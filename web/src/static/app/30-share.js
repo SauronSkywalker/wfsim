@@ -640,11 +640,11 @@ const cap1 = (s) => String(s || "").replace(/^./, (c) => c.toUpperCase());
 
 /// WHERE SHORT LINKS LIVE, whatever origin made one: the desktop client and the
 /// dev server have no store of their own, and a link must open for anybody.
-const SHARE_ORIGIN = "https://wfsim.app";
+const SHARE_ORIGIN = LIVE_ORIGIN;
 const shareApi = () => (location.origin === SHARE_ORIGIN ? "" : SHARE_ORIGIN);
 /// THE SITE AND THE DESKTOP SHELL make short links; a dev server or a check
 /// (127.0.0.1) makes the long form, so no test ever writes the live store.
-const SHARE_SHORT_HOSTS = ["wfsim.app", "wfsim.localhost"];
+const SHARE_SHORT_HOSTS = LIVE_HOSTS;
 
 /// THE LINK: short when the store answers, the full code when it does not —
 /// offline, on a shell with no network, or a store that is down. The long form

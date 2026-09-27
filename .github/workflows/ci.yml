@@ -135,6 +135,10 @@ jobs:
       # nothing that is not a share code. Stub store, no network.
       - name: Short share links store a build and nothing else
         run: node scripts/check_share_short.mjs
+      # A USAGE EVENT named on one side only is a time series that never starts,
+      # and nothing throws. Stub dataset, no network.
+      - name: Usage points agree between page and worker
+        run: node scripts/check_usage_events.mjs
       # …AND IT CAN BE PUT BACK. A backup nobody has restored is a hope: the
       # restore runs once, under pressure, by someone who has just lost data,
       # which is the worst moment to find a typo in it. Stub `curl`, no network.

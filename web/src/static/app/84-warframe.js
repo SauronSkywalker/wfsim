@@ -570,6 +570,8 @@ function refreshWfPanel() {
     renderWfStats(r);
     renderWfAbilities(r);
     renderWfCaps(r);
+    const p = wfPayload();
+    if (p.mods.length || p.exilus || p.aura) track("builder.warframe", p.frame);
   }, 120);
 }
 

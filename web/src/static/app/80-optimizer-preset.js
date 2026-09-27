@@ -247,6 +247,8 @@ async function pollOptimize() {
     optFinish();
     if (st.result && st.result.results && st.result.results.length) {
       renderOptResults(st.result);
+      // FINISHED, not started: a start can be cancelled, and a cancel is not a run.
+      if (st.phase === "done") track("optimizer.run", $("weapon").value, st.elapsed_s);
       // …AND EVERY FINALIST GOES TO THE BOARD. After the results are drawn, so
       // a slow door never delays the answer the reader asked for.
       offerOptBoardSubmit(st.result);

@@ -65,5 +65,10 @@
       "database_name": "wfsim",
       "database_id": "0fdd0713-cdd6-44ff-af38-efe6978c9e52"
     }
+  ],
+  // WHAT READERS DID — `POST /api/e`, docs/ANALYTICS.md. A dataset is created by
+  // its first write; nothing to provision. Read back by `scripts/usage.py`.
+  "analytics_engine_datasets": [
+    { "binding": "USAGE", "dataset": "wfsim" }
   ]
 }

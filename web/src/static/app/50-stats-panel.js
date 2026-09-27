@@ -52,6 +52,8 @@ function refreshPanel() {
     try {
       const r = await api("/api/panel", body);
       renderPanel(r);
+      // A BUILD, not the default weapon opened: at least one card seated.
+      if (r && r.ok !== false && body.mods && body.mods.length) track("builder.weapon", body.weapon);
     } catch (e) {
       $("stats-rows").innerHTML = `<div class="error">panel failed: ${e}</div>`;
     }

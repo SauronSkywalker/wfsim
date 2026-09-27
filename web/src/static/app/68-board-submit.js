@@ -1204,6 +1204,7 @@ async function runSim() {
     boardOnBoard = null;
     renderResults(r);
     saveSimResult(r);
+    track("simulator.run", body.weapon, simRuns());
     // ONE INTEGER PAIR, FOR THE READER'S OWN EYES. `/support` is the only thing
     // that reads it and it never leaves this browser — see `SUPPORT_USE`. It is
     // counted HERE rather than in the worker because what is being counted is a

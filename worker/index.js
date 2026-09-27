@@ -351,9 +351,67 @@ async function shareFetch(id, env) {
     { "cache-control": "public, max-age=31536000, immutable" });
 }
 
+// ---- USAGE -----------------------------------------------------------------
+//
+// ONE DATA POINT PER THING A READER DID, into Workers Analytics Engine
+// (`env.USAGE`). The page computes everything on the device, so without this the
+// edge cannot tell a bounce from an hour-long search. docs/ANALYTICS.md.
+
+/// THE VOCABULARY, declared once and named by DOMAIN, never by a control: a
+/// renamed event is a broken time series, and history cannot be backfilled.
+/// EXPORTED so `check_usage_events.mjs` holds it against what the page sends.
+export const USAGE_EVENTS = [
+  "app.boot", "builder.weapon", "builder.warframe", "builder.operator",
+  "simulator.run", "optimizer.run",
+];
+/// The wire's schema, written into every point so a later change stays readable.
+export const USAGE_SCHEMA = 1;
+const USAGE_CID = /^[0-9a-f]{32}$/;
+const USAGE_ROUTE = /^[a-z0-9_-]{1,32}$/;
+const USAGE_LANG = /^[a-z]{2}(-[a-z0-9]{2,8})?$/;
+const USAGE_RELEASE = /^[0-9A-Za-z._-]{1,40}$/;
+const USAGE_SHELLS = ["web", "desktop"];
+
+/// The point as it is written, or null for anything that is not one. SHAPE ONLY,
+/// like `record`: whether a subject exists is game data this worker has not got.
+export function usagePoint(b, country) {
+  if (!b || typeof b !== "object" || b.v !== USAGE_SCHEMA) return null;
+  const s = (x) => (typeof x === "string" ? x : "");
+  const subject = s(b.subject), n = b.n === undefined ? 0 : b.n;
+  if (!USAGE_EVENTS.includes(b.e) || !USAGE_CID.test(s(b.cid))
+      || !USAGE_ROUTE.test(s(b.route)) || !USAGE_LANG.test(s(b.lang))
+      || !USAGE_RELEASE.test(s(b.release)) || !USAGE_SHELLS.includes(b.shell)
+      || (subject && !ID_PLAIN.test(subject))
+      || typeof n !== "number" || !Number.isFinite(n) || n < 0) return null;
+  // THE VISITOR IS THE INDEX, so when the engine samples it keeps or drops a
+  // visitor whole — a return rate computed over half-sampled visitors is wrong.
+  // NOTHING ELSE ABOUT THEM: no IP, no user agent; the country is the edge's.
+  return {
+    indexes: [b.cid],
+    blobs: [b.e, b.cid, subject, b.route, b.lang, b.shell, b.release,
+      /^[A-Z]{2}$/.test(s(country)) ? country : ""],
+    doubles: [USAGE_SCHEMA, n],
+  };
+}
+
+async function usage(request, env) {
+  const { b, err } = await body(request);
+  if (err) return new Response(null, { status: 400, headers: CORS });
+  const point = usagePoint(b, request.cf && request.cf.country);
+  if (!point) return new Response(null, { status: 400, headers: CORS });
+  if (!env.USAGE) return new Response(null, { status: 503, headers: CORS });
+  // Fire and forget on this side too: `writeDataPoint` queues, it does not wait.
+  env.USAGE.writeDataPoint(point);
+  return new Response(null, { status: 204, headers: CORS });
+}
+
 export default {
   async fetch(request, env) {
     const path = new URL(request.url).pathname;
+    if (path === "/api/e") {
+      if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
+      return request.method === "POST" ? usage(request, env) : new Response(null, { status: 405, headers: CORS });
+    }
     if (path === "/api/s" || path.startsWith("/api/s/")) {
       if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
       if (path === "/api/s") {

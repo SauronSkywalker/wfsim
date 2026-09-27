@@ -43,7 +43,7 @@ code, not after.
 | the update channel, mirrors, shells | `docs/DISTRIBUTION.md` |
 | the Windows client | `docs/DESKTOP.md` |
 | setup, profiling, what has been tried | `docs/DEVELOPMENT.md` |
-| how usage would be counted (unimplemented) | `docs/ANALYTICS.md` |
+| how usage is counted | `docs/ANALYTICS.md` |
 
 ## Map
 
