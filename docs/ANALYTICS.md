@@ -38,6 +38,9 @@ well". Both come from the usage points below.
 - **No PII, no cookies, no accounts.** One random `wfsim-cid` in localStorage,
   clearable like every other `wfsim-*` key. No IP, no user agent is written.
 - **Global Privacy Control or Do Not Track set: nothing is sent.**
+- **A crawler that runs the page is not a reader.** Applebot and Googlebot boot
+  the app; the worker answers a point whose user agent is a crawler's
+  (`USAGE_CRAWLER`) and writes nothing.
 - **Only the live site and the desktop shell send** (`LIVE_HOSTS`,
   `07-usage.js`). A dev server or a check on 127.0.0.1 never writes the live
   dataset.

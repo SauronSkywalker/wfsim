@@ -524,6 +524,7 @@ const USAGE_ROUTE = /^[a-z0-9_-]{1,32}$/;
 const USAGE_LANG = /^[a-z]{2}(-[a-z0-9]{2,8})?$/;
 const USAGE_RELEASE = /^[0-9A-Za-z._-]{1,40}$/;
 const USAGE_SHELLS = ["web", "desktop"];
+export const USAGE_CRAWLER = /(bot|crawler|spider|slurp)[/;\s)]|headlesschrome|lighthouse/i;
 
 /// The point as it is written, or null for anything that is not one. SHAPE ONLY,
 /// like `record`: whether a subject exists is game data this worker has not got.
@@ -553,6 +554,9 @@ async function usage(request, env) {
   const point = usagePoint(b, request.cf && request.cf.country);
   if (!point) return new Response(null, { status: 400, headers: CORS });
   if (!env.USAGE) return new Response(null, { status: 503, headers: CORS });
+  // A CRAWLER THAT RUNS THE PAGE (Applebot, Googlebot) boots the app like a
+  // reader and would be counted as one. Answered, never written.
+  if (USAGE_CRAWLER.test(request.headers.get("user-agent") || "")) return new Response(null, { status: 204, headers: CORS });
   // Fire and forget on this side too: `writeDataPoint` queues, it does not wait.
   env.USAGE.writeDataPoint(point);
   return new Response(null, { status: 204, headers: CORS });

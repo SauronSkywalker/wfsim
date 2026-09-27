@@ -72,6 +72,23 @@ for (const [what, b] of refused) {
 }
 check("the page's own route fallback is a route the worker accepts",
   ["home", "other"].every((route) => usagePoint({ ...good, route }, "")));
+for (const ua of [
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Safari/605.1.15 (Applebot/0.1; +http://www.apple.com/go/applebot)",
+  "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Googlebot/2.1; +http://www.google.com/bot.html) Chrome/145.0.0.0 Safari/537.36",
+  "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.0.0 Safari/537.36",
+]) {
+  const before = written.length;
+  r = await worker.fetch(new Request("https://wfsim.app/api/e", { method: "POST", body: JSON.stringify(good),
+    headers: { "user-agent": ua } }), env);
+  check(`a crawler that runs the page is answered and not counted: ${ua.match(/\w+(bot|Chrome)\b/i)[0]}`,
+    r.status === 204 && written.length === before);
+}
+{
+  const before = written.length;
+  r = await worker.fetch(new Request("https://wfsim.app/api/e", { method: "POST", body: JSON.stringify(good),
+    headers: { "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0" } }), env);
+  check("…and a reader's browser is", r.status === 204 && written.length === before + 1);
+}
 r = await post(good, {});
 check("no dataset bound is a 503, not a silent 204", r.status === 503, `status ${r.status}`);
 r = await post(null, env, "OPTIONS");
