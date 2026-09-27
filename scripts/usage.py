@@ -25,6 +25,8 @@ ROOT = Path(__file__).resolve().parent.parent
 DATASET = "wfsim"
 BOOT = "app.boot"
 # A RESULT, as opposed to a page opened: anything but the boot.
+# THE RELEASE a deploy check writes its one point under, never a reader.
+CHECK_RELEASE = "deploy-check"
 RESULTS = ("builder.weapon", "builder.warframe", "builder.operator", "simulator.run", "optimizer.run")
 
 
@@ -65,7 +67,7 @@ def main():
     ap.add_argument("--top", type=int, default=15)
     args = ap.parse_args()
     account, token = credentials()
-    since = f"timestamp > NOW() - INTERVAL '{args.days}' DAY"
+    since = f"timestamp > NOW() - INTERVAL '{args.days}' DAY AND blob7 != '{CHECK_RELEASE}'"
 
     rows = sql(account, token, f"""
         SELECT toStartOfInterval(timestamp, INTERVAL '1' DAY) AS day, blob2 AS cid, blob1 AS e,
@@ -83,14 +85,14 @@ def main():
     days = sorted(by_day)
     print(f"covered {days[0]} .. {days[-1]} ({len(days)} days)\n")
 
-    head = f"{'day':10}  {'visitors':>8}  {'result':>7}  {'activ.':>6}  " + "  ".join(f"{e.split('.')[-1]:>8}" for e in RESULTS)
+    head = f"{'day':10}  {'visitors':>8}  {'result':>7}  {'activ.':>6}  " + "  ".join(f"{e.split('.')[-1] if e.startswith('builder.') else e.split('.')[0]:>9}" for e in RESULTS)
     print(head)
     for d in days:
         ev = by_day[d]
         seen = set().union(*ev.values())
         got = set().union(*(ev.get(e, set()) for e in RESULTS))
         print(f"{d:10}  {len(seen):8}  {len(got):7}  {pct(len(got), len(seen)):>6}  "
-              + "  ".join(f"{len(ev.get(e, ())):8}" for e in RESULTS))
+              + "  ".join(f"{len(ev.get(e, ())):9}" for e in RESULTS))
 
     # RETURN: of the visitors in the week before last, how many came back last week.
     if len(days) >= 14:
