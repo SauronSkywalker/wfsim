@@ -20,6 +20,13 @@ use super::*;
 /// what makes a single constant honest here rather than a fitted one.
 pub(super) const TICK_QUEUE_MIN: usize = 32;
 
+/// ELECTRICITY AND GAS TICK AS ONE GROUP — every live stack of the type pays
+/// into one instance a second (wiki `Damage/Electricity Damage`, U33.6).
+pub(super) fn consolidated(t: DamageType) -> bool {
+    matches!(t, DamageType::Electricity | DamageType::Gas)
+}
+
+
 /// ONE SCHEDULED STATUS EVENT, ordered the way the scan that preceded it was.
 ///
 /// The scan took the strictly earliest event, considering DoTs in index order,
@@ -104,8 +111,25 @@ impl DebuffState {
                 q.push(std::cmp::Reverse(TickKey { t, class, index: index as u32 }));
             }
         };
+        // A CONSOLIDATED GROUP IS ONE EVENT, so it is queued once: the stack
+        // with the lowest index, which is the key that fires today — every
+        // other stack's key only ever came off the queue stale. On a crowd
+        // under Melee Influence they were 73% of every pop.
+        // A handful of groups at most; one that does not fit is queued per
+        // stack as before, which costs a stale pop and changes nothing.
+        let mut groups = [(DamageType::Impact, 0.0f64); 8];
+        let mut n = 0;
         for (i, d) in self.dots.iter().enumerate() {
             if d.ticks_left > 0 {
+                if consolidated(d.dtype) {
+                    if groups[..n].iter().any(|&(t, at)| t == d.dtype && (at - d.next_tick).abs() < 1e-9) {
+                        continue;
+                    }
+                    if n < groups.len() {
+                        groups[n] = (d.dtype, d.next_tick);
+                        n += 1;
+                    }
+                }
                 push(d.next_tick, 0, i);
             }
         }
@@ -288,7 +312,7 @@ pub(super) fn process_ticks(
                 //
                 // wiki `Damage/Electricity Damage`, U33.6: "no longer deal
                 // their respective damage separately ... but once per second".
-                let value = if matches!(dtype, DamageType::Electricity | DamageType::Gas) {
+                let value = if consolidated(dtype) {
                     let mut sum = 0.0;
                     // ONE ACCUMULATOR FOR THE WHOLE GROUP, taken from whichever
                     // seed joined it first — "they are added to the same
@@ -296,6 +320,7 @@ pub(super) fn process_ticks(
                     // once" (`Dot::accumulator_unit`). Adding it per stack is
                     // the exact mistake the page calls out.
                     let mut unit = 0.0;
+                    let source = crate::fight::dot::Source::at(params, dtype, now, w);
                     for d in debuffs.dots.iter_mut() {
                         if d.dtype == dtype
                             && d.ticks_left > 0
@@ -309,9 +334,9 @@ pub(super) fn process_ticks(
                             // THE LANDING SCALES THE ACCUMULATOR TOO: 234, not
                             // 233, off a 24 body tick (M100). A group takes the
                             // landing of the seed that brought its `1`.
-                            sum += d.live(params, now, w) * d.landing;
+                            sum += d.live(&source) * d.landing;
                             if unit == 0.0 {
-                                unit = d.accumulator_unit(params, now, w) * d.landing;
+                                unit = d.accumulator_unit(&source) * d.landing;
                             }
                         }
                     }
@@ -319,7 +344,7 @@ pub(super) fn process_ticks(
                     // stacks paying into one tick and they need not share a
                     // depth, so a single product drawn over all of them would
                     // be a claim about stacks this arm cannot inspect.
-                    dot_parts = Some(vec![
+                    dot_parts = rec.is_on().then(|| vec![
                         crate::record::Part {
                             factor: crate::record::Factor::StatusSeeds,
                             amount: sum,
@@ -340,22 +365,27 @@ pub(super) fn process_ticks(
                     d.ticks_left -= 1;
                     // Slash and Toxin tick independently, so each stack is its
                     // own tick group and carries its own accumulator.
-                    let (seeds, acc) = (d.live(params, now, w), d.accumulator_unit(params, now, w));
-                    let (over_seed, over_acc) = d.explain(params, now, w);
-                    dot_parts = Some(vec![
-                        crate::record::Part {
-                            factor: crate::record::Factor::StatusSeeds,
-                            amount: seeds,
-                            head: d.frozen,
-                            of: over_seed,
-                        },
-                        crate::record::Part {
-                            factor: crate::record::Factor::StatusAccumulator,
-                            amount: acc,
-                            head: d.unit,
-                            of: over_acc,
-                        },
-                    ]);
+                    let source = crate::fight::dot::Source::at(params, d.dtype, now, w);
+                    let (seeds, acc) = (d.live(&source), d.accumulator_unit(&source));
+                    // THE LEDGER'S HALF, and only the ledger reads it: explaining a
+                    // tick allocates, so a fight nobody records does not.
+                    dot_parts = rec.is_on().then(|| {
+                        let (over_seed, over_acc) = d.explain(params, now, w);
+                        vec![
+                            crate::record::Part {
+                                factor: crate::record::Factor::StatusSeeds,
+                                amount: seeds,
+                                head: d.frozen,
+                                of: over_seed,
+                            },
+                            crate::record::Part {
+                                factor: crate::record::Factor::StatusAccumulator,
+                                amount: acc,
+                                head: d.unit,
+                                of: over_acc,
+                            },
+                        ]
+                    });
                     seeds + acc
                 };
                 let hit_type = if ignores_armor {

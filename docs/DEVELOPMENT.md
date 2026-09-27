@@ -270,10 +270,20 @@ at arithmetic — which is the shape of the remaining wins if there are any. The
 per-shot loop is otherwise allocation-free (the one `vec!` in it is behind the
 replay's `trace` guard).
 
-Beyond that there is no hot spot to take: the cost is spread across the
-per-shot and per-tick work, which is what a tight inner loop looks like. The
-room is in **how many runs get spent**, not in what one costs — see
-docs/OPTIMIZER.md.
+**THE SECOND WIN WAS IN THE TICK LOOP, and only a crowd shows it.** Praedos
+under Melee Influence on the ruler's 25 bodies spends 60% of a run in
+`process_ticks`, and three things there were paid per STACK that belong to the
+INSTANT: an Electricity or Gas group tick re-read the element and faction
+brackets for every stack (each read locks the cast plan and walks the ability
+list — `dot::Source` now reads them once), the queue held one key per stack of
+a group that fires as one (73% of its pops were stale), and every tick built
+the ledger's parts with nobody recording. Identical answers, measured with
+`one_fight … bodies=25 arcanes=melee_influence` against the old binary:
+**−36% to −43%**, and −4.6% on the default suite. The rule it generalises to:
+what is the same for every stack at one instant is read once per instant.
+
+Beyond that the cost is spread across the per-shot and per-tick work, and the
+room is in **how many runs get spent** — see docs/OPTIMIZER.md.
 
 ### The quick calc pays a different fixed cost
 

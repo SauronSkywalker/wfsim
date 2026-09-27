@@ -207,9 +207,10 @@ fn arcanes_for(weapon: &str, ids: &[&str]) -> ArcaneFx {
         .iter()
         .filter(|id| !id.is_empty())
         .map(|id| {
-            let card = wfsim_engine::data::arcanes::pool_for_weapon(weapon, "primary")
+            // EVERY SEAT THE WEAPON HAS — a melee arcane sits in a melee seat.
+            let card = wfsim_engine::data::weapons::arcane_pools(weapon)
                 .into_iter()
-                .chain(wfsim_engine::data::arcanes::pool_for_weapon(weapon, "secondary"))
+                .flat_map(|seat| wfsim_engine::data::arcanes::pool_for_weapon(weapon, seat))
                 .find(|a| a.id == *id)
                 .unwrap_or_else(|| panic!("no arcane seat for {id} on {weapon}"));
             card.fx(

@@ -64,6 +64,21 @@ pub(super) struct Dot {
     pub(super) ignores_armor: bool,
 }
 
+/// WHAT THE SOURCE HOLDS FOR ONE TYPE AT ONE INSTANT — the element bracket's
+/// live share and the faction bracket, the two factors a DoT re-reads. Equal
+/// for every stack of that type at that instant, so a consolidated tick reads
+/// them once: each read locks the cast plan and walks the ability list.
+pub(super) struct Source {
+    pub(super) element: f64,
+    pub(super) faction: f64,
+}
+
+impl Source {
+    pub(super) fn at(params: &FightParams, dtype: DamageType, now: f64, w: &CardWindows) -> Self {
+        Source { element: params.element_at(dtype, now, w), faction: params.faction_at_time(now) }
+    }
+}
+
 impl Dot {
     /// WHAT THIS TICK IS WORTH RIGHT NOW.
     ///
@@ -80,13 +95,14 @@ impl Dot {
     /// faction damage, which double dips for status effects, the one from
     /// Eclipse is applied once."* Eclipse lives in `frozen`, applied once at
     /// the moment the proc landed.
-    pub(super) fn live(&self, params: &FightParams, now: f64, w: &CardWindows) -> f64 {
+    ///
+    /// `s` is the source read at the tick ([`Source::at`]) — once for every
+    /// stack of one type at one instant, not once per stack.
+    pub(super) fn live(&self, s: &Source) -> f64 {
         if !self.source_scaled {
             return self.frozen;
         }
-        self.frozen
-            * (self.bracket + params.element_at(self.dtype, now, w))
-            * faction_at(params.faction_at_time(now), self.depth)
+        self.frozen * (self.bracket + s.element) * faction_at(s.faction, self.depth)
     }
 
     /// **THE ACCUMULATOR STARTS AT 1, NOT AT 0** (wiki `Damage/Calculation`
@@ -106,13 +122,11 @@ impl Dot {
     /// Electricity and Gas consolidate; Slash and Toxin each carry their own.
     /// ONLY ONE FACTION LAYER, since the seed already holds the hit's own, so a
     /// payload at `depth` puts `depth − 1` in the seed and one here. M56.
-    pub(super) fn accumulator_unit(&self, params: &FightParams, now: f64, w: &CardWindows) -> f64 {
+    pub(super) fn accumulator_unit(&self, s: &Source) -> f64 {
         if !self.source_scaled || self.unit == 0.0 {
             return 0.0;
         }
-        self.unit
-            * (self.bracket + params.element_at(self.dtype, now, w))
-            * params.faction_at_time(now)
+        self.unit * (self.bracket + s.element) * s.faction
     }
 
     /// THE MULTIPLIERS OVER EACH HALF, for the ledger and nothing else:

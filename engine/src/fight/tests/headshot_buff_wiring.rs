@@ -215,7 +215,7 @@ fn a_burning_cloud_reads_the_window_at_every_tick() {
     let at = |until: f64| {
         let mut w = windows_for(&p);
         w.weakpoint_buff = until;
-        cloud.live(&p, 1.0, &w)
+        cloud.live(&crate::fight::dot::Source::at(&p, cloud.dtype, 1.0, &w))
     };
     let shut = at(f64::NEG_INFINITY);
     let open = at(10.0);
@@ -225,10 +225,10 @@ fn a_burning_cloud_reads_the_window_at_every_tick() {
     // stamp at the proc cannot do.
     let mut w = windows_for(&p);
     w.weakpoint_buff = 0.5;
-    assert!((cloud.live(&p, 1.0, &w) - 100.0).abs() < 1e-9, "the window shut at 0.5");
+    assert!((cloud.live(&crate::fight::dot::Source::at(&p, cloud.dtype, 1.0, &w)) - 100.0).abs() < 1e-9, "the window shut at 0.5");
     // …AND AN ELEMENT THE CARD DOES NOT NAME IS UNTOUCHED.
     let bleed = Dot { dtype: DamageType::Slash, ..cloud };
     let mut w = windows_for(&p);
     w.weakpoint_buff = 10.0;
-    assert!((bleed.live(&p, 1.0, &w) - 100.0).abs() < 1e-9, "a Slash bleed is not Gas");
+    assert!((bleed.live(&crate::fight::dot::Source::at(&p, bleed.dtype, 1.0, &w)) - 100.0).abs() < 1e-9, "a Slash bleed is not Gas");
 }
