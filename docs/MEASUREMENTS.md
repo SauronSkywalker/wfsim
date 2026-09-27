@@ -192,6 +192,7 @@ path, so an entry may be renamed but never renumbered.
 | [M102](measurements/M102-latron-prime-double-tap-flensing-riddled.md) | Latron Prime: Double Tap reaches only the Incarnon explosion (148 + 1935), +40% a shot, one pile per form frozen at each swap; Flensing Spikes strips 20% per bullet for good; Riddled Target stacks keep their own clocks | ✅ 2026-09-20 (owner) |
 | [M103](measurements/M103-latron-bounces-punch-through-and-the-gauge.md) | Latron: the Incarnon bounce is three deterministic REFLECTIONS and a weak-point kill sends it into the air, so it is admitted rather than modelled; the Incarnon form takes no punch through and the base form does; a round through two weak points charges the gauge twice and fires every other weak-point trigger twice | ✅ 2026-09-21 (owner) |
 | [M105](measurements/M105-warframe-casts-snapshot-strength.md) | a Warframe cast SNAPSHOTS Ability Strength and keeps it for its duration — Valkyr's claws are the strength Hysteria was cast at; Transference out and back is 1 s; Arcane Power Ramp drops to zero at once on a repeated ability | ✅ 2026-09-26 (owner) |
+| [M106](measurements/M106-assault-rifle-mods-take-launchers.md) | an "Assault Rifle" mod goes on a launcher — Tainted Mag on the Kuva Ogris — so every launcher draws the assault-rifle pool; whether Rifle Ammo Mutation does too, which the wiki names as refused on an Ogris, is open | ✅ 2026-09-27 (owner) |
 | [M104](measurements/M104-primary-compression-multiplies-on-the-latron-incarnon.md) | Primary Compression MULTIPLIES on the Latron Prime Incarnon rather than joining the base-damage bucket (2097 + 8042 against the bucket's 1074), a rank-2 card pays +70% a metre over the 3.2 m it takes, and the base form earns nothing | ✅ 2026-09-21 (owner) |
 
 ## By weapon
@@ -219,6 +220,7 @@ settles a RULE rather than a weapon has no row and is found by number above.
 | Gotva Prime | `gotva_prime` | [M30](measurements/M30-stat-lock-mod-bucket.md) |
 | Grimoire | `grimoire` | [M63](measurements/M63-grimoire-orb-strikes.md) · [M64](measurements/M64-tome-meter-is-a-clock.md) |
 | Kuva Nukor | `kuva_nukor` | [M78](measurements/M78-kuva-nukor-valence-in-co-base.md) |
+| Kuva Ogris | `kuva_ogris` | [M106](measurements/M106-assault-rifle-mods-take-launchers.md) |
 | Laetum | `laetum` | [M9](measurements/M09-incarnon-transition-timings.md) · [M10](measurements/M10-incarnon-reload-buff-reach.md) · [M11](measurements/M11-on-hit-per-trigger-or-instance.md) · [M15](measurements/M15-torid-incarnon-chain-nodes.md) · [M46](measurements/M46-chill-ladder.md) · [M59](measurements/M59-laetum-incarnon-irradiate-echo.md) · [M60](measurements/M60-headshot-bonuses-add.md) · [M61](measurements/M61-shield-break-spillover.md) · [M62](measurements/M62-volley-settles-per-pellet.md) |
 | Latron Prime | `latron_prime` | [M102](measurements/M102-latron-prime-double-tap-flensing-riddled.md) · [M103](measurements/M103-latron-bounces-punch-through-and-the-gauge.md) · [M104](measurements/M104-primary-compression-multiplies-on-the-latron-incarnon.md) |
 | Larkspur Prime | `larkspur_prime` | [M19](measurements/M19-deadhead-stacking.md) |

@@ -61,6 +61,25 @@ fn an_exalted_melee_seats_the_cards_techrot_encore_reenabled() {
     assert!(!has("magistar", "hysteria"));
 }
 
+/// AN "ASSAULT RIFLE" MOD GOES ON A LAUNCHER (M106: Tainted Mag on the Kuva
+/// Ogris) — every launcher draws the pool — and a bow and a sniper do not.
+#[test]
+fn an_assault_rifle_mod_goes_on_every_launcher_and_not_on_a_bow_or_a_sniper() {
+    let has = |weapon: &str, id: &str| pool_for_weapon(weapon).iter().any(|m| m.id == id);
+    let launchers: Vec<&str> = crate::data::weapons::all()
+        .iter()
+        .filter(|w| w.class == "launcher" && !w.mod_pools.is_empty())
+        .map(|w| w.id.as_str())
+        .collect();
+    assert!(launchers.contains(&"kuva_ogris"), "{launchers:?}");
+    for w in &launchers {
+        assert!(has(w, "tainted_mag"), "{w}");
+    }
+    assert!(has("gotva_prime", "tainted_mag"), "an assault rifle keeps it");
+    assert!(!has("cernos_prime", "tainted_mag"), "a bow");
+    assert!(!has("komorex", "tainted_mag"), "a sniper rifle");
+}
+
 /// Every AMALGAM mod must declare that it cannot go on a sentinel weapon.
 ///
 /// The wiki states it per mod — "This mod cannot be equipped on Sentinel

@@ -395,8 +395,8 @@ Prey, Rifle Ammo Mutation (+ Primed), Deft Tempo, Hydraulic Gauge, Loose Hatch,
 Overview, Recover, Gun Glide, Tainted Mag. That is the single largest mod gate
 in the game we do not have — larger than Sniper's 14.
 
-Our two rifle-pool weapons are a launcher (Torid) and a bow (Cernos Prime).
-Neither is an assault rifle, so the tag has never applied.
+The assault-rifle pool also reaches every launcher (M106: Tainted Mag equips on
+the Kuva Ogris); a bow and a sniper rifle do not draw it.
 
 Zero new engine mechanics. Candidates, all single-attack, Auto or Semi-Auto,
 hit-scan or plain projectile:

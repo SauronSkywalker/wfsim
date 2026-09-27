@@ -1530,8 +1530,10 @@ fn a_weapons_pool_is_the_union_of_the_pools_it_draws() {
     let verglas = pool_union(&spec("verglas_prime").unwrap().mod_pools);
     let rifle = class_pool("rifle").len();
     let primary = class_pool("primary").len();
+    let assault = class_pool("assault_rifle").len();
     assert!(primary > 0, "data/mods/primary/ exists");
-    assert_eq!(torid.len(), rifle + primary, "union of both, no overlap");
+    // A launcher draws the assault-rifle pool too (M106).
+    assert_eq!(torid.len(), rifle + primary + assault, "union of the three, no overlap");
     assert_eq!(verglas.len(), rifle + primary, "a primary-kind sentinel weapon: both");
     assert!(torid.iter().any(|m| m.id == "vigilante_armaments"));
     assert!(verglas.iter().any(|m| m.id == "vigilante_armaments"));
@@ -1547,8 +1549,9 @@ fn a_weapons_pool_is_the_union_of_the_pools_it_draws() {
 fn the_primary_slot_needed_no_code() {
     let t = spec("torid").expect("torid");
     assert_eq!(t.slot, "primary");
-    // A UNION, widest first: primary-wide mods AND the rifle class pool.
-    assert_eq!(t.mod_pools, ["primary", "rifle"]);
+    // A UNION, widest first: primary-wide mods, the rifle class pool, and the
+    // assault-rifle pool a launcher draws (M106).
+    assert_eq!(t.mod_pools, ["primary", "rifle", "assault_rifle"]);
     assert!(roster().any(|s| s.id == "torid"), "selectable");
     assert!(
         !roster().any(|s| s.id == "torid_incarnon"),
