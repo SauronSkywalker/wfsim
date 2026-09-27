@@ -317,6 +317,7 @@ function identityLines() {
 }
 
 function renderSupport() {
+  renderUsageNote();
   const facts = $("support-facts");
   if (facts) {
     facts.innerHTML = projectFacts().map((f) => `

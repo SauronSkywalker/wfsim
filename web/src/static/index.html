@@ -609,6 +609,13 @@
          below with the unofficial-fan-project disclaimer, and printing it
          twice on one screen reads as boilerplate rather than as a statement. -->
     <p class="sup-fine" data-i18n>Chipping in is a gift rather than a purchase — it covers what this site costs to run, and it buys nobody an advantage.</p>
+    <!-- WHAT IS COUNTED, said where a reader looking for it will look, with the
+         way out beside it. docs/ANALYTICS.md is the whole of it. -->
+    <section class="sup-usage" id="usage">
+      <h2 data-i18n>What is counted</h2>
+      <p><span data-i18n>WFSim counts what gets used — which pages open, whether a build was computed, a simulation or a search finished, a link shared — under a random id this browser keeps. No account, no IP address, no cookie. With Global Privacy Control or Do Not Track on, nothing is sent.</span></p>
+      <p><span data-i18n>This browser's id:</span> <code id="usage-id">—</code> <button id="usage-off" class="cu-btn" type="button"></button></p>
+    </section>
     <!-- WHAT THIS CLIENT IS RUNNING — the release, the board it is reading, and
          the shell around it. It answers the one question two readers comparing
          numbers ask each other, and without it a version difference and a real
@@ -1208,7 +1215,8 @@
     <!-- The ONLY entry to /support. It stays a footer link at footer weight:
          the ask belongs where someone who already wants to give will look for
          it, not in the path of someone doing a calculation. -->
-    <a href="/support" title="what WFSim costs to run" data-i18n-title data-i18n>Support</a>
+    <a href="/support" title="what WFSim costs to run" data-i18n-title data-i18n>Support</a> ·
+    <a href="/support#usage" data-i18n>Usage statistics</a>
     <!-- WHICH BUILD YOU ARE LOOKING AT. `build_site_app.py` stamps the commit
          and the time it generated `site/`; the dev server leaves the
          placeholder, which is itself the answer there.

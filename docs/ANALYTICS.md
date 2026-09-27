@@ -37,7 +37,9 @@ well". Both come from the usage points below.
   `scripts/check_usage_events.mjs` holds the page to it.
 - **No PII, no cookies, no accounts.** One random `wfsim-cid` in localStorage,
   clearable like every other `wfsim-*` key. No IP, no user agent is written.
-- **Global Privacy Control or Do Not Track set: nothing is sent.**
+- **Global Privacy Control or Do Not Track set: nothing is sent.** Nor after
+  the reader turns counting off on `/support#usage`, which also says what is
+  counted and shows the browser's id — the footer links there.
 - **A crawler that runs the page is not a reader.** Applebot and Googlebot boot
   the app; the worker answers a point whose user agent is a crawler's
   (`USAGE_CRAWLER`) and writes nothing.
@@ -107,6 +109,11 @@ visitors; the **week-over-week return rate**; **China against overseas** —
 activation, boot time p50/p90, engine failure rate, shares made and opened;
 the top subjects per event; and visitors by landing route, language, shell and
 country.
+
+It also ranks the **most active visitors** — by days seen, then results — under
+the first eight characters of their id. A visitor is a browser and nothing
+more; it becomes a person only if they tell us the id `/support` shows them,
+and then `python scripts/usage.py --visitor <id>` lists everything it sent.
 
 Activation and return are the two numbers that matter. Pageviews are not a
 measure of a calculator; producing a result is.

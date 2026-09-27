@@ -81,13 +81,14 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--days", type=int, default=14)
     ap.add_argument("--top", type=int, default=15)
+    ap.add_argument("--visitor", help="one visitor's history, by id or id prefix")
     args = ap.parse_args()
     account, token = credentials()
     since = f"timestamp > NOW() - INTERVAL '{args.days}' DAY AND blob7 != '{CHECK_RELEASE}'"
 
     rows = sql(account, token, f"""
         SELECT toStartOfInterval(timestamp, INTERVAL '1' DAY) AS day, blob2 AS cid, blob1 AS e,
-               max(_sample_interval) AS si
+               max(_sample_interval) AS si, SUM(_sample_interval) AS n
         FROM {DATASET} WHERE {since} GROUP BY day, cid, e LIMIT 1000000""")
     if not rows:
         print(f"no usage points in the last {args.days} days")
@@ -95,6 +96,8 @@ def main():
     if any(float(r["si"]) > 1 for r in rows):
         print("NOTE: the dataset is SAMPLED in this window; visitor counts below are a floor\n")
 
+    if args.visitor:
+        return visitor(account, token, since, args.visitor)
     by_day = defaultdict(lambda: defaultdict(set))
     by_event = defaultdict(set)
     for r in rows:
@@ -160,11 +163,48 @@ def main():
     for e in sorted(per):
         print(f"\n{e}: " + ", ".join(f"{s} {n}" for s, n in per[e][:args.top]))
 
+    # THE MOST ACTIVE VISITORS. A visitor is a random per-browser id and nothing
+    # more: this ranks browsers, and says who they are only if they tell us
+    # (their id is on /support). Days seen first, then results produced.
+    per = defaultdict(lambda: {"days": set(), "loads": 0, "results": 0, "sims": 0, "searches": 0, "shares": 0})
+    for r in rows:
+        v, n = per[r["cid"]], int(float(r["n"]))
+        v["days"].add(r["day"][:10])
+        if r["e"] == BOOT: v["loads"] += n
+        if r["e"] in RESULTS: v["results"] += n
+        if r["e"] == "simulator.run": v["sims"] += n
+        if r["e"] == "optimizer.run": v["searches"] += n
+        if r["e"] == "share.create": v["shares"] += n
+    where = {r["cid"]: (r["lang"], r["country"], r["shell"]) for r in boots}
+    ranked = sorted(per.items(), key=lambda kv: (-len(kv[1]["days"]), -kv[1]["results"], -kv[1]["loads"]))
+    print(f"\nmost active visitors (by days seen, then results):")
+    print(f"  {'visitor':10}  {'days':>4}  {'loads':>5}  {'results':>7}  {'sims':>4}  {'searches':>8}  {'shares':>6}  where")
+    for cid, v in ranked[:args.top]:
+        lang, country, shell = where.get(cid, ("?", "?", "?"))
+        print(f"  {cid[:8]:10}  {len(v['days']):4}  {v['loads']:5}  {v['results']:7}  {v['sims']:4}  {v['searches']:8}  {v['shares']:6}  {country} {lang} {shell}")
+
     for dim in ("route", "lang", "shell", "country"):
         c = Counter()
         for value, cids in _group(boots, dim).items():
             c[value or "?"] = len(cids)
         print(f"\nvisitors by landing {dim}: " + ", ".join(f"{k} {v}" for k, v in c.most_common(args.top)))
+
+
+def visitor(account, token, since, prefix):
+    """Every point one visitor sent, oldest first — for a browser someone has
+    named to us by the id /support shows them."""
+    if not all(c in "0123456789abcdef" for c in prefix) or not prefix:
+        sys.exit("usage.py: a visitor id is hex")
+    rows = sql(account, token, f"""
+        SELECT timestamp, blob1 AS e, blob3 AS subject, blob4 AS route, blob8 AS country, double2 AS n
+        FROM {DATASET} WHERE {since} AND startsWith(blob2, '{prefix}')
+        ORDER BY timestamp LIMIT 5000""")
+    for r in rows:
+        n = float(r["n"])
+        print(f"{r['timestamp'][:16]}  {r['e']:17} {r['subject'] or '':24} {r['route']:10} {r['country']}"
+              + (f"  n={n:g}" if n else ""))
+    if not rows:
+        print("no points from that visitor in this window")
 
 
 def _group(rows, dim):
