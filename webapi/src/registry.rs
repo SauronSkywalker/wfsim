@@ -273,11 +273,29 @@ pub(crate) fn weapons() -> &'static [WeaponInfo] {
     })
 }
 
+/// A weapon the registry holds. An id from a REQUEST goes through
+/// [`weapon_of`], which refuses one that does not exist; one that reaches here
+/// unknown is this crate's mistake, and it says so rather than answering as
+/// another weapon.
 pub(crate) fn weapon(id: &str) -> &'static WeaponInfo {
     weapons()
         .iter()
         .find(|w| w.id == id)
-        .unwrap_or(&weapons()[0])
+        .unwrap_or_else(|| panic!("weapon {id:?} is not in the registry — a request's weapon goes through weapon_of"))
+}
+
+/// THE WEAPON A REQUEST NAMES — the default one when it names none, and a
+/// refusal naming the id when it names one that does not exist. It was answered
+/// as the first weapon in the list, so a typo read "cannot be equipped on
+/// Arbucep" to a caller who never named it.
+pub(crate) fn weapon_of(v: &serde_json::Value) -> Result<&'static WeaponInfo, serde_json::Value> {
+    match v.get("weapon").and_then(serde_json::Value::as_str) {
+        None => Ok(weapon(default_weapon_id())),
+        Some(id) => weapons()
+            .iter()
+            .find(|w| w.id == id)
+            .ok_or_else(|| crate::request::err_json(format!("unknown weapon: {id:?}"))),
+    }
 }
 
 // ---- spec-derived lookups: no weapon ids are hardcoded anywhere below ----
@@ -440,6 +458,34 @@ pub(crate) fn innate_slots_for(id: &str) -> Vec<Option<Polarity>> {
 /// and an uncharged bow is the same bow. That is what a TRANSFORM GROUP already
 /// means, so the exemption is read off the weapon data rather than written as a
 /// list of pairs or guessed from the id's suffix.
+#[cfg(test)]
+mod an_unknown_weapon_is_refused {
+    use serde_json::{json, Value};
+
+    /// A WEAPON THAT DOES NOT EXIST IS REFUSED BY NAME at every door a request
+    /// comes through — never answered as the first weapon in the list, which
+    /// read "cannot be equipped on Arbucep" to a caller who never named it.
+    #[test]
+    fn every_request_door_refuses_a_weapon_that_does_not_exist() {
+        let v = json!({ "weapon": "no_such_weapon", "mods": [], "runs": 1, "duration": 1,
+            "strategy": "quick", "slots": [], "axis": { "kind": "mods", "idx": 0 } });
+        let refused = |name: &str, out: Value| {
+            assert_eq!(out["ok"], json!(false), "{name} answered: {out}");
+            let why = out["error"].as_str().unwrap_or_default();
+            assert!(why.contains("no_such_weapon"), "{name} did not name it: {why}");
+        };
+        refused("simulate", crate::simulate_json(&v));
+        refused("panel", crate::panel_json(&v));
+        refused("candidates", crate::candidates_json(&v));
+        refused("riven", crate::riven_json(&v));
+        refused("optimizer buffs", crate::opt_buffs_json(&v));
+        refused("optimize", crate::parse_optimize(&v).err().unwrap_or_else(|| json!({ "ok": true })));
+        // …AND A REQUEST THAT NAMES NO WEAPON STILL GETS THE DEFAULT ONE.
+        let bare = json!({ "mods": [], "runs": 1, "duration": 1 });
+        assert_ne!(crate::simulate_json(&bare)["ok"], json!(false), "no weapon named is the default, not an error");
+    }
+}
+
 #[cfg(test)]
 mod one_picture_one_weapon {
     use super::*;

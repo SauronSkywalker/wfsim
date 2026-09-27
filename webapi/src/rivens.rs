@@ -3,7 +3,7 @@
 
 use serde_json::{json, Value};
 use wfsim_engine::model::ModDef;
-use crate::registry::{WeaponInfo, default_weapon_id, mod_pool_for, weapon};
+use crate::registry::{WeaponInfo, mod_pool_for};
 use crate::request::{get_str, get_u32};
 
 /// A mod id that must outlive the request. Riven ids are made from a name the
@@ -142,7 +142,10 @@ pub(crate) fn mod_pool_with_rivens(v: &Value, info: &WeaponInfo, evos: &[&str]) 
 
 pub fn riven_json(v: &Value) -> Value {
     use wfsim_engine::build::rivens::{RivenSpec, RolledStat};
-    let info = weapon(get_str(v, "weapon", default_weapon_id()));
+    let info = match crate::registry::weapon_of(v) {
+        Ok(info) => info,
+        Err(no) => return no,
+    };
     let class = riven_class(info);
     // A slot may carry a `roll` OR a `value`. `value` is what you type off a
     // riven you already own; it is turned into the roll it implies and

@@ -892,7 +892,8 @@ pub(crate) fn whole_scope(v: &Value) -> Option<Value> {
     if v.get("strategy").and_then(Value::as_str) != Some("quick") || v.get("mods").is_some() {
         return None;
     }
-    let info = crate::registry::weapon(v.get("weapon").and_then(Value::as_str).unwrap_or(""));
+    // An unknown weapon is `parse_fight`'s to refuse, right after this.
+    let Ok(info) = crate::registry::weapon_of(v) else { return None };
     let every = wfsim_engine::data::mods::every_rank();
     let every_list = |k: &str, dflt: &[String]| -> Vec<String> {
         v.get("every_rank")

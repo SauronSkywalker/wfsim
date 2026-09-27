@@ -8,7 +8,7 @@ use wfsim_engine::target::{BodyPart, TargetMode};
 use wfsim_engine::data::enemies::EnemySpec;
 use wfsim_engine::model::StackPolicy;
 use crate::buffs::{BuffCfg, frenzy_apply, frenzy_lock_mode, parse_buff_config};
-use crate::registry::{WeaponInfo, default_weapon_id, enemies, evo_group, form_unlock_evo, incarnon_id, weapon};
+use crate::registry::{WeaponInfo, enemies, evo_group, form_unlock_evo, incarnon_id};
 use crate::request::{err_json, get_bool, get_f64, get_str, get_u32};
 use crate::tenno::tenno_from;
 
@@ -452,7 +452,7 @@ pub(crate) fn parse_fight(v: &Value) -> Result<Fight, Value> {
                 .join(", ")
         )));
     };
-    let info = weapon(get_str(v, "weapon", default_weapon_id()));
+    let info = crate::registry::weapon_of(v)?;
     // Per-buff configured policy (Sim panel section 2). Present ⇒ Emergent sim
     // with each buff carrying its own initial stacks + lock. Absent ⇒ the
     // legacy `assume_max`/`frenzy` knobs (byte-for-byte with the old path).

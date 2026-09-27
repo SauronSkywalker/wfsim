@@ -13,7 +13,7 @@ use wfsim_engine::fight::Summary;
 use crate::buffs::{BuffMeta, arcane_at_rank, arcane_in_pools, buffs_json, enumerate_buffs, evo_buffs};
 use crate::fight::{ladder_prefix, parse_fight};
 use crate::kitgun::valence_element_of;
-use crate::registry::{WeaponInfo, default_weapon_id, form_unlock_evo, innate_slots_for, mod_not_here, weapon, wspec};
+use crate::registry::{WeaponInfo, form_unlock_evo, innate_slots_for, mod_not_here, weapon, wspec};
 use crate::request::{err_json, get_f64, get_str, get_u32};
 use crate::rivens::{mod_pool_with_rivens, riven_stat_ids_ok};
 use crate::tenno::tenno_from;
@@ -25,7 +25,10 @@ mod quick;
 // over the WHOLE scope, not one build. `apply_buff_config` applies each per
 // candidate where present.
 pub fn opt_buffs_json(v: &Value) -> Value {
-    let info = weapon(get_str(v, "weapon", default_weapon_id()));
+    let info = match crate::registry::weapon_of(v) {
+        Ok(info) => info,
+        Err(no) => return no,
+    };
     fn merge(out: &mut Vec<BuffMeta>, list: Vec<BuffMeta>) {
         for b in list {
             if !out.iter().any(|x| x.id == b.id) {

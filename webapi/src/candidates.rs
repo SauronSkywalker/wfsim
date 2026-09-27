@@ -18,7 +18,7 @@
 use serde_json::{json, Map, Value};
 use wfsim_engine::model::ModDef;
 
-use crate::registry::{evo_forbids, evo_group, form_unlock_evo, weapon, WeaponInfo};
+use crate::registry::{evo_forbids, evo_group, form_unlock_evo, WeaponInfo};
 
 const EXILUS: usize = 8;
 
@@ -50,8 +50,8 @@ fn card_of(id: &str) -> &str {
     }
 }
 
-fn parse(v: &Value) -> Build<'_> {
-    let info = weapon(v.get("weapon").and_then(Value::as_str).unwrap_or(""));
+fn parse(v: &Value) -> Result<Build<'_>, Value> {
+    let info = crate::registry::weapon_of(v)?;
     let strs = |k: &str| -> Vec<String> {
         v.get(k)
             .and_then(Value::as_array)
@@ -87,7 +87,7 @@ fn parse(v: &Value) -> Build<'_> {
             .map(|a| a.iter().filter_map(Value::as_str).map(str::to_string).collect())
             .unwrap_or_else(|| dflt.to_vec())
     };
-    Build {
+    Ok(Build {
         info,
         slots,
         evo,
@@ -100,7 +100,7 @@ fn parse(v: &Value) -> Build<'_> {
         every_mods: every_list("mods", &every.mods),
         every_arcanes: every_list("arcanes", &every.arcanes),
         req: v,
-    }
+    })
 }
 
 /// The mod ids a set of evolutions takes off the weapon — the union of each
@@ -290,7 +290,10 @@ fn assembly(b: &Build) -> Vec<Value> {
 
 /// Every candidate for `axis` on the build in `v`, as `{ id, payload }`.
 pub fn candidates_json(v: &Value) -> Value {
-    let b = parse(v);
+    let b = match parse(v) {
+        Ok(b) => b,
+        Err(no) => return no,
+    };
     let axis = v.get("axis").cloned().unwrap_or(Value::Null);
     let idx = axis.get("idx").and_then(Value::as_u64).unwrap_or(0) as usize;
     let list = match axis.get("kind").and_then(Value::as_str).unwrap_or("mods") {

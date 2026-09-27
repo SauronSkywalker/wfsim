@@ -16,8 +16,8 @@ use wfsim_engine::model::{ModDef, ModEffect, StackPolicy};
 use wfsim_engine::model::pct as fpct;
 use crate::buffs::{arcane_choices, arcane_fx_for, buffs_json, enumerate_buffs, evo_buffs};
 use crate::fight::chosen_evolutions;
-use crate::registry::{WeaponInfo, attack_desc, base_for, default_weapon_id, form_unlock_evo, mod_not_here, weapon, wspec};
-use crate::request::{err_json, get_str, prettify};
+use crate::registry::{WeaponInfo, attack_desc, base_for, form_unlock_evo, mod_not_here, wspec};
+use crate::request::{err_json, prettify};
 use crate::rivens::{mod_pool_with_rivens, riven_stat_ids_ok};
 use crate::tenno::{floor_json, tenno_from, wielder_from};
 
@@ -50,7 +50,10 @@ fn display_number(x: f64) -> String {
 }
 
 pub fn panel_json(v: &Value) -> Value {
-    let info = weapon(get_str(v, "weapon", default_weapon_id()));
+    let info = match crate::registry::weapon_of(v) {
+        Ok(info) => info,
+        Err(no) => return no,
+    };
     // THE PLAYER, RESOLVED ONCE AND FIRST, because the mod loop needs it: a
     // mod that scales off the Tenno has to say what THIS one is worth to it.
     // One call rather than two, because two `tenno_from` in one function is two
