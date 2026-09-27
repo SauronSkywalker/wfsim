@@ -115,14 +115,19 @@ pub(super) fn bump_shells(params: &FightParams, stacks: &mut [LiveStacks], n: u3
 /// form's magazine (wiki).
 ///
 /// One function rather than the same three lines at four sites: everything that
-/// a refill ends, ends here. Ready Retaliation is spent, Reaver's Rapture is
-/// reset, and the burst count restarts. THE MOMENT IS THE COMPLETION — a
+/// a refill ends, ends here. Ready Retaliation is armed or dropped, Reaver's
+/// Rapture is reset, and the burst count restarts. THE MOMENT IS THE COMPLETION — a
 /// reload that has begun has refilled nothing.
 ///
 /// `also_a_reload` is false where the event refills without being a reload:
 /// swapping OUT of the Incarnon form refills the base magazine, and Blazing
 /// Barrel is stated to survive it.
+///
+/// `from_empty` is `Some` where the refill ENDS a reload (a transform into the
+/// Incarnon form is one) and says whether it began empty: Ready Retaliation is
+/// up after one that did — see `ResolvedPanel::rs_on_reload`. `None` leaves it.
 #[inline]
+#[allow(clippy::too_many_arguments)]
 pub(super) fn magazine_refilled(
     params: &FightParams,
     ammo: &mut Ammo,
@@ -131,8 +136,11 @@ pub(super) fn magazine_refilled(
     rs_armed: &mut bool,
     opening_closed: &mut bool,
     also_a_reload: bool,
+    from_empty: Option<bool>,
 ) {
-    *rs_armed = false;
+    if let Some(empty) = from_empty {
+        *rs_armed = empty;
+    }
     ammo.rounds_this_mag = 0;
     // HOW MANY TIMES THE MAGAZINE HAS BEEN FULL AGAIN. Counted here
     // rather than derived from `r.reloads` and `r.transforms`, because
@@ -695,7 +703,6 @@ pub fn run_once_traced(
             &mut bodies[0],
             &mut me.weakpoint_pile,
             &mut me.double_tap,
-            &mut me.rs_armed,
         );
         // AN ORB ATTACK FIRES NO PELLETS — when the TRIGGER is what deploys it.
         // The shot settles no collision and no explosion, because everything it

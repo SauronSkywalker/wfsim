@@ -725,18 +725,12 @@ pub struct ResolvedPanel {
     /// Strike's, which is what the card's "Stacks additively with base damage
     /// bonuses" says it should do.
     pub base_damage_on_eximus_weakpoint: Option<TimedBuff>,
-    /// READY RETALIATION's window — see
-    /// [`crate::model::EvoEffect::ReloadSpeedOnEmptyReload`]. It joins
-    /// the reload bucket the mods and `evo_reload_bonus` feed, but only while
-    /// open, and only a reload FROM EMPTY opens it.
-    /// READY RETALIATION as the sim holds it: a buff with NO DURATION that is
-    /// simply up or down (0.0 = the weapon does not have the perk).
-    ///
-    /// The magazine running out puts it up; a reload completing, or either
-    /// Incarnon transform completing, takes it down — because all three refill
-    /// the magazine. Nothing ASKS whether the moment is a reload: the value is
-    /// summed into the live reload-speed total wherever that total is needed,
-    /// and only the removal events are reasoned about.
+    /// READY RETALIATION ([`crate::model::EvoEffect::ReloadSpeedOnEmptyReload`]),
+    /// a buff with no duration that is up or down; 0.0 = no perk. A reload that
+    /// began empty puts it up when it COMPLETES and one that did not takes it
+    /// down, so the first reload of a fight is the plain one (wiki
+    /// `Boar_Incarnon_Genesis`; `run::magazine_refilled`). While up it joins the
+    /// reload bucket the mods feed; assuming every buff up holds it all fight.
     pub rs_on_reload: f64,
     /// Flensing Spikes' rate — see [`WeaponBase::armor_strip_per_puncture`].
     pub armor_strip_per_puncture: f64,

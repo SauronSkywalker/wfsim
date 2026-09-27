@@ -424,8 +424,9 @@ is intrinsic — but they still model as a transform group here, and they carry
 2. **The 19 shared perk kinds**, driven by whichever adapter needs them first.
    ~~Rapid Reinforcement alone appears on 14 guns~~ — **done 2026-08-08**
    (`EvoEffect::ReloadSpeedBonus`, into the same additive bucket the mods
-   feed). Its conditional sibling Ready Retaliation is still inert: granting a
-   conditional bonus unconditionally is worse than not granting it.
+   feed). Its conditional sibling Ready Retaliation is implemented too: a
+   reload from empty arms it when it completes (UNMODELLED.md §"The MANUAL
+   reload").
 3. **The zero-mechanic adapters, widest family first**: ~~Braton (4)~~,
    ~~Latron (3)~~, ~~Boltor (3)~~, ~~Sybaris (3)~~, ~~Lato (3)~~, ~~Dera~~,
    ~~Vasto~~, ~~Lex~~, ~~Bronco~~, ~~Kunai~~, ~~Sicarus~~, ~~Despair~~,
@@ -567,9 +568,9 @@ which `TennoCondition` has no room for.
 
 ### The Phenmor
 
-Four inert perks. Two are the family's — an instant reload the sim cannot end,
-and Ready Retaliation's reload-speed kind. The other two would be real damage
-here rather than handling stats:
+Four perks that were inert. Two are the family's — an instant reload the sim
+cannot end, and Ready Retaliation's reload-speed kind, both implemented since.
+The other two would be real damage here rather than handling stats:
 
 - **Spiteful Defilement** is the ANTI-Condition-Overload perk: a crit multiplier
   that pays while the target carries fewer than three statuses and stops the
@@ -624,7 +625,6 @@ Two are near-misses rather than absences.
   needs a miss to prevent.
 
 Rapid Reinforcement is NOT on the list: it is implemented
-(`EvoEffect::ReloadSpeedBonus`, into the additive bucket the mods feed). The
-conditional member of that family, **Ready Retaliation**, is inert — its
-`condition:` is unread, and granting a conditional bonus unconditionally is
-worse than not granting it.
+(`EvoEffect::ReloadSpeedBonus`, into the additive bucket the mods feed), and so
+is the conditional member of that family, **Ready Retaliation** — armed when a
+reload from empty completes (UNMODELLED.md §"The MANUAL reload").

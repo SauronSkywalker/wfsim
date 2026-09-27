@@ -545,26 +545,24 @@ fn a_killing_headshot_fills_the_magazine() {
     assert!(armed > without, "{armed} shots with the perk, {without} without");
 }
 
-/// READY RETALIATION: the magazine that ran out is what pays for the reload.
+/// READY RETALIATION: a reload from empty arms it when it COMPLETES, so the
+/// FIRST one of the fight runs at the plain speed and every one after it takes
+/// the bonus — *"As the reload speed bonus is only applied at the end of the
+/// first reload from empty, the bonus will not apply to the first reload, only
+/// subsequent ones"* (wiki `Boar_Incarnon_Genesis`). Held up for the whole
+/// fight only when every buff is assumed up.
 ///
-/// THE EMPTY MAGAZINE ARMS IT and the next reload spends it, so that reload
-/// is already faster — the first one of the fight included. The arming moment is the shot that empties the magazine
-/// rather than the reload that follows, which only matters when something
-/// else happens in between; see the transform test beside this one.
-///
-/// The FIRST reload is the sharp case and it gets its own window here: the
-/// run is cut short so that exactly one reload is in it, and the perk is
-/// the difference between the second magazine having started and not. An
-/// end-to-end count over many reloads cannot tell rule 1 from "only later
-/// reloads count" — the first version of this test asserted the opposite
-/// rule and passed, because at those numbers both readings happened to fit
-/// the same whole number of magazines.
+/// Each reload gets its own window: the run is cut short so that the line
+/// falls inside it, and the perk is the difference between the next magazine
+/// having started and not. An end-to-end count over many reloads cannot tell
+/// "the first one counts" from "only later ones count" — a version of this
+/// test asserted the wrong rule and passed on whole magazines.
 #[test]
-fn ready_retaliation_speeds_up_the_reload_that_arms_it() {
+fn ready_retaliation_arms_when_a_reload_from_empty_completes() {
 
     // 10 rounds at 10/s = 1 s of firing, then a 2 s reload — 1 s with the
-    // perk. Stopping the clock at 2.5 s puts the second magazine's first
-    // shots on one side of the line and nothing on the other.
+    // perk. The first reload runs 1–3 s either way; the second runs 4–6 s,
+    // or 4–5 s with the perk.
     let p = FightParams {
         fire_rate: 10.0,
         magazine_size: 10.0,
@@ -577,9 +575,16 @@ fn ready_retaliation_speeds_up_the_reload_that_arms_it() {
     let without = run_once(&p, &mut Rng::new(1)).shots;
     let armed = run_once(&with, &mut Rng::new(1)).shots;
     assert_eq!(without, 10, "the magazine, and the reload still running at 2.5 s");
+    assert_eq!(armed, 10, "the FIRST reload is the plain one: {armed} shots at 2.5 s");
+
+    // …THE SECOND ONE TAKES IT: at 5.5 s it has finished with the perk and
+    // is still running without.
+    let later = FightParams { duration_seconds: 5.5, ..p.clone() };
+    let later_armed = FightParams { rs_on_reload: 1.0, ..later.clone() };
+    assert_eq!(run_once(&later, &mut Rng::new(1)).shots, 20, "two magazines, the second reload still running");
     assert!(
-        armed > 10,
-        "the FIRST reload takes the buff it armed: {armed} shots, wanted more than 10"
+        run_once(&later_armed, &mut Rng::new(1)).shots > 20,
+        "the SECOND reload takes the bonus the first one armed"
     );
 
     // …and over a long run it compounds into whole extra magazines.

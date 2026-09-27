@@ -533,11 +533,11 @@ the rate starts and ends, beside the single number the stat panel prints.
 This sim reloads when it cannot fire, and never a round earlier. A player
 reloads whenever it suits them, and on one perk that is the whole difference:
 
-**Ready Retaliation** ("On Reload from Empty: +100% Reload Speed for 6 seconds")
-is implemented and correct — pressing reload on an empty magazine arms it, so
-that reload is already faster and every later one is too. Measured on the
-Phenmor's base form: **+17.4% stock** (27 reloads become 30) and **+19.5% on a
-fire-rate build** (58 become 67), the best tier-3 option in both cases.
+**Ready Retaliation** ("On Reload From Empty: +100% Reload Speed") is
+implemented: a reload from empty arms it when it COMPLETES, so the first reload
+of a fight is the plain one and every later one from empty is faster — *"the
+bonus will not apply to the first reload, only subsequent ones"* (wiki
+`Boar_Incarnon_Genesis`). Assuming every buff up holds it for the whole fight.
 
 The gap is the **Incarnon cycle**, where it is worth zero for a different reason:
 the base form transmutes on a full gauge and therefore never empties, so no

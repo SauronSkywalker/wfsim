@@ -347,14 +347,10 @@ fn amalgam_serration_opens_the_sprint_gate_for_the_slowest_frame() {
         "plain Serration carries no sprint clause and opens nothing");
 }
 
-/// THE EMPTY MAGAZINE ARMS IT, and the TRANSFORM is what proves that.
-///
-/// Owner
-///
-/// A reload alone cannot tell the two readings apart: armed at the empty
-/// magazine and armed when the reload starts both make that reload faster.
-/// THE TRANSMUTE CAN — it happens between the two, so it is faster under
-/// the first reading and untouched under the second.
+/// A TRANSFORM FROM EMPTY ARMS READY RETALIATION TOO, the way it counts as a
+/// reload from empty for every other card, and the animations after it take
+/// the bonus. Transmuting is scaled by reload speed, so a weapon that never
+/// reloads still earns and spends the perk.
 ///
 /// A synthetic cycle, because the real one that has this perk cannot show
 /// it: the Phenmor's base form transmutes on a full gauge and never empties,
@@ -363,7 +359,7 @@ fn amalgam_serration_opens_the_sprint_gate_for_the_slowest_frame() {
 /// magazine and charges on direct hits, so it empties, transforms, and
 /// comes back, over and over.
 #[test]
-fn an_empty_magazine_arms_ready_retaliation_before_any_reload() {
+fn a_transform_from_empty_arms_ready_retaliation() {
     let mk = |rs: f64| {
         // THE PERK IS THE BASE FORM'S, and only the base form's: the
         // evolution loader drops it on a charge-backed form. The outer
@@ -406,7 +402,7 @@ fn an_empty_magazine_arms_ready_retaliation_before_any_reload() {
     let on = monte_carlo(&mk(1.0), 20, 0x5EED);
     assert!(
         on.mean_transforms > off.mean_transforms,
-        "the transform is faster with the buff already up: {} -> {} transforms",
+        "the transforms after the first take the bonus: {} -> {} transforms",
         off.mean_transforms, on.mean_transforms
     );
     // AND THIS FIXTURE NEVER RELOADS AT ALL, which is the scenario stated

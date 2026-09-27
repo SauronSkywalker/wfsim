@@ -40,8 +40,8 @@ pub(super) fn rescale_reload(secs: f64, bucket: f64, live: f64) -> f64 {
 /// mean anything: a reload is `secs x (1 + bucket)` seconds of WORK and a total
 /// of `add` retires it at `1 + bucket + add` per second.
 ///
-/// NO LAPSING WINDOW. Ready Retaliation is scoped to the reload ACTION — it
-/// arrives when the reload starts and is gone when it ends — so nothing lapses
+/// NO LAPSING WINDOW. Ready Retaliation changes only when a reload or a
+/// transform ENDS, so it is up for a whole reload or not at all — nothing lapses
 /// mid-reload and there is no partial-rate branch. If a lapsing reload buff
 /// ever exists, this is where it goes.
 ///

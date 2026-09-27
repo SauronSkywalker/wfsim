@@ -58,7 +58,7 @@ pub(super) fn resolve_the_shot(
     body: &mut Body,
     weakpoint_pile: &mut LiveStacks,
     double_tap: &mut DoubleTap,
-    rs_armed: &mut bool,) -> Resolved {
+) -> Resolved {
     let Body { state: target, debuffs } = body;
         // Timed buffs (Frenzy) lapse before this shot reads the bar;
         // Permanent locks re-assert — only in phases where the perk exists
@@ -510,17 +510,6 @@ pub(super) fn resolve_the_shot(
         // — and after `ms_eff` was rolled, so the shot that earns the stack does
         // not carry it.
         bump_buffs!(params, buff_stacks, rec_buff_index, rec, crate::model::BuffTrigger::Firing, t, d.spine);
-        // READY RETALIATION IS ARMED THE MOMENT THE MAGAZINE RUNS OUT, which is
-        // HERE — the shot that spends the last round — and not at the reload
-        // that follows. The two are the same instant for a reload and are not
-        // the same instant for a TRANSFORM: the shot that fills the gauge can
-        // also be the shot that empties the magazine, and the transform is
-        // decided before any reload is. Arming at the reload would have left
-        // that transform at the plain speed, which is the case the owner used
-        // to state the rule.
-        if !can_fire(if incarnon.in_base_form { incarnon.base_magazine } else { ammo.loaded }, active.ammo_cost) {
-            *rs_armed = true;
-        }
     Resolved {
         flat_crit,
         crit_chance_relative,

@@ -66,10 +66,9 @@ pub(super) fn charge_magazine_cycle(
                 // revert does NOT count as a transform — `transforms` counts
                 // TRANSMUTES INTO the Incarnon form only (user:
                 // both-directions counting read as doubled).
-                // COMING OUT OF INCARNON FORM IS A RELOAD too, and for the
-                // same stated reason: the swap refills the base magazine. It
-                // takes the speed if the buff is up and spends it — which is
-                // also why this animation is scaled by reload speed at all.
+                // COMING OUT OF INCARNON FORM is scaled by reload speed, so it
+                // takes Ready Retaliation when the buff is up — and, not being
+                // a reload, neither arms nor drops it.
                 let spent = rescale_reload(cy.transmute_out_seconds, cy.reload_bucket,
                     live_reload_speed(params, &cy.base_form, *rs_armed, buff_stacks, *t));
                 rec.push(*t, None, crate::record::Kind::TransformStart {
@@ -80,7 +79,7 @@ pub(super) fn charge_magazine_cycle(
                 *t += spent;
                 // …but it is NOT a reload, and one perk can tell the difference:
                 // see `ClearedBy::Reload`.
-                magazine_refilled(params, ammo, r, buff_stacks, rs_armed, opening_closed, false);
+                magazine_refilled(params, ammo, r, buff_stacks, rs_armed, opening_closed, false, None);
                 incarnon.in_base_form = true;
                 double_tap.swap(*t);
                 record_weapon(params, rec, ammo, incarnon);
@@ -143,7 +142,7 @@ pub(super) fn charge_magazine_cycle(
                 rec.push(*t, None, crate::record::Kind::ReloadStart { seconds: spent });
                 r.downtime_seconds += spent;
                 *t += spent;
-                magazine_refilled(params, ammo, r, buff_stacks, rs_armed, opening_closed, true);
+                magazine_refilled(params, ammo, r, buff_stacks, rs_armed, opening_closed, true, Some(from_empty));
                 r.reloads += 1;
                 if let Some(b) = cy.base_form.fire_rate_on_reload {
                     windows.fire_rate_after_reload = *t + b.duration;
@@ -207,10 +206,6 @@ pub(super) fn charge_magazine_cycle(
             if !params.infinite_reserve && ammo.reserve < 1e-9 {
                 return Flow::Break;
             }
-            // THE WINDOW OPENS WHEN THE RELOAD BEGINS — the player's reload
-            // ACTION is the trigger, not its completion.
-            // So it is armed BEFORE the line below, and the reload that armed
-            // it is the first thing it speeds up.
             let rs = live_reload_speed(params, params, *rs_armed, buff_stacks, *t);
             let spent = live_reload_time(params, params, arc, rs, *t, from_empty);
             // THE THROW IS THE RELOAD'S: it leaves partway through and costs no
@@ -224,7 +219,7 @@ pub(super) fn charge_magazine_cycle(
             rec.push(*t, None, crate::record::Kind::ReloadStart { seconds: spent });
             r.downtime_seconds += spent;
             *t += spent;
-            magazine_refilled(params, ammo, r, buff_stacks, rs_armed, opening_closed, true);
+            magazine_refilled(params, ammo, r, buff_stacks, rs_armed, opening_closed, true, Some(from_empty));
             r.reloads += 1;
             if let Some(b) = params.fire_rate_on_reload {
                 windows.fire_rate_after_reload = *t + b.duration;
@@ -359,7 +354,7 @@ pub(super) fn charge_the_gauge(
                 });
                 r.downtime_seconds += spent;
                 *t += spent;
-                magazine_refilled(params, ammo, r, buff_stacks, rs_armed, opening_closed, true);
+                magazine_refilled(params, ammo, r, buff_stacks, rs_armed, opening_closed, true, Some(transformed_from_empty));
                 if transformed_from_empty {
                     bump_on_trigger(params, buff_stacks, crate::model::BuffTrigger::ReloadFromEmpty, *t, &mut d.spine);
                 }
