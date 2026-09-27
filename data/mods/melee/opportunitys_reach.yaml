@@ -5,7 +5,7 @@ polarity: madurai
 base_drain: 4
 max_rank: 3
 internal_name: /Lotus/Upgrades/EmpoweredHeavyMelee/PerfectReach
-description: "Enables Tennokai. Increases opportunity window to 4.0s and melee range by 3m for Tennokai attacks."
+description: "Enables Tennokai. Increases opportunity window to Xs for Tennokai attacks."
 exilus: true
 
 # Rank 0: Enables Tennokai. Increases opportunity window to 2.8s and melee range by 0.75m for Tennokai attacks.
@@ -16,6 +16,8 @@ effects:
   # THE `+3m melee range for Tennokai attacks` HALF IS NOT MODELLED: reach is
   # resolved once at build time and this one is per swing.
   - kind: tennokai
+    # RANK 0 from DE's card per rank; linear to the max-rank value below.
+    window_seconds_rank0: 2.8
     window_seconds: 4.0
   - kind: unmodelled
 

@@ -5,7 +5,7 @@ polarity: madurai
 base_drain: 6
 max_rank: 3
 internal_name: /Lotus/Upgrades/Mods/Melee/Channel/ChannelFireRateMod
-description: "+40% Attack Speed / +20% Combo Count Chance"
+description: "+X% Attack Speed\n+X% Combo Count Chance"
 
 # Rank 0: +10% Attack Speed / +5% Combo Count Chance
 effects:

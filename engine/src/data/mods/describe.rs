@@ -132,6 +132,21 @@ pub fn desc_info(id: &str) -> Option<&'static ModDescInfo> {
                 (Some(a), Some(b)) if (a - b).abs() > 1e-12 => Some((a, b)),
                 _ => None,
             };
+            // EVERY LADDER an effect has, in order: its value, then each
+            // `<field>_rank0` the fight reads (`parse::field_ladders`) — so one
+            // effect can answer several placeholders, Dreamer's Wrath's chance
+            // and its crit damage, the way the fight reads both.
+            let ladders = |e: &Value| -> Vec<(f64, f64)> {
+                varying(e)
+                    .into_iter()
+                    .chain(
+                        super::parse::field_ladders(e)
+                            .into_iter()
+                            .map(|(_, a, b)| (a, b))
+                            .filter(|(a, b)| (a - b).abs() > 1e-12),
+                    )
+                    .collect()
+            };
             // `duration` (buff) and `duration_seconds` (on_equip_buff) are the
             // same slot in the sentence; a mod carries one or neither. A
             // duration that RAMPS with rank (Argon Scope: 2s -> 9s) also states
@@ -167,26 +182,41 @@ pub fn desc_info(id: &str) -> Option<&'static ModDescInfo> {
                         // other's slots and it printed "+100% Life Steal /
                         // +0.2 Purity" for the wiki's "+20% / +1". Both wrong,
                         // both the kind of number a mod could have.
+                        let left = |i: usize, used: &[usize]| {
+                            ladders(&mf.effects[i]).len() > used.iter().filter(|&&u| u == i).count()
+                        };
                         let named = x_line.get(xi).and_then(|&l| lines.get(l)).and_then(|line| {
-                            (0..mf.effects.len()).find(|i| {
-                                !used.contains(i)
-                                    && varying(&mf.effects[*i]).is_some()
-                                    && effect_spoken_at(&mf.effects[*i], line).is_some()
+                            (0..mf.effects.len()).find(|&i| {
+                                left(i, &used) && effect_spoken_at(&mf.effects[i], line).is_some()
                             })
                         });
                         ei = named.or_else(|| {
-                            seek(ei.map_or(0, |i| i + 1), &|e| varying(e).is_some())
+                            (ei.map_or(0, |i| i + 1)..mf.effects.len()).find(|&i| left(i, &used))
                         });
-                        if let Some(i) = ei {
+                        ei.map(|i| {
+                            let k = used.iter().filter(|&&u| u == i).count();
                             used.push(i);
-                        }
-                        ei.and_then(|i| varying(&mf.effects[i]))
+                            ladders(&mf.effects[i])[k]
+                        })
                     }
                     XKind::Duration => {
                         if ei.is_none() {
                             ei = seek(0, &|e| dur(e).is_some());
                         }
-                        ei.and_then(|i| dur(&mf.effects[i]))
+                        // SECONDS THAT ARE THE VALUE — Body Count's "+Xs Combo
+                        // Duration" — where no effect lasts for them: the next
+                        // rank-varying value, the way a stack cap falls back.
+                        ei.and_then(|i| dur(&mf.effects[i])).or_else(|| {
+                            let left = |i: usize| {
+                                ladders(&mf.effects[i]).len() > used.iter().filter(|&&u| u == i).count()
+                            };
+                            ei = (0..mf.effects.len()).find(|&i| left(i));
+                            ei.map(|i| {
+                                let k = used.iter().filter(|&&u| u == i).count();
+                                used.push(i);
+                                ladders(&mf.effects[i])[k]
+                            })
+                        })
                     }
                     XKind::Stacks => {
                         if ei.is_none() {

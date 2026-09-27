@@ -710,6 +710,59 @@ Refresh Double Jump up to 6x while Airborne."
     );
 }
 
+/// A CARD THAT CHANGES WITH RANK SAYS SO. A mod whose effects ladder with rank
+/// carries an `X` on its card; written with its max-rank number instead, every
+/// rank prints that number — 71 melee cards did, Lasting Sting reading "+110%
+/// Status Duration" at rank 0 while the fight paid +10%.
+#[test]
+fn a_mod_that_varies_by_rank_has_an_x_on_its_card() {
+    let mut blind = Vec::new();
+    for (path, text) in crate::data::files_under("mods/") {
+        let Ok(v) = serde_norway::from_str::<Value>(text) else { continue };
+        let Some(desc) = v.get("description").and_then(Value::as_str) else { continue };
+        let effects = v.get("effects").and_then(Value::as_sequence).cloned().unwrap_or_default();
+        let ladders = effects.iter().any(|e| {
+            matches!((f(e, "rank0"), f(e, "rankMax")), (Some(a), Some(b)) if (a - b).abs() > 1e-12)
+                || n(e, "duration_rank0").is_some()
+                || !field_ladders(e).is_empty()
+        });
+        if ladders && !desc.contains('X') {
+            blind.push(path.to_string());
+        }
+    }
+    assert!(blind.is_empty(), "rank-scaled mods whose card prints one number at every rank: {blind:?}");
+}
+
+/// A TENNOKAI CARD PAYS ITS OWN RANK — the fight's number and the card's are the
+/// one ladder, rank 0 to max, read off DE's card per rank.
+#[test]
+fn a_tennokai_card_pays_its_own_rank() {
+    let tennokai = |id: &str| {
+        let m = if id.contains('@') { at_rank(id).expect(id) } else { class_pool("melee").into_iter().find(|m| m.id == id).expect(id) };
+        m.effects
+            .iter()
+            .find_map(|e| match *e {
+                ModEffect::Tennokai { chance, crit_damage, damage, status_chance, window_seconds, every_n_hits, .. } => {
+                    Some((chance, crit_damage, damage, status_chance, window_seconds, every_n_hits))
+                }
+                _ => None,
+            })
+            .expect("a Tennokai effect")
+    };
+    let near = |a: f64, b: f64| (a - b).abs() < 1e-9;
+    let (chance, crit, ..) = tennokai("dreamers_wrath@0");
+    assert!(near(chance, 0.125) && near(crit, 0.08), "rank 0: {chance} / {crit}");
+    let (chance, crit, ..) = tennokai("dreamers_wrath");
+    assert!(near(chance, 0.5) && near(crit, 0.32), "max rank: {chance} / {crit}");
+    assert!(near(tennokai("masters_edge@2").2, 0.3), "rank 2 of 10% → 60%");
+    assert!(near(tennokai("conditions_perfection@1").3, 0.5));
+    assert!(near(tennokai("opportunitys_reach@0").4, 2.8));
+    assert_eq!(tennokai("disciplines_merit@1").5, 6, "a count stays a whole count");
+    assert_eq!(desc_info("dreamers_wrath").unwrap().at(0),
+        "Enables Tennokai. Increases opportunity chance by 12.5% and critical damage by 8% for Tennokai attacks.");
+    assert_eq!(desc_info("lasting_sting").unwrap().at(0), "+10% Status Duration");
+}
+
 #[test]
 fn desc_info_fills_every_x_across_the_pool() {
     // EVERY class, not just pistol. The pool this walked was the only one

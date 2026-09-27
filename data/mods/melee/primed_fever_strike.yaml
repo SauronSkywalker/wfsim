@@ -5,7 +5,7 @@ polarity: naramon
 base_drain: 6
 max_rank: 10
 internal_name: /Lotus/Upgrades/Mods/Melee/Expert/WeaponToxinDamageModExpert
-description: "+165% <DT_POISON_COLOR>Toxin"
+description: "+X% <DT_POISON_COLOR>Toxin"
 
 # Rank 0: +15% <DT_POISON_COLOR>Toxin
 effects:

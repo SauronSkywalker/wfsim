@@ -5,7 +5,7 @@ polarity: naramon
 base_drain: 4
 max_rank: 3
 internal_name: /Lotus/Upgrades/EmpoweredHeavyMelee/CertainStrike
-description: "Enables Tennokai. Opportunities occur every <LOWER_IS_BETTER>4 melee hits instead of at random."
+description: "Enables Tennokai. Opportunities occur every <LOWER_IS_BETTER>X melee hits instead of at random."
 exilus: true
 
 # Rank 0: Enables Tennokai. Opportunities occur every <LOWER_IS_BETTER>7 melee hits instead of at random.
@@ -14,6 +14,8 @@ effects:
   # instead of at random`, which is what makes a light build able to PLAN
   # around the window rather than wait for it.
   - kind: tennokai
+    # RANK 0 from DE's card per rank; linear to the max-rank value below.
+    every_n_hits_rank0: 7
     every_n_hits: 4
 
 family: tennokai

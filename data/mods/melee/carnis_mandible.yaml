@@ -5,7 +5,7 @@ polarity: naramon
 base_drain: 4
 max_rank: 5
 internal_name: /Lotus/Upgrades/Mods/Sets/Ashen/AshenMandibleMod
-description: "+90% <DT_SLASH_COLOR>Slash / +60% Status Chance"
+description: "+X% <DT_SLASH_COLOR>Slash\n+X% Status Chance"
 
 # Rank 0: +15% <DT_SLASH_COLOR>Slash / +10% Status Chance
 effects:

@@ -6,7 +6,7 @@ polarity: umbra
 base_drain: 6
 max_rank: 10
 internal_name: /Lotus/Upgrades/Mods/Sets/Sacrifice/MeleeSacrificeModA
-description: "+110% Melee Damage / x1.33 Damage to Sentients"
+description: "+X% Melee Damage\nxX Damage to Sentients"
 
 # Rank 0: +10% Melee Damage / x1.03 Damage to Sentients
 effects:

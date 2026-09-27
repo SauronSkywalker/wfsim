@@ -5,7 +5,7 @@ polarity: naramon
 base_drain: 4
 max_rank: 5
 internal_name: /Lotus/Upgrades/Mods/Sets/Boneblade/BonebladeBarbsMod
-description: "+90% <DT_PUNCTURE_COLOR>Puncture / +60% Status Chance"
+description: "+X% <DT_PUNCTURE_COLOR>Puncture\n+X% Status Chance"
 
 # Rank 0: +15% <DT_PUNCTURE_COLOR>Puncture / +10% Status Chance
 effects:

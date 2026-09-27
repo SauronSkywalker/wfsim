@@ -5,13 +5,13 @@ polarity: vazarin
 base_drain: 4
 max_rank: 5
 internal_name: /Lotus/Upgrades/Mods/Syndicate/MeleeRangeOnProcMod
-description: "On Status Effect: +1 Range for 24s. Stacks up to 2 times."
+description: "On Status Effect: +X Range for Xs. Stacks up to 2 times."
 
 # Rank 0: On Status Effect: +0.2 Range for 4s. Stacks up to 2 times.
 effects:
   # FLAT METRES on the reach, "additive to other range mods", and the stacks
   # "have independent timers that decay separately" (W`Spring-Loaded_Blade`) —
-  # so each status buys its own 24 s, and two stacks need two statuses inside
+  # so each status buys its own window (24 s at max rank), and two stacks need two statuses inside
   # that window.
   - kind: stacking_buff
     trigger: status_applied
@@ -20,6 +20,8 @@ effects:
     rank0: 0.2
     rankMax: 1.0
     max_stacks: 2
+    # A LADDERED duration — "for 4s" at rank 0, 24 s at max (DE's card per rank).
+    duration_rank0: 4
     duration: 24
 
 source:

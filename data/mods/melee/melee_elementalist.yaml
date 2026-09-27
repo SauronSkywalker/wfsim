@@ -5,7 +5,7 @@ polarity: vazarin
 base_drain: 4
 max_rank: 5
 internal_name: /Lotus/Upgrades/Mods/Melee/MeleeStatusDamageDuoMod
-description: "+90% Status Damage / +60% Heavy Attack Wind Up Speed"
+description: "+X% Status Damage\n+X% Heavy Attack Wind Up Speed"
 
 # Rank 0: +15% Status Damage / +10% Heavy Attack Wind Up Speed
 effects:

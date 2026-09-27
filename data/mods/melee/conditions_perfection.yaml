@@ -5,7 +5,7 @@ polarity: vazarin
 base_drain: 4
 max_rank: 3
 internal_name: /Lotus/Upgrades/EmpoweredHeavyMelee/PerfectCondition
-description: "Enables Tennokai. Increases status chance by +100% on Tennokai attacks."
+description: "Enables Tennokai. Increases status chance by +X% on Tennokai attacks."
 exilus: true
 
 # Rank 0: Enables Tennokai. Increases status chance by +25% on Tennokai attacks.
@@ -13,6 +13,8 @@ effects:
   # `Increases status chance by +100% on Tennokai attacks` — the ordinary
   # status bracket, on the one swing.
   - kind: tennokai
+    # RANK 0 from DE's card per rank; linear to the max-rank value below.
+    status_chance_rank0: 0.25
     status_chance: 1.0
 
 family: tennokai

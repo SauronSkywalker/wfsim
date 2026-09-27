@@ -5,7 +5,7 @@ polarity: madurai
 base_drain: 2                 # max drain 7 at rank 5 (wiki cost column: 2..7)
 max_rank: 5
 internal_name: /Lotus/Upgrades/Mods/Rifle/Event/Nightwave/NightwaveBasmuAugmentMod
-description: "Increased Damage and Status Chance by +20% for every 75 Warframe Health. Capped at 360%"
+description: "Increased Damage and Status Chance by +X% for every 75 Warframe Health. Capped at 360%"
 exclusive_to: [basmu]
 family: dreadful_killshot
 

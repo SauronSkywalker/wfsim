@@ -5,7 +5,7 @@ polarity: madurai
 base_drain: 6
 max_rank: 10
 internal_name: /Lotus/Upgrades/Mods/Melee/WeaponProcTimeMod
-description: "+110% Status Duration"
+description: "+X% Status Duration"
 
 # Rank 0: +10% Status Duration
 effects:

@@ -5,7 +5,7 @@ polarity: madurai
 base_drain: 4
 max_rank: 10
 internal_name: /Lotus/Upgrades/Mods/Melee/Expert/WeaponMeleeFactionDamageCorpusExpert
-description: "x1.55 Damage to Corpus"
+description: "xX Damage to Corpus"
 
 # Rank 0: x1.05 Damage to Corpus
 effects:

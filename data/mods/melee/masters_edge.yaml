@@ -5,7 +5,7 @@ polarity: madurai
 base_drain: 4
 max_rank: 5
 internal_name: /Lotus/Upgrades/EmpoweredHeavyMelee/HeavyAgression
-description: "Enables Tennokai. Increases Tennokai damage by 60%."
+description: "Enables Tennokai. Increases Tennokai damage by X%."
 exilus: true
 
 # Rank 0: Enables Tennokai. Increases Tennokai damage by 10%.
@@ -13,6 +13,8 @@ effects:
   # `Increases Tennokai damage by 60%` — on the swing the window bought and
   # on no other.
   - kind: tennokai
+    # RANK 0 from DE's card per rank; linear to the max-rank value below.
+    damage_rank0: 0.1
     damage: 0.6
 
 family: tennokai

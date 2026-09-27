@@ -624,39 +624,21 @@ mod tests {
         /// to put there and hardcoding "9s" would be wrong at every rank below
         /// max (it ramps 2 → 9). The clause is off our card.
         ///
-        /// `double_tap`: "Stacks up to 80x outside of Conclave." The ladder is
-        /// 80 / 40 / 26 / 20 and the schema stores two endpoints, so no
-        /// interpolation reaches it — it is not linear because the cap is not
-        /// what DE ranks. The CEILING is, at a flat +400%, and the cap is that
-        /// divided by a per-stack value that does rank linearly (5/10/15/20).
-        /// Two endpoints would print 60x and 40x at ranks 1 and 2 against the
-        /// real 40x and 26x, so the clause is off our card rather than wrong on
-        /// it. The number the sim runs is on the effect line either way.
-        const OMITS_A_CLAUSE: [&str; 2] = ["guided_ordnance", "double_tap"];
+        /// `double_tap`: "Stacks up to 80x" ramps 80 / 40 / 26 / 20 — a flat
+        /// +400% ceiling over a linear per-stack value — so two endpoints would
+        /// print 60x and 40x at ranks 1 and 2. The clause is off our card.
+        ///
+        /// `opportunitys_reach`: "melee range by 3m" ramps 0.75 → 3 and range
+        /// is unmodelled, so no ladder holds it — the clause is off our card.
+        const OMITS_A_CLAUSE: [&str; 3] = ["guided_ordnance", "double_tap", "opportunitys_reach"];
         /// Cards whose ENGLISH text is a literal max-rank string ("+30% Attack
         /// Speed", no `X`), so our rank-0 card prints the max. DE's rank-0 card
         /// is right and ours is the gap; only the rank-0 comparison is waived.
         /// SHRINK-ONLY: an entry whose card now ranks fails below.
         const ENGLISH_CARD_DOES_NOT_RANK: &[&str] = &[
-            "amalgam_organ_shatter", "auger_strike", "berserker_fury", "blood_rush", "body_count",
-            "buzz_kill", "carnis_mandible", "collision_force", "condition_overload", "conditions_perfection",
-            "corrupt_charge", "disciplines_merit", "dispatch_overdrive", "dreadful_killshot", "dreamers_wrath",
-            "drifting_contact", "enduring_affliction", "enduring_strike", "energy_channel", "fever_strike",
-            "finishing_touch", "focus_energy", "focus_radon", "focused_defense", "fury",
-            "galvanized_elementalist", "galvanized_reflex", "galvanized_steel", "gladiator_might", "gladiator_rush",
-            "gladiator_vice", "guardian_derision", "healing_return", "heavy_trauma", "jagged_edge",
-            "jugulus_barbs", "killing_blow", "lasting_sting", "life_strike",
-            "magnetic_rush", "maiming_strike", "masters_edge", "melee_elementalist", "melee_prowess",
-            "molten_impact", "motus_impact", "north_wind", "opportunitys_reach", "organ_shatter",
-            "parry", "pressure_point", "primed_fever_strike", "primed_fury", "primed_heavy_trauma",
-            "primed_pressure_point", "primed_reach", "primed_smite_corpus", "primed_smite_corrupted", "primed_smite_grineer",
-            "primed_smite_infested", "primed_smite_the_murmur", "proton_snap", "quickening", "reach",
-            "reflex_coil", "relentless_combination", "rending_strike", "sacrificial_pressure", "sacrificial_steel",
-            "saxum_thorax", "seismic_wave", "shattering_impact", "shocking_touch", "smite_corpus",
-            "smite_grineer", "smite_infested", "smite_orokin", "smite_the_murmur", "spoiled_strike",
-            "spring_loaded_blade", "strain_infection", "sundering_strike", "tek_gravity", "true_punishment",
-            "true_steel", "truths_flame", "vicious_frost", "virulent_scourge", "volcanic_edge",
-            "voltaic_strike", "weeping_wounds",
+            "dispatch_overdrive", "energy_channel", "finishing_touch", "focused_defense", "guardian_derision",
+            "healing_return", "life_strike", "motus_impact", "parry", "proton_snap",
+            "relentless_combination", "shattering_impact", "strain_infection", "tek_gravity", "truths_flame",
         ];
 
         let mut bad: Vec<String> = Vec::new();

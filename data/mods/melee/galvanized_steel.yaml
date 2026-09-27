@@ -7,7 +7,7 @@ polarity: madurai
 base_drain: 2
 max_rank: 10
 internal_name: /Lotus/Upgrades/Mods/Melee/Expert/WeaponCritChanceSPMod
-description: "+110% Critical Chance (x2 for Heavy Attacks) / On Melee Kill: +30% Critical Damage for 20s. Stacks up to 4x."
+description: "+X% Critical Chance (x2 for Heavy Attacks)\nOn Melee Kill:\n+X% Critical Damage for 20s. Stacks up to 4x."
 
 # Rank 0: +10% Critical Chance (x2 for Heavy Attacks) / On Melee Kill:\n+2.7% Critical Damage for 20s. Stacks up to 4x.
 effects:

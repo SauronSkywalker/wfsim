@@ -5,7 +5,7 @@ polarity: madurai
 base_drain: 4
 max_rank: 3
 internal_name: /Lotus/Upgrades/Mods/Melee/DualStat/PoisonEventMeleeMod
-description: "+60% <DT_POISON_COLOR>Toxin / +60% Status Chance"
+description: "+X% <DT_POISON_COLOR>Toxin\n+X% Status Chance"
 
 # Rank 0: +15% <DT_POISON_COLOR>Toxin / +15% Status Chance
 effects:

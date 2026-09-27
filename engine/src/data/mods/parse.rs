@@ -612,28 +612,52 @@ pub(super) fn effect(id: &str, v: &Value) -> Option<ModEffect> {
     })
 }
 
+/// EVERY `<field>_rank0` LADDERS `<field>` from rank 0 to the max-rank value
+/// the file states — `(field, rank 0, max)`, in the order the file writes them.
+/// Dreamer's Wrath is why: a kind that reads plain fields (`crit_damage: 0.32`)
+/// paid its max-rank number at every rank. `duration` is left to its own
+/// reader, which also covers `duration_seconds`.
+pub(super) fn field_ladders(e: &Value) -> Vec<(String, f64, f64)> {
+    let Value::Mapping(m) = e else { return Vec::new() };
+    m.iter()
+        .filter_map(|(k, v0)| {
+            let field = k.as_str()?.strip_suffix("_rank0")?;
+            (field != "duration").then_some(())?;
+            Some((field.to_string(), v0.as_f64()?, n(e, field)?))
+        })
+        .collect()
+}
+
 /// One effect entry with its rank-varying numbers read at `rank`: the value
-/// (`rank0` → `rankMax`) and a laddered duration (`duration_rank0` →
-/// `duration`/`duration_seconds`), both linear — the rule `ModDescInfo::at`
-/// fills the card with, so the slot's text and the fight read one number.
+/// (`rank0` → `rankMax`), a laddered duration (`duration_rank0` →
+/// `duration`/`duration_seconds`) and every other [`field_ladders`] entry, all
+/// linear — the rule `ModDescInfo::at` fills the card with, so the slot's text
+/// and the fight read one number.
 pub(super) fn effect_at_rank(e: &Value, rank: u32, max_rank: u32) -> Value {
     let t = f64::from(rank.min(max_rank)) / f64::from(max_rank.max(1));
     let lerp = |a: f64, b: f64| a + (b - a) * t;
     let mut out = e.clone();
-    let mut set = |k: &str, x: f64| {
+    let mut set = |k: &str, x: Value| {
         if let Value::Mapping(m) = &mut out {
-            m.insert(Value::from(k), Value::from(x));
+            m.insert(Value::from(k), x);
         }
     };
     if let (Some(a), Some(b)) = (n(e, "rank0"), n(e, "rankMax")) {
-        set("rankMax", lerp(a, b));
+        set("rankMax", Value::from(lerp(a, b)));
     }
     if let Some(d0) = n(e, "duration_rank0") {
         for k in ["duration", "duration_seconds"] {
             if let Some(d) = n(e, k) {
-                set(k, lerp(d0, d));
+                set(k, Value::from(lerp(d0, d)));
             }
         }
+    }
+    for (k, a, b) in field_ladders(e) {
+        let x = lerp(a, b);
+        // A COUNT STAYS A COUNT: Discipline's Merit's "every 7 melee hits" is
+        // read as an integer, and 7 → 4 over three ranks lands on whole hits.
+        let whole = a.fract() == 0.0 && b.fract() == 0.0 && x.fract() == 0.0;
+        set(&k, if whole { Value::from(x as u64) } else { Value::from(x) });
     }
     out
 }

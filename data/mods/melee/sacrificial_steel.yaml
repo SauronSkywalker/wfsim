@@ -5,7 +5,7 @@ polarity: umbra
 base_drain: 6
 max_rank: 10
 internal_name: /Lotus/Upgrades/Mods/Sets/Sacrifice/MeleeSacrificeModB
-description: "+220% Critical Chance (x2 for Heavy Attacks) / x1.33 Damage to Sentients"
+description: "+X% Critical Chance (x2 for Heavy Attacks)\nxX Damage to Sentients"
 
 # Rank 0: +20% Critical Chance (x2 for Heavy Attacks) / x1.03 Damage to Sentients
 effects:

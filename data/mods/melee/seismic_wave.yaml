@@ -5,7 +5,7 @@ polarity: madurai
 base_drain: 6
 max_rank: 3
 internal_name: /Lotus/Upgrades/Mods/Melee/WeaponMeleeSlamDamageMod
-description: "+200% Slam Attack Damage"
+description: "+X% Slam Attack Damage"
 
 # Rank 0: +50% Slam Attack Damage
 effects:

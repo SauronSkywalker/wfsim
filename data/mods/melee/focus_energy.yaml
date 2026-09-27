@@ -5,7 +5,7 @@ polarity: madurai
 base_drain: 6
 max_rank: 3
 internal_name: /Lotus/Upgrades/Mods/Melee/DualStat/FocusEnergyMod
-description: "+40% Heavy Attack Efficiency / +60% <DT_ELECTRICITY_COLOR>Electricity"
+description: "+X% Heavy Attack Efficiency\n+X% <DT_ELECTRICITY_COLOR>Electricity"
 
 # Rank 0: +10% Heavy Attack Efficiency / +15% <DT_ELECTRICITY_COLOR>Electricity
 effects:

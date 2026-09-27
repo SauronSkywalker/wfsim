@@ -5,7 +5,7 @@ polarity: naramon
 base_drain: 4
 max_rank: 5
 internal_name: /Lotus/Upgrades/Mods/Melee/Event/ComboDurationMod
-description: "+12s Combo Duration"
+description: "+Xs Combo Duration"
 
 # Rank 0: +2s Combo Duration
 # see notes: exalted_mods_reenabled
