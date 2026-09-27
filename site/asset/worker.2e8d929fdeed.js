@@ -10,9 +10,9 @@
 //   `checkpoint` (a JSON string from a previous session) RESUMES that run.
 // The optimize call blocks this worker until done — that is the design: the
 // page runs it in a DEDICATED worker and cancels by terminating it.
-importScripts("/pkg/wfsim_wasm.c1c7cd348153.js");
+importScripts("/pkg/wfsim_wasm.f5676594d31f.js");
 
-const ready = wasm_bindgen({ module_or_path: "/pkg/wfsim_wasm_bg.c1c7cd348153.wasm" });
+const ready = wasm_bindgen({ module_or_path: "/pkg/wfsim_wasm_bg.f5676594d31f.wasm" });
 
 onmessage = async (e) => {
   await ready;
