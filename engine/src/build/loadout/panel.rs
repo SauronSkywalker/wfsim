@@ -206,7 +206,8 @@ pub struct ResolvedReloadGrenade {
     /// and only the throw that follows the magazine's last round.
     pub last_round_factor: f64,
     /// CRITICAL MUTATION, `(per kill, cap, lost per small throw)` — see
-    /// [`crate::model::ModEffect::GrenadeCritPerKill`].
+    /// [`crate::model::ModEffect::CritPerKill`]. It rides the grenade's entry
+    /// because the throw is what charges it; the fight reads it everywhere.
     pub crit_per_kill: Option<(f64, f64, f64)>,
 }
 

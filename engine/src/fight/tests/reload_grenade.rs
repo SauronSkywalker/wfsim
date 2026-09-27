@@ -104,21 +104,24 @@ fn the_codas_outer_grenades_reach_the_target_only_where_their_blast_does() {
     assert!((far - 1011.0).abs() < 1e-6, "at 30 m: {far}");
 }
 
-/// CRITICAL MUTATION'S PILE: every kill pays in, capped on the way in, and a
-/// throw that strikes fewer than three enemies takes one step back — never
-/// below nothing.
+/// CRITICAL MUTATION'S PILE: every kill pays in at once, capped on the way in,
+/// and a throw that strikes fewer than three enemies takes one step back —
+/// never below nothing (M107).
 #[test]
 fn critical_mutation_pays_per_kill_caps_and_charges_a_lonely_throw() {
     let mut m = crate::fight::grenades::Mutation::default();
-    assert!((m.pay_in(4, 0.3, 3.0) - 1.2).abs() < 1e-9, "four kills");
+    for _ in 0..4 {
+        m.on_kill(0.3, 3.0);
+    }
+    assert!((m.bonus - 1.2).abs() < 1e-9, "four kills");
     m.charge(1, 0.3);
-    assert!((m.bonus - 0.9).abs() < 1e-9, "one enemy struck costs a step");
+    assert!((m.bonus - 0.9).abs() < 1e-9, "one enemy struck costs one step");
     m.charge(3, 0.3);
     assert!((m.bonus - 0.9).abs() < 1e-9, "three struck costs nothing");
-    // Only the kills SINCE the last throw pay in…
-    assert!((m.pay_in(4, 0.3, 3.0) - 0.9).abs() < 1e-9, "no new kills");
-    // …and the cap holds however many there were.
-    assert!((m.pay_in(40, 0.3, 3.0) - 3.0).abs() < 1e-9, "the 300% cap");
+    for _ in 0..40 {
+        m.on_kill(0.3, 3.0);
+    }
+    assert!((m.bonus - 3.0).abs() < 1e-9, "the 300% cap");
     for _ in 0..20 {
         m.charge(0, 0.3);
     }
@@ -126,7 +129,7 @@ fn critical_mutation_pays_per_kill_caps_and_charges_a_lonely_throw() {
 }
 
 /// THE CARDS AS THE DATA STATES THEM: the throw each weapon resolves, the
-/// innate -20% on its reload, and Critical Mutation reaching the grenade of
+/// innate -20% on its reload, and Critical Mutation resolving on
 /// the two weapons it fits and no other.
 #[test]
 fn the_catabolyst_family_resolves_its_throw_and_its_augment() {
@@ -158,7 +161,7 @@ fn the_catabolyst_family_resolves_its_throw_and_its_augment() {
     assert!((g.from_empty.blast.damage.total() - 658.0).abs() < 1e-9 && (g.from_empty.blast.radius_m - 5.0).abs() < 1e-9);
     assert!((g.partial.blast.damage.total() - 74.0).abs() < 1e-9 && (g.partial.blast.radius_m - 3.0).abs() < 1e-9);
     assert_eq!(g.crit_per_kill, Some((0.3, 3.0, 0.3)));
-    // The beam carries none of it.
+    // The PANEL carries none of it: the pile is earned in the fight (M107).
     assert!((three.crit_chance - 0.11).abs() < 1e-9, "{}", three.crit_chance);
     // "Radius is not affected by Fulmination" — the beam's 0.7 m is.
     let fulminated = resolved("coda_catabolyst", &["fulmination"]);
@@ -173,22 +176,39 @@ fn the_catabolyst_family_resolves_its_throw_and_its_augment() {
 
 /// …AND THE PILE LANDS IN THE CRIT MODS' OWN BUCKETS, scaled by the GRENADE'S
 /// base: "additive with mods such as Pistol Gambit" and "such as Target
-/// Cracker". A grenade at 31% base under a +150% card and a full 300% pile is
-/// 31% x (1 + 1.5 + 3.0), not 31% x 2.5 x 4.
+/// Cracker" — and a GLOBAL buff: the BEAM takes it, fed by kills as they land
+/// (M107). The same fight against a target that dies every few shots rolls
+/// more and bigger crits with the pile than without, on the direct part alone;
+/// the grenade here deals nothing, so the difference is the beam's.
 #[test]
-fn critical_mutation_joins_the_crit_buckets_on_the_grenades_own_base() {
-    let modded = crate::build::loadout::ResolvedRadial {
-        crit_chance: 0.31 * 2.5,
-        base_crit_chance: 0.31,
-        crit_damage: 2.9 * 1.6,
-        base_crit_damage: 2.9,
-        ..Default::default()
+fn critical_mutation_is_a_global_buff_the_beam_takes() {
+    let run = |pile: bool| {
+        let g = crate::build::loadout::ResolvedReloadGrenade {
+            crit_per_kill: pile.then_some((0.3, 3.0, 0.0)),
+            ..grenade(1, 0.0, 0.0, 1.0)
+        };
+        let mut p = FightParams {
+            damage: DamageVector::new().with(DamageType::Impact, 100.0),
+            base_crit_chance: 0.1,
+            unmodded_crit_chance: 0.1,
+            crit_multiplier: 2.0,
+            unmodded_crit_damage: 2.0,
+            ..thrower(g, crate::rules::space::CONTACT_RANGE_M)
+        };
+        p.magazine_size = 30.0;
+        // A target that dies every other shot and comes straight back.
+        p.foe.mode = TargetMode::InstantRespawn;
+        p.foe.base_health = 150.0;
+        p.foe.base_shield = 0.0;
+        p.foe.base_armor = 0.0;
+        p.foe.level = 1;
+        p.foe.base_level = 1;
+        run_once(&p, &mut crate::rules::rng::Rng::new(3))
     };
-    let at_cap = crate::fight::grenades::lingering_of(&modded, 3.0, None);
-    assert!((at_cap.crit_chance - 0.31 * (1.0 + 1.5 + 3.0)).abs() < 1e-9, "{}", at_cap.crit_chance);
-    assert!((at_cap.crit_damage - 2.9 * (1.0 + 0.6 + 3.0)).abs() < 1e-9, "{}", at_cap.crit_damage);
-    let none = crate::fight::grenades::lingering_of(&modded, 0.0, None);
-    assert!((none.crit_chance - modded.crit_chance).abs() < 1e-12);
+    let (off, on) = (run(false), run(true));
+    assert!(off.kills >= 5, "the fixture kills: {}", off.kills);
+    assert!(on.crit_tier_sum > off.crit_tier_sum, "crits: {} with, {} without", on.crit_tier_sum, off.crit_tier_sum);
+    assert!(on.sources.direct > off.sources.direct, "beam damage: {} with, {} without", on.sources.direct, off.sources.direct);
 }
 
 /// A BLAST ON A NEIGHBOUR IS BOOKED TO THE NEIGHBOUR. The explosion reaches

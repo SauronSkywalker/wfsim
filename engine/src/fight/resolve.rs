@@ -183,6 +183,9 @@ pub(super) fn resolve_the_shot(
             windows.crit_on_headshot_stacks.retain(|&e| e > t);
             s.per_stack * windows.crit_on_headshot_stacks.len() as f64
         }) + params.arcane.crit_chance_relative
+            // CRITICAL MUTATION: "additive with mods such as Pistol Gambit", a
+            // global buff the beam takes as well as the grenade (M107).
+            + gal.mutation.bonus
             // SENTIENT SURGE: "Additive to other crit chance and status chance
             // mods", so it belongs in the RELATIVE bucket beside Pistol
             // Gambit's — multiplying the unmodded base, not the modded one.

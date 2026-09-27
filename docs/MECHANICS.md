@@ -1532,14 +1532,14 @@ From Empty Impact"* — so the contact carries a class of its own
 explosion takes none as every AoE part does, and the beam, absent from the
 table, is the ordinary Adding. The Coda carries the family's rows.
 
-**CRITICAL MUTATION** pays the grenade and nothing else — DE's U35 notes call it
-the augment *"which applied buffs to its grenade"*. Each kill adds +30% crit
-chance and crit damage, relative and in the crit mods' buckets, capped at 300%;
-each THROW whose explosions strike fewer than three enemies takes 30% back. The
-pile is settled at the throw from the run's kill counter, the same delta every
-on-kill pile reads, and it is per throw rather than per grenade because the card
-speaks of "the grenade explosion" as one event. A lone target therefore pays for
-every throw, and the pile is worth most in a crowd — which is the card's design.
+**CRITICAL MUTATION IS A GLOBAL BUFF** (M107): the beam takes it as well as the
+grenade. Each kill — the beam's or a grenade's — adds +30% crit chance and crit
+damage at once, relative and in the crit mods' buckets, capped at 300%; every
+crit roll the weapon makes reads the pile as it stands. The grenade only decides
+whether it lasts: each THROW whose explosions strike fewer than three enemies
+takes one step back, per throw rather than per grenade because the card speaks of
+"the grenade explosion" as one event. Against a lone target, kills faster than
+reloads keep the pile up.
 
 ### Continuous (beam) weapons
 

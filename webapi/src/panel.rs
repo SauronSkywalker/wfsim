@@ -468,22 +468,22 @@ fn mod_sources(
                         },
                     }));
                 }
-                // CRITICAL MUTATION is a pile earned in the fight and paid on the
-                // grenade only, so no bucket line can hold it.
-                GrenadeCritPerKill(..) => {
+                // CRITICAL MUTATION is a pile earned in the fight, so no bucket
+                // line can hold it.
+                CritPerKill(..) => {
                     conditionals.push(json!({
                         "mod": name,
                         "desc": e.describe(),
                         "active": true,
-                        "why": "earned by kills during the fight and spent on the reload grenade only — the simulator counts it, this panel cannot".to_string(),
+                        "why": "earned by kills during the fight — the beam's and the grenade's alike — and read by every crit roll; the simulator counts it, this panel cannot".to_string(),
                     }));
                 }
-                GrenadeCritLossPerThrow(_) => {
+                CritLossPerLonelyThrow(_) => {
                     conditionals.push(json!({
                         "mod": name,
                         "desc": e.describe(),
                         "active": true,
-                        "why": "charged once per throw, so against a lone target every reload pays it and the pile is worth most in a crowd".to_string(),
+                        "why": "one step per throw that strikes fewer than 3 enemies — against a lone target, kills faster than reloads keep the pile up".to_string(),
                     }));
                 }
                 // THE CHAMBER FAMILY, the same shape from the other end of the

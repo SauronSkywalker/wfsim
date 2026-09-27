@@ -396,8 +396,8 @@ pub fn resolve_for(
                 ModEffect::AddedSpread(v) => added_spread += v,
                 ModEffect::GrantsStackingBuff(b) => mod_buffs.push(b),
                 ModEffect::LastRoundDamage(v) => last_round_damage += v,
-                ModEffect::GrenadeCritPerKill(v, cap) => grenade_crit_per_kill = Some((v, cap)),
-                ModEffect::GrenadeCritLossPerThrow(v) => grenade_crit_loss += v,
+                ModEffect::CritPerKill(v, cap) => grenade_crit_per_kill = Some((v, cap)),
+                ModEffect::CritLossPerLonelyThrow(v) => grenade_crit_loss += v,
                 // THE CHAMBERS SUM, which is the wiki's own "stacks additively
                 // with … for up to 140% bonus damage" — one factor, two cards.
                 ModEffect::FirstRoundDamage(v) => first_round_damage += v,

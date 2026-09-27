@@ -341,11 +341,13 @@ pub(super) fn field_tick(
 
     // Crit: the field's OWN base stats. Relative bonuses scale its base,
     // absolute ones land flat (MECHANICS §7).
-    let crit_chance_relative = ctx.crit_chance_relative_mods + params.arcane.crit_chance_relative;
+    // Critical Mutation's pile is a global buff, the reload grenade's too (M107).
+    let crit_chance_relative = ctx.crit_chance_relative_mods + params.arcane.crit_chance_relative + gal.mutation.bonus;
     let cc = f.crit_chance + ctx.flat_crit + f.base_crit_chance * crit_chance_relative;
     let tier = upgrade_crit_tier(roll_crit_tier(cc, &mut d.spine), active.crit_tier_upgrade_chance, &mut d.spine);
     let crit_damage_relative = arc.total(&params.arcane.buffs, ArcGrant::CritDamage, at)
         + arc.cd_bonus(active, at)
+        + gal.mutation.bonus
         + params.arcane.crit_damage_relative;
     let cd = f.crit_damage
         + f.base_crit_damage * crit_damage_relative

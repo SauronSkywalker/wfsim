@@ -120,7 +120,7 @@ impl LiveStacks {
 pub(super) struct GalStacks {
     pub(super) co: LiveStacks,
     pub(super) multishot: LiveStacks,
-    /// Critical Mutation's pile — another kill-fed stack, settled at the throw.
+    /// Critical Mutation's pile — another kill-fed stack, charged at the throw.
     pub(super) mutation: Mutation,
 }
 
@@ -131,6 +131,9 @@ impl GalStacks {
         }
         if let Some(spec) = &params.multishot_stack {
             self.multishot.on_kill(now, spec);
+        }
+        if let Some((per_kill, cap, _)) = params.reload_grenade.and_then(|g| g.crit_per_kill) {
+            self.mutation.on_kill(per_kill, cap);
         }
     }
 }

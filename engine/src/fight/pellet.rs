@@ -257,6 +257,8 @@ pub(super) fn settle_pellet(pellet_idx: u32, shot: &Strike, live: &mut Live) {
         // DREAMER'S WRATH: `+32% critical damage for Tennokai attacks`
         // — on the one swing the window bought and no other.
         + if tennokai { active.tennokai.crit_damage } else { 0.0 }
+        // CRITICAL MUTATION: "additive with mods such as Target Cracker" (M107).
+        + gal.mutation.bonus
         + params.arcane.crit_damage_relative;
     // SPITEFUL DEFILEMENT rides the same after-mods FLAT bucket Cold's
     // received bonus does — "Bonus is added after mods as a flat value"

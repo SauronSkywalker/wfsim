@@ -311,11 +311,11 @@ pub(super) fn effect(id: &str, v: &Value) -> Option<ModEffect> {
             ModEffect::AddedSpread(max("rankMax") * f64::from(u(v, "max_stacks").max(1)))
         }
         "last_round_damage" => ModEffect::LastRoundDamage(max("rankMax")),
-        "grenade_crit_per_kill" => ModEffect::GrenadeCritPerKill(
+        "crit_per_kill" => ModEffect::CritPerKill(
             max("rankMax"),
-            f(v, "cap").expect("grenade_crit_per_kill needs `cap:`"),
+            f(v, "cap").expect("crit_per_kill needs `cap:`"),
         ),
-        "grenade_crit_loss_per_throw" => ModEffect::GrenadeCritLossPerThrow(max("rankMax")),
+        "crit_loss_per_lonely_throw" => ModEffect::CritLossPerLonelyThrow(max("rankMax")),
         "first_round_damage" => ModEffect::FirstRoundDamage(max("rankMax")),
         // JAHU CANTICLE. `range_m` is the card's Affinity Range, transcribed
         // rather than assumed, so a card with another radius costs a number

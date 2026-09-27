@@ -9,29 +9,25 @@
 
 use super::*;
 
-/// CRITICAL MUTATION'S PILE, one per seat. The bonus is held as the fraction it
-/// grants rather than as a count, because the cap is a fraction ("up to 300%")
-/// that holds at every rank.
+/// CRITICAL MUTATION'S PILE, one per seat — a GLOBAL buff: every crit bucket
+/// the weapon rolls reads it, the beam's and the grenade's alike (M107). The
+/// bonus is held as the fraction it grants rather than as a count, because the
+/// cap is a fraction ("up to 300%") that holds at every rank.
 #[derive(Debug, Clone, Copy, Default)]
-pub(super) struct Mutation {
-    pub(super) bonus: f64,
-    /// Kills already paid into `bonus` — the run's counter, read as a delta, the
-    /// rule every on-kill pile in this loop follows.
-    pub(super) kill_mark: u32,
+pub struct Mutation {
+    pub bonus: f64,
 }
 
 impl Mutation {
-    /// Pay in every kill since the last throw, capped on the way in, and return
-    /// the bonus this throw carries.
-    pub(super) fn pay_in(&mut self, kills: u32, per_kill: f64, cap: f64) -> f64 {
-        let fresh = kills.saturating_sub(self.kill_mark);
-        self.kill_mark = kills;
-        self.bonus = (self.bonus + per_kill * f64::from(fresh)).min(cap);
-        self.bonus
+    /// A kill pays in AT ONCE, whatever made it — the beam or a grenade (M107) —
+    /// capped on the way in.
+    pub fn on_kill(&mut self, per_kill: f64, cap: f64) {
+        self.bonus = (self.bonus + per_kill).min(cap);
     }
 
-    /// Charge a throw whose explosions struck `struck` enemies.
-    pub(super) fn charge(&mut self, struck: usize, loss: f64) {
+    /// Charge a throw whose explosions struck `struck` enemies: one step, the
+    /// card's own 30% at max rank (M107).
+    pub fn charge(&mut self, struck: usize, loss: f64) {
         if struck < MUTATION_CROWD {
             self.bonus = (self.bonus - loss).max(0.0);
         }
@@ -51,7 +47,7 @@ pub(super) const THROW_AT_RELOAD_SHARE_UNMEASURED: f64 = 0.5;
 const MUTATION_CROWD: usize = 3;
 
 /// THROW THE MAGAZINE at `at`: every grenade the reload releases, landed and
-/// settled, and Critical Mutation's pile paid in and charged for it.
+/// settled, and Critical Mutation's pile charged for it.
 ///
 /// WHERE THEY LAND. At the reticle's distance, fanned `fan_deg` edge to edge
 /// about the aim — the Coda's page: "Reload throws 3 grenades at a 45 degree
@@ -85,14 +81,12 @@ pub(super) fn throw_reload_grenades(
         &params.foe, 0,
     );
 
-    // THE PILE, paid in for every kill since the last throw and capped on the
-    // way in. It is read only here, so settling it at the throw is exact.
-    let bonus = g.crit_per_kill.map_or(0.0, |(per_kill, cap, _)| gal.mutation.pay_in(r.kills, per_kill, cap));
     let throw = if from_empty { g.from_empty } else { g.partial };
     // THE CONTACT takes Condition Overload under its own class where the catalog
-    // gives it one; the explosion never does.
-    let contact = lingering_of(&throw.contact, bonus, g.contact_co);
-    let blast = lingering_of(&throw.blast, bonus, None);
+    // gives it one; the explosion never does. Critical Mutation's pile is read
+    // where every timed part's crit is, at the moment each lands.
+    let contact = lingering_of(&throw.contact, g.contact_co);
+    let blast = lingering_of(&throw.blast, None);
     // Synth Charge rides the throw that follows the magazine's LAST round.
     let last_round_factor = if from_empty { g.last_round_factor } else { 1.0 };
 
@@ -176,20 +170,16 @@ fn settle(
     )
 }
 
-/// A grenade part in the timed-part shape `field_tick` settles, with Critical
-/// Mutation's bonus laid into the relative buckets it joins — "additive with
-/// mods such as Pistol Gambit" and "such as Target Cracker" (wiki), so it scales
-/// the part's own base.
+/// A grenade part in the timed-part shape `field_tick` settles.
 pub(super) fn lingering_of(
     r: &crate::build::loadout::ResolvedRadial,
-    bonus: f64,
     co: Option<crate::model::CoBehavior>,
 ) -> crate::build::loadout::ResolvedLingering {
     crate::build::loadout::ResolvedLingering {
         damage: r.damage,
         modified_base: r.modified_base,
-        crit_chance: r.crit_chance + r.base_crit_chance * bonus,
-        crit_damage: r.crit_damage + r.base_crit_damage * bonus,
+        crit_chance: r.crit_chance,
+        crit_damage: r.crit_damage,
         status_chance: r.status_chance,
         base_crit_chance: r.base_crit_chance,
         base_crit_damage: r.base_crit_damage,
