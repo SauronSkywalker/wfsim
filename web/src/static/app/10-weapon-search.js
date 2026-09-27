@@ -295,8 +295,8 @@ async function init() {
   // as anything in between waited on the network.
   const bootWeapon = routeWeaponId() || META.defaults.weapon;
   // THE ENGINE ANSWERED: the denominator every other point is read against,
-  // with how long the reader waited for it since the navigation began.
-  track("app.boot", "", Math.round(performance.now()));
+  // with how the page was reached and how long the reader waited for it.
+  track("app.boot", usageArrival(), Math.round(performance.now()));
   const boardBoot = loadBoard(bootWeapon);
   applyI18n();
   fillSelect("weapon", META.weapons);

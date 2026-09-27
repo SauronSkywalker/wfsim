@@ -2,7 +2,8 @@
 
 **Goal.** Answer two questions with numbers instead of guesses: *how many
 people use wfsim.app*, and *how well do they use it*. Not marketing
-attribution — where visitors come from is out of scope. The output is roadmap
+attribution — where visitors come from is recorded as far as the site that
+sent them, and no further. The output is roadmap
 fuel: which module and which weapons are actually exercised, and whether a
 visit produces a RESULT or nothing.
 
@@ -28,6 +29,8 @@ well". Both come from the usage points below.
 
 ## Rules
 
+- **A referrer is its HOST, never its path**: which site sent a reader, not
+  which page. A page the browser prerenders is not counted until it is opened.
 - **Same-origin, first-party.** Points post to wfsim.app itself. A third-party
   host that mainland China blocks would under-count exactly the players WFSim
   is for — no Google Analytics, no `static.cloudflareinsights.com`.
@@ -63,12 +66,12 @@ with this thing, not how many times: forty edits to one build are one build.
 
 | event | fires when | subject | `n` |
 | --- | --- | --- | --- |
-| `app.boot` | the engine has answered `/api/meta` | — | ms since navigation |
+| `app.boot` | the engine has answered `/api/meta` | how the page was reached: `reload`, `back_forward`, `from_site`, `direct` or `from_<referrer host>` | ms since navigation |
 | `app.view` | a page was drawn | page kind (`home`, `weapon_builder`, `weapon_simulator`, `warframe`, …) | — |
 | `engine.fail` | an engine worker failed to load, or stopped answering | `worker_load` / `worker_silent` | ms since navigation (load only) |
 | `builder.weapon` | the weapon panel computed a build with ≥1 mod | weapon id | — |
-| `builder.warframe` | the Warframe panel computed a build with ≥1 mod | frame id | — |
-| `builder.operator` | the Tektolyst Artifact panel computed with ≥1 card | — | — |
+| `builder.warframe` | the Warframe panel computed a build with anything set — a mod, arcane, shard or Helminth ability | frame id | — |
+| `builder.operator` | the Operator page answered with a Focus school chosen or an Artifact card seated | — | — |
 | `builder.riven` | a custom riven was edited and saved | — | — |
 | `simulator.run` | a Run Sim finished (not stopped) | weapon id | runs |
 | `optimizer.run` | a search finished (not cancelled) | weapon id | seconds |
@@ -128,7 +131,7 @@ longer than a quarter cannot be drawn.
 
 ## Not collected
 
-Referrer and campaign attribution, Google Analytics, user accounts, and any
+Referrer PATHS and campaign attribution, Google Analytics, user accounts, and any
 third-party script on the critical path. Depth and sharing — optimizer runs per
 session, weapon switches, shared and opened-from-share links — wait until the
 numbers above say which axis is worth splitting.

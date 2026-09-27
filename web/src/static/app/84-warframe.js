@@ -570,8 +570,12 @@ function refreshWfPanel() {
     renderWfStats(r);
     renderWfAbilities(r);
     renderWfCaps(r);
+    // ANYTHING SET is a build: a frame fitted only with shards or a Helminth
+    // ability was worked on as much as one fitted with mods.
     const p = wfPayload();
-    if (p.mods.length || p.exilus || p.aura) track("builder.warframe", p.frame);
+    if (p.mods.length || p.exilus || p.aura || p.arcanes.length || p.shards.length || p.helminth) {
+      track("builder.warframe", p.frame);
+    }
   }, 120);
 }
 

@@ -29,6 +29,8 @@ CHECK_RELEASE = "deploy-check"
 # A RESULT, as opposed to a page opened: a build computed, a fight or a search finished.
 RESULTS = ("builder.weapon", "builder.warframe", "builder.operator", "builder.riven",
            "simulator.run", "optimizer.run")
+# A boot that is not a landing: the reader was already on the site.
+INSIDE = ("from_site", "reload", "back_forward")
 # Mainland China, and everyone else — the two audiences whose habits can differ.
 MARKET = lambda country: "china" if country == "CN" else "overseas"
 
@@ -123,10 +125,10 @@ def main():
     # THE TWO MARKETS, side by side. A visitor's market is the country of their
     # boot; one who never booted is placed by any point they sent.
     boots = sql(account, token, f"""
-        SELECT blob2 AS cid, blob4 AS route, blob5 AS lang, blob6 AS shell, blob8 AS country,
-               min(double2) AS ms
+        SELECT blob2 AS cid, blob3 AS arrival, blob4 AS route, blob5 AS lang, blob6 AS shell,
+               blob8 AS country, min(double2) AS ms, SUM(_sample_interval) AS n
         FROM {DATASET} WHERE {since} AND blob1 = '{BOOT}'
-        GROUP BY cid, route, lang, shell, country LIMIT 1000000""")
+        GROUP BY cid, arrival, route, lang, shell, country LIMIT 1000000""")
     placed = sql(account, token, f"""
         SELECT blob2 AS cid, blob8 AS country FROM {DATASET} WHERE {since}
         GROUP BY cid, country LIMIT 1000000""")
@@ -183,9 +185,19 @@ def main():
         lang, country, shell = where.get(cid, ("?", "?", "?"))
         print(f"  {cid[:8]:10}  {len(v['days']):4}  {v['loads']:5}  {v['results']:7}  {v['sims']:4}  {v['searches']:8}  {v['shares']:6}  {country} {lang} {shell}")
 
+    # HOW THEY ARRIVE: each boot's navigation, as visitors and as page loads.
+    # A boot from inside the site, a reload or a back/forward is not a landing;
+    # "?" is a boot from before arrivals were recorded.
+    arrived, loads = defaultdict(set), Counter()
+    for r in boots:
+        arrived[r["arrival"] or "?"].add(r["cid"])
+        loads[r["arrival"] or "?"] += int(float(r["n"]))
+    print("\nhow they arrive (visitors / page loads): " + ", ".join(
+        f"{k} {len(v)}/{loads[k]}" for k, v in sorted(arrived.items(), key=lambda kv: -len(kv[1]))[:args.top]))
+    landings = [r for r in boots if r["arrival"] not in INSIDE]
     for dim in ("route", "lang", "shell", "country"):
         c = Counter()
-        for value, cids in _group(boots, dim).items():
+        for value, cids in _group(landings, dim).items():
             c[value or "?"] = len(cids)
         print(f"\nvisitors by landing {dim}: " + ", ".join(f"{k} {v}" for k, v in c.most_common(args.top)))
 

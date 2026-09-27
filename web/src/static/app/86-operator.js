@@ -160,7 +160,8 @@ async function refreshOpArtifact() {
   const r = await api("/api/operator/panel", { artifact: { mods: op.artifact.mods.filter(Boolean), arcane: op.artifact.arcane } });
   if (seq !== opPanelSeq || !r || !r.ok) return;
   opPanel = Object.fromEntries(r.mods.map((m) => [m.id, m]));
-  if (r.mods.length) track("builder.operator");
+  // A SCHOOL CHOSEN is the page used; a card seated is too.
+  if (op.school || r.mods.length) track("builder.operator");
   renderOpArtifact();
 }
 

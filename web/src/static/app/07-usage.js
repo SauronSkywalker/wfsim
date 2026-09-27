@@ -42,6 +42,20 @@ function renderUsageNote() {
   };
 }
 
+/// HOW THIS PAGE WAS REACHED, as `app.boot`'s subject: the browser's own
+/// navigation type when it is not a fresh one ("reload", "back_forward"), else
+/// where the reader came from — "from_site", "direct", or "from_<host>". The
+/// referrer's HOST and never its path: which site sent someone, not which page.
+function usageArrival() {
+  const nav = (performance.getEntriesByType("navigation")[0] || {}).type || "navigate";
+  if (nav !== "navigate") return nav.replace(/[^a-z_]/g, "_");
+  let host = "";
+  try { host = document.referrer ? new URL(document.referrer).hostname : ""; } catch (_) { /* none */ }
+  if (!host) return "direct";
+  if (LIVE_HOSTS.includes(host)) return "from_site";
+  return ("from_" + host.replace(/^www\./, "").replace(/[^a-z0-9]+/g, "_")).slice(0, 64);
+}
+
 /// ONCE PER (event, subject) PER PAGE LOAD. A point says a reader got this far
 /// with this thing, not how many times: forty edits to one build are one build.
 const usageSent = new Set();
@@ -50,11 +64,18 @@ const usageSent = new Set();
 /// failed point is a point missing, and nothing the reader can see.
 /// A text/plain body is a SIMPLE request: the desktop shell posts cross-origin
 /// without a preflight.
-function track(event, subject = "", n) {
+function track(event, subject = "", n) { usageSend(event, subject, n); }
+function usageSend(event, subject, n) {
   try {
     if (!LIVE_HOSTS.includes(location.hostname)) return;
     // A reader who has asked not to be tracked is not.
     if (navigator.globalPrivacyControl || navigator.doNotTrack === "1" || usageOff()) return;
+    // A PAGE THE BROWSER RENDERS AHEAD, in case it is opened, is not yet a
+    // visit: the point waits for the reader to actually arrive.
+    if (document.prerendering) {
+      document.addEventListener("prerenderingchange", () => usageSend(event, subject, n), { once: true });
+      return;
+    }
     const key = `${event}\n${subject}`;
     if (usageSent.has(key)) return;
     usageSent.add(key);
