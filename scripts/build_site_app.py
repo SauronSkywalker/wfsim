@@ -1376,7 +1376,9 @@ def prerender(flagged: str) -> None:
     # THE WARFRAME BUILDER'S PAGES, one per `data/warframes/` file, at the wiki's
     # own name — the same rule a weapon's address follows.
     frame_urls = []
-    for f in sorted((ROOT / "data" / "warframes").glob("*.yaml")):
+    # THE PROTOTYPE LAST, as the engine orders every roster: it is the floor.
+    last = lambda f: (f.stem.startswith("prototype"), f.name)
+    for f in sorted((ROOT / "data" / "warframes").glob("*.yaml"), key=last):
         spec = yload(f.read_text(encoding="utf-8"))
         name = spec["name"]
         path = "/warframes/" + wiki_slug(name)
@@ -1392,7 +1394,7 @@ def prerender(flagged: str) -> None:
     # THE COMPANION HOSTS' PAGES, one per `data/companions/` file, at its own
     # name: what carries a robotic weapon, between the weapon and the Warframe.
     companion_urls = []
-    for f in sorted((ROOT / "data" / "companions").glob("*.yaml")):
+    for f in sorted((ROOT / "data" / "companions").glob("*.yaml"), key=last):
         spec = yload(f.read_text(encoding="utf-8"))
         name = spec["name"]
         path = "/companions/" + wiki_slug(name)

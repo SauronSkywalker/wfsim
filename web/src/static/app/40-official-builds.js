@@ -6,6 +6,8 @@
 // weapon locked to its frames (`wielders`, Valkyr Talons) offers only those and
 // never the Prototype. docs/UI.md §The wielder.
 const PROTOTYPE_ID = "prototype";
+/// …and a robotic weapon's floor host (`engine::data::companions::PROTOTYPE_COMPANION`).
+const PROTOTYPE_COMPANION_ID = "prototype_companion";
 let buildWielder = { frame: PROTOTYPE_ID, preset: null };
 
 /// WHAT A LINK NAMES, resolved: a preset that exists by its id; the DEFAULT when
@@ -40,7 +42,11 @@ function defaultWielder(weaponId, v) {
   const allowed = info.wielders || [];
   const holds = (id) => (info.sentinel ? isHostId(id)
     : (META.warframes || []).some((f) => f.id === id) && (!allowed.length || allowed.includes(id)));
-  const first = info.sentinel ? (compHosts()[0] || {}).id : (allowed.length ? allowed[0] : PROTOTYPE_ID);
+  // THE FLOOR BY NAME, never by position: the roster ends with it, and a
+  // second host would otherwise become every robotic weapon's default.
+  const first = info.sentinel
+    ? ((compHosts().find((c) => c.id === PROTOTYPE_COMPANION_ID) || compHosts()[0] || {}).id)
+    : (allowed.length ? allowed[0] : PROTOTYPE_ID);
   const frame = v && holds(v.frame) ? v.frame : first;
   return { frame, preset: v && v.frame === frame && v.preset ? v.preset : null };
 }

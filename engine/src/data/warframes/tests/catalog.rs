@@ -12,6 +12,15 @@ fn close(a: f64, b: f64) -> bool {
     (a - b).abs() < 1e-9
 }
 
+/// THE PROTOTYPE IS LAST, in every list read off the roster: it is the floor,
+/// not a frame anyone picks first — and file order would put it before Valkyr.
+#[test]
+fn the_prototype_ends_the_roster() {
+    let ids: Vec<&str> = warframes().iter().map(|f| f.id.as_str()).collect();
+    assert_eq!(ids.last(), Some(&PROTOTYPE), "{ids:?}");
+    assert_eq!(ids.iter().filter(|x| **x == PROTOTYPE).count(), 1, "{ids:?}");
+}
+
 #[test]
 fn every_file_loads_and_names_what_exists() {
     assert!(mods().len() > 100, "{}", mods().len());

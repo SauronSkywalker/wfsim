@@ -19,13 +19,20 @@ pub struct Companion {
     pub name: String,
 }
 
-/// Every companion host, in file order.
+/// The floor host a robotic weapon falls back to when nothing else is linked.
+pub const PROTOTYPE_COMPANION: &str = "prototype_companion";
+
+/// Every companion host, in file order — THE PROTOTYPE LAST: it is the floor a
+/// weapon falls back to, never a host anyone picks first, so every list that
+/// reads this one ends with it.
 pub fn companions() -> &'static [Companion] {
     static C: OnceLock<Vec<Companion>> = OnceLock::new();
     C.get_or_init(|| {
-        crate::data::files_under("companions/")
+        let mut all: Vec<Companion> = crate::data::files_under("companions/")
             .map(|(p, text)| serde_norway::from_str(text).unwrap_or_else(|e| panic!("{p}: {e}")))
-            .collect()
+            .collect();
+        all.sort_by_key(|c| c.id == PROTOTYPE_COMPANION);
+        all
     })
 }
 
@@ -182,7 +189,7 @@ mod tests {
     fn a_companion_host_is_named_and_its_stats_are_the_floors() {
         let c = companions();
         assert_eq!(c.len(), 1);
-        assert_eq!(c[0].id, "prototype_companion");
+        assert_eq!(c.last().map(|x| x.id.as_str()), Some(PROTOTYPE_COMPANION), "the floor host ends the list");
         assert_eq!(c[0].name, crate::data::tenno::sentinel_wielder().name);
     }
 

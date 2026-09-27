@@ -72,10 +72,13 @@ pub(super) struct RawFrame {
 /// The floor frame every weapon is held by when nothing else is linked.
 pub const PROTOTYPE: &str = "prototype";
 
+/// Every Warframe, in file order — THE PROTOTYPE LAST: it is the floor a weapon
+/// falls back to, never a frame anyone picks first, so every list that reads
+/// this one (the home grid, the pickers, the catalogue) ends with it.
 pub fn warframes() -> &'static [WarframeDef] {
     static F: OnceLock<Vec<WarframeDef>> = OnceLock::new();
     F.get_or_init(|| {
-        leak_all("warframes/")
+        let mut all: Vec<WarframeDef> = leak_all("warframes/")
             .map(|(p, text)| {
                 let r: RawFrame = serde_norway::from_str(text).unwrap_or_else(|e| panic!("{p}: {e}"));
                 // THE PROTOTYPE'S FIVE NUMBERS ARE THE FIGHT'S FLOOR, read from the
@@ -110,7 +113,9 @@ pub fn warframes() -> &'static [WarframeDef] {
                     url: r.source.url,
                 }
             })
-            .collect()
+            .collect();
+        all.sort_by_key(|f| f.id == PROTOTYPE);
+        all
     })
 }
 
