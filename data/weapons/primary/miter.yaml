@@ -58,6 +58,16 @@ attack:
   status_chance: 0.5
   # "Charged shots have innate 2.5 meter punch through" (wiki).
   punch_through_m: 2.5
+  # PRIMARY COMPRESSION's row (docs/CATALOGS.md §2), verbatim:
+  #   Miter | Charged Shot | 100% | Multiplies | Snapshot | 0.2 m | +16% | +23.04%
+  #   "Wide projectile, not traditional AoE explosion"
+  # The 0.2 m is the blade's width, which this entry carries no radial for, so
+  # the metres are declared — without them the arcane paid this attack nothing.
+  compression:
+    effectiveness: 1.00
+    stacking: multiplies
+    radius_calculation: snapshot
+    reads_radius_m: 0.2
   damage: { impact: 25, slash: 450, puncture: 25 }   # total 500
 
 # incarnon_evolutions: definitions live in data/evolutions/miter_*.yaml.

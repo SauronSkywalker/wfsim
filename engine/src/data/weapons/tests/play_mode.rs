@@ -475,6 +475,7 @@ fn the_roster_reproduces_primary_compressions_published_column() {
         ("larkspur_charged", 0.0),
         ("larkspur_prime_charged", 0.0),
         ("lenz", 5.76),   // table prints +575%
+        ("miter", 0.16),   // 0.2 m declared: the blade's width, not a radial
         ("morgha", 0.0),
         ("morgha_alt", 0.0),
         ("mutalist_cernos", 0.0),
@@ -530,6 +531,22 @@ fn the_roster_reproduces_primary_compressions_published_column() {
         assert!(table.iter().any(|(t, _)| t == id), "{id} has a row and no expected bonus");
     }
     assert_eq!(carried.len(), table.len());
+}
+
+#[test]
+fn declared_compression_metres_take_blast_radius_mods() {
+    // The table's Primed Firestorm column on the two rows whose metres are
+    // declared rather than read off a radial: 1.44x, like every other row.
+    for (id, pf) in [("miter", 0.2304), ("vectis_incarnon", 0.1152)] {
+        let base = crate::model::WeaponBase::from_data(id, true, &[]);
+        let pool = crate::data::mods::pool_for_weapon(id);
+        let mods: Vec<&crate::model::ModDef> =
+            pool.iter().filter(|d| d.id == "primed_firestorm").collect();
+        assert_eq!(mods.len(), 1, "{id} is offered Primed Firestorm");
+        let p = crate::build::loadout::resolve(&base, &mods, crate::model::StackPolicy::Emergent);
+        let lost = p.compression.map_or(0.0, |c| c.radius_lost_m);
+        assert!((lost - pf).abs() < 5e-4, "{id}: the table says +{}%, this build pays +{:.2}%", pf * 100.0, lost * 100.0);
+    }
 }
 
 /// A COMPRESSION ROW BELONGS TO THE FAMILY, not to the variant the wiki's
@@ -737,11 +754,13 @@ fn every_compression_row_is_one_the_engine_could_apply() {
             "{}: `{}` is not a Radius Calculation",
             w.id, c.radius_calculation
         );
-        // An OVERRIDE is only ever the reason a row's radius is not the
-        // attack's, so it must not also be at full effectiveness — that
-        // pair would be two answers to one question.
+        // An OVERRIDE beside a radius the attack carries is the reason the
+        // row's radius is not that one, so it must not also be at full
+        // effectiveness — two answers to one question. With nothing to read
+        // (the Miter's blade width) the override is the only answer.
+        let own_radius = w.attack.radial.is_some() || w.attack.lingering.is_some();
         assert!(
-            c.reads_radius_m.is_none() || c.effectiveness != 1.0,
+            c.reads_radius_m.is_none() || c.effectiveness != 1.0 || !own_radius,
             "{}: reads_radius_m with 100% effectiveness — which one is the radius?",
             w.id
         );

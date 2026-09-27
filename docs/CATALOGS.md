@@ -868,7 +868,7 @@ the additions are a tested **0%** ("Archguns cannot equip", the beam
 exclusion), which is a ROW and not an omission: saying so is the difference
 between "checked" and "nobody looked".
 
-108 rows.
+109 rows.
 
 | our entry | eff | base radius | max bonus | stacking | radius calc |
 | --- | --- | --- | --- | --- | --- |
@@ -927,6 +927,7 @@ between "checked" and "nobody looked".
 | `latron_prime_incarnon` | 100% | 4 m | +320% | Multiplies | snapshot |
 | `latron_wraith_incarnon` | 100% | 4 m | +320% | Multiplies | snapshot, **carried from the family** |
 | `lenz` | 100% | 7.2 m | +576% | Multiplies | snapshot |
+| `miter` | 100% | 0.2 m | +16% | Multiplies | snapshot, **metres declared** (the blade's width; no radial) |
 | `mausolon` | 100% | 1.8 m | +144% | Adds | stolen |
 | `mausolon_charged` | 100% | 8 m | +640% | Adds | snapshot |
 | `miter_incarnon` | 100% | 3 m | +240% | Multiplies | snapshot |

@@ -968,6 +968,8 @@ pub fn resolve_for(
         // radial instead of their 6.7 m headshot explosion), in which case the
         // row's metres ARE the answer and `effectiveness` is the transcribed
         // account of how far off that is rather than a second multiplication.
+        // Those metres are MODDED too: the table's Primed Firestorm column is
+        // 1.44x on the Vectis (+8% -> +11.52%) and the Miter (+16% -> +23.04%).
         let attack_radius = base
             .radial
             .as_ref()
@@ -976,7 +978,7 @@ pub fn resolve_for(
             .unwrap_or(0.0);
         let considered = c
             .reads_radius_m
-            .unwrap_or(attack_radius * c.effectiveness);
+            .map_or(attack_radius * c.effectiveness, |m| m * (1.0 + br));
         compression = Some(Compression {
             radius_lost_m: considered * (1.0 - COMPRESSION_RADIUS_KEPT),
             // THE ROW'S OTHER COLUMN, and the same split Condition Overload
