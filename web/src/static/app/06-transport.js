@@ -228,7 +228,7 @@ function makeLane() {
     pending.forEach((res) => res({ ok: false, error: why, worker_dead: true }));
     pending.clear(); progress.clear(); wd.clear(); busy = 0;
   };
-  const wd = watchSilence(() => perish("worker stopped answering"));
+  const wd = watchSilence(() => { track("engine.fail", "worker_silent"); perish("worker stopped answering"); });
   // A LANE THAT CANNOT LOAD IS A LANE, NOT A DEAD PAGE.
   //
   // `worker.js` fetches a ~6 MB wasm module, and a fetch can fail — a flaky
@@ -247,6 +247,7 @@ function makeLane() {
   w.onerror = (e) => {
     if (e && e.preventDefault) e.preventDefault();
     dead = true;
+    track("engine.fail", "worker_load", Math.round(performance.now()));
     perish(String((e && e.message) || "worker failed to load"));
   };
   w.onmessage = (e) => {

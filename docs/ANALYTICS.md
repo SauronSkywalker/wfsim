@@ -56,12 +56,22 @@ with this thing, not how many times: forty edits to one build are one build.
 
 | event | fires when | subject | `n` |
 | --- | --- | --- | --- |
-| `app.boot` | the engine has answered `/api/meta` | — | — |
+| `app.boot` | the engine has answered `/api/meta` | — | ms since navigation |
+| `app.view` | a page was drawn | page kind (`home`, `weapon_builder`, `weapon_simulator`, `warframe`, …) | — |
+| `engine.fail` | an engine worker failed to load, or stopped answering | `worker_load` / `worker_silent` | ms since navigation (load only) |
 | `builder.weapon` | the weapon panel computed a build with ≥1 mod | weapon id | — |
 | `builder.warframe` | the Warframe panel computed a build with ≥1 mod | frame id | — |
 | `builder.operator` | the Tektolyst Artifact panel computed with ≥1 card | — | — |
+| `builder.riven` | a custom riven was edited and saved | — | — |
 | `simulator.run` | a Run Sim finished (not stopped) | weapon id | runs |
 | `optimizer.run` | a search finished (not cancelled) | weapon id | seconds |
+| `share.create` | a build link was copied | weapon id | — |
+| `share.open` | a shared build landed in a reader's app | weapon id | — |
+| `board.submit` | a build reached the board's inbox | weapon id | — |
+| `desktop.download` | a desktop download link was clicked | — | — |
+
+An `engine.fail` from a visitor with no `app.boot` is a reader the site lost
+before it could do anything — the one failure the edge cannot see.
 
 The data point, schema 1 — **frozen once written**: a change adds a schema
 number, it never reinterprets a column.
@@ -90,8 +100,10 @@ python scripts/usage.py --days 28
 Needs `CF_ACCOUNT` and `CF_TOKEN` (an API token with **Account Analytics:
 Read**) in the environment or in `private/cloudflare.env`. It prints, per day,
 visitors, visitors with a result and the **activation rate**; each module's
-visitors; the **week-over-week return rate**; the top subjects per event; and
-visitors by landing route, language, shell and country.
+visitors; the **week-over-week return rate**; **China against overseas** —
+activation, boot time p50/p90, engine failure rate, shares made and opened;
+the top subjects per event; and visitors by landing route, language, shell and
+country.
 
 Activation and return are the two numbers that matter. Pageviews are not a
 measure of a calculator; producing a result is.

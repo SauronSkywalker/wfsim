@@ -868,6 +868,7 @@ async function importShare(code) {
   // door a scenario is set through, so not opening it IS the guarantee — the
   // same rule `check_preset_independence.mjs` asserts for a build being LOADED.
   whileApplying(() => restoreState(state, w.id));
+  track("share.open", w.id);
   // NO `lastResult`: a measurement is a build plus the fight it was made in
   // plus the number, and the fight did not travel. A number without one is not
   // a claim a reader could check, so the build lands unmeasured and the first
@@ -909,6 +910,7 @@ async function openSharePanel(bar) {
   const bBox = panel.querySelector(".sh-url");
   bBox.onclick = () => bBox.select();
   panel.querySelector(".sh-copy").onclick = async () => {
+    track("share.create", $("weapon").value);
     try { await navigator.clipboard.writeText(bUrl); presetToast(tr("link copied")); }
     catch (_) { bBox.select(); presetToast(tr("press Ctrl+C to copy the selected link")); }
   };

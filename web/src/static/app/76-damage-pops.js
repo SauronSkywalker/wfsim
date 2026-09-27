@@ -673,6 +673,7 @@ function renderResults(r, testedAt) {
   if (toShare) {
     toShare.onclick = async () => {
       const url = await shareUrl();
+      track("share.create", $("weapon").value);
       // NO DIALOG. `prompt`/`alert`/`confirm` are blocked in this project, so a
       // clipboard that refuses says so in the toast the page already has.
       try { await navigator.clipboard.writeText(url); presetToast(tr("link copied")); }

@@ -24,10 +24,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DATASET = "wfsim"
 BOOT = "app.boot"
-# A RESULT, as opposed to a page opened: anything but the boot.
 # THE RELEASE a deploy check writes its one point under, never a reader.
 CHECK_RELEASE = "deploy-check"
-RESULTS = ("builder.weapon", "builder.warframe", "builder.operator", "simulator.run", "optimizer.run")
+# A RESULT, as opposed to a page opened: a build computed, a fight or a search finished.
+RESULTS = ("builder.weapon", "builder.warframe", "builder.operator", "builder.riven",
+           "simulator.run", "optimizer.run")
+# Mainland China, and everyone else — the two audiences whose habits can differ.
+MARKET = lambda country: "china" if country == "CN" else "overseas"
 
 
 def credentials():
@@ -61,6 +64,19 @@ def pct(a, b):
     return f"{100 * a / b:5.1f}%" if b else "    -"
 
 
+def quantile(xs, q):
+    xs = sorted(xs)
+    return xs[min(len(xs) - 1, int(q * len(xs)))] if xs else None
+
+
+def seconds(ms):
+    return f"{ms / 1000:5.1f}s" if ms is not None else "    -"
+
+
+def label(e):
+    return e.split(".")[-1] if e.startswith("builder.") else e.split(".")[0]
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--days", type=int, default=14)
@@ -80,13 +96,14 @@ def main():
         print("NOTE: the dataset is SAMPLED in this window; visitor counts below are a floor\n")
 
     by_day = defaultdict(lambda: defaultdict(set))
+    by_event = defaultdict(set)
     for r in rows:
         by_day[r["day"][:10]][r["e"]].add(r["cid"])
+        by_event[r["e"]].add(r["cid"])
     days = sorted(by_day)
     print(f"covered {days[0]} .. {days[-1]} ({len(days)} days)\n")
 
-    head = f"{'day':10}  {'visitors':>8}  {'result':>7}  {'activ.':>6}  " + "  ".join(f"{e.split('.')[-1] if e.startswith('builder.') else e.split('.')[0]:>9}" for e in RESULTS)
-    print(head)
+    print(f"{'day':10}  {'visitors':>8}  {'result':>7}  {'activ.':>6}  " + "  ".join(f"{label(e):>9}" for e in RESULTS))
     for d in days:
         ev = by_day[d]
         seen = set().union(*ev.values())
@@ -100,26 +117,54 @@ def main():
         a, b = week(days[-14:-7]), week(days[-7:])
         print(f"\nweekly visitors {len(a)} -> {len(b)}; returned {len(a & b)} of {len(a)} ({pct(len(a & b), len(a)).strip()})")
 
+    # THE TWO MARKETS, side by side. A visitor's market is the country of their
+    # boot; one who never booted is placed by any point they sent.
+    boots = sql(account, token, f"""
+        SELECT blob2 AS cid, blob4 AS route, blob5 AS lang, blob6 AS shell, blob8 AS country,
+               min(double2) AS ms
+        FROM {DATASET} WHERE {since} AND blob1 = '{BOOT}'
+        GROUP BY cid, route, lang, shell, country LIMIT 1000000""")
+    placed = sql(account, token, f"""
+        SELECT blob2 AS cid, blob8 AS country FROM {DATASET} WHERE {since}
+        GROUP BY cid, country LIMIT 1000000""")
+    market = {r["cid"]: MARKET(r["country"]) for r in placed}
+    market.update({r["cid"]: MARKET(r["country"]) for r in boots})
+    boot_ms = defaultdict(list)
+    for r in boots:
+        if float(r["ms"]) > 0:
+            boot_ms[market[r["cid"]]].append(float(r["ms"]))
+    everyone = set().union(*by_event.values())
+    got = set().union(*(by_event.get(e, set()) for e in RESULTS))
+    failed = by_event.get("engine.fail", set())
+    print(f"\n{'market':9}  {'visitors':>8}  {'activ.':>6}  {'boot p50':>8}  {'boot p90':>8}  {'engine fail':>11}  {'shares':>6}  {'opened':>6}")
+    for m in ("china", "overseas"):
+        who = {c for c in everyone if market.get(c) == m}
+        n = lambda e: len(by_event.get(e, set()) & who)
+        print(f"{m:9}  {len(who):8}  {pct(len(got & who), len(who)):>6}  {seconds(quantile(boot_ms[m], 0.5)):>8}  "
+              f"{seconds(quantile(boot_ms[m], 0.9)):>8}  {pct(len(failed & who), len(who)):>11}  {n('share.create'):6}  {n('share.open'):6}")
+    never = failed - by_event.get(BOOT, set())
+    if never:
+        print(f"  {len(never)} visitor(s) had the engine fail and never booted")
+
+    others = [e for e in sorted(by_event) if e != BOOT and e not in RESULTS]
+    if others:
+        print("\nvisitors per event: " + ", ".join(f"{e} {len(by_event[e])}" for e in others))
+
     subjects = sql(account, token, f"""
         SELECT blob1 AS e, blob3 AS subject, SUM(_sample_interval) AS n
         FROM {DATASET} WHERE {since} AND blob1 != '{BOOT}' AND blob3 != ''
-        GROUP BY e, subject ORDER BY n DESC LIMIT 2000""")
+        GROUP BY e, subject ORDER BY n DESC LIMIT 5000""")
     per = defaultdict(list)
     for r in subjects:
         per[r["e"]].append((r["subject"], int(float(r["n"]))))
-    for e in RESULTS:
-        if per.get(e):
-            print(f"\n{e}: " + ", ".join(f"{s} {n}" for s, n in per[e][:args.top]))
+    for e in sorted(per):
+        print(f"\n{e}: " + ", ".join(f"{s} {n}" for s, n in per[e][:args.top]))
 
-    boots = sql(account, token, f"""
-        SELECT blob2 AS cid, blob4 AS route, blob5 AS lang, blob6 AS shell, blob8 AS country
-        FROM {DATASET} WHERE {since} AND blob1 = '{BOOT}'
-        GROUP BY cid, route, lang, shell, country LIMIT 1000000""")
     for dim in ("route", "lang", "shell", "country"):
         c = Counter()
         for value, cids in _group(boots, dim).items():
             c[value or "?"] = len(cids)
-        print(f"\nvisitors by {dim}: " + ", ".join(f"{k} {v}" for k, v in c.most_common(args.top)))
+        print(f"\nvisitors by landing {dim}: " + ", ".join(f"{k} {v}" for k, v in c.most_common(args.top)))
 
 
 def _group(rows, dim):

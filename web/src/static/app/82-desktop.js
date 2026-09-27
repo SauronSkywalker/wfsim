@@ -68,6 +68,10 @@ const DOWNLOADS = [
 /// whose drive it is on before they click rather than after the tab has opened.
 /// The badge links to the same place, so "where does this come from" and "take
 /// me there to look first" are one click apart.
+// A CLICK ON EITHER LINK is a download asked for; the file itself is not ours to count.
+document.addEventListener("click", (e) => {
+  if (e.target.closest && e.target.closest(".dl-btn, .dl-src")) track("desktop.download");
+});
 function downloadOffer(d) {
   const src = d.source;
   return `<a class="dl-btn" href="${escHtml(src.url)}" target="_blank" rel="noopener">`

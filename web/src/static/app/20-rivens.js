@@ -671,6 +671,7 @@ function saveRivenSoon() {
     if (i >= 0) {
       ps[i].state = snapshotRiven();
       storePresetList(RIVENS, ps);
+      track("builder.riven");
       renderRivenTools();
       // The mod lists show each riven's generated name and printed values, so
       // they have to be re-asked for after an edit.

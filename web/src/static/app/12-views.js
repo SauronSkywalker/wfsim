@@ -151,6 +151,10 @@ async function route() {
   const gen = ++routeGen;
   if (w) await loadWeaponBoard(w.id);
   if (gen !== routeGen) return;
+  // WHICH PAGE, as a kind and never an address: one point per kind per load.
+  track("app.view", w ? `weapon_${mod || "builder"}` : support ? "support" : bench ? "benchmark"
+    : dl ? "download" : thx ? "thanks" : wfHit ? "warframe" : opRoute ? "operator"
+    : compHit ? "companion" : "home");
   document.body.classList.toggle("on-home", !w && !support && !bench && !dl && !thx && !wfHit && !opRoute && !compHit);
   document.body.classList.toggle("on-warframe", !!wfHit);
   document.body.classList.toggle("on-operator", opRoute);

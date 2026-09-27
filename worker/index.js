@@ -361,8 +361,10 @@ async function shareFetch(id, env) {
 /// renamed event is a broken time series, and history cannot be backfilled.
 /// EXPORTED so `check_usage_events.mjs` holds it against what the page sends.
 export const USAGE_EVENTS = [
-  "app.boot", "builder.weapon", "builder.warframe", "builder.operator",
+  "app.boot", "app.view", "engine.fail",
+  "builder.weapon", "builder.warframe", "builder.operator", "builder.riven",
   "simulator.run", "optimizer.run",
+  "share.create", "share.open", "board.submit", "desktop.download",
 ];
 /// The wire's schema, written into every point so a later change stays readable.
 export const USAGE_SCHEMA = 1;

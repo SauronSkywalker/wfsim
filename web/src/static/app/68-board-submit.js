@@ -279,7 +279,7 @@ async function offerOptBoardSubmit(r) {
         headers: { "content-type": "application/json" },
         body: JSON.stringify(body),
       }).then((x) => x.ok).catch(() => false);
-      if (ok) sent += 1; else failed += 1;
+      if (ok) { sent += 1; track("board.submit", body.weapon); } else failed += 1;
     } catch (_) {
       failed += 1;
     }
@@ -496,6 +496,7 @@ async function offerBoardSubmit() {
       body: JSON.stringify(body),
     });
     boardState = res.ok ? "sent" : "failed";
+    if (res.ok) track("board.submit", body.weapon);
   } catch (_) {
     // Never an error dialog: a board that is unreachable is not a failed run.
     boardState = "failed";
