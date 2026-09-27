@@ -754,7 +754,7 @@ ui:
   "Shrapnel Rounds, the Marelok-exclusive mod — a weapon-exclusive card outside the pools this roster loads": "「Shrapnel Rounds」，Marelok 家族的专属 MOD——这是一张武器专属卡，不在本武器库载入的卡池里"
   "Sim": 模拟
   "Simulator": 模拟器
-  "Demolisher · one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM": 爆破 · 单体 · 爆破型吞噬者 9999 钢铁 · 四人血量 · 180 秒 · KPM
+  "Demolisher · one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM": 爆破使 · 单体 · 爆破型吞噬者 9999 钢铁 · 四人血量 · 180 秒 · KPM
   "Measured builds": 实测配装
   "what this weapon's number does not account for": 这把武器的数字没算进去的东西
   "the board's best riven-free build for each ruler": 榜单上每把尺子下最好的无裂罅配装
@@ -769,7 +769,7 @@ ui:
   "Its flaws are stated rather than hidden: it carries no shield, its Overguard may sit high, and the spectral form it enters on death is switched off here.": 它的缺点也写在这里，不藏着：它没有护盾，超宏防护可能偏高，死后的灵体形态在这里是关掉的。
   "Standard means this fight is claimed to represent most play, not that it is the fight you play: a crowd of tough, unaffiliated targets, packed as close as every elemental area effect still reaches and no larger than holds them whole.": 「标准」是说这场战斗被判断为能代表大多数情况，不是说你平时就在打它：一群耐打、不属于任何派系的目标，站得刚好让每种元素范围效果都能打到邻居，方阵大小刚好装下它们。
   "The spacing decides whether splash or single-target damage wins: 3 m is where that ordering matches play, and it is the widest whole metre at which Electricity still reaches a neighbour.": 决定溅射还是单体胜出的是间隔：3 米时这个排序和实战一致，也是电还能打到相邻敌人的最大整米间隔。
-  "One specific fight players run, measured as it is rather than as a stand-in for most play: a Demolisher a full squad meets, taken apart by one weapon.": 这是玩家实际会打的一场具体战斗，按它本来的样子来测，不代表大多数情况：一整支小队面对的拆毁者，由一把武器单独拆掉。
+  "One specific fight players run, measured as it is rather than as a stand-in for most play: a Demolisher a full squad meets, taken apart by one weapon.": 这是玩家实际会打的一场具体战斗，按它本来的样子来测，不代表大多数情况：一整支小队面对的爆破使，由一把武器单独拆掉。
   "Skull Shots and Stinging Truth, the Viper-exclusive mods — weapon-exclusive cards outside the pools this roster loads": "「Skull Shots」和「Stinging Truth」，Viper 家族的专属 MOD——这是武器专属卡，不在本武器库载入的卡池里"
   "Sometimes it says the number is right and the game is wrong, and names the bug a hotfix would take away.":
     有时候它会说：数字没错，是游戏错了——顺带指出那个下次热修可能就没了的 bug。
