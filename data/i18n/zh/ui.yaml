@@ -942,7 +942,7 @@ ui:
   "text copied": 文字已复制
   "share…": 分享…
   "What is counted": 统计了什么
-  "WFSim counts what gets used — which pages open, whether a build was computed, a simulation or a search finished, a link shared — under a random id this browser keeps. No account, no IP address, no cookie. With Global Privacy Control or Do Not Track on, nothing is sent.": WF模拟会统计功能的使用情况——打开了哪些页面、是否算出了配装、模拟或搜索是否跑完、是否分享了链接——记在这个浏览器保存的一个随机编号下。不需要账号，不记录 IP 地址，不使用 cookie。浏览器开启了“全局隐私控制”或“请勿追踪”时，不发送任何数据。
+  "WFSim counts what gets used — which pages open, whether a build was computed, a simulation or a search finished, a link shared — under a random id this browser keeps. The count records no IP address and sets no cookie, and the id is not linked to anything that identifies you. With Global Privacy Control or Do Not Track on, nothing is sent.": WF模拟会统计功能的使用情况——打开了哪些页面、是否算出了配装、模拟或搜索是否跑完、是否分享了链接——记在这个浏览器保存的一个随机编号下。统计不记录 IP 地址，也不设置 cookie，这个编号不与任何能识别你身份的信息关联。浏览器开启了“全局隐私控制”或“请勿追踪”时，不发送任何数据。
   "This browser's id:": 这个浏览器的编号：
   "stop counting this browser": 不再统计这个浏览器
   "count this browser again": 恢复统计这个浏览器

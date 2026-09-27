@@ -40,6 +40,8 @@ well". Both come from the usage points below.
 - **Global Privacy Control or Do Not Track set: nothing is sent.** Nor after
   the reader turns counting off on `/support#usage`, which also says what is
   counted and shows the browser's id — the footer links there.
+  **That page states what is true now and promises nothing further**: when an
+  account can be linked to a visitor, it changes in the same commit.
 - **A crawler that runs the page is not a reader.** Applebot and Googlebot boot
   the app; the worker answers a point whose user agent is a crawler's
   (`USAGE_CRAWLER`) and writes nothing.
