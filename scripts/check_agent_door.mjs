@@ -35,6 +35,9 @@ check("the mod-exchange decision exists once", once("[a.mod, b.mod] = [b.mod, a.
 check("clearing back to innate polarities exists once", once("s.pol = innate[i]") === 1,
   once("s.pol = innate[i]"));
 check("the weapon control goes through the door", src.includes('wfsim.do("builder.weapon.set"'));
+check("an Operator node's switch goes through the door, a tick by the reader's hand",
+  src.includes('wfsim.do("simulator.node.simulate"')
+  && src.includes('wfsim.do("simulator.node.tick", { node: n.id, on: el.dataset.s === "on" }, { hand: true })'));
 check("which slot a mod may sit in is decided once", once("=== !!m.stance") === 1, once("=== !!m.stance"));
 
 await app.load("/weapons/Torid");
@@ -316,6 +319,42 @@ check("a Kitgun's grip swaps and is observed", more.part.ok === true && more.par
 check("...a part that does not exist is refused, and so is a part on a weapon without them",
   more.badPart.ok === false && more.noParts.ok === false && more.noParts.reason === "no_parts",
   JSON.stringify([more.badPart, more.noParts]));
+
+// ---- the Operator's nodes: simulated is the fight's, a tick is the reader's ----
+
+const opn = await evaluate(`(async () => {
+  const out = {};
+  await window.wfsim.do("shell.module.open", { module: "simulator" });
+  await new Promise(r => setTimeout(r, 600));
+  out.list = await window.wfsim.do("simulator.nodes.list", {});
+  const nodes = out.list.nodes || [];
+  out.noHand = await window.wfsim.do("simulator.node.tick", { node: (nodes[0] || { id: "x" }).id, on: true });
+  const live = nodes.find(n => n.simulatable);
+  const fixed = nodes.find(n => !n.simulatable);
+  if (live) {
+    out.on = await window.wfsim.do("simulator.node.simulate", { node: live.id, simulated: true });
+    out.off = await window.wfsim.do("simulator.node.simulate", { node: live.id, simulated: false });
+  }
+  if (fixed) out.fixed = await window.wfsim.do("simulator.node.simulate", { node: fixed.id, simulated: true });
+  out.bad = await window.wfsim.do("simulator.node.simulate", { node: "no_such_node", simulated: true });
+  await window.wfsim.do("shell.module.open", { module: "builder" });
+  return out;
+})()`, { awaitPromise: true });
+
+check("the Operator's nodes list with their state, or the fight says it has no Operator",
+  (opn.list.ok === true && Array.isArray(opn.list.nodes) && opn.list.nodes.every(n => ["off", "on", "sim"].includes(n.state)))
+  || (opn.list.ok === false && opn.list.reason === "no_operator"), JSON.stringify(opn.list).slice(0, 300));
+check("...a tick is refused without the reader's hand", opn.noHand.ok === false && opn.noHand.reason === "reader_only",
+  JSON.stringify(opn.noHand));
+if (opn.on) {
+  check("...a simulatable node is performed by the fight, and stops when asked",
+    opn.on.ok === true && opn.on.state === "sim" && opn.off.ok === true && opn.off.state !== "sim", JSON.stringify([opn.on, opn.off]));
+}
+if (opn.fixed) {
+  check("...a node the fight cannot perform is refused", opn.fixed.ok === false && opn.fixed.reason === "not_simulatable",
+    JSON.stringify(opn.fixed));
+}
+check("...and a node that does not exist is refused", opn.bad.ok === false, JSON.stringify(opn.bad));
 
 // ---- custom targets -----------------------------------------------------------
 

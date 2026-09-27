@@ -71,14 +71,27 @@ function setOpPart(part, on) {
 }
 const castRule = (id) => ({ action: { do: "cast", ability: id }, when: { if: "always" } });
 
-function setNodeState(o, n, s) {
-  if (s === "sim") {
-    if (o.preset) setOperatorTick(o.preset, n.id, false);
-    setOpPart("sling", true);
-  } else {
-    if (n.trigger) setOpPart("sling", false);
-    if (o.preset) setOperatorTick(o.preset, n.id, s === "on");
-  }
+/// The linked Operator and its nodes that are not always on — what the frame
+/// block lists and the door's `simulator.node*` and `simulator.nodes.list` name.
+function operatorNodes() {
+  const o = simOperator();
+  return { o, nodes: o && o.school ? o.school.nodes.filter((n) => !n.always) : [] };
+}
+
+/// SIMULATED IS THE FIGHT'S: the list performs the node's action, or stops.
+/// The tick is left alone — the list replaces it rather than adding to it
+/// (`the_claws_are_the_strength_their_summoning_read`).
+function simulateNode(on) {
+  setOpPart("sling", on);
+  markScenarioDirty();
+  renderSim();
+}
+
+/// A TICK IS THE OPERATOR BUILD'S, and a node the list performs shows as
+/// simulated whatever its tick, so ticking takes it out of the list.
+function tickNode(o, n, on) {
+  if (n.trigger) setOpPart("sling", false);
+  setOperatorTick(o.preset, n.id, on);
   markScenarioDirty();
   renderSim();
 }
@@ -199,7 +212,7 @@ async function renderSimFrame(host) {
   // THE BUILD'S CONDITIONAL SOURCES — the linked Operator's nodes that are not
   // always on. OFF and ASSUMED are the Operator build's tick; SIMULATED is the
   // fight's list performing the action, offered only where the fight can.
-  const nodes = o && o.school ? o.school.nodes.filter((n) => !n.always) : [];
+  const { nodes } = operatorNodes();
   const nodeRows = nodes.map((n) => {
     const now = nodeState(o, n);
     return `<div class="sf-row"><div class="sf-name"><b>${escHtml(n.name)}</b>
@@ -250,9 +263,12 @@ async function renderSimFrame(host) {
         frame.summon_strength != null ? ` · ${escHtml(tr("summoned at"))} ${pct(frame.summon_strength)}` : ""}</div>` : "");
 
   const redraw = () => { markScenarioDirty(); renderSim(); };
+  // THROUGH THE DOOR: which state may be set, and by whom, is decided there.
   host.querySelectorAll("[data-node]").forEach((el) => el.addEventListener("click", () => {
     const n = nodes.find((x) => x.id === el.dataset.node);
-    if (n && !el.classList.contains("dis") && nodeState(o, n) !== el.dataset.s) setNodeState(o, n, el.dataset.s);
+    if (!n || el.classList.contains("dis") || nodeState(o, n) === el.dataset.s) return;
+    if (el.dataset.s === "sim") wfsim.do("simulator.node.simulate", { node: n.id, simulated: true });
+    else wfsim.do("simulator.node.tick", { node: n.id, on: el.dataset.s === "on" }, { hand: true });
   }));
   host.querySelectorAll("[data-apl-add]").forEach((el) => el.addEventListener("click", () => {
     const c = adds.find((x) => x.key === el.dataset.aplAdd);

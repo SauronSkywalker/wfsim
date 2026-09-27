@@ -362,6 +362,63 @@ const AGENT_ACTIONS = [
     },
   },
   {
+    id: "simulator.nodes.list",
+    query: true,
+    what: "List the linked Operator's conditional Focus nodes — each one's id, what it does, its state (off, on = assumed up by the Operator build, sim = the fight's action list performs it) and whether the fight can simulate it.",
+    anchor: "[data-node]",
+    needs_weapon: true,
+    args: {},
+    run() {
+      const { o, nodes } = operatorNodes();
+      if (!o || !o.school) return agentNo("no_operator", { because: "no Warframe with a Focus school holds this weapon" });
+      return { school: o.school.name, operator_build: o.preset ? o.preset.name : null,
+        nodes: nodes.map((n) => ({ id: n.id, name: n.name, text: n.text, state: nodeState(o, n), simulatable: !!n.trigger })) };
+    },
+  },
+  {
+    id: "simulator.node.simulate",
+    writes: "scenario",
+    what: "Have the fight's action list perform an Operator node's action (simulated=true), or stop (false) — the node is then earned in the fight rather than assumed. Only a node simulator.nodes.list marks simulatable. Whether a node is assumed up is the reader's Operator build and not on the door.",
+    anchor: "[data-node]",
+    needs_weapon: true,
+    args: {
+      node: { kind: "string", required: true, what: "the node's id" },
+      simulated: { kind: "boolean", required: true, what: "true = the fight performs it" },
+    },
+    run({ node, simulated }) {
+      const { o, nodes } = operatorNodes();
+      if (!o || !o.school) return agentNo("no_operator", { because: "no Warframe with a Focus school holds this weapon" });
+      const n = nodes.find((x) => x.id === node);
+      if (!n) return agentNo("bad_argument", { argument: "node", alternatives: nodes.map((x) => x.id) });
+      if (!n.trigger) {
+        return agentNo("not_simulatable", { argument: "node", because: "the fight cannot perform this node's action",
+          alternatives: nodes.filter((x) => x.trigger).map((x) => x.id) });
+      }
+      simulateNode(simulated);
+      return { node, state: nodeState(operatorNodes().o, n) };
+    },
+  },
+  {
+    id: "simulator.node.tick",
+    writes: "operator",
+    hand: true,
+    what: "Tick an Operator node off or assumed up in the linked Operator build, which every Warframe build linking it reads. A reader's click only.",
+    anchor: "[data-node][data-s=off], [data-node][data-s=on]",
+    needs_weapon: true,
+    args: {
+      node: { kind: "string", required: true, what: "the node's id" },
+      on: { kind: "boolean", required: true, what: "true = assumed up" },
+    },
+    run({ node, on }) {
+      const { o, nodes } = operatorNodes();
+      const n = nodes.find((x) => x.id === node);
+      if (!n) return agentNo("bad_argument", { argument: "node", alternatives: nodes.map((x) => x.id) });
+      if (!o.preset) return agentNo("no_operator_build", { because: "link an Operator on the Warframe page to tick its nodes" });
+      tickNode(o, n, on);
+      return { node, state: nodeState(operatorNodes().o, n) };
+    },
+  },
+  {
     id: "simulator.triggers.list",
     query: true,
     what: "List the buff triggers the fight can switch off (a buff whose trigger is off never fires, though the run still does the action), by group, with which are off.",

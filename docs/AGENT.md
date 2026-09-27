@@ -96,8 +96,12 @@ is edited. `check_agent_door` asserts the shared decisions exist once, on the
 SOURCE, because a running page cannot see its own duplication.
 
 **Every action declares what it writes** — the document of one bar (build,
-scenario, search, riven, target), this browser's preferences, the bar its `bar`
-argument names, or nothing — and a query writes nothing. The official ruler's
+scenario, search, riven, target), the linked Operator build, this browser's
+preferences, the bar its `bar` argument names, or nothing — and a query writes
+nothing. Nothing copies an Operator build, so only a hand action writes one:
+an agent may have the fight PERFORM an Operator node
+(`simulator.node.simulate`), and whether it is assumed up stays the
+reader's tick. The official ruler's
 lock and an agent's copy-before-write both read the declaration, so they
 cannot disagree about what counts as an edit.
 

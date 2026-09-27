@@ -242,12 +242,13 @@ const agentTools = () => AGENT_ACTIONS.filter((a) => !a.hand).map((a) => ({
 
 const agentWeaponIds = () => (META.weapons || []).map((w) => w.id);
 /// WHAT AN ACTION WRITES, declared on the action: the document of one bar
-/// (build, scenario, search, riven, target), this browser's preferences, the
-/// bar its `bar` argument names, or nothing. The official ruler's lock and an
-/// agent's copy-before-write both read it, so they cannot disagree about what
-/// an edit is. `check_agent_door` requires it of every action that is not a
-/// query.
-const AGENT_WRITES = ["build", "scenario", "search", "riven", "target", "prefs", "bar", "none"];
+/// (build, scenario, search, riven, target), the linked Operator build, this
+/// browser's preferences, the bar its `bar` argument names, or nothing. The
+/// official ruler's lock and an agent's copy-before-write both read it, so they
+/// cannot disagree about what an edit is. `check_agent_door` requires it of
+/// every action that is not a query. Nothing copies an Operator build, so only
+/// a `hand` action may write one.
+const AGENT_WRITES = ["build", "scenario", "search", "riven", "target", "operator", "prefs", "bar", "none"];
 const agentWritesFight = (a) => a.writes === "scenario";
 
 /// A FOUND LIST IS CAPPED, and says how many it left out, so a caller knows to
