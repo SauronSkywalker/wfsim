@@ -145,7 +145,17 @@ pub(super) struct DebuffState {
     /// second one.
     pub(super) attractor: Vec<f64>,
     pub(super) blast: Vec<BlastStack>,
+    /// APPEND THROUGH [`Self::push_dot`], never `dots.push`: it keeps
+    /// `dots_due` a lower bound, and a tick pass that trusts a stale one skips
+    /// a tick that was due.
     pub(super) dots: Vec<Dot>,
+    /// NO DoT TICKS BEFORE THIS — a LOWER bound on the earliest `next_tick` in
+    /// `dots`, `None` when nothing is known. Set exactly at the end of every
+    /// tick pass and lowered by every append; a removal only raises the truth,
+    /// so the bound holds through it. A body under Melee Influence carries
+    /// ~340 DoTs and is asked at every shot, and more than half of those asks
+    /// find nothing due: this is what lets them answer at once.
+    pub(super) dots_due: Option<f64>,
     pub(super) heat: Option<HeatEntity>,
     /// Heat armor-strip ramp-DOWN (ignite.yaml): after the entity dies at
     /// `.0` with strip `.1`, armor returns 50→40→30→15→0% in 1.5 s steps.
@@ -615,6 +625,14 @@ impl DebuffState {
                     None => break,
                 }
             }
+        }
+        self.push_dot(dot);
+    }
+
+    /// Append one DoT, lowering `dots_due` to it.
+    pub(super) fn push_dot(&mut self, dot: Dot) {
+        if let Some(due) = self.dots_due.as_mut() {
+            *due = due.min(dot.next_tick);
         }
         self.dots.push(dot);
     }

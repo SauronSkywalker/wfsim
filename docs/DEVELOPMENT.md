@@ -282,6 +282,14 @@ the ledger's parts with nobody recording. Identical answers, measured with
 **−36% to −43%**, and −4.6% on the default suite. The rule it generalises to:
 what is the same for every stack at one instant is read once per instant.
 
+**…AND A BODY WITH NOTHING DUE ANSWERS AT ONCE.** The same fight on a real
+build (ten cards, five evolutions) carries ~340 DoTs a body and asks every
+body at every shot; more than half of those asks found nothing due and still
+walked the whole list to build a queue. `DebuffState::dots_due` is a lower
+bound on the earliest tick, kept by `push_dot`, and a pass that cannot pop an
+event returns before touching the list: 220 → 150 ms a run on the captured
+request, the answer identical to the last digit.
+
 Beyond that the cost is spread across the per-shot and per-tick work, and the
 room is in **how many runs get spent** — see docs/OPTIMIZER.md.
 

@@ -1,5 +1,27 @@
 use super::*;
 
+/// A DoT IS APPENDED THROUGH `DebuffState::push_dot` AND NOWHERE ELSE: that is
+/// what keeps `dots_due` a lower bound, and a tick pass that trusts a stale one
+/// skips a tick that was due, with nothing to say so.
+#[test]
+fn every_dot_is_appended_through_push_dot() {
+    let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("src/fight");
+    let mut direct = Vec::new();
+    for entry in std::fs::read_dir(&dir).expect("src/fight") {
+        let path = entry.expect("an entry").path();
+        if path.extension().is_none_or(|x| x != "rs") {
+            continue;
+        }
+        let src = std::fs::read_to_string(&path).expect("a source file");
+        let n = src.matches(".dots.push(").count();
+        let allowed = usize::from(path.ends_with("debuffs.rs"));
+        if n > allowed {
+            direct.push(format!("{} ({n})", path.display()));
+        }
+    }
+    assert!(direct.is_empty(), "append through push_dot instead: {direct:?}");
+}
+
 #[test]
 fn longer_status_duration_slows_the_heat_strip_ramp() {
     // ignite.yaml: the ramp steps scale WITH status duration —

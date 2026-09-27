@@ -162,7 +162,7 @@ pub(super) fn push_break_proc(
     };
     let fraction = (0.03 * stacks as f64).min(0.30);
     let total = fraction * pool_max * params.status_damage_multiplier.powi(2);
-    debuffs.dots.push(Dot {
+    debuffs.push_dot(Dot {
         owner,
         next_tick: now,
         ticks_left: 6,

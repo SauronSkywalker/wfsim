@@ -246,6 +246,13 @@ pub(super) fn process_ticks(
     // because only this loop can still see them apart — see `Dot::live` and
     // `Dot::accumulator_unit`, which take DIFFERENT faction layers.
     let mut dot_parts: Option<Vec<crate::record::Part>>;
+    // NOTHING DUE, NOTHING TO DO: the loop below would pop no event, so an
+    // answer from the bound and a live look at Heat and Blast is the same one
+    // without rebuilding a queue over every DoT on the body.
+    let heat_due = debuffs.heat.as_ref().is_some_and(|h| h.next_tick <= h.expiry && h.next_tick < until);
+    if debuffs.dots_due.is_some_and(|due| due >= until) && !heat_due && debuffs.blast.iter().all(|b| b.fuse >= until) {
+        return;
+    }
     let use_queue = debuffs.dots.len() > TICK_QUEUE_MIN;
     let mut q = std::mem::take(&mut debuffs.tick_q);
     if use_queue {
@@ -623,6 +630,7 @@ pub(super) fn process_ticks(
     q.clear();
     debuffs.tick_q = q;
     debuffs.dots.retain(|d| d.ticks_left > 0);
+    debuffs.dots_due = Some(debuffs.dots.iter().map(|d| d.next_tick).fold(f64::INFINITY, f64::min));
 }
 
 /// WHAT IS STILL IN THE AIR, settled up to this shot — the clouds and the
