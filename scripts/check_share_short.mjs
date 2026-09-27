@@ -13,6 +13,7 @@
 //   node scripts/check_share_short.mjs
 import worker, { SHARE_CODE, SHARE_ID, shareId, shareHostOf, sharePreviewText } from "../worker/index.js";
 import { decodeShare, useShareHost } from "../worker/share_codec.js";
+import { shareCardSvg } from "../worker/share_card.js";
 import { existsSync, readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -129,6 +130,17 @@ check("…and describes the build it carries, not the board's",
 check("…names the link itself as its url", og("og:url") === `https://wfsim.app/weapons/Torid/s/${tiny.j.id}`, og("og:url"));
 check("…and asks not to be indexed apart from the weapon", og("robots") === "noindex");
 check("…in the page's <title> too", /<title>Torid build \| WFSim<\/title>/.test(shown));
+check("…with a large card image drawn for this link",
+  og("og:image") === `https://wfsim.app/og/s/${tiny.j.id}.png?v=1` && og("twitter:card") === "summary_large_image",
+  `${og("og:image")} ${og("twitter:card")}`);
+const noCard = await worker.fetch(new Request("https://wfsim.app/og/s/BBBBBBBBBB.png"), envP);
+check("a card for a link that does not exist is a 404, not a broken image", noCard.status === 404);
+const svg = shareCardSvg({ weapon: "Torid <x>", mods: ["Serration", "Split Chamber"], rivenSlots: 1,
+  riven: "+Critical Chance −Zoom", arcanes: ["Primary Merciless"], evolutions: [],
+  claim: { headline: "79.3116 KPM", line: "Standard Single Target benchmark" } });
+check("the card states the weapon, escaped", svg.includes("Torid &lt;x&gt;") && !svg.includes("<x>"));
+check("…the result and where it was measured", svg.includes(">79.3116 KPM<") && svg.includes("Standard Single Target benchmark"));
+check("…every mod, and the riven as a chip of its own", svg.includes(">Split Chamber<") && svg.includes(">Riven<") && svg.includes("+Critical Chance"));
 const gone = await (await worker.fetch(new Request("https://wfsim.app/weapons/Torid/s/BBBBBBBBBB"), envP)).text();
 check("an unknown id serves the weapon page unchanged", gone === HEAD);
 

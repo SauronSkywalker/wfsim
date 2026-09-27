@@ -346,6 +346,15 @@ in CI — against `site/share-names.json`, which the site build writes from
 `data/share_order.yaml` and the data's English names. Nothing a sharer typed
 reaches a preview. Any failure serves the weapon page unchanged.
 
+**…AND UNFURLS AS A CARD.** The rewritten head names `/og/s/<id>.png?v=<n>` as
+a 1200×630 `summary_large_image`. The worker draws it on first ask —
+`share_card.js` writes the SVG from the same `shareBuildNames` the text uses,
+`share_png.js` rasterises it with resvg and Inter (both vendored under
+`worker/vendor/` with their licences) — and the edge cache keeps it for ever
+under that address, so `SHARE_CARD_V` is bumped whenever the drawing changes.
+TEXT ONLY, like the weapon cards the build draws: the resvg build does not read
+the site's WebP art, and a card that states things needs no DE art to do it.
+
 **THE SHARER'S RESULT MAY TRAVEL BESIDE THE LINK, NEVER IN IT.** A scenario is
 always selected, so the panel offers "include my result in this scenario" (off
 until chosen; the choice is browser storage). The result is a CLAIM stored in

@@ -400,11 +400,15 @@ export function shareClaim(m, table) {
 /// A metric is named by its id, uppercased: the engine's labels are exactly
 /// that (`engine::rules::metrics`), and the id is what the claim carries.
 export function claimText(c, table) {
-  if (!c) return { line: "", headline: "" };
+  if (!c) return { line: "", headline: "", where: "" };
   const headline = `${c.v} ${String(c.k).toUpperCase()}`;
-  if (c.s) return { headline, line: `${headline} in the ${table.scenarios[c.s]} benchmark.` };
+  if (c.s) {
+    const where = `${table.scenarios[c.s]} benchmark`;
+    return { headline, where, line: `${headline} in the ${where}.` };
+  }
   const who = c.e ? table.enemies[c.e] : "a custom target";
-  return { headline, line: `${headline} vs ${who} Lv ${c.l}${c.sp ? " SP" : ""}, ${c.d} s — the sharer's own fight.` };
+  const where = `vs ${who} Lv ${c.l}${c.sp ? " SP" : ""}, ${c.d} s — the sharer's own fight`;
+  return { headline, where, line: `${headline} ${where}.` };
 }
 
 /// What the codec asks of its host, from the names table: the frozen order, and
@@ -424,18 +428,26 @@ export function shareHostOf(table) {
 /// A decoded build as the two lines a chat shows. ENGLISH, because the preview
 /// is read by whoever the link is posted to and English is the one both markets
 /// read; names only from the table, so nothing typed reaches it.
-export function sharePreviewText(d, table, host, claim) {
+/// A decoded build as the names it shows — one reading for the text and the card.
+export function shareBuildNames(d, table, host) {
   const nm = (id) => table.names[id] || String(id).replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-  const weapon = nm(d.w);
   const slots = (d.slots || []).map((s) => s && s.mod).filter(Boolean);
-  const mods = slots.filter((m) => !String(m).startsWith("~")).map(nm);
-  const arcanes = (d.arcane || []).filter((a) => a && a !== "none").map(nm);
   const pre = host.evoPrefixFor(d.w);
-  const evos = (d.evos || []).filter(Boolean).map((e) => nm(pre + e));
-  const rivens = (d.rivens || []).map((r) => [
-    ...(r.s.bonuses || []).map((b) => "+" + nm(b.id)),
-    ...(r.s.malus ? ["−" + nm(r.s.malus.id)] : []),
-  ].join(" "));
+  return {
+    weapon: nm(d.w),
+    mods: slots.filter((m) => !String(m).startsWith("~")).map(nm),
+    rivenSlots: slots.filter((m) => String(m).startsWith("~")).length,
+    arcanes: (d.arcane || []).filter((a) => a && a !== "none").map(nm),
+    evolutions: (d.evos || []).filter(Boolean).map((e) => nm(pre + e)),
+    rivens: (d.rivens || []).map((r) => [
+      ...(r.s.bonuses || []).map((b) => "+" + nm(b.id)),
+      ...(r.s.malus ? ["−" + nm(r.s.malus.id)] : []),
+    ].join(" ")),
+  };
+}
+
+export function sharePreviewText(d, table, host, claim) {
+  const { weapon, mods, arcanes, evolutions: evos, rivens } = shareBuildNames(d, table, host);
   const lines = [
     mods.length ? `Mods: ${mods.join(" · ")}` : "",
     rivens.length ? `Riven: ${rivens.join("; ")}` : "",
@@ -455,7 +467,7 @@ const attr = (s) => String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").rep
 /// and Twitter pair, `og:url` naming the link itself — and `noindex`, because a
 /// thousand builds of one weapon are one page to a search engine (the canonical
 /// still names the weapon).
-export function rewriteShareHead(html, preview, url) {
+export function rewriteShareHead(html, preview, url, image) {
   const meta = (key, name, value) => {
     const tag = `<meta ${key}="${name}" content="${attr(value)}" />`;
     const re = new RegExp(`<meta ${key}="${name}" content="[^"]*" />`);
@@ -470,7 +482,58 @@ export function rewriteShareHead(html, preview, url) {
     meta("name", "twitter:title", preview.title),
     meta("name", "twitter:description", preview.description),
     meta("name", "robots", "noindex"),
+    ...(image ? [
+      meta("property", "og:image", image),
+      meta("property", "og:image:width", "1200"),
+      meta("property", "og:image:height", "630"),
+      meta("name", "twitter:card", "summary_large_image"),
+      meta("name", "twitter:image", image),
+    ] : []),
   ].reduce((h, f) => f(h), html);
+}
+
+/// THE CARD'S VERSION, in its address: a card is a pure function of the row and
+/// this code, so a URL that names both may be cached for ever. Bump it when
+/// `share_card.js` changes what it draws.
+const SHARE_CARD_V = "1";
+
+/// The build a short id names, decoded, with its table and claim — or null.
+async function shareRowOf(id, env, url) {
+  const row = await env.LIBRARY.prepare("SELECT weapon, code, claim FROM shares WHERE id = ?").bind(id).first();
+  const table = row && await shareNamesOf(env, url);
+  if (!table) return null;
+  const host = shareHostOf(table);
+  useShareHost(host);
+  const d = await decodeShare(row.code);
+  return d && d.w ? { d, table, host, claim: row.claim ? JSON.parse(row.claim) : null } : null;
+}
+
+/// `/og/s/<id>.png`: the card for one short link, drawn on first ask and kept
+/// in the edge cache under its versioned address. A 404 for anything that is
+/// not a link, so a chat falls back to no image rather than a broken one.
+async function shareCardResponse(id, request, env, ctx) {
+  const cache = typeof caches !== "undefined" ? caches.default : null;
+  const hit = cache && await cache.match(request);
+  if (hit) return hit;
+  let got = null;
+  try { got = env.LIBRARY && await shareRowOf(id, env, request.url); } catch (e) {
+    console.log("share card failed:", (e && e.message) || String(e));
+  }
+  if (!got) return new Response("not found", { status: 404, headers: { "content-type": "text/plain" } });
+  const names = shareBuildNames(got.d, got.table, got.host);
+  const { shareCardSvg } = await import("./share_card.js");
+  const { sharePng } = await import("./share_png.js");
+  const png = await sharePng(shareCardSvg({
+    weapon: names.weapon, mods: names.mods, rivenSlots: names.rivenSlots,
+    riven: names.rivens.join("; "), arcanes: names.arcanes, evolutions: names.evolutions,
+    claim: got.claim ? (({ headline, where }) => ({ headline, line: where }))(claimText(got.claim, got.table)) : null,
+  }));
+  const res = new Response(png, { headers: {
+    "content-type": "image/png",
+    "cache-control": "public, max-age=31536000, immutable",
+  } });
+  if (cache && ctx) ctx.waitUntil(cache.put(request, res.clone()));
+  return res;
 }
 
 /// The build a short id names, as a preview, or null — no row, an unreadable
@@ -478,13 +541,8 @@ export function rewriteShareHead(html, preview, url) {
 async function sharePreviewFor(id, env, url) {
   if (!env.LIBRARY) return null;
   try {
-    const row = await env.LIBRARY.prepare("SELECT weapon, code, claim FROM shares WHERE id = ?").bind(id).first();
-    const table = row && await shareNamesOf(env, url);
-    if (!table) return null;
-    const host = shareHostOf(table);
-    useShareHost(host);
-    const d = await decodeShare(row.code);
-    return d && d.w ? sharePreviewText(d, table, host, row.claim ? JSON.parse(row.claim) : null) : null;
+    const got = await shareRowOf(id, env, url);
+    return got ? sharePreviewText(got.d, got.table, got.host, got.claim) : null;
   } catch (e) {
     console.log("share preview failed:", (e && e.message) || String(e));
     return null;
@@ -563,8 +621,10 @@ async function usage(request, env) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const path = new URL(request.url).pathname;
+    const card = path.match(/^\/og\/s\/([0-9A-Za-z]{10})\.png$/);
+    if (card) return shareCardResponse(card[1], request, env, ctx);
     if (path === "/api/e") {
       if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
       return request.method === "POST" ? usage(request, env) : new Response(null, { status: 405, headers: CORS });
@@ -592,7 +652,8 @@ export default {
       headers.delete("etag");
       headers.delete("content-length");
       const own = new URL(request.url);
-      return new Response(rewriteShareHead(await res.text(), preview, own.origin + own.pathname),
+      const image = `${own.origin}/og/s/${short[2]}.png?v=${SHARE_CARD_V}`;
+      return new Response(rewriteShareHead(await res.text(), preview, own.origin + own.pathname, image),
         { status: res.status, headers });
     }
     if (path === "/api/board/pending") {
