@@ -367,7 +367,9 @@ notes:
     flies there on a clock of its own, so it costs the melee loop no time and
     adds nothing to the combo counter. Melee damage bonuses (Pressure Point,
     the Form's own +100%, Arcane Fury) do not reach it; elements, crit, status
-    and faction do, and Condition Overload reaches the direct hit alone
+    and faction do, Condition Overload reaches the direct hit alone, Melee
+    Careen's frozen multiplier reaches both, and Melee Influence is opened by
+    either and carries only the explosion's rolled statuses
     (W`Okina_Incarnon_Genesis`).
   tonfa_heavy_timing: |
     A HEAVY IS TWO CLOCKS AND EACH HAS ITS OWN BUCKET. Measured on a Tonfa at

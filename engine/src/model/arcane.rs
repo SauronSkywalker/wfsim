@@ -62,6 +62,8 @@ pub enum ArcEffect {
     EncumberChance(Scale),
     ColdBurst { scale: Scale, radius0: f64, radius1: f64 },
     OverguardDamage(Scale),
+    /// MELEE CAREEN — a damage MULTIPLIER on a target at ten Cold stacks.
+    DamageVsFrozen(Scale),
     AmmoEfficiency(Scale),
     /// PRIMARY COMPRESSION, whose worth is a property of the WEAPON: it shrinks
     /// the explosion to a fifth while aiming and pays per metre given up. Both

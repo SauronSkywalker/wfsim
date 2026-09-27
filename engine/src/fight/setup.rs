@@ -1623,6 +1623,14 @@ impl RunResult {
             self.first_kill_at = Some(at);
         }
         self.kills += killed;
+        if self.kill_clock_on && !self.kill_clock_paused {
+            for _ in 0..killed {
+                if self.kill_clock_len < KILL_CLOCK_LEN {
+                    self.kill_clock[self.kill_clock_len] = at;
+                    self.kill_clock_len += 1;
+                }
+            }
+        }
         if in_reach {
             self.kills_in_reach += killed;
         }

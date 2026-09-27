@@ -681,9 +681,12 @@ asserts on the swing count.
 
 WHAT REACHES IT is the part no other attack has: melee damage bonuses do not
 (the dagger resolves with an empty base-damage bucket and ignores the live one),
-elements, crit and status do, and a dagger's own kill makes no dagger. The EVO2
-pair's `Increase Base Damage` lands on the dagger and not the swing, the
-behaviour the wiki files under Bugs.
+elements, crit and status do, Melee Careen's frozen multiplier does, and a
+dagger's own kill makes no dagger. A kill between two swings dates its dagger by
+`RunResult::kill_clock`. Melee Influence is opened by a strike or an explosion
+and carries the explosion's rolled statuses only. The EVO2 pair's `Increase
+Base Damage` lands on the dagger and not the swing, the behaviour the wiki files
+under Bugs. What it still assumes: docs/UNMODELLED.md §"THE OKINA".
 
 ---
 

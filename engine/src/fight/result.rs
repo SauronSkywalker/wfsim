@@ -306,6 +306,9 @@ impl RunResult {
     }
 }
 
+/// How many kill times [`RunResult::kill_clock`] holds between two looks.
+pub const KILL_CLOCK_LEN: usize = 8;
+
 /// Result of a single engagement.
 #[derive(Debug, Clone, Copy, Default)]
 pub struct RunResult {
@@ -424,6 +427,16 @@ pub struct RunResult {
     /// When the FIRST target died. `None` if none did — an honest absence
     /// rather than a zero, which would read as "instantly".
     pub first_kill_at: Option<f64>,
+    /// WHEN EACH KILL SINCE THE LAST LOOK HAPPENED — the spectral daggers'
+    /// clock, kept only in a fight that makes them (`kill_clock_on`). A FIXED
+    /// ARRAY because this struct is `Copy`; six is the most daggers that can
+    /// be alive, so eight is room enough and a ninth kill takes the swing's time.
+    pub(crate) kill_clock: [f64; KILL_CLOCK_LEN],
+    pub(crate) kill_clock_len: usize,
+    pub(crate) kill_clock_on: bool,
+    /// A dagger's own hit is being settled: its kills make no dagger, so they
+    /// stay off the clock.
+    pub(crate) kill_clock_paused: bool,
     /// Effective damage dealt before the first reload started: the opening
     /// window, which is what decides whether a room dies before it reacts.
     pub first_magazine_damage: f64,

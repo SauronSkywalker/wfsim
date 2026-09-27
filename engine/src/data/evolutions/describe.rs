@@ -161,7 +161,7 @@ impl EvolutionDef {
                 ),
                 EvoEffect::MeleeRange(v) => format!("+{v:.1} m of melee reach"),
                 EvoEffect::ComboCountOnStatusHit { status, value } => format!(
-                    "+{value:.0} combo points for every hit that lands on a target carrying a {} status",
+                    "+{value:.0} combo points for every hit a swing lands while the aimed body carries a {} status",
                     status.name()
                 ),
                 EvoEffect::SpectralDaggers(g) => format!(

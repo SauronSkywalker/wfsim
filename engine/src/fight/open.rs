@@ -347,6 +347,7 @@ pub(super) fn open<'a>(
     let opening_closed = false;
     let r = RunResult {
         rng_state: started_at,
+        kill_clock_on: params.spectral_dagger.is_some(),
         ..Default::default()
     };
     // THE BUFF ROSTER the record's stack lists are positional against, built

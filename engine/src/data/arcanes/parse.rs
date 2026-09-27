@@ -188,6 +188,7 @@ pub(super) fn effect(v: &Value) -> Option<ArcEffect> {
             seconds1: f(v, "duration_rankMax").unwrap_or(0.0),
         },
         "overguard_damage_bonus" => ArcEffect::OverguardDamage(scale(v)),
+        "damage_vs_frozen" => ArcEffect::DamageVsFrozen(scale(v)),
         "ammo_efficiency" => ArcEffect::AmmoEfficiency(scale(v)),
         "compression_damage" => ArcEffect::CompressionDamage(scale(v)),
         "compression_ammo_efficiency" => ArcEffect::CompressionAmmoEfficiency(scale(v)),

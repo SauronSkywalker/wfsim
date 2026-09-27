@@ -842,11 +842,13 @@ pub fn run_once_traced(
             &mut me.strip_kills_seen,
         );
         // …AND THE DAGGERS DUE BEFORE THIS SWING, which fly on a clock of their
-        // own and never hold one up.
+        // own and never hold one up — the kills since the last swing made first,
+        // each at its own time.
+        make_daggers(me.seat, me.params, active, t, &mut r, &mut me.dagger_kill_mark, &mut daggers);
         process_daggers(
             &me.windows, &mut daggers, &mut me.gal, &mut me.arc, t,
             me.params, me.params, &me.field_ctx, &mut r, rec, d, &mut bodies,
-            &mut me.dagger_kill_mark,
+            &mut me.dagger_kill_mark, &mut me.influence_until,
         );
         // Secondary Encumber: at most ONE extra proc per instant — pellets
         // of one pull land simultaneously, so one roll per pull.
@@ -1011,7 +1013,7 @@ pub fn run_once_traced(
 
         // A KILL THIS SWING OR ANYTHING BEFORE IT MADE is a spectral dagger, if the
         // form that makes them was up when it swung.
-        make_daggers(me.seat, me.params, active, t, &r, &mut me.dagger_kill_mark, &mut daggers);
+        make_daggers(me.seat, me.params, active, t, &mut r, &mut me.dagger_kill_mark, &mut daggers);
 
         after_the_shot(
             me.params,
@@ -1125,11 +1127,18 @@ pub fn run_once_traced(
         orbs.append(&mut mine);
     }
     for (si, me) in seats.iter_mut().enumerate() {
+        // THE KILLS SINCE THE LAST SWING still make their daggers, and one made
+        // in time lands inside the engagement.
+        let active = match &me.params.cycle {
+            Some(cy) if me.incarnon.in_base_form => &cy.base_form,
+            _ => me.params,
+        };
+        make_daggers(me.seat, me.params, active, end, &mut r, &mut me.dagger_kill_mark, &mut daggers);
         let mut mine = owned_by(&mut daggers, Seat(si), |g| g.owner);
         process_daggers(
             &me.windows, &mut mine, &mut me.gal, &mut me.arc, end,
             me.params, me.params, &me.field_ctx, &mut r, rec, &mut me.d, &mut bodies,
-            &mut me.dagger_kill_mark,
+            &mut me.dagger_kill_mark, &mut me.influence_until,
         );
         daggers.append(&mut mine);
     }

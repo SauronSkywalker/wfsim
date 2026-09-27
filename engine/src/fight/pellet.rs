@@ -571,7 +571,11 @@ pub(super) fn settle_pellet(pellet_idx: u32, shot: &Strike, live: &mut Live) {
     };
     // Primary Compression's `multiplies` row is NOT here: an adding CO's
     // recalculation omits it, so it joins `beside_adding_co` below.
-    let arc_final = params.arcane.final_multiplier * og_mult;
+    // …AND MELEE CAREEN, on the aimed body's own Cold. A body the hit
+    // spreads to reads its own (`spread_hit`), so it is divided back out of
+    // what the spread carries.
+    let careen = careen_factor(params, &mut bodies[0].debuffs, t);
+    let arc_final = params.arcane.final_multiplier * og_mult * careen;
 
     // ---- ATTACK PARTS (MECHANICS §7) -------------------------
     // A projectile carries TWO instances where the weapon declares a
@@ -1414,7 +1418,7 @@ pub(super) fn settle_pellet(pellet_idx: u32, shot: &Strike, live: &mut Live) {
             // behind it.
             if strike_spread.is_none() {
                 *strike_spread = Some(SpreadStrike {
-                    raw_per_bucket: body_only(raw / bucket),
+                    raw_per_bucket: body_only(raw / bucket / careen),
                     shares,
                     crit_multiplier,
                     crit_tier: tier,

@@ -186,3 +186,14 @@ pub(super) fn gunco_bucket(
         ),
     }
 }
+
+/// MELEE CAREEN — *"The damage multiplier only affects enemies that are fully
+/// frozen, i.e. 10 Cold stacks"* (W`Melee_Careen`), on every body a melee hit
+/// or a spectral dagger reaches. 1.0 without the card or below ten.
+pub(super) fn careen_factor(params: &FightParams, debuffs: &mut DebuffState, t: f64) -> f64 {
+    if params.arcane.frozen_multiplier != 1.0 && debuffs.cold_status_count(t) >= 10 {
+        params.arcane.frozen_multiplier
+    } else {
+        1.0
+    }
+}

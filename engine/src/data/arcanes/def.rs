@@ -321,6 +321,7 @@ impl ArcaneDef {
                     fx.influence_radius_m = lerp(*radius0, *radius1);
                     fx.influence_seconds = lerp(*seconds0, *seconds1);
                 }
+                ArcEffect::DamageVsFrozen(sc) => fx.frozen_multiplier = sc.at(rank, self.max_rank),
                 ArcEffect::OverguardDamage(sc) => {
                     fx.overguard_multiplier = 1.0 + sc.at(rank, self.max_rank);
                 }
@@ -403,6 +404,7 @@ impl ArcaneDef {
                 // NO `X` TO FILL: this card's text carries its numbers
                 // literally, the way every melee arcane's does.
                 ArcEffect::StatusSpread { .. }
+                | ArcEffect::DamageVsFrozen(_)
                 | ArcEffect::HeadshotMultiplier { .. }
                 | ArcEffect::ReloadSpeed { .. }
                 | ArcEffect::Inert(_) | ArcEffect::Elsewhere(_) => {}
@@ -595,6 +597,10 @@ impl ArcaneDef {
                 // Overguard" is the card, ×9 is what it does (M38). Printing
                 // the total here would put a number on the panel that appears
                 // nowhere in game.
+                ArcEffect::DamageVsFrozen(sc) => out.push(format!(
+                    "x{:.2} damage to a target at ten Cold stacks — every melee hit and every spectral dagger",
+                    at(sc)
+                )),
                 ArcEffect::OverguardDamage(sc) => out.push(format!(
                     "×{:.0} extra damage to Overguard (×{:.0} in total)",
                     at(sc),

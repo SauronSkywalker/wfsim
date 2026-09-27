@@ -331,7 +331,8 @@ pub(super) fn spread_hit(
     // not interchangeable: `share` scales the hit AND the modded base its DoTs
     // are computed from, while a head multiplier scales the hit alone. 1.0 for
     // every mechanism but the ricochet, so this changes nothing anywhere else.
-    let raw = raw_per_bucket * bucket.bucket * inst.share * inst.part_factor;
+    let careen = careen_factor(params, &mut foe.debuffs, t);
+    let raw = raw_per_bucket * bucket.bucket * inst.share * inst.part_factor * careen;
     if raw <= 0.0 {
         return Landed::default();
     }
@@ -405,6 +406,7 @@ pub(super) fn spread_hit(
                 (crate::record::Factor::ConditionOverload, bucket.bucket),
                 (crate::record::Factor::HopFalloff, inst.share),
                 (crate::record::Factor::BodyPart, inst.part_factor),
+                (crate::record::Factor::ArcaneFinal, careen),
             ]),
             head: inst.headshot,
             // …AND THE TIER, so the row states the multiplier it was built

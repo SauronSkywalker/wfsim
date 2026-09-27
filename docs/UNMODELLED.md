@@ -405,6 +405,27 @@ the radial's — the second is the shape the code already has and is the way in.
 Aiming AT a body, or within a body's width of one, is unaffected: the line
 crosses it, the shot lands, and the sphere seeds from its surface as it should.
 
+## THE OKINA — what its daggers and its Genesis still assume
+
+The spectral daggers are modelled (`fight::daggers`, `notes:
+okina_spectral_dagger`): the kill that makes one and its time, six at most,
+the flight, the strike and the explosion, what reaches them (no melee damage
+bonus; elements, crit, status, faction, Condition Overload on the strike,
+Melee Careen on both) and Melee Influence opened by either and carrying only
+the explosion's rolled statuses. What is left:
+
+- **The ORBIT and the TARGET are stand-ins.** How long a dagger circles before
+  it seeks is unpublished (1.0 s on the EVO1 card), and which body it seeks is
+  unpublished too (the nearest inside 15 m). On every Okina entry's page
+  (`spectral_dagger_orbit_and_target_assumed`). A measurement closes both.
+- **The class heavy is 2x against the class table's 5x** — sourced, unmeasured
+  (`dual_daggers_heavy_unmeasured`, `notes: dual_daggers_heavy`).
+- **Seeing Red reads the AIMED body's bleed** for every hit a swing lands; a
+  swing reaching a second body pays that body's hits off the first one's state.
+  Its card line says so.
+- **Edges, not gaps**: Sprint Speed, Parkour Velocity, Swordsman's Celerity and
+  the held 5% Movement Speed (`no_movement`), Standoff (`no_holster`).
+
 ## Open decisions, not missing machinery
 
 These are things the engine COULD do today and deliberately does not, because

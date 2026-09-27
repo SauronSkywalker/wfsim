@@ -2,8 +2,8 @@
 //!
 //! An ENTITY, like an orb: made by a kill, it orbits the wielder, seeks a body
 //! and strikes it on a clock of its own, so the swing loop never waits for it.
-//! What it deals is settled through [`field_tick`], the one function every
-//! timed damage instance in this engine shares.
+//! What it deals is settled through [`field_tick_seeded`], the one function
+//! every timed damage instance in this engine shares.
 use super::*;
 
 /// ONE DAGGER between the kill that made it and the body it strikes.
@@ -21,27 +21,26 @@ pub(super) struct DaggerState {
 }
 
 /// MAKE A DAGGER FOR EVERY KILL SINCE THE LAST LOOK, while the form making them
-/// is up.
+/// is up, each AT ITS KILL'S OWN TIME (`RunResult::kill_clock`).
 ///
 /// *"Kills from the daggers will not generate new daggers, but kills from
-/// status procs created by daggers will"* — `kill_mark` is advanced past a
-/// dagger's own kills where they are settled ([`process_daggers`]), so what is
-/// left here is every other kill: a swing's, a status tick's, a slam's.
-///
-/// A KILL IS SEEN AT THE NEXT SWING, which is when this runs. A status kill
-/// between two swings makes its dagger up to one swing late — a fraction of a
-/// second against a one-second orbit.
+/// status procs created by daggers will"* — a dagger's own hit pauses the clock
+/// and advances `kill_mark` past what it killed ([`process_daggers`]), so what
+/// is left here is every other kill: a swing's, a status tick's, a slam's.
 pub(super) fn make_daggers(
     owner: Seat,
     params: &FightParams,
     active: &FightParams,
     t: f64,
-    r: &RunResult,
+    r: &mut RunResult,
     kill_mark: &mut u32,
     live: &mut Vec<DaggerState>,
 ) {
     let fresh = r.kills.saturating_sub(*kill_mark);
     *kill_mark = r.kills;
+    let clock = r.kill_clock;
+    let timed = r.kill_clock_len;
+    r.kill_clock_len = 0;
     let Some(g) = active.spectral_dagger else { return };
     // *"Up to 6 daggers can be active at once"* — a kill with no room makes none.
     let alive = live.iter().filter(|d| d.owner == owner).count() as u32;
@@ -59,12 +58,15 @@ pub(super) fn make_daggers(
         .map(|(b, &at)| (b, crate::rules::space::gap(params.player_at, at)))
         .filter(|&(_, d)| d <= g.rules.seek_range_m)
         .min_by(|a, b| a.1.total_cmp(&b.1).then(a.0.cmp(&b.0)));
-    for _ in 0..n {
+    // A KILL PAST THE CLOCK'S LENGTH is dated to this look.
+    let births = clock[..timed].iter().map(|&at| at.min(t)).chain(std::iter::repeat(t));
+    for born in births.take(n as usize) {
         live.push(DaggerState {
             owner,
             part: g,
             body: target.map(|(b, _)| b),
-            strikes_at: target.map_or(f64::INFINITY, |(_, d)| t + g.rules.orbit_seconds + d / g.speed_mps.max(1e-9)),
+            strikes_at: target
+                .map_or(f64::INFINITY, |(_, d)| born + g.rules.orbit_seconds + d / g.speed_mps.max(1e-9)),
         });
     }
 }
@@ -77,6 +79,12 @@ pub(super) fn make_daggers(
 /// status, takes Condition Overload and forces ten Cold stacks — and then
 /// EXPLODES there, reaching every body inside its sphere with a forced Cold of
 /// its own and no Condition Overload.
+///
+/// …AND MELEE INFLUENCE (W`Okina_Incarnon_Genesis`): *"Dagger direct hits and
+/// AoEs can activate Melee Influence's buff, but only statuses procced from the
+/// dagger AoE will be spread by the effect"*, and *"Forced cold procs will not
+/// be spread"*. The window is the wielder's own (`influence_until`), the one
+/// the swings read and open.
 #[allow(clippy::too_many_arguments)]
 pub(super) fn process_daggers(
     // See `process_ticks`.
@@ -93,11 +101,13 @@ pub(super) fn process_daggers(
     d: &mut crate::rules::rng::Draws,
     bodies: &mut [Body],
     kill_mark: &mut u32,
+    influence_until: &mut f64,
 ) {
     if daggers.is_empty() {
         return;
     }
     let body_at = params.body_positions();
+    let influence = params.arcane.influence_chance > 0.0;
     while let Some(i) = daggers
         .iter()
         .enumerate()
@@ -114,13 +124,27 @@ pub(super) fn process_daggers(
             &params.foe, 0,
         );
         let kills_before = r.kills;
-        let mut hit = |k: usize, part: &crate::build::loadout::ResolvedLingering, mult: f64, is_blast: bool, bodies: &mut [Body], r: &mut RunResult, rec: &mut crate::record::Record, d: &mut crate::rules::rng::Draws| {
-            let (Some(spec), Some(here)) = (params.body(k), bodies.get_mut(k)) else { return };
-            let killed = field_tick(
+        r.kill_clock_paused = true;
+        // WHAT THE HIT LEFT FOR INFLUENCE, and whether it killed — a body the
+        // hit killed seeds nothing (*"hits that one-hit-kill enemies cannot
+        // trigger nor benefit"*).
+        let mut hit = |k: usize,
+                       part: &crate::build::loadout::ResolvedLingering,
+                       falloff: f64,
+                       is_blast: bool,
+                       bodies: &mut [Body],
+                       r: &mut RunResult,
+                       rec: &mut crate::record::Record,
+                       d: &mut crate::rules::rng::Draws|
+         -> Option<InfluenceSeed> {
+            let (Some(spec), Some(here)) = (params.body(k), bodies.get_mut(k)) else { return None };
+            let mut seed = InfluenceSeed::default();
+            let killed = field_tick_seeded(
                 w,
                 dagger.owner,
-                part, mult, at, ctx, here, k, gal, arc, params, active, r, rec, d,
+                part, falloff, at, ctx, here, k, gal, arc, params, active, r, rec, d,
                 spec.params, crate::record::Origin::SpectralDagger, None, is_blast,
+                influence.then_some(&mut seed),
             );
             // THE BODY THAT STANDS BACK UP IS A NEW INDIVIDUAL, so the pile
             // the last one wore goes with it — before the explosion lands, so
@@ -131,18 +155,42 @@ pub(super) fn process_daggers(
                 } else {
                     bodies[k].debuffs.on_death(dagger.owner, None, spec.params);
                 }
+                return None;
             }
+            Some(seed)
         };
-        hit(b, &dagger.part.strike, 1.0, false, bodies, r, rec, d);
+        let mut electricity = hit(b, &dagger.part.strike, 1.0, false, bodies, r, rec, d)
+            .is_some_and(|s| s.electricity);
         let centre = body_at[b];
+        let mut blast_seeds: Vec<(usize, InfluenceSeed)> = Vec::new();
         for (k, &pos) in body_at.iter().enumerate() {
             let dist = pos.distance(centre);
             if !crate::rules::space::caught_by_blast(dist, dagger.part.blast.radius_m) {
                 continue;
             }
-            let mult = dagger.part.blast.falloff_at(crate::rules::space::blast_reach(dist));
-            hit(k, &dagger.part.blast, mult, true, bodies, r, rec, d);
+            let falloff = dagger.part.blast.falloff_at(crate::rules::space::blast_reach(dist));
+            if let Some(seed) = hit(k, &dagger.part.blast, falloff, true, bodies, r, rec, d) {
+                electricity |= seed.electricity;
+                blast_seeds.push((k, seed));
+            }
         }
+        if influence {
+            // THE SPREAD READS THE WINDOW THIS DAGGER FOUND OPEN, and the roll
+            // that opens it comes after — the order a swing keeps.
+            let open = at < *influence_until;
+            if open {
+                for (k, seed) in &blast_seeds {
+                    let Some(scale) = seed.scale else { continue };
+                    spread_from_influence(
+                        dagger.owner, &body_at, bodies, params, active, *k, &seed.carried, scale,
+                        params.arcane.influence_radius_m, gal, arc, r, rec, d, at,
+                    );
+                }
+            } else if electricity && d.extra.chance(params.arcane.influence_chance) {
+                *influence_until = at + params.arcane.influence_seconds;
+            }
+        }
+        r.kill_clock_paused = false;
         // …AND WHAT IT KILLED MAKES NO DAGGER of its own.
         *kill_mark += r.kills - kills_before;
     }

@@ -118,6 +118,9 @@ pub struct ArcaneFx {
     /// Secondary Fortifier: total damage multiplier while the target still
     /// has Overguard (x3..x8 in-game → stored as the multiplier). 1.0 = none.
     pub overguard_multiplier: f64,
+    /// Melee Careen: the multiplier a hit takes on a target at ten Cold
+    /// stacks (x1.25..x2.5). 1.0 = none.
+    pub frozen_multiplier: f64,
     /// Akimbo Slip Strike under assumed-max (sliding/aim-gliding not simmed):
     /// added to BuffBar ammo efficiency. Gated on the `dual_pistols` trait.
     pub ammo_efficiency: f64,
@@ -171,6 +174,7 @@ impl Default for ArcaneFx {
             encumber_chance: 0.0,
             cold_bursts_on_puncture: 0,
             overguard_multiplier: 1.0,
+            frozen_multiplier: 1.0,
             ammo_efficiency: 0.0,
             compression_damage_per_m: 0.0,
             compression_effectiveness_per_m: 0.0,
@@ -265,6 +269,7 @@ impl ArcaneFx {
                     // would invent a stacking rule nothing states.
                     out.debilitate_chance = out.debilitate_chance.max(a.debilitate_chance);
                     out.overguard_multiplier *= a.overguard_multiplier;
+                    out.frozen_multiplier *= a.frozen_multiplier;
                 }
                 out
             }

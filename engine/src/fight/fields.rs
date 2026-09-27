@@ -268,6 +268,48 @@ pub(super) fn process_field_ticks(
 #[allow(clippy::too_many_arguments)]
 pub(super) fn field_tick(
     w: &CardWindows,
+    owner: Seat,
+    f: &crate::build::loadout::ResolvedLingering,
+    damage_multiplier: f64,
+    at: f64,
+    ctx: &FieldCtx,
+    body: &mut Body,
+    body_index: usize,
+    gal: &mut GalStacks,
+    arc: &mut ArcRuntime,
+    params: &FightParams,
+    active: &FightParams,
+    r: &mut RunResult,
+    rec: &mut crate::record::Record,
+    d: &mut crate::rules::rng::Draws,
+    foe: &Foe,
+    origin: crate::record::Origin,
+    head_chance: Option<f64>,
+    is_blast: bool,
+) -> bool {
+    field_tick_seeded(
+        w, owner, f, damage_multiplier, at, ctx, body, body_index, gal, arc, params, active, r, rec, d,
+        foe, origin, head_chance, is_blast, None,
+    )
+}
+
+/// WHAT A TIMED INSTANCE LEFT FOR MELEE INFLUENCE — the statuses it rolled,
+/// each with its share of the instance, and the scale they were settled at.
+/// Only a spectral dagger asks for one (`fight::daggers`).
+#[derive(Debug, Clone, Default)]
+pub(super) struct InfluenceSeed {
+    /// The ROLLED statuses Influence may carry, forced ones left out: *"Forced
+    /// cold procs will not be spread"*.
+    pub(super) carried: Vec<(DamageType, f64)>,
+    pub(super) scale: Option<InstanceScale>,
+    /// Did it land an Electricity status — what opens the window.
+    pub(super) electricity: bool,
+}
+
+/// [`field_tick`], and when `seed` is given, what it left for Melee Influence.
+#[allow(clippy::too_many_arguments)]
+pub(super) fn field_tick_seeded(
+    w: &CardWindows,
     // WHOSE CLOUD — carried from the [`FieldState`] rather than assumed, for
     // the same reason the state holds it: this tick can be long after the
     // pull that left it, and long after whoever left it stopped firing.
@@ -312,8 +354,12 @@ pub(super) fn field_tick(
     // this engine happens to settle it through the same function a cloud's tick
     // goes through.
     is_blast: bool,
+    seed: Option<&mut InfluenceSeed>,
 ) -> bool {
     let Body { state: target, debuffs } = body;
+    // MELEE CAREEN reaches a spectral dagger, and a melee weapon's only timed
+    // parts are its daggers.
+    let careen = careen_factor(params, debuffs, at);
     let status_damage = params.status_duration_multiplier;
     let mit = debuffs.mitigation(at, status_damage, params.armor_strip_per_puncture, params.squad.enemy_armor_multiplier);
     // The field is its own attack part, so the ability elements are sized off
@@ -420,7 +466,8 @@ pub(super) fn field_tick(
     let raw =
         qtotal * crit_multiplier * part_factor * bucket * faction_at(params.faction_at_time(at), DEPTH_HIT)
             * damage_multiplier
-            * params.ability_final_at(at);
+            * params.ability_final_at(at)
+            * careen;
     let col = target.incoming_column(foe);
     let mut breakdown = Breakdown::default();
     let settled = target.apply(
@@ -467,6 +514,7 @@ pub(super) fn field_tick(
             ].into_iter().chain(faction_layers(params, at, DEPTH_HIT)).chain([
                 (crate::record::Factor::FieldDamage, damage_multiplier),
                 (crate::record::Factor::WarframeAbility, params.ability_final_at(at)),
+                (crate::record::Factor::ArcaneFinal, careen),
             ]).collect::<Vec<_>>()),
             ..Instance::default()
         },
@@ -512,11 +560,7 @@ pub(super) fn field_tick(
         &foe.status_immunities,
         &mut d.status,
     );
-    settle_procs(
-        procs,
-        owner,
-        at,
-        InstanceScale {
+    let scale = InstanceScale {
             mb_live,
             crit_multiplier,
             // A STATUS IS STAMPED WITH THE MULTIPLIERS OF THE HIT THAT APPLIED
@@ -533,7 +577,23 @@ pub(super) fn field_tick(
             // takes is that gun's.
             xh_bracket: active.extra_hit_bracket(at, w),
             status_damage_live: 0.0,
-        },
+        };
+    if let Some(s) = seed {
+        let forced_kept = forced.iter().filter(|t| !foe.status_immunities.contains(t)).count();
+        s.electricity = procs.contains(&DamageType::Electricity);
+        s.carried = procs[forced_kept.min(procs.len())..]
+            .iter()
+            .copied()
+            .filter(|ty| influence_can_spread(*ty))
+            .map(|ty| (ty, raw * shares.share(ty)))
+            .collect();
+        s.scale = Some(scale);
+    }
+    settle_procs(
+        procs,
+        owner,
+        at,
+        scale,
         debuffs,
         gal,
         arc,

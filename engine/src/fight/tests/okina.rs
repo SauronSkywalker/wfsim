@@ -8,6 +8,18 @@ use super::*;
 /// training dummy cannot die. `armed` holds the window open from the first
 /// swing, the card knob a test uses to ask what the form is worth.
 fn okina(form: &str, evos: &[&str], mods: &[&str], frail: bool, armed: bool) -> FightParams {
+    okina_with(form, evos, mods, None, frail, armed)
+}
+
+/// …WITH A MELEE ARCANE, at its max rank.
+fn okina_with(
+    form: &str,
+    evos: &[&str],
+    mods: &[&str],
+    arcane: Option<&str>,
+    frail: bool,
+    armed: bool,
+) -> FightParams {
     let weapon = if form.starts_with("okina_prime") { "okina_prime" } else { "okina" };
     let base = crate::model::WeaponBase::from_data(form, false, evos);
     let pool = crate::data::mods::pool_for_weapon(weapon);
@@ -34,7 +46,14 @@ fn okina(form: &str, evos: &[&str], mods: &[&str], frail: bool, armed: bool) -> 
             })
             .collect();
     }
-    let mut p = FightParams::for_panel(&panel, &arena, &crate::data::arcanes::ArcaneFx::none(), || {
+    let fx = arcane.map_or_else(crate::data::arcanes::ArcaneFx::none, |id| {
+        let card = crate::data::arcanes::pool_for_weapon(form, "melee")
+            .into_iter()
+            .find(|a| a.id == id)
+            .unwrap_or_else(|| panic!("the melee pool seats {id}"));
+        card.fx(card.max_rank, crate::model::StackPolicy::Emergent, &[], crate::data::tenno::default_tenno())
+    });
+    let mut p = FightParams::for_panel(&panel, &arena, &fx, || {
         let unarmed: Vec<&str> = evos
             .iter()
             .copied()
@@ -53,11 +72,16 @@ fn okina(form: &str, evos: &[&str], mods: &[&str], frail: bool, armed: bool) -> 
 
 /// The dagger rows of one fight's record, as `(t, effective)`.
 fn dagger_rows(p: &FightParams) -> Vec<(f64, f64)> {
+    rows_of(p, crate::record::Origin::SpectralDagger)
+}
+
+/// One origin's rows of one fight's record, as `(t, effective)`.
+fn rows_of(p: &FightParams, origin: crate::record::Origin) -> Vec<(f64, f64)> {
     record(p, 0x0C1A, 0.0, 30.0, 1_000_000, 0)
         .events()
         .iter()
         .filter_map(|e| match &e.kind {
-            crate::record::Kind::Damage(d) if d.origin == crate::record::Origin::SpectralDagger => {
+            crate::record::Kind::Damage(d) if d.origin == origin => {
                 Some((e.t, d.effective))
             }
             _ => None,
@@ -88,10 +112,20 @@ fn a_kill_makes_a_dagger_and_the_dagger_holds_up_no_swing() {
     assert!(dagger_rows(&without).is_empty());
     // A STRIKE IS NEVER BEFORE ITS ORBIT: the first dagger is made by the first
     // kill, and it circles a full second before it seeks.
+    // …AND IT LANDS AT ITS KILL'S OWN TIME plus the orbit and the flight — not
+    // at the next swing's: the first kill makes the first dagger.
     let first_kill = b.first_kill_at.expect("a kill");
+    let g = with.spectral_dagger.expect("daggers");
+    let flight = with
+        .body_positions()
+        .iter()
+        .map(|&at| crate::rules::space::gap(with.player_at, at))
+        .fold(f64::INFINITY, f64::min)
+        / g.speed_mps;
+    let due = first_kill + g.rules.orbit_seconds + flight;
     assert!(
-        rows[0].0 >= first_kill + 1.0 - 1e-9,
-        "the first dagger lands at {:.2} s, the first kill was at {first_kill:.2} s",
+        (rows[0].0 - due).abs() < 1e-9,
+        "the first dagger lands at {:.4} s, due at {due:.4} s (kill {first_kill:.4} s)",
         rows[0].0
     );
 }
@@ -179,4 +213,83 @@ fn synergist_surety_grows_the_bleeds_and_not_the_hits() {
         direct(&off),
         direct(&on)
     );
+}
+
+/// **MELEE CAREEN REACHES THE DAGGER**, and the dagger is what feeds it: ten
+/// forced Cold stacks is a frozen target, so the explosion after a strike and
+/// every dagger after the first lands on one — *"Daggers can benefit from Melee
+/// Careen's damage multiplier against frozen enemies"*.
+#[test]
+fn melee_careen_multiplies_a_dagger_on_a_frozen_body() {
+    let evo = ["okina_evo1_incarnon_form"];
+    let off = dagger_rows(&okina_with("okina", &evo, &[], None, true, true));
+    let on = dagger_rows(&okina_with("okina", &evo, &[], Some("melee_careen"), true, true));
+    let mean = |v: &[(f64, f64)]| v.iter().map(|x| x.1).sum::<f64>() / v.len().max(1) as f64;
+    assert!(!off.is_empty() && !on.is_empty());
+    assert!(
+        mean(&on) > mean(&off) * 1.3,
+        "x2.5 on a frozen body: a dagger row averages {:.0} -> {:.0}",
+        mean(&off),
+        mean(&on)
+    );
+}
+
+/// **INFLUENCE CARRIES A DAGGER'S EXPLOSION, AND NOT ITS FORCED COLD.** With the
+/// window held open, the Okina's swings spread nothing (they deal no element),
+/// so every Influence row in the fight is a dagger's. With the explosion's own
+/// status roll taken away, what is left is forced Cold alone, and that spreads
+/// nothing at all.
+#[test]
+fn influence_carries_a_daggers_explosion_and_not_its_forced_cold() {
+    let evo = ["okina_evo1_incarnon_form"];
+    let mut p = okina_with("okina", &evo, &[], Some("melee_influence"), true, true);
+    p.influence_open = Some(f64::INFINITY);
+    let mut no_daggers = p.clone();
+    no_daggers.spectral_dagger = None;
+    assert!(
+        rows_of(&no_daggers, crate::record::Origin::Influence).is_empty(),
+        "the swings carry no element, so they spread nothing"
+    );
+    assert!(
+        !rows_of(&p, crate::record::Origin::Influence).is_empty(),
+        "a dagger's explosion rolls Cold, and Influence carries it"
+    );
+    let mut forced_only = p.clone();
+    if let Some(g) = forced_only.spectral_dagger.as_mut() {
+        g.blast.status_chance = 0.0;
+        g.strike.status_chance = 0.0;
+    }
+    assert!(
+        rows_of(&forced_only, crate::record::Origin::Influence).is_empty(),
+        "forced Cold is never spread"
+    );
+}
+
+/// **A DAGGER IS BORN AT ITS KILL'S OWN TIME**, not at the swing that next looks
+/// — a status tick that kills between two swings has its dagger orbiting from
+/// that moment. And six is the most there can be: two more kills with no room
+/// make nothing.
+#[test]
+fn a_dagger_is_born_at_its_kills_own_time_and_six_is_the_most() {
+    let p = okina("okina", &["okina_evo1_incarnon_form"], &[], true, true);
+    let g = p.spectral_dagger.expect("daggers");
+    let flight = p
+        .body_positions()
+        .iter()
+        .map(|&at| crate::rules::space::gap(p.player_at, at))
+        .fold(f64::INFINITY, f64::min)
+        / g.speed_mps;
+    let mut r = RunResult { kills: 8, kill_clock_on: true, ..Default::default() };
+    for (k, at) in [3.0, 3.25, 3.5, 3.75, 4.0, 4.1, 4.15, 4.19].into_iter().enumerate() {
+        r.kill_clock[k] = at;
+    }
+    r.kill_clock_len = 8;
+    let (mut mark, mut live) = (0u32, Vec::new());
+    make_daggers(Seat::WIELDER, &p, &p, 4.2, &mut r, &mut mark, &mut live);
+    assert_eq!(live.len(), 6, "up to six at once");
+    for (k, born) in [3.0, 3.25, 3.5, 3.75, 4.0, 4.1].into_iter().enumerate() {
+        let due = born + g.rules.orbit_seconds + flight;
+        assert!((live[k].strikes_at - due).abs() < 1e-9, "dagger {k}: {} against {due}", live[k].strikes_at);
+    }
+    assert_eq!((mark, r.kill_clock_len), (8, 0), "every kill is spent and the clock is emptied");
 }
