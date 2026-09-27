@@ -292,6 +292,7 @@ pub(super) fn fire_extra_hits(
                 // is a LIVE BUG in the game and is declared as one (M37).
                 attrition: 1.0,
                 xh_bracket: bracket,
+                status_damage_live: 0.0,
             },
             debuffs,
             gal,
@@ -558,10 +559,10 @@ pub(super) fn settle_procs(
     // through an extra damage instance.
     depth: u32,
 ) {
-    let InstanceScale { mb_live, crit_multiplier, part_factor, landing, attrition, xh_bracket } =
+    let InstanceScale { mb_live, crit_multiplier, part_factor, landing, attrition, xh_bracket, status_damage_live } =
         scale;
     let status_damage = params.status_duration_multiplier;
-    let sdm = params.status_damage_multiplier;
+    let sdm = params.status_damage_multiplier + status_damage_live;
     let caps = foe.stack_caps;
     let gcap = |base: usize| caps.map_or(base, |c| base.min(c.general));
     let corrosion_cap_bonus = params.squad.cap_bonus("corrosion");
@@ -1088,6 +1089,7 @@ pub(super) fn settle_procs(
                         // so a Blast it splits out detonates behind the same
                         // bracket the parent's would have.
                         xh_bracket,
+                        status_damage_live,
                     },
                     debuffs,
                     gal,

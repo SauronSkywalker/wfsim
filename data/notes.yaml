@@ -343,6 +343,32 @@ notes:
     848/212, Ohma 896/224, Telos Boltace 840/210, Praedos 800/200), and it is
     unanimous where the module is one row. The HIT COUNT is the module's and the
     TOTAL is the export's, so each of the two hits is 200%.
+  dual_daggers_heavy: |
+    SAVAGE TIGER — the Dual Daggers' own heavy, identical on every stance
+    because it is the CLASS's rather than the card's.
+
+    IT IS 2x, AND TWO WIKI SOURCES DISAGREE. The weapon's own infobox
+    (`Module:Weapons/data/melee`) prints `HeavyAttack = 280` on a 140 Okina and
+    368 on a 184 Okina Prime; W`Melee`'s class table prints "5x (2.5x Slash +
+    2.5x Slash)" and `Module:Stances/data` prints `Dmg = { 250 }, Hits = { 2 }`.
+    The weapon's own page wins over a family overview (docs/WEAPON_INTAKE.md
+    §1), and DE's export agrees on all six Dual Daggers. The HIT COUNT is the
+    stance module's, so each of the two hits is 100%. Unmeasured.
+
+    THE WIND-UP is the infobox's `WindUp = 0.5`, split the way
+    `heavy_charge_share_assumed` states.
+  okina_spectral_dagger: |
+    THE SPECTRAL DAGGER — what an Okina's Incarnon Form makes of a kill. The
+    attack is the infobox's (`Spectral Dagger` and its `Spectral Dagger
+    Explosion`, 18 m/s, a 4 m sphere with no falloff and a forced Cold); WHEN
+    one is made is the Genesis's (`spectral_daggers` on EVO1).
+
+    IT IS NOT A SWING. A dagger orbits the wielder, seeks a body inside 15 m and
+    flies there on a clock of its own, so it costs the melee loop no time and
+    adds nothing to the combo counter. Melee damage bonuses (Pressure Point,
+    the Form's own +100%, Arcane Fury) do not reach it; elements, crit, status
+    and faction do, and Condition Overload reaches the direct hit alone
+    (W`Okina_Incarnon_Genesis`).
   tonfa_heavy_timing: |
     A HEAVY IS TWO CLOCKS AND EACH HAS ITS OWN BUCKET. Measured on a Tonfa at
     1.0x attack speed: the CHARGE is 0.4 s and the swing after it 0.8 s, 1.2 s

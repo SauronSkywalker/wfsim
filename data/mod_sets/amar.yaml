@@ -1,0 +1,14 @@
+id: amar
+name: Amar
+# 3 mods: two Warframe mods and one Dual Daggers mod. VERBATIM (wiki Amar's Set):
+#
+#   Teleport to a target within X meters on using a Heavy Attack.
+#
+# 10 / 20 / 30 m by pieces seated. A teleport moves the Tenno and deals nothing,
+# and nobody moves in this arena.
+members: 3
+bonus:
+  kind: unmodelled
+  per_mod: 0.0
+source:
+  url: https://wiki.warframe.com/w/Amar%27s_Set

@@ -160,6 +160,18 @@ impl EvolutionDef {
                     "+{v:.0} combo points for every body the slam reached, scaled by combo                      count chance — the only thing that earns combo on a heavy mode"
                 ),
                 EvoEffect::MeleeRange(v) => format!("+{v:.1} m of melee reach"),
+                EvoEffect::ComboCountOnStatusHit { status, value } => format!(
+                    "+{value:.0} combo points for every hit that lands on a target carrying a {} status",
+                    status.name()
+                ),
+                EvoEffect::SpectralDaggers(g) => format!(
+                    "every kill makes a spectral dagger, up to {} at once: it orbits for {:.1}s, flies at the                      nearest body within {:.0} m and strikes it with {} forced Cold stacks, then explodes —                      on its own clock, so no swing waits for it",
+                    g.max_alive, g.orbit_seconds, g.seek_range_m, g.forced_cold_stacks
+                ),
+                EvoEffect::SpectralDaggerFlatBaseDamage(v) => format!(
+                    "+{v:.0} base damage on the spectral daggers only — the swing does not take it"
+                ),
+                EvoEffect::StatusDurationBonus(v) => format!("+{:.0}% status duration", v * 100.0),
                 EvoEffect::FollowThroughBonus(v) => format!(
                     "+{:.0}% follow through — a bigger share for every body a swing reaches                      past the first",
                     v * 100.0

@@ -1061,6 +1061,17 @@ pub struct WeaponBase {
     /// Incarnon is not this: it is a second weapon entry with its own attack,
     /// and it ends when its charge magazine does.
     pub melee_incarnon: Option<MeleeIncarnon>,
+    /// THE DAGGER'S ATTACK, from the weapon entry — see [`SpectralDaggerBase`].
+    /// Nothing fires it until `spectral_dagger_rules` says when.
+    pub spectral_dagger: Option<crate::model::SpectralDaggerBase>,
+    /// …AND WHEN, from the Genesis tier that makes them. `None` outside the
+    /// Incarnon Form's panel, which is what keeps them off an unarmed swing.
+    pub spectral_dagger_rules: Option<crate::model::SpectralDaggerRules>,
+    /// Points the combo counter gains per landed hit on a target carrying this
+    /// status (Seeing Red's `5 additional Combos` on a Slash-afflicted one).
+    pub evo_combo_count_on_status_hit: Option<(crate::rules::damage::DamageType, f64)>,
+    /// Status DURATION from an evolution, into the bucket the mods feed.
+    pub evo_status_duration_bonus: f64,
     /// A relative change to Follow Through, from an evolution.
     pub evo_follow_through_bonus: f64,
     /// A relative change to a slam's radius, from an evolution.

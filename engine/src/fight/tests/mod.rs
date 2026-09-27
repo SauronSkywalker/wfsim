@@ -23,6 +23,7 @@ mod incarnon_reload_route;
 mod m102_latron_prime;
 mod m103_latron_punch_through;
 mod melee;
+mod okina;
 mod orbs_fields_beams;
 mod overguard_status;
 mod pellet_volley;
@@ -191,6 +192,7 @@ impl Default for FightParams {
             combo_count_chance_on_lifted: 0.0,
             combo_gain_chance: 0.0,
             combo_count_on_slam_hit: 0.0,
+            combo_count_on_status_hit: None,
             status_chance_on_lifted: 0.0,
             heavy_attack_damage: 0.0,
             slam_damage: 0.0,
@@ -250,6 +252,7 @@ impl Default for FightParams {
             orb: None,
             orb_strike: None,
             orb_blast: None,
+            spectral_dagger: None,
             meter: None,
             squad_size: 1,
         }
@@ -451,6 +454,8 @@ fn cloud(stacking: crate::model::FieldStacking) -> crate::build::loadout::Resolv
         stacking,
         takes_condition_overload: true,
         co_behavior: None,
+        forced_proc_count: 1,
+        excludes_live_base_damage: false,
     }
 }
 
@@ -506,6 +511,8 @@ fn orb_part(damage: f64) -> crate::build::loadout::ResolvedLingering {
         stacking: crate::model::FieldStacking::Stack,
         takes_condition_overload: false,
         co_behavior: None,
+        forced_proc_count: 1,
+        excludes_live_base_damage: false,
     }
 }
 

@@ -575,6 +575,20 @@ weapons:
   tombfinger_secondary: 墓指
   vermisplicer_primary: 虫置
   vermisplicer_secondary: 虫置
+  okina: 翁
+  okina_forward: 翁
+  okina_block: 翁
+  okina_block_forward: 翁
+  okina_heavy: 翁
+  okina_slide: 翁
+  okina_heavy_slam: 翁
+  okina_prime: 翁 Prime
+  okina_prime_forward: 翁 Prime
+  okina_prime_block: 翁 Prime
+  okina_prime_block_forward: 翁 Prime
+  okina_prime_heavy: 翁 Prime
+  okina_prime_slide: 翁 Prime
+  okina_prime_heavy_slam: 翁 Prime
 
 enemies:
   demolisher_devourer: 爆破型吞噬者
@@ -1026,6 +1040,10 @@ mods:
   sundering_strike: 破甲
   tek_gravity: 技法 引力
   truths_flame: 真相之焰
+  amars_contempt: 欺谋狼主之鄙
+  gnashing_payara: 狼鱼咬咬
+  sinking_talon: 沉没之爪
+  spinning_needle: 旋压刺针
 
 arcanes:
   akimbo_slip_shot: 双枪·滑射

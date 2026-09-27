@@ -1,0 +1,15 @@
+id: okina_commodores_fortune
+name: Commodore's Fortune
+weapon: okina
+tier: 4
+icon: HighCrit(xWhite).png
+description: "Increase Base Critical Chance by +12%."
+selection: choose_one
+
+effects:
+  # BASE crit chance, so every crit mod multiplies it — the dagger's too.
+  - kind: flat_base_crit_chance
+    value: 0.12
+
+source:
+  url: https://wiki.warframe.com/w/Okina_Incarnon_Genesis

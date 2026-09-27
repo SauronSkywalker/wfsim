@@ -1,0 +1,17 @@
+id: okina_prime_alchemy_of_war
+name: Alchemy of War
+weapon: okina_prime
+tier: 4
+icon: HighStatus(xWhite).png
+description: "Increase Base Status Chance by +12%.\n+25% Status Duration"
+selection: choose_one
+
+effects:
+  - kind: flat_base_status_chance
+    value: 0.12
+  # from: "+25% Status Duration" — the bucket the mods feed.
+  - kind: status_duration_bonus
+    value: 0.25
+
+source:
+  url: https://wiki.warframe.com/w/Okina_Incarnon_Genesis

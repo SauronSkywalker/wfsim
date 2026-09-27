@@ -11,7 +11,7 @@
 # refuse on purpose, and the reason rides beside it. The export answers "does
 # a mod for this weapon exist", which is not "may a player equip it here".
 #
-# 92 of 199 carried, 7 excluded on purpose, 100 still to transcribe.
+# 93 of 199 carried, 7 excluded on purpose, 99 still to transcribe.
 #
 # THE ROSTER THIS WAS JOINED AGAINST, because a survey nobody re-runs
 # reports the question it was asked LAST time. This file sat at 20 rows
@@ -24,7 +24,7 @@
 # stale and RED. Only this script can clear it, and only on a machine
 # with `vendor/` — which is why the guard is a comparison here rather
 # than a regeneration in CI, where the export does not exist.
-roster: 463
+roster: 465
 mods:
   - name: Acid Shells
     compat: Sobek
@@ -215,7 +215,7 @@ mods:
     compat: Catabolyst
     kind: SECONDARY
     internal_name: /Lotus/Upgrades/Mods/Pistol/Event/Nightwave/NightwaveCatabolystAugmentMod
-    carried: ~
+    carried: data/mods/pistol/critical_mutation.yaml
   - name: Critical Precision
     compat: Tiberon
     kind: PRIMARY

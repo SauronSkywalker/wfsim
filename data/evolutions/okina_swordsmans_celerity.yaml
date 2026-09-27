@@ -1,0 +1,15 @@
+id: okina_swordsmans_celerity
+name: Swordsman's Celerity
+weapon: okina
+tier: 3
+icon: MovementSpeedWhileEquipped(xWhite).png
+description: "+30% Movement Speed"
+selection: choose_one
+
+effects:
+  - kind: out_of_scope
+    clause: "+30% Movement Speed"
+    reason: no_movement
+
+source:
+  url: https://wiki.warframe.com/w/Okina_Incarnon_Genesis

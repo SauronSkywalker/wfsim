@@ -33,6 +33,10 @@ pub(super) struct InstanceScale {
     /// count for a stack applied while it was up, the same rule `value`
     /// already follows.
     pub(super) xh_bracket: f64,
+    /// STATUS DAMAGE A LIVE BUFF ADDS as of the hit (Synergist Surety's
+    /// on-crit stacks) — the same bucket `status_damage_multiplier` sums the
+    /// cards into, snapshotted like everything else a status takes from its hit.
+    pub(super) status_damage_live: f64,
 }
 
 /// The GunCO-family bracket for one damage instance — MECHANICS §6. Every

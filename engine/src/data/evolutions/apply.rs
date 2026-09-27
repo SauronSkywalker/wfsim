@@ -97,6 +97,10 @@ pub fn apply(base: &mut WeaponBase, evos: &[&EvolutionDef]) {
                     if let Some(f) = base.lingering.as_mut() {
                         f.base_crit_chance += v;
                     }
+                    if let Some(g) = base.spectral_dagger.as_mut() {
+                        g.strike.base_crit_chance += v;
+                        g.blast.base_crit_chance += v;
+                    }
                 }
                 // BASE multishot, so the multishot MODS multiply it — the
                 // same bracket a weapon's own innate multishot sits in. Not
@@ -114,6 +118,24 @@ pub fn apply(base: &mut WeaponBase, evos: &[&EvolutionDef]) {
                 EvoEffect::InitialCombo(v) => base.evo_initial_combo += v,
                 EvoEffect::ComboCountOnSlamHit(v) => base.evo_combo_count_on_slam_hit += v,
                 EvoEffect::MeleeRange(v) => base.evo_melee_range_m += v,
+                EvoEffect::ComboCountOnStatusHit { status, value } => {
+                    let e = base.evo_combo_count_on_status_hit.get_or_insert((*status, 0.0));
+                    e.1 += value;
+                }
+                EvoEffect::SpectralDaggers(rules) => base.spectral_dagger_rules = Some(*rules),
+                // ONTO THE DAGGER'S TWO PARTS, pro-rata, and not onto the swing —
+                // the card's bug, which is the behaviour (see the variant).
+                EvoEffect::SpectralDaggerFlatBaseDamage(v) => {
+                    if let Some(g) = base.spectral_dagger.as_mut() {
+                        for part in [&mut g.strike, &mut g.blast] {
+                            let total = part.base_vector.total();
+                            if total > 0.0 {
+                                part.base_vector = part.base_vector.scale((total + v) / total);
+                            }
+                        }
+                    }
+                }
+                EvoEffect::StatusDurationBonus(v) => base.evo_status_duration_bonus += v,
                 EvoEffect::IncarnonWindow { arm_at_combo, seconds } => {
                     let w = base.melee_incarnon.get_or_insert(crate::model::MeleeIncarnon {
                         arm_at_combo: f64::INFINITY,
@@ -168,6 +190,10 @@ pub fn apply(base: &mut WeaponBase, evos: &[&EvolutionDef]) {
                     if let Some(f) = base.lingering.as_mut() {
                         f.base_status_chance += v;
                     }
+                    if let Some(g) = base.spectral_dagger.as_mut() {
+                        g.strike.base_status_chance += v;
+                        g.blast.base_status_chance += v;
+                    }
                 }
                 EvoEffect::FlatBaseStatusChanceByForm { base: b, incarnon } => {
                     // The Incarnon entry is the one carrying the `incarnon:`
@@ -181,6 +207,10 @@ pub fn apply(base: &mut WeaponBase, evos: &[&EvolutionDef]) {
                     if let Some(f) = base.lingering.as_mut() {
                         f.base_status_chance += v;
                     }
+                    if let Some(g) = base.spectral_dagger.as_mut() {
+                        g.strike.base_status_chance += v;
+                        g.blast.base_status_chance += v;
+                    }
                 }
                 EvoEffect::FlatBaseCritMultiplier(v) => {
                     base.base_crit_damage += v;
@@ -189,6 +219,10 @@ pub fn apply(base: &mut WeaponBase, evos: &[&EvolutionDef]) {
                     }
                     if let Some(f) = base.lingering.as_mut() {
                         f.base_crit_damage += v;
+                    }
+                    if let Some(g) = base.spectral_dagger.as_mut() {
+                        g.strike.base_crit_damage += v;
+                        g.blast.base_crit_damage += v;
                     }
                 }
                 // BASE FORM ONLY, and the gate is load-bearing: an Incarnon

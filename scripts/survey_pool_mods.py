@@ -64,6 +64,9 @@ POOL_TAG = {
     ('MELEE', 'Melee'): 'melee',
     ('STANCE', 'Hammers'): 'hammer',
     ('STANCE', 'Tonfas'): 'tonfa',
+    # …AND A CLASS'S OWN MELEE CARD beside its stances (Amar's Contempt).
+    ('STANCE', 'Dual Daggers'): 'dual_daggers',
+    ('MELEE', 'Dual Daggers'): 'dual_daggers',
 }
 
 # A POOL NO EXPORT TAG CAN FILL, by declaration: the card in it is not an item.

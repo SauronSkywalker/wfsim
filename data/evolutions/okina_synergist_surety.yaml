@@ -1,0 +1,27 @@
+id: okina_synergist_surety
+name: Synergist Surety
+weapon: okina
+tier: 2
+icon: OnCriticalHitGainXStatusDamage(xWhite).png
+description: "Increase Base Damage by +60.\nOn Critical Hit: +8% Status Damage for 10s. Stacks up to 5x."
+# THIS WEAPON'S COLUMN; the Okina Prime's differs on both lines.
+selection: choose_one
+
+effects:
+  # from: "Increase Base Damage by +60" — and the wiki files what it does
+  # under Bugs: "give base weapon damage instead of base melee damage, which
+  # do not affect Okina but do affect the spectral daggers". So the swing
+  # takes none of it and both halves of a dagger take all of it.
+  - kind: spectral_dagger_flat_base_damage
+    value: 60.0
+  # from: "On Critical Hit: +8% Status Damage for 10s. Stacks up to 5x."
+  # The Elementalist cards' bucket, read as of the hit a status lands with.
+  - kind: stacking_buff
+    trigger: crit
+    grants: status_damage
+    per_stack: 0.08
+    max_stacks: 5
+    duration_seconds: 10.0
+
+source:
+  url: https://wiki.warframe.com/w/Okina_Incarnon_Genesis

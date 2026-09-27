@@ -72,6 +72,7 @@ pub fn of_builtin(id: &str) -> Option<Option<&'static str>> {
         // Valkyr's Rage: melee hits and kills.
         "valkyr_rage" => "hit",
         "on_plain_hit_damage" => "plain_hit",
+        "on_crit_status_damage" => "crit",
         "on_punch_through_crit_chance" | "on_punch_through_fire_rate" => "punch_through",
         "on_reload_fr" | "on_reload_bd" | "on_reload_damage" | "on_reload_fire_rate"
         | "per_shell_fire_rate" => "reload_complete",

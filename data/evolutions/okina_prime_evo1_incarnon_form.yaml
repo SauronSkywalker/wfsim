@@ -1,0 +1,41 @@
+id: okina_prime_evo1_incarnon_form
+name: Incarnon Form
+weapon: okina_prime
+tier: 1
+icon: OkinaGhosts(xWhite).png
+description: "Reach 6x Combo and then Heavy Attack to activate Incarnon Form for 180 seconds. Kills generate spectral daggers that target enemies, applying max Cold Status stacks. +100% Melee Damage, +20% Sprint Speed, +20% to Parkour Velocity."
+# A MELEE INCARNON IS NOT A FORM: it changes numbers on the seven ways the
+# weapon is already swung and unlocks no second entry — plus, on this one,
+# the SPECTRAL DAGGERS, which are what the Genesis is bought for.
+#
+# THE WINDOW IS SIMULATED: the fight opens un-armed and buys it with a heavy
+# attack at 6x, and 180 s is the whole engagement.
+selection: fixed
+
+effects:
+  - kind: incarnon_window
+    arm_at_combo: 6.0
+    seconds: 180.0
+  # from: "+100% Melee Damage" — a bracket term beside Pressure Point.
+  - kind: base_damage_bonus
+    value: 1.0
+  # from: "Kills create a spectral dagger that orbits the player, then seeks an
+  # enemy within 15 meters. Daggers deal damage and apply 10 forced Cold stacks
+  # to the target, then explode in a 4m radius", "Up to 6 daggers can be
+  # active at once" (the page's notes). The attack is the weapon's own
+  # `spectral_dagger:`; this is when one is made.
+  #
+  # THE ORBIT IS A STAND-IN. Nothing publishes how long a dagger circles
+  # before it seeks, and the figure decides how soon a kill pays; one second
+  # until it is measured.
+  - kind: spectral_daggers
+    max_alive: 6
+    seek_range_m: 15.0
+    orbit_seconds: 1.0
+    forced_cold_stacks: 10
+  - kind: out_of_scope
+    clause: "+20% Sprint Speed, +20% to Parkour Velocity"
+    reason: no_movement
+
+source:
+  url: https://wiki.warframe.com/w/Okina_Incarnon_Genesis

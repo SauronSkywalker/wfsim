@@ -121,6 +121,9 @@ pub enum Origin {
     /// A RELOAD GRENADE's contact hit or explosion — the Catabolyst family's
     /// thrown magazine (`fight::grenades`).
     ReloadGrenade,
+    /// A SPECTRAL DAGGER's strike or its explosion — the Okina's Incarnon
+    /// Form, acting on its own clock from a kill the swings made.
+    SpectralDagger,
 }
 
 impl Origin {
@@ -141,6 +144,7 @@ impl Origin {
             Origin::Influence => "influence",
             Origin::Arcane => "arcane",
             Origin::ReloadGrenade => "reload_grenade",
+            Origin::SpectralDagger => "spectral_dagger",
         }
     }
 }

@@ -1574,3 +1574,12 @@ evolution_descriptions:
   #   magistar_edge_of_justice, magistar_seismic_slam, magistar_orokin_reach,
   #   magistar_swift_break, magistar_flashing_bleed, magistar_subtle_force,
   #   magistar_critical_parallel
+  #
+  # The Okina and Okina Prime Genesis perks are in the same state, for the same
+  # reason — the CN wiki answered this repo's fetcher with its challenge page:
+  #   okina_evo1_incarnon_form, okina_seeing_red, okina_synergist_surety,
+  #   okina_orokin_reach, okina_standoff, okina_swordsmans_celerity,
+  #   okina_commodores_fortune, okina_alchemy_of_war, okina_survivors_edge
+  #   okina_prime_evo1_incarnon_form, okina_prime_seeing_red, okina_prime_synergist_surety,
+  #   okina_prime_orokin_reach, okina_prime_standoff, okina_prime_swordsmans_celerity,
+  #   okina_prime_commodores_fortune, okina_prime_alchemy_of_war, okina_prime_survivors_edge

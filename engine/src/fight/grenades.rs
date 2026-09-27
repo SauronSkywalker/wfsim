@@ -194,5 +194,7 @@ pub(super) fn lingering_of(
         stacking: crate::model::FieldStacking::Stack,
         takes_condition_overload: co.is_some(),
         co_behavior: co,
+        forced_proc_count: 1,
+        excludes_live_base_damage: false,
     }
 }

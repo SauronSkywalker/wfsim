@@ -93,6 +93,23 @@ pub(super) fn effect(v: &Value) -> Option<EvoEffect> {
             EvoEffect::ComboCountOnSlamHit(f(v, "value").unwrap_or(0.0))
         }
         "melee_range_bonus_m" => EvoEffect::MeleeRange(f(v, "value").unwrap_or(0.0)),
+        "combo_count_on_status_hit" => {
+            let Some(status) = v.get("status").and_then(Value::as_str).and_then(crate::rules::damage::DamageType::from_name)
+            else {
+                return Some(EvoEffect::Inert("combo_count_on_status_hit without a known `status:`".into()));
+            };
+            EvoEffect::ComboCountOnStatusHit { status, value: f(v, "value").unwrap_or(0.0) }
+        }
+        "spectral_daggers" => EvoEffect::SpectralDaggers(crate::model::SpectralDaggerRules {
+            max_alive: v.get("max_alive").and_then(Value::as_u64).unwrap_or(0) as u32,
+            seek_range_m: f(v, "seek_range_m").unwrap_or(0.0),
+            orbit_seconds: f(v, "orbit_seconds").unwrap_or(0.0),
+            forced_cold_stacks: v.get("forced_cold_stacks").and_then(Value::as_u64).unwrap_or(0) as u32,
+        }),
+        "spectral_dagger_flat_base_damage" => {
+            EvoEffect::SpectralDaggerFlatBaseDamage(f(v, "value").unwrap_or(0.0))
+        }
+        "status_duration_bonus" => EvoEffect::StatusDurationBonus(f(v, "value").unwrap_or(0.0)),
         "follow_through_bonus" => EvoEffect::FollowThroughBonus(f(v, "value").unwrap_or(0.0)),
         "slam_radius_bonus" => EvoEffect::SlamRadiusBonus(f(v, "value").unwrap_or(0.0)),
         "heavy_windup_speed_bonus" => EvoEffect::HeavyWindUpSpeed(f(v, "value").unwrap_or(0.0)),

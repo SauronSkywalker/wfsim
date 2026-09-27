@@ -33,6 +33,21 @@ pub enum EvoEffect {
     /// Synergy, effectively doubling the Combo Count gain from 4 to 8"* (wiki,
     /// Praedos), so the grant is `value x (1 + chance)` rather than a roll.
     ComboCountOnSlamHit(f64),
+    /// COMBO POINTS PER LANDED HIT on a target carrying `status` — Seeing Red's
+    /// *"5 additional Combos on targets affected by Slash Status"*. Paid only
+    /// by a swing that earns, like every other combo gain.
+    ComboCountOnStatusHit { status: crate::rules::damage::DamageType, value: f64 },
+    /// THE OKINA'S SPECTRAL DAGGERS — *"Kills generate spectral daggers that
+    /// target enemies"*. The attack is the weapon's own
+    /// (`WeaponBase::spectral_dagger`); this is when one is made.
+    SpectralDaggers(crate::model::SpectralDaggerRules),
+    /// FLAT BASE DAMAGE THAT REACHES THE DAGGERS AND NOT THE SWING. The Okina's
+    /// EVO2 pair say "Increase Base Damage", and the wiki files what they do
+    /// under Bugs: *"give base weapon damage instead of base melee damage,
+    /// which do not affect Okina but do affect the spectral daggers"*.
+    SpectralDaggerFlatBaseDamage(f64),
+    /// STATUS DURATION into the bucket the mods feed (Alchemy of War's +25%).
+    StatusDurationBonus(f64),
     /// METRES OF MELEE REACH (Orokin Reach's `+1.4 Range`).
     MeleeRange(f64),
     /// THE WINDOW A MELEE INCARNON IS ON FOR, and what opens it — *"Reach 6x

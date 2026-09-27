@@ -7,8 +7,8 @@
 #
 # Never edit by hand: run the generator, which only ever appends.
 #
-digest: c07545fa180cf5d4
-count: 1790
+digest: d8fbb6f8a1467c44
+count: 1825
 ids:
   - acceltra
   - acceltra_prime
@@ -1800,3 +1800,38 @@ ids:
   - parry_angle
   - slam_attack_damage
   - critical_mutation
+  - okina
+  - okina_block
+  - okina_block_forward
+  - okina_forward
+  - okina_heavy
+  - okina_heavy_slam
+  - okina_prime
+  - okina_prime_block
+  - okina_prime_block_forward
+  - okina_prime_forward
+  - okina_prime_heavy
+  - okina_prime_heavy_slam
+  - okina_prime_slide
+  - okina_slide
+  - gnashing_payara
+  - sinking_talon
+  - spinning_needle
+  - okina_alchemy_of_war
+  - okina_commodores_fortune
+  - okina_evo1_incarnon_form
+  - okina_orokin_reach
+  - okina_prime_alchemy_of_war
+  - okina_prime_commodores_fortune
+  - okina_prime_evo1_incarnon_form
+  - okina_prime_orokin_reach
+  - okina_prime_seeing_red
+  - okina_prime_standoff
+  - okina_prime_survivors_edge
+  - okina_prime_swordsmans_celerity
+  - okina_prime_synergist_surety
+  - okina_seeing_red
+  - okina_standoff
+  - okina_survivors_edge
+  - okina_swordsmans_celerity
+  - okina_synergist_surety

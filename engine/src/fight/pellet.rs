@@ -329,6 +329,9 @@ pub(super) fn settle_pellet(pellet_idx: u32, shot: &Strike, live: &mut Live) {
     // The stacks read here are the ones EARNED so far; the hit that
     // grants a stack does not benefit from it (the bump happens
     // after the status roll below).
+    // STATUS DAMAGE A LIVE BUFF IS ADDING, read before this hit bumps any —
+    // what the statuses this hit leaves burn at (Synergist Surety).
+    let status_damage_live = buff_total(active, crate::model::BuffGrant::StatusDamage, &mut *buff_stacks, t);
     let arcane_base_damage = arc.total(&params.arcane.buffs, ArcGrant::BaseDamage, t)
         + bd_reload_add
         + bd_eximus_add
@@ -2219,6 +2222,7 @@ pub(super) fn settle_pellet(pellet_idx: u32, shot: &Strike, live: &mut Live) {
                 // remembers the bracket its detonation's extra hit takes —
                 // not this stage's, which the detonation itself never gets.
                 xh_bracket: active.extra_hit_bracket(t, windows),
+                status_damage_live,
             },
             &mut bodies[0].debuffs,
             &mut *gal,
@@ -2264,6 +2268,7 @@ pub(super) fn settle_pellet(pellet_idx: u32, shot: &Strike, live: &mut Live) {
                 landing,
                 attrition,
                 xh_bracket: active.extra_hit_bracket(t, windows),
+                status_damage_live,
             };
             if open {
                 for (from, landed) in &influence_seeds {

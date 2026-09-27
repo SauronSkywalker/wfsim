@@ -336,6 +336,29 @@ pub fn base_panel_assembled(
         }),
     });
 
+    // THE SPECTRAL DAGGER, both halves through the bomblet's builder. Its
+    // strike is a DIRECT hit — Condition Overload reaches it and not the
+    // explosion (W`Okina_Incarnon_Genesis`) — and multishot raises neither:
+    // a kill makes one dagger.
+    let spectral_dagger = s.attack.spectral_dagger.as_ref().map(|g| crate::model::SpectralDaggerBase {
+        strike: a_radial(&RadialSpec {
+            damage: g.damage.clone(),
+            radius_m: crate::rules::space::BODY_RADIUS_M,
+            blast_kind: BlastKind::default(),
+            takes_blast_radius_mods: false,
+            crit_chance: None,
+            crit_multiplier: None,
+            status_chance: None,
+            falloff_start_m: None,
+            falloff_reduction: None,
+            forced_procs: Vec::new(),
+            takes_condition_overload: true,
+            takes_multishot: false,
+        }),
+        blast: a_radial(&RadialSpec { takes_multishot: false, takes_condition_overload: false, ..g.blast.clone() }),
+        speed_mps: g.speed_mps,
+    });
+
     // The lingering FIELD (Torid's Toxin cloud). Each stat falls back to the
     // direct part's when unstated, same rule as the radial.
     let lingering = s.attack.lingering.as_ref().map(|f| {
@@ -587,6 +610,10 @@ pub fn base_panel_assembled(
         // A GENESIS FILLS THESE IN, and an entry states none of them.
         evo_base_damage_bonus: 0.0,
         evo_combo_count_on_slam_hit: 0.0,
+        spectral_dagger,
+        spectral_dagger_rules: None,
+        evo_combo_count_on_status_hit: None,
+        evo_status_duration_bonus: 0.0,
         evo_initial_combo: 0.0,
         evo_melee_range_m: 0.0,
         evo_follow_through_bonus: 0.0,

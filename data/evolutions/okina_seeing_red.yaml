@@ -1,0 +1,24 @@
+id: okina_seeing_red
+name: Seeing Red
+weapon: okina
+tier: 2
+icon: 5AdditionalCombosOnTargetsWithBleed(xWhite).png
+description: "Increase Base Damage by +60.\n5 additional Combos on targets affected by Slash Status"
+# THIS WEAPON'S COLUMN; the Okina Prime's differs on both lines.
+selection: choose_one
+
+effects:
+  # from: "Increase Base Damage by +60" — and the wiki files what it does
+  # under Bugs: "give base weapon damage instead of base melee damage, which
+  # do not affect Okina but do affect the spectral daggers". So the swing
+  # takes none of it and both halves of a dagger take all of it.
+  - kind: spectral_dagger_flat_base_damage
+    value: 60.0
+  # from: "5 additional Combos on targets affected by Slash Status" — per hit
+  # that lands while the target bleeds, on a swing that earns combo at all.
+  - kind: combo_count_on_status_hit
+    status: slash
+    value: 5.0
+
+source:
+  url: https://wiki.warframe.com/w/Okina_Incarnon_Genesis

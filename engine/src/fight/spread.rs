@@ -510,6 +510,7 @@ pub(super) fn spread_hit(
             // a chain hop is the same shot, and the Extra Hit it may set off is
             // the same weapon's.
             xh_bracket: active.extra_hit_bracket(t, w),
+            status_damage_live: 0.0,
         },
         &mut foe.debuffs,
         gal,
@@ -1479,6 +1480,7 @@ pub(super) fn fire_syndicate_radial(
                 // not scale it", so a Blast stack it applies detonates with no
                 // elemental bracket behind it either.
                 xh_bracket: 1.0,
+                status_damage_live: 0.0,
             },
             debuffs,
             gal,

@@ -196,7 +196,7 @@ pub fn resolve_for(
     // multiplying, which is the shape every other shared stat here has.
     let mut rl = base.evo_reload_bonus + fb.reload_speed;
     // Magazine-capacity and status-duration additive buckets.
-    let (mut mag, mut sdur) = (fb.magazine, fb.status_duration);
+    let (mut mag, mut sdur) = (fb.magazine, fb.status_duration + base.evo_status_duration_bonus);
     // Sentient Surge's three, carried to the sim rather than spent here: all
     // three depend on fight state (how many tendrils are up, whether anything
     // died) that the panel cannot know.
@@ -988,8 +988,12 @@ pub fn resolve_for(
         });
     }
 
-    let build = |base_vector: &DamageVector,
-                     elem_bonus: Option<&mut Vec<(DamageType, f64)>>|
+    // THE BASE-DAMAGE BUCKET IS AN ARGUMENT because one attack part takes none
+    // of it: the Okina's spectral dagger is "not affected by melee damage
+    // bonuses", and on a melee weapon that bucket is exactly those.
+    let build_in = |base_vector: &DamageVector,
+                     elem_bonus: Option<&mut Vec<(DamageType, f64)>>,
+                     base_damage: f64|
      -> (DamageVector, f64) {
         let modified_base = base_vector.total() * (1.0 + base_damage);
         let scale = 1.0 + base_damage;
@@ -1062,17 +1066,20 @@ pub fn resolve_for(
         }
         (elements::combine(&physical, &input), modified_base)
     };
+    let build = |base_vector: &DamageVector, elem_bonus: Option<&mut Vec<(DamageType, f64)>>| {
+        build_in(base_vector, elem_bonus, base_damage)
+    };
 
     let (damage, modified_base) =
         build(&base.base_vector.scale(charge_scale), Some(&mut elem_bonus));
     // The radial part (Laetum Incarnon's 300 Radiation explosion): its own
     // base vector, crit and status stats, modded by the same buckets.
-    let a_resolved = |r: &RadialBase| {
+    let a_resolved_in = |r: &RadialBase, base_damage: f64| {
         // THE EXPLOSION RIDES THE CHARGE TOO. "Damage dealt by the plasma bomb
         // is directly proportional to the amount of ammo consumed" — the bomb
         // IS the explosion on this weapon, and the direct hit is the smaller
         // half of it.
-        let (rd, rmb) = build(&r.base_vector.scale(charge_scale), None);
+        let (rd, rmb) = build_in(&r.base_vector.scale(charge_scale), None, base_damage);
         ResolvedRadial {
             blast_kind: r.blast_kind,
             damage: rd,
@@ -1114,6 +1121,17 @@ pub fn resolve_for(
             co_base: r.co_base_pair(),
         }
     };
+    let a_resolved = |r: &RadialBase| a_resolved_in(r, base_damage);
+    // THE SPECTRAL DAGGER, through every bucket but the base-damage one — see
+    // `build_in` — and only on a panel whose Genesis tier makes them.
+    let spectral_dagger = base.spectral_dagger.as_ref().zip(base.spectral_dagger_rules).map(|(g, rules)| {
+        ResolvedSpectralDagger {
+            strike: a_resolved_in(&g.strike, 0.0),
+            blast: a_resolved_in(&g.blast, 0.0),
+            speed_mps: g.speed_mps,
+            rules,
+        }
+    });
     let radial = base.radial.as_ref().map(&a_resolved).map(|mut r| {
         if r.blast_kind == crate::model::BlastKind::Slam {
             r.radius_m *= SLAM_HEIGHT_RADIUS_SCALE;
@@ -1233,6 +1251,8 @@ pub fn resolve_for(
             stacking: f.stacking,
             takes_condition_overload: f.takes_condition_overload,
             co_behavior: None,
+            forced_proc_count: 1,
+            excludes_live_base_damage: false,
         }
     });
 
@@ -1510,6 +1530,8 @@ pub fn resolve_for(
         combo_count_chance_on_lifted,
         combo_gain_chance,
         combo_count_on_slam_hit: base.evo_combo_count_on_slam_hit,
+        combo_count_on_status_hit: base.evo_combo_count_on_status_hit,
+        spectral_dagger,
         status_chance_on_lifted,
         heavy_attack_damage: heavy_damage,
         slam_damage,

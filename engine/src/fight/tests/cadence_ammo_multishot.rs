@@ -1319,6 +1319,8 @@ fn a_field_takes_condition_overload_only_where_the_weapon_declares_it() {
         lingering: Some(crate::build::loadout::ResolvedLingering {
             takes_condition_overload: takes,
             co_behavior: None,
+            forced_proc_count: 1,
+            excludes_live_base_damage: false,
             ..cloud(crate::model::FieldStacking::Stack)
         }),
         co_per_type: 1.0,

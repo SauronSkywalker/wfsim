@@ -313,6 +313,20 @@ weapons:
   praedos_heavy: wiki:Praedos.png
   praedos_slide: wiki:Praedos.png
   praedos_heavy_slam: wiki:Praedos.png
+  okina: Okina.png
+  okina_forward: Okina.png
+  okina_block: Okina.png
+  okina_block_forward: Okina.png
+  okina_heavy: Okina.png
+  okina_slide: Okina.png
+  okina_heavy_slam: Okina.png
+  okina_prime: OkinaPrime.png
+  okina_prime_forward: OkinaPrime.png
+  okina_prime_block: OkinaPrime.png
+  okina_prime_block_forward: OkinaPrime.png
+  okina_prime_heavy: OkinaPrime.png
+  okina_prime_slide: OkinaPrime.png
+  okina_prime_heavy_slam: OkinaPrime.png
   magnus: Magnus.png
   magnus_prime: MagnusPrime.png
   mandonel: TnConcreteArchgun.png
@@ -674,6 +688,7 @@ mods:
   amalgam_organ_shatter: SwiftShatter.jpg
   amalgam_serration: SerratedRush.jpg
   amalgam_shotgun_barrage: VampireShot.jpg
+  amars_contempt: AmarMeleeMod.jpg
   ammo_chain: ArchwingRifleAmmoMaxMod.jpg
   ammo_drum: RifleAmmoMaxMod.jpg
   ammo_stock: ShotgunClipMaxMod.jpg
@@ -800,6 +815,7 @@ mods:
   galvanized_scope: CritChanceWhileAimingRifleSPMod.jpg
   galvanized_shot: PistolGalvanizedWeaponStatusChanceSPMod.jpg
   galvanized_steel: WeaponCritChanceSPMod.jpg
+  gnashing_payara: DualDaggerCombo2c.jpg
   gemini_cross: TonfaCombo1a.jpg
   gilded_truth: BurstonPrime.jpg
   gladiator_might: GladiatorMight.jpg
@@ -1018,6 +1034,7 @@ mods:
   shred: Shred.jpg
   shredder: BleedDamageShotgunMod.jpg
   silent_battery: WeaponNoiseReductionMod.jpg
+  sinking_talon: DualDaggerCombo1a.jpg
   sinister_reach: WeaponBeamDistanceRifleMod.jpg
   slip_magazine: PistolClipMax.jpg
   smite_corpus: MeleeDamageCorpus.jpg
@@ -1032,6 +1049,7 @@ mods:
   speed_trigger: RifleFireRateMod.jpg
   split_chamber: RifleFireIterationsMod.jpg
   split_flights: BowMultiShotOnHitMod.jpg
+  spinning_needle: DualDaggerCmbThree.jpg
   spoiled_strike: CorruptedChargeDmgForChargeSpeedMod.jpg
   spring_loaded_blade: MeleeRangeOnProcMod.jpg
   spring_loaded_chamber: RifleFireRateWhileAiming.jpg

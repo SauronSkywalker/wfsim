@@ -1,0 +1,25 @@
+id: amars_contempt
+name: Amar's Contempt
+rarity: rare
+polarity: madurai
+base_drain: 4
+max_rank: 5
+internal_name: /Lotus/Upgrades/Mods/Sets/Amar/AmarMeleeMod
+description: "+X% Melee Damage\n+X% <DT_SLASH_COLOR>Slash"
+
+# THE ONE DUAL DAGGERS CARD THAT IS NOT A STANCE. Its set bonus is a teleport
+# (data/mod_sets/amar.yaml).
+set: amar
+
+# Rank 0: +15% Melee Damage / +5% Slash (wiki rank table)
+effects:
+  - kind: base_damage_bonus
+    rank0: 0.15
+    rankMax: 0.9
+  - kind: physical_damage_bonus
+    element: slash
+    rank0: 0.05
+    rankMax: 0.3
+
+source:
+  url: https://wiki.warframe.com/w/Amar%27s_Contempt

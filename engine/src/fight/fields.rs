@@ -366,10 +366,16 @@ pub(super) fn field_tick(
     // Damage buckets: the same live base-damage additions the direct hit reads,
     // then the GunCO bracket off the target's CURRENT status count.
     let base_damage = active.base_damage_bonus;
-    let arcane_base_damage = arc.total(&params.arcane.buffs, ArcGrant::BaseDamage, at)
-        + ctx.base_damage_add_mods
-        + heavy_attack_base_damage(active)
-        + arc.rage_bonus(at);
+    // …NONE OF WHICH REACHES A PART THAT MELEE DAMAGE BONUSES DO NOT (the
+    // spectral dagger): on a melee weapon every live term here is one.
+    let arcane_base_damage = if f.excludes_live_base_damage {
+        0.0
+    } else {
+        arc.total(&params.arcane.buffs, ArcGrant::BaseDamage, at)
+            + ctx.base_damage_add_mods
+            + heavy_attack_base_damage(active)
+            + arc.rage_bonus(at)
+    };
     let arc_ratio = (1.0 + base_damage + arcane_base_damage) / (1.0 + base_damage);
     // CO on an AoE part is the EXCEPTION, not the default. What the mods say is
     // direct hits only — which is why the radial path never takes it — and the
@@ -490,8 +496,17 @@ pub(super) fn field_tick(
     arc.next_instance();
     let mut forced_buf = [DamageType::Impact; DamageType::ALL.len()];
     let forced_n = f.forced_procs.fill(&mut forced_buf);
+    // TEN OF THE SAME FORCED PROC is ten entries — the spectral dagger's
+    // strike — and every other part forces one of each.
+    let repeated: Vec<DamageType>;
+    let forced: &[DamageType] = if f.forced_proc_count > 1 {
+        repeated = (0..f.forced_proc_count).flat_map(|_| forced_buf[..forced_n].iter().copied()).collect();
+        &repeated
+    } else {
+        &forced_buf[..forced_n]
+    };
     let procs = status::procs_for_hit(
-        &forced_buf[..forced_n],
+        forced,
         f.status_chance,
         &qvec,
         &foe.status_immunities,
@@ -517,6 +532,7 @@ pub(super) fn field_tick(
             // applies still detonates off a gun, and the bracket its extra hit
             // takes is that gun's.
             xh_bracket: active.extra_hit_bracket(at, w),
+            status_damage_live: 0.0,
         },
         debuffs,
         gal,

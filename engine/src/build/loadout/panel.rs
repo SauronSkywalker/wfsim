@@ -110,6 +110,14 @@ pub struct ResolvedLingering {
     /// THE PART'S OWN CO CLASS, where the catalog gives the part a row of its own
     /// (a thrown grenade's contact); `None` reads the weapon's `co_behavior`.
     pub co_behavior: Option<crate::model::CoBehavior>,
+    /// HOW MANY OF EACH forced proc one instance applies — 1 on every part but
+    /// the spectral dagger's strike, which forces ten Cold stacks at once. 0
+    /// reads as 1.
+    pub forced_proc_count: u32,
+    /// Does the fight's LIVE base-damage bucket (a melee arcane, an on-kill
+    /// stacking buff) reach this part? It does on every part but the spectral
+    /// dagger's, which melee damage bonuses do not reach.
+    pub excludes_live_base_damage: bool,
 }
 
 impl ResolvedLingering {
@@ -132,6 +140,16 @@ impl ResolvedLingering {
         }
         (1.0 - self.falloff_reduction * ((d - self.falloff_start_m) / span)).max(0.0)
     }
+}
+
+/// THE SPECTRAL DAGGER after mod resolution: a strike and an explosion,
+/// both resolved without the base-damage bucket (`notes: okina_spectral_dagger`).
+#[derive(Debug, Clone, Copy)]
+pub struct ResolvedSpectralDagger {
+    pub strike: ResolvedRadial,
+    pub blast: ResolvedRadial,
+    pub speed_mps: f64,
+    pub rules: crate::model::SpectralDaggerRules,
 }
 
 /// The radial part after mod resolution.
@@ -391,6 +409,11 @@ pub struct ResolvedPanel {
     /// COMBO POINTS PER BODY THE SLAM REACHED (Shockwave Synergy), before the
     /// combo count chance that scales them.
     pub combo_count_on_slam_hit: f64,
+    /// See [`crate::model::WeaponBase::evo_combo_count_on_status_hit`].
+    pub combo_count_on_status_hit: Option<(crate::rules::damage::DamageType, f64)>,
+    /// THE OKINA'S SPECTRAL DAGGER, resolved — `None` on every panel but an
+    /// Incarnon Form that makes them.
+    pub spectral_dagger: Option<ResolvedSpectralDagger>,
     /// Relative status chance a LIFTED target adds (Enduring Affliction) — the
     /// bracket Weeping Wounds is in.
     pub status_chance_on_lifted: f64,

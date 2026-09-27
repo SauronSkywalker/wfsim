@@ -410,6 +410,7 @@ pub fn run_once_traced(
         mut r,
         mut fields,
         mut orbs,
+        mut daggers,
         mut ghost_pile,
         body_at,
         area_near,
@@ -840,6 +841,13 @@ pub fn run_once_traced(
             &mut r,
             &mut me.strip_kills_seen,
         );
+        // …AND THE DAGGERS DUE BEFORE THIS SWING, which fly on a clock of their
+        // own and never hold one up.
+        process_daggers(
+            &me.windows, &mut daggers, &mut me.gal, &mut me.arc, t,
+            me.params, me.params, &me.field_ctx, &mut r, rec, d, &mut bodies,
+            &mut me.dagger_kill_mark,
+        );
         // Secondary Encumber: at most ONE extra proc per instant — pellets
         // of one pull land simultaneously, so one roll per pull.
         let mut encumber_done = false;
@@ -1001,6 +1009,10 @@ pub fn run_once_traced(
             &mut d.arc_landing,
         );
 
+        // A KILL THIS SWING OR ANYTHING BEFORE IT MADE is a spectral dagger, if the
+        // form that makes them was up when it swung.
+        make_daggers(me.seat, me.params, active, t, &r, &mut me.dagger_kill_mark, &mut daggers);
+
         after_the_shot(
             me.params,
             &me.apl,
@@ -1111,6 +1123,15 @@ pub fn run_once_traced(
             &mut bodies,
         );
         orbs.append(&mut mine);
+    }
+    for (si, me) in seats.iter_mut().enumerate() {
+        let mut mine = owned_by(&mut daggers, Seat(si), |g| g.owner);
+        process_daggers(
+            &me.windows, &mut mine, &mut me.gal, &mut me.arc, end,
+            me.params, me.params, &me.field_ctx, &mut r, rec, &mut me.d, &mut bodies,
+            &mut me.dagger_kill_mark,
+        );
+        daggers.append(&mut mine);
     }
     // The clouds still burning after the last shot, with the buff snapshot from
     // that shot (nothing refreshes it once firing stops).

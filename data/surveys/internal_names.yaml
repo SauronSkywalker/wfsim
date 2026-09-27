@@ -250,6 +250,8 @@ resolved:
   nunchasa:                      /Lotus/Weapons/Tenno/Bows/DuelistBow/DuelistBow
   ocucor:                        /Lotus/Weapons/Corpus/Pistols/CrpSentExperimentPistol/CrpSentExperimentPistol
   ogris:                         /Lotus/Weapons/ClanTech/Chemical/RocketLauncher
+  okina:                         /Lotus/Weapons/Tenno/Melee/Swords/TennoSai/TennoSais
+  okina_prime:                   /Lotus/Weapons/Tenno/Melee/Swords/PrimeOkina/PrimeOkina
   onos:                          /Lotus/Weapons/Thanotech/EntratiWristGun/EntratiWristGunWeapon
   opticor:                       /Lotus/Weapons/Corpus/LongGuns/CrpBFG/CrpBFG
   opticor_vandal:                /Lotus/Weapons/Corpus/LongGuns/CrpBFG/Vandal/VandalCrpBFG

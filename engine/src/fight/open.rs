@@ -43,6 +43,8 @@ pub(super) struct Fight {
     /// it. Each one will name its owner when a second combatant can leave one.
     pub(super) fields: Vec<FieldState>,
     pub(super) orbs: Vec<OrbState>,
+    /// …AND SPECTRAL DAGGERS on their way to a body (`fight::daggers`).
+    pub(super) daggers: Vec<DaggerState>,
     /// What the fight LEFT STANDING — the fight's, not any one shooter's.
     pub(super) ghost_pile: Ghosts,
     /// WHERE EVERYTHING STANDS, constant for the engagement. In the world
@@ -94,6 +96,9 @@ pub(super) struct Combatant<'a> {
     pub(super) field_ctx: FieldCtx,
     pub(super) meter: Meter,
     pub(super) strip_kills_seen: u32,
+    /// KILLS THE SPECTRAL DAGGERS HAVE ALREADY BEEN MADE FOR — or were made BY
+    /// one, which make none — read as a delta off the run's own counter.
+    pub(super) dagger_kill_mark: u32,
     pub(super) super_crit_armed: bool,
     pub(super) weakpoint_next_shot_armed: bool,
     pub(super) incarnon: IncarnonState,
@@ -484,6 +489,7 @@ pub(super) fn open<'a>(
     // place of their own that move, strike ONE body inside their reach, and
     // detonate where they have got to.
     let orbs: Vec<OrbState> = Vec::new();
+    let daggers: Vec<DaggerState> = Vec::new();
     let field_ctx = FieldCtx::default();
 
     // The form whose panel SPAWNED the fields. Only one form of a transform
@@ -503,6 +509,7 @@ pub(super) fn open<'a>(
     // run's own counter for the same reason the meter's pickups are: there are
     // nine places a body can die and a tenth would silently stop paying.
     let strip_kills_seen = 0u32;
+    let dagger_kill_mark = 0u32;
 
     // Initial locks: one natural-duration grant at t = 0 (at the set
     // stack count); afterwards only the buff's own mechanics govern it.
@@ -664,6 +671,7 @@ pub(super) fn open<'a>(
             r,
             fields,
             orbs,
+            daggers,
             ghost_pile,
             body_at,
             area_near,
@@ -697,6 +705,7 @@ pub(super) fn open<'a>(
             field_ctx,
             meter,
             strip_kills_seen,
+            dagger_kill_mark,
             super_crit_armed,
             weakpoint_next_shot_armed,
             incarnon,

@@ -541,6 +541,8 @@ pub struct FightParams {
     /// COMBO POINTS PER BODY THE SLAM REACHED (Shockwave Synergy), before the
     /// combo count chance that scales them. Zero on every other weapon.
     pub combo_count_on_slam_hit: f64,
+    /// COMBO POINTS PER LANDED HIT on a target carrying the status (Seeing Red).
+    pub combo_count_on_status_hit: Option<(crate::rules::damage::DamageType, f64)>,
     pub status_chance_on_lifted: f64,
     /// `+X%` on a HEAVY attack alone (Killing Blow). Read only where
     /// `spends_combo` is true, which is what "heavy attack" means here.
@@ -755,6 +757,9 @@ pub struct FightParams {
     /// …AND WHAT ITS FUSE ENDS IN: the attack's own `radial:`, in the same
     /// shape, fired from wherever the orb had got to.
     pub orb_blast: Option<crate::build::loadout::ResolvedLingering>,
+    /// THE OKINA'S SPECTRAL DAGGER — `None` on every panel but an Incarnon
+    /// Form that makes them. See [`crate::fight::daggers`].
+    pub spectral_dagger: Option<SpectralDaggerParams>,
     /// THE RECHARGE METER THAT GATES THE ORB — see
     /// [`crate::build::loadout::ResolvedMeter`].
     ///
@@ -823,4 +828,14 @@ impl FightParams {
             None => AbilitiesNow::Fixed(&self.abilities),
         }
     }
+}
+
+/// ONE SPECTRAL DAGGER'S TWO PARTS in the timed-instance shape, plus the rules
+/// that say when one is made and where it goes.
+#[derive(Debug, Clone, Copy)]
+pub struct SpectralDaggerParams {
+    pub strike: crate::build::loadout::ResolvedLingering,
+    pub blast: crate::build::loadout::ResolvedLingering,
+    pub speed_mps: f64,
+    pub rules: crate::model::SpectralDaggerRules,
 }

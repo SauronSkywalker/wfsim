@@ -71,6 +71,10 @@ impl EvolutionDef {
                 EvoEffect::BaseDamageBonus(_)
                 | EvoEffect::InitialCombo(_)
                 | EvoEffect::ComboCountOnSlamHit(_)
+                | EvoEffect::ComboCountOnStatusHit { .. }
+                | EvoEffect::SpectralDaggers(_)
+                | EvoEffect::SpectralDaggerFlatBaseDamage(_)
+                | EvoEffect::StatusDurationBonus(_)
                 | EvoEffect::IncarnonWindow { .. }
                 | EvoEffect::MeleeRange(_)
                 | EvoEffect::FollowThroughBonus(_)
@@ -250,6 +254,7 @@ pub(super) fn stacking_card_id(
         (T::ReloadFromEmpty, G::BaseCritDamage) => "on_empty_reload_crit_damage",
         (T::PunchThrough, G::CritChance) => "on_punch_through_crit_chance",
         (T::PunchThrough, G::FireRate) => "on_punch_through_fire_rate",
+        (T::Crit, G::StatusDamage) => "on_crit_status_damage",
         // A pair nobody has written a card for yet. It is still a real buff and
         // still runs; it just shares one generic id, which is visible the first
         // time two of them appear on one weapon and is the point at which the

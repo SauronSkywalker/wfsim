@@ -348,6 +348,14 @@ pub(super) fn after_swing(
                     &mut |p| d.spine.chance(p),
                 );
             }
+            // SEEING RED — *"5 additional Combos on targets affected by Slash
+            // Status"*, per hit that lands while the aimed body carries a
+            // bleed. A flat grant: the card names no roll for it to take.
+            if let Some((status, per_hit)) = active.combo_count_on_status_hit {
+                if has_status(&bodies[0].debuffs, status) {
+                    gained += per_hit * landed;
+                }
+            }
             melee.combo_points += gained;
         }
         if refreshes_combo_timer(landed, earns, gained) {

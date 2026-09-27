@@ -445,6 +445,10 @@ pub struct AttackSpec {
     /// collision and no explosion of its own: the orb delivers both.
     #[serde(default)]
     pub orb: Option<OrbSpec>,
+    /// THE DAGGER A KILL MAKES — see [`SpectralDaggerSpec`]. Only a Genesis
+    /// tier that says so fires it.
+    #[serde(default)]
+    pub spectral_dagger: Option<SpectralDaggerSpec>,
     /// THE METER THAT GATES THIS FORM — see [`MeterSpec`].
     ///
     /// Declaring one makes this form GAUGE-FED, which `play_modes` reads off
@@ -458,6 +462,18 @@ pub struct AttackSpec {
     /// Continuous-beam geometry (Torid Incarnon). Shape, not a damage part.
     #[serde(default)]
     pub beam: Option<BeamSpec>,
+}
+
+/// THE SPECTRAL DAGGER — the infobox's `Spectral Dagger` attack and its
+/// `Spectral Dagger Explosion`, which is what one dagger deals. Crit and status
+/// default to the swing's, which is what the infobox prints for both.
+/// `notes: okina_spectral_dagger`.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SpectralDaggerSpec {
+    pub damage: BTreeMap<String, f64>,
+    pub speed_mps: f64,
+    pub blast: RadialSpec,
 }
 
 /// A lingering damage FIELD — MECHANICS §7 "Lingering damage FIELDS". Unlike

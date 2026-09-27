@@ -117,6 +117,33 @@ pub struct ClusterBase {
     pub blast: RadialBase,
 }
 
+/// THE DAGGER AN OKINA'S INCARNON FORM MAKES OF A KILL, unmodded — see
+/// [`crate::data::weapons::SpectralDaggerSpec`]. Both halves are a
+/// [`RadialBase`] for the reason the bomblets' are: they resolve through the
+/// buckets an explosion does. The STRIKE's radius is one body's.
+#[derive(Debug, Clone)]
+pub struct SpectralDaggerBase {
+    pub strike: RadialBase,
+    pub blast: RadialBase,
+    /// The infobox's `ShotSpeed` — its flight to the body is a real clock.
+    pub speed_mps: f64,
+}
+
+/// WHEN A SPECTRAL DAGGER IS MADE AND WHERE IT GOES — the Genesis's half, from
+/// EVO1's card (`EvoEffect::SpectralDaggers`).
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct SpectralDaggerRules {
+    /// *"Up to 6 daggers can be active at once"*.
+    pub max_alive: u32,
+    /// *"seeks an enemy within 15 meters"*, from the wielder.
+    pub seek_range_m: f64,
+    /// How long one orbits the wielder before it seeks. Unpublished.
+    pub orbit_seconds: f64,
+    /// *"apply 10 forced Cold stacks to the target"* — the strike's; the
+    /// explosion's one is its own `forced_procs`.
+    pub forced_cold_stacks: u32,
+}
+
 /// THE GRENADES A RELOAD THROWS — see
 /// [`crate::data::weapons::ReloadGrenadeSpec`]. Two throws, from empty and
 /// partial, each a contact hit and an explosion per grenade.

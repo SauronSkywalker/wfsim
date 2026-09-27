@@ -12,12 +12,13 @@
 # app refuses by RULE (flawed variants, riven placeholders, Conclave-only),
 # and the rule rides beside it.
 #
-# 391 of 624 carried, 215 excluded by rule, 18 still to transcribe.
+# 395 of 629 carried, 216 excluded by rule, 18 still to transcribe.
 #
 # Per pool (carried / in export, gap):
 #   archgun         37 /  39, gap 0
 #   assault_rifle    8 /  15, gap 0
 #   bow              1 /  10, gap 4
+#   dual_daggers     4 /   5, gap 0
 #   hammer           2 /   3, gap 0
 #   melee           91 / 143, gap 0
 #   pistol          81 / 140, gap 5
@@ -299,6 +300,27 @@ mods:
     internal_name: /Lotus/Upgrades/Mods/Rifle/Intermediate/BowExplosionChanceModIntermediate
     carried: excluded
     reason: "DE's own internal tier of a card the player holds under the same name (the bare path is the released one, and the wiki's rank table matches it)"
+  - name: Amar's Contempt
+    pool: dual_daggers
+    internal_name: /Lotus/Upgrades/Mods/Sets/Amar/AmarMeleeMod
+    carried: data/mods/dual_daggers/amars_contempt.yaml
+  - name: Biting Piranha
+    pool: dual_daggers
+    internal_name: /Lotus/Upgrades/Mods/PvPMods/Stances/PvPDualDaggersStanceOne
+    carried: excluded
+    reason: "Conclave: a PvP-path mod the wiki mod tables leave tagged \"Exclusive to PvP\" (the PvE-legal ones are carried and pinned by name in the engine)"
+  - name: Gnashing Payara
+    pool: dual_daggers
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/DualDaggerCmbTwoMeleeTree
+    carried: data/mods/dual_daggers/gnashing_payara.yaml
+  - name: Sinking Talon
+    pool: dual_daggers
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/DualDaggerCmbOneMeleeTree
+    carried: data/mods/dual_daggers/sinking_talon.yaml
+  - name: Spinning Needle
+    pool: dual_daggers
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/DualDaggerCmbThreeMeleeTree
+    carried: data/mods/dual_daggers/spinning_needle.yaml
   - name: Crashing Havoc
     pool: hammer
     internal_name: /Lotus/Upgrades/Mods/PvPMods/Stances/PvPHammerStanceOne

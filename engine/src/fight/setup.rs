@@ -1124,6 +1124,8 @@ impl FightParams {
                 stacking: crate::model::FieldStacking::Stack,
                 takes_condition_overload: false,
                 co_behavior: None,
+                forced_proc_count: 1,
+                excludes_live_base_damage: false,
             }),
             orb_blast: panel.orb.and(panel.radial).map(|r| crate::build::loadout::ResolvedLingering {
                 damage: r.damage,
@@ -1144,6 +1146,52 @@ impl FightParams {
                 stacking: crate::model::FieldStacking::Stack,
                 takes_condition_overload: r.takes_condition_overload,
                 co_behavior: None,
+                forced_proc_count: 1,
+                excludes_live_base_damage: false,
+            }),
+            // THE SPECTRAL DAGGER, in the same timed-instance shape the orb's two
+            // parts take: an entity acting on its own clock is settled the way
+            // a cloud's tick is. `notes: okina_spectral_dagger`.
+            spectral_dagger: panel.spectral_dagger.map(|g| {
+                let part = |r: crate::build::loadout::ResolvedRadial,
+                            strike: bool| crate::build::loadout::ResolvedLingering {
+                    damage: r.damage,
+                    modified_base: r.modified_base,
+                    crit_chance: r.crit_chance,
+                    crit_damage: r.crit_damage,
+                    status_chance: r.status_chance,
+                    base_crit_chance: r.base_crit_chance,
+                    base_crit_damage: r.base_crit_damage,
+                    base_status_chance: r.base_status_chance,
+                    tick_rate: 1.0,
+                    duration_seconds: 0.0,
+                    first_tick_delay_seconds: 0.0,
+                    // THE STRIKE FORCES TEN COLD STACKS, which is the Genesis's
+                    // number; the explosion forces its own one.
+                    forced_procs: if strike {
+                        crate::rules::damage::ForcedProcs::from_types([DamageType::Cold])
+                    } else {
+                        r.forced_procs
+                    },
+                    forced_proc_count: if strike { g.rules.forced_cold_stacks.max(1) } else { 1 },
+                    // A STRIKE REACHES ONE BODY at full damage; the explosion
+                    // is a 4 m sphere with no falloff.
+                    radius_m: if strike { f64::INFINITY } else { r.radius_m },
+                    falloff_start_m: if strike { f64::INFINITY } else { r.falloff_start_m },
+                    falloff_reduction: if strike { 0.0 } else { r.falloff_reduction },
+                    stacking: crate::model::FieldStacking::Stack,
+                    takes_condition_overload: r.takes_condition_overload,
+                    // *"Condition Overload effects are multiplicative to sources
+                    // of universal base damage"* — a bracket of its own.
+                    co_behavior: Some(crate::model::CoBehavior::Independent),
+                    excludes_live_base_damage: true,
+                };
+                SpectralDaggerParams {
+                    strike: part(g.strike, true),
+                    blast: part(g.blast, false),
+                    speed_mps: g.speed_mps,
+                    rules: g.rules,
+                }
             }),
             lingering: compressed_lingering,
             continuous: panel.continuous,
@@ -1295,6 +1343,7 @@ impl FightParams {
             combo_count_chance_on_lifted: panel.combo_count_chance_on_lifted,
             combo_gain_chance: panel.combo_gain_chance,
             combo_count_on_slam_hit: panel.combo_count_on_slam_hit,
+            combo_count_on_status_hit: panel.combo_count_on_status_hit,
             status_chance_on_lifted: panel.status_chance_on_lifted,
             heavy_attack_damage: panel.heavy_attack_damage,
             slam_damage: panel.slam_damage,

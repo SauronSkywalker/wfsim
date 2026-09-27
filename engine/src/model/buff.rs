@@ -291,6 +291,10 @@ pub enum BuffGrant {
     /// "additive to other range mods", read at the swing so a stack earned
     /// mid-fight reaches the bodies it brings into range.
     MeleeRange,
+    /// Synergist Surety: *"On Critical Hit: +8% Status Damage for 10s"* — the
+    /// status-damage bucket the Elementalist cards feed, read as of the hit a
+    /// status lands with.
+    StatusDamage,
 }
 
 impl BuffGrant {
@@ -313,6 +317,7 @@ impl BuffGrant {
             BuffGrant::HeadshotDamage => "headshot_damage",
             BuffGrant::InitialCombo => "initial_combo",
             BuffGrant::MeleeRange => "melee_range",
+            BuffGrant::StatusDamage => "status_damage",
         }
     }
 
@@ -322,7 +327,7 @@ impl BuffGrant {
         [
             G::BaseDamage, G::FlatBaseDamage, G::BaseMultishot, G::Multishot, G::FlatMultishot, G::ReloadSpeed,
             G::FireRate, G::BaseCritDamage, G::CritDamage, G::CritChance, G::StatusChance, G::HeadshotDamage,
-            G::InitialCombo, G::MeleeRange,
+            G::InitialCombo, G::MeleeRange, G::StatusDamage,
         ]
         .into_iter()
         .find(|g| g.id() == id)
@@ -352,6 +357,7 @@ impl BuffGrant {
             BuffGrant::HeadshotDamage => "headshot_damage",
             BuffGrant::InitialCombo => "initial_combo",
             BuffGrant::MeleeRange => "melee_range",
+            BuffGrant::StatusDamage => "status_damage",
         }
     }
 
@@ -375,6 +381,7 @@ impl BuffGrant {
             BuffGrant::HeadshotDamage => "Headshot Damage",
             BuffGrant::InitialCombo => "Initial Combo",
             BuffGrant::MeleeRange => "Range",
+            BuffGrant::StatusDamage => "Status Damage",
         }
     }
 }

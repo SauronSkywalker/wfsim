@@ -34,11 +34,14 @@ seven different builds being ranked, which is what the board is for.
 | `slide` | slide | Hell's Wave | 200% (360deg, forced Impact) |
 | `heavy_slam` | heavy, airborne | — | 630 Blast, 10 m sphere |
 
-**THE ROSTER HOLDS TWO CLASSES**, and the second one is what proves the first
+**THE ROSTER HOLDS THREE CLASSES**, and the second one is what proves the first
 was not hard-coded. A Tonfa (the Praedos) differs from a hammer in every number
 the class owns — 1.17 attack speed against 0.833, a **4x** heavy against 6x,
 0.6 Follow Through against 0.4, a 0.4 s heavy CHARGE against the hammer's
 published 1.2 — and it needed no engine change to say so. Its stances are two more cards in a pool of their own.
+The third, DUAL DAGGERS (the Okina pair), is the same: a **2x** heavy, 0.8
+Follow Through, 1.7 m of reach, three stances and Amar's Contempt in
+`data/mods/dual_daggers/` (`notes: dual_daggers_heavy`).
 
 **THE TONFA HEAVY IS THE ONE NUMBER TWO WIKI SOURCES DISAGREE ON.**
 `Module:Stances/data` prints `Dmg = { 250 }, Hits = { 2 }` for Discord Sewn,
@@ -605,6 +608,12 @@ applies to.
   the reading with an argument behind it (DE publishes a damage figure per combo
   attack) and it is the harmless one, since quantizing `kX` against `ks` is `k`
   times quantizing `X` against `s`. Unmeasured either way.
+- **The Dual Daggers heavy, 2x or 5x.** The Okina's own infobox prints 2x and
+  the class table and the stance module print 5x; the entries take the infobox
+  (`notes: dual_daggers_heavy`). One heavy on a training dummy settles it.
+- **A spectral dagger's ORBIT before it seeks.** Unpublished; it stands at
+  **1.0 s** on the Okina's EVO1 card (`orbit_seconds`), and it is how late a
+  kill pays.
 
 ---
 
@@ -658,6 +667,23 @@ sim reports rather than assumes away:
 `a_melee_incarnon_is_earned_and_a_heavy_attack_is_what_earns_it` pins all three,
 and `magistar_evo_armed` holds the window open where a test means to ask what
 the Genesis is WORTH rather than whether the mode can arm it.
+
+### …and the Okina's, which also MAKES something
+
+The Okina's Incarnon Form turns every kill into a SPECTRAL DAGGER
+(`fight::daggers`, `notes: okina_spectral_dagger`): an entity like an orb,
+made at the swing that sees the kill, orbiting, then flying at 18 m/s to the
+nearest body inside 15 m, up to six at once. It strikes — its own crit and
+status, Condition Overload, ten forced Cold — and explodes for 4 m. It is
+settled through `field_tick` like every timed instance, and the swing loop
+never waits on it, which `a_kill_makes_a_dagger_and_the_dagger_holds_up_no_swing`
+asserts on the swing count.
+
+WHAT REACHES IT is the part no other attack has: melee damage bonuses do not
+(the dagger resolves with an empty base-damage bucket and ignores the live one),
+elements, crit and status do, and a dagger's own kill makes no dagger. The EVO2
+pair's `Increase Base Damage` lands on the dagger and not the swing, the
+behaviour the wiki files under Bugs.
 
 ---
 
