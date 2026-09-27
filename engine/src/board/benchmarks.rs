@@ -112,13 +112,9 @@ pub struct Benchmark {
     /// a wall, and the page can lay it out.
     #[serde(default)]
     pub rules: Vec<String>,
-    /// WHY THIS RULER IS A STANDARD — what the `standard_` prefix rests on,
-    /// in prose, for the reader who asks on what authority. Consumed data for
-    /// the same reason `rules` is: the page renders it.
-    ///
-    /// EMPTY ON A RULER THAT REPRESENTS NOTHING BUT ITS OWN FIGHT, and the
-    /// emptiness is the statement rather than an omission — `demolisher` is
-    /// one specific thing players do and claims to stand for no other.
+    /// WHAT THIS RULER STANDS FOR, in one sentence of idea and no detail — on a
+    /// `standard_` ruler, what the prefix rests on. The detail belongs in
+    /// `rules`, one claim each. Consumed data: the page renders it above them.
     #[serde(default)]
     pub standard: String,
     /// What a build must look like to be admitted. Absent = admit anything

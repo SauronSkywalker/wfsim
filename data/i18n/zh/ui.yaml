@@ -304,7 +304,6 @@ ui:
   "Acrobatic Speed": 翻滚速度
   "Add this build to the official board?": 把这套配装加入官方榜单？
   "Aim": "瞄准"
-  "Aimed, with every shot on the weak point. This is the ceiling a weapon reaches in skilled hands — the companion board removes the aim and measures the floor.": 全程瞄准，每一枪都打在弱点上。这是一把武器在熟练玩家手里的上限——另一个榜把瞄准拿掉，量的是下限。
   "Aiming": 瞄准
   "All targets": 所有目标
   "All": 全部
@@ -765,8 +764,12 @@ ui:
   "not measured yet": 还没测过
   "No build has been measured for this weapon yet. Submitting one puts it in the queue.": "这把武器还没有任何配装被测过。提交一套就会进入队列。"
   "Standard Single Target · Thrax Centurion Lv 9999 SP · 180 s · KPM": 标准单体 · 凶魂百夫长 9999 钢铁 · 180 秒 · KPM
-  "Standard means this fight is claimed to represent most play, not that it is the fight you play. The target is a Thrax Centurion because a build that beats it transfers: it belongs to no faction, so no faction mod and no faction bonus reads on it; it carries Overguard, which most Warframe abilities cannot take off, so the weapon has to; it is armoured and it is tanky; it is immune to no element, so every proc lands; its weak points are the ordinary ones, 3x on the head and 1x elsewhere; and killing it is what moves a mission along. Its flaws are stated rather than hidden — it carries no shield, its Overguard may sit high, and the spectral form it enters on death is switched off here. One target can still be over-fitted to, which is why the board keeps a deep field and not only its leader.": "「标准」是说这场战斗被我们判断为能代表大多数情况，不是说你平时就在打它。选凶魂百夫长做标的，是因为打得赢它的配装能迁移：它不属于任何派系，派系 MOD 和派系加成都对它无效；它带超宏防护，大多数战甲技能扒不掉，只能靠武器；它有护甲，够肉；它不免疫任何元素，各种触发都能正常吃到；它的弱点分布是常见的，头部 3 倍、其他部位 1 倍；而且不杀它任务就推不动。它的缺点也写在这里，不藏着：它没有护盾，超宏防护可能偏高，死后的灵体形态在这里是关掉的。只打一只怪仍然可能偏科，所以榜单保留了大量前排配装，不只是第一名。"
-  "Standard means this fight is claimed to represent most play, not that it is the fight you play. The target is a Thrax Centurion because a build that beats it transfers: it belongs to no faction, so no faction mod and no faction bonus reads on it; it carries Overguard, which most Warframe abilities cannot take off, so the weapon has to; it is armoured and it is tanky; it is immune to no element, so every proc lands; its weak points are the ordinary ones, 3x on the head and 1x elsewhere; and killing it is what moves a mission along. The crowd stands 3 m apart, centre to centre: the spacing decides whether splash or single-target damage wins, 3 m is where that ordering matches play, and it is the widest whole metre at which Electricity still reaches a neighbour.": "「标准」是说这场战斗被我们判断为能代表大多数情况，不是说你平时就在打它。选凶魂百夫长做标的，是因为打得赢它的配装能迁移：它不属于任何派系，派系 MOD 和派系加成都对它无效；它带超宏防护，大多数战甲技能扒不掉，只能靠武器；它有护甲，够肉；它不免疫任何元素，各种触发都能正常吃到；它的弱点分布是常见的，头部 3 倍、其他部位 1 倍；而且不杀它任务就推不动。这群敌人圆心间隔 3 米：决定溅射还是单体胜出的是间隔，3 米时这个排序和实战一致，也是电还能打到相邻敌人的最大整米间隔。"
+  "Standard means this fight is claimed to represent most play, not that it is the fight you play: one tough, unaffiliated target, and a build that beats it transfers.": 「标准」是说这场战斗被判断为能代表大多数情况，不是说你平时就在打它：一个耐打、不属于任何派系的目标，打得赢它的配装能迁移到别处。
+  "The target is a Thrax Centurion because a build that beats it transfers: it belongs to no faction, so no faction mod and no faction bonus reads on it; it carries Overguard, which most Warframe abilities cannot take off, so the weapon has to; it is armoured and tanky; it is immune to no element, so every proc lands; its weak points are the ordinary ones, 3x on the head and 1x elsewhere.": 选凶魂百夫长做目标，是因为打得赢它的配装能迁移：它不属于任何派系，派系 MOD 和派系加成都对它无效；它带超宏防护，大多数战甲技能扒不掉，只能靠武器；它有护甲，够肉；它不免疫任何元素，各种触发都能正常吃到；它的弱点分布是常见的，头部 3 倍、其他部位 1 倍。
+  "Its flaws are stated rather than hidden: it carries no shield, its Overguard may sit high, and the spectral form it enters on death is switched off here.": 它的缺点也写在这里，不藏着：它没有护盾，超宏防护可能偏高，死后的灵体形态在这里是关掉的。
+  "Standard means this fight is claimed to represent most play, not that it is the fight you play: a crowd of tough, unaffiliated targets, packed as close as every elemental area effect still reaches and no larger than holds them whole.": 「标准」是说这场战斗被判断为能代表大多数情况，不是说你平时就在打它：一群耐打、不属于任何派系的目标，站得刚好让每种元素范围效果都能打到邻居，方阵大小刚好装下它们。
+  "The spacing decides whether splash or single-target damage wins: 3 m is where that ordering matches play, and it is the widest whole metre at which Electricity still reaches a neighbour.": 决定溅射还是单体胜出的是间隔：3 米时这个排序和实战一致，也是电还能打到相邻敌人的最大整米间隔。
+  "One specific fight players run, measured as it is rather than as a stand-in for most play: a Demolisher a full squad meets, taken apart by one weapon.": 这是玩家实际会打的一场具体战斗，按它本来的样子来测，不代表大多数情况：一整支小队面对的拆毁者，由一把武器单独拆掉。
   "Skull Shots and Stinging Truth, the Viper-exclusive mods — weapon-exclusive cards outside the pools this roster loads": "「Skull Shots」和「Stinging Truth」，Viper 家族的专属 MOD——这是武器专属卡，不在本武器库载入的卡池里"
   "Sometimes it says the number is right and the game is wrong, and names the bug a hotfix would take away.":
     有时候它会说：数字没错，是游戏错了——顺带指出那个下次热修可能就没了的 bug。
@@ -1843,8 +1846,8 @@ ui:
   "a per-PELLET aim weight on the body the shot STRUCK, not a whole-spread promise — the landing spot is rolled for each pellet, and nothing a blast or a chain reaches can be a headshot": 这是对「被射中的那个目标」的逐弹丸落点权重，不是对整发弹幕的承诺 —— 每颗弹丸各自掷一次落点，而爆炸和链打到的任何目标都不可能爆头。
   # THE BOARD'S RULES: mechanical, and naming no weapon.
   "The target is one Thrax Centurion at level 9999 on Steel Path. The fight lasts 180 seconds.": 目标是一只 9999 级钢铁之路的 Thrax Centurion。战斗持续 180 秒。
-  "One target, so nothing here rewards clearing a room.": 只有一个目标，所以这里的任何东西都不因清场而得分。
-  "Every shot is aimed and lands on the weak point. The companion board removes the aim; between them they are the ceiling and the floor.": 每一发都瞄准并命中弱点。姊妹榜取消瞄准；两者一个是上限、一个是下限。
+  "One target: damage that reaches other enemies counts for nothing here.": 只有一个目标：波及其他敌人的伤害在这里不计分。
+  "Every shot is aimed and lands on the weak point. That is the ceiling of aim, not a claim about how most players shoot.": 每一发都瞄准并命中弱点。这是瞄准的上限，不是说大多数人都这么打。
   "The score is kills per minute, counting the fraction of the current target already gone. Removing 3% of one target in 180 seconds scores 0.03 and still ranks.": 分数是每分钟击杀数，并计入当前目标已被削去的比例。180 秒内削掉一个目标的 3%，得分 0.03，仍然进榜。
   "Every main slot is filled, every evolution tier the entry has is taken, every arcane seat it has is filled. The Exilus slot is never counted.": 每个主槽都装满，该条目拥有的每一阶进化都选，每一个赋能位都填。Exilus 槽从不计入。
   "Investment is not ranked: every entry is scored at full Forma, at max rank, and at the maximum roll of any bonus a player can raise by farming duplicates.": 投入不参与排名：每个条目都按满 Forma、满等级、以及任何可以靠刷重复品提升的加成的最大值来计分。
