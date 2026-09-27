@@ -357,9 +357,9 @@ That Torid line is the tool doing its job: the weapon's entire cost is its
 lingering field, and the status axis — the obvious suspect, and 12.5% on the
 Gotva Prime — sees none of it.
 
-**`bodies=361 spacing=3` STANDS THE RULER'S CROWD THERE**, unkillable, and
+**`bodies=25 spacing=3` STANDS THE RULER'S CROWD THERE**, unkillable, and
 `arcanes=` seats what the row wears. The rows that set this board's makespan are
-all multi-target ones and a build pays 141x there what it pays against one body,
+all multi-target ones and a build paid 141x on a 361-body crowd what it pays against one body,
 so a table taken against the fixture alone profiles the cheap 0.7% of the
 weapon. It is off by default: every saved baseline and every golden value was
 measured against one body.

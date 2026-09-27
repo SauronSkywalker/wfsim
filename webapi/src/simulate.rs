@@ -1543,7 +1543,7 @@ mod asset_tests {
     /// FORMED is running it. This does, through the same `simulate_json` every
     /// module goes through, and it asserts the two claims the file makes:
     ///
-    ///   · the crowd is REAL — 361 bodies, expanded from three numbers;
+    ///   · the crowd is REAL — cols x rows bodies, expanded from three numbers;
     ///   · and it is what is being measured — a chaining weapon scores far
     ///     higher here than under the single-target ruler, on the same build.
     ///
@@ -1575,20 +1575,24 @@ mod asset_tests {
         let crowd = simulate_json(&req(bench));
         assert!(crowd.get("error").is_none(), "{crowd}");
 
-        // 361 BODIES, FROM THREE NUMBERS — proved by making the SAME shorthand
-        // overflow the cap. A grid that expanded into nothing could not, so
-        // this is the crowd being real rather than declared, and it exercises
-        // the shorthand through the one path that counts bodies.
-        // 361 BODIES, AND THE YAML SAYS THREE NUMBERS. The expansion happens
-        // once, where the yaml becomes a scenario (`board::benchmarks`), so what
-        // this ruler HOLDS by the time anything reads it is bodies — which is
-        // also what lets the canvas draw the crowd it is about to simulate.
+        // COLS x ROWS BODIES, AND THE YAML SAYS THREE NUMBERS. The expansion
+        // happens once, where the yaml becomes a scenario (`board::benchmarks`),
+        // so what this ruler HOLDS by the time anything reads it is bodies —
+        // which is also what lets the canvas draw the crowd it is about to
+        // simulate. The size is read from the RAW yaml, so a resized grid needs
+        // no edit here.
+        let raw: serde_norway::Value = serde_norway::from_str(
+            wfsim_engine::data::file("benchmarks/standard_multi_target.yaml").expect("the ruler's file"),
+        )
+        .expect("the ruler parses");
+        let grid = &raw["scenario"]["formation_grid"];
+        let side = |k: &str| grid[k].as_u64().expect("cols and rows") as usize;
         let n = bench
             .scenario
             .get("formation")
             .and_then(|f| f.as_sequence())
             .map_or(0, |a| a.len());
-        assert_eq!(n, 19 * 19 - 1, "19x19 is 361 bodies, one of them the aimed one");
+        assert_eq!(n, side("cols") * side("rows") - 1, "every cell is a body, one of them the aimed one");
         assert!(
             bench.scenario.get("formation_grid").is_none(),
             "the shorthand must not survive into the scenario"

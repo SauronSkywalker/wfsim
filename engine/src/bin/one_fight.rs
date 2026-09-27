@@ -150,7 +150,7 @@ struct Cfg<'a> {
     steel_path: bool,
     verbose: bool,
     /// HOW MANY BODIES STAND THERE. One is the fixture every golden value was
-    /// measured under; the multi-target ruler's crowd is 361, and the rows that
+    /// measured under; the multi-target ruler's crowd is 25, and the rows that
     /// cost this board its makespan are all in it. A cost table that can only
     /// be taken against one body cannot see where their time goes.
     bodies: usize,
@@ -593,7 +593,7 @@ fn main() -> std::process::ExitCode {
              \x20 runs=1000  duration=180  seed=24301  repeats=3\n\
              \x20 enemy=thrax_centurion  level=9999  steel_path=1\n\
              \x20 enemy=training        no mitigation — the weapon's own arithmetic\n\
-             \x20 bodies=361 spacing=3  the ruler's crowd, and it cannot die\n\
+             \x20 bodies=25 spacing=3   the ruler's crowd, and it cannot die\n\
              \x20 arcanes=primary_debilitate\n\
              \x20 -v                    print every repeat\n\
              \x20 ablate                where the time goes, by subsystem\n\n\

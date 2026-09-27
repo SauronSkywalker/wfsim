@@ -20,7 +20,7 @@ builder, simulator, optimizer.
 archgun, plus sentinel weapons and 69 Incarnon forms; mods, arcanes,
 evolutions, rivens, custom enemies and the [leaderboard](docs/BOARD.md) are
 live. Melee is being imported now: three weapons so far, seven attack forms
-each. Fights are single-target or a 19x19 formation. Gaps are expected —
+each. Fights are single-target or a formation; the crowd ruler is a 5x5. Gaps are expected —
 issues welcome.
 
 **On AI:** I use AI assistance while writing this code (see

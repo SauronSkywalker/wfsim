@@ -15,20 +15,21 @@
 # `board/benchmarks.rs` refuses it any weapon, mod, arcane or evolution id.
 id: standard_multi_target
 
-name: "Standard Multi Target · 19x19 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM"
+name: "Standard Multi Target · 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM"
 
 # WHAT "STANDARD" CLAIMS, and it is a judgement rather than a fact — which is
 # exactly why it is written down where it can be argued with. The target half
 # is the same claim its companion makes; the spacing is this ruler's own.
-standard: "Standard means this fight is claimed to represent most play, not that it is the fight you play. The target is a Thrax Centurion because a build that beats it transfers: it belongs to no faction, so no faction mod and no faction bonus reads on it; it carries Overguard, which most Warframe abilities cannot take off, so the weapon has to; it is armoured and it is tanky; it is immune to no element, so every proc lands; its weak points are the ordinary ones, 3x on the head and 1x elsewhere; and killing it is what moves a mission along. The crowd stands 3 m apart because the spacing, not the arrangement, is what decides whether splash or single-target damage wins — and 3 m is where the ordering matches what the same fight does in game."
+standard: "Standard means this fight is claimed to represent most play, not that it is the fight you play. The target is a Thrax Centurion because a build that beats it transfers: it belongs to no faction, so no faction mod and no faction bonus reads on it; it carries Overguard, which most Warframe abilities cannot take off, so the weapon has to; it is armoured and it is tanky; it is immune to no element, so every proc lands; its weak points are the ordinary ones, 3x on the head and 1x elsewhere; and killing it is what moves a mission along. The crowd stands 3 m apart, centre to centre: the spacing decides whether splash or single-target damage wins, 3 m is where that ordering matches play, and it is the widest whole metre at which Electricity still reaches a neighbour."
 
 rules:
-  - "The target is a formation of 361 Thrax Centurions at level 9999 on Steel Path, a 19 by 19 grid spaced 3 metres centre to centre. The fight lasts 180 seconds."
+  - "The target is a formation of 25 Thrax Centurions at level 9999 on Steel Path, a 5 by 5 grid spaced 3 metres centre to centre: the smallest odd square that holds every elemental area effect around the aimed body whole, a fully grown 6 m Gas cloud included. The fight lasts 180 seconds."
+  - "A weapon's own explosion wider than about 6 m, and punch-through past five bodies, are clipped by the grid on purpose: a deeper column would rank the arena rather than the weapon."
   - "The shooter stands at contact with the middle body of the front rank, and fires along the line that rank faces."
   - "Every shot is aimed and lands on the weak point of whatever it strikes directly, including anything it punches through. A chain hop and a damage cloud cannot be a weak point hit. A BLAST detonation can: it carries the weak-point and critical multipliers of the hit that applied the stack, out to everything its 5 m sphere reaches — measured in game (MEASUREMENTS M54)."
   - "The score is kills per minute across the whole formation, counting the fraction of each target already gone."
   - "A body that dies respawns where it stood, so the arrangement is the same at the end as at the start and the score is a rate rather than a race to the last body."
-  - "The grid is stated as three numbers rather than as 361 positions, so its terms can be read and argued with."
+  - "The grid is stated as three numbers rather than as 25 positions, so its terms can be read and argued with."
   - "Every main slot is filled, every evolution tier the entry has is taken, every arcane seat it has is filled. The Exilus slot is optional: a row may wear one and a row without one is not a lesser build, so the two sit on the same board and the better number wins."
   - "The stance slot is optional too, and it is not a discount but a GRANT: a stance hands the weapon 10 mod capacity on a matching polarity, 5 on a bare slot and 4 on the wrong colour. A row without one is not a lesser build; it is a build that spent the capacity elsewhere."
   - "Investment is not ranked: every entry is scored at full Forma, at max rank, and at the maximum roll of any bonus a player can raise by farming duplicates."
@@ -75,19 +76,15 @@ scenario:
   # then expands into the ordinary `formation` list — so nothing downstream
   # knows this was a shorthand.
   #
-  # 19 x 19 = 361 BODIES, and the number is MEASURED rather than chosen. The
-  # roster's LARGEST blast is the Morgha alt's 12 m radius, and it reaches 110
-  # bodies here, 110 at 21x21 and 110 at 23x23 — so 19 is exactly where nothing
-  # in the roster is clipped by the arena, which was the only argument for going
-  # bigger. Past it the extra ranks change two things and neither is wanted: an
-  # infinite-punch-through weapon's column runs one body deeper per rank (it
-  # never saturates, and a perfect column that long is an arrangement no player
-  # will line up), and a spread weapon's wandering epicentre catches a couple
-  # more on wide MISSES. docs/BOARD.md carries the tables.
+  # 5 x 5 = 25 BODIES: the smallest odd square that holds every elemental area
+  # effect centred on the aimed body WHOLE. Reach is radius + BODY_RADIUS_M,
+  # centre to centre: Electricity (3 m) and a Blast proc (5 m) fit a 3x3, a
+  # fully grown Gas cloud (6 m) reaches the bodies 6 m to either side and needs 5.
   #
-  # COST IS NOT WHY. `rules::chain::Layout` made the grid's size almost free — a chain
-  # resolves against a precomputed neighbour list, so 361 bodies cost 21.2 s per
-  # 1000 runs against 19.5 s for 49. The size is settled by saturation alone.
+  # WHAT IT CLIPS, on purpose: a weapon's own explosion wider than ~6 m, and
+  # punch-through past five bodies. A column's depth IS a punch-through weapon's
+  # score — exactly N on an NxN — so a deeper grid ranks the arena, not the
+  # weapon. docs/BOARD.md §"The multi-target ruler" carries the measurement.
   #
   # 3 m SPACING, and it is the single most consequential number in this file. It decides the whole splash-versus-single-target
   # ordering, because a 5 m Blast sphere holds `pi * 25 / spacing^2` bodies —
@@ -119,8 +116,8 @@ scenario:
   # handing a 5 m sphere three dozen targets. A number in the crossover band is
   # a choice; that it must be in the band is not.
   formation_grid:
-    cols: 19
-    rows: 19
+    cols: 5
+    rows: 5
     spacing_m: 3.0
 
   # NO `aim_at`: the weapon points at the body it is in contact with, which is

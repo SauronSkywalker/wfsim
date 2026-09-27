@@ -54,7 +54,7 @@ pub struct BuildRequirement {
     /// exilus mods are handling and mobility with no damage model. That is true
     /// of most of the pool and false of the part that matters: BEAM RANGE is
     /// exilus, and beam range decides how many bodies a beam reaches — on a
-    /// 19x19 group ruler, most of the damage. The rule stays per RULER because
+    /// group ruler, much of the damage. The rule stays per RULER because
     /// admission always has been.
     ///
     /// NOT `full`. Requiring one would force a choice worth nothing on most
@@ -131,7 +131,7 @@ pub struct Benchmark {
     /// primary one" while `standard_single_target.yaml` sorted first. Adding
     /// `standard_multi_target.yaml` broke it in two places at once: the
     /// board page opened on a brand-new EMPTY ranking, and — worse — every
-    /// first-time visitor's default SCENARIO became a 361-body fight, because
+    /// first-time visitor's default SCENARIO became a crowd fight, because
     /// the app seeds the active scenario from the first builtin.
     ///
     /// Declared rather than derived, and declared ONCE: `all()` sorts on it, so
@@ -181,14 +181,14 @@ pub fn core_metric(
 /// further along the shot's own line — and becomes an ordinary `formation`
 /// list before anything downstream sees the scenario.
 ///
-/// WHY THE SHORTHAND EXISTS: 361 bodies written out is 360 lines nobody can
+/// WHY THE SHORTHAND EXISTS: a crowd written out is a line per body nobody can
 /// check by reading, and a ruler whose terms cannot be argued with is not a
 /// ruler.
 ///
 /// WHY IT IS EXPANDED HERE: because the PAGE has to draw the crowd. The arena
 /// is the source — what you see is what gets simulated — and it reads
 /// `formation`. Expanding at simulate time instead would have left the canvas
-/// drawing one body for a 361-body fight, and expanding in both places is the
+/// drawing one body for a crowd fight, and expanding in both places is the
 /// two-implementations bug this repo keeps paying for. One expansion, at the
 /// moment the yaml becomes a scenario, and every consumer downstream — the
 /// canvas, the payload, `parse_fight`, the board scorer — sees only bodies.
@@ -467,7 +467,7 @@ mod tests {
     /// So the prose is CHECKED against the field rather than kept in step by
     /// hand. It reads the grid before expansion, which is why this lives beside
     /// `expand_formation_grid`: once expanded there is no spacing left to
-    /// compare, only 361 positions.
+    /// compare, only positions.
     ///
     /// It is deliberately not a template. A ruler's name is written for a
     /// reader and generating it would flatten every one of them into the same
@@ -476,7 +476,7 @@ mod tests {
     fn a_rulers_name_and_rules_quote_its_own_spacing() {
         // THE RAW YAML, because `all()` expands the grid away: after
         // `expand_formation_grid` there is no spacing left to compare against,
-        // only 361 positions.
+        // only positions.
         let mut checked = 0;
         for (path, text) in crate::data::files_under("benchmarks/") {
             if !path.ends_with(".yaml") || path["benchmarks/".len()..].contains('/') {
@@ -504,6 +504,21 @@ mod tests {
                 "{id}: the grid is {spacing} m and neither the name nor the rules say so.\n  \
                  name:  {}\n  This is the drift that put '19x19 at 1.5 m' over a 3 m fight.",
                 b.name
+            );
+            // …AND ITS SIZE, in the name and in the rules both: the same drift
+            // with the other two numbers.
+            let side = |k: &str| g.get(k).and_then(|v| v.as_u64()).expect("cols and rows");
+            let (cols, rows) = (side("cols"), side("rows"));
+            assert!(
+                b.name.contains(&format!("{cols}x{rows}")),
+                "{id}: the grid is {cols}x{rows} and the name does not say so.\n  name:  {}",
+                b.name
+            );
+            let body = b.rules.join(" ");
+            assert!(
+                body.contains(&format!("{cols} by {rows}")) && body.contains(&format!(" {} ", cols * rows)),
+                "{id}: the grid is {cols} by {rows}, {} bodies, and the rules do not say both.",
+                cols * rows
             );
         }
         assert!(checked > 0, "at least one ruler lays a grid, or this checks nothing");

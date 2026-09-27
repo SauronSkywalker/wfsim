@@ -543,7 +543,7 @@ ui:
   "Gain": 提升
   "Game data derived from the community": 游戏数据来自社区
   "Grineer": Grineer
-  "Standard Multi Target · 19x19 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM": 标准群体 · 19x19 间隔 3 米 · 凶魂百夫长 9999 级 钢铁之路 · 180 秒 · KPM
+  "Standard Multi Target · 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM": 标准群体 · 5x5 间隔 3 米 · 凶魂百夫长 9999 级 钢铁之路 · 180 秒 · KPM
   "Headshot %": 爆头率 %
   "Headshot rate": 爆头率
   "Headshot": 爆头
@@ -766,7 +766,7 @@ ui:
   "No build has been measured for this weapon yet. Submitting one puts it in the queue.": "这把武器还没有任何配装被测过。提交一套就会进入队列。"
   "Standard Single Target · Thrax Centurion Lv 9999 SP · 180 s · KPM": 标准单体 · 凶魂百夫长 9999 钢铁 · 180 秒 · KPM
   "Standard means this fight is claimed to represent most play, not that it is the fight you play. The target is a Thrax Centurion because a build that beats it transfers: it belongs to no faction, so no faction mod and no faction bonus reads on it; it carries Overguard, which most Warframe abilities cannot take off, so the weapon has to; it is armoured and it is tanky; it is immune to no element, so every proc lands; its weak points are the ordinary ones, 3x on the head and 1x elsewhere; and killing it is what moves a mission along. Its flaws are stated rather than hidden — it carries no shield, its Overguard may sit high, and the spectral form it enters on death is switched off here. One target can still be over-fitted to, which is why the board keeps a deep field and not only its leader.": "「标准」是说这场战斗被我们判断为能代表大多数情况，不是说你平时就在打它。选凶魂百夫长做标的，是因为打得赢它的配装能迁移：它不属于任何派系，派系 MOD 和派系加成都对它无效；它带超宏防护，大多数战甲技能扒不掉，只能靠武器；它有护甲，够肉；它不免疫任何元素，各种触发都能正常吃到；它的弱点分布是常见的，头部 3 倍、其他部位 1 倍；而且不杀它任务就推不动。它的缺点也写在这里，不藏着：它没有护盾，超宏防护可能偏高，死后的灵体形态在这里是关掉的。只打一只怪仍然可能偏科，所以榜单保留了大量前排配装，不只是第一名。"
-  "Standard means this fight is claimed to represent most play, not that it is the fight you play. The target is a Thrax Centurion because a build that beats it transfers: it belongs to no faction, so no faction mod and no faction bonus reads on it; it carries Overguard, which most Warframe abilities cannot take off, so the weapon has to; it is armoured and it is tanky; it is immune to no element, so every proc lands; its weak points are the ordinary ones, 3x on the head and 1x elsewhere; and killing it is what moves a mission along. The crowd stands 3 m apart because the spacing, not the arrangement, is what decides whether splash or single-target damage wins — and 3 m is where the ordering matches what the same fight does in game.": "「标准」是说这场战斗被我们判断为能代表大多数情况，不是说你平时就在打它。选凶魂百夫长做标的，是因为打得赢它的配装能迁移：它不属于任何派系，派系 MOD 和派系加成都对它无效；它带超宏防护，大多数战甲技能扒不掉，只能靠武器；它有护甲，够肉；它不免疫任何元素，各种触发都能正常吃到；它的弱点分布是常见的，头部 3 倍、其他部位 1 倍；而且不杀它任务就推不动。这群敌人间隔 3 米，因为决定溅射还是单体胜出的是间隔而不是排布——3 米是这个排序和游戏里实际打起来一致的那个距离。"
+  "Standard means this fight is claimed to represent most play, not that it is the fight you play. The target is a Thrax Centurion because a build that beats it transfers: it belongs to no faction, so no faction mod and no faction bonus reads on it; it carries Overguard, which most Warframe abilities cannot take off, so the weapon has to; it is armoured and it is tanky; it is immune to no element, so every proc lands; its weak points are the ordinary ones, 3x on the head and 1x elsewhere; and killing it is what moves a mission along. The crowd stands 3 m apart, centre to centre: the spacing decides whether splash or single-target damage wins, 3 m is where that ordering matches play, and it is the widest whole metre at which Electricity still reaches a neighbour.": "「标准」是说这场战斗被我们判断为能代表大多数情况，不是说你平时就在打它。选凶魂百夫长做标的，是因为打得赢它的配装能迁移：它不属于任何派系，派系 MOD 和派系加成都对它无效；它带超宏防护，大多数战甲技能扒不掉，只能靠武器；它有护甲，够肉；它不免疫任何元素，各种触发都能正常吃到；它的弱点分布是常见的，头部 3 倍、其他部位 1 倍；而且不杀它任务就推不动。这群敌人圆心间隔 3 米：决定溅射还是单体胜出的是间隔，3 米时这个排序和实战一致，也是电还能打到相邻敌人的最大整米间隔。"
   "Skull Shots and Stinging Truth, the Viper-exclusive mods — weapon-exclusive cards outside the pools this roster loads": "「Skull Shots」和「Stinging Truth」，Viper 家族的专属 MOD——这是武器专属卡，不在本武器库载入的卡池里"
   "Sometimes it says the number is right and the game is wrong, and names the bug a hotfix would take away.":
     有时候它会说：数字没错，是游戏错了——顺带指出那个下次热修可能就没了的 bug。
@@ -817,12 +817,13 @@ ui:
   "The engine, the game data and the wasm it all runs on are public. If you ever stop recognising what this becomes, you can run your own — that is not my assurance, it is the licence.":
     引擎、游戏数据，以及承载它们的 wasm，全部公开。真到哪天你不再认可它变成的样子，你可以自己跑一个——这不是我的保证，是授权协议决定的。
   "The fight": 这场仗
-  "The grid is stated as three numbers rather than as 361 positions, so its terms can be read and argued with.": 方阵用三个数字描述而不是 361 个坐标，这样它的条款才读得懂、争得动。
+  "The grid is stated as three numbers rather than as 25 positions, so its terms can be read and argued with.": 方阵用三个数字描述而不是 25 个坐标，这样它的条款才读得懂、争得动。
   "The real Simulacrum Prime.": 真正的幻影装置 Prime。
   "The Tenno": 使用者
   "The score is kills per minute across the whole formation, counting the fraction of each target already gone.": 分数是整个阵型的每分钟击杀数，并计入每个目标已被削掉的比例。
   "The shooter stands at contact with the middle body of the front rank, and fires along the line that rank faces.": 射手贴身站在前排正中那个目标前，沿着该排面对的方向射击。
-  "The target is a formation of 361 Thrax Centurions at level 9999 on Steel Path, a 19 by 19 grid spaced 3 metres centre to centre. The fight lasts 180 seconds.": 目标是 361 个 9999 级钢铁之路凶魂百夫长组成的阵型，19×19 的方阵，圆心间隔 3 米。战斗持续 180 秒。
+  "The target is a formation of 25 Thrax Centurions at level 9999 on Steel Path, a 5 by 5 grid spaced 3 metres centre to centre: the smallest odd square that holds every elemental area effect around the aimed body whole, a fully grown 6 m Gas cloud included. The fight lasts 180 seconds.": 目标是 25 个 9999 级钢铁之路凶魂百夫长组成的阵型，5×5 的方阵，圆心间隔 3 米：这是能把以被瞄准敌人为中心的所有元素范围效果完整装下的最小奇数方阵，叠满到 6 米的毒气云也在内。战斗持续 180 秒。
+  "A weapon's own explosion wider than about 6 m, and punch-through past five bodies, are clipped by the grid on purpose: a deeper column would rank the arena rather than the weapon.": 武器自身半径超过约 6 米的爆炸，以及超过 5 个的穿透，会被方阵有意截掉：更深的纵列排出来的是场地，而不是武器。
   "There is no transition animation either way.": 两个方向都没有切换动作。
   "Thermagnetic Shells, the Detron family's exclusive mod — a weapon-exclusive card outside the pools this roster loads": "「热磁弹壳」，Detron 家族的专属 MOD——这是一张武器专属卡，不在本武器库载入的卡池里"
   "Time to first kill": 首杀耗时

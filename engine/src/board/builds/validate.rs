@@ -242,7 +242,7 @@ pub fn validate_with(
     // model". That was true of most of them and is not true of the pool: BEAM
     // RANGE is exilus (`sinister_reach`, `ruinous_extension`,
     // `galvanized_acceleration`), and beam range decides how many bodies a beam
-    // reaches — which on a 19x19 group ruler is most of the damage. Excluding
+    // reaches — which on a group ruler is much of the damage. Excluding
     // the slot put those mods out of reach of every board row.
     //
     // THE SLOT ONLY TAKES AN EXILUS MOD, which is the one rule the game

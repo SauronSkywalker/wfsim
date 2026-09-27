@@ -1207,12 +1207,11 @@ than from the clock.
 A weapon with neither mechanic touches 1 body at every size and costs what it
 always did, so the ruler is free for most of the roster.
 
-> **THE RULER MOVED TO 3 m ON 2026-08-22** and the analysis below is kept as it
-> was measured. It is evidence about SATURATION — which mechanism stops growing
-> at which grid size — and that question is unchanged; what changed is the
-> spacing, and why is the section above and MEASUREMENTS M54. The one conclusion here that the move overturns is the last section's:
-> 1.5 m separates all three steps of a radius mod and 3 m does not, which is
-> the cost the move pays on purpose.
+> **THE TABLES BELOW WERE MEASURED AT 1.5 m** and are evidence about
+> SATURATION — which mechanism stops growing at which grid size. Neither the
+> ruler's spacing nor its size is read off them: both are decided in §"The
+> multi-target ruler". 1.5 m separates all three steps of a radius mod and 3 m
+> does not, which is a cost the ruler pays on purpose.
 
 ### The spacing is the ruler's ANSWER, not its arrangement
 
@@ -1232,7 +1231,7 @@ actually reaches in a real fight (~9 at 3 m, ~20 at 2 m, ~5 at 4 m).
 
 A RULER'S PROSE QUOTES ITS OWN NUMBERS. The spacing is written three times —
 the field, the ruler's NAME, and the rule sentence — and a test reads the RAW
-yaml (the grid is expanded into 361 positions at load) and asserts the prose
+yaml (the grid is expanded into positions at load) and asserts the prose
 quotes the field.
 
 ### At 1.5 m, and where each mechanism stops growing
@@ -1277,7 +1276,7 @@ was a field for an hour and a test caught the trap at once — widen
 `beam.damage_radius_m` after the params are built and the cached layout is
 silently stale, which is the two-declarations bug wearing a cache.
 
-### Where it stops mattering — 19x19
+### Where each mechanism stops growing, at 1.5 m
 
 With cost flat, the size is settled by SATURATION alone. Measured at 1.5 m out
 to 23x23 (bodies touched · seconds per 1000 runs):
@@ -1291,8 +1290,8 @@ to 23x23 (bodies touched · seconds per 1000 runs):
 | 23x23 | 529 | 13 · 20.7 s | **110** · 3.9 s | 81 · 3.0 s | 23 · 8.4 s |
 
 **19x19 is where the roster's largest blast stops growing.** The Morgha alt's
-12 m reaches 110 bodies there and 110 at 23x23, so no weapon in the roster is
-clipped by the arena any more — which was the only argument for going bigger.
+12 m reaches 110 bodies there and 110 at 23x23, so at 1.5 m no weapon in the
+roster is clipped by a 19x19.
 
 Past 19 the extra rows change exactly two things, and neither is wanted: an
 infinite-punch-through weapon's column runs one body deeper per row (19, 21,
@@ -1347,29 +1346,51 @@ a band and 1.5 sits in it.
 about a ROOM rather than a target. Its companion's name has said "Single
 Target" first since it was written, precisely so this could exist beside it.
 
-**19 x 19 at 1.5 m, Thrax Centurion Lv 9999 SP, 180 s, KPM.** The shooter
-stands at CONTACT with the middle body of the front rank and fires along the
-line that rank faces. Every number in it is measured — see the tables above —
-and the two that were choices are:
+**5 x 5 at 3 m centre to centre, Thrax Centurion Lv 9999 SP, 180 s, KPM.** The
+shooter stands at CONTACT with the middle body of the front rank and fires
+along the line that rank faces. Both numbers are extremes of a stated
+criterion, and a body is reached when the centre-to-centre distance is within
+the effect's radius plus `BODY_RADIUS_M` (0.25 m):
 
-- **19 x 19** is where the roster's largest blast (the Morgha alt's 12 m) stops
-  growing at 110 bodies and stays there through 23x23. Past it the extra ranks
-  only deepen an infinite-punch-through weapon's column and reward a spread
-  weapon's wide misses.
-- **1.5 m** is the only spacing that separates all three steps of a radius mod
-  (6 / 9 / 13 seeds for bare / Firestorm / Primed Firestorm).
+- **3 m** is the widest whole-metre spacing at which every elemental area
+  effect still reaches a neighbour. Electricity's 3 m arc reaches 3.25 m: the
+  bodies either side and behind at 3 m, and none at 4 m. It is also inside the
+  band where the splash-versus-single-target ordering matches play (above).
+- **5 x 5** is the smallest odd square that holds every elemental area effect
+  centred on the aimed body WHOLE. Electricity and a Blast proc's 5 m fit a
+  3x3; a fully grown 6 m Gas cloud reaches the bodies 6 m to either side and
+  needs the fifth column.
+
+**WHAT IT CLIPS IS CLIPPED ON PURPOSE.** A weapon's own explosion wider than
+about 6 m, and punch-through past five bodies. Punch-through is the reason the
+grid is not deeper: its score is EXACTLY proportional to the rank count (5x5
+scores 5/19 of 19x19 to two digits on every such weapon), so a deeper grid
+ranks the arena rather than the weapon. Measured over every weapon and mode's
+best row, 200 runs each on the ruler's seed, 5x5 against 19x19 at 3 m:
+
+| | rows |
+|---|---|
+| score unchanged | 438 of 593 |
+| kept 90–100% | 47 |
+| kept 50–90% | 62 |
+| kept 30–50% | 11 |
+| kept under 30% — punch-through, Praedos, Magistar slams | 35 |
+
+The rows 19x19 ranked in its top 20 had earned **64%** of their score on
+bodies outside the 5x5; rows ranked below 100 had earned 10.6%. The full reach
+of a very large radius is a question for a ruler about reach, not this one.
 
 ### A crowd in three numbers, expanded ONCE
 
 `formation_grid: {cols, rows, spacing_m}` becomes an ordinary `formation` list
 in `board::benchmarks`, at the moment the yaml is parsed — not at simulate time.
-361 bodies written out is 360 lines nobody can check by reading, and a ruler
+A crowd written out is a line per body nobody can check by reading, and a ruler
 whose terms cannot be argued with is not a ruler.
 
 **Why there and not in `parse_fight`:** the PAGE has to draw the crowd. The
 arena is the source — what you see is what gets simulated — and it reads
 `formation`. Expanding at simulate time would have left the canvas drawing one
-body for a 361-body fight; expanding in both places is the two-implementations
+body for a crowd fight; expanding in both places is the two-implementations
 bug this repo keeps paying for. One expansion, and every consumer downstream —
 the canvas, the payload, `parse_fight`, the scorer — sees only bodies. The
 board page's own arena had `sc.formation = []` hard-coded from when a ruler
@@ -1380,7 +1401,7 @@ could not have one, and now draws the ruler's real crowd.
 The rulers were in PATH ORDER, and that was indistinguishable from "the primary
 one" while `standard_single_target.yaml` sorted first. `standard_multi_target.yaml` sorts before
 it, so the board page opened on a brand-new EMPTY ranking — and, worse, every
-first-time visitor's default SCENARIO became a 361-body fight, because the app
+first-time visitor's default SCENARIO became a crowd fight, because the app
 seeds the active scenario from the first builtin.
 
 `primary: true` on `standard_single_target.yaml` is the declaration, and
@@ -1618,8 +1639,8 @@ median row says, so a slice priced from medians is a slice sized at two thirds.
 
 WHAT CARRIES IS THE SHAPE, not the figures: the bill is dominated by the ruler
 with the most bodies in it, and a single-target ruler costs an order of
-magnitude less however many of them there are. That is a fact about 361 bodies
-against one, and it does not depend on which single-target rulers exist.
+magnitude less however many of them there are. It was measured on a 361-body
+crowd; the crowd ruler is 25 bodies now and its share has not been re-measured.
 
 **`standard_multi_target` is 60% of the live bill** on 26% of its rows, and
 inside that a handful are the tail: the top 100 rows of 15,225 are 11% of that
