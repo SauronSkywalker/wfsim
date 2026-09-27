@@ -78,12 +78,12 @@ pub struct ArcaneFx {
     /// row nobody has transcribed.
     pub rechargeable_magazine: bool,
     /// Σ RELATIVE crit-chance bonuses from assumed-max conditionals
-    /// (Overcharge, Outburst) — they join the crit-chance BUCKET, so each
+    /// (Overcharge) — they join the crit-chance BUCKET, so each
     /// attack part multiplies its OWN unmodded base by this. Kept relative all
     /// the way into the sim on purpose: resolving it against the direct part's
     /// base here is what silently excluded the explosion.
     pub crit_chance_relative: f64,
-    /// Σ RELATIVE crit-damage bonuses (Outburst) — same rule as `crit_chance_relative`.
+    /// Σ RELATIVE crit-damage bonuses — same rule as `crit_chance_relative`.
     pub crit_damage_relative: f64,
     /// Σ RELATIVE crit chance on weak-point hits only (Cascadia Accuracy,
     /// assumed-max). Direct hits only — a radial never hits a weak point — so

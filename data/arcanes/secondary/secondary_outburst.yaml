@@ -6,26 +6,29 @@ internal_name: /Lotus/Upgrades/CosmeticEnhancers/Offensive/MultishotForCombo
 description: "On swapping to Secondary Weapon, consume all Combo Multipliers to increase Secondary Weapon Critical Chance and Critical Damage by X% per Combo consumed for 30s."
 
 effects:
-  # "Per Combo consumed" = per melee combo MULTIPLIER tier: the regular 12x
-  # combo cap (240 hits) gives 12 stacks = +240% at max rank. Both bonuses are
-  # ADDITIVE with their buckets (Pistol Gambit / Target Cracker). Swapping with
-  # a LOWER combo does not override a stronger active buff.
+  # "Per Combo consumed" = per melee combo MULTIPLIER: 13 stacks is the
+  # highest multiplier any melee reaches (Venka Prime's 13x; 12x elsewhere).
+  # Both bonuses are ADDITIVE with their buckets (Pistol Gambit / Target
+  # Cracker).
+  #
+  # THE COUNT IS THE CARD'S. This arena holds one weapon and never swaps, so
+  # the stacks are the multiplier the player sets — 0 by default, which is what
+  # every ruler runs — and they are held for the whole engagement: the card's
+  # 30 s is not applied, and no `duration` is stated for it.
   - kind: buff
     trigger: swap_consume_combo
     grants: crit_chance
     rank0: 0.05
     rankMax: 0.2
     ranks: [0.05, 0.07, 0.09, 0.12, 0.16, 0.2]   # NON-LINEAR (wiki: "Bonus per Combo")
-    max_stacks: 12
-    duration: 30
+    max_stacks: 13
   - kind: buff
     trigger: swap_consume_combo
     grants: crit_damage
     rank0: 0.05
     rankMax: 0.2
     ranks: [0.05, 0.07, 0.09, 0.12, 0.16, 0.2]   # NON-LINEAR (wiki: "Bonus per Combo")
-    max_stacks: 12
-    duration: 30
+    max_stacks: 13
 
 source:
   url: https://wiki.warframe.com/w/Secondary_Outburst

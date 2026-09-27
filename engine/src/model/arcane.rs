@@ -36,10 +36,6 @@ pub enum ArcEffect {
     },
     /// Relative crit chance under a non-simmed condition (Overcharge).
     CondCritChance(Scale),
-    /// Outburst: relative CC and CD per combo tier consumed (assumed-max =
-    /// full 12x combo), duration-limited buff on a non-simmed trigger.
-    CondCritChanceStacked { scale: Scale, max_stacks: u32 },
-    CondCritDamageStacked { scale: Scale, max_stacks: u32 },
     /// Cascadia Accuracy: relative crit chance on weak-point hits (on-roll
     /// buff — assumed-max only).
     WeakpointCritChance(Scale),

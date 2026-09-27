@@ -243,7 +243,7 @@ pub(super) fn settle_pellet(pellet_idx: u32, shot: &Strike, live: &mut Live) {
     // further in — see the stage loop.
     // Crit damage: resolved multiplier + Cold's flat bonus received
     // + Sharpened Bullets' live on-kill buff + the arcane's
-    // assumed-max conditional (Outburst).
+    // stacks (Outburst's are the count set on its card).
     // Primary Blight / Frostbite: a stacking crit-damage grant,
     // already resolved to an ABSOLUTE per-stack value against the
     // weapon's base crit damage (ArcaneDef::fx), so it adds straight

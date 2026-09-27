@@ -172,7 +172,7 @@ pub(super) fn resolve_the_shot(
         let weakened_cc = WEAKENED_FLAT_CC_PER_STACK * debuffs.weakened_active(t) as f64;
         // Relative, shared by every stage: Crosshairs' on-headshot buff and
         // its per-stack-expiry kill stacks (assumes constant aiming), plus the
-        // arcane's assumed-max conditionals (Overcharge/Outburst).
+        // arcane's assumed-max conditionals (Overcharge).
         let crit_chance_relative = params.crit_chance_on_headshot.map_or(0.0, |b| {
             if t < windows.crit_on_headshot {
                 b.value
@@ -183,6 +183,8 @@ pub(super) fn resolve_the_shot(
             windows.crit_on_headshot_stacks.retain(|&e| e > t);
             s.per_stack * windows.crit_on_headshot_stacks.len() as f64
         }) + params.arcane.crit_chance_relative
+            // SECONDARY OUTBURST's stacks, in the bracket its card names.
+            + arc.total(&params.arcane.buffs, ArcGrant::CritChance, t)
             // CRITICAL MUTATION: "additive with mods such as Pistol Gambit", a
             // global buff the beam takes as well as the grenade (M107).
             + gal.mutation.bonus

@@ -201,16 +201,6 @@ impl ArcaneDef {
                         fx.crit_chance_relative += sc.at(rank, self.max_rank);
                     }
                 }
-                ArcEffect::CondCritChanceStacked { scale, max_stacks } => {
-                    if assumed {
-                        fx.crit_chance_relative += scale.at(rank, self.max_rank) * *max_stacks as f64;
-                    }
-                }
-                ArcEffect::CondCritDamageStacked { scale, max_stacks } => {
-                    if assumed {
-                        fx.crit_damage_relative += scale.at(rank, self.max_rank) * *max_stacks as f64;
-                    }
-                }
                 ArcEffect::WeakpointCritChance(sc) => {
                     if assumed {
                         fx.weakpoint_crit_chance_relative += sc.at(rank, self.max_rank);
@@ -367,8 +357,6 @@ impl ArcaneDef {
                 ArcEffect::Buff { scale, .. }
                 | ArcEffect::TennoScaled { cap: scale, .. }
                 | ArcEffect::CondCritChance(scale)
-                | ArcEffect::CondCritChanceStacked { scale, .. }
-                | ArcEffect::CondCritDamageStacked { scale, .. }
                 | ArcEffect::WeakpointCritChance(scale)
                 | ArcEffect::PerColdDamage { scale, .. }
                 | ArcEffect::AddedElement { scale, .. }
@@ -454,6 +442,7 @@ impl ArcaneDef {
                         ArcGrant::Multishot => "Multishot",
                         ArcGrant::ReloadSpeed => "Reload Speed",
                         ArcGrant::CritDamage => "Critical Damage",
+                        ArcGrant::CritChance => "Critical Chance",
                         ArcGrant::StatusChance => "Status Chance",
                         ArcGrant::AmmoEfficiency => "Ammo Efficiency",
                     };
@@ -467,6 +456,7 @@ impl ArcaneDef {
                         ArcTrigger::ColdStatus => "On Cold Status",
                         ArcTrigger::WeakpointHit => "On Weak Point Hit",
                         ArcTrigger::Passive => "Always",
+                        ArcTrigger::ComboSwap => "Per melee combo multiplier consumed on swap",
                     };
                     let decay = if *all_drop { "all drop on timeout" } else { "lose one on timeout" };
                     // The per-instance cap belongs on the CARD: it is the
@@ -504,14 +494,6 @@ impl ArcaneDef {
                 ArcEffect::CondCritChance(sc) => {
                     out.push(format!("{} Crit Chance (conditional)", pct(at(sc))));
                 }
-                ArcEffect::CondCritChanceStacked { scale, max_stacks } => out.push(format!(
-                    "{} Crit Chance per combo consumed ×{max_stacks} (on swap)",
-                    pct(at(scale))
-                )),
-                ArcEffect::CondCritDamageStacked { scale, max_stacks } => out.push(format!(
-                    "{} Crit Damage per combo consumed ×{max_stacks} (on swap)",
-                    pct(at(scale))
-                )),
                 ArcEffect::WeakpointCritChance(sc) => out.push(format!(
                     "On Roll: {} Crit Chance on weak-point hits",
                     pct(at(sc))

@@ -126,6 +126,7 @@ mod tests {
             spelled.push(t.id().expect("only Passive has none"));
         }
         assert_eq!(ArcTrigger::Passive.id(), None);
+        assert_eq!(ArcTrigger::ComboSwap.id(), None);
         spelled.sort_unstable();
         spelled.dedup();
         let mut listed: Vec<&str> = ALL.iter().map(|(id, _)| *id).collect();

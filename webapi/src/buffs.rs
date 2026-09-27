@@ -87,6 +87,7 @@ fn grant_label(g: wfsim_engine::model::ArcGrant) -> &'static str {
         Multishot => "Multishot",
         ReloadSpeed => "Reload Speed",
         CritDamage => "Critical Damage",
+        CritChance => "Critical Chance",
         StatusChance => "Status Chance",
         AmmoEfficiency => "Ammo Efficiency",
     }
@@ -1193,5 +1194,56 @@ mod buff_event_cards {
             score(&open),
             "an unknown trigger must be dropped, not obeyed and not refused"
         );
+    }
+}
+
+#[cfg(test)]
+mod secondary_outburst {
+    use crate::panel::panel_json;
+    use crate::simulate::simulate_json;
+    use serde_json::{json, Value};
+
+    fn req(extra: Value) -> Value {
+        let mut v = json!({
+            "weapon": "lex_prime", "mods": [],
+            "enemy": "corrupted_heavy_gunner", "level": 100,
+            "runs": 20, "seed": 7, "duration": 10,
+        });
+        for (k, x) in extra.as_object().expect("a mapping") {
+            v[k] = x.clone();
+        }
+        v
+    }
+
+    fn crit_rate(v: Value) -> f64 {
+        let r = simulate_json(&v);
+        assert!(r.get("error").is_none(), "{r}");
+        r["crit_rate"].as_f64().expect("a crit rate")
+    }
+
+    /// THE COUNT IS THE CARD'S: a card left at its default pays nothing, which
+    /// is what every ruler runs, and a count set on it is held for the whole
+    /// fight up to the 13x no melee exceeds.
+    #[test]
+    fn outburst_pays_the_combo_the_card_is_set_to_and_nothing_unset() {
+        let worn = json!({"arcane": ["secondary_outburst"]});
+        let card = panel_json(&req(worn.clone()))["buffs"]
+            .as_array()
+            .and_then(|a| a.iter().find(|b| b["id"] == "arcane:secondary_outburst").cloned())
+            .expect("the arcane has a card");
+        assert_eq!((card["max_stacks"].as_u64(), card["default_stacks"].as_u64()), (Some(13), Some(0)));
+
+        let bare = crit_rate(req(json!({})));
+        assert_eq!(crit_rate(req(worn)), bare, "an unset card must pay nothing");
+
+        let set = |n: u32| {
+            crit_rate(req(json!({
+                "arcane": ["secondary_outburst"],
+                "buffs": {"arcane:secondary_outburst": {"stacks": n, "locked": false}},
+            })))
+        };
+        let (six, thirteen) = (set(6), set(13));
+        assert!(bare < six && six < thirteen, "{bare} -> {six} -> {thirteen}");
+        assert_eq!(set(20), thirteen, "13x is the cap");
     }
 }

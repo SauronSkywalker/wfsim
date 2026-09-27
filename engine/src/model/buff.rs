@@ -595,6 +595,11 @@ pub enum ArcTrigger {
     /// stacks" (wiki). Weak spots created by Banshee's Sonar do NOT count,
     /// which is also exactly what `BodyPart::is_head` means here.
     WeakpointHit,
+    /// Swapping to the secondary consumes the melee combo (Secondary
+    /// Outburst). This arena holds one weapon and never swaps, so nothing
+    /// fires it: the count is the melee multiplier the player sets on the
+    /// card, 0 by default, and it is held for the whole engagement.
+    ComboSwap,
 }
 
 /// EVENTS A CARD NAMES THAT NO FIGHT HERE RAISES — an ability cast, a roll, a
@@ -652,8 +657,9 @@ impl BuffTrigger {
 }
 
 impl ArcTrigger {
-    /// The same for an arcane's own vocabulary. `None` for [`ArcTrigger::Passive`]:
-    /// nothing grants it, so no switch may take it away.
+    /// The same for an arcane's own vocabulary. `None` for [`ArcTrigger::Passive`]
+    /// and [`ArcTrigger::ComboSwap`]: nothing in the fight grants them, so no
+    /// switch may take them away.
     pub fn id(self) -> Option<&'static str> {
         Some(match self {
             ArcTrigger::Kill => "kill",
@@ -664,7 +670,7 @@ impl ArcTrigger {
             ArcTrigger::ElectricityStatus => "electricity_status",
             ArcTrigger::ToxinStatus => "toxin_status",
             ArcTrigger::ColdStatus => "cold_status",
-            ArcTrigger::Passive => return None,
+            ArcTrigger::Passive | ArcTrigger::ComboSwap => return None,
         })
     }
 

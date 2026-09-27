@@ -86,18 +86,21 @@ pub(super) fn effect(v: &Value) -> Option<ArcEffect> {
                 "weakpoint_hit" if grants == "final_damage" => {
                     return Some(ArcEffect::WeakpointNextShotDamage(scale(v)))
                 }
-                // Non-simmed triggers with modeled grants:
+                // NOTHING HERE SWAPS, so the stack count is the card's and it
+                // never times out: the file states no duration for it to have.
                 "swap_consume_combo" => {
-                    return Some(match grants {
-                        "crit_chance" => ArcEffect::CondCritChanceStacked {
-                            scale: scale(v),
-                            max_stacks: u(v, "max_stacks"),
+                    return Some(ArcEffect::Buff {
+                        trigger: ArcTrigger::ComboSwap,
+                        grant: match grants {
+                            "crit_chance" => ArcGrant::CritChance,
+                            "crit_damage" => ArcGrant::CritDamage,
+                            other => return inert(&format!("on_swap grant {other}")),
                         },
-                        "crit_damage" => ArcEffect::CondCritDamageStacked {
-                            scale: scale(v),
-                            max_stacks: u(v, "max_stacks"),
-                        },
-                        other => ArcEffect::Inert(format!("on_swap grant {other}")),
+                        scale: scale(v),
+                        max_stacks: u(v, "max_stacks"),
+                        duration: crate::model::NO_TIMEOUT,
+                        all_drop: false,
+                        one_per_instance: false,
                     })
                 }
                 "roll" if grants == "weakpoint_crit_chance" => {

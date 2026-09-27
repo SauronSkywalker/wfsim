@@ -1450,6 +1450,10 @@ pub enum ArcGrant {
     /// own base crit damage, like the crit-damage mods (Primary
     /// Blight/Frostbite). Multiplied out per stage in the sim, not here.
     CritDamage,
+    /// Joins the crit-CHANCE bucket, relative on the attack part's own base
+    /// like Pistol Gambit — Secondary Outburst's card says its bonus is
+    /// additive with those mods.
+    CritChance,
     /// Joins the status-chance bucket (Primary Crux). VERBATIM (wiki):
     /// "Status Chance bonus is additive to mods like Rifle Aptitude", so it is
     /// a RELATIVE bonus on the attack part's base status chance.
@@ -1476,6 +1480,7 @@ impl ArcGrant {
             ArcGrant::Multishot => "multishot",
             ArcGrant::ReloadSpeed => "reload_speed",
             ArcGrant::CritDamage => "crit_damage",
+            ArcGrant::CritChance => "crit_chance",
             ArcGrant::StatusChance => "status_chance",
             ArcGrant::AmmoEfficiency => "ammo_efficiency",
         }
