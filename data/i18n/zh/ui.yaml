@@ -938,6 +938,9 @@ ui:
   "copy image": 复制图片
   "copy it into a {thing} of your own — the official one cannot be edited": 复制成一份你自己的{thing} —— 官方那份不可编辑
   "copy link": 复制链接
+  "copy as text": 复制为文字
+  "text copied": 文字已复制
+  "share…": 分享…
   "copy the group number": 复制群号
   "corpses keep conducting the chain, which the page states as 'Enemy corpses will still allow the beam to connect to nearby enemies' — this arena removes a body when it dies": "尸体仍然能导电，页面的原话是「敌人的尸体仍然允许光束连接到附近的敌人」——本场里一个身体死了就会被移走"
   "corpses keep conducting the chain, which the page states as 'Enemy corpses will still allow the beam to connect to nearby enemies' — this arena removes a body when it dies, so a chain that would have hopped THROUGH a corpse to a live enemy behind it finds nothing there": "尸体仍然能导电，页面的原话是「敌人的尸体仍然允许光束连接到附近的敌人」——本场里一个身体死了就会被移走，所以一段本该「穿过」尸体连到它身后活敌的连锁，在这里什么也找不到"

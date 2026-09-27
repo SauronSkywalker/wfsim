@@ -36,87 +36,6 @@ const SHARE_ENABLED = true;
 /// below it stands unreached on purpose: the question it answers (how a number
 /// travels without landing in the reader's app) is still open.
 const SHARE_CARD_ENABLED = false;
-const SHARE_V_DEFLATE = "1";
-const SHARE_V_PLAIN = "0";
-/// **v3: THE IDS TRAVEL AS INDICES, AND THE PAYLOAD IS PLAIN TEXT**.
-///
-/// Spelling the ids out and then deflating them costs ~280 characters for a
-/// build: the payload is mostly identifiers, and deflate cannot know the ones
-/// the payload does NOT contain. The same Laetum is 76 characters
-/// as indices — and at that length deflate makes it BIGGER (its own header
-/// outweighs what it finds), so v3 goes into the URL as it is.
-///
-/// EVERY SEPARATOR IS URL-SAFE, which is what lets the text travel raw: `~`,
-/// `-`, `.` and `_` are unreserved in RFC 3986 and `:`, `;`, `,` and `!` are
-/// sub-delims a query accepts without escaping. Anything that is not — a riven
-/// somebody named in Chinese — falls back to the deflate+base64 path, which is
-/// still there and still reads every link ever posted.
-const SHARE_V_TEXT = "3";
-/// **v4: EVERY ID IS TWO CHARACTERS, SO NOTHING SEPARATES THEM.**
-///
-/// v3 spells an index in decimal and pays a `.` to say where it ends — about
-/// 4.4 characters per id. The manifest holds 1749 entries and 62² is 3844, so
-/// the same index is TWO characters of base62 and a run of them needs no
-/// separator at all. That is the whole of v4: the same indices, spelled denser.
-///
-/// IT IS A RESPELLING, NEVER A RENUMBERING. `data/share_order.yaml` stays
-/// append-only and every v3 link still reads — the ratchet in
-/// `engine::data::share_order` guards the same thing it always did.
-///
-/// Headroom is 3844, about double what is used. Crossing it is a THIRD width,
-/// which is another version character; that is what the version character is
-/// for.
-const SHARE_V_B62 = "4";
-/// The alphabet, every character of it unreserved in RFC 3986. `-` and `.` are
-/// unreserved too and deliberately NOT in it, which is what lets them mark a
-/// slot that no id can be confused with.
-const B62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-const B62_MAX = 62 * 62;
-const b62 = (n) => B62[Math.floor(n / 62)] + B62[n % 62];
-const b62Back = (t) => {
-  const a = B62.indexOf(String(t)[0]), b = B62.indexOf(String(t)[1]);
-  return a < 0 || b < 0 ? -1 : a * 62 + b;
-};
-/// An id as its two characters, or `null` for one v4 cannot spell — a mod added
-/// since the last `gen_share_order.py`, or a manifest past its headroom. The
-/// encoder measures every form and takes the shortest, so `null` here is a link
-/// that goes out as v3: longer, and correct.
-const si62 = (id) => {
-  const n = shareIndex().to.get(id);
-  return n == null || n >= B62_MAX ? null : b62(n);
-};
-const si62Back = (t) => {
-  const n = b62Back(t);
-  return n < 0 ? "" : (shareIndex().from.get(n) || "");
-};
-/// A RIVEN ROLL IS 200 STEPS, NOT FIVE CHARACTERS. Every stat rolls in
-/// 0.9–1.1 (`engine::build::rivens::{ROLL_MIN, ROLL_MAX}`) and the payload
-/// already rounds to three decimals, so a roll is one of 201 values — two
-/// characters, losslessly, where `1.052` cost five.
-///
-/// THE BAND IS FROZEN HERE, not read from the engine: a wire format cannot
-/// follow a constant that moves, or every link already posted decodes to a
-/// different riven. A roll outside it is a payload v4 declines to write.
-/// A RIVEN'S SHAPE IS ONE CHARACTER. There are four of them (`RIVEN_SHAPES`)
-/// plus the absent one a board riven carries, and "" is a different value from
-/// "3+1" to everything downstream — so it is CODED here rather than derived
-/// from the bonus count, and coded rather than carried raw, because the `+` in
-/// it is the one character a query turns into a space.
-///
-/// A shape not in this table is one v4 declines to write, and the encoder falls
-/// back to a form that spells it out.
-const SHAPE_CODE = { "": "-", "2": "2", "3": "3", "2+1": "a", "3+1": "b" };
-const SHAPE_BACK = Object.fromEntries(
-  Object.entries(SHAPE_CODE).map(([k, v]) => [v, k]));
-const ROLL_FLOOR = 0.9, ROLL_CEIL = 1.1, ROLL_STEP = 0.001;
-const roll62 = (x) => {
-  const n = Math.round((Number(x) - ROLL_FLOOR) / ROLL_STEP);
-  return Number(x) < ROLL_FLOOR - 1e-9 || Number(x) > ROLL_CEIL + 1e-9 ? null : b62(n);
-};
-const roll62Back = (t) => {
-  const n = b62Back(t);
-  return n < 0 ? 1 : r3(ROLL_FLOOR + n * ROLL_STEP);
-};
 /// The frozen order both ends index into, from `/api/meta`'s `si` per entity.
 /// Built once, from what is already travelling — the manifest itself never
 /// crosses the wire.
@@ -143,40 +62,6 @@ function shareIndex() {
   shareIx = { to, from };
   return shareIx;
 }
-/// An id as a number, or `!<id>` for one the manifest has never been told
-/// about — a mod added since the last `gen_share_order.py`. A link that carries
-/// one is longer and still correct, which is the only direction this may fail.
-const siOf = (id) => {
-  const n = shareIndex().to.get(id);
-  return n == null ? "!" + id : String(n);
-};
-const siBack = (tok) => {
-  if (tok === "" || tok == null) return "";
-  if (tok[0] === "!") return tok.slice(1);
-  const id = shareIndex().from.get(Number(tok));
-  return id == null ? "" : id;
-};
-/// The characters the compact forms may travel raw in. Everything a format
-/// itself uses, plus what an id or a rank can contain — and `%`, which is how
-/// the one field a PERSON types gets into that alphabet.
-const SHARE_TEXT_OK = /^[A-Za-z0-9~.:;,!_%-]*$/;
-
-/// A NAME IS THE ONE FIELD SOMEBODY TYPES, so it is the one that can hold
-/// anything: a space, a quote, Chinese. It is ESCAPED INTO the alphabet rather
-/// than allowed to veto it: a space in it would otherwise send the WHOLE
-/// payload back to base64, 2.5x for one field the reader can do without.
-///
-/// Everything outside `[A-Za-z0-9_-]` is escaped, not just what a URL would
-/// demand: the format's own separators (`~ . : ; , !`) are legal in a query and
-/// would pass `encodeURIComponent` untouched, straight into the grammar.
-const encName = (s) => String(s || "").replace(/[^A-Za-z0-9_-]/g, (c) =>
-  Array.from(new TextEncoder().encode(c))
-    .map((b) => "%" + b.toString(16).toUpperCase().padStart(2, "0")).join(""));
-/// Its inverse, and identity on every name posted before it existed — those
-/// could not contain a `%`, because `%` was not in the alphabet above.
-const decName = (s) => {
-  try { return decodeURIComponent(String(s || "")); } catch (_) { return String(s || ""); }
-};
 
 /// A weapon's evolution id prefix, WITHOUT reading the page — `evoPrefix` asks
 /// the DOM and the decoder runs before the weapon has been switched.
@@ -187,278 +72,6 @@ const evoPrefixFor = (weaponId) => {
   return first && first.id.startsWith(weaponId + "_") ? weaponId + "_" : "";
 };
 
-/// The v2 array as v3 text. One place, and its inverse is directly below it —
-/// the pair round-trips, which is what `check_share` asserts over every axis.
-// v4's layout, read it beside `unpackV4`. The RARE fields are last, so the
-// list's trailing trim removes them from an ordinary link:
-//   0  weapon                2 chars
-//   1  slots                 2 chars each: an id, "--" empty, "-<n>" the nth riven
-//   2  arcanes               2 chars each
-//   3  evolutions by tier    2 chars each, "--" for a tier left unset
-//   4  rivens                "!" apart, each ";" apart: name;shape;rank;pol;
-//                            stats;malus — shape is ONE character, see SHAPE_CODE
-//   5  build name            escaped into the alphabet, "" when it is not the
-//                            sharer's (see `sharePayload`)
-//   6  mode      7  valence      8  assembly (two ids, no separator)
-//   9  the sparse extras: "s<slot><pol><rank>" and "a<arcane><rank>", "." apart.
-//      A polarity or a below-max rank is rare, and inline they would cost every
-//      OTHER slot the separator that says where its modifier stopped.
-//
-function packV4(a) {
-  const [, weapon, name, slots9, arcs, evos, rivens, sc, m, md, val, asm] = a;
-  if (sc || m) return null;
-  let bad = false;
-  const id = (x) => { const t = si62(x); if (t === null) bad = true; return t || "00"; };
-  const pre = evoPrefixFor(weapon);
-  const extra = [];
-
-  const slots = (slots9 || []).map((s, i) => {
-    if (!s) return "--";
-    const [sid, pol, rank] = typeof s === "string" ? [s] : s;
-    // THE MODIFIER IS RECORDED BEFORE THE SLOT IS SPELLED, because a RIVEN slot
-    // is spelled differently and would otherwise leave its polarity behind.
-    if (pol || rank != null) extra.push(`s${B62[i]}${pol || "-"}${rank == null ? "" : rank}`);
-    return String(sid)[0] === "~" ? "-" + String(sid).slice(1) : id(sid);
-  });
-  const arcanes = (arcs || []).map((x, i) => {
-    if (!Array.isArray(x)) return id(x);
-    extra.push(`a${B62[i]}${x[1]}`);
-    return id(x[0]);
-  });
-  const riven = (r) => {
-    const [rn, shape, rank, pol, bonuses, malus] = r;
-    const sc2 = SHAPE_CODE[String(shape ?? "")];
-    if (sc2 === undefined) bad = true;
-    const stat = ([sid, roll]) => {
-      const t = roll62(roll);
-      if (t === null) bad = true;
-      return id(sid) + (t || "00");
-    };
-    const derived = boardRivenName({
-      bonuses: (bonuses || []).map(([x]) => x),
-      malus: malus ? malus[0] : null,
-    });
-    return [rn === derived ? "" : encName(rn), sc2 || "-", rank, pol,
-      (bonuses || []).map(stat).join(""), malus ? stat(malus) : ""].join(";");
-  };
-
-  const out = [
-    id(weapon),
-    slots.join(""),
-    arcanes.join(""),
-    (evos || []).map((e) => (e ? id(pre + e) : "--")).join(""),
-    (rivens || []).map(riven).join("!"),
-    encName(name),
-    md || "",
-    val ? `${val[0]}:${val[1]}` : "",
-    asm ? id(asm[0]) + id(asm[1]) : "",
-    extra.join("."),
-  ];
-  if (bad) return null;
-  while (out.length > 2 && out[out.length - 1] === "") out.pop();
-  const text = out.join("~");
-  return SHARE_TEXT_OK.test(text) ? text : null;
-}
-
-function unpackV4(text) {
-  const f = String(text).split("~");
-  const weapon = si62Back(f[0] || "");
-  if (!weapon) return null;
-  const pre = evoPrefixFor(weapon);
-  // FIXED WIDTH IS THE GRAMMAR: a run of ids is read two characters at a time,
-  // which is why nothing separates them.
-  const pairs = (str) => {
-    const out = [];
-    const t = String(str || "");
-    for (let i = 0; i + 1 < t.length; i += 2) out.push(t.slice(i, i + 2));
-    return out;
-  };
-  const sExtra = new Map(), aExtra = new Map();
-  String(f[9] || "").split(".").filter(Boolean).forEach((t) => {
-    // THE INDEX IS ONE base62 CHARACTER, not one decimal digit: a decimal one
-    // stops being one character at ten slots, and a melee already has more
-    // than nine things a modifier could name.
-    const i = B62.indexOf(t[1]);
-    if (t[0] === "s") sExtra.set(i, { pol: t[2] === "-" ? "" : t[2], rank: t.slice(3) });
-    else if (t[0] === "a") aExtra.set(i, Number(t.slice(2)));
-  });
-  const slots9 = pairs(f[1]).map((t, i) => {
-    if (t === "--") return 0;
-    // ONE TAIL FOR BOTH KINDS: a riven slot takes a polarity exactly as a mod
-    // slot does, and reading it anywhere but here is how it goes missing.
-    const sid = t[0] === "-" ? "~" + t.slice(1) : si62Back(t);
-    if (!sid) return 0;
-    const x = sExtra.get(i);
-    if (!x) return sid;
-    return x.rank === "" ? [sid, x.pol] : [sid, x.pol, Number(x.rank)];
-  });
-  const arcs = pairs(f[2]).map((t, i) => {
-    const aid = si62Back(t);
-    return aExtra.has(i) ? [aid, aExtra.get(i)] : aid;
-  });
-  const evos = pairs(f[3]).map((t) => {
-    if (t === "--") return "";
-    const eid = si62Back(t);
-    return eid && pre && eid.startsWith(pre) ? eid.slice(pre.length) : eid;
-  });
-  const rivens = String(f[4] || "").split("!").filter(Boolean).map((r) => {
-    const [rn, shape, rank, pol, stats, mal] = r.split(";");
-    const quad = (t) => [si62Back(t.slice(0, 2)), roll62Back(t.slice(2, 4))];
-    const bonuses = [];
-    const st = String(stats || "");
-    for (let i = 0; i + 3 < st.length; i += 4) bonuses.push(quad(st.slice(i, i + 4)));
-    const malus = mal ? quad(mal) : 0;
-    const name = decName(rn) || boardRivenName({
-      bonuses: bonuses.map(([x]) => x),
-      malus: malus ? malus[0] : null,
-    });
-    return [name, SHAPE_BACK[shape] ?? "", Number(rank), pol, bonuses, malus];
-  });
-  const val = f[7] ? f[7].split(":") : null;
-  return [2, weapon, decName(f[5]) || 0, slots9, arcs, evos, rivens, 0, 0,
-    f[6] || 0, val ? [val[0], Number(val[1])] : 0,
-    f[8] ? [si62Back(f[8].slice(0, 2)), si62Back(f[8].slice(2, 4))] : 0];
-}
-
-function packV3(a) {
-  const [, weapon, name, slots9, arcs, evos, rivens, sc, m, md, val, asm] = a;
-  // A LINK THAT SOMEHOW CARRIED A FIGHT COULD NOT BE WRITTEN IN v3 — and one
-  // can no longer be built at all, so this is the format's own limit restated
-  // rather than a branch anything reaches.
-  if (sc || m) return null;
-  const pre = evoPrefixFor(weapon);
-  const slot = (s) => {
-    if (!s) return "";
-    const [id, pol, rank] = typeof s === "string" ? [s] : s;
-    // A RIVEN SLOT names the riven by its place in field 5, as v2 does with
-    // "~0" — `r0` here, because `~` is the field separator.
-    const head = String(id)[0] === "~" ? "r" + String(id).slice(1) : siOf(id);
-    if (rank != null) return `${head}:${pol || ""}:${rank}`;
-    return pol ? `${head}:${pol}` : head;
-  };
-  const riven = (r) => {
-    const [rn, shape, rank, pol, bonuses, malus] = r;
-    const stats = (bonuses || []).map(([id, roll]) => `${siOf(id)}:${roll}`).join(",");
-    const mal = malus ? `${siOf(malus[0])}:${malus[1]}` : "";
-    // A NAME THE SHAPE ALREADY IMPLIES DOES NOT TRAVEL — the same rule every
-    // other field here follows. A board riven's local name is
-    // `boardRivenName(shape)` and nothing else, so sending it is pure length —
-    // and it is the one string in this payload that is NOT url-safe (it is
-    // localized: "榜单 · critical_chance / …"), which would have sent every
-    // board-riven link back to base64 for a name the reader can compute.
-    //
-    // AND THE READER NAMES IT IN THEIR OWN LANGUAGE, which is better than
-    // carrying the sharer's.
-    const derived = boardRivenName({
-      bonuses: (bonuses || []).map(([id]) => id),
-      malus: malus ? malus[0] : null,
-    });
-    return [rn === derived ? "" : encName(rn), shape, rank, pol, stats, mal].join(";");
-  };
-  const out = [
-    siOf(weapon),
-    encName(name),
-    (slots9 || []).map(slot).join("."),
-    (arcs || []).map((x) => (Array.isArray(x) ? `${siOf(x[0])}:${x[1]}` : siOf(x))).join("."),
-    (evos || []).map((e) => (e ? siOf(pre + e) : "")).join("."),
-    (rivens || []).map(riven).join("!"),
-    md || "",
-    val ? `${val[0]}:${val[1]}` : "",
-    asm ? `${siOf(asm[0])}:${siOf(asm[1])}` : "",
-  ];
-  while (out.length > 3 && out[out.length - 1] === "") out.pop();
-  const text = out.join("~");
-  return SHARE_TEXT_OK.test(text) ? text : null;
-}
-
-/// v3 text back into the v2 array, so everything downstream is unchanged.
-function unpackV3(text) {
-  const f = String(text).split("~");
-  const weapon = siBack(f[0]);
-  if (!weapon) return null;
-  const pre = evoPrefixFor(weapon);
-  const list = (i, sep) => (f[i] ? String(f[i]).split(sep || ".") : []);
-  const slots9 = list(2).map((t) => {
-    if (!t) return 0;
-    const [head, pol, rank] = t.split(":");
-    const id = head[0] === "r" ? "~" + head.slice(1) : siBack(head);
-    if (!id) return 0;
-    if (rank != null && rank !== "") return [id, pol || "", Number(rank)];
-    return pol ? [id, pol] : id;
-  });
-  const arcs = list(3).map((t) => {
-    const [i, rank] = t.split(":");
-    return rank == null ? siBack(i) : [siBack(i), Number(rank)];
-  });
-  const evos = list(4).map((t) => {
-    const id = siBack(t);
-    return id && pre && id.startsWith(pre) ? id.slice(pre.length) : id;
-  });
-  const rivens = list(5, "!").filter(Boolean).map((r) => {
-    const [rn, shape, rank, pol, stats, mal] = r.split(";");
-    const pair = (t) => { const [i, roll] = t.split(":"); return [siBack(i), Number(roll)]; };
-    const bonuses = stats ? stats.split(",").map(pair) : [];
-    const malus = mal ? pair(mal) : 0;
-    // AN EMPTY NAME MEANS "the one the shape implies" — see `packV3`.
-    const name = decName(rn) || boardRivenName({
-      bonuses: bonuses.map(([id]) => id),
-      malus: malus ? malus[0] : null,
-    });
-    return [name, shape, Number(rank), pol, bonuses, malus];
-  });
-  const val = f[7] ? f[7].split(":") : null;
-  const asm = f[8] ? f[8].split(":") : null;
-  return [2, weapon, decName(f[1]) || 0, slots9, arcs, evos, rivens, 0, 0,
-    f[6] || 0, val ? [val[0], Number(val[1])] : 0,
-    asm ? [siBack(asm[0]), siBack(asm[1])] : 0];
-}
-
-const b64urlEnc = (u8) => {
-  let s = "";
-  u8.forEach((b) => { s += String.fromCharCode(b); });
-  return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-};
-const b64urlDec = (s) => {
-  const b = atob(s.replace(/-/g, "+").replace(/_/g, "/"));
-  return Uint8Array.from(b, (c) => c.charCodeAt(0));
-};
-
-async function deflate(u8) {
-  if (typeof CompressionStream === "undefined") return null;
-  const cs = new CompressionStream("deflate-raw");
-  const w = cs.writable.getWriter();
-  w.write(u8); w.close();
-  return new Uint8Array(await new Response(cs.readable).arrayBuffer());
-}
-async function inflate(u8) {
-  const ds = new DecompressionStream("deflate-raw");
-  const w = ds.writable.getWriter();
-  w.write(u8); w.close();
-  return new Uint8Array(await new Response(ds.readable).arrayBuffer());
-}
-
-// v2 — POSITIONAL, and nothing that can be derived travels.
-//
-// v1 was 2.5 kB of JSON before compression and most of it was waste: a
-// 914-byte freshness key (a serialised copy of the build, inside the payload
-// describing that build), 401 bytes of riven shape DRAFTS the recipient
-// regenerates blank anyway, and a JSON key beside every value. Links are
-// posted into chat windows and printed into QR codes, so length is a feature.
-//
-// The layout, by index — read it beside `decodeShare`:
-//   0  version (2)
-//   1  weapon id
-//   2  build name
-//   3  slots: 9 entries, each null | [modId] | [modId, pol] | [modId, pol, rank]
-//      pol is one letter, rank omitted when it is the mod's max
-//   4  arcanes: [] | [id] | [[id, rank], …]      rank omitted when max
-//   5  evolutions by tier: ["evo1_incarnon_form", "", …] — the weapon prefix
-//      is stripped, since a tier's options belong to the weapon in field 1
-//   6  rivens: [[name, shape, rank, pol, [[statId, roll], …], [malusId, roll]|0], …]
-//   7, 8  FROZEN AT 0 — were the scenario and the measurement. Neither
-//      travels; older links carry them and `decodeShare` does not look.
-const POL_LETTER = { Madurai: "M", Naramon: "N", Vazarin: "V", Umbra: "U", Omni: "O" };
-const LETTER_POL = Object.fromEntries(Object.entries(POL_LETTER).map(([k, x]) => [x, k]));
 
 // The weapon's evolution group, so ids can travel without their prefix.
 const evoPrefix = () => {
@@ -635,7 +248,6 @@ function sharePayload() {
   return out;
 }
 
-const r3 = (x) => Math.round((Number(x) || 0) * 1000) / 1000;
 const cap1 = (s) => String(s || "").replace(/^./, (c) => c.toUpperCase());
 
 /// WHERE SHORT LINKS LIVE, whatever origin made one: the desktop client and the
@@ -704,81 +316,6 @@ async function shareCode() {
   return forms.concat(zipped).reduce((a, b) => (b.length < a.length ? b : a), zipped);
 }
 
-async function decodeShare(code) {
-  if (!code) return null;
-  // THE COMPACT FORMS ARE TEXT, so they never go near base64 or inflate.
-  // Dispatched on the version character the code has always carried, which is
-  // why adding a form costs every older one nothing.
-  let data;
-  if (code[0] === SHARE_V_B62) {
-    data = unpackV4(code.slice(1));
-    if (!data) return null;
-  } else if (code[0] === SHARE_V_TEXT) {
-    data = unpackV3(code.slice(1));
-    if (!data) return null;
-  } else {
-    const bytes = b64urlDec(code.slice(1));
-    const json = code[0] === SHARE_V_DEFLATE ? await inflate(bytes) : bytes;
-    data = JSON.parse(new TextDecoder().decode(json));
-  }
-  if (!Array.isArray(data)) return v1Share(data);      // links posted before v2
-  // FIELDS 7 AND 8 ARE NOT DESTRUCTURED, and that is the whole of "a link
-  // carries a build and nothing else". A v1 or v2 link posted while the fight
-  // and the measurement travelled still HAS them on the wire; refusing to read
-  // them here is what stops one landing, and it is one place rather than a
-  // guard at every use.
-  const [, weapon, name, slots9, arcs, evos, rivens, , , md, val, asm] = data;
-  return {
-    w: weapon,
-    n: name,
-    // Absent means "whatever this weapon's default is", which is exactly what
-    // `defaultMode`/`defaultValence` answer when handed nothing — so a link
-    // posted before these two travelled still lands where it always did.
-    mode: md || undefined,
-    valence: val ? { element: val[0], bonus: val[1] } : undefined,
-    // Absent means this weapon's default, the same as the two above — so a link
-    // posted before parts travelled still lands where it always did, and an
-    // ordinary weapon (which has none) is unaffected either way.
-    assembly: asm ? { grip: asm[0], loader: asm[1] } : undefined,
-    slots: (slots9 || []).map((s) => {
-      if (!s) return { mod: null, pol: null, rank: null };
-      const [id, pol, rank] = typeof s === "string" ? [s] : s;
-      return { mod: id, pol: LETTER_POL[pol] || null, rank: rank ?? null };
-    }),
-    arcane: (arcs || []).map((a) => (Array.isArray(a) ? a[0] : a)),
-    arcaneRank: (arcs || []).map((a) => (Array.isArray(a) ? a[1] : null)),
-    evos: evos || [],
-    rivens: (rivens || []).map(([rn, shape, rank, pol, bonuses, malus]) => ({
-      n: rn,
-      s: {
-        shape, rank, polarity: (LETTER_POL[pol] || "Madurai").toLowerCase(),
-        bonuses: (bonuses || []).map(([id, roll]) => ({ id, roll })),
-        malus: malus ? { id: malus[0], roll: malus[1] } : null,
-      },
-    })),
-    // ALWAYS NULL, for every link this decoder will ever be handed. A fight is
-    // not a build's to move and a number measured in a fight nobody has is not
-    // a claim, so neither reaches a reader — the fields stay here, spelled out,
-    // because `importShare` reads this object and not the wire.
-    sc: null,
-    m: null,
-  };
-}
-
-// A v1 link (the first shape this shipped in) read into the v2 structure.
-// Its fight and its measurement are dropped on the same terms as v2's.
-function v1Share(d) {
-  if (!d || !d.b) return null;
-  return {
-    w: d.w, n: d.n,
-    slots: d.b.slots || [],
-    arcane: d.b.arcane || [], arcaneRank: d.b.arcaneRank || [],
-    evos: Object.values(d.b.evoSel || {}).map((x) => x || ""),
-    rivens: d.r || [],
-    sc: null,
-    m: null,
-  };
-}
 
 // Land a shared link: a NEW copy of every part, never a merge into what is
 // already there. A link is someone else's work — it may not overwrite yours,
@@ -887,6 +424,35 @@ async function importShare(code) {
   return true;
 }
 
+/// THE BUILD AS LINES OF TEXT, for a chat that shows a pasted link as a bare
+/// string: a heading, then mods, riven, arcanes, evolutions. Read back out of
+/// the link's own code, so the text states what the link carries and nothing
+/// the link does not — named in the sharer's language, for the sharer's chat.
+async function shareText() {
+  const d = await decodeShare(await shareCode());
+  const w = weaponInfo(d.w);
+  const name = (x) => (x && x.name) || "";
+  const mods = d.slots.map((s) => s.mod).filter((m) => m && !String(m).startsWith("~"))
+    .map((m) => name(modById(m)) || m);
+  const rivens = d.rivens.map((r) => [
+    ...(r.s.bonuses || []).map((b) => "+" + (rivenStat(b.id) ? rivenStatName(rivenStat(b.id)) : b.id)),
+    ...(r.s.malus ? ["−" + (rivenStat(r.s.malus.id) ? rivenStatName(rivenStat(r.s.malus.id)) : r.s.malus.id)] : []),
+  ].join(" "));
+  const arcanes = d.arcane.filter((a) => a && a !== "none").map((a) => name(arcaneById(a)) || a);
+  const pre = evoPrefix();
+  const evos = d.evos.filter(Boolean).map((e) => {
+    const o = weaponEvos().flatMap((t) => t.options || []).find((x) => x.id === pre + e || x.id === e);
+    return name(o) || e;
+  });
+  return [
+    `${w.name} ${tr("build")} — WFSim`,
+    mods.length ? `${tr("Mods")}: ${mods.join(" · ")}` : "",
+    rivens.length ? `${tr("Riven")}: ${rivens.join("; ")}` : "",
+    arcanes.length ? `${tr("Arcane")}: ${arcanes.join(" · ")}` : "",
+    evos.length ? `${tr("Evolutions")}: ${evos.join(" · ")}` : "",
+  ].filter(Boolean);
+}
+
 // The share panel: the link, and a CARD to paste into a chat. Both carry the
 // site's own address — an image that travels without one is a screenshot of
 // nowhere.
@@ -900,19 +466,36 @@ async function openSharePanel(bar) {
   // offers the one link there is and needs no simulation to open.
   panel.hidden = false;
   const bUrl = await shareUrl();
+  const text = await shareText();
+  const native = typeof navigator.share === "function";
   panel.innerHTML =
     `<div class="sh-row"><input class="sh-url" type="text" readonly value="${escHtml(bUrl)}">` +
-    `<button class="cu-btn sh-copy">${escHtml(tr("copy link"))}</button></div>` +
+    `<button class="cu-btn sh-copy">${escHtml(tr("copy link"))}</button>` +
+    `<button class="cu-btn sh-text">${escHtml(tr("copy as text"))}</button>` +
+    (native ? `<button class="cu-btn sh-native">${escHtml(tr("share…"))}</button>` : "") +
+    `</div>` +
     `<div class="sh-note">${escHtml(tr("the build and its rivens, and nothing else: no fight, no measurement, so opening it leaves the reader's own scenario untouched"))}</div>` +
     (SHARE_CARD_ENABLED
       ? `<div class="sh-more"><button class="cu-btn sh-full">${escHtml(tr("…as a card →"))}</button></div>`
       : "");
   const bBox = panel.querySelector(".sh-url");
   bBox.onclick = () => bBox.select();
+  // `n` says HOW it left: 1 the link, 2 as text, 3 through the system's share sheet.
   panel.querySelector(".sh-copy").onclick = async () => {
-    track("share.create", $("weapon").value);
+    track("share.create", $("weapon").value, 1);
     try { await navigator.clipboard.writeText(bUrl); presetToast(tr("link copied")); }
     catch (_) { bBox.select(); presetToast(tr("press Ctrl+C to copy the selected link")); }
+  };
+  panel.querySelector(".sh-text").onclick = async () => {
+    track("share.create", $("weapon").value, 2);
+    try { await navigator.clipboard.writeText(`${text.join("\n")}\n${bUrl}`); presetToast(tr("text copied")); }
+    catch (_) { bBox.select(); presetToast(tr("press Ctrl+C to copy the selected link")); }
+  };
+  const nat = panel.querySelector(".sh-native");
+  if (nat) nat.onclick = async () => {
+    track("share.create", $("weapon").value, 3);
+    // A CANCELLED SHEET REJECTS, and a reader closing it is not an error.
+    try { await navigator.share({ title: text[0], text: text.slice(1).join("\n"), url: bUrl }); } catch (_) { /* closed */ }
   };
   const full = panel.querySelector(".sh-full");
   if (full) full.onclick = () => openShareClaim(panel, bUrl);

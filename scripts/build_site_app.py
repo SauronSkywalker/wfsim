@@ -1154,6 +1154,36 @@ def shell(flagged: str, title: str, desc: str, url: str, og_img: str, seo: str,
     return page.replace("<body>\n  ", "<body>\n  " + body, 1)
 
 
+def ship_share_names() -> None:
+    """`site/share-names.json`: what a short link's preview needs to name a build
+    — the frozen share order, each id's ENGLISH name, and the weapons whose
+    evolution ids carry the weapon's own prefix. The worker reads it
+    (worker/index.js §SHARE PREVIEW); the page never does, it has `META`."""
+    order = [ln.strip()[2:].strip() for ln in
+             (ROOT / "data" / "share_order.yaml").read_text(encoding="utf-8").splitlines()
+             if ln.strip().startswith("- ")]
+    names, prefixed = {}, set()
+    for family in ("weapons", "mods", "arcanes", "evolutions"):
+        for f in sorted((ROOT / "data" / family).rglob("*.yaml")):
+            d = yload(f.read_text(encoding="utf-8"))
+            if isinstance(d, dict) and d.get("id") and d.get("name"):
+                names.setdefault(d["id"], str(d["name"]))
+                if family == "evolutions" and d.get("weapon") and d["id"].startswith(d["weapon"] + "_"):
+                    prefixed.add(d["weapon"])
+    # A RIVEN STAT has no `name`: it is its card line without the hole and the
+    # unit — the page's `rivenStatNameEn`, the same three steps.
+    for f in sorted((ROOT / "data" / "rivens").glob("*.yaml")):
+        for s in (yload(f.read_text(encoding="utf-8")) or {}).get("stats", []) or []:
+            if isinstance(s, dict) and s.get("id") and s.get("text"):
+                label = re.sub(r"^\s*[%s]\s*", "", str(s["text"]).replace("|val|", "", 1))
+                names.setdefault(s["id"], re.sub(r"\s+", " ", label).strip())
+    (APP / "share-names.json").write_text(
+        json.dumps({"order": order, "names": {i: names[i] for i in order if i in names},
+                    "evolution_prefixed": sorted(prefixed)},
+                   ensure_ascii=False, separators=(",", ":")),
+        encoding="utf-8", newline="\n")
+
+
 def prerender(flagged: str) -> None:
     """Write a real HTML file per weapon, plus robots.txt and sitemap.xml.
 
@@ -1755,6 +1785,7 @@ def main() -> None:
     guard_board_files()
     run(sys.executable, str(ROOT / "scripts" / "board_meta.py"))
     prerender(flagged)
+    ship_share_names()
 
     # WHAT THIS RELEASE IS, served beside the files it names. A mirror is asked
     # this file and nothing else to answer "are you current" — see

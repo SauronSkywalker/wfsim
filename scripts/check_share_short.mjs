@@ -11,7 +11,11 @@
 //     as that weapon.
 //
 //   node scripts/check_share_short.mjs
-import worker, { SHARE_CODE, SHARE_ID, shareId } from "../worker/index.js";
+import worker, { SHARE_CODE, SHARE_ID, shareId, shareHostOf, sharePreviewText } from "../worker/index.js";
+import { decodeShare, useShareHost } from "../worker/share_codec.js";
+import { existsSync, readFileSync } from "node:fs";
+import { resolve, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 
 let failures = 0;
 const check = (what, ok, detail = "") => {
@@ -91,6 +95,55 @@ served.length = 0;
 const page = await call(`/weapons/Dual_Toxocyst/s/${a.j.id}`);
 check("the short path serves the weapon's own page", page.status === 200 && served[0] === "/weapons/Dual_Toxocyst",
   `${page.status} ${served.join(",")}`);
+
+// THE PREVIEW: a chat reads the head, so the head must describe THIS build.
+// Against a names table of six, through the whole worker path.
+const TABLE = {
+  order: ["torid", "serration", "split_chamber", "primary_merciless", "critical_chance", "zoom"],
+  names: { torid: "Torid", serration: "Serration", split_chamber: "Split Chamber",
+    primary_merciless: "Primary Merciless", critical_chance: "Critical Chance", zoom: "Zoom" },
+  evolution_prefixed: [],
+};
+// v4: weapon 00, slots 01 02 and riven 0, arcane 03, a riven of +04 −05 at roll 1.0.
+const TINY = "400~0102-0~03~~;a;8;M;041c;051c";
+const HEAD = `<html><head><title>Torid — board</title>
+<meta name="description" content="the board's best" />
+<meta property="og:title" content="Torid — board" />
+<meta property="og:description" content="the board's best" />
+<meta property="og:url" content="https://wfsim.app/weapons/Torid" />
+</head><body></body></html>`;
+const envP = {
+  LIBRARY,
+  ASSETS: { fetch: async (req) => (new URL(req.url).pathname === "/share-names.json"
+    ? new Response(JSON.stringify(TABLE)) : new Response(HEAD, { headers: { "content-type": "text/html", etag: "x" } })) },
+};
+const tiny = await store("Torid", TINY);
+const shown = await (await worker.fetch(new Request(`https://wfsim.app/weapons/Torid/s/${tiny.j.id}`), envP)).text();
+const og = (p) => (shown.match(new RegExp(`<meta (?:property|name)="${p}" content="([^"]*)"`)) || [])[1];
+check("a short link's preview is titled by its weapon", og("og:title") === "Torid build | WFSim", og("og:title"));
+check("…and describes the build it carries, not the board's",
+  og("og:description") === "Mods: Serration · Split Chamber. Riven: +Critical Chance −Zoom. Arcane: Primary Merciless.",
+  og("og:description"));
+check("…names the link itself as its url", og("og:url") === `https://wfsim.app/weapons/Torid/s/${tiny.j.id}`, og("og:url"));
+check("…and asks not to be indexed apart from the weapon", og("robots") === "noindex");
+check("…in the page's <title> too", /<title>Torid build \| WFSim<\/title>/.test(shown));
+const gone = await (await worker.fetch(new Request("https://wfsim.app/weapons/Torid/s/BBBBBBBBBB"), envP)).text();
+check("an unknown id serves the weapon page unchanged", gone === HEAD);
+
+// AND AGAINST THE REAL TABLE the build writes, with a code the page wrote: the
+// generated codec and the names file have to agree with each other.
+const real = resolve(dirname(fileURLToPath(import.meta.url)), "../site/share-names.json");
+if (!existsSync(real)) check("site/share-names.json exists — run build_site_app.py", false);
+else {
+  const table = JSON.parse(readFileSync(real, "utf8"));
+  const host = shareHostOf(table);
+  useShareHost(host);
+  const p = sharePreviewText(await decodeShare(CODE), table, host);
+  check("a real code previews under its real weapon", p.title === "Dual Toxocyst build | WFSim", p.title);
+  check("…with its mods and its riven named in English",
+    /^Mods: [A-Z][^.]+\. Riven: \+[A-Z]/.test(p.description) && !/undefined|\b[a-z]+_[a-z]+\b/.test(p.description),
+    p.description);
+}
 
 console.log(failures ? `\n${failures} failed` : "\nshort links store a build and nothing else");
 process.exit(failures ? 1 : 0);

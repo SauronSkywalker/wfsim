@@ -133,6 +133,10 @@ jobs:
         run: node scripts/check_board_submit.mjs
       # A SHORT SHARE LINK stores a build under the worker's own hash of it, and
       # nothing that is not a share code. Stub store, no network.
+      # THE WORKER READS SHARE CODES WITH THE PAGE'S OWN CODEC, copied by a
+      # generator; a stale copy previews a link by a grammar the page left behind.
+      - name: The worker's share codec is the page's
+        run: node scripts/gen_worker_codec.mjs --check
       - name: Short share links store a build and nothing else
         run: node scripts/check_share_short.mjs
       # A USAGE EVENT named on one side only is a time series that never starts,

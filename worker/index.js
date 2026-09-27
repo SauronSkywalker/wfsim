@@ -18,6 +18,8 @@
 // KEYED BY IDENTITY, so writes are idempotent: a hundred players arriving at
 // the same build produce ONE row, with no dedup pass and no counting.
 
+import { decodeShare, useShareHost } from "./share_codec.js";
+
 const MAX_BYTES = 4096;        // a build is a few hundred bytes; this is slack
 // AN OUTER BOUND, NOT THE RULE — see below. It is `MAIN_SLOTS + 1`: eight main
 // slots and the STANCE, which is the one extra card that rides `mods` (the
@@ -340,6 +342,105 @@ async function shareStore(request, env) {
   return shareJson({ ok: true, id, path: `/weapons/${weapon}/s/${id}` });
 }
 
+// ---- SHARE PREVIEW ---------------------------------------------------------
+//
+// A PASTED SHORT LINK PREVIEWS AS THE BUILD IT CARRIES. A chat reads the page's
+// head without running it, and the weapon's own head describes the BOARD's best
+// build — so a link to somebody's build previewed as somebody else's. The code
+// is decoded by the page's own codec (`share_codec.js`, generated) against
+// `site/share-names.json`, and nothing a sharer typed reaches the preview.
+
+let shareNames = null;
+async function shareNamesOf(env, url) {
+  if (shareNames) return shareNames;
+  const r = await env.ASSETS.fetch(new Request(new URL("/share-names.json", url)));
+  if (!r.ok) return null;
+  shareNames = await r.json();
+  return shareNames;
+}
+
+/// What the codec asks of its host, from the names table: the frozen order, and
+/// which weapons' evolution ids carry the weapon's own prefix.
+export function shareHostOf(table) {
+  const to = new Map(), from = new Map();
+  table.order.forEach((id, i) => { to.set(id, i); from.set(i, id); });
+  const prefixed = new Set(table.evolution_prefixed || []);
+  return {
+    index: { to, from },
+    evoPrefixFor: (w) => (prefixed.has(w) ? w + "_" : ""),
+    // A riven's local name is never shown here; its stats are.
+    rivenName: () => "",
+  };
+}
+
+/// A decoded build as the two lines a chat shows. ENGLISH, because the preview
+/// is read by whoever the link is posted to and English is the one both markets
+/// read; names only from the table, so nothing typed reaches it.
+export function sharePreviewText(d, table, host) {
+  const nm = (id) => table.names[id] || String(id).replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  const weapon = nm(d.w);
+  const slots = (d.slots || []).map((s) => s && s.mod).filter(Boolean);
+  const mods = slots.filter((m) => !String(m).startsWith("~")).map(nm);
+  const arcanes = (d.arcane || []).filter((a) => a && a !== "none").map(nm);
+  const pre = host.evoPrefixFor(d.w);
+  const evos = (d.evos || []).filter(Boolean).map((e) => nm(pre + e));
+  const rivens = (d.rivens || []).map((r) => [
+    ...(r.s.bonuses || []).map((b) => "+" + nm(b.id)),
+    ...(r.s.malus ? ["−" + nm(r.s.malus.id)] : []),
+  ].join(" "));
+  const lines = [
+    mods.length ? `Mods: ${mods.join(" · ")}` : "",
+    rivens.length ? `Riven: ${rivens.join("; ")}` : "",
+    arcanes.length ? `Arcane: ${arcanes.join(" · ")}` : "",
+    evos.length ? `Evolutions: ${evos.join(" · ")}` : "",
+  ].filter(Boolean);
+  return {
+    title: `${weapon} build | WFSim`,
+    description: lines.length ? lines.join(". ") + "." : `A ${weapon} build shared from WFSim.`,
+  };
+}
+
+const attr = (s) => String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+/// The weapon page's head, restated for one build: title, description, the OG
+/// and Twitter pair, `og:url` naming the link itself — and `noindex`, because a
+/// thousand builds of one weapon are one page to a search engine (the canonical
+/// still names the weapon).
+export function rewriteShareHead(html, preview, url) {
+  const meta = (key, name, value) => {
+    const tag = `<meta ${key}="${name}" content="${attr(value)}" />`;
+    const re = new RegExp(`<meta ${key}="${name}" content="[^"]*" />`);
+    return (h) => (re.test(h) ? h.replace(re, tag) : h.replace("</head>", `${tag}\n</head>`));
+  };
+  return [
+    (h) => h.replace(/<title>[^<]*<\/title>/, `<title>${attr(preview.title)}</title>`),
+    meta("name", "description", preview.description),
+    meta("property", "og:title", preview.title),
+    meta("property", "og:description", preview.description),
+    meta("property", "og:url", url),
+    meta("name", "twitter:title", preview.title),
+    meta("name", "twitter:description", preview.description),
+    meta("name", "robots", "noindex"),
+  ].reduce((h, f) => f(h), html);
+}
+
+/// The build a short id names, as a preview, or null — no row, an unreadable
+/// code, a names table that is not there. Null serves the weapon page unchanged.
+async function sharePreviewFor(id, env, url) {
+  if (!env.LIBRARY) return null;
+  try {
+    const row = await env.LIBRARY.prepare("SELECT weapon, code FROM shares WHERE id = ?").bind(id).first();
+    const table = row && await shareNamesOf(env, url);
+    if (!table) return null;
+    const host = shareHostOf(table);
+    useShareHost(host);
+    const d = await decodeShare(row.code);
+    return d && d.w ? sharePreviewText(d, table, host) : null;
+  } catch (e) {
+    console.log("share preview failed:", (e && e.message) || String(e));
+    return null;
+  }
+}
+
 async function shareFetch(id, env) {
   if (!SHARE_ID.test(id)) return shareJson({ ok: false, error: "not a share id" }, 404);
   if (!env.LIBRARY) return shareJson({ ok: false, error: "not configured" }, 503);
@@ -426,12 +527,19 @@ export default {
     // A SHORT LINK OPENS THE WEAPON'S OWN PAGE — its prerendered title and
     // preview, which is what a chat shows when the link is pasted. The page
     // itself reads the id and asks `/api/s/<id>` for the build.
-    const short = path.match(/^\/weapons\/([^/]+)\/s\/[0-9A-Za-z]{10}\/?$/);
+    const short = path.match(/^\/weapons\/([^/]+)\/s\/([0-9A-Za-z]{10})\/?$/);
     if (short) {
       const page = new URL(request.url);
       page.pathname = `/weapons/${short[1]}`;
       const res = await env.ASSETS.fetch(new Request(page.toString(), request));
-      return new Response(res.body, { status: res.status, headers: res.headers });
+      const preview = res.ok && await sharePreviewFor(short[2], env, request.url);
+      if (!preview) return new Response(res.body, { status: res.status, headers: res.headers });
+      const headers = new Headers(res.headers);
+      headers.delete("etag");
+      headers.delete("content-length");
+      const own = new URL(request.url);
+      return new Response(rewriteShareHead(await res.text(), preview, own.origin + own.pathname),
+        { status: res.status, headers });
     }
     if (path === "/api/board/pending") {
       return request.method === "GET" ? pending(env) : bad("GET only", 405);

@@ -65,7 +65,7 @@ with this thing, not how many times: forty edits to one build are one build.
 | `builder.riven` | a custom riven was edited and saved | — | — |
 | `simulator.run` | a Run Sim finished (not stopped) | weapon id | runs |
 | `optimizer.run` | a search finished (not cancelled) | weapon id | seconds |
-| `share.create` | a build link was copied | weapon id | — |
+| `share.create` | a build left the page | weapon id | how, the first way per load: 1 link, 2 text, 3 share sheet |
 | `share.open` | a shared build landed in a reader's app | weapon id | — |
 | `board.submit` | a build reached the board's inbox | weapon id | — |
 | `desktop.download` | a desktop download link was clicked | — | — |

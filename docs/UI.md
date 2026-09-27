@@ -334,6 +334,23 @@ as it always has. `check_share_short.mjs` holds the worker's half.
 It rides the QUERY, not the fragment — a fragment never reaches a crawler and
 these links are meant to be posted.
 
+**A PASTED SHORT LINK PREVIEWS AS ITS BUILD.** A chat reads the head without
+running the page, and the weapon's own head describes the board's best build.
+So the worker restates the head for `/weapons/<name>/s/<id>`: title
+`<Weapon> build | WFSim`, a description listing mods, riven stats, arcanes and
+evolutions in ENGLISH (the one language both markets read), `og:url` naming
+the link, and `noindex` (the canonical still names the weapon). It decodes the
+stored code with THE PAGE'S CODEC — `29-share-codec.js`, copied verbatim into
+`worker/share_codec.js` by `scripts/gen_worker_codec.mjs`, whose `--check` runs
+in CI — against `site/share-names.json`, which the site build writes from
+`data/share_order.yaml` and the data's English names. Nothing a sharer typed
+reaches a preview. Any failure serves the weapon page unchanged.
+
+**THE PANEL OFFERS THREE WAYS OUT**: copy the link; copy it AS TEXT — the same
+build decoded from the link's own code, named in the sharer's language, for a
+chat that shows a link as a bare string; and the system share sheet where the
+browser has one (`navigator.share`). `share.create`'s `n` records the first way used per page load.
+
 THE CARD IS OFF. `SHARE_CARD_ENABLED` is false, so the share panel draws no
 entry to it and `drawShareCard`/`qrMatrix` stand unreached: a card states a
 MEASUREMENT, and what may be shared today is a build. The question the card
