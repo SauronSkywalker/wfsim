@@ -346,6 +346,18 @@ in CI — against `site/share-names.json`, which the site build writes from
 `data/share_order.yaml` and the data's English names. Nothing a sharer typed
 reaches a preview. Any failure serves the weapon page unchanged.
 
+**THE SHARER'S RESULT MAY TRAVEL BESIDE THE LINK, NEVER IN IT.** A scenario is
+always selected, so the panel offers "include my result in this scenario" (off
+until chosen; the choice is browser storage). The result is a CLAIM stored in
+the `shares` row and hashed into the id, never a field of the code: opening the
+link still lands the build alone. An OFFICIAL scenario is named by its id — the
+whole fight, which any reader can run; any other fight is stated by its terms
+(enemy, level, Steel Path, duration) and marked as the sharer's own, with a
+target the sharer built left unnamed. `shareClaim` in the worker rebuilds it
+field by field against `share-names.json`: no typed text reaches a preview, so
+a forger can misstate the number and nothing else. The value is `fmtScore`'s
+spelling, sent as text, so the preview prints what the page printed.
+
 **THE PANEL OFFERS THREE WAYS OUT**: copy the link; copy it AS TEXT — the same
 build decoded from the link's own code, named in the sharer's language, for a
 chat that shows a link as a bare string; and the system share sheet where the

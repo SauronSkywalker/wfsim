@@ -262,7 +262,7 @@ const SHARE_SHORT_HOSTS = LIVE_HOSTS;
 /// offline, on a shell with no network, or a store that is down. The long form
 /// opens exactly as it always has, so a failure here costs length and nothing
 /// else.
-async function shareUrl() {
+async function shareUrl(claim) {
   const w = weaponInfo($("weapon").value);
   const code = await shareCode();
   if (SHARE_SHORT_HOSTS.includes(location.hostname)) try {
@@ -270,7 +270,7 @@ async function shareUrl() {
     const timer = setTimeout(() => ask.abort(), 4000);
     const r = await fetch(`${shareApi()}/api/s`, {
       method: "POST", headers: { "content-type": "application/json" }, signal: ask.signal,
-      body: JSON.stringify({ w: weaponPath(w.id).slice("/weapons/".length), c: code }),
+      body: JSON.stringify({ w: weaponPath(w.id).slice("/weapons/".length), c: code, ...(claim ? { m: claim } : {}) }),
     });
     clearTimeout(timer);
     const j = r.ok ? await r.json() : null;
@@ -453,52 +453,93 @@ async function shareText() {
   ].filter(Boolean);
 }
 
-// The share panel: the link, and a CARD to paste into a chat. Both carry the
-// site's own address — an image that travels without one is a screenshot of
-// nowhere.
+/// THE SHARER'S RESULT in the scenario on screen, when they choose to send one:
+/// the claim the worker stores beside the link (`shareClaim` in worker/index.js
+/// names every field) and the line the copied text shows. The LINK still lands
+/// the build and nothing else — the number travels beside it, as theirs.
+/// Measured first when the stored result does not describe this build in this
+/// fight (`resultForShare`); null when no run answers.
+async function shareMeasurement() {
+  const got = await resultForShare();
+  if (!got || !got.r) return null;
+  const met = metricOf(sim.metric);
+  const v = fmtScore(metricValue(met, got.r));
+  const sc = scenarioNamed(activeScenario) || {};
+  // AN OFFICIAL SCENARIO IS NAMED, and the name is the whole fight; anything
+  // else is stated by its terms, with a target the sharer built left unnamed.
+  const claim = officialScenarioActive() ? { s: sc.builtin, k: met.id, v } : {
+    k: met.id, v,
+    ...(customEnemiesFor(sim.enemy).length ? {} : { e: sim.enemy }),
+    l: Math.round(Number(sim.level) || 1),
+    ...(sim.steel_path ? { sp: 1 } : {}),
+    d: Math.round(Number(sim.duration) || 1),
+  };
+  return { claim, line: `${v} ${metricLabel(met)} — ${sc.name || tr("Scenarios")}` };
+}
+
+/// Whether this browser last chose to send its result. A convenience, so it is
+/// browser storage and may be lost.
+const SHARE_RESULT = "wfsim-share-result";
+
+// The share panel: the link, as a link, as text, or through the system's share
+// sheet — with the sharer's result beside it when they ask for that.
 async function openSharePanel(bar) {
   const panel = bar.querySelector(".pshare");
   if (!panel) return;
   if (!panel.hidden) { panel.hidden = true; return; }
-  // ONE THING IS SHAREABLE HERE, AND IT IS A BUILD. A build is a statement
-  // about a weapon; a RESULT is that build plus the fight it was measured in
-  // plus the number, and a fight is not a build's to move — so the panel
-  // offers the one link there is and needs no simulation to open.
   panel.hidden = false;
-  const bUrl = await shareUrl();
-  const text = await shareText();
-  const native = typeof navigator.share === "function";
-  panel.innerHTML =
-    `<div class="sh-row"><input class="sh-url" type="text" readonly value="${escHtml(bUrl)}">` +
-    `<button class="cu-btn sh-copy">${escHtml(tr("copy link"))}</button>` +
-    `<button class="cu-btn sh-text">${escHtml(tr("copy as text"))}</button>` +
-    (native ? `<button class="cu-btn sh-native">${escHtml(tr("share…"))}</button>` : "") +
-    `</div>` +
-    `<div class="sh-note">${escHtml(tr("the build and its rivens, and nothing else: no fight, no measurement, so opening it leaves the reader's own scenario untouched"))}</div>` +
-    (SHARE_CARD_ENABLED
-      ? `<div class="sh-more"><button class="cu-btn sh-full">${escHtml(tr("…as a card →"))}</button></div>`
-      : "");
-  const bBox = panel.querySelector(".sh-url");
-  bBox.onclick = () => bBox.select();
-  // `n` says HOW it left: 1 the link, 2 as text, 3 through the system's share sheet.
-  panel.querySelector(".sh-copy").onclick = async () => {
-    track("share.create", $("weapon").value, 1);
-    try { await navigator.clipboard.writeText(bUrl); presetToast(tr("link copied")); }
-    catch (_) { bBox.select(); presetToast(tr("press Ctrl+C to copy the selected link")); }
+  let withResult = false;
+  try { withResult = localStorage.getItem(SHARE_RESULT) === "1"; } catch (_) { /* off */ }
+  const draw = async () => {
+    if (withResult) panel.innerHTML = `<div class="sh-note">${escHtml(tr("simulating this build in the current scenario…"))}</div>`;
+    const measured = withResult ? await shareMeasurement() : null;
+    const bUrl = await shareUrl(measured && measured.claim);
+    const lines = await shareText();
+    const text = measured ? [lines[0], measured.line, ...lines.slice(1)] : lines;
+    const native = typeof navigator.share === "function";
+    panel.innerHTML =
+      `<div class="sh-row"><input class="sh-url" type="text" readonly value="${escHtml(bUrl)}">` +
+      `<button class="cu-btn sh-copy">${escHtml(tr("copy link"))}</button>` +
+      `<button class="cu-btn sh-text">${escHtml(tr("copy as text"))}</button>` +
+      (native ? `<button class="cu-btn sh-native">${escHtml(tr("share…"))}</button>` : "") +
+      `</div>` +
+      `<label class="sh-opt"><input type="checkbox" class="sh-result"${withResult ? " checked" : ""}> ` +
+      `${escHtml(tr("include my result in this scenario"))}` +
+      (measured ? ` <b>${escHtml(measured.line)}</b>` : "") + `</label>` +
+      `<div class="sh-note">${escHtml(tr(measured
+        ? "the link still opens the build alone; your result travels beside it, shown as yours"
+        : "the build and its rivens, and nothing else: no fight, no measurement, so opening it leaves the reader's own scenario untouched"))}</div>` +
+      (SHARE_CARD_ENABLED
+        ? `<div class="sh-more"><button class="cu-btn sh-full">${escHtml(tr("…as a card →"))}</button></div>`
+        : "");
+    const bBox = panel.querySelector(".sh-url");
+    bBox.onclick = () => bBox.select();
+    // `n` says HOW it left: 1 the link, 2 as text, 3 through the system's share sheet.
+    panel.querySelector(".sh-copy").onclick = async () => {
+      track("share.create", $("weapon").value, 1);
+      try { await navigator.clipboard.writeText(bUrl); presetToast(tr("link copied")); }
+      catch (_) { bBox.select(); presetToast(tr("press Ctrl+C to copy the selected link")); }
+    };
+    panel.querySelector(".sh-text").onclick = async () => {
+      track("share.create", $("weapon").value, 2);
+      try { await navigator.clipboard.writeText(`${text.join("\n")}\n${bUrl}`); presetToast(tr("text copied")); }
+      catch (_) { bBox.select(); presetToast(tr("press Ctrl+C to copy the selected link")); }
+    };
+    const nat = panel.querySelector(".sh-native");
+    if (nat) nat.onclick = async () => {
+      track("share.create", $("weapon").value, 3);
+      // A CANCELLED SHEET REJECTS, and a reader closing it is not an error.
+      try { await navigator.share({ title: text[0], text: text.slice(1).join("\n"), url: bUrl }); } catch (_) { /* closed */ }
+    };
+    panel.querySelector(".sh-result").onchange = (e) => {
+      withResult = e.target.checked;
+      try { localStorage.setItem(SHARE_RESULT, withResult ? "1" : "0"); } catch (_) { /* this page only */ }
+      draw();
+    };
+    const full = panel.querySelector(".sh-full");
+    if (full) full.onclick = () => openShareClaim(panel, bUrl);
   };
-  panel.querySelector(".sh-text").onclick = async () => {
-    track("share.create", $("weapon").value, 2);
-    try { await navigator.clipboard.writeText(`${text.join("\n")}\n${bUrl}`); presetToast(tr("text copied")); }
-    catch (_) { bBox.select(); presetToast(tr("press Ctrl+C to copy the selected link")); }
-  };
-  const nat = panel.querySelector(".sh-native");
-  if (nat) nat.onclick = async () => {
-    track("share.create", $("weapon").value, 3);
-    // A CANCELLED SHEET REJECTS, and a reader closing it is not an error.
-    try { await navigator.share({ title: text[0], text: text.slice(1).join("\n"), url: bUrl }); } catch (_) { /* closed */ }
-  };
-  const full = panel.querySelector(".sh-full");
-  if (full) full.onclick = () => openShareClaim(panel, bUrl);
+  await draw();
 }
 
 /// THE CARD: a picture of this build's run, to paste into a chat window. Split

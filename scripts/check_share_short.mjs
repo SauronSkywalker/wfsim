@@ -31,7 +31,7 @@ const LIBRARY = {
     bind: (...a) => ({
       run: async () => {
         if (/INSERT OR IGNORE INTO shares/.test(sql) && !shares.has(a[0])) {
-          shares.set(a[0], { weapon: a[1], code: a[2], at: a[3] });
+          shares.set(a[0], { weapon: a[1], code: a[2], at: a[3], claim: a[4] ?? null });
         }
       },
       first: async () => (/FROM shares/.test(sql) ? shares.get(a[0]) || null : null),
@@ -103,6 +103,8 @@ const TABLE = {
   names: { torid: "Torid", serration: "Serration", split_chamber: "Split Chamber",
     primary_merciless: "Primary Merciless", critical_chance: "Critical Chance", zoom: "Zoom" },
   evolution_prefixed: [],
+  scenarios: { standard_single_target: "Standard Single Target" },
+  enemies: { thrax_centurion: "Thrax Centurion" },
 };
 // v4: weapon 00, slots 01 02 and riven 0, arcane 03, a riven of +04 −05 at roll 1.0.
 const TINY = "400~0102-0~03~~;a;8;M;041c;051c";
@@ -129,6 +131,45 @@ check("…and asks not to be indexed apart from the weapon", og("robots") === "n
 check("…in the page's <title> too", /<title>Torid build \| WFSim<\/title>/.test(shown));
 const gone = await (await worker.fetch(new Request("https://wfsim.app/weapons/Torid/s/BBBBBBBBBB"), envP)).text();
 check("an unknown id serves the weapon page unchanged", gone === HEAD);
+
+// A MEASUREMENT, when the sharer sends one: stored beside the build, in the id,
+// and stated in the preview — and nothing typed gets through.
+const storeP = (w, c, m) => worker.fetch(new Request("https://wfsim.app/api/s", {
+  method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ w, c, m }),
+}), envP).then(async (r) => ({ status: r.status, j: await r.json() }));
+const headOf = async (id) => (await (await worker.fetch(new Request(`https://wfsim.app/weapons/Torid/s/${id}`), envP)).text());
+const ogOf = (html, p) => (html.match(new RegExp(`<meta (?:property|name)="${p}" content="([^"]*)"`)) || [])[1];
+
+const official = await storeP("Torid", TINY, { s: "standard_single_target", k: "kpm", v: "79.3116" });
+check("a build with a measurement is another link than the build alone",
+  official.j.ok && official.j.id !== tiny.j.id, JSON.stringify(official));
+check("…and a build without one keeps the id it always had", tiny.j.id === await shareId("Torid", TINY));
+const oh = await headOf(official.j.id);
+check("an official scenario's result heads the preview", ogOf(oh, "og:title") === "Torid build — 79.3116 KPM | WFSim", ogOf(oh, "og:title"));
+check("…and is named as the benchmark it was measured in",
+  (ogOf(oh, "og:description") || "").startsWith("79.3116 KPM in the Standard Single Target benchmark. Mods: Serration"),
+  ogOf(oh, "og:description"));
+const claimBack = await (await worker.fetch(new Request(`https://wfsim.app/api/s/${official.j.id}`), envP)).json();
+check("…and comes back with the build when the link is opened", claimBack.m && claimBack.m.s === "standard_single_target" && claimBack.m.v === "79.3116");
+
+const own = await storeP("Torid", TINY, { k: "dps", v: "12345.0000", e: "thrax_centurion", l: 9999, sp: 1, d: 180, name: "ignored" });
+const ownHead = await headOf(own.j.id);
+check("a fight of the sharer's own is stated by its terms, and marked as theirs",
+  (ogOf(ownHead, "og:description") || "").startsWith("12345.0000 DPS vs Thrax Centurion Lv 9999 SP, 180 s — the sharer's own fight."),
+  ogOf(ownHead, "og:description"));
+const ownBack = await (await worker.fetch(new Request(`https://wfsim.app/api/s/${own.j.id}`), envP)).json();
+check("…and a field nobody declared is not stored", ownBack.m && !("name" in ownBack.m), JSON.stringify(ownBack.m));
+
+for (const [what, m] of [
+  ["a value that is words", { k: "kpm", v: "the best", s: "standard_single_target" }],
+  ["a scenario the site does not have", { k: "kpm", v: "1.0", s: "my_scenario" }],
+  ["an enemy the site does not have", { k: "kpm", v: "1.0", e: "<b>x</b>", l: 1, d: 10 }],
+  ["a level past the game's", { k: "kpm", v: "1.0", l: 10000, d: 10 }],
+  ["a metric that is not an id", { k: "K P M", v: "1.0", s: "standard_single_target" }],
+]) {
+  const r = await storeP("Torid", TINY, m);
+  check(`refused, and no link made: ${what}`, r.status === 400 && !r.j.ok, JSON.stringify(r));
+}
 
 // AND AGAINST THE REAL TABLE the build writes, with a code the page wrote: the
 // generated codec and the names file have to agree with each other.

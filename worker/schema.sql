@@ -186,9 +186,14 @@ CREATE INDEX IF NOT EXISTS queue_batch ON queue (batch);
 -- `id` is a hash of (weapon, code) computed by the worker, so a row never
 -- changes, the same build is one row, and no client chooses an id. `at` is the
 -- day, like every table here. worker/index.js §"SHORT SHARE LINKS".
+-- `claim` is the sharer's measurement when they chose to include one (JSON,
+-- validated by `shareClaim`), and it is in the id's hash; NULL otherwise.
+-- Added to a live table with:
+--   ALTER TABLE shares ADD COLUMN claim TEXT;
 CREATE TABLE IF NOT EXISTS shares (
   id     TEXT PRIMARY KEY,
   weapon TEXT NOT NULL,
   code   TEXT NOT NULL,
-  at     TEXT NOT NULL
+  at     TEXT NOT NULL,
+  claim  TEXT
 );

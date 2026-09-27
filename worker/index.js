@@ -298,9 +298,12 @@ const B62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 /// The id of a (weapon, code) pair. The WEAPON is in the hash because the row
 /// stores it, and a row whose weapon a first writer could pick would be a page
 /// that opens under the wrong name.
-export async function shareId(weapon, code) {
+export async function shareId(weapon, code, claim) {
+  // A CLAIM IS PART OF WHAT IS STORED, so it is part of the id; without one the
+  // hash is what it always was, and every id already posted still resolves.
+  const text = `${weapon}\n${code}` + (claim ? `\n${JSON.stringify(claim)}` : "");
   const bytes = new Uint8Array(await crypto.subtle.digest(
-    "SHA-256", new TextEncoder().encode(`${weapon}\n${code}`)));
+    "SHA-256", new TextEncoder().encode(text)));
   let n = 0n;
   for (const b of bytes.slice(0, 8)) n = (n << 8n) | BigInt(b);
   let out = "";
@@ -329,12 +332,17 @@ async function shareStore(request, env) {
       || typeof code !== "string" || !SHARE_CODE.test(code)) {
     return shareJson({ ok: false, error: "not a share code" }, 400);
   }
-  const id = await shareId(weapon, code);
+  let claim = null;
+  if (b.m !== undefined) {
+    claim = shareClaim(b.m, await shareNamesOf(env, request.url));
+    if (!claim) return shareJson({ ok: false, error: "not a measurement" }, 400);
+  }
+  const id = await shareId(weapon, code, claim);
   try {
     // THE DAY, and nothing finer — the same promise every table here makes.
     await env.LIBRARY.prepare(
-      "INSERT OR IGNORE INTO shares (id, weapon, code, at) VALUES (?, ?, ?, ?)",
-    ).bind(id, weapon, code, new Date().toISOString().slice(0, 10)).run();
+      "INSERT OR IGNORE INTO shares (id, weapon, code, at, claim) VALUES (?, ?, ?, ?, ?)",
+    ).bind(id, weapon, code, new Date().toISOString().slice(0, 10), claim && JSON.stringify(claim)).run();
   } catch (e) {
     console.log("share write failed:", (e && e.message) || String(e));
     return shareJson({ ok: false, error: "could not be stored" }, 503);
@@ -359,6 +367,46 @@ async function shareNamesOf(env, url) {
   return shareNames;
 }
 
+/// THE SHARER'S MEASUREMENT, rebuilt field by field from what arrived, or null.
+/// NOTHING TYPED: a scenario and an enemy are ids the names table knows, the
+/// metric an id, the value the page's own spelling of a number (`fmtScore`), the
+/// rest small integers. A forger can misstate the number and nothing else.
+///   s   an official scenario's id — the whole fight, reproducible by anyone
+///   k   metric id      v  the value as the page printed it
+///   e   enemy id (absent for a target the sharer built)
+///   l   level          sp 1 on the Steel Path      d  duration, seconds
+export function shareClaim(m, table) {
+  if (!m || typeof m !== "object" || Array.isArray(m) || !table) return null;
+  const int = (x, lo, hi) => Number.isInteger(x) && x >= lo && x <= hi;
+  if (!ID_PLAIN.test(String(m.k)) || String(m.k).length > 12) return null;
+  if (typeof m.v !== "string" || !/^\d{1,12}(\.\d{1,12})?$/.test(m.v)) return null;
+  const out = { k: m.k, v: m.v };
+  if (m.s !== undefined) {
+    if (!(table.scenarios || {})[m.s]) return null;
+    return { s: m.s, ...out };
+  }
+  if (m.e !== undefined) {
+    if (!(table.enemies || {})[m.e]) return null;
+    out.e = m.e;
+  }
+  if (!int(m.l, 1, 9999) || !int(m.d, 1, 3600) || ![0, 1, undefined].includes(m.sp)) return null;
+  out.l = m.l;
+  if (m.sp) out.sp = 1;
+  out.d = m.d;
+  return out;
+}
+
+/// The claim as a sentence, or "" — and the number alone, for the title.
+/// A metric is named by its id, uppercased: the engine's labels are exactly
+/// that (`engine::rules::metrics`), and the id is what the claim carries.
+export function claimText(c, table) {
+  if (!c) return { line: "", headline: "" };
+  const headline = `${c.v} ${String(c.k).toUpperCase()}`;
+  if (c.s) return { headline, line: `${headline} in the ${table.scenarios[c.s]} benchmark.` };
+  const who = c.e ? table.enemies[c.e] : "a custom target";
+  return { headline, line: `${headline} vs ${who} Lv ${c.l}${c.sp ? " SP" : ""}, ${c.d} s — the sharer's own fight.` };
+}
+
 /// What the codec asks of its host, from the names table: the frozen order, and
 /// which weapons' evolution ids carry the weapon's own prefix.
 export function shareHostOf(table) {
@@ -376,7 +424,7 @@ export function shareHostOf(table) {
 /// A decoded build as the two lines a chat shows. ENGLISH, because the preview
 /// is read by whoever the link is posted to and English is the one both markets
 /// read; names only from the table, so nothing typed reaches it.
-export function sharePreviewText(d, table, host) {
+export function sharePreviewText(d, table, host, claim) {
   const nm = (id) => table.names[id] || String(id).replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   const weapon = nm(d.w);
   const slots = (d.slots || []).map((s) => s && s.mod).filter(Boolean);
@@ -394,9 +442,11 @@ export function sharePreviewText(d, table, host) {
     arcanes.length ? `Arcane: ${arcanes.join(" · ")}` : "",
     evos.length ? `Evolutions: ${evos.join(" · ")}` : "",
   ].filter(Boolean);
+  const said = claimText(claim, table);
+  const build = lines.length ? lines.join(". ") + "." : `A ${weapon} build shared from WFSim.`;
   return {
-    title: `${weapon} build | WFSim`,
-    description: lines.length ? lines.join(". ") + "." : `A ${weapon} build shared from WFSim.`,
+    title: said.headline ? `${weapon} build — ${said.headline} | WFSim` : `${weapon} build | WFSim`,
+    description: said.line ? `${said.line} ${build}` : build,
   };
 }
 
@@ -428,13 +478,13 @@ export function rewriteShareHead(html, preview, url) {
 async function sharePreviewFor(id, env, url) {
   if (!env.LIBRARY) return null;
   try {
-    const row = await env.LIBRARY.prepare("SELECT weapon, code FROM shares WHERE id = ?").bind(id).first();
+    const row = await env.LIBRARY.prepare("SELECT weapon, code, claim FROM shares WHERE id = ?").bind(id).first();
     const table = row && await shareNamesOf(env, url);
     if (!table) return null;
     const host = shareHostOf(table);
     useShareHost(host);
     const d = await decodeShare(row.code);
-    return d && d.w ? sharePreviewText(d, table, host) : null;
+    return d && d.w ? sharePreviewText(d, table, host, row.claim ? JSON.parse(row.claim) : null) : null;
   } catch (e) {
     console.log("share preview failed:", (e && e.message) || String(e));
     return null;
@@ -444,11 +494,11 @@ async function sharePreviewFor(id, env, url) {
 async function shareFetch(id, env) {
   if (!SHARE_ID.test(id)) return shareJson({ ok: false, error: "not a share id" }, 404);
   if (!env.LIBRARY) return shareJson({ ok: false, error: "not configured" }, 503);
-  const row = await env.LIBRARY.prepare("SELECT weapon, code FROM shares WHERE id = ?")
+  const row = await env.LIBRARY.prepare("SELECT weapon, code, claim FROM shares WHERE id = ?")
     .bind(id).first();
   if (!row) return shareJson({ ok: false, error: "no such link" }, 404);
   // FOREVER: the id is a hash of the row, so the row under it can never change.
-  return shareJson({ ok: true, w: row.weapon, c: row.code }, 200,
+  return shareJson({ ok: true, w: row.weapon, c: row.code, ...(row.claim ? { m: JSON.parse(row.claim) } : {}) }, 200,
     { "cache-control": "public, max-age=31536000, immutable" });
 }
 

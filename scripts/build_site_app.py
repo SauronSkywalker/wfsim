@@ -1177,9 +1177,19 @@ def ship_share_names() -> None:
             if isinstance(s, dict) and s.get("id") and s.get("text"):
                 label = re.sub(r"^\s*[%s]\s*", "", str(s["text"]).replace("|val|", "", 1))
                 names.setdefault(s["id"], re.sub(r"\s+", " ", label).strip())
+    # WHAT A MEASUREMENT MAY NAME: an official scenario by its title (the name up
+    # to its first " · " — the rest restates the fight), and an enemy.
+    def titled(family, short=False):
+        out = {}
+        for f in sorted((ROOT / "data" / family).rglob("*.yaml")):
+            d = yload(f.read_text(encoding="utf-8"))
+            if isinstance(d, dict) and d.get("id") and d.get("name"):
+                out[d["id"]] = str(d["name"]).split(" · ")[0] if short else str(d["name"])
+        return out
     (APP / "share-names.json").write_text(
         json.dumps({"order": order, "names": {i: names[i] for i in order if i in names},
-                    "evolution_prefixed": sorted(prefixed)},
+                    "evolution_prefixed": sorted(prefixed),
+                    "scenarios": titled("benchmarks", short=True), "enemies": titled("enemies")},
                    ensure_ascii=False, separators=(",", ":")),
         encoding="utf-8", newline="\n")
 
