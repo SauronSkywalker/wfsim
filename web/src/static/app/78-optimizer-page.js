@@ -159,7 +159,15 @@ function renderOptLimits() {
     html += limitHead("element-block", "Valence") + `<div class="combo-menu opt-limit-list">${
       vs.elements.map((e) => plainRow("valence", e, DT(e))).join("")}</div>`;
   }
+  // A CLICK REDRAWS THE BOX, and a redraw must not move the reader: each list
+  // scrolls on its own, and a fresh one opens at its top — so a pick deep in
+  // the mod list threw the reader back to its first row. Kept by position,
+  // which the sections do not change between two draws.
+  const kept = [...box.querySelectorAll(".opt-limit-list")].map((el) => el.scrollTop);
+  const pageY = window.scrollY;
   box.innerHTML = html;
+  box.querySelectorAll(".opt-limit-list").forEach((el, i) => { el.scrollTop = kept[i] || 0; });
+  if (window.scrollY !== pageY) window.scrollTo(window.scrollX, pageY);
   box.querySelectorAll(".opt[data-axis]").forEach((o) => o.addEventListener("click", (e) => {
     if (e.target.closest("a")) return;
     toggleLimit(o.dataset.axis, o.dataset.id);

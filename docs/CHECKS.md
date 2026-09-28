@@ -360,6 +360,13 @@ equipped" plus how one WOULD be computed. The check walks all three behaviours
 from three weapons the catalog classifies differently and asserts they are
 three different sentences.
 
+## `check_opt_limits_scroll`
+
+A pick in the optimizer's Limits redraws the whole box, and each list in it
+scrolls on its own. It scrolls the mod list down, excludes a row it can see,
+takes it back, and asserts the list and the page are where they were — a
+fresh list opens at its top, which is what a forgetful redraw looks like.
+
 ## `check_opt_replay`
 
 The only check about a build that CANNOT go stale: it
