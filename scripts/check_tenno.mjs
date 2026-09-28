@@ -109,8 +109,10 @@ check("the Tenno block carries every player field",
   r.keys.join(","));
 check("the check is standing on a fight of its own, not the locked ruler",
   r.editable === true);
-check("the build's Wielder picker offers the Prototype and the modelled frames",
-  r.wielders[0] === "prototype" && r.wielders.includes("valkyr_prime"), r.wielders.join(","));
+// THE PROTOTYPE ENDS EVERY ROSTER: it is the floor, not the pick
+// (`engine::data::warframes::all`).
+check("the build's Wielder picker offers the modelled frames, and the Prototype last",
+  r.wielders.at(-1) === "prototype" && r.wielders.includes("valkyr_prime"), r.wielders.join(","));
 // Valkyr Prime, from data/frames.yaml: 1000 armor, 1.1 sprint, 225 max energy
 // (175 at rank 0, +50). Three DIFFERENT numbers from one pick is the claim —
 // moving only armor and energy would leave every sprint gate shut.
