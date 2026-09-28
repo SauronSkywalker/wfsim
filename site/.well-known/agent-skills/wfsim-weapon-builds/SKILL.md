@@ -5,7 +5,15 @@ description: Look up a Warframe weapon's stats and its best measured riven-free 
 
 # WFSim weapon builds
 
-WFSim is a Warframe weapon calculator. It builds a loadout, simulates the fight against a named enemy, and searches for the best mods. Every formula cites its source, and every golden test is calibrated against a real in-game run. It runs in the browser, free, and its source is open (AGPL-3.0).
+WFSim is a Warframe weapon calculator. It builds a loadout, simulates the fight against a named enemy, and searches for the best mods. Every formula cites its source, and every golden test is calibrated against a real in-game run. A board score belongs to its ruler, the named benchmark fight: compare scores only under one ruler, quote the ruler with the number, and give the reader the row's link, which opens the build in the calculator. It runs in the browser, free, and its source is open (AGPL-3.0).
+
+## Call it over MCP
+
+https://mcp.wfsim.app/mcp (Streamable HTTP, no sign-in) offers these tools, all read-only:
+
+- `builder_weapons_find`: Find weapons by name, in any language WFSim speaks.
+- `builder_board_read`: Read a weapon's leaderboard: the measured best builds per ruler (the benchmark fight), mode, and with or without a riven, ranked. Each row carries the link that opens it, and a riven-free row its `build`, which the stats read takes.
+- `builder_stats_read`: Read the stats panel for a build: every stat per form and part, base and final, with the mod each change came from, and what the weapon's model does not cover.
 
 ## Look up a weapon
 

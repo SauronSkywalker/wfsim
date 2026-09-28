@@ -4,8 +4,26 @@
       "anchor": "https://wfsim.app/.well-known/api-catalog",
       "item": [
         {
+          "href": "https://mcp.wfsim.app/mcp"
+        },
+        {
           "href": "https://wfsim.app/board/index.json",
           "type": "application/json"
+        }
+      ]
+    },
+    {
+      "anchor": "https://mcp.wfsim.app/mcp",
+      "service-desc": [
+        {
+          "href": "https://wfsim.app/.well-known/mcp/server-card.json",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://wfsim.app/.well-known/agent-skills/wfsim-weapon-builds/SKILL.md",
+          "type": "text/markdown"
         }
       ]
     },
