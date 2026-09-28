@@ -14,10 +14,6 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.7193 | Blaze, Toxic Barrage, Galvanized Hell, Primed Point Blank, Primed Ravage, Galvanized Savvy, Critical Deceleration, Magnetic Strafe, Primary Crux |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.02943 | Blaze, Toxic Barrage, Galvanized Hell, Primed Point Blank, Primed Ravage, Galvanized Savvy, Critical Deceleration, Magnetic Strafe, Primary Crux |
 
-## Not modelled here
-
-- Combat Reload, the Tigris-exclusive mod — a weapon-exclusive card outside the pools this roster loads
-
 ## In WFSim
 
 - Build, simulate and optimize it: https://wfsim.app/weapons/Tigris

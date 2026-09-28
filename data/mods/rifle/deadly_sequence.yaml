@@ -9,10 +9,8 @@ description: "+X% Critical Chance\n+X Sequence"
 
 # A SYNDICATE AUGMENT (The Perrin Sequence, rank Senior Executive, 25,000
 # standing). The page names TWO weapons — "exclusive to the Grinlok and Prisma
-# Grinlok" — and this roster carries only the Prisma, so only it is listed. A
-# weapon we do not have cannot be named in an equip gate, and the day the base
-# Grinlok is added this line grows by one id.
-exclusive_to: [prisma_grinlok]
+# Grinlok".
+exclusive_to: [grinlok, prisma_grinlok]
 
 #   Rank | Critical chance | Sequence | Cost
 #     0  |      +50%       |   0.25   |  4

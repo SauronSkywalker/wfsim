@@ -55,7 +55,6 @@ attack:
 unmodeled:
   - "WHEN AIMING, headshots take '+400% critical chance', additive with Point Strike (wiki). The engine has no headshot-CONDITIONAL crit bucket — a crit is rolled for the hit, and the body part it lands on is drawn beside it — so this arena's crit chance is the unaimed one. It is the larger half of the weapon: against a headshot-heavy fight the number here is well under the real one"
   - "the HIP-FIRE half of the same passive, '+60% ammo efficiency' — this arena aims, and ammo economy pays nothing against infinite reserves either way"
-  - "Biotic Rounds, the AX-52-exclusive mod — a weapon-exclusive card outside the pools this roster loads"
 
 source:
   url: https://wiki.warframe.com/w/AX-52

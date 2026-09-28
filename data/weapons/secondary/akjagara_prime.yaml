@@ -59,8 +59,5 @@ attack:
   range_m: 300.0
   damage: { impact: 3.8, puncture: 3.8, slash: 30.4 }   # total 38
 
-unmodeled:
-  - "Range Advantage, the Akjagara-exclusive mod — a weapon-exclusive card outside the pools this roster loads"
-
 source:
   url: https://wiki.warframe.com/w/Akjagara_Prime

@@ -47,8 +47,5 @@ attack:
   range_m: 300.0
   damage: { impact: 21.6, puncture: 3.6, slash: 10.8 }   # total 36
 
-unmodeled:
-  - "Zazvat-Kar, the Akstiletto Prime-exclusive mod — a weapon-exclusive card outside the pools this roster loads"
-
 source:
   url: https://wiki.warframe.com/w/Akstiletto_Prime

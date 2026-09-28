@@ -59,8 +59,5 @@ attack:
   range_m: 22.0
   damage: { puncture: 9.24, slash: 12.76 }   # total 22
 
-unmodeled:
-  - "Sequence Burn, the Spectra-exclusive mod — a weapon-exclusive card outside the pools this roster loads"
-
 source:
   url: https://wiki.warframe.com/w/Spectra_Vandal

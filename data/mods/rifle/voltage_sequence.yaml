@@ -1,0 +1,23 @@
+id: voltage_sequence
+name: Voltage Sequence
+rarity: rare
+polarity: naramon
+base_drain: 4
+max_rank: 3
+internal_name: /Lotus/Upgrades/Mods/Syndicate/LankaMod
+description: "Killing a flying enemy creates a lightning trap from their remains, lasting Xs\n+X Sequence"
+exclusive_to: [lanka, lanka_uncharged]
+
+effects:
+  - kind: unmodelled
+    clause: "Killing a flying enemy creates an 8s lightning trap"
+    rank0: 2.0
+    rankMax: 8.0
+  - kind: syndicate_radial
+    syndicate: sequence
+    rank0: 0.25
+    rankMax: 1.00
+
+source:
+  url: https://wiki.warframe.com/w/Voltage_Sequence
+  # Rank table and trap rule; Sequence payload from /w/Sequence.

@@ -16,7 +16,6 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- Directed Convergence and Entropy Burst, the Supra-exclusive mods — weapon-exclusive cards outside the pools this roster loads
 - the spool rebuilds after every reload: the page says burst firing MAINTAINS it, so a player whose pauses are short enough keeps more of the listed rate than this sim does — here the only pauses are the reloads the weapon forces. The spool itself IS modelled
 
 ## In WFSim

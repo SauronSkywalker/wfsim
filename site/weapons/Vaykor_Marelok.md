@@ -17,7 +17,6 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 ## Not modelled here
 
 - the JUSTICE syndicate effect, which on a proc detonates a radial blast and heals the wielder — it fires off a syndicate standing meter this sim does not track, and the blast is not counted here
-- Shrapnel Rounds, the Marelok-exclusive mod — a weapon-exclusive card outside the pools this roster loads
 
 ## In WFSim
 

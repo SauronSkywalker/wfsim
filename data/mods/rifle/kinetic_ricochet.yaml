@@ -1,0 +1,22 @@
+id: kinetic_ricochet
+name: Kinetic Ricochet
+rarity: rare
+polarity: naramon
+base_drain: 2
+max_rank: 5
+internal_name: /Lotus/Upgrades/Mods/Rifle/Event/CorpusArena/TetraCorpusArenaMod
+description: "Shots now bounce up to 6x and travel X% further."
+exilus: true
+exclusive_to: [tetra, prisma_tetra, tenet_tetra, tenet_tetra_grenade]
+lower_ranks_unmodelled: true
+
+effects:
+  - kind: unmodelled
+    clause: "Shots now bounce up to 6x"
+  - kind: range_bonus
+    rank0: 0.05
+    rankMax: 0.30
+
+source:
+  url: https://wiki.warframe.com/w/Kinetic_Ricochet
+  # Rank table, bounce rule and family compatibility; metadata from Module:Mods/data.

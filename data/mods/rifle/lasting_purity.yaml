@@ -1,0 +1,24 @@
+id: lasting_purity
+name: Lasting Purity
+rarity: rare
+polarity: naramon
+base_drain: 4
+max_rank: 3
+internal_name: /Lotus/Upgrades/Mods/Syndicate/VulkarMod
+description: "+X% Damage when Aiming\n+X Purity"
+exclusive_to: [vulkar, vulkar_wraith]
+
+effects:
+  - kind: base_damage_bonus
+    condition: aiming
+    rank0: 0.15
+    rankMax: 0.60
+
+  - kind: syndicate_radial
+    syndicate: purity
+    rank0: 0.25
+    rankMax: 1.00
+
+source:
+  url: https://wiki.warframe.com/w/Lasting_Purity
+  # Rank table and family compatibility; Purity payload from /w/Purity.

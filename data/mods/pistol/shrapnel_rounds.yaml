@@ -1,0 +1,22 @@
+id: shrapnel_rounds
+name: Shrapnel Rounds
+rarity: rare
+polarity: madurai
+base_drain: 10
+max_rank: 0
+internal_name: /Lotus/Upgrades/Mods/PvPMods/Pistol/MarelokMultishot
+description: "+200% Multishot\n-66% Damage"
+exclusive_to: [marelok, vaykor_marelok]
+
+effects:
+  - kind: multishot_bonus
+    rank0: 2.00
+    rankMax: 2.00
+
+  - kind: base_damage_bonus
+    rank0: -0.66
+    rankMax: -0.66
+
+source:
+  url: https://wiki.warframe.com/w/Shrapnel_Rounds
+  # Unranked card values, PvE eligibility and compatibility; metadata from Module:Mods/data.

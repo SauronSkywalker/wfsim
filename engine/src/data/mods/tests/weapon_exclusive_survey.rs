@@ -139,7 +139,7 @@ fn the_weapon_exclusive_mods_we_still_owe_only_goes_down() {
     // last run can only ever be absent — so raising this line is a
     // deliberate edit whose reason goes in the commit, never the way to
     // make a red run green.
-    const OWED: usize = 99;
+    const OWED: usize = 0;
     let text = crate::data::file("surveys/weapon_exclusive_mods.yaml")
         .expect("data/surveys/weapon_exclusive_mods.yaml — run scripts/survey_weapon_mods.py");
     let mut total = 0usize;
@@ -212,4 +212,43 @@ fn the_weapon_exclusive_mods_we_still_owe_only_goes_down() {
     // as one nobody owes.
     let carried = total - missing.len() - excluded.len();
     assert!(carried >= 13, "only {carried} of {total} carried");
+}
+
+/// **AN `exclusive_to` GATE REACHES THE WHOLE FAMILY `compatName` NAMES.**
+///
+/// The survey's `reaches:` is every roster entry the export's family covers,
+/// minus the members a page refuses (`REFUSED` in the script, with its quote).
+/// A gate written before a sibling joined the roster stops short of it and the
+/// builder hides the mod there in silence — Deadly Sequence sat on the Prisma
+/// Grinlok alone after the base Grinlok arrived.
+#[test]
+fn every_exclusive_gate_reaches_its_whole_family() {
+    let text = crate::data::file("surveys/weapon_exclusive_mods.yaml")
+        .expect("data/surveys/weapon_exclusive_mods.yaml — run scripts/survey_weapon_mods.py");
+    let mut id = None;
+    let mut checked = 0usize;
+    let mut unreached: Vec<String> = Vec::new();
+    for line in text.lines() {
+        let l = line.trim();
+        if l.starts_with("- name:") {
+            id = None;
+        } else if let Some(v) = l.strip_prefix("carried: data/mods/") {
+            id = v.rsplit('/').next().and_then(|f| f.strip_suffix(".yaml"));
+        } else if let (Some(m), Some(v)) = (id, l.strip_prefix("reaches:")) {
+            checked += 1;
+            for w in v.trim().trim_matches(['[', ']']).split(',').map(str::trim) {
+                if !crate::data::mods::pool_for_weapon(w).iter().any(|d| d.id == m) {
+                    unreached.push(format!("{m} -> {w}"));
+                }
+            }
+        }
+    }
+    assert!(checked >= 20, "the survey carries only {checked} gated mods");
+    assert!(
+        unreached.is_empty(),
+        "a weapon-exclusive mod is not offered to a member of its family — widen \
+         its `exclusive_to`, or add the pair to REFUSED in \
+         scripts/survey_weapon_mods.py with the page's words:\n  {}",
+        unreached.join("\n  ")
+    );
 }

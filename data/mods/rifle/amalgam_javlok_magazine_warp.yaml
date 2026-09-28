@@ -1,0 +1,23 @@
+id: amalgam_javlok_magazine_warp
+name: Amalgam Javlok Magazine Warp
+rarity: rare
+polarity: madurai
+base_drain: 6
+max_rank: 5
+internal_name: /Lotus/Upgrades/Mods/DualSource/Rifle/JavlokSwordShieldMod
+description: "+X% Magazine Capacity\n+X% Combo Count Chance while Blocking with a Shield"
+exclusive_to: [javlok, javlok_throw]
+excludes_weapon: [sentinel_weapon]
+
+effects:
+  - kind: magazine_capacity_bonus
+    rank0: 0.075
+    rankMax: 0.45
+  - kind: unmodelled
+    clause: "+100% Combo Count Chance while Blocking with a Shield"
+    rank0: 0.167
+    rankMax: 1.00
+
+source:
+  url: https://wiki.warframe.com/w/Amalgam_Javlok_Magazine_Warp
+  # Rank table and blocking clause; metadata from Module:Mods/data.

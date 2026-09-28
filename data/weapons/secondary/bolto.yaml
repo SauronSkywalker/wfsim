@@ -49,7 +49,6 @@ attack:
   damage: { impact: 6.4, puncture: 57.6 }   # total 64
 
 unmodeled:
-  - "Entropy Spike, the Bolto-exclusive mod — a weapon-exclusive card outside the pools this roster loads"
   - reason: bolt_corpse_ragdoll
 
 source:

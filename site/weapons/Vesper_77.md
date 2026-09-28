@@ -18,7 +18,6 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 - this weapon is SILENT and this arena has nobody to alert — stealth is worth nothing here and a great deal in a real mission
 - the laser sight also HIGHLIGHTS weak points on screen, which is an aiming aid rather than a damage bonus — this sim draws its head hits from the fight's headshot percentage and cannot be helped to aim
-- Leaded Gas, the Vesper 77-exclusive mod — a weapon-exclusive card outside the pools this roster loads
 
 ## In WFSim
 

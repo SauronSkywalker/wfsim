@@ -16,7 +16,6 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- Photon Overcharge, the Glaxion family's exclusive mod — a weapon-exclusive card outside the pools this roster loads
 - corpses keep conducting the chain, which the page states as 'Enemy corpses will still allow the beam to connect to nearby enemies' — this arena removes a body when it dies, so a chain that would have hopped THROUGH a corpse to a live enemy behind it finds nothing there
 
 ## In WFSim

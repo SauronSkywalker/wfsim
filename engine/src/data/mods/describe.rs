@@ -246,3 +246,11 @@ pub fn desc_info(id: &str) -> Option<&'static ModDescInfo> {
     })
     .get(id)
 }
+
+/// Whether the card deliberately refuses every rank below its maximum.
+pub fn lower_ranks_unmodelled(id: &str) -> bool {
+    crate::data::files_under("mods/").any(|(_, text)| {
+        serde_norway::from_str::<ModFile>(text)
+            .is_ok_and(|mf| mf.id == id && mf.lower_ranks_unmodelled)
+    })
+}

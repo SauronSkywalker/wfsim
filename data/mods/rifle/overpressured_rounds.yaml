@@ -1,0 +1,15 @@
+id: overpressured_rounds
+name: Overpressured Rounds
+rarity: rare
+polarity: madurai
+base_drain: 2
+max_rank: 5
+internal_name: /Lotus/Upgrades/Mods/Rifle/Event/Nightwave/NightwaveLasGooAKAugmentMod
+description: "Rifle kills add 120% Falloff Distance and decrease Spread for next attack with Buckshot. Buckshot kills restore 50% of the current Magazine."
+exclusive_to: [efv_5_jupiter, efv_5_jupiter_buckshot]
+lower_ranks_unmodelled: true
+effects:
+  - kind: unmodelled
+    clause: "Kills alternate Falloff, Spread and Magazine between fire modes"
+source:
+  url: https://wiki.warframe.com/w/Overpressured_Rounds

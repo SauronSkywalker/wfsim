@@ -1,0 +1,16 @@
+id: bursting_mass
+name: Bursting Mass
+rarity: rare
+polarity: naramon
+base_drain: 4
+max_rank: 5
+internal_name: /Lotus/Upgrades/Mods/Rifle/Event/Arbitration/InfCrpShockSwarmRifleArbitrationMod
+description: "The infested mass accumulates 200% of the damage that goes through it and deals it in 15m radius when it expires. Secondary fire will manually detonate an existing mass."
+exclusive_to: [mutalist_quanta, mutalist_quanta_orb]
+lower_ranks_unmodelled: true
+effects:
+  - kind: unmodelled
+    clause: "The infested mass accumulates and detonates passed damage"
+source:
+  url: https://wiki.warframe.com/w/Bursting_Mass
+

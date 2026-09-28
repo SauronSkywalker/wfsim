@@ -48,8 +48,5 @@ attack:
   range_m: 300.0
   damage: { impact: 14.4, puncture: 1.8, slash: 1.8 }   # total 18
 
-unmodeled:
-  - "Skull Shots and Stinging Truth, the Viper-exclusive mods — weapon-exclusive cards outside the pools this roster loads"
-
 source:
   url: https://wiki.warframe.com/w/Viper_Wraith

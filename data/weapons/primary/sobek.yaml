@@ -51,8 +51,5 @@ attack:
     reduction: 0.5
   damage: { impact: 52.5, puncture: 8.75, slash: 8.75 }   # 70 a pellet, 350 a shot
 
-unmodeled:
-  - "Shattering Justice, Acid Shells and Clip Delegation, the Sobek-exclusive mods — weapon-exclusive cards outside the pools this roster loads. Acid Shells in particular detonates corpses for a share of their health, which is a whole second damage source"
-
 source:
   url: https://wiki.warframe.com/w/Sobek

@@ -47,8 +47,5 @@ attack:
   range_m: 300.0
   damage: { impact: 80, puncture: 16, slash: 64 }   # total 160
 
-unmodeled:
-  - "Shrapnel Rounds, the Marelok-exclusive mod — a weapon-exclusive card outside the pools this roster loads"
-
 source:
   url: https://wiki.warframe.com/w/Marelok

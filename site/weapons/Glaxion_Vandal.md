@@ -16,7 +16,6 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- Photon Overcharge, the Glaxion family's exclusive mod — a weapon-exclusive card outside the pools this roster loads
 - kills leave an EXTRA CORPSE, which the page names as a synergy with Nekros' Desecrate — a loot mechanic with nothing to drop into here
 
 ## In WFSim

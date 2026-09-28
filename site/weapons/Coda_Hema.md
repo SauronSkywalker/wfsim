@@ -18,7 +18,6 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 - the HEALTH COST, which is the whole of this weapon's drawback: "health is converted to ammo", scaling with the ammo restored up to 5% of the user's max health. Nothing shoots back here and the Tenno has no health pool to spend, so the sim shows this rifle with its price removed
 - the 5% Life Steal on headshots, which is the other side of the same trade and equally invisible with nothing to heal from
-- Necrophagic Vigor, the Hema family's exclusive mod — a weapon-exclusive card outside the pools this roster loads
 
 ## In WFSim
 

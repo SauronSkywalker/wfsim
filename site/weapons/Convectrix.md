@@ -16,7 +16,6 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- Efficient Beams, the Convectrix-exclusive mod — a weapon-exclusive card outside the pools this roster loads
 - the two beams CONVERGE on the crosshair and deal full damage there only once they are aligned (wiki). This arena lands both on the aimed body from the first tick, which is the ceiling
 
 ## In WFSim

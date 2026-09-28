@@ -649,6 +649,8 @@ mod tests {
                 }
                 let Some(info) = crate::data::mods::desc_info(id) else { continue };
                 let literal = ENGLISH_CARD_DOES_NOT_RANK.contains(&id.as_str());
+                let lower_ranks_unmodelled =
+                    crate::data::mods::lower_ranks_unmodelled(id);
                 if literal && info.at(0) != info.at(info.max_rank) {
                     bad.push(format!("{id}: its English card ranks now — drop it from ENGLISH_CARD_DOES_NOT_RANK"));
                 }
@@ -657,7 +659,7 @@ mod tests {
                     if rank != 0 && rank != info.max_rank {
                         continue; // interpolated — see (1) above
                     }
-                    if literal && rank == 0 {
+                    if (literal || lower_ranks_unmodelled) && rank == 0 {
                         continue;
                     }
                     let ours = info.at(rank);
@@ -753,4 +755,3 @@ mod tests {
         }
         assert!(checked >= 10, "every table was asked about: {checked}");
     }
-

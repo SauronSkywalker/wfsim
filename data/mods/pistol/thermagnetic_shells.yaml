@@ -1,0 +1,15 @@
+id: thermagnetic_shells
+name: Thermagnetic Shells
+rarity: rare
+polarity: naramon
+base_drain: 2
+max_rank: 3
+internal_name: /Lotus/Upgrades/Mods/Rifle/Event/CorpusArena/SupraCorpusArenaMod
+description: "Enemies explode on death, dealing 80 Magnetic Damage (+40% Enemy Max Health) in a 6m radius."
+exclusive_to: [detron, mara_detron, tenet_detron, tenet_detron_mag_burst]
+lower_ranks_unmodelled: true
+effects:
+  - kind: unmodelled
+    clause: "Enemies explode for Magnetic and maximum-Health damage"
+source:
+  url: https://wiki.warframe.com/w/Thermagnetic_Shells

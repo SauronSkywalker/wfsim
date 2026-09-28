@@ -1,0 +1,16 @@
+id: sentient_barrage
+name: Sentient Barrage
+rarity: rare
+polarity: madurai
+base_drain: 2
+max_rank: 5
+internal_name: /Lotus/Upgrades/Mods/Rifle/Event/Nightwave/NightwaveBattacorAugmentMod
+description: "Discharge from Alt-Fire now has infinite Body Punch Through but no longer explodes on contact. Each enemy hit will refill one charge, and reaching a full charge will increase the Critical Chance and Critical Damage of the next discharge by 300%."
+exclusive_to: [battacor, battacor_charged]
+lower_ranks_unmodelled: true
+effects:
+  - kind: unmodelled
+    clause: "Alt-Fire gains punch through, charge refill and a full-charge critical buff"
+source:
+  url: https://wiki.warframe.com/w/Sentient_Barrage
+

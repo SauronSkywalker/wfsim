@@ -56,8 +56,5 @@ attack:
   # three-way split this is TWO types only, with no Slash at all.
   damage: { impact: 6.4, puncture: 25.6 }   # total 32
 
-unmodeled:
-  - "Focused Acceleration and Kinetic Ricochet, the Tetra family's exclusive mods — weapon-exclusive cards outside the pools this roster loads"
-
 source:
   url: https://wiki.warframe.com/w/Tetra

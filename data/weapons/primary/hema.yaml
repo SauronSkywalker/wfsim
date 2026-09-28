@@ -70,7 +70,6 @@ attack:
 
 unmodeled:
   - "the HEALTH COST, which is the whole of this weapon's drawback: \"health is converted to ammo\". Nothing shoots back here and the Tenno has no health pool to spend, so the sim shows this rifle with its price removed"
-  - "Necrophagic Vigor, the Hema family's exclusive mod — a weapon-exclusive card outside the pools this roster loads"
 
 source:
   url: https://wiki.warframe.com/w/Hema

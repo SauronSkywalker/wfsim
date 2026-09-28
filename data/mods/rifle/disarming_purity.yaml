@@ -1,0 +1,23 @@
+id: disarming_purity
+name: Disarming Purity
+rarity: rare
+polarity: naramon
+base_drain: 4
+max_rank: 3
+internal_name: /Lotus/Upgrades/Mods/Syndicate/PantheraMod
+description: "Secondary Fire mode has a X% chance to disarm enemies.\n+X Purity"
+exclusive_to: [panthera, panthera_alt, panthera_prime, panthera_prime_alt]
+
+effects:
+  - kind: unmodelled
+    clause: "Secondary Fire mode has a 40% chance to disarm enemies"
+    rank0: 0.10
+    rankMax: 0.40
+  - kind: syndicate_radial
+    syndicate: purity
+    rank0: 0.25
+    rankMax: 1.00
+
+source:
+  url: https://wiki.warframe.com/w/Disarming_Purity
+  # Rank table and family compatibility; Purity payload from /w/Purity.

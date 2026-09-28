@@ -1,0 +1,29 @@
+id: damzav_vati
+name: Damzav-Vati
+rarity: rare
+polarity: madurai
+base_drain: 2                 # max drain 7 at rank 5
+max_rank: 5
+internal_name: /Lotus/Upgrades/Mods/Pistol/Event/AkbroncoViralDamageMod
+description: "+X% Viral"
+
+# A WEAPON AUGMENT for the AKBRONCO PRIME (Entrati, Rank 4 - Friend, 20,000
+# standing): "a Weapon Augment Mod for Akbronco Prime". The base Akbronco is not
+# named, and DE's export `compatName` is "Akbronco Prime" too.
+exclusive_to: [akbronco_prime]
+family: damzav_vati
+
+effects:
+  # A COMBINED ELEMENT FROM A MOD, so it takes the Magnetic Might path — added
+  # beside the hierarchy, never paired: "The Viral damage from this mod is added
+  # after other modded elements … Pathogen Rounds will not combine with the
+  # augment and instead adds Toxin damage."
+  - kind: elemental_damage_bonus
+    element: viral
+    rank0: 0.4
+    rankMax: 2.4
+
+source:
+  url: https://wiki.warframe.com/w/Damzav-Vati
+  # Rank table (+40% a rank, cost 2–7) and Notes. Polarity, drain and rank
+  # confirmed in DE's Public Export (AP_ATTACK, RARE, baseDrain 2, fusionLimit 5).

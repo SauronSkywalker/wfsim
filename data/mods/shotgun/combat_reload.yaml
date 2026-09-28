@@ -1,0 +1,15 @@
+id: combat_reload
+name: Combat Reload
+rarity: rare
+polarity: naramon
+base_drain: 4
+max_rank: 5
+internal_name: /Lotus/Upgrades/Mods/Rifle/Event/Nightwave/NightwaveTigrisAugmentMod
+description: "If 5 pellets are headshots, increase reload speed by +120% for 3s."
+exclusive_to: [sancti_tigris, tigris, tigris_prime]
+lower_ranks_unmodelled: true
+effects:
+  - kind: unmodelled
+    clause: "+120% Reload Speed for 3s"
+source:
+  url: https://wiki.warframe.com/w/Combat_Reload

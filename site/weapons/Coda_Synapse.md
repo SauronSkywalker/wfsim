@@ -14,10 +14,6 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 35.1887 | Primed Cryo Rounds, Malignant Force, Galvanized Chamber, Galvanized Aptitude, Critical Delay, Vile Acceleration, Vital Sense, Magnetic Capacity, Primary Deadhead |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 3.7341 | Primed Cryo Rounds, Malignant Force, Primary Acuity, Galvanized Aptitude, Hammer Shot, Vile Acceleration, Vital Sense, Magnetic Capacity, Primary Deadhead |
 
-## Not modelled here
-
-- Necrophagic Vigor, the Synapse family's exclusive mod — a weapon-exclusive card outside the pools this roster loads
-
 ## In WFSim
 
 - Build, simulate and optimize it: https://wfsim.app/weapons/Coda_Synapse

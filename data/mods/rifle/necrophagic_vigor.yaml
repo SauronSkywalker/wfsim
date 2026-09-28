@@ -1,0 +1,15 @@
+id: necrophagic_vigor
+name: Necrophagic Vigor
+rarity: rare
+polarity: madurai
+base_drain: 2
+max_rank: 5
+internal_name: /Lotus/Upgrades/Mods/Rifle/Event/Nightwave/NightwaveHemaAugmentMod
+description: "Reloading drains up to half your Health based on ammo created, increasing Critical Chance and Critical Damage by +20% for every 20 Health drained. Capped at 360%."
+exclusive_to: [coda_hema, hema]
+lower_ranks_unmodelled: true
+effects:
+  - kind: unmodelled
+    clause: "Health drained on reload grants Critical Chance and Critical Damage"
+source:
+  url: https://wiki.warframe.com/w/Necrophagic_Vigor

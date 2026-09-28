@@ -2238,3 +2238,32 @@ fn an_elementalist_pays_status_damage_and_leaves_the_hit_alone() {
         assert!((both.damage.total() - alone.damage.total()).abs() < 1e-9, "{card} beside {damage}");
     }
 }
+
+/// **DAMZAV-VATI'S VIRAL NEVER PAIRS.** The page's own example: "Pathogen
+/// Rounds will not combine with the augment and instead adds Toxin damage" —
+/// so the Toxin stays Toxin and the Viral is 240% of base on its own, not
+/// Toxin pulled into it. And only the Prime may carry it.
+#[test]
+fn damzav_vatis_viral_stands_beside_the_hierarchy() {
+    let pool = crate::data::mods::pool_for_build("akbronco_prime", &[]);
+    let by = |id: &str| pool.iter().find(|m| m.id == id).unwrap_or_else(|| panic!("{id}"));
+    let (damzav, pathogen) = (by("damzav_vati"), by("pathogen_rounds"));
+    assert!(
+        !crate::data::mods::pool_for_build("akbronco", &[]).iter().any(|m| m.id == "damzav_vati"),
+        "the base Akbronco cannot equip the Prime's augment"
+    );
+    let toxin: f64 = pathogen
+        .effects
+        .iter()
+        .filter_map(|e| match *e {
+            ModEffect::Element(Toxin, v) => Some(v),
+            _ => None,
+        })
+        .sum();
+    assert!(toxin > 0.0);
+    let base = WeaponBase::from_data("akbronco_prime", false, &[]);
+    let p = resolve(&base, &[damzav, pathogen], StackPolicy::AssumedMax);
+    let b = p.modified_base;
+    assert!((p.damage.get(Viral) - 2.4 * b).abs() < 1e-6, "{} vs {}", p.damage.get(Viral), 2.4 * b);
+    assert!((p.damage.get(Toxin) - toxin * b).abs() < 1e-6);
+}

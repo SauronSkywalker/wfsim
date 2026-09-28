@@ -59,7 +59,6 @@ attack:
 unmodeled:
   - reason: silent_weapon
   - "the laser sight also HIGHLIGHTS weak points on screen, which is an aiming aid rather than a damage bonus — this sim draws its head hits from the fight's headshot percentage and cannot be helped to aim"
-  - "Leaded Gas, the Vesper 77-exclusive mod — a weapon-exclusive card outside the pools this roster loads"
 
 source:
   url: https://wiki.warframe.com/w/Vesper_77

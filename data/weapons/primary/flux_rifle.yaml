@@ -90,8 +90,5 @@ attack:
 # the engine's own constants and match; only the floor differs.
 beam_ramp_floor: 0.25
 
-unmodeled:
-  - "Flux Overdrive, the Flux Rifle family's exclusive mod — a weapon-exclusive card outside the pools this roster loads"
-
 source:
   url: https://wiki.warframe.com/w/Flux_Rifle

@@ -1,0 +1,16 @@
+id: spontaneous_singularity
+name: Spontaneous Singularity
+rarity: rare
+polarity: madurai
+base_drain: 2
+max_rank: 5
+internal_name: /Lotus/Upgrades/Mods/Nightwave/NightwaveCephPrimaryAugmentMod
+description: "Orbs that strike targets will explode immediately with 90% Bonus Damage and a 18% chance of Singularity that pulls in more targets. Orbs do not bounce or combine."
+exclusive_to: [simulor, synoid_simulor]
+lower_ranks_unmodelled: true
+effects:
+  - kind: unmodelled
+    clause: "Orbs explode immediately with bonus damage and a Singularity chance"
+source:
+  url: https://wiki.warframe.com/w/Spontaneous_Singularity
+

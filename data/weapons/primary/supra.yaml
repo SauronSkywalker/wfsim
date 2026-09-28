@@ -57,7 +57,6 @@ attack:
   damage: { impact: 4, puncture: 30, slash: 6 }   # total 40
 
 unmodeled:
-  - "Directed Convergence and Entropy Burst, the Supra-exclusive mods — weapon-exclusive cards outside the pools this roster loads"
   - reason: spool_rebuilds_after_reload
 
 source:

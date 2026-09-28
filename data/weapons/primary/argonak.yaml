@@ -52,7 +52,6 @@ attack:
 
 unmodeled:
   - "aiming highlights enemies within 100 m through the weapon's energy colour (wiki) — an aiming aid this sim cannot use"
-  - "Amalgam Argonak Metal Auger, the Argonak-exclusive mod — a weapon-exclusive card outside the pools this roster loads"
 
 source:
   url: https://wiki.warframe.com/w/Argonak

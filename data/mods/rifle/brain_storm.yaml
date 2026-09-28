@@ -1,0 +1,15 @@
+id: brain_storm
+name: Brain Storm
+rarity: rare
+polarity: madurai
+base_drain: 10
+max_rank: 3
+internal_name: /Lotus/Upgrades/Mods/PvPMods/Rifle/GrakataUnlimitedAmmo
+description: "On Headshot:\n+100% Ammo Efficiency for 0.5s"
+exclusive_to: [grakata, prisma_grakata]
+lower_ranks_unmodelled: true
+effects:
+  - kind: unmodelled
+    clause: "+100% Ammo Efficiency for 0.5s"
+source:
+  url: https://wiki.warframe.com/w/Brain_Storm

@@ -1,0 +1,21 @@
+id: amalgam_argonak_metal_auger
+name: Amalgam Argonak Metal Auger
+rarity: rare
+polarity: madurai
+base_drain: 6
+max_rank: 5
+internal_name: /Lotus/Upgrades/Mods/DualSource/Rifle/ArgonakDaggerMod
+description: "+Xm Punch Through\nDamage from Daggers reduces Armor by 6.\nEnemies are revealed by Punch Through."
+exclusive_to: [argonak, argonak_auto]
+excludes_weapon: [sentinel_weapon]
+
+effects:
+  - kind: punch_through_bonus
+    rank0: 0.5
+    rankMax: 3.0
+  - kind: unmodelled
+    clause: "Damage from Daggers reduces Armor by 6; enemies are revealed by Punch Through"
+
+source:
+  url: https://wiki.warframe.com/w/Amalgam_Argonak_Metal_Auger
+  # Rank table and cross-weapon clauses; metadata from Module:Mods/data.

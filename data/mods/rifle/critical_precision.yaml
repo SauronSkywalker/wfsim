@@ -1,0 +1,15 @@
+id: critical_precision
+name: Critical Precision
+rarity: rare
+polarity: madurai
+base_drain: 2
+max_rank: 5
+internal_name: /Lotus/Upgrades/Mods/Rifle/Event/Nightwave/NightwaveTiberonAugmentMod
+description: "Burst Fire Only: Headshots increase Critical Chance by 10% up to 500%. Missing with all shots in a burst removes up to 100% of this bonus Critical Chance."
+exclusive_to: [tiberon, tiberon_prime, tiberon_prime_auto, tiberon_prime_semi]
+lower_ranks_unmodelled: true
+effects:
+  - kind: unmodelled
+    clause: "Headshots build Critical Chance and a missed burst removes it"
+source:
+  url: https://wiki.warframe.com/w/Critical_Precision

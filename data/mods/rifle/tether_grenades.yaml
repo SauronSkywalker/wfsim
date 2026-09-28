@@ -1,0 +1,17 @@
+id: tether_grenades
+name: Tether Grenades
+rarity: rare
+polarity: naramon
+base_drain: 2
+max_rank: 5
+internal_name: /Lotus/Upgrades/Mods/Rifle/Event/CorpusArena/PentaCorpusArenaMod
+description: "Grenades tether up to 5 enemies from 9m away."
+exilus: true
+exclusive_to: [carmine_penta, penta, secura_penta]
+lower_ranks_unmodelled: true
+effects:
+  - kind: unmodelled
+    clause: "Grenades tether up to 5 enemies from 9m away"
+source:
+  url: https://wiki.warframe.com/w/Tether_Grenades
+

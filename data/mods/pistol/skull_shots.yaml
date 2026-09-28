@@ -1,0 +1,15 @@
+id: skull_shots
+name: Skull Shots
+rarity: rare
+polarity: madurai
+base_drain: 10
+max_rank: 3
+internal_name: /Lotus/Upgrades/Mods/PvPMods/Pistol/ViperUnlimitedAmmo
+description: "On Headshot:\n+100% Ammo Efficiency for 2s"
+exclusive_to: [viper, viper_wraith]
+lower_ranks_unmodelled: true
+effects:
+  - kind: unmodelled
+    clause: "+100% Ammo Efficiency for 2s"
+source:
+  url: https://wiki.warframe.com/w/Skull_Shots

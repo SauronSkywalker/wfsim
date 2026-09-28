@@ -51,8 +51,5 @@ attack:
   # see notes: no_range_row_attack
   damage: { toxin: 33 }   # total 33
 
-unmodeled:
-  - "Mutalist Whip, the Paracyst-exclusive augment — a weapon-exclusive card outside the pools this roster loads"
-
 source:
   url: https://wiki.warframe.com/w/Paracyst

@@ -1,0 +1,15 @@
+id: wild_frenzy
+name: Wild Frenzy
+rarity: rare
+polarity: naramon
+base_drain: 4
+max_rank: 5
+internal_name: /Lotus/Upgrades/Mods/Rifle/Event/Arbitration/GrnAssaultRifleArbitrationMod
+description: "Secondary Fire will shoot with +400% Fire Rate until the magazine is empty. Killing 2 or more enemies will refund 100% of the ammo."
+exclusive_to: [grakata, prisma_grakata]
+lower_ranks_unmodelled: true
+effects:
+  - kind: unmodelled
+    clause: "Secondary Fire gains Fire Rate and multikills refund its ammo"
+source:
+  url: https://wiki.warframe.com/w/Wild_Frenzy

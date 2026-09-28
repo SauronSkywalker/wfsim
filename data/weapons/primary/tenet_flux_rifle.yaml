@@ -75,8 +75,5 @@ attack:
   # "This weapon deals primarily Slash damage" — and the split says so.
   damage: { puncture: 4.84, slash: 17.16 }   # total 22
 
-unmodeled:
-  - "Flux Overdrive, the Flux Rifle family's exclusive mod — a weapon-exclusive card outside the pools this roster loads"
-
 source:
   url: https://wiki.warframe.com/w/Tenet_Flux_Rifle

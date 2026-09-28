@@ -17,7 +17,6 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 ## Not modelled here
 
 - it 'reloads 50% faster from a fully depleted magazine' (wiki), and this engine carries ONE reload time per weapon. This sim holds the trigger until the magazine is dry, which is exactly the case that reload applies to — so the 2.6 s here is the SLOW reload for a fight that would always earn the fast one, and the weapon is understated
-- Velox Conclusion, the Velox-exclusive mod — a weapon-exclusive card outside the pools this roster loads
 
 ## In WFSim
 

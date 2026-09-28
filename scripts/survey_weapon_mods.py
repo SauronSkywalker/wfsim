@@ -24,6 +24,7 @@ import os
 import re
 
 import de_export
+from survey_pool_mods import POOL_TAG
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, 'data/surveys/weapon_exclusive_mods.yaml')
@@ -63,11 +64,33 @@ EXCLUDED = {
         'PvP: "Thundermiter is Conclave-exclusive Miter mod".',
     '/Lotus/Upgrades/Mods/PvPMods/Rifle/MoreDamageonMultiHitRifleMod':
         'PvP: "Triple Tap is Conclave-exclusive Burston mod".',
+    '/Lotus/Upgrades/Mods/PvPMods/Rifle/HindDamageonFifthHit':
+        'PvP: "Final Tap is Conclave-exclusive Hind mod".',
+    '/Lotus/Upgrades/Mods/PvPMods/Rifle/TiberonLowRoFAiming':
+        'PvP: "Measured Burst is Conclave-exclusive Tiberon mod".',
+    '/Lotus/Upgrades/Mods/PvPMods/Rifle/TonkorAccuracySmallerMag':
+        'PvP: "Precision Munition is Conclave-exclusive Tonkor mod".',
+    '/Lotus/Upgrades/Mods/PvPMods/Pistol/StaticorFasterProjLessAoE':
+        'PvP: "Static Alacrity is Conclave-exclusive Staticor mod".',
     '/Lotus/Upgrades/Mods/Syndicate/BallisticaMod':
         'unreleased: "Soaring Truth" has no wiki page, no row in '
         'Template:AugmentedMods (which lists every released augment), and is '
         'not among warframe.market\'s 3,837 tradeable items — while its three '
         'sibling syndicate augments are in all three. Checked 2026-08-13.',
+}
+
+
+# FAMILY MEMBERS a weapon-exclusive mod does NOT reach, and why. `compatName`
+# names the base of a family and the join hands the mod to every variant, which
+# is right unless the page refuses one or lists the family without it (Winds of
+# Purity names its MK1; Stockpiled Blight does not). Keyed (uniqueName, weapon id).
+REFUSED = {
+    ('/Lotus/Upgrades/Mods/Syndicate/HekMod', 'vaykor_hek'):
+        'Scattered_Justice: "Can not be equipped on Vaykor Hek".',
+    ('/Lotus/Upgrades/Mods/Syndicate/FurisMod', 'dex_furis'):
+        'Winds_of_Purity: "cannot be equipped on the Afuris or Dex Furis".',
+    ('/Lotus/Upgrades/Mods/Syndicate/KunaiMod', 'mk1_kunai'):
+        'Stockpiled_Blight: "exclusive to the Kunai", and the MK1 is not named.',
 }
 
 
@@ -83,12 +106,14 @@ def carried():
 
 
 def weapon_names():
-    out = set()
+    """display name -> the roster ids carrying it (a weapon and its forms)."""
+    out = {}
     for p in glob.glob(os.path.join(ROOT, 'data/weapons/**/*.yaml'), recursive=True):
         t = io.open(p, encoding='utf-8').read()
         m = re.search(r'^name:\s*(.+)$', t, re.M)
-        if m:
-            out.add(m.group(1).strip().strip('"'))
+        i = re.search(r'^id:\s*(\S+)', t, re.M)
+        if m and i:
+            out.setdefault(m.group(1).strip().strip('"'), []).append(i.group(1))
     return out
 
 
@@ -97,7 +122,13 @@ def fits(compat, names):
     if not compat:
         return []
     return sorted(n for n in names
-                  if n == compat or n.startswith(compat + ' ') or n.endswith(' ' + compat))
+                  if n == compat or n.startswith(compat + ' ')
+                  or n.endswith(' ' + compat) or n.endswith('-' + compat))
+
+
+def is_exclusive(path):
+    t = io.open(os.path.join(ROOT, path), encoding='utf-8').read()
+    return re.search(r'^exclusive_to:', t, re.M) is not None
 
 
 def main():
@@ -107,6 +138,8 @@ def main():
     rows = []
     for m in mods:
         if m.get('type') not in GUN_TYPES:
+            continue
+        if (m.get('type'), m.get('compatName')) in POOL_TAG:
             continue
         uniq = m.get('uniqueName', '')
         # The unrolled riven: the riven editor's output, never a pool entry.
@@ -123,6 +156,7 @@ def main():
             'carried': have.get(uniq),
             'excluded': EXCLUDED.get(uniq),
             'weapons': who,
+            'ids': sorted(i for n in who for i in names[n]),
         })
     rows.sort(key=lambda r: r['name'])
 
@@ -167,8 +201,14 @@ def main():
         if r['excluded']:
             lines.append('    carried: excluded')
             lines.append('    reason: %s' % json.dumps(r['excluded']))
-        else:
-            lines.append('    carried: %s' % (r['carried'] or '~'))
+            continue
+        lines.append('    carried: %s' % (r['carried'] or '~'))
+        # THE FAMILY an `exclusive_to` gate must reach, minus what REFUSED
+        # takes out — a gate that stops short of it is a mod the builder hides.
+        if r['carried'] and not is_exclusive(r['carried']):
+            continue
+        lines.append('    reaches: [%s]' % ', '.join(
+            i for i in r['ids'] if (r['internal_name'], i) not in REFUSED))
     io.open(OUT, 'w', encoding='utf-8', newline='\n').write('\n'.join(lines) + '\n')
     print('%s: %d rows, %d carried, %d excluded, %d missing' % (
         os.path.relpath(OUT, ROOT), len(rows),

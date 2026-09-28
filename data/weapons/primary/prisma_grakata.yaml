@@ -48,8 +48,5 @@ attack:
   range_m: 300.0
   damage: { impact: 6, puncture: 5, slash: 4 }   # total 15
 
-unmodeled:
-  - "Brain Storm and Wild Frenzy, the Grakata-exclusive mods — weapon-exclusive cards outside the pools this roster loads"
-
 source:
   url: https://wiki.warframe.com/w/Prisma_Grakata

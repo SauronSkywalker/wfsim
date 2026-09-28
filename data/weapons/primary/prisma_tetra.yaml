@@ -54,8 +54,5 @@ attack:
   # than 32.
   damage: { impact: 7.6, puncture: 30.4 }   # total 38
 
-unmodeled:
-  - "Focused Acceleration and Kinetic Ricochet, the Tetra family's exclusive mods — weapon-exclusive cards outside the pools this roster loads"
-
 source:
   url: https://wiki.warframe.com/w/Prisma_Tetra

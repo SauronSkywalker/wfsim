@@ -1,0 +1,19 @@
+id: ambush_optics
+name: Ambush Optics
+rarity: rare
+polarity: naramon
+base_drain: 6
+max_rank: 3
+internal_name: /Lotus/Upgrades/Mods/PvPMods/Rifle/RubicoLowZoom
+description: "-X% Zoom"
+exilus: true
+exclusive_to: [rubico, rubico_prime]
+
+effects:
+  - kind: zoom_bonus
+    rank0: -0.125
+    rankMax: -0.50
+
+source:
+  url: https://wiki.warframe.com/w/Ambush_Optics
+  # Rank table and PvE eligibility; metadata from Module:Mods/data.

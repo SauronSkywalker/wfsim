@@ -47,8 +47,5 @@ attack:
   range_m: 300.0
   damage: { impact: 93.5, puncture: 18.7, slash: 74.8 }   # total 187
 
-unmodeled:
-  - "Deadly Sequence, the Grinlok-exclusive mod — a weapon-exclusive card outside the pools this roster loads"
-
 source:
   url: https://wiki.warframe.com/w/Grinlok

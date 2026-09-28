@@ -17,7 +17,6 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 ## Not modelled here
 
 - 'Chamber Cascade': a hit or a damaging status has a 4% chance to grant 100% ammo efficiency for 4 seconds (wiki). Ammo economy pays nothing here — reserves are infinite by default because this sim does not model ammo pickups — so the passive is real and worth nothing to this number
-- Deadly Maneuvers, the Magnus-exclusive mod — a weapon-exclusive card outside the pools this roster loads
 
 ## In WFSim
 

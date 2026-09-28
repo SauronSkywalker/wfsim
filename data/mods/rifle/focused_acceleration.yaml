@@ -1,0 +1,20 @@
+id: focused_acceleration
+name: Focused Acceleration
+rarity: rare
+polarity: madurai
+base_drain: 10
+max_rank: 3
+internal_name: /Lotus/Upgrades/Mods/PvPMods/Rifle/TetraFasterProjAiming
+description: "When Aiming:\n+X% Projectile Speed"
+exilus: true
+exclusive_to: [tetra, prisma_tetra, tenet_tetra, tenet_tetra_grenade]
+
+effects:
+  - kind: projectile_speed_bonus
+    condition: aiming
+    rank0: 0.20
+    rankMax: 0.80
+
+source:
+  url: https://wiki.warframe.com/w/Focused_Acceleration
+  # Rank table, PvE eligibility and family compatibility; metadata from Module:Mods/data.

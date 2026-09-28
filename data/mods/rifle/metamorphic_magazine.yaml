@@ -9,9 +9,8 @@ description: "+X% Magazine Capacity\n+X% Ammo Maximum\nInflicting 20 cumulative 
 
 # A WEAPON AUGMENT for the GORGON family (Nightwave Cred Offerings, 20 Creds;
 # originally Rank 23 of Nora's Mix Volume 3). The page names three weapons —
-# "for Gorgon, Prisma Gorgon, and Gorgon Wraith" — and this roster carries two
-# of them. The Prisma is not here, so it is not listed.
-exclusive_to: [gorgon, gorgon_wraith]
+# "for Gorgon, Prisma Gorgon, and Gorgon Wraith".
+exclusive_to: [gorgon, gorgon_wraith, prisma_gorgon]
 
 #   Rank | Magazine | Ammo Max | Required Hits | Duration | Cost
 #     0  |   +15%   |   +15%   |      20       |    5s    |  2

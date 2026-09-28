@@ -1,0 +1,15 @@
+id: velox_conclusion
+name: Velox Conclusion
+rarity: rare
+polarity: madurai
+base_drain: 2
+max_rank: 5
+internal_name: /Lotus/Upgrades/Mods/Pistol/Event/Nightwave/NightwaveVeloxAugmentMod
+description: "On hit, gain +0.6% Ability Strength up to 60% maximum. Consumed on your next Ability cast."
+exclusive_to: [velox, velox_prime]
+lower_ranks_unmodelled: true
+effects:
+  - kind: unmodelled
+    clause: "Ability Strength stacks and is consumed by the next Ability cast"
+source:
+  url: https://wiki.warframe.com/w/Velox_Conclusion

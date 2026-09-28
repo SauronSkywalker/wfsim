@@ -48,8 +48,5 @@ attack:
   range_m: 300.0
   damage: { impact: 44.1, puncture: 26.95, slash: 26.95 }   # total 98
 
-unmodeled:
-  - "Deadly Maneuvers, the Magnus-exclusive mod — a weapon-exclusive card outside the pools this roster loads"
-
 source:
   url: https://wiki.warframe.com/w/Magnus

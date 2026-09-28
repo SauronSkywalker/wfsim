@@ -1,0 +1,20 @@
+id: directed_convergence
+name: Directed Convergence
+rarity: rare
+polarity: madurai
+base_drain: 10
+max_rank: 3
+internal_name: /Lotus/Upgrades/Mods/PvPMods/Rifle/SupraHigherAccuracyAiming
+description: "+X% Accuracy when Aiming"
+exilus: true
+exclusive_to: [supra, supra_vandal]
+
+effects:
+  - kind: accuracy_bonus
+    condition: aiming
+    rank0: 0.25
+    rankMax: 1.00
+
+source:
+  url: https://wiki.warframe.com/w/Directed_Convergence
+  # Rank table, PvE eligibility and compatibility; metadata from Module:Mods/data.

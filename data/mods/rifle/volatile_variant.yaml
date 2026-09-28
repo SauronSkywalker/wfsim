@@ -1,0 +1,18 @@
+id: volatile_variant
+name: Volatile Variant
+rarity: rare
+polarity: madurai
+base_drain: 2
+max_rank: 5
+internal_name: /Lotus/Upgrades/Mods/Rifle/Event/Nightwave/NightwaveSporothrixAugmentMod
+description: "Shots have +Xm Punch Through and barbs explode instantly. Barbs that strike enemies directly have +4m radius and +50% Status Chance."
+exclusive_to: [coda_sporothrix, sporothrix]
+lower_ranks_unmodelled: true
+effects:
+  - kind: punch_through_bonus
+    rank0: 0.5
+    rankMax: 3.0
+  - kind: unmodelled
+    clause: "Barbs explode instantly and direct hits gain radius and Status Chance"
+source:
+  url: https://wiki.warframe.com/w/Volatile_Variant

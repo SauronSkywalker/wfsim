@@ -1,0 +1,23 @@
+id: toxic_sequence
+name: Toxic Sequence
+rarity: rare
+polarity: vazarin
+base_drain: 4
+max_rank: 3
+internal_name: /Lotus/Upgrades/Mods/Syndicate/AcridMod
+description: "+X% Status Duration\n+X Sequence"
+exclusive_to: [acrid]
+
+effects:
+  - kind: status_duration_bonus
+    rank0: 0.50
+    rankMax: 2.00
+
+  - kind: syndicate_radial
+    syndicate: sequence
+    rank0: 0.25
+    rankMax: 1.00
+
+source:
+  url: https://wiki.warframe.com/w/Toxic_Sequence
+  # Rank table and compatibility; Sequence payload from /w/Sequence.

@@ -1,0 +1,15 @@
+id: precision_strike
+name: Precision Strike
+rarity: rare
+polarity: naramon
+base_drain: 4
+max_rank: 3
+internal_name: /Lotus/Upgrades/Mods/Rifle/Event/Arbitration/GrnGrenadeLauncherArbitrationMod
+description: "Hitting an enemy directly with the grenade increases Reload Speed by 150% for 5s."
+exclusive_to: [kuva_tonkor, tonkor]
+lower_ranks_unmodelled: true
+effects:
+  - kind: unmodelled
+    clause: "+150% Reload Speed for 5s"
+source:
+  url: https://wiki.warframe.com/w/Precision_Strike

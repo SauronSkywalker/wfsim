@@ -51,7 +51,6 @@ attack:
 unmodeled:
   - reason: empty_reload_is_faster
     seconds: 2.6
-  - "Velox Conclusion, the Velox-exclusive mod — a weapon-exclusive card outside the pools this roster loads"
 
 source:
   url: https://wiki.warframe.com/w/Velox

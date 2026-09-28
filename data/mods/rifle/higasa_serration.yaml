@@ -1,0 +1,22 @@
+id: higasa_serration
+name: Higasa Serration
+rarity: rare
+polarity: madurai
+base_drain: 6
+max_rank: 5
+internal_name: /Lotus/Weapons/Tenno/LongGuns/Gunbrella/ShrineMaidenGunbrellaAugment
+description: "Alternate Fire applies a random Status Effect to enemies hit.\n+X% Damage"
+exclusive_to: [higasa, higasa_charged]
+family: serration
+incompatible_with: [serration, amalgam_serration]
+
+effects:
+  - kind: base_damage_bonus
+    rank0: 0.75
+    rankMax: 4.50
+
+  - kind: alternate_fire_applies_a_random_status_effect
+
+source:
+  url: https://wiki.warframe.com/w/Higasa_Serration
+  # Rank table, incompatibilities and alternate-fire rule; metadata from Module:Mods/data.

@@ -66,8 +66,5 @@ attack:
   # wiki: "Range: 9.0 m".
   damage: { toxin: 35 }   # total 35
 
-unmodeled:
-  - "Eroding Blight and Vile Discharge, the Embolist-exclusive mods — weapon-exclusive cards outside the pools this roster loads"
-
 source:
   url: https://wiki.warframe.com/w/Embolist

@@ -52,8 +52,5 @@ attack:
     reduction: 0.75
   damage: { impact: 40, puncture: 5, slash: 5 }   # 50 a pellet, 350 a shot
 
-unmodeled:
-  - "Damzav-Vati, the Akbronco Prime-exclusive mod — a weapon-exclusive card outside the pools this roster loads"
-
 source:
   url: https://wiki.warframe.com/w/Akbronco_Prime

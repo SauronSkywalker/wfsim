@@ -1,0 +1,20 @@
+id: photon_overcharge
+name: Photon Overcharge
+rarity: rare
+polarity: vazarin
+base_drain: 2
+max_rank: 5
+internal_name: /Lotus/Upgrades/Mods/Nightwave/GlaxionNightwaveMod
+description: "+X% Critical Damage\nOn Kill or Assist: Slain enemies have a 2% chance to drop an Energy Orb per Cold Status affecting them."
+exclusive_to: [glaxion, glaxion_vandal, tenet_glaxion]
+
+effects:
+  - kind: crit_damage_bonus
+    rank0: 0.15
+    rankMax: 0.90
+  - kind: unmodelled
+    clause: "2% Energy Orb chance per Cold Status on a slain enemy"
+
+source:
+  url: https://wiki.warframe.com/w/Photon_Overcharge
+  # Rank table, orb rule and family compatibility; metadata from Module:Mods/data.

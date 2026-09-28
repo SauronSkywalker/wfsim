@@ -17,7 +17,6 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 ## Not modelled here
 
 - shots RICOCHET once (wiki), which is what lets a player kill something behind cover — this arena has no walls to bounce off
-- Fomorian Accelerant, the Drakgoon-exclusive mod — a weapon-exclusive card outside the pools this roster loads
 
 ## In WFSim
 

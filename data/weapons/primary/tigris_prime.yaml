@@ -52,8 +52,5 @@ attack:
     reduction: 0.4872
   damage: { impact: 19.5, puncture: 19.5, slash: 156 }   # 195 a pellet, 1560 a shot
 
-unmodeled:
-  - "Combat Reload, the Tigris-exclusive mod — a weapon-exclusive card outside the pools this roster loads"
-
 source:
   url: https://wiki.warframe.com/w/Tigris_Prime

@@ -17,7 +17,6 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 ## Not modelled here
 
 - aiming highlights enemies within 100 m through the weapon's energy colour (wiki) — an aiming aid this sim cannot use
-- Amalgam Argonak Metal Auger, the Argonak-exclusive mod — a weapon-exclusive card outside the pools this roster loads
 
 ## In WFSim
 

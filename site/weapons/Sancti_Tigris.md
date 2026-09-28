@@ -17,7 +17,6 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 ## Not modelled here
 
 - the PURITY syndicate effect, which on a proc heals the wielder and nearby allies and cleanses status from them — the wielder is not a body in this arena and there are no allies, so it pays nothing
-- Combat Reload, the Tigris-exclusive mod — a weapon-exclusive card outside the pools this roster loads
 
 ## In WFSim
 

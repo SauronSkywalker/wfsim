@@ -52,8 +52,5 @@ attack:
   # data/surveys/weapon_range.yaml.
   damage: { toxin: 43 }   # total 43
 
-unmodeled:
-  - "Toxic Sequence, the Acrid-exclusive mod — a weapon-exclusive card outside the pools this roster loads"
-
 source:
   url: https://wiki.warframe.com/w/Acrid

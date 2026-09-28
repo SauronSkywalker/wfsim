@@ -7,8 +7,8 @@
 #
 # Never edit by hand: run the generator, which only ever appends.
 #
-digest: d8fbb6f8a1467c44
-count: 1825
+digest: 763902468f147453
+count: 1874
 ids:
   - acceltra
   - acceltra_prime
@@ -1835,3 +1835,52 @@ ids:
   - okina_survivors_edge
   - okina_swordsmans_celerity
   - okina_synergist_surety
+  - damzav_vati
+  - ambush_optics
+  - directed_convergence
+  - efficient_beams
+  - eroding_blight
+  - focused_acceleration
+  - higasa_serration
+  - lasting_purity
+  - sequence_burn
+  - shrapnel_rounds
+  - toxic_sequence
+  - amalgam_argonak_metal_auger
+  - amalgam_javlok_magazine_warp
+  - disarming_purity
+  - entropy_burst
+  - entropy_spike
+  - fomorian_accelerant
+  - kinetic_ricochet
+  - photon_overcharge
+  - prototype_shock_coils
+  - stinging_truth
+  - voltage_sequence
+  - zazvat_kar
+  - amalgam_daikyu_target_acquired
+  - biotic_rounds
+  - brain_storm
+  - bursting_mass
+  - combat_reload
+  - critical_precision
+  - deadly_maneuvers
+  - exposing_harpoon
+  - flux_overdrive
+  - meticulous_aim
+  - napalm_grenades
+  - necrophagic_vigor
+  - overpressured_rounds
+  - pain_points
+  - precision_strike
+  - range_advantage
+  - sentient_barrage
+  - skull_shots
+  - spontaneous_singularity
+  - spring_loaded_broadhead
+  - tether_grenades
+  - thermagnetic_shells
+  - velox_conclusion
+  - vile_discharge
+  - volatile_variant
+  - wild_frenzy

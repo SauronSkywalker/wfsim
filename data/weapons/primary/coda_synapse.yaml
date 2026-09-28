@@ -99,8 +99,5 @@ attack:
 # back to 20% over 2 seconds", which is BEAM_RAMP_SECONDS, BEAM_DECAY_DELAY and
 # the 20% floor exactly, so no `beam_ramp_floor` override.
 
-unmodeled:
-  - "Necrophagic Vigor, the Synapse family's exclusive mod — a weapon-exclusive card outside the pools this roster loads"
-
 source:
   url: https://wiki.warframe.com/w/Coda_Synapse

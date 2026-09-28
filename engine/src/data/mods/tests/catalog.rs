@@ -534,7 +534,7 @@ fn an_unlocked_incarnon_form_is_a_second_firing_mode() {
 /// path and `Shotgun_Mods` tagged ten of them.
 #[test]
 fn only_pve_legal_conclave_mods_are_in_the_pools() {
-    const PVE_LEGAL: [&str; 13] = [
+    const PVE_LEGAL: [&str; 20] = [
         "agile_aim", "twitch", "eject_magazine", "reflex_draw",
         // Shotgun, from `Shotgun_Mods`.
         "broad_eye", "double_barrel_drift", "lock_and_load", "snap_shot", "soft_hands",
@@ -555,6 +555,10 @@ fn only_pve_legal_conclave_mods_are_in_the_pools() {
         // Conclave" — so a PvP path here is where it came FROM, not where
         // it works.
         "double_tap",
+        // Weapon augments whose own pages state they are legal in both PvE
+        // and Conclave; the path records their origin, not their restriction.
+        "ambush_optics", "directed_convergence", "focused_acceleration",
+        "shrapnel_rounds", "brain_storm", "skull_shots", "spring_loaded_broadhead",
     ];
     let mut found: Vec<String> = crate::data::files_under("mods/")
         .filter(|(p, _)| p.ends_with(".yaml"))

@@ -77,6 +77,9 @@ fn a_mod_that_drops_an_effect_says_so_and_the_list_is_argued() {
             // Incarnon's, is modelled since M102.
             "double_tap :: a bullet attraction bubble makes each hit count twice",
             "double_tap :: hitting an object counts as a miss and clears the stacks",
+            // The random proc from alternate fire is stated but has no
+            // published distribution the status model can apply.
+            "higasa_serration :: alternate fire applies a random status effect",
             // Crowd control again, and for the same reason it is worth
             // nothing: the target never acts, so stone changes nothing it
             // TAKES.

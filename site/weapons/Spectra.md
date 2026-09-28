@@ -14,10 +14,6 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.2273 | Primed Heated Charge, Pistol Pestilence, Frostbite, Galvanized Diffusion, Primed Target Cracker, Galvanized Shot, Lethal Torrent, Magnetic Might, Cascadia Flare |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.002944 | Primed Heated Charge, Pistol Pestilence, Frostbite, Galvanized Diffusion, Primed Target Cracker, Galvanized Shot, Lethal Torrent, Magnetic Might, Cascadia Flare |
 
-## Not modelled here
-
-- Sequence Burn, the Spectra-exclusive mod — a weapon-exclusive card outside the pools this roster loads
-
 ## In WFSim
 
 - Build, simulate and optimize it: https://wfsim.app/weapons/Spectra

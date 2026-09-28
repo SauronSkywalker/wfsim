@@ -96,7 +96,6 @@ attack:
 # down would be a second copy of a constant that could drift from it.
 
 unmodeled:
-  - "Photon Overcharge, the Glaxion family's exclusive mod — a weapon-exclusive card outside the pools this roster loads"
   - "corpses keep conducting the chain, which the page states as 'Enemy corpses will still allow the beam to connect to nearby enemies' — this arena removes a body when it dies, so a chain that would have hopped THROUGH a corpse to a live enemy behind it finds nothing there"
 
 source:

@@ -1,0 +1,15 @@
+id: deadly_maneuvers
+name: Deadly Maneuvers
+rarity: rare
+polarity: naramon
+base_drain: 4
+max_rank: 3
+internal_name: /Lotus/Upgrades/Mods/Nightwave/MagnusNightwaveMod
+description: "On Dodge, gain 400% Headshot Critical Chance for your next 2 shots."
+exclusive_to: [magnus, magnus_prime]
+lower_ranks_unmodelled: true
+effects:
+  - kind: unmodelled
+    clause: "+400% Headshot Critical Chance for the next 2 shots"
+source:
+  url: https://wiki.warframe.com/w/Deadly_Maneuvers

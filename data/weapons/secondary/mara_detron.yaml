@@ -57,8 +57,5 @@ attack:
     reduction: 0.625
   damage: { radiation: 40 }   # 40 a pellet, 280 a shot
 
-unmodeled:
-  - "Thermagnetic Shells, the Detron family's exclusive mod — a weapon-exclusive card outside the pools this roster loads"
-
 source:
   url: https://wiki.warframe.com/w/Mara_Detron

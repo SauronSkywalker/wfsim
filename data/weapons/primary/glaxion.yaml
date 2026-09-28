@@ -70,8 +70,5 @@ attack:
 # exactly, so no `beam_ramp_floor` override. The VANDAL states 30% and carries
 # one; three floors now live in this family's three entries.
 
-unmodeled:
-  - "Photon Overcharge, the Glaxion family's exclusive mod — a weapon-exclusive card outside the pools this roster loads"
-
 source:
   url: https://wiki.warframe.com/w/Glaxion

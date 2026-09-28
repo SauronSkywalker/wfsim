@@ -1,0 +1,23 @@
+id: eroding_blight
+name: Eroding Blight
+rarity: rare
+polarity: vazarin
+base_drain: 4
+max_rank: 3
+internal_name: /Lotus/Upgrades/Mods/Syndicate/EmbolistMod
+description: "+X% Magazine Capacity\n+X Blight"
+exclusive_to: [embolist]
+
+effects:
+  - kind: magazine_capacity_bonus
+    rank0: 0.50
+    rankMax: 2.00
+
+  - kind: syndicate_radial
+    syndicate: blight
+    rank0: 0.25
+    rankMax: 1.00
+
+source:
+  url: https://wiki.warframe.com/w/Eroding_Blight
+  # Rank table and compatibility; Blight payload from /w/Blight.

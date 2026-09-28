@@ -10,9 +10,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 13.5859 | Primed Convulsion, Pistol Pestilence, Primed Heated Charge, Pistol Acuity, Hornet Strike, Primed Target Cracker, Galvanized Shot, Magnetic Might, Secondary Deadhead |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 13.5859 | Primed Convulsion, Pistol Pestilence, Primed Heated Charge, Pistol Acuity, Hornet Strike, Primed Target Cracker, Galvanized Shot, Magnetic Might, Secondary Deadhead |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 0.6140 | Primed Convulsion, Pistol Pestilence, Primed Heated Charge, Pistol Acuity, Hornet Strike, Primed Target Cracker, Galvanized Shot, Magnetic Might, Secondary Deadhead |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 22.2867 | Frostbite, Pistol Pestilence, Pistol Acuity, Primed Target Cracker, Galvanized Shot, Anemic Agility, Accelerated Isotope, Magnetic Might, Primed Steady Hands, Cascadia Flare |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 22.2867 | Frostbite, Pistol Pestilence, Pistol Acuity, Primed Target Cracker, Galvanized Shot, Anemic Agility, Accelerated Isotope, Magnetic Might, Primed Steady Hands, Cascadia Flare |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 2.4172 | Frostbite, Pistol Pestilence, Primed Heated Charge, Pistol Acuity, Primed Target Cracker, Galvanized Shot, Anemic Agility, Magnetic Might, Primed Steady Hands, Cascadia Flare |
 
 ## Not modelled here
 

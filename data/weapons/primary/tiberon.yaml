@@ -51,8 +51,5 @@ attack:
   range_m: 300.0
   damage: { impact: 11, puncture: 22, slash: 11 }   # total 44
 
-unmodeled:
-  - "Critical Precision, the Tiberon-exclusive mod — a weapon-exclusive card outside the pools this roster loads"
-
 source:
   url: https://wiki.warframe.com/w/Tiberon
