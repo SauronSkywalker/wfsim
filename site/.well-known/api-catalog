@@ -1,0 +1,22 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://wfsim.app/.well-known/api-catalog",
+      "item": [
+        {
+          "href": "https://wfsim.app/board/index.json",
+          "type": "application/json"
+        }
+      ]
+    },
+    {
+      "anchor": "https://wfsim.app/board/index.json",
+      "service-doc": [
+        {
+          "href": "https://wfsim.app/.well-known/agent-skills/wfsim-weapon-builds/SKILL.md",
+          "type": "text/markdown"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+# Athodai
+
+Chinese name: 阿索代
+
+Pistol · Secondary · Mastery Rank 10. 70 base damage (heat 48, puncture 22), 32% crit chance, 2x crit multiplier, 8% status chance.
+
+## Best riven-free build on the WFSim board, as of 2026-09-28
+
+A score belongs to its ruler: compare it only with scores under the same ruler.
+
+| Ruler | Fight | Mode | Score | Build |
+| --- | --- | --- | ---: | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.2138 | Primed Heated Charge, Pistol Pestilence, Frostbite, Galvanized Diffusion, Primed Target Cracker, Galvanized Shot, Lethal Torrent, Magnetic Might, Cascadia Flare |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.2138 | Primed Heated Charge, Pistol Pestilence, Frostbite, Galvanized Diffusion, Primed Target Cracker, Galvanized Shot, Lethal Torrent, Magnetic Might, Cascadia Flare |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.002004 | Primed Heated Charge, Pistol Pestilence, Frostbite, Galvanized Diffusion, Primed Target Cracker, Galvanized Shot, Lethal Torrent, Magnetic Might, Cascadia Flare |
+
+## Not modelled here
+
+- 'Overdrive': a weak-point KILL grants +100% fire rate, +100% ammo efficiency and -100% recoil for 8 seconds, and it disables Alternate Fire while it lasts (wiki). It is a kill-triggered buff this engine has no shape for, so this entry fires at its listed rate throughout
+
+## In WFSim
+
+- Build, simulate and optimize it: https://wfsim.app/weapons/Athodai
+- Every published board row, as JSON: https://wfsim.app/board/athodai.json

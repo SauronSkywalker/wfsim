@@ -1,0 +1,20 @@
+# Boar
+
+Chinese name: 野猪
+
+Shotgun · Primary · Mastery Rank 2. 22 base damage x8 multishot (impact 12.1, puncture 3.3, slash 6.6), 10% crit chance, 1.5x crit multiplier, 7.5% status chance.
+
+## Best riven-free build on the WFSim board, as of 2026-09-28
+
+A score belongs to its ruler: compare it only with scores under the same ruler.
+
+| Ruler | Fight | Mode | Score | Build |
+| --- | --- | --- | ---: | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 7.9135 | Primed Chilling Grasp, Toxic Barrage, Incendiary Coat, Galvanized Hell, Primed Point Blank, Primed Ravage, Critical Deceleration, Magnetic Strafe, Primary Crux |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 40.5187 | Primed Chilling Grasp, Toxic Barrage, Incendiary Coat, Galvanized Hell, Primed Point Blank, Primed Ravage, Critical Deceleration, Magnetic Strafe, Primary Crux |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 1.2199 | Blaze, Scattering Inferno, Hell's Chamber, Primed Point Blank, Primed Ravage, Critical Deceleration, Vigilante Armaments, Magnetic Strafe, Primary Crux |
+
+## In WFSim
+
+- Build, simulate and optimize it: https://wfsim.app/weapons/Boar
+- Every published board row, as JSON: https://wfsim.app/board/boar.json

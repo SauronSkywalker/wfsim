@@ -1,0 +1,25 @@
+# Rubico Prime
+
+Chinese name: 绝路 Prime
+
+Sniper · Primary · Mastery Rank 12. 187 base damage (impact 149.6, puncture 28.1, slash 9.3), 38% crit chance, 3x crit multiplier, 16% status chance.
+
+## Best riven-free build on the WFSim board, as of 2026-09-28
+
+A score belongs to its ruler: compare it only with scores under the same ruler.
+
+| Ruler | Fight | Mode | Score | Build |
+| --- | --- | --- | ---: | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 19.7939 | Primed Cryo Rounds, Infected Clip, Hellfire, Galvanized Chamber, Galvanized Aptitude, Galvanized Scope, Vile Acceleration, Magnetic Capacity, Primary Crux |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 75.2259 | Hellfire, Galvanized Chamber, Galvanized Aptitude, Galvanized Scope, Critical Delay, Semi-Rifle Cannonade, Vital Sense, Magnetic Capacity, Primary Crux |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.7692 | Hellfire, Wildfire, Thermite Rounds, Heavy Caliber, Primary Acuity, Hammer Shot, Semi-Rifle Cannonade, Vital Sense, Vigilante Supplies, Primary Crux |
+
+## Not modelled here
+
+- a MISSED shot drops the combo counter and this entry cannot miss — the only thing that misses here is SPREAD, and this one lands on the reticle, so nothing but its 2 s timer ever takes a stack off. A player who pulls the shot loses the combo and this sim never pulls one
+- the LOWER zoom levels are not modelled — this arena has no field of view to trade for magnification, so the scope always sits at its top level and its best buff
+
+## In WFSim
+
+- Build, simulate and optimize it: https://wfsim.app/weapons/Rubico_Prime
+- Every published board row, as JSON: https://wfsim.app/board/rubico_prime.json

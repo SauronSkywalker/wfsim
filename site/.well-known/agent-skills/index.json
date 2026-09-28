@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "wfsim-weapon-builds",
+      "type": "skill-md",
+      "description": "Look up a Warframe weapon's stats and its best measured riven-free builds on WFSim.",
+      "url": "/.well-known/agent-skills/wfsim-weapon-builds/SKILL.md",
+      "digest": "sha256:b2d207c929b9cf748719d0e8b9214b10317281265615bc64811735ebdf30015f"
+    }
+  ]
+}

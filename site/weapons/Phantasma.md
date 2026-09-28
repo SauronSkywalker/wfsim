@@ -1,0 +1,20 @@
+# Phantasma
+
+Chinese name: 幻离子
+
+Shotgun · Primary · Mastery Rank 9. 15 base damage x6 multishot (impact 5, radiation 10), 3% crit chance, 1.5x crit multiplier, 22.2% status chance.
+
+## Best riven-free build on the WFSim board, as of 2026-09-28
+
+A score belongs to its ruler: compare it only with scores under the same ruler.
+
+| Ruler | Fight | Mode | Score | Build |
+| --- | --- | --- | ---: | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 15.0593 | Frigid Blast, Toxic Barrage, Primed Charged Shell, Galvanized Hell, Primed Point Blank, Galvanized Savvy, Shotgun Elementalist, Magnetic Strafe, Shotgun Ammo Mutation, Primary Debilitate |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 111.1610 | Frigid Blast, Toxic Barrage, Primed Charged Shell, Galvanized Hell, Primed Point Blank, Galvanized Savvy, Shotgun Elementalist, Magnetic Strafe, Shotgun Ammo Mutation, Primary Debilitate |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.5505 | Frigid Blast, Toxic Barrage, Incendiary Coat, Galvanized Hell, Primed Point Blank, Galvanized Savvy, Vigilante Armaments, Magnetic Strafe, Primary Crux |
+
+## In WFSim
+
+- Build, simulate and optimize it: https://wfsim.app/weapons/Phantasma
+- Every published board row, as JSON: https://wfsim.app/board/phantasma.json

@@ -1,0 +1,24 @@
+# Mara Detron
+
+Chinese name: 苦痛·德特昂
+
+Shotgun Sidearm · Secondary · Mastery Rank 9. 40 base damage x7 multishot (radiation 40), 8% crit chance, 1.5x crit multiplier, 13.71% status chance.
+
+## Best riven-free build on the WFSim board, as of 2026-09-28
+
+A score belongs to its ruler: compare it only with scores under the same ruler.
+
+| Ruler | Fight | Mode | Score | Build |
+| --- | --- | --- | ---: | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.2190 | Primed Heated Charge, Pistol Pestilence, Frostbite, Galvanized Diffusion, Primed Target Cracker, Galvanized Shot, Lethal Torrent, Magnetic Might, Cascadia Flare |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.2190 | Primed Heated Charge, Pistol Pestilence, Frostbite, Galvanized Diffusion, Primed Target Cracker, Galvanized Shot, Lethal Torrent, Magnetic Might, Cascadia Flare |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.001630 | Primed Heated Charge, Pistol Pestilence, Frostbite, Galvanized Diffusion, Primed Target Cracker, Galvanized Shot, Lethal Torrent, Magnetic Might, Cascadia Flare |
+
+## Not modelled here
+
+- Thermagnetic Shells, the Detron family's exclusive mod — a weapon-exclusive card outside the pools this roster loads
+
+## In WFSim
+
+- Build, simulate and optimize it: https://wfsim.app/weapons/Mara_Detron
+- Every published board row, as JSON: https://wfsim.app/board/mara_detron.json
