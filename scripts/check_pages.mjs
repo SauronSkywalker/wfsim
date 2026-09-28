@@ -39,7 +39,9 @@ app.on("Network.loadingFailed", (p) => {
   problems.push(`${current} FAILED TO LOAD ${p.errorText}`);
 });
 
-await app.load("/", 13000);
+// An OAuth return reports its outcome while the account part itself is still
+// evaluating. Starting here catches initialization-order failures in that path.
+await app.load("/?auth=signed_in", 13000);
 // The ENGLISH name, always: a URL mirrors the English wiki page name, and the
 // display name is Chinese in the second pass (docs/DATA_SOURCES: a localized
 // name in a wiki URL lands on garbage — the same is true of our own routes).

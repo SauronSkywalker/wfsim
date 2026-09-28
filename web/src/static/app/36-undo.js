@@ -193,23 +193,6 @@ const PRESET_LABELS = {
   operators: "Operator builds",
 };
 
-// Inline feedback, never a native dialog (those are blocked in the owner's
-// browser). It has to say WHICH collection moved: the shortcut is global and
-// the slip may have been two tabs ago.
-let toastTimer = null;
-function presetToast(msg) {
-  let el = $("toast");
-  if (!el) {
-    el = document.createElement("div");
-    el.id = "toast";
-    document.body.appendChild(el);
-  }
-  el.textContent = msg;
-  el.classList.add("on");
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove("on"), 2200);
-}
-
 // Ctrl/Cmd+Z, and Ctrl+Shift+Z / Ctrl+Y to come back. Never while a text
 // field has focus: there the browser's own undo is the one being asked for,
 // and stealing it would make renaming a preset a trap.
@@ -749,4 +732,3 @@ function initPresets() {
   renderPresetBar();
   lockOfficialBuild();
 }
-
