@@ -49,10 +49,6 @@ const setBoardConsent = (v) => {
 };
 
 /// The submission itself: the BUILD, and nothing else about you.
-/// The mod id a RIVEN takes in a board record — the bare word, because the
-/// endpoint's ids are `[a-z0-9_]` and a riven's local name is one player's
-/// label for their own item.
-const BOARD_RIVEN_SLOT = "riven";
 
 /// THE EQUIPPED RIVEN AS A SHAPE, for a board record: `{riven_pos, riven_neg}`,
 /// or `{}` when the build wears none.

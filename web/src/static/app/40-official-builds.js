@@ -587,70 +587,17 @@ const builtinBuilds = () => {
   return out;
 };
 const builtinBuildsUncached = (w) => {
-  // IN THE RULERS' OWN ORDER, which puts the PRIMARY one first — the same
-  // declaration the board page and the scenario bar read (`Benchmark::primary`).
+  // THE READING ORDER IS `rankBoard`'s (`87-headless.js`), so the bar and a
+  // headless caller rank one board one way.
   //
-  // It was the published file's order, which is the scorer's, and that was
-  // indistinguishable from "the primary ruler first" until a second ruler took
-  // rows: a cold load then restored a MULTI-TARGET build under a weapon page,
-  // which is not the row a first-time reader is looking at.
-  const order = (id) => {
-    const i = benchList().findIndex((b) => b.id === id);
-    return i < 0 ? 99 : i;
-  };
-  // …THEN BY MODE AND BY KIND, STRONGEST GROUP FIRST. Each is a control on the
-  // bar and a control's order is its own answer — which way of playing this
-  // weapon wins here, and whether the winner carries a riven — so a reader who
-  // touches nothing lands on the board's leader. A GROUP IS RANKED BY ITS BEST
-  // ROW: one huge build and fifty mediocre ones are not comparable by any
-  // other statistic the board holds.
-  const best = {};
-  for (const r of BOARD[w.id] || []) {
-    const k = `${r.benchmark}#${r.mode || "base"}`;
-    const k2 = `${k}#${rowHasRiven(r) ? "r" : "p"}`;
-    best[k] = Math.max(best[k] ?? -1, r.score || 0);
-    best[k2] = Math.max(best[k2] ?? -1, r.score || 0);
-  }
-  const modeKey = (r) => `${r.benchmark}#${r.mode || "base"}`;
-  const kindKey = (r) => `${modeKey(r)}#${rowHasRiven(r) ? "r" : "p"}`;
-  // TIES KEEP THE GROUPS CONTIGUOUS, or a rank means nothing — the picker
-  // numbers each group as it walks the list. `w.modes` is the order the
-  // builder's own Mode control offers, so the tiebreak agrees with it.
-  const modeOrder = (m) => {
-    const i = (w.modes || []).indexOf(m || "base");
-    return i < 0 ? 99 : i;
-  };
   // DEEP ENOUGH TO READ, and no deeper — see `BOARD_DEPTHS`. It is drawn
-  // against `best[kindKey]`, which is this row's own group: a riven build and
-  // a plain one compete with each other for nothing, and one ruler's leader
-  // says nothing about another's. The boundary is INCLUSIVE, so a row exactly
-  // on the line is shown — a cut drawn with `>` deletes the one row a reader
-  // is most likely to go looking for. A group whose leader scored ZERO is
-  // never emptied: every row ties it, and a ratio has nothing to say with no
-  // scale to say it on.
-  //
-  // FILTERING BEFORE THE RANK IS WHAT KEEPS `#1` MEANING `#1`: the list is
-  // descending, so what survives is always a prefix of a group and the numbers
-  // below it are the same ones the full list would give.
+  // against the row's own group, and the boundary is INCLUSIVE, so a row
+  // exactly on the line is shown. FILTERING BEFORE THE RANK IS WHAT KEEPS `#1`
+  // MEANING `#1`: what survives is always a prefix of a group, and every
+  // group's leader survives it.
   const deep = boardGroupLeaders(BOARD[w.id]);
-  const rows = (BOARD[w.id] || []).filter((r) => deep(r, boardDepth))
-    .sort((a, b) =>
-      order(a.benchmark) - order(b.benchmark)
-      || (best[modeKey(b)] || 0) - (best[modeKey(a)] || 0)
-      || modeOrder(a.mode) - modeOrder(b.mode)
-      || (best[kindKey(b)] || 0) - (best[kindKey(a)] || 0)
-      || (rowHasRiven(a) ? 1 : 0) - (rowHasRiven(b) ? 1 : 0)
-      // Best first inside a group. The published rows already arrive this way;
-      // stating it here is what makes `#1` the leader rather than a bet on the
-      // scorer's write order.
-      || (b.score || 0) - (a.score || 0));
-  const rank = {};
-  return rows.map((row) => {
-    const mode = row.mode || "base";
-    const rv = rowHasRiven(row);
-    const key = `${row.benchmark}#${mode}#${rv ? "r" : "p"}`;
-    rank[key] = (rank[key] || 0) + 1;
-    const n = rank[key];
+  const rows = (BOARD[w.id] || []).filter((r) => deep(r, boardDepth));
+  return rankBoard(rows, benchList().map((b) => b.id), w.modes).map(({ row, mode, riven: rv, rank: n, key }) => {
     const bench = (META.benchmarks || []).find((b) => b.id === row.benchmark);
     // WHAT THIS ROW IS BEST OF, said in its own name. A board that holds both
     // kinds has two leaders per weapon and mode, and "#1" alone would be the
@@ -674,7 +621,7 @@ const builtinBuildsUncached = (w) => {
       rank: n,
       // Unique per ruler, mode AND kind: the id is what the active pointer
       // stores, and a plain #1 and a riven #1 are two different builds.
-      builtin: `${row.benchmark}#${mode}#${rv ? "r" : "p"}#${n}`,
+      builtin: key,
       // STATED, not parsed back out of the id above. The id is a durable key
       // and reading a fact out of one is how a rename becomes a wrong answer.
       riven: rv,

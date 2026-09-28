@@ -759,37 +759,6 @@ const AGENT_ACTIONS = [
     },
   },
   {
-    id: "builder.board.read",
-    query: true,
-    what: "Read this weapon's leaderboard: the measured best builds per ruler (the benchmark fight), mode, and with or without a riven, in the page's own order and ranks. A row's id opens it with shell.preset.open (bar \"build\").",
-    anchor: "#build-finder",
-    needs_weapon: true,
-    args: {
-      riven: { kind: "string", what: "\"without\" (default), \"with\" or \"any\"", enum: () => ["without", "with", "any"] },
-      mode: { kind: "string", what: "only this mode id" },
-      limit: { kind: "number", min: 1, max: 20, what: "rows per group, default 3" },
-    },
-    run({ riven = "without", mode: m, limit = 3 }) {
-      const w = weaponInfo($("weapon").value) || {};
-      if (!BOARD[w.id]) return agentNo("board_not_loaded", { because: "this weapon has no board rows here yet" });
-      const name = (id) => (modById(id) || { name: id }).name;
-      const rows = builtinBuilds()
-        .filter((p) => (riven === "any" || p.riven === (riven === "with")) && (!m || p.mode === m) && p.rank <= limit)
-        .map((p) => {
-          const r = p.board || {};
-          return {
-            id: presetId(p), rank: p.rank, ruler: p.group, mode: p.mode, riven: p.riven, score: p.hint,
-            mods: (r.mods || []).filter((x) => x && x !== BOARD_RIVEN_SLOT).map(name),
-            ...(r.exilus && r.exilus !== "none" ? { exilus: name(r.exilus) } : {}),
-            ...((r.arcanes || []).some((x) => x && x !== "none") ? { arcanes: r.arcanes.filter((x) => x && x !== "none") } : {}),
-            ...((r.evolutions || []).some(Boolean) ? { evolutions: r.evolutions.filter(Boolean) } : {}),
-            ...(r.riven ? { riven_stats: r.riven } : {}),
-          };
-        });
-      return { rows };
-    },
-  },
-  {
     id: "optimizer.search.start",
     writes: "none",
     what: "Start a build search with the optimizer's current scope against the current fight. Returns at once; a search takes minutes — read its progress with optimizer.search.read.",
@@ -954,36 +923,6 @@ const AGENT_ACTIONS = [
     run({ bar }) { return { preset: copyActivePreset(AGENT_BARS[bar]()) }; },
   },
   {
-    id: "builder.stats.read",
-    query: true,
-    what: "Read the stats panel for the build on screen: every stat per form and part, base and final, with the mod each change came from, and what this weapon's model does not cover.",
-    anchor: "#stats-rows",
-    needs_weapon: true,
-    args: {},
-    async run() {
-      const r = await api("/api/panel", buildPayload());
-      if (!r || r.ok === false) return agentNo("panel_failed", { because: r ? r.error : "no answer" });
-      const w = weaponInfo($("weapon").value) || {};
-      const gaps = gapsOf(w).slice();
-      if (w.passive_unmodeled) gaps.unshift("this weapon's passive is not modelled yet");
-      return {
-        policy: r.policy,
-        not_modelled: gaps.map(trGap),
-        forms: (r.forms || []).map((f) => ({
-          label: f.label, meta: f.meta,
-          stats: (f.stats || []).map(agentStat),
-          elements: (f.elements || []).map(agentStat),
-          indirect: (f.indirect || []).map(agentStat),
-          parts: (f.parts || []).map((pt) => ({
-            label: pt.label, meta: pt.meta, damage_total: pt.damage_total, damage: pt.damage,
-            stats: (pt.stats || []).map(agentStat),
-          })),
-        })),
-        conditionals: r.conditionals, buffs: r.buffs,
-      };
-    },
-  },
-  {
     id: "simulator.result.read",
     query: true,
     what: "Read the last simulated fight for this build: the headline and whether it is still this build's, kills, time to kill, crit and headshot rates, and which damage sources dealt what share.",
@@ -991,18 +930,6 @@ const AGENT_ACTIONS = [
     needs_weapon: true,
     args: {},
     run() { return agentRunSummary() || agentNo("nothing_measured", { try: "simulator.run.start" }); },
-  },
-  {
-    id: "builder.weapons.find",
-    query: true,
-    what: "Find weapons by name, in any language the page speaks.",
-    anchor: "#weapon",
-    args: { ...agentFind, query: { ...agentFind.query, required: true } },
-    run({ query, limit = 12 }) {
-      const q = query.trim().toLowerCase();
-      return agentFound((META.weapons || []).filter((w) => searchHit(w, q)), limit,
-        (w) => ({ id: w.id, name: w.name, class: w.class }));
-    },
   },
   {
     id: "builder.mods.find",
@@ -1288,7 +1215,7 @@ const AGENT_ACTIONS = [
       return r ? { result: r, text: `${sig2(r.value)} ${r.unit}` } : agentNo("nothing_measured");
     },
   },
-  ...SHAPLEY_ACTIONS, ...ROSTER_ACTIONS]; // …and the ones declared beside what they act on
+  ...SHAPLEY_ACTIONS, ...ROSTER_ACTIONS, ...HEADLESS_DOOR_ACTIONS]; // …and the ones declared beside what they act on
 
 /// THE PUBLIC NAME. Everything an outside caller may touch, and nothing else:
 /// `observe` to see, `do` to act, `tools` to learn the table, `actions` to

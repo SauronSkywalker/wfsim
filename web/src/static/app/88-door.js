@@ -260,14 +260,30 @@ const agentFound = (xs, limit, row) => ({
 const agentFind = { query: { kind: "string", what: "name or effect words, in any language the page speaks" },
   limit: { kind: "number", min: 1, max: 40, what: "rows to return, default 12" } };
 
-/// ONE STAT ROW as the panel draws it — the page's own wording, sources named.
-/// A row is the server's answer, never recomputed here.
-const agentStat = (x) => ({
-  label: x.label, base: x.base, final: x.final,
-  ...(x.note ? { note: x.note } : {}), ...(x.rule ? { rule: x.rule } : {}),
-  ...(x.sources && x.sources.length
-    ? { sources: x.sources.map((y) => `${y.mod} ${y.value}${y.note ? ` (${y.note})` : ""}`) } : {}),
-});
+/// THE PAGE AS A HEADLESS HOST (`87-headless.js`): what a query reads, from
+/// what the page already holds. Links name the site, so a link a query returns
+/// here is the link it returns anywhere else.
+const HEADLESS_PAGE_HOST = {
+  meta: () => META,
+  names: () => (ALT_NAMES || []).concat(I18N ? [I18N] : []),
+  async board(id) {
+    await loadWeaponBoard(id, boardOffOrigin ? BOARD_ORIGIN : "");
+    return BOARD[id] || null;
+  },
+  api: (path, body) => api(path, body),
+  tr: (s) => tr(s),
+  weapon_path: (id) => weaponPath(id),
+  origin: LIVE_ORIGIN,
+  screen_weapon: () => (weaponInfo($("weapon").value) || {}).id || null,
+  screen_build: () => (weaponInfo($("weapon").value) ? buildPayload() : null),
+};
+
+/// THE HEADLESS QUERIES ON THE DOOR, run with the page as their host. `page`
+/// is what the door can say that a caller with no page cannot use.
+const HEADLESS_DOOR_ACTIONS = HEADLESS_QUERIES.map((q) => ({
+  id: q.id, query: true, what: q.page ? `${q.what} ${q.page}` : q.what, anchor: q.anchor, args: q.args,
+  run: (args) => q.run(args, HEADLESS_PAGE_HOST),
+}));
 
 /// THE LAST RUN, without the arrays that exist to draw a chart or a replay —
 /// the reader reads those as pictures, and the numbers they summarise are here.

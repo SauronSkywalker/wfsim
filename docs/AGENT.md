@@ -218,6 +218,52 @@ and takes no actions at all. Nothing there is watching a screen, so an action
 would have no reader to be visible to and no hand to take it over: what such a
 caller wants from a build it cannot see is a LINK to the page holding it.
 
+## Headless queries
+
+**A QUERY IS IMPLEMENTED ONCE, WITH NO PAGE UNDER IT.** Every surface that
+answers without a page — the MCP server, the chat bots, the skill and `llms.txt`
+— and the page's own door reach one table of headless queries, and none of them
+carries a second copy of what a query does. WFSim changes every week; a surface
+that keeps its own copy is the one that answers with last month's numbers.
+
+| layer | holds | changes when |
+| --- | --- | --- |
+| `87-headless.js` | the table: each query's id, description, argument schema and body | a capability is added |
+| `webapi` | the engine work a query asks for, as a route | the engine changes |
+| page door | the actions, and each query's call with the build on screen | a control is added (`check_agent_coverage`) |
+| Nona | her persona, conversation and memory; tools from `tools()` | never for a new query |
+| `/mcp` in `worker/index.js` | the MCP protocol over the table | the protocol changes |
+| Discord / QQ | how a result reads as a chat message | never for a new query |
+| skill, `llms.txt`, api catalog | written from the table by `build_site_app.py` | never by hand |
+
+The rules the table keeps:
+
+- **STATELESS.** A headless query takes the weapon or the build as an argument
+  — the build as the wire `buildPayload()` sends, whose axes `BUILD_AXES`
+  declares. On the door an omitted one is the one on screen (`screen_weapon`,
+  `screen_build`); a door query that reads page state a headless caller cannot
+  send is a page query, and stays on the door alone.
+- **ONE PART, TWO HOSTS.** `87-headless.js` touches no DOM and no page global:
+  what a query reads arrives on `host` — `HEADLESS_PAGE_HOST` on the page, the
+  worker's own elsewhere, which takes the part by generated copy the way
+  `worker/share_codec.js` takes `29-share-codec.js`. Engine work is a `webapi`
+  route reached through `host.api`, the same wasm `api()` in the page and in
+  the worker, so it ships with every build. The page's own lists use the
+  part's functions too (`rankBoard` orders the build bar), so a headless answer
+  and the page's are one computation, not two that agree today.
+- **NO ACTIONS.** A headless caller has no reader watching (§"Who is on the
+  other side"); what it wants from a build it cannot see is a link to the page.
+- **A PUBLISHED NAME IS WIRE.** A query's id and its arguments, once served, join
+  `naming::FROZEN`: an agent that learned a tool keeps calling it by that name.
+- **THE TWO HALVES AGREE.** A check runs each headless query from the door
+  with the build on screen and from the table with that build as an argument,
+  and fails on any difference; another fails a query marked headless that the
+  table does not hold.
+
+Order of work: the table and its first queries with the door moved onto them;
+then `/mcp` with a server card, once a fight's CPU cost in a worker is measured;
+then the bots; auth only with accounts.
+
 ## Machine-readable
 
 An agent that fetches the site rather than driving the page reads what

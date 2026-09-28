@@ -57,17 +57,7 @@ const tr = (s) => (I18N && I18N.ui && I18N.ui[s]) || s;
 const gapsOf = (w) => (w && w.unmodeled_parts && w.unmodeled_parts.length)
   ? w.unmodeled_parts
   : ((w && w.unmodeled) || []);
-const trGap = (g) => {
-  if (typeof g === "string") return tr(g);
-  if (g && g.template) {
-    const t = tr(g.template);
-    if (t !== g.template) {
-      return Object.entries(g.params || {}).reduce(
-        (s, [k, v]) => s.split(`{${k}}`).join(v), t);
-    }
-  }
-  return tr((g && g.text) || "");
-};
+const trGap = (g) => headlessGap(g, tr);
 /// Translate a template and fill its `{named}` holes — the same contract
 /// `trGap` uses for an unmodelled reason, hoisted out so anything else that
 /// needs a sentence with numbers in it costs ONE translated string rather than

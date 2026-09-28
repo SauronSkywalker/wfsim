@@ -20,6 +20,7 @@
 //     ONCE — a second copy is how the click and the call start to disagree.
 import { openApp } from "./cdp.mjs";
 import { appSource } from "./app_source.mjs";
+import { readFileSync } from "node:fs";
 
 const app = await openApp({ boot: 13000, base: process.env.WFSIM_BASE });
 const { evaluate, check, finish } = app;
@@ -39,6 +40,16 @@ check("an Operator node's switch goes through the door, a tick by the reader's h
   src.includes('wfsim.do("simulator.node.simulate"')
   && src.includes('wfsim.do("simulator.node.tick", { node: n.id, on: el.dataset.s === "on" }, { hand: true })'));
 check("which slot a mod may sit in is decided once", once("=== !!m.stance") === 1, once("=== !!m.stance"));
+
+// THE HEADLESS PART READS NOTHING OF THE PAGE: a surface with no page runs it
+// as it is (docs/AGENT.md §"Headless queries"), so a page global in it works
+// here and breaks there. Comments are stripped; `host.tr(` is the part's own.
+const headless = readFileSync(new URL("../web/src/static/app/87-headless.js", import.meta.url), "utf8")
+  .split("\n").filter((l) => !/^\s*\/\//.test(l)).join("\n");
+const reaches = headless.match(/\b(META|BOARD|BOARD_HAVE|LANG|I18N|ALT_NAMES|document|window|location|fetch)\b|\$\(|(?<![.\w])(tr|api|weaponInfo|modById|arcaneById|buildPayload)\(/g) || [];
+check("the headless part reads nothing of the page", reaches.length === 0, reaches.join(" · "));
+check("the build bar ranks the board with the headless part's ranking",
+  src.includes("return rankBoard(rows, benchList()"));
 
 await app.load("/weapons/Torid");
 
@@ -415,8 +426,8 @@ const board = await evaluate(`(async () => {
   out.read = await window.wfsim.do("builder.board.read", { riven: "any", limit: 1 });
   const top = out.read.ok && out.read.rows[0];
   if (top) {
-    out.open = await window.wfsim.do("shell.preset.open", { bar: "build", preset: top.id });
-    out.onIt = window.wfsim.observe().open.build === top.id;
+    out.open = await window.wfsim.do("shell.preset.open", { bar: "build", preset: top.key });
+    out.onIt = window.wfsim.observe().open.build === top.key;
   }
   await window.wfsim.do("shell.preset.new", { bar: "build" });
   return out;
