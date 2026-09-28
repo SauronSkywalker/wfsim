@@ -1812,38 +1812,103 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
 . Below 700px this whole thing is `display:contents` and
    its children flatten into the phone menu — one copy of every control at both
    widths, which is the same trick `.topmenu` plays one level up. */
-/* THE ACCOUNT PANEL (`17-account.js`): a popover like the overflow's, and in
-   the phone menu a block of its own rather than flattened — it is a form. */
-.account{position:relative}
-.account-panel{display:none;position:absolute;top:calc(100% + 10px);right:0;z-index:61;
-  width:300px;flex-direction:column;gap:8px;padding:12px;
-  background:var(--surface);border:1px solid var(--line);border-radius:10px;
-  box-shadow:0 8px 28px rgba(0,0,0,.35);font-size:13px}
-.account.open .account-panel{display:flex}
-.account-btn.on{color:var(--accent)}
-.acc-h{font-weight:600}
-.acc-small{font-size:12px;color:var(--text-2)}
-.acc-note{font-size:12px;padding:6px 8px;border-radius:6px;background:var(--plane)}
-.acc-note.bad{color:var(--critical)}
-.acc-way{display:block;text-align:center;padding:7px 10px;border:1px solid var(--line);border-radius:8px;
-  background:var(--plane);color:var(--text);text-decoration:none;cursor:pointer;font:inherit}
-.acc-way:hover{border-color:var(--accent)}
-.acc-form{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.acc-form input{flex:1 1 140px;min-width:0;padding:6px 8px;border:1px solid var(--line);border-radius:6px;
-  background:var(--plane);color:var(--text);font:inherit}
-.acc-go,.acc-mini,.acc-danger{padding:4px 9px;border:1px solid var(--line);border-radius:6px;
-  background:var(--plane);color:var(--text);font:inherit;font-size:12px;cursor:pointer;text-decoration:none}
-.acc-danger,.acc-warn{color:var(--critical)}
-.acc-slot{display:grid;grid-template-columns:62px 1fr auto;gap:6px;align-items:center}
-.acc-p{font-weight:600;font-size:12px}
-.acc-l{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
-.acc-a{display:flex;gap:4px}
-.acc-row{display:flex;flex-wrap:wrap;gap:6px}
-.acc-or{font-size:12px;color:var(--text-2);text-align:center}
-.acc-link{background:none;border:0;padding:0;color:var(--accent);font:inherit;font-size:12px;cursor:pointer}
-.acc-form input{flex:1 1 100%}
-.acc-confirm{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;
-  padding:8px;border:1px solid var(--critical);border-radius:6px}
+/* ---- ACCOUNTS (`17-account.js`, docs/ACCOUNTS.md) ----
+   One entry in the top bar, and pages of their own: the shape a serious
+   product has. The settings page is built from `.block > .bh > .bb`. */
+.account{position:relative;display:flex;align-items:center}
+.signin-btn{display:inline-flex;align-items:center;height:28px;padding:0 12px;border-radius:8px;
+  border:1px solid var(--line);background:var(--surface);color:var(--text);font-weight:600;font-size:13px;text-decoration:none}
+.signin-btn:hover{border-color:var(--accent)}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;font-size:13px;
+  display:inline-flex;align-items:center;justify-content:center;border:0;cursor:pointer;line-height:1;flex:none}
+.avatar-lg{width:44px;height:44px;font-size:18px;cursor:default}
+.acct-menu{position:absolute;right:0;top:calc(100% + 10px);width:250px;z-index:62;background:var(--surface);
+  border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 32px rgba(0,0,0,.25);padding:6px}
+.acct-menu .who{display:flex;gap:10px;align-items:center;padding:8px 8px 10px;border-bottom:1px solid var(--line);margin-bottom:4px}
+.acct-menu .who .avatar{cursor:default}
+.acct-menu .who div b{display:block;font-size:13px;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.acct-menu .who div span{font-size:12px;color:var(--text-2)}
+.acct-menu a{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:6px;color:var(--text);text-decoration:none;font-size:13px}
+.acct-menu a[href]:hover{background:var(--plane)}
+.acct-menu a.off{color:var(--muted);cursor:default}
+.acct-menu a small{margin-left:auto;font-size:11px;color:var(--muted)}
+.acct-menu hr{border:0;border-top:1px solid var(--line);margin:4px 0}
+.auth-page{display:flex;justify-content:center;padding:44px 16px 56px}
+.auth-card{width:100%;max-width:392px;background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  padding:28px;display:flex;flex-direction:column;gap:14px}
+.auth-card h2{margin:0;font-size:21px;text-align:center;text-wrap:balance}
+.auth-card .lede{margin:-6px 0 4px;text-align:center;color:var(--text-2);font-size:13px}
+.auth-err{font-size:13px;padding:8px 10px;border-radius:8px;color:var(--critical);
+  background:color-mix(in srgb,var(--critical) 9%,transparent);border:1px solid color-mix(in srgb,var(--critical) 35%,transparent)}
+.prov{display:flex;align-items:center;justify-content:center;gap:10px;height:40px;border:1px solid var(--line);border-radius:10px;
+  background:var(--surface);color:var(--text);font-weight:600;font-size:14px;text-decoration:none}
+.prov:hover{background:var(--plane)}
+.prov svg{width:18px;height:18px}
+.or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px}
+.or::before,.or::after{content:"";flex:1;border-top:1px solid var(--line)}
+.field{display:flex;flex-direction:column;gap:5px;text-align:left}
+.field label{font-size:12.5px;font-weight:600;display:flex;flex-direction:row;align-items:baseline;justify-content:space-between;gap:8px;color:var(--text)}
+.field label a{font-weight:400;color:var(--accent);text-decoration:none}
+.field input{height:38px;padding:0 11px;border:1px solid var(--line);border-radius:8px;background:var(--plane);color:var(--text);font:inherit}
+.field input:focus{outline:none;border-color:var(--accent)}
+.auth-card .hint{font-size:12px;color:var(--muted);margin-top:-9px}
+.auth-card .run-btn,.inline-code .run-btn{margin-top:4px}
+.auth-foot{text-align:center;font-size:13px;color:var(--text-2)}
+.auth-foot a{color:var(--accent);text-decoration:none;font-weight:600}
+.auth-foot .muted{color:var(--muted)}
+.fine{text-align:center;font-size:11.5px;color:var(--muted)}
+.fine a{color:var(--text-2)}
+.code-boxes{display:flex;gap:8px;justify-content:center}
+.code-boxes input{width:44px;height:52px;text-align:center;font-size:22px;font-weight:700;border:1px solid var(--line);
+  border-radius:9px;background:var(--plane);color:var(--text);font-family:inherit;padding:0}
+.code-boxes input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.mail-ico{width:48px;height:48px;border-radius:50%;background:var(--panel2);display:flex;align-items:center;justify-content:center;margin:0 auto}
+.mail-ico svg{width:22px;height:22px}
+.settings{display:grid;grid-template-columns:200px 1fr;gap:22px;max-width:980px;margin:0 auto;padding:26px 16px 40px}
+.set-side{display:flex;flex-direction:column;gap:2px;position:sticky;top:70px;align-self:start}
+.set-side .me{display:flex;gap:10px;align-items:center;padding:0 6px 14px}
+.set-side .me div b{display:block;font-size:14px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.set-side .me div span{font-size:12px;color:var(--text-2)}
+.set-side a{padding:7px 10px;border-radius:8px;color:var(--text-2);text-decoration:none;font-size:13.5px}
+.set-side a:hover{background:var(--surface);color:var(--text)}
+.set-main{display:flex;flex-direction:column;min-width:0}
+.set-main h1.page{margin:0 0 14px;font-size:20px}
+.set-note{font-size:12.5px;color:var(--text-2);margin:-4px 0 14px}
+.method{display:grid;grid-template-columns:30px 1fr auto;gap:12px;align-items:center;padding:12px 13px;border-top:1px solid var(--line)}
+.method:first-child{border-top:0}
+.method .ic{width:30px;height:30px;border-radius:8px;background:var(--panel2);display:flex;align-items:center;justify-content:center}
+.method .ic svg{width:17px;height:17px}
+.method b{font-size:13.5px;display:block}
+.method span{font-size:12.5px;color:var(--text-2);overflow-wrap:anywhere}
+.method .acts{display:flex;gap:6px;align-items:center}
+.settings .tag.ok{border-color:transparent;background:color-mix(in srgb,var(--good) 14%,transparent);color:var(--good-text)}
+.settings .tag.muted{background:var(--panel2);color:var(--muted)}
+.btn-sm{height:30px;display:inline-flex;align-items:center;text-decoration:none;font-size:12.5px}
+.kvs{margin:0}
+.kvs .kv{display:grid;grid-template-columns:120px 1fr auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.kvs .kv:first-child{border-top:0;padding-top:0}
+.kvs .kv dt{font-size:12.5px;color:var(--text-2)}
+.kvs .kv dd{margin:0;font-size:13.5px;overflow-wrap:anywhere}
+.inline-form{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;margin-top:10px;padding:12px;
+  border:1px dashed var(--line);border-radius:10px;background:var(--panel3)}
+.inline-form .run-btn{width:auto;padding:9px 18px;margin:0}
+.inline-code{display:flex;flex-direction:column;gap:12px;max-width:392px;margin:0 auto;text-align:center}
+.inline-code h2{margin:0;font-size:17px}
+.inline-code .lede{margin:0;color:var(--text-2);font-size:13px}
+.block.danger{border-color:color-mix(in srgb,var(--critical) 55%,var(--line))}
+.block.danger>.bh{background:color-mix(in srgb,var(--critical) 8%,var(--panel3))}
+.block.danger>.bh h2{color:var(--critical)}
+.btn-danger{height:32px;padding:0 14px;border-radius:8px;border:1px solid var(--critical);color:#fff;background:var(--critical);
+  font:inherit;font-weight:600;cursor:pointer}
+.btn-danger:disabled{opacity:.45;cursor:not-allowed}
+.confirm{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.confirm input{height:32px;padding:0 10px;border:1px solid var(--line);border-radius:8px;background:var(--plane);color:var(--text);font:inherit;width:160px}
+@media (max-width:760px){
+  .settings{grid-template-columns:1fr}
+  .set-side{position:static;flex-direction:row;flex-wrap:wrap}
+  .set-side .me{flex-basis:100%}
+  .inline-form,.kvs .kv{grid-template-columns:1fr}
+}
 .tbmore{position:relative}
 .tbmore-panel{display:none;position:absolute;top:calc(100% + 10px);right:0;z-index:60;
   min-width:190px;flex-direction:column;gap:2px;padding:6px;
@@ -1909,7 +1974,6 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
   /* The overflow stops being one: its children join the phone menu directly,
      so the `⋯` has nothing left to open and the panel is not a box. */
   .tbmore,.tbmore-panel,.tbmore.open .tbmore-panel{display:contents}
-  .account-panel{position:static;width:auto;box-shadow:none}
   .topbar-inner .tbmore-btn{display:none}
   /* `.topbar-inner .tblinks>*` sets order:4 on the row's own children; the
      overflow's promoted children default to 0 and would jump ahead of the ask.

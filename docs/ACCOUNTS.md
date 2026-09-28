@@ -49,10 +49,28 @@ point-in-time restore of one must not roll the other back, and because nothing
 personal may reach the public `library-backups` branch, which reads `wfsim`.
 D1 Time Travel is its backup: any minute of the last 30 days.
 
-The page's panel is `web/src/static/app/17-account.js`. It draws only where
-`/api/account` names a way in, so the dev server, the desktop shell and a site
-whose secrets are not set draw no account control at all. Its links carry
-`data-native`, which the app's client-side router leaves to the browser.
+## On the page
+
+The shape a mature product has, because that is where the trust comes from:
+
+| surface | what it is |
+| --- | --- |
+| top bar | ONE entry: "Sign in", or an avatar whose menu holds settings, the reader's builds and sign-out |
+| `/login` | third parties in one click, then an email and a password; "Forgot password?" beside the password |
+| `/signup` | the same ways in; an email and a password, then a page for the mailed code — six boxes, a paste fills them, the last digit submits, a resend after a minute |
+| `/reset` | an email, then the code and a new password |
+| `/account` | settings in `.block` sections — ways to sign in, email and password, data and privacy, and a danger zone that asks for `DELETE` typed before it deletes |
+
+All four pages are one `<main id="auth-page">`, drawn by
+`web/src/static/app/17-account.js` from the route. Nothing draws where
+`/api/account` names no way in, so the dev server, the desktop shell and a site
+whose secrets are not set show no account control. A sign-in page returns the
+reader to `?return=`, and an OAuth round trip from one comes back through
+`/login` so a refusal is said in the card; elsewhere an outcome is a toast.
+Disconnecting the last way in is refused and sends the reader to the danger
+zone, so deleting an account is always the one deliberate act. Links that leave
+the app (an OAuth start, `/privacy`) carry `data-native`, which the client-side
+router leaves to the browser.
 
 | endpoint | does |
 | --- | --- |

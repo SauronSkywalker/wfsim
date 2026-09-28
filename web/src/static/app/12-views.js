@@ -84,6 +84,9 @@ async function route() {
   // meant to be PASTED — into a video description, into the group — so it is a
   // real address rather than a section somebody has to scroll to.
   const thx = /^\/thanks\/?$/.test(location.pathname);
+  // `/login`, `/signup`, `/reset`, `/account` — the account's pages, which
+  // belong to no weapon (`17-account.js`).
+  const authKind = authKindOf(location.pathname);
   // `/warframes/<Wiki_Name>` — the Warframe builder, a page of its own that
   // belongs to no weapon. Matched by id or by the wiki name, like a weapon.
   const wfRoute = location.pathname.match(/^\/warframes\/([^/]+?)\/?$/);
@@ -97,7 +100,7 @@ async function route() {
   const compSlug = compRoute && decodeURIComponent(compRoute[1]).trim().toLowerCase().replace(/[\s-]+/g, "_");
   const compHit = compSlug && compHosts().find((c) =>
     c.id === compSlug || c.name.toLowerCase().replace(/[\s-]+/g, "_") === compSlug) || null;
-  const m = (support || bench || dl || thx || wfHit || opRoute || compHit) ? null : location.pathname.match(/^\/weapons\/([^/]+?)(\/simulator|\/optimizer|\/rivens|\/enemies|\/benchmark)?\/?$/);
+  const m = (support || bench || dl || thx || wfHit || opRoute || compHit || authKind) ? null : location.pathname.match(/^\/weapons\/([^/]+?)(\/simulator|\/optimizer|\/rivens|\/enemies|\/benchmark)?\/?$/);
   // A hand-typed URL is not the canonical slug. Fold case and treat spaces
   // (and their %20) as underscores, so "/weapons/Dual Toxocyst" reaches the
   // same weapon as "/weapons/Dual_Toxocyst" instead of silently falling back
@@ -119,8 +122,10 @@ async function route() {
   // WHICH PAGE, as a kind and never an address: one point per kind per load.
   track("app.view", w ? `weapon_${mod || "builder"}` : support ? "support" : bench ? "benchmark"
     : dl ? "download" : thx ? "thanks" : wfHit ? "warframe" : opRoute ? "operator"
-    : compHit ? "companion" : "home");
-  document.body.classList.toggle("on-home", !w && !support && !bench && !dl && !thx && !wfHit && !opRoute && !compHit);
+    : compHit ? "companion" : authKind ? "account" : "home");
+  document.body.classList.toggle("on-home", !w && !support && !bench && !dl && !thx && !wfHit && !opRoute && !compHit && !authKind);
+  document.body.classList.toggle("on-auth", !!authKind);
+  $("auth-page").hidden = !authKind;
   document.body.classList.toggle("on-warframe", !!wfHit);
   document.body.classList.toggle("on-operator", opRoute);
   document.body.classList.toggle("on-companion", !!compHit);
@@ -149,14 +154,14 @@ async function route() {
     const ask = ensurePageBodies(away);
     if (ask) ask.then(() => route());
   }
-  $("home-page").hidden = !!w || support || bench || dl || thx || !!wfHit || opRoute || !!compHit;
+  $("home-page").hidden = !!w || support || bench || dl || thx || !!wfHit || opRoute || !!compHit || !!authKind;
   $("support-page").hidden = !support;
   $("thanks-page").hidden = !thx;
   $("bench-page").hidden = !bench;
   $("download-page").hidden = !dl;
   // The nav says where you are. `data-nav` rather than a path compare: the
   // roster lives at "/" and a path compare there matches every page.
-  const here = bench ? "benchmark" : (!w && !support && !dl && !thx && !wfHit && !opRoute && !compHit) ? "home" : "";
+  const here = bench ? "benchmark" : (!w && !support && !dl && !thx && !wfHit && !opRoute && !compHit && !authKind) ? "home" : "";
   document.querySelectorAll(".tnav").forEach((a) => {
     a.classList.toggle("sel", a.dataset.nav === here);
   });
@@ -166,7 +171,9 @@ async function route() {
   // for "Simulacrum Prime", and the tab/result/share-card is the one place
   // that has to be found rather than enjoyed. The joke
   // stays on the page, which is where a player meets it.
-  document.title = support ? `${tr("Support")} — WFSim`
+  document.title = authKind ? `${tr({ login: "Sign in", signup: "Create an account", reset: "Reset your password",
+    account: "Account settings" }[authKind])} — WFSim`
+    : support ? `${tr("Support")} — WFSim`
     : thx ? `${tr("Thank you")} — WFSim`
     : dl ? `${tr("WFSim for Windows")} — WFSim`
     : bench ? `${tr("Benchmark")} — WFSim`
@@ -175,6 +182,8 @@ async function route() {
     : opRoute ? `${tr("Operator")} — WFSim`
     : w ? `${w.name}${modTitle} — WFSim` : "WFSim — Warframe Calculator";
   trailPush();
+  // The top bar's "Sign in" carries this page as where to come back to.
+  renderAccountEntry();
   if (wfHit) {
     await showWarframe(wfHit.id);
     if (gen !== routeGen) return;
@@ -184,6 +193,8 @@ async function route() {
   } else if (opRoute) {
     await showOperator();
     if (gen !== routeGen) return;
+  } else if (authKind) {
+    renderAuthPage(authKind);
   } else if (support) {
     renderSupport();
   } else if (thx) {
