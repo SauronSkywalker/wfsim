@@ -253,8 +253,12 @@ The rules the table keeps:
   and the page's are one computation, not two that agree today.
 - **NO ACTIONS.** A headless caller has no reader watching (§"Who is on the
   other side"); what it wants from a build it cannot see is a link to the page.
-- **A PUBLISHED NAME IS WIRE.** A query's id and its arguments, once served, join
-  `naming::FROZEN`: an agent that learned a tool keeps calling it by that name.
+- **WFSIM DECIDES ITS NAMES; A CALLER ADAPTS.** A query may be renamed or
+  retired whenever WFSim moves on. What is owed to a caller is a readable
+  answer, not a frozen name: a retired id stays in `HEADLESS_RETIRED` with the
+  query that replaces it, or none, and a call to it is refused with that
+  pointer rather than with "no such tool". The row is removed when WFSim
+  chooses; nothing obliges it to stay.
 - **THE TWO HALVES AGREE.** `check_agent_door` reads a board row's panel from
   the row opened on screen and from its `build` sent as an argument, and fails
   on any difference; `check_mcp_tools` runs every query in the worker's copy

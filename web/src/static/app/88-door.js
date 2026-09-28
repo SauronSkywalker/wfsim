@@ -138,7 +138,7 @@ const agentDiff = (a, b) => {
 
 async function agentDo(id, args = {}, opts = {}) {
   const a = AGENT_ACTIONS.find((x) => x.id === id);
-  if (!a) return agentNo("unknown_action", { alternatives: agentNear(id) });
+  if (!a) return headlessUnknown(id) || agentNo("unknown_action", { alternatives: agentNear(id) });
   // A HAND ACTION IS THE READER'S GESTURE: the page's own control passes
   // `hand`, and nothing a model can reach does — it is not in `tools()`.
   if (a.hand && !opts.hand) return agentNo("reader_only", { because: "this is a reader's click, not a tool" });

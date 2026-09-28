@@ -245,6 +245,21 @@ function headlessBoardBuild(w, row) {
   };
 }
 
+/// NAMES WFSIM HAS RETIRED, old id -> the query that replaces it, or null
+/// when nothing does. A caller that learned the old name is told where it went
+/// (docs/AGENT.md §"Headless queries"); the row goes whenever WFSim decides.
+const HEADLESS_RETIRED = {};
+
+/// The refusal for a name that is not a query: where a retired one went, or
+/// that there is no such name.
+function headlessUnknown(id) {
+  if (Object.prototype.hasOwnProperty.call(HEADLESS_RETIRED, id)) {
+    const use = HEADLESS_RETIRED[id];
+    return headlessNo("retired", use ? { use, tool: headlessToolName(use) } : {});
+  }
+  return null;
+}
+
 const HEADLESS_WEAPON_ARG = { kind: "string", what: "weapon id; on the page, the one open when omitted" };
 
 const HEADLESS_QUERIES = [
@@ -346,4 +361,4 @@ const HEADLESS_QUERIES = [
   },
 ];
 
-export { HEADLESS_ABOUT, HEADLESS_QUERIES, headlessCheckArgs, headlessSchema, headlessNo, headlessToolName };
+export { HEADLESS_ABOUT, HEADLESS_QUERIES, HEADLESS_RETIRED, headlessCheckArgs, headlessSchema, headlessNo, headlessToolName, headlessUnknown };

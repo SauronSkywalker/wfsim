@@ -7,7 +7,8 @@
 // offers queries only — a caller with no page has no reader to act for
 // (docs/AGENT.md §"Headless queries").
 import { wasm_bindgen, module, ENGINE_DIGEST } from "./engine.js";
-import { HEADLESS_ABOUT, HEADLESS_QUERIES, headlessCheckArgs, headlessNo, headlessSchema, headlessToolName } from "./headless.js";
+import { HEADLESS_ABOUT, HEADLESS_QUERIES, HEADLESS_RETIRED, headlessCheckArgs, headlessNo, headlessSchema, headlessToolName,
+  headlessUnknown } from "./headless.js";
 
 const SITE = "https://wfsim.app";
 const PROTOCOLS = ["2025-06-18", "2025-03-26"];
@@ -51,7 +52,10 @@ const TOOLS = HEADLESS_QUERIES.map((q) => ({ q, name: headlessToolName(q.id) }))
 
 async function call(env, name, args) {
   const t = TOOLS.find((x) => x.name === name);
-  if (!t) return headlessNo("unknown_tool", { alternatives: TOOLS.map((x) => x.name) });
+  if (!t) {
+    const old = Object.keys(HEADLESS_RETIRED).find((id) => headlessToolName(id) === name);
+    return (old && headlessUnknown(old)) || headlessNo("unknown_tool", { alternatives: TOOLS.map((x) => x.name) });
+  }
   const bad = headlessCheckArgs(t.q, args || {});
   if (bad) return bad;
   try {

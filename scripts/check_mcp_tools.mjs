@@ -9,7 +9,7 @@ import { resolve, dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const { HEADLESS_QUERIES, headlessCheckArgs, headlessSchema, headlessToolName } =
+const { HEADLESS_QUERIES, HEADLESS_RETIRED, headlessCheckArgs, headlessSchema, headlessToolName, headlessUnknown } =
   await import(pathToFileURL(resolve(ROOT, "mcp/headless.js")));
 
 let failed = 0;
@@ -75,6 +75,22 @@ check("with no screen, a missing build is refused, not guessed", nobody.ok === f
 const typo = await run("builder.board.read", { weapon: "somaa" });
 check("a mistyped weapon is refused with what was meant", typo.ok === false && typo.alternatives.includes("soma"),
   JSON.stringify(typo));
+
+// A RETIRED NAME POINTS SOMEWHERE REAL: it is no longer a query, and what
+// replaces it is one. The mechanism is exercised with a name of its own, so the
+// check reads the same whether or not anything has been retired yet.
+const live = new Set(HEADLESS_QUERIES.map((q) => q.id));
+for (const [old, use] of Object.entries(HEADLESS_RETIRED)) {
+  check(`retired ${old} is not still a query`, !live.has(old));
+  check(`retired ${old} points at a query that exists`, use === null || live.has(use), use);
+}
+HEADLESS_RETIRED["builder.check.retired"] = "builder.board.read";
+const moved = headlessUnknown("builder.check.retired");
+delete HEADLESS_RETIRED["builder.check.retired"];
+check("a retired name is refused with where it went",
+  moved && moved.reason === "retired" && moved.use === "builder.board.read" && moved.tool === "builder_board_read",
+  JSON.stringify(moved));
+check("a name nobody retired is not answered as retired", headlessUnknown("builder.never.was") === null);
 
 console.log(failed ? `\n${failed} failed` : "\nthe MCP server's queries run with no page");
 process.exit(failed ? 1 : 0);
