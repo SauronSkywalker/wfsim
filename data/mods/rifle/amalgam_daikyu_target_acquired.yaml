@@ -10,8 +10,9 @@ exclusive_to: [daikyu, daikyu_prime, daikyu_prime_quick]
 excludes_weapon: [sentinel_weapon]
 lower_ranks_unmodelled: true
 effects:
+  - kind: headshot_damage_bonus
+    rankMax: 0.75
   - kind: unmodelled
-    clause: "+75% Headshot Multiplier, Nikana Life Steal and arrow recovery"
+    clause: "Nikana Life Steal and arrow recovery"
 source:
   url: https://wiki.warframe.com/w/Amalgam_Daikyu_Target_Acquired
-

@@ -291,6 +291,12 @@ pub enum ModEffect {
     GrantsStackingBuff(StackingBuff),
     /// Additive base-damage bucket (Hornet Strike).
     BaseDamage(f64),
+    /// Range Advantage: additive base damage while every enemy is farther than
+    /// `metres` from the player (wiki `Range_Advantage`).
+    BaseDamageIfNoEnemyWithin { bonus: f64, metres: f64 },
+    /// Spring-Loaded Broadhead: additive base damage when the aimed target is
+    /// farther than `metres` from the player (wiki `Spring-Loaded_Broadhead`).
+    BaseDamageBeyondTargetRange { bonus: f64, metres: f64 },
     /// Additive multishot bucket (total pellets = base × (1 + Σ)).
     Multishot(f64),
     /// Relative crit chance (base_cc × (1 + Σ)).
@@ -299,6 +305,9 @@ pub enum ModEffect {
     CritDamage(f64),
     /// Relative status chance.
     StatusChance(f64),
+    /// FLAT status chance added after mods. "Final Status Chance" augments use
+    /// this layer, matching Elemental Excess rather than the relative bucket.
+    PostModStatusChance(f64),
     /// Relative fire rate (negative for Creeping Bullseye's downside).
     FireRate(f64),
     /// JAHU CANTICLE: `(fraction, radius_m)` — what one KILL takes off the
@@ -435,6 +444,10 @@ pub enum ModEffect {
     /// Magazine capacity bonus (+v of base magazine, additive; floored to a
     /// whole round). Feeds reload cadence / long-fight sustain.
     MagazineCapacity(f64),
+    /// An absolute add to the base magazine before percentage magazine mods.
+    /// Charge-backed Incarnon magazines ignore it like evolution base-magazine
+    /// grants; Stinging Truth's Viper family has no such form.
+    FlatBaseMagazine(f64),
     /// Blast RANGE (+v of base radius) — Firestorm/Fulmination. The mods say
     /// "+X% Blast Range", NOT Blast damage: reading that description as an
     /// element is what had Primed Firestorm inventing +44% Blast damage on
@@ -456,6 +469,8 @@ pub enum ModEffect {
     /// with the headshot-multiplier bracket (wiki Pistol_Acuity notes:
     /// Butcher 3x head + rank-10 Acuity = 3 + 3.5 × 1.5 = 8.25x).
     WeakpointDamage(f64),
+    /// Additive headshot-damage bonus inside the multiplier bracket.
+    HeadshotDamage(f64),
     /// Weak Point crit chance (Pistol Acuity): a NORMAL relative crit-chance
     /// bonus (additive with Pistol Gambit — the multiplicative-crit behavior
     /// was a bug fixed in 38.5) that is only active on weak-point hits.

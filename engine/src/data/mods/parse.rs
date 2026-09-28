@@ -165,6 +165,14 @@ pub(super) fn effect(id: &str, v: &Value) -> Option<ModEffect> {
             }
         }
         "base_damage_bonus" => ModEffect::BaseDamage(max("rankMax")),
+        "base_damage_if_no_enemy_within" => ModEffect::BaseDamageIfNoEnemyWithin {
+            bonus: max("rankMax"),
+            metres: f(v, "range_m")?,
+        },
+        "base_damage_beyond_target_range" => ModEffect::BaseDamageBeyondTargetRange {
+            bonus: max("rankMax"),
+            metres: f(v, "range_m")?,
+        },
         "multishot_bonus" => ModEffect::Multishot(max("rankMax")),
         "crit_chance_bonus" => ModEffect::CritChance(max("rankMax")),
         // ---- MELEE COMBO. Five kinds, and the two that read the counter
@@ -239,6 +247,9 @@ pub(super) fn effect(id: &str, v: &Value) -> Option<ModEffect> {
         "heavy_windup_speed_bonus" => ModEffect::HeavyWindUpSpeed(max("rankMax")),
         "crit_damage_bonus" => ModEffect::CritDamage(max("rankMax")),
         "status_chance_bonus" => ModEffect::StatusChance(max("rankMax")),
+        // These cards print whole percentage points without a `%` placeholder
+        // in the client text, so YAML preserves 20/30 and this seam normalizes.
+        "final_status_chance" => ModEffect::PostModStatusChance(max("rankMax") / 100.0),
         "status_damage_bonus" => ModEffect::StatusDamage(max("rankMax")),
         "ammo_efficiency_bonus" => ModEffect::AmmoEfficiency(max("rankMax")),
         // Hunter Munitions / Internal Bleeding: a Slash status rolled off a
@@ -341,6 +352,8 @@ pub(super) fn effect(id: &str, v: &Value) -> Option<ModEffect> {
         "fire_rate_bonus" => ModEffect::FireRate(max("rankMax")),
         "reload_speed_bonus" => ModEffect::ReloadSpeed(max("rankMax")),
         "magazine_capacity_bonus" => ModEffect::MagazineCapacity(max("rankMax")),
+        "flat_base_magazine" => ModEffect::FlatBaseMagazine(max("rankMax")),
+        "headshot_damage_bonus" => ModEffect::HeadshotDamage(max("rankMax")),
         "blast_radius_bonus" => ModEffect::BlastRadius(max("rankMax")),
         "status_duration_bonus" => ModEffect::StatusDuration(max("rankMax")),
         // Faction damage (Bane/Expel): +max total damage vs the named faction.

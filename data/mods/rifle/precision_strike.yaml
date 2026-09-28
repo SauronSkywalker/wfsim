@@ -9,7 +9,11 @@ description: "Hitting an enemy directly with the grenade increases Reload Speed 
 exclusive_to: [kuva_tonkor, tonkor]
 lower_ranks_unmodelled: true
 effects:
-  - kind: unmodelled
-    clause: "+150% Reload Speed for 5s"
+  - kind: stacking_buff
+    trigger: direct_hit
+    grants: reload_speed
+    rankMax: 1.5
+    max_stacks: 1
+    duration: 5.0
 source:
   url: https://wiki.warframe.com/w/Precision_Strike

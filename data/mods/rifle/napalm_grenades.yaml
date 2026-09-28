@@ -10,7 +10,8 @@ exclusive_to: [carmine_penta, penta, secura_penta]
 lower_ranks_unmodelled: true
 effects:
   - kind: unmodelled
-    clause: "Grenades leave a burning patch and gain Final Status Chance"
+    clause: "Grenades leave a burning patch"
+  - kind: final_status_chance
+    rankMax: 30.0
 source:
   url: https://wiki.warframe.com/w/Napalm_Grenades
-

@@ -9,8 +9,7 @@ description: "+X Final Status Chance\n+X Entropy"
 exclusive_to: [supra, supra_vandal]
 
 effects:
-  - kind: unmodelled
-    clause: "+20 Final Status Chance"
+  - kind: final_status_chance
     rank0: 5.0
     rankMax: 20.0
   - kind: syndicate_radial

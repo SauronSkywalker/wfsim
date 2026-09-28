@@ -9,8 +9,9 @@ description: "+105% Headshot Damage\n-45% Bodyshot Damage"
 exclusive_to: [vulkar, vulkar_wraith]
 lower_ranks_unmodelled: true
 effects:
+  - kind: headshot_damage_bonus
+    rankMax: 1.05
   - kind: unmodelled
-    clause: "+105% Headshot Damage and -45% Bodyshot Damage"
+    clause: "-45% Bodyshot Damage"
 source:
   url: https://wiki.warframe.com/w/Meticulous_Aim
-

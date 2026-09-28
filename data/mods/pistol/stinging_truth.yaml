@@ -10,8 +10,8 @@ exclusive_to: [viper, viper_wraith]
 lower_ranks_unmodelled: true
 
 effects:
-  - kind: unmodelled
-    clause: "+40 Magazine Capacity"
+  - kind: flat_base_magazine
+    rankMax: 40.0
   - kind: syndicate_radial
     syndicate: truth
     rank0: 0.25

@@ -101,7 +101,8 @@ pub(super) fn resolve_the_shot(
         let efficiency = ammo_efficiency(
             active.ammo_efficiency_applies,
             contribs.ammo_efficiency
-                + weakpoint_ammo(params.weakpoint_stacks, weakpoint_pile, t),
+                + weakpoint_ammo(params.weakpoint_stacks, weakpoint_pile, t)
+                + buff_total(active, crate::model::BuffGrant::AmmoEfficiency, buff_stacks, t),
             params.arcane.ammo_efficiency,
             arc.total(&params.arcane.buffs, ArcGrant::AmmoEfficiency, t),
             crate::data::abilities::ammo_efficiency_at(&params.abilities_now(), t),

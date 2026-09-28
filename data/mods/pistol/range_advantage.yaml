@@ -9,7 +9,8 @@ description: "+300% damage if no enemies are within 10m."
 exclusive_to: [akjagara, akjagara_prime]
 lower_ranks_unmodelled: true
 effects:
-  - kind: unmodelled
-    clause: "+300% Damage"
+  - kind: base_damage_if_no_enemy_within
+    rankMax: 3.0
+    range_m: 10.0
 source:
   url: https://wiki.warframe.com/w/Range_Advantage

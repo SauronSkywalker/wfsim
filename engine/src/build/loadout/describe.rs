@@ -76,6 +76,12 @@ impl ModEffect {
                 pct(per_stack), pct(per_stack * f64::from(max_stacks))
             ),
             BaseDamage(v) => format!("{} Base Damage", pct(v)),
+            BaseDamageIfNoEnemyWithin { bonus, metres } => {
+                format!("{} Base Damage if no enemy is within {metres:.0} m", pct(bonus))
+            }
+            BaseDamageBeyondTargetRange { bonus, metres } => {
+                format!("{} Base Damage if the target is beyond {metres:.0} m", pct(bonus))
+            }
             Multishot(v) => format!("{} Multishot", pct(v)),
             CritChance(v) => format!("{} Crit Chance", pct(v)),
             // Both halves in one line, because they are one column on the card
@@ -200,6 +206,7 @@ impl ModEffect {
             }
             CritDamage(v) => format!("{} Crit Damage", pct(v)),
             StatusChance(v) => format!("{} Status Chance", pct(v)),
+            PostModStatusChance(v) => format!("{} Final Status Chance", pct(v)),
             FireRate(v) => format!("{} Fire Rate", pct(v)),
             ChargeRate(v) => format!("{} Charge Rate", pct(v)),
             ReloadSpeed(v) => format!("{} Reload Speed", pct(v)),
@@ -263,9 +270,11 @@ impl ModEffect {
             // Seconds, not a percentage — the card's own unit.
             ComboDuration(v) => format!("+{v}s Combo Duration"),
             MagazineCapacity(v) => format!("{} Magazine Capacity", pct(v)),
+            FlatBaseMagazine(v) => format!("+{v:.0} Magazine Capacity"),
             BlastRadius(v) => format!("{} Blast Range (radius)", pct(v)),
             StatusDuration(v) => format!("{} Status Duration", pct(v)),
             WeakpointDamage(v) => format!("{} Weak Point Damage", pct(v)),
+            HeadshotDamage(v) => format!("{} Headshot Damage", pct(v)),
             WeakpointCritChance(v) => format!("{} Weak Point Crit Chance", pct(v)),
             OnKillCritDamage { bonus, duration } => {
                 format!("On Kill: {} Crit Damage, {duration}s", pct(bonus))

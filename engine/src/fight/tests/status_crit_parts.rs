@@ -23,6 +23,77 @@ fn frenzy_ammo_efficiency_prevents_reloads() {
 }
 
 #[test]
+fn headshot_ammo_efficiency_buff_refreshes_and_prevents_reloads() {
+    let buff = crate::model::StackingBuff {
+        id: "headshot_ammo_efficiency",
+        trigger: crate::model::BuffTrigger::Headshot,
+        grant: crate::model::BuffGrant::AmmoEfficiency,
+        chance: 1.0,
+        decay: crate::model::BuffDecay::LoseOneAndReset,
+        per_stack: 1.0,
+        max_stacks: 1,
+        duration: 2.0,
+        initial_stacks: 0,
+        stacks_per_trigger: 1,
+        per_shell: false,
+        cleared_by: crate::model::ClearedBy::Nothing,
+        card_opens_full: false,
+    };
+    let head = FightParams {
+        stacking_buffs: vec![buff],
+        magazine_size: 3.0,
+        body_parts: vec![BodyPart {
+            name: "head".into(),
+            aim_weight: 1.0,
+            multiplier: 3.0,
+            is_head: true,
+            is_weak_point: true,
+            crit_bonus: true,
+        }],
+        ..no_status()
+    };
+    let body = FightParams { body_parts: mono_body(1.0), ..head.clone() };
+    let head_result = monte_carlo(&head, 20, 4);
+    let body_result = monte_carlo(&body, 20, 4);
+    assert_eq!(head_result.mean_reloads, 0.0, "the first hit makes every later shot free");
+    assert!(body_result.mean_reloads > 0.0, "body shots must never open the window");
+}
+
+#[test]
+fn direct_hit_reload_speed_buff_accelerates_later_reloads() {
+    let buff = crate::model::StackingBuff {
+        id: "direct_hit_reload_speed",
+        trigger: crate::model::BuffTrigger::DirectHit,
+        grant: crate::model::BuffGrant::ReloadSpeed,
+        chance: 1.0,
+        decay: crate::model::BuffDecay::LoseOneAndReset,
+        per_stack: 1.5,
+        max_stacks: 1,
+        duration: 5.0,
+        initial_stacks: 0,
+        stacks_per_trigger: 1,
+        per_shell: false,
+        cleared_by: crate::model::ClearedBy::Nothing,
+        card_opens_full: false,
+    };
+    let plain = FightParams {
+        magazine_size: 2.0,
+        duration_seconds: 10.0,
+        body_parts: mono_body(1.0),
+        ..no_status()
+    };
+    let boosted = FightParams { stacking_buffs: vec![buff], ..plain.clone() };
+    let a = monte_carlo(&plain, 20, 4);
+    let b = monte_carlo(&boosted, 20, 4);
+    assert!(
+        b.mean_shots > a.mean_shots,
+        "direct impacts must make later reloads faster: {} vs {} shots",
+        b.mean_shots,
+        a.mean_shots
+    );
+}
+
+#[test]
 fn frenzy_accelerates_fire_rate_on_headshots() {
     // All-head aim: the first headshot grants Frenzy (fire rate x2.5 ->
     // interval 0.4 s), refreshed by every subsequent headshot. Shots at

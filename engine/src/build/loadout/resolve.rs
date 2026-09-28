@@ -205,6 +205,11 @@ pub fn resolve_for(
     let mut syndicate_radial: Option<crate::data::syndicates::SyndicateDef> = None;
     // Blast RANGE bucket (Firestorm / Fulmination): + the sum, of base radius.
     let mut br = 0.0;
+    let mut base_damage_if_no_enemy_within = Vec::new();
+    let mut base_damage_beyond_target_range = Vec::new();
+    let mut flat_base_magazine = 0.0;
+    let mut post_mod_status_chance = 0.0;
+    let mut headshot_damage = 0.0;
     // Hunter Munitions: its own bucket, because its roll is its own.
     let mut slash_on_crit = 0.0;
     let mut ammo_efficiency = 0.0;
@@ -410,6 +415,12 @@ pub fn resolve_for(
                     tenno_scaled.push(TennoScaledTerm { stat, above, unit, per_unit, cap, grant });
                 }
                 ModEffect::BaseDamage(v) => base_damage += v,
+                ModEffect::BaseDamageIfNoEnemyWithin { bonus, metres } => {
+                    base_damage_if_no_enemy_within.push((bonus, metres));
+                }
+                ModEffect::BaseDamageBeyondTargetRange { bonus, metres } => {
+                    base_damage_beyond_target_range.push((bonus, metres));
+                }
                 ModEffect::Multishot(v) => multishot += v,
                 ModEffect::CritChance(v) => cc += v,
                 // The per-tendril halves do NOT join `cc`/`sc` here: their
@@ -508,6 +519,7 @@ pub fn resolve_for(
                 }
                 ModEffect::CritDamage(v) => cd += v,
                 ModEffect::StatusChance(v) => sc += v,
+                ModEffect::PostModStatusChance(v) => post_mod_status_chance += v,
                 // "(x2 for Bows)" is on the CARD of every fire-rate mod, so it
                 // is the mod's own bonus that doubles — penalties included
                 // (Critical Delay reads −40% on a bow). Buff-granted fire rate
@@ -684,6 +696,7 @@ pub fn resolve_for(
                 ModEffect::GrantsLingering(field) => granted_lingering = Some(field),
                 ModEffect::LingeringAreaFraction(v) => granted_area_fraction = v,
                 ModEffect::MagazineCapacity(v) => mag += v,
+                ModEffect::FlatBaseMagazine(v) => flat_base_magazine += v,
                 ModEffect::BlastRadius(v) => br += v,
                 ModEffect::StatusDuration(v) => sdur += v,
                 // Weak-point effects: conditional on the PART HIT, not on an
@@ -702,6 +715,7 @@ pub fn resolve_for(
                 // (Cascadia Accuracy) was already in this bucket, so the mod
                 // was the only thing in the engine claiming otherwise.
                 ModEffect::WeakpointDamage(v) => wp_dmg += v,
+                ModEffect::HeadshotDamage(v) => headshot_damage += v,
                 ModEffect::WeakpointCritChance(v) => wp_cc += v,
                 ModEffect::OnKillCritDamage { bonus, duration } => match policy {
                     StackPolicy::AssumedMax => cd += bonus,
@@ -855,8 +869,8 @@ pub fn resolve_for(
     // Cestra/Sicarus/Vectis the other — so the order cannot matter, and
     // computing them this way means it never will.
     let modded_cc_pre = (base.base_crit_chance * (1.0 + cc) + (base.post_mod_crit_chance + post_mod_cc_extra)).max(0.0);
-    let modded_sc_pre =
-        (base.base_status_chance * (1.0 + sc) + base.post_mod_status_chance).max(0.0);
+    let modded_sc_pre = (base.base_status_chance * (1.0 + sc)
+        + base.post_mod_status_chance + post_mod_status_chance).max(0.0);
     let derived = |spec: Option<(f64, f64)>, from: f64| -> f64 {
         spec.map_or(0.0, |(rate, cap)| (rate * from).min(cap))
     };
@@ -927,7 +941,7 @@ pub fn resolve_for(
     let mag_size = if base.gauge_form.is_some() {
         base.magazine_size
     } else {
-        (base.magazine_size * (1.0 + mag)).floor()
+        ((base.magazine_size + flat_base_magazine) * (1.0 + mag)).floor()
     };
     // …AND WHAT A FULL CHARGE IS WORTH. The Phantasma's alt fire spends the
     // magazine to buy damage — "directly proportional to the amount of ammo
@@ -1092,7 +1106,8 @@ pub fn resolve_for(
             crit_damage: r.base_crit_damage * (1.0 + cd),
             base_crit_chance: r.base_crit_chance,
             base_crit_damage: r.base_crit_damage,
-            status_chance: (r.base_status_chance * (1.0 + sc) + base.post_mod_status_chance)
+            status_chance: (r.base_status_chance * (1.0 + sc) + base.post_mod_status_chance
+                + post_mod_status_chance)
                 .max(0.0),
             base_status_chance: r.base_status_chance,
             forced_procs: r.forced_procs,
@@ -1236,7 +1251,8 @@ pub fn resolve_for(
             },
             crit_damage: if f.can_crit { f.base_crit_damage * (1.0 + cd) } else { 1.0 },
             status_chance: if f.status_mods_apply {
-                (f.base_status_chance * (1.0 + sc) + base.post_mod_status_chance).max(0.0)
+                (f.base_status_chance * (1.0 + sc) + base.post_mod_status_chance
+                    + post_mod_status_chance).max(0.0)
             } else {
                 f.base_status_chance
             },
@@ -1419,6 +1435,16 @@ pub fn resolve_for(
         continuous: base.continuous,
         field_duration_on_empty_reload: base.field_duration_on_empty_reload,
         multishot_beyond_range: base.multishot_beyond_range,
+        base_damage_if_no_enemy_within: if locked_stat("base_damage") {
+            Vec::new()
+        } else {
+            base_damage_if_no_enemy_within
+        },
+        base_damage_beyond_target_range: if locked_stat("base_damage") {
+            Vec::new()
+        } else {
+            base_damage_beyond_target_range
+        },
         multishot_on_last_round: ms_last_round,
         // Locked the same way: an Acuity says "set to its default ignoring
         // other bonuses", and a bigger base for one burst is a bonus.
@@ -1596,7 +1622,7 @@ pub fn resolve_for(
         // No upper clamp: status chance ABOVE 100% is meaningful (a
         // guaranteed proc plus an extra roll) — DT resolves to 129%.
         status_chance: ((base.base_status_chance + sc_from_cc) * (1.0 + sc)
-            + base.post_mod_status_chance)
+            + base.post_mod_status_chance + post_mod_status_chance)
             .max(0.0),
         base_crit_chance: base.base_crit_chance,
         base_crit_damage: base.base_crit_damage,
@@ -1669,6 +1695,7 @@ pub fn resolve_for(
         // `tenno` here is already the aim-corrected one, so an Incarnon form
         // that cannot zoom pays nothing without knowing why.
         headshot_damage_bonus: base.headshot_damage_bonus
+            + headshot_damage
             + if tenno.state.aiming { base.scope_headshot_damage } else { 0.0 },
         noncrit_bonus: base.noncrit_bonus,
         stacking_buffs: base

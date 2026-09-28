@@ -877,13 +877,26 @@ impl FightParams {
         // (diluted by Serration, and it reaches status payloads through
         // ModifiedBase); `multiplies` is a final multiplier on the instance
         // that an adding CO's term does not see (`scale::beside_adding_co`).
-        let (compression_multiplier, compression_base_damage) = match panel.compression {
+        let (compression_multiplier, mut compression_base_damage) = match panel.compression {
             Some(c) => {
                 let bonus = arcane.compression_damage_per_m * c.radius_lost_m;
                 if c.adds { (1.0, bonus) } else { (1.0 + bonus, 0.0) }
             }
             None => (1.0, 0.0),
         };
+        let target_distance = arena.player_at.distance(arena.target_at);
+        compression_base_damage += panel.base_damage_beyond_target_range.iter()
+            .filter(|(_, metres)| target_distance > *metres)
+            .map(|(bonus, _)| bonus)
+            .sum::<f64>();
+        compression_base_damage += panel.base_damage_if_no_enemy_within.iter()
+            .filter(|(_, metres)| {
+                target_distance > *metres
+                    && arena.others.iter()
+                        .all(|foe| arena.player_at.distance(foe.at) > *metres)
+            })
+            .map(|(bonus, _)| bonus)
+            .sum::<f64>();
         // …AND THE SPHERE IT BOUGHT THAT WITH IS ACTUALLY GONE: *"x0.2 explosion
         // radius"*. The metres charged for are the metres taken, so what is left
         // of the blast is a fifth of it — and the fight is where this can be

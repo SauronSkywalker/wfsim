@@ -545,10 +545,19 @@ fn mod_sources(
                     }));
                 }
                 BaseDamage(x) => push("base_damage", x, None),
+                BaseDamageIfNoEnemyWithin { .. } => conditionals.push(json!({
+                    "mod": name, "desc": e.describe(), "active": true,
+                    "why": "the arena checks every enemy's distance from the player; any one inside the stated range closes this base-damage bonus"})),
+                BaseDamageBeyondTargetRange { .. } => conditionals.push(json!({
+                    "mod": name, "desc": e.describe(), "active": true,
+                    "why": "the arena checks the aimed target's distance from the player and adds this to the base-damage bucket only beyond the stated range"})),
                 Multishot(x) => push("multishot", x, None),
                 CritChance(x) => push("crit_chance", x, None),
                 CritDamage(x) => push("crit_damage", x, None),
                 StatusChance(x) => push("status_chance", x, None),
+                PostModStatusChance(_) => conditionals.push(json!({
+                    "mod": name, "desc": e.describe(), "active": true,
+                    "why": "a flat addition after relative status-chance mods, so it is not attributed inside their bucket"})),
                 StatusDamage(x) => push("status_damage", x, None),
                 // Its own row: the chance is not a status chance and does not
                 // pool with one - it is a separate roll off a critical hit.
@@ -684,6 +693,9 @@ fn mod_sources(
                     "why": format!("+{}% total damage only vs {fac:?} (applied ×2 on DoT ticks)",
                         (x * 100.0).round())})),
                 MagazineCapacity(x) => push("magazine", x, None),
+                FlatBaseMagazine(_) => conditionals.push(json!({
+                    "mod": name, "desc": e.describe(), "active": true,
+                    "why": "an absolute addition to the base magazine before percentage magazine mods multiply it"})),
                 // Attributed on the radius rows of whichever parts have one.
                 BlastRadius(x) => push("radius", x, None),
                 StatusDuration(x) => push("status_duration", x, None),
@@ -712,6 +724,10 @@ fn mod_sources(
                     "mod": name, "desc": e.describe(), "active": true,
                     "why": format!("+{}% added to the weak-point multiplier ON weak-point hits \
                         (1.5× listed on true weak points)", (x * 100.0).round())})),
+                HeadshotDamage(x) => conditionals.push(json!({
+                    "mod": name, "desc": e.describe(), "active": true,
+                    "why": format!("+{}% inside the additive headshot-damage bracket, and nothing on body shots",
+                        (x * 100.0).round())})),
                 WeakpointCritChance(x) => conditionals.push(json!({
                     "mod": name, "desc": e.describe(), "active": true,
                     "why": format!("+{}% relative crit chance ON weak-point hits only",

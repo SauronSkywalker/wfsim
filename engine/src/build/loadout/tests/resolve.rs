@@ -1676,6 +1676,91 @@ fn magazine_and_status_duration_buckets_resolve() {
 }
 
 #[test]
+fn exclusive_augments_use_their_static_final_buckets() {
+    let find = |weapon: &str, id: &str| {
+        crate::data::mods::pool_for_build(weapon, &[])
+            .into_iter()
+            .find(|m| m.id == id)
+            .unwrap_or_else(|| panic!("{id} is not compatible with {weapon}"))
+    };
+
+    let viper = WeaponBase::from_data("viper", true, &[]);
+    let stinging = find("viper", "stinging_truth");
+    let slip_magazine = find("viper", "slip_magazine");
+    let enlarged = resolve(&viper, &[&stinging, &slip_magazine], StackPolicy::AssumedMax);
+    assert_eq!(
+        enlarged.magazine_size,
+        ((viper.magazine_size + 40.0) * 1.30).floor(),
+        "the flat 40 raises the base that Slip Magazine multiplies"
+    );
+
+    for (weapon, id, final_bonus) in [
+        ("supra", "entropy_burst", 0.20),
+        ("penta", "napalm_grenades", 0.30),
+    ] {
+        let base = WeaponBase::from_data(weapon, true, &[]);
+        let augment = find(weapon, id);
+        let plain = resolve(&base, &[], StackPolicy::AssumedMax);
+        let augmented = resolve(&base, &[&augment], StackPolicy::AssumedMax);
+        assert!(
+            (augmented.status_chance - plain.status_chance - final_bonus).abs() < 1e-9,
+            "{id} must add {final_bonus} after the relative status bucket"
+        );
+    }
+
+    for (weapon, id, bonus) in [
+        ("daikyu", "amalgam_daikyu_target_acquired", 0.75),
+        ("vulkar", "meticulous_aim", 1.05),
+    ] {
+        let base = WeaponBase::from_data(weapon, true, &[]);
+        let augment = find(weapon, id);
+        let plain = resolve(&base, &[], StackPolicy::AssumedMax);
+        let augmented = resolve(&base, &[&augment], StackPolicy::AssumedMax);
+        assert!(
+            (augmented.headshot_damage_bonus - plain.headshot_damage_bonus - bonus).abs() < 1e-9
+        );
+    }
+}
+
+#[test]
+fn exclusive_range_augments_read_their_distinct_arena_conditions() {
+    let resolve_augment = |weapon: &str, augment: &str| {
+        let base = WeaponBase::from_data(weapon, true, &[]);
+        let def = crate::data::mods::pool_for_build(weapon, &[])
+            .into_iter()
+            .find(|m| m.id == augment)
+            .unwrap_or_else(|| panic!("{augment} is not compatible with {weapon}"));
+        resolve(&base, &[&def], StackPolicy::Emergent)
+    };
+    let params = |panel: &ResolvedPanel, arena: &crate::arena::Arena| {
+        crate::fight::FightParams::from_panel(
+            panel, arena, &crate::data::arcanes::ArcaneFx::none())
+    };
+
+    let broadhead = resolve_augment("daikyu", "spring_loaded_broadhead");
+    let mut arena = crate::arena::Arena::training(10.0);
+    arena.target_at = crate::rules::space::Vec2::new(0.0, 20.0);
+    assert!((params(&broadhead, &arena).compression_base_damage - 0.40).abs() < 1e-9);
+    arena.target_at = crate::rules::space::Vec2::new(0.0, 10.0);
+    assert_eq!(params(&broadhead, &arena).compression_base_damage, 0.0);
+
+    let advantage = resolve_augment("akjagara", "range_advantage");
+    arena.target_at = crate::rules::space::Vec2::new(0.0, 20.0);
+    assert!((params(&advantage, &arena).compression_base_damage - 3.0).abs() < 1e-9);
+    arena.others.push(crate::formation::FoeSpec {
+        id: "nearby".to_string(),
+        params: arena.target.clone(),
+        body_parts: arena.body_parts.clone(),
+        at: crate::rules::space::Vec2::new(0.0, 5.0),
+    });
+    assert_eq!(
+        params(&advantage, &arena).compression_base_damage,
+        0.0,
+        "a nearby non-target enemy must close Range Advantage"
+    );
+}
+
+#[test]
 fn physical_mod_scales_base_of_its_type_not_the_element_hierarchy() {
     // A +90% Impact physical mod scales the BASE Impact by ×1.9 and does
     // NOT add modified_base as a combined element (the old, wrong behavior).

@@ -9,7 +9,8 @@ description: "Increase damage by +40% if the target is over 15m away."
 exclusive_to: [daikyu, daikyu_prime, daikyu_prime_quick]
 lower_ranks_unmodelled: true
 effects:
-  - kind: unmodelled
-    clause: "+40% Damage"
+  - kind: base_damage_beyond_target_range
+    rankMax: 0.4
+    range_m: 15.0
 source:
   url: https://wiki.warframe.com/w/Spring-Loaded_Broadhead

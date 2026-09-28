@@ -328,6 +328,10 @@ pub struct ResolvedPanel {
     /// metres)`. `resolve` cannot settle it because it never sees the arena —
     /// `FightParams::from_panel` does, and that is where it is paid.
     pub multishot_beyond_range: Option<(f64, f64)>,
+    /// Range-conditioned base-damage terms carried to the arena, where enemy
+    /// positions are known. Tuples are `(bonus, metres)`.
+    pub base_damage_if_no_enemy_within: Vec<(f64, f64)>,
+    pub base_damage_beyond_target_range: Vec<(f64, f64)>,
     /// Final Fusillade's flat multishot add on the magazine's last round
     /// (0.0 = none). NOT folded into `multishot`: it is conditional on the
     /// magazine position, which only the sim can evaluate.

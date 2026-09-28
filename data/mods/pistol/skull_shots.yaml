@@ -9,7 +9,11 @@ description: "On Headshot:\n+100% Ammo Efficiency for 2s"
 exclusive_to: [viper, viper_wraith]
 lower_ranks_unmodelled: true
 effects:
-  - kind: unmodelled
-    clause: "+100% Ammo Efficiency for 2s"
+  - kind: stacking_buff
+    trigger: headshot
+    grants: ammo_efficiency
+    rankMax: 1.0
+    max_stacks: 1
+    duration: 2.0
 source:
   url: https://wiki.warframe.com/w/Skull_Shots

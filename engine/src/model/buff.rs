@@ -177,6 +177,9 @@ pub enum BuffTrigger {
     /// a hit that did NEITHER. Two cards, two sentences, and reading one as the
     /// other is worth several stacks a second on a high-crit build.
     Hit,
+    /// Precision Strike: the projectile itself hit the target. Radial and
+    /// lingering damage from that projectile do not retrigger it.
+    DirectHit,
     /// Arcane Fury: a CRITICAL damage instance — "On Critical Hit" — rolled per
     /// instance like [`BuffTrigger::Hit`], and on nothing that did not crit.
     Crit,
@@ -241,6 +244,9 @@ pub enum BuffGrant {
     /// The RELATIVE status-chance bucket. Galvanized Elementalist's on-kill
     /// `+30% Status Chance`.
     StatusChance,
+    /// The refunded share of a round. Brain Storm and Skull Shots refresh a
+    /// full-efficiency window on each weak-point hit.
+    AmmoEfficiency,
     /// Blazing Barrel on the Sybaris and the Stug: "+5% Multishot" — a
     /// PERCENTAGE of the weapon's base, which is what every multishot MOD
     /// grants, so it joins their bucket rather than either flat bracket.
@@ -314,6 +320,7 @@ impl BuffGrant {
             BuffGrant::CritDamage => "crit_damage",
             BuffGrant::CritChance => "crit_chance",
             BuffGrant::StatusChance => "status_chance",
+            BuffGrant::AmmoEfficiency => "ammo_efficiency",
             BuffGrant::HeadshotDamage => "headshot_damage",
             BuffGrant::InitialCombo => "initial_combo",
             BuffGrant::MeleeRange => "melee_range",
@@ -326,7 +333,7 @@ impl BuffGrant {
         use BuffGrant as G;
         [
             G::BaseDamage, G::FlatBaseDamage, G::BaseMultishot, G::Multishot, G::FlatMultishot, G::ReloadSpeed,
-            G::FireRate, G::BaseCritDamage, G::CritDamage, G::CritChance, G::StatusChance, G::HeadshotDamage,
+            G::FireRate, G::BaseCritDamage, G::CritDamage, G::CritChance, G::StatusChance, G::AmmoEfficiency, G::HeadshotDamage,
             G::InitialCombo, G::MeleeRange, G::StatusDamage,
         ]
         .into_iter()
@@ -354,6 +361,7 @@ impl BuffGrant {
             BuffGrant::BaseCritDamage | BuffGrant::CritDamage => "crit_damage",
             BuffGrant::CritChance => "crit_chance",
             BuffGrant::StatusChance => "status_chance",
+            BuffGrant::AmmoEfficiency => "ammo_efficiency",
             BuffGrant::HeadshotDamage => "headshot_damage",
             BuffGrant::InitialCombo => "initial_combo",
             BuffGrant::MeleeRange => "melee_range",
@@ -378,6 +386,7 @@ impl BuffGrant {
             BuffGrant::CritDamage => "Critical Damage",
             BuffGrant::CritChance => "Crit Chance",
             BuffGrant::StatusChance => "Status Chance",
+            BuffGrant::AmmoEfficiency => "Ammo Efficiency",
             BuffGrant::HeadshotDamage => "Headshot Damage",
             BuffGrant::InitialCombo => "Initial Combo",
             BuffGrant::MeleeRange => "Range",
@@ -402,6 +411,7 @@ impl BuffTrigger {
             BuffTrigger::Firing => "on firing",
             BuffTrigger::StatusApplied => "on a status landing",
             BuffTrigger::Hit => "on a hit",
+            BuffTrigger::DirectHit => "on a direct hit",
             BuffTrigger::Crit => "on a critical hit",
             BuffTrigger::ConsecutiveHeadshot => "on consecutive weak-point hits",
         }
@@ -626,6 +636,7 @@ impl BuffTrigger {
         match self {
             BuffTrigger::Kill => "kill",
             BuffTrigger::Hit => "hit",
+            BuffTrigger::DirectHit => "direct_hit",
             BuffTrigger::Crit => "crit",
             BuffTrigger::PlainHit => "plain_hit",
             BuffTrigger::Headshot => "headshot",
@@ -648,7 +659,7 @@ impl BuffTrigger {
     pub fn from_id(id: &str) -> Option<Self> {
         use BuffTrigger as T;
         [
-            T::Kill, T::Hit, T::Crit, T::PlainHit, T::Headshot, T::ConsecutiveHeadshot, T::PunchThrough,
+            T::Kill, T::Hit, T::DirectHit, T::Crit, T::PlainHit, T::Headshot, T::ConsecutiveHeadshot, T::PunchThrough,
             T::StatusApplied, T::ReloadComplete, T::ReloadFromEmpty, T::FullBurst, T::Firing,
         ]
         .into_iter()
