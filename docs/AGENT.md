@@ -217,3 +217,30 @@ line, another service — takes the query half under one id namespace with these
 and takes no actions at all. Nothing there is watching a screen, so an action
 would have no reader to be visible to and no hand to take it over: what such a
 caller wants from a build it cannot see is a LINK to the page holding it.
+
+## Machine-readable
+
+An agent that fetches the site rather than driving the page reads what
+`build_site_app.py` `ship_agent_files` writes beside the html, and the worker
+serves it:
+
+| path | what it is |
+| --- | --- |
+| `/index.md`, `/weapons.md`, `/weapons/<Wiki_Name>.md` | a page's markdown twin, from the same values as its html |
+| `/llms.txt` | llmstxt.org index: what WFSim is and every weapon's twin |
+| `/.well-known/agent-skills/index.json` | one skill: look a weapon up, read the board, quote a score |
+| `/.well-known/api-catalog` | RFC 9727: the board JSON is the one public read API |
+| `/robots.txt` | each AI crawler named, `Content-Signal` granting search, ai-input, ai-train |
+
+A page with a twin (`markdownTwin` in `worker/index.js`) answers
+`Accept: text/markdown` with it when markdown ranks at least as high as html,
+and carries a `Link` header naming the twin and the discovery documents either
+way — which is why `/`, `/weapons` and `/weapons/*` run the worker first. An
+unknown `/.well-known/` path is a 404, never the SPA.
+
+This is what Cloudflare's agent-readiness scan grades (`isitagentready.com`,
+`POST /api/scan`). Level 4 is what the site states truthfully: level 5 needs two
+of a Web Bot Auth key for bots it does not run, auth metadata for an API that
+has none, and an MCP server and A2A agent it does not have. A
+twin states only what the page does, so a fact reaches it through the same
+function that writes the html, never a second one.

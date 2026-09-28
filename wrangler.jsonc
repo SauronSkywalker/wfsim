@@ -41,7 +41,10 @@
     // …AND A SHORT SHARE LINK, which the SPA fallback would answer with the
     // home page's HTML; the worker serves the weapon's own page for it.
     // …AND A SHORT LINK'S CARD, drawn by the worker rather than stored.
-    "run_worker_first": ["/api/*", "/asset/*", "/pkg/*", "/weapons/*/s/*", "/og/s/*"]
+    // …AND EVERY PAGE WITH A MARKDOWN TWIN, which the worker serves to
+    // `Accept: text/markdown`, and `.well-known/`, which is a document or a 404.
+    "run_worker_first": ["/api/*", "/asset/*", "/pkg/*", "/", "/weapons", "/weapons/*",
+                         "/.well-known/*", "/og/s/*"]
   },
   // THE CARD'S FONTS ride in the bundle as bytes: a worker has no system fonts.
   "rules": [{ "type": "Data", "globs": ["**/*.ttf"], "fallthrough": true }],

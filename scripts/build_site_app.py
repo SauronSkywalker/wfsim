@@ -1194,6 +1194,11 @@ def ship_share_names() -> None:
         encoding="utf-8", newline="\n")
 
 
+def weapon_facts(spec: dict) -> str:
+    return (f"{spec['class'].replace('_', ' ').title()} · {spec['slot'].title()} · "
+            f"Mastery Rank {spec.get('mastery_rank', 0)}")
+
+
 def prerender(flagged: str) -> None:
     """Write a real HTML file per weapon, plus robots.txt and sitemap.xml.
 
@@ -1228,10 +1233,7 @@ def prerender(flagged: str) -> None:
         ms = atk.get("multishot", 1.0)
         # The same sentence a player would write about the weapon: what it is,
         # then the numbers they came to compare.
-        facts = (
-            f"{spec['class'].replace('_', ' ').title()} · {spec['slot'].title()} · "
-            f"Mastery Rank {spec.get('mastery_rank', 0)}"
-        )
+        facts = weapon_facts(spec)
         stats = (
             f"{total:g} base damage"
             + (f" x{ms:g} multishot" if ms != 1.0 else "")
@@ -1272,11 +1274,14 @@ def prerender(flagged: str) -> None:
             gear += [names_of.get(a, a) for a in (row.get("arcanes") or ())]
             board_rows.append((ruler, fight, row.get("mode", "base").replace("_", " "),
                                row.get("shown") or f"{row['score']:.4g}", ", ".join(gear)))
-        seo = brief_block(board_rows, caveats_of(spec, REASONS))
+        caveats = caveats_of(spec, REASONS)
+        seo = brief_block(board_rows, caveats)
         out = APP / wiki_path(spec).lstrip("/") / "index.html"
         out.parent.mkdir(parents=True, exist_ok=True)
         page = shell(flagged, title, desc, url, og_img, seo, "w-name", name, cn)
         past_the_scanner(lambda: put(out, page))
+        put(APP / (wiki_path(spec).lstrip("/") + ".md"),
+            weapon_md(spec, name, cn, facts, stats, board_rows, caveats))
 
     # /weapons — THE ADDRESS OF THE ROSTER, and the only page that links to it.
     #
@@ -1420,12 +1425,154 @@ def prerender(flagged: str) -> None:
     )
     # Without this file the SPA fallback answered /robots.txt with HTML and a
     # 200, which is a soft 404 for every crawler that asks.
-    put(APP / "robots.txt", f"User-agent: *\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\n")
+    put(APP / "robots.txt", robots_txt())
+    ship_agent_files(by_slot)
     named = ", ".join("/" + path for path, *_ in shell_pages)
     print(f"prerendered {len(urls) - 2 - len(shell_pages) - len(frame_urls) - len(companion_urls)} weapon pages + "
           f"{len(frame_urls)} Warframe pages + {len(companion_urls)} companion pages + /weapons + "
           f"{named} + sitemap.xml + robots.txt — "
           f"{WROTE[0]} written, {WROTE[1]} already current")
+
+
+# THE CRAWLERS NAMED ONE BY ONE, because a reader of robots.txt cannot tell a
+# wildcard that means "everyone, AI included" from one nobody thought about —
+# the agent-readiness scan (docs/AGENT.md §Machine-readable) fails the second.
+AI_CRAWLERS = (
+    "GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-SearchBot",
+    "Claude-User", "Claude-Web", "anthropic-ai", "Google-Extended", "Applebot-Extended",
+    "Amazonbot", "PerplexityBot", "Perplexity-User", "meta-externalagent", "Bytespider",
+    "CCBot",
+)
+# contentsignals.org: search, answering from the page, and training are all
+# granted. A group a crawler matches REPLACES `*`, so each carries its own copy.
+CONTENT_SIGNAL = "Content-Signal: search=yes, ai-input=yes, ai-train=yes"
+
+# WHAT WFSIM IS, once, for every surface an agent reads instead of the page.
+AGENT_SUMMARY = (
+    "WFSim is a Warframe weapon calculator. It builds a loadout, simulates the "
+    "fight against a named enemy, and searches for the best mods. Every formula "
+    "cites its source, and every golden test is calibrated against a real "
+    "in-game run. It runs in the browser, free, and its source is open (AGPL-3.0)."
+)
+SKILL_NAME = "wfsim-weapon-builds"
+
+
+def robots_txt() -> str:
+    agents = "".join(f"User-agent: {a}\n" for a in AI_CRAWLERS)
+    return (f"User-agent: *\n{CONTENT_SIGNAL}\nAllow: /\n\n"
+            f"{agents}{CONTENT_SIGNAL}\nAllow: /\n\n"
+            f"Sitemap: {SITE}/sitemap.xml\n")
+
+
+def md_cell(text: str) -> str:
+    return str(text).replace("|", "\\|").replace("\n", " ")
+
+
+def weapon_md(spec, name, cn, facts, stats, board_rows, caveats) -> str:
+    """The weapon page as markdown — the same facts `brief_block` and the page's
+    description state, from the same values, for a reader that runs no script."""
+    url = SITE + wiki_path(spec)
+    out = f"# {name}\n\n"
+    if cn:
+        out += f"Chinese name: {cn}\n\n"
+    out += f"{facts}. {stats}.\n\n"
+    if board_rows:
+        out += "## Best riven-free build on the WFSim board"
+        out += f", as of {board_asof()}\n\n" if board_asof() else "\n\n"
+        out += ("A score belongs to its ruler: compare it only with scores under "
+                "the same ruler.\n\n")
+        out += "| Ruler | Fight | Mode | Score | Build |\n| --- | --- | --- | ---: | --- |\n"
+        for row in board_rows:
+            out += "| " + " | ".join(md_cell(c) for c in row) + " |\n"
+        out += "\n"
+    if caveats:
+        out += "## Not modelled here\n\n" + "".join(f"- {c}\n" for c in caveats) + "\n"
+    out += f"## In WFSim\n\n- Build, simulate and optimize it: {url}\n"
+    if (APP / "board" / f"{spec['id']}.json").exists():
+        out += f"- Every published board row, as JSON: {SITE}/board/{spec['id']}.json\n"
+    return out
+
+
+def skill_md() -> str:
+    return f"""---
+name: {SKILL_NAME}
+description: Look up a Warframe weapon's stats and its best measured riven-free builds on WFSim, and give the reader a link that opens the build in the calculator.
+---
+
+# WFSim weapon builds
+
+{AGENT_SUMMARY}
+
+## Look up a weapon
+
+1. Find it in the roster, {SITE}/weapons.md. A weapon's address is the Warframe
+   wiki's page name: {SITE}/weapons/<Wiki_Name>, for example {SITE}/weapons/Soma_Prime.
+2. Read it as markdown: request that address with `Accept: text/markdown`, or
+   append `.md`. It states the base stats, the board's best riven-free build
+   under each ruler, and what the weapon's number does not account for.
+3. Give the reader the address without `.md`. It opens the weapon in the
+   calculator, where they can change the build and run the fight themselves.
+
+## Read the board as JSON
+
+- {SITE}/board/<weapon_id>.json holds every published row for one weapon. A row
+  names its ruler (`benchmark`), its `score` and the rounded `shown`, its `mode`,
+  and the build as WFSim ids: `mods`, `exilus`, `arcanes`, `evolutions`.
+- {SITE}/board/index.json holds rows for every weapon, keyed by weapon id.
+
+## Quoting a number
+
+- A score belongs to its ruler. Compare scores only under the same ruler, and
+  quote the ruler's name with the number.
+- Quote the "as of" date the page states; the board is rescored as builds arrive.
+"""
+
+
+def ship_agent_files(by_slot: dict) -> None:
+    """The site as an agent reads it: markdown twins of the home page and the
+    roster, `/llms.txt`, and the `/.well-known/` documents that point at them.
+    `worker/index.js` serves a twin for `Accept: text/markdown`."""
+    def entry(s):
+        return f"- [{s['name']}]({SITE}{wiki_path(s)}.md): {weapon_facts(s)}\n"
+
+    roster_md = "".join(f"\n## {slot.title()} ({len(by_slot[slot])})\n\n"
+                        + "".join(entry(s) for s in by_slot[slot])
+                        for slot in sorted(by_slot))
+    put(APP / "weapons.md", f"# All {len(roster())} Warframe weapons in WFSim\n\n"
+        f"Each links to its page as markdown; drop `.md` for the calculator.\n{roster_md}")
+    links = (f"- [All weapons]({SITE}/weapons.md): every weapon WFSim models, by slot\n"
+             f"- [Weapon lookup skill]({SITE}/.well-known/agent-skills/{SKILL_NAME}/SKILL.md): "
+             "how to read a weapon's page and the board\n"
+             f"- [Board index]({SITE}/board/index.json): board rows for every weapon, as JSON\n"
+             "- [Source code](https://github.com/magenie33/wfsim): the engine, the game "
+             "data and the measurements behind the golden tests\n")
+    put(APP / "index.md", f"# WFSim\n\n{AGENT_SUMMARY}\n\nCalculator: {SITE}/\n\n{links}")
+    put(APP / "llms.txt", f"# WFSim\n\n> {AGENT_SUMMARY}\n\n## Start here\n\n{links}"
+        f"\n## Weapons\n\n" + "".join(entry(s) for s in roster()))
+
+    wk = APP / ".well-known"
+    skill = skill_md()
+    put(wk / "agent-skills" / SKILL_NAME / "SKILL.md", skill)
+    digest = hashlib.sha256(skill.encode("utf-8")).hexdigest()
+    put(wk / "agent-skills" / "index.json", json.dumps({
+        "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+        "skills": [{
+            "name": SKILL_NAME,
+            "type": "skill-md",
+            "description": "Look up a Warframe weapon's stats and its best measured "
+                           "riven-free builds on WFSim.",
+            "url": f"/.well-known/agent-skills/{SKILL_NAME}/SKILL.md",
+            "digest": f"sha256:{digest}",
+        }],
+    }, indent=2) + "\n")
+    # RFC 9727: the catalog lists the one public read API, the published board.
+    put(wk / "api-catalog", json.dumps({"linkset": [
+        {"anchor": f"{SITE}/.well-known/api-catalog",
+         "item": [{"href": f"{SITE}/board/index.json", "type": "application/json"}]},
+        {"anchor": f"{SITE}/board/index.json",
+         "service-doc": [{"href": f"{SITE}/.well-known/agent-skills/{SKILL_NAME}/SKILL.md",
+                          "type": "text/markdown"}]},
+    ]}, indent=2) + "\n")
 
 
 WROTE = [0, 0]  # [written, already current]
