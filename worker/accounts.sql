@@ -18,13 +18,16 @@ CREATE TABLE IF NOT EXISTS accounts (
 -- provider's own id for the person — for `email`, the address, lowercased —
 -- and (provider, subject) belongs to one account at most, which is what makes a
 -- merge impossible to do by accident. `label` is only what the account page
--- shows the person: a name, or the address.
+-- shows the person: a name, or the address. `password_hash` is the email
+-- slot's password (`worker/accounts.js` §passwords), null on a third-party
+-- slot and on an email slot linked before passwords, until one is set.
 CREATE TABLE IF NOT EXISTS identities (
-  provider  TEXT NOT NULL CHECK (provider IN ('google', 'discord', 'github', 'email')),
-  subject   TEXT NOT NULL,
-  account   TEXT NOT NULL REFERENCES accounts (id) ON DELETE CASCADE,
-  label     TEXT NOT NULL,
-  linked_at TEXT NOT NULL,
+  provider      TEXT NOT NULL CHECK (provider IN ('google', 'discord', 'github', 'email')),
+  subject       TEXT NOT NULL,
+  account       TEXT NOT NULL REFERENCES accounts (id) ON DELETE CASCADE,
+  label         TEXT NOT NULL,
+  linked_at     TEXT NOT NULL,
+  password_hash TEXT,
   PRIMARY KEY (provider, subject),
   UNIQUE (account, provider)
 );
@@ -47,11 +50,26 @@ CREATE TABLE IF NOT EXISTS sessions (
 );
 
 -- A CODE MAILED AND NOT YET USED, one per address; its HMAC, never the code.
--- Deleted when it is used.
+-- Mail goes out for three things only — `purpose` says which: `register` a new
+-- account, `link` the address to the signed-in `account`, `reset` a password.
+-- A password chosen before the code arrives waits here as its hash, never as
+-- itself. Deleted when it is used.
 CREATE TABLE IF NOT EXISTS email_codes (
-  email      TEXT PRIMARY KEY,
-  code_hash  TEXT NOT NULL,
-  expires_at TEXT NOT NULL,
-  attempts   INTEGER NOT NULL DEFAULT 0,
-  sent_at    TEXT NOT NULL
+  email         TEXT PRIMARY KEY,
+  code_hash     TEXT NOT NULL,
+  expires_at    TEXT NOT NULL,
+  attempts      INTEGER NOT NULL DEFAULT 0,
+  sent_at       TEXT NOT NULL,
+  purpose       TEXT NOT NULL DEFAULT 'register' CHECK (purpose IN ('register', 'link', 'reset')),
+  password_hash TEXT,
+  account       TEXT
+);
+
+-- WRONG PASSWORDS AGAINST ONE ADDRESS, in a window that restarts when it
+-- lapses. Enough of them close that address to passwords for the rest of the
+-- window; a right one, or a reset, clears the row.
+CREATE TABLE IF NOT EXISTS login_failures (
+  email    TEXT PRIMARY KEY,
+  failures INTEGER NOT NULL,
+  first_at TEXT NOT NULL
 );

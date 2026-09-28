@@ -69,6 +69,7 @@ const env = {
   GITHUB_CLIENT_ID: "h", GITHUB_CLIENT_SECRET: "hs",
 };
 const SITE = "https://wfsim.app";
+const PASSWORD = "correct horse battery";
 
 // ---- a browser: a cookie jar and the calls the page makes ----------------------------
 
@@ -104,12 +105,22 @@ function browser() {
       const back = await call("GET", `/api/auth/${provider}/callback?code=${code}&state=${tamper || state}`);
       return new URL(back.headers.get("location"));
     },
-    async email(address, intent = "login", wrong = false) {
-      const s = await (await call("POST", "/api/auth/email/start", { email: address })).json();
+    /// Register or link an address with a password: the mail, then its code.
+    async email(address, purpose = "register", { password = PASSWORD, wrong = false } = {}) {
+      const s = await (await call("POST", `/api/auth/email/${purpose}`, { email: address, password })).json();
       if (!s.ok) return s;
       const code = mail.at(-1).subject.slice(0, 6);
       return (await call("POST", "/api/auth/email/verify",
-        { email: address, code: wrong ? String((Number(code) + 1) % 1e6).padStart(6, "0") : code, intent })).json();
+        { email: address, code: wrong ? String((Number(code) + 1) % 1e6).padStart(6, "0") : code })).json();
+    },
+    login: async (address, password) =>
+      (await call("POST", "/api/auth/email/login", { email: address, password })).json(),
+    async reset(address, password) {
+      const before = mail.length;
+      const s = await (await call("POST", "/api/auth/email/reset", { email: address })).json();
+      if (!s.ok || mail.length === before) return { ...s, mailed: false };
+      return (await call("POST", "/api/auth/email/verify",
+        { email: address, code: mail.at(-1).subject.slice(0, 6), password })).json();
     },
   };
 }
@@ -155,10 +166,10 @@ check("a filled slot is replaced, not doubled",
   back.searchParams.get("auth") === "replaced" && me.identities.length === 2
     && count("SELECT COUNT(*) n FROM identities WHERE subject = 'g-ada'") === 0, JSON.stringify(me));
 
-const wrong = await a.email("ada.other@example.com", "link", true);
+const wrong = await a.email("ada.other@example.com", "link", { wrong: true });
 check("a wrong code fills nothing", wrong.ok === false && wrong.reason === "wrong_code"
   && count("SELECT COUNT(*) n FROM identities WHERE provider = 'email' AND account = ?", adaId) === 0, JSON.stringify(wrong));
-const tooSoon = await (await a.post("/api/auth/email/start", { email: "ada.other@example.com" })).json();
+const tooSoon = await (await a.post("/api/auth/email/link", { email: "ada.other@example.com", password: PASSWORD })).json();
 check("a second code inside a minute is refused", tooSoon.reason === "too_soon", JSON.stringify(tooSoon));
 env.ACCOUNTS.raw.prepare("UPDATE email_codes SET sent_at = '2000-01-01T00:00:00.000Z'").run();
 const linked = await a.email("Ada.Other@Example.com", "link");
@@ -167,6 +178,64 @@ check("an address links once its code is right, lowercased", linked.ok && linked
   JSON.stringify(linked));
 check("the mail carries the code and no link", mail.length > 0 && /^\d{6} /.test(mail.at(-1).subject)
   && !/https?:\/\//.test(mail.at(-1).text), JSON.stringify(mail.at(-1)));
+
+// ---- the password: signing in sends no mail -------------------------------------------
+
+const mailed = mail.length;
+const pw = await browser().login("ada.other@example.com", PASSWORD);
+check("an address and its password sign in to its account, and nothing is mailed",
+  pw.ok && pw.outcome === "signed_in" && mail.length === mailed, JSON.stringify(pw));
+const badPw = await browser().login("ada.other@example.com", "not-the-password");
+const nobody = await browser().login("nobody@example.com", PASSWORD);
+check("a wrong password and an unknown address answer alike",
+  badPw.reason === "wrong_credentials" && nobody.reason === "wrong_credentials", JSON.stringify([badPw, nobody]));
+check("a password is never kept as itself", !env.ACCOUNTS.raw.prepare(
+  "SELECT group_concat(password_hash) h FROM identities").get().h.includes(PASSWORD));
+me = await a.me();
+check("the account page says the address has a password, and never shows it",
+  me.identities.find((i) => i.provider === "email").has_password === true && !JSON.stringify(me).includes("pbkdf2"),
+  JSON.stringify(me));
+
+const short = await browser().post("/api/auth/email/register", { email: "short@example.com", password: "1234567" });
+check("a password under eight characters is refused", (await short.json()).reason === "bad_password");
+const again = await (await browser().post("/api/auth/email/register", { email: "ADA@example.com", password: PASSWORD })).json();
+check("registering an address that has an account says so", again.reason === "email_taken", JSON.stringify(again));
+
+const other = browser();
+const reg = await other.email("carol@example.com");
+const carolId = (await other.me()).id;
+check("registering is the only mail before the account exists", reg.ok && reg.outcome === "created", JSON.stringify(reg));
+const elsewhere = browser();
+await elsewhere.login("carol@example.com", PASSWORD);
+for (let i = 0; i < 5; i++) await browser().login("carol@example.com", "wrong-wrong");
+const locked = await browser().login("carol@example.com", PASSWORD);
+check("five wrong passwords close the address to passwords for a while", locked.reason === "locked", JSON.stringify(locked));
+const noMail = await browser().reset("nobody@example.com", "fresh-password");
+check("a reset for an address nobody holds answers the same, and mails nothing",
+  noMail.ok === true && noMail.mailed === false, JSON.stringify(noMail));
+env.ACCOUNTS.raw.prepare("UPDATE email_codes SET sent_at = '2000-01-01T00:00:00.000Z'").run();
+const reset = await browser().reset("carol@example.com", "a-new-password");
+check("a reset sets the new password and lifts the lock",
+  reset.ok && reset.outcome === "password_reset" && (await browser().login("carol@example.com", "a-new-password")).ok,
+  JSON.stringify(reset));
+check("...and signs every other browser out", (await elsewhere.me()) === null && (await other.me()) === null);
+
+const keep = browser();
+await keep.login("carol@example.com", "a-new-password");
+const second = browser();
+await second.login("carol@example.com", "a-new-password");
+const refused = await (await keep.post("/api/account/password", { current: "wrong", password: "third-password" })).json();
+check("changing the password asks for the old one", refused.reason === "wrong_password", JSON.stringify(refused));
+const changed = await (await keep.post("/api/account/password", { current: "a-new-password", password: "third-password" })).json();
+check("...and with it, changes it, keeps this browser and signs the others out",
+  changed.ok && (await keep.me())?.id === carolId && (await second.me()) === null, JSON.stringify(changed));
+
+env.ACCOUNTS.raw.prepare("UPDATE identities SET password_hash = NULL WHERE subject = 'carol@example.com'").run();
+check("an address linked before passwords cannot sign in with one",
+  (await browser().login("carol@example.com", "third-password")).reason === "wrong_credentials");
+const set = await (await keep.post("/api/account/password", { password: "fourth-password" })).json();
+check("...and its signed-in owner sets one without an old one to give",
+  set.ok && (await browser().login("carol@example.com", "fourth-password")).ok, JSON.stringify(set));
 
 let r = await (await a.post("/api/account/unlink", { provider: "discord" })).json();
 check("a slot empties while another is filled", r.ok && r.deleted === false, JSON.stringify(r));

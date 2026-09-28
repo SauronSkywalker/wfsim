@@ -1592,16 +1592,19 @@ keeps:</p>
 or GitHub name, or your email address;</li>
 <li>when you linked it.</li>
 </ul>
-<p>It also keeps a signed-in browser as the hash of a random token (the cookie
-<code>wfsim_session</code>, 90 days), and a mailed login code as a hash for ten
-minutes. It does not keep passwords (there are none), your IP address, or the
-access token a service hands back — that is read once for your id and dropped.
+<p>With an email address you also choose a password. WFSim keeps it only as a
+salted, slow hash that cannot be turned back into the password. Mail is sent only
+to prove an address — when you register it, link it or reset its password — and
+the code in it is kept as a hash for ten minutes. A signed-in browser is kept as
+the hash of a random token (the cookie <code>wfsim_session</code>, 90 days).
+WFSim does not keep your IP address, or the access token a service hands back —
+that is read once for your id and dropped.
 Two accounts are never merged by WFSim: a way to sign in belongs to one account,
 and moves only if you remove it from one and add it to another.</p>
 
 <h2>Who else handles it</h2>
 <ul>
-<li><b>Cloudflare</b> hosts the site and the database, and delivers login mail;
+<li><b>Cloudflare</b> hosts the site and the database, and delivers the verification mail;
 its delivery log keeps the address a code was sent to for up to 30 days.</li>
 <li><b>Google, Discord and GitHub</b> handle a sign-in you choose to make with them.</li>
 </ul>
@@ -1621,8 +1624,8 @@ remains.</li>
 <ul>
 <li><b>不登录时：</b>配装、场景、紫卡只保存在你自己的浏览器里。使用统计记在浏览器保存的一个随机编号下，不记录 IP，不设置 cookie，可在
 <a href="/support#usage">支持页面</a>关闭。提交到排行榜的只有配装本身。</li>
-<li><b>登录后：</b>账号是一个随机编号，最多可绑定 Google、Discord、GitHub、邮箱四种登录方式。每种方式保存：是哪个服务、该服务给你的用户编号、账号页上显示给你看的名字（Google 邮箱、Discord 或 GitHub 用户名、你的邮箱），以及绑定时间。登录状态以随机令牌的哈希保存（cookie <code>wfsim_session</code>，90 天），邮件验证码以哈希保存 10 分钟。不保存密码、IP 地址，也不保存第三方返回的访问令牌。WFSim 从不合并两个账号。</li>
-<li><b>第三方：</b>Cloudflare 提供托管、数据库和登录邮件投递，其投递日志会保留收件地址最多 30 天；Google、Discord、GitHub 仅在你选择用它们登录时参与。不出售任何数据，不用于广告。</li>
+<li><b>登录后：</b>账号是一个随机编号，最多可绑定 Google、Discord、GitHub、邮箱四种登录方式。每种方式保存：是哪个服务、该服务给你的用户编号、账号页上显示给你看的名字（Google 邮箱、Discord 或 GitHub 用户名、你的邮箱），以及绑定时间。使用邮箱时你会设置一个密码，WFSim 只保存它加盐的慢哈希，无法还原成密码。邮件只在需要验证邮箱时发送（注册、绑定、找回密码），其中的验证码以哈希保存 10 分钟。登录状态以随机令牌的哈希保存（cookie <code>wfsim_session</code>，90 天）。不保存 IP 地址，也不保存第三方返回的访问令牌。WFSim 从不合并两个账号。</li>
+<li><b>第三方：</b>Cloudflare 提供托管、数据库和验证邮件投递，其投递日志会保留收件地址最多 30 天；Google、Discord、GitHub 仅在你选择用它们登录时参与。不出售任何数据，不用于广告。</li>
 <li><b>你的权利：</b>可在账号面板下载你的全部数据、移除任何登录方式（移除最后一种即删除账号）、直接删除账号。删除立即生效；数据库的时间点历史最多保留 30 天。</li>
 </ul>
 """

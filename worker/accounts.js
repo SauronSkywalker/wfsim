@@ -1,7 +1,9 @@
 // ---- ACCOUNTS -----------------------------------------------------------------
 //
 // docs/ACCOUNTS.md. An account is a UUID, and a person reaches it through four
-// SLOTS — Google, Discord, GitHub and an email address — at most one of each.
+// SLOTS — Google, Discord, GitHub, and an email address with a password — at
+// most one of each. Mail goes out only to prove an address: to register, to
+// link one, to reset a password. Signing in with a password sends nothing.
 // The UUID lives while a slot is filled: removing the last one deletes it, and
 // the schema's trigger holds that whoever deletes (`worker/accounts.sql`).
 //
@@ -49,6 +51,10 @@ const CODE_SECONDS = 600;
 const CODE_RESEND_SECONDS = 60;
 const CODE_ATTEMPTS = 5;
 const EMAIL_FROM = "WFSim <login@wfsim.app>";
+const PASSWORD_MIN = 8;
+const PASSWORD_MAX = 128;
+const LOGIN_FAILURES = 5;
+const LOGIN_WINDOW_SECONDS = 15 * 60;
 
 const secretOf = (env, p) => ({ id: env[`${p.toUpperCase()}_CLIENT_ID`], secret: env[`${p.toUpperCase()}_CLIENT_SECRET`] });
 const configured = (env) => [
@@ -135,18 +141,19 @@ const endSession = () => setCookie(SESSION_COOKIE, "", 0);
 ///          another account holds it, a replacement if the slot is filled
 ///
 /// Returns `{ ok, outcome, account, cookie? }` or `{ ok: false, reason }`.
-export async function arrive(env, request, { provider, subject, label }, intent) {
+export async function arrive(env, request, { provider, subject, label, password_hash = null }, intent) {
   const db = env.ACCOUNTS;
-  const owner = await db.prepare("SELECT account FROM identities WHERE provider = ?1 AND subject = ?2")
+  const holder = await db.prepare("SELECT account FROM identities WHERE provider = ?1 AND subject = ?2")
     .bind(provider, subject).first();
   const signedIn = await sessionAccount(env, request);
 
   if (intent === "link") {
     if (!signedIn) return { ok: false, reason: "not_signed_in" };
-    if (owner && owner.account !== signedIn) return { ok: false, reason: "taken" };
-    if (owner) {
-      await db.prepare("UPDATE identities SET label = ?1 WHERE provider = ?2 AND subject = ?3")
-        .bind(label, provider, subject).run();
+    if (holder && holder.account !== signedIn) return { ok: false, reason: "taken" };
+    if (holder) {
+      // The same address again: its password is the one just chosen.
+      await db.prepare("UPDATE identities SET label = ?1, password_hash = COALESCE(?2, password_hash) WHERE provider = ?3 AND subject = ?4")
+        .bind(label, password_hash, provider, subject).run();
       return { ok: true, outcome: "linked", account: signedIn };
     }
     const slot = await db.prepare("SELECT subject FROM identities WHERE account = ?1 AND provider = ?2")
@@ -154,27 +161,27 @@ export async function arrive(env, request, { provider, subject, label }, intent)
     if (slot) {
       // A REPLACEMENT IS AN UPDATE, not a delete and an insert: the slot is
       // never empty, so the last-slot trigger can never fire half way through.
-      await db.prepare("UPDATE identities SET subject = ?1, label = ?2, linked_at = ?3 WHERE account = ?4 AND provider = ?5")
-        .bind(subject, label, now(), signedIn, provider).run();
+      await db.prepare("UPDATE identities SET subject = ?1, label = ?2, linked_at = ?3, password_hash = ?4 WHERE account = ?5 AND provider = ?6")
+        .bind(subject, label, now(), password_hash, signedIn, provider).run();
       return { ok: true, outcome: "replaced", account: signedIn };
     }
-    await db.prepare("INSERT INTO identities (provider, subject, account, label, linked_at) VALUES (?1, ?2, ?3, ?4, ?5)")
-      .bind(provider, subject, signedIn, label, now()).run();
+    await db.prepare("INSERT INTO identities (provider, subject, account, label, linked_at, password_hash) VALUES (?1, ?2, ?3, ?4, ?5, ?6)")
+      .bind(provider, subject, signedIn, label, now(), password_hash).run();
     return { ok: true, outcome: "linked", account: signedIn };
   }
 
-  if (owner) {
+  if (holder) {
     await db.prepare("UPDATE identities SET label = ?1 WHERE provider = ?2 AND subject = ?3")
       .bind(label, provider, subject).run();
-    return { ok: true, outcome: "signed_in", account: owner.account, cookie: await newSession(env, owner.account) };
+    return { ok: true, outcome: "signed_in", account: holder.account, cookie: await newSession(env, holder.account) };
   }
   // A NEW ACCOUNT ARRIVES WITH ITS FIRST SLOT, in one batch: there is no moment
   // at which a UUID exists with nothing to reach it by.
   const account = crypto.randomUUID();
   await db.batch([
     db.prepare("INSERT INTO accounts (id, created_at) VALUES (?1, ?2)").bind(account, now()),
-    db.prepare("INSERT INTO identities (provider, subject, account, label, linked_at) VALUES (?1, ?2, ?3, ?4, ?5)")
-      .bind(provider, subject, account, label, now()),
+    db.prepare("INSERT INTO identities (provider, subject, account, label, linked_at, password_hash) VALUES (?1, ?2, ?3, ?4, ?5, ?6)")
+      .bind(provider, subject, account, label, now(), password_hash),
   ]);
   return { ok: true, outcome: "created", account, cookie: await newSession(env, account) };
 }
@@ -253,54 +260,191 @@ async function oauthCallback(request, env, provider) {
   return r.ok ? done(`auth=${r.outcome}`, r.cookie) : done(`auth_error=${r.reason}`);
 }
 
+// ---- passwords ------------------------------------------------------------------
+
+// PBKDF2-SHA256 AT 100,000 ROUNDS, the ceiling a Worker's WebCrypto allows —
+// below what is advised for PBKDF2 alone, so the password is first keyed with a
+// secret only the worker holds: a copy of the table without it cannot test a
+// single guess. The stored string names its scheme and rounds, so either can
+// move without breaking a stored hash.
+const PBKDF2_ROUNDS = 100000;
+
+async function stretch(env, password, salt, rounds) {
+  const keyed = await hmac(`${env.AUTH_SECRET}:password`, password);
+  const k = await crypto.subtle.importKey("raw", enc.encode(keyed), "PBKDF2", false, ["deriveBits"]);
+  return b64url(await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt, iterations: rounds }, k, 256));
+}
+
+async function hashPassword(env, password) {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  return `pbkdf2-sha256$${PBKDF2_ROUNDS}$${b64url(salt)}$${await stretch(env, password, salt, PBKDF2_ROUNDS)}`;
+}
+
+async function passwordMatches(env, password, stored) {
+  const [scheme, rounds, salt, hash] = String(stored || "").split("$");
+  if (scheme !== "pbkdf2-sha256" || !hash) return false;
+  const raw = Uint8Array.from(atob(salt.replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0));
+  const got = await stretch(env, password, raw, Number(rounds));
+  let diff = got.length ^ hash.length;
+  for (let i = 0; i < Math.min(got.length, hash.length); i++) diff |= got.charCodeAt(i) ^ hash.charCodeAt(i);
+  return diff === 0;
+}
+
+/// Eight to 128 characters, and nothing else asked of it.
+const passwordOf = (p) => (typeof p === "string" && p.length >= PASSWORD_MIN && p.length <= PASSWORD_MAX ? p : null);
+
 // ---- email: the first-party way in --------------------------------------------------
 
 const emailOf = (s) => {
   const e = String(s || "").trim().toLowerCase();
   return /^[^\s@]{1,64}@[^\s@]{1,253}\.[^\s@]{2,}$/.test(e) && e.length <= 254 ? e : null;
 };
+const emailSlot = (env, email) => env.ACCOUNTS.prepare(
+  "SELECT account, password_hash FROM identities WHERE provider = 'email' AND subject = ?1").bind(email).first();
 
-/// A SIX-DIGIT CODE, mailed. A code rather than a link, because it works on the
-/// device the reader is on whichever device reads the mail — the desktop app
-/// included. The table keeps its HMAC, not the code.
-async function emailStart(request, env, b) {
-  const email = emailOf(b.email);
-  if (!email) return no("bad_email");
+const CODE_SUBJECTS = { register: "is your WFSim code", link: "is your WFSim code", reset: "resets your WFSim password" };
+
+/// A SIX-DIGIT CODE, mailed, for one purpose. A code rather than a link, so it
+/// works on whichever device the reader is on. The table keeps the code's HMAC
+/// and, for a password chosen up front, that password's hash — neither in the
+/// clear.
+async function mailCode(env, email, purpose, { password_hash = null, account = null } = {}) {
   const prior = await env.ACCOUNTS.prepare("SELECT sent_at FROM email_codes WHERE email = ?1").bind(email).first();
   if (prior && Date.parse(prior.sent_at) > Date.now() - CODE_RESEND_SECONDS * 1000) return no("too_soon", 429);
   const code = String(crypto.getRandomValues(new Uint32Array(1))[0] % 1000000).padStart(6, "0");
   await env.ACCOUNTS.prepare(
-    `INSERT INTO email_codes (email, code_hash, expires_at, attempts, sent_at) VALUES (?1, ?2, ?3, 0, ?4)
-     ON CONFLICT (email) DO UPDATE SET code_hash = ?2, expires_at = ?3, attempts = 0, sent_at = ?4`,
-  ).bind(email, await hmac(env.AUTH_SECRET, `${email}:${code}`), later(CODE_SECONDS), now()).run();
+    `INSERT INTO email_codes (email, code_hash, expires_at, attempts, sent_at, purpose, password_hash, account)
+     VALUES (?1, ?2, ?3, 0, ?4, ?5, ?6, ?7)
+     ON CONFLICT (email) DO UPDATE SET code_hash = ?2, expires_at = ?3, attempts = 0, sent_at = ?4,
+       purpose = ?5, password_hash = ?6, account = ?7`,
+  ).bind(email, await hmac(env.AUTH_SECRET, `${email}:${code}`), later(CODE_SECONDS), now(), purpose,
+    password_hash, account).run();
   try {
     await env.EMAIL.send({
       to: email,
       from: EMAIL_FROM,
-      subject: `${code} is your WFSim code`,
+      subject: `${code} ${CODE_SUBJECTS[purpose]}`,
       text: `Your WFSim code is ${code}\n\nIt works for 10 minutes. If you did not ask for it, ignore this mail.\n\n你的 WFSim 验证码是 ${code}，10 分钟内有效。如果不是你本人操作，请忽略本邮件。\n`,
     });
   } catch (_) {
     return no("send_failed", 502);
   }
-  return json({ ok: true });
+  return json({ ok: true, sent: true });
 }
 
+/// REGISTER: an address nobody holds, and a password for it. Nothing is
+/// created until the code comes back.
+async function emailRegister(env, b) {
+  const email = emailOf(b.email);
+  if (!email) return no("bad_email");
+  const password = passwordOf(b.password);
+  if (!password) return no("bad_password");
+  if (await emailSlot(env, email)) return no("email_taken", 409);
+  return mailCode(env, email, "register", { password_hash: await hashPassword(env, password) });
+}
+
+/// LINK: the signed-in account's email slot, filled or replaced once the
+/// address proves itself. The password travels with the address.
+async function emailLink(env, account, b) {
+  const email = emailOf(b.email);
+  if (!email) return no("bad_email");
+  const password = passwordOf(b.password);
+  if (!password) return no("bad_password");
+  const held = await emailSlot(env, email);
+  if (held && held.account !== account) return no("taken", 409);
+  return mailCode(env, email, "link", { password_hash: await hashPassword(env, password), account });
+}
+
+/// RESET: a code to whoever holds the address, answered the same whether or
+/// not anyone does, so the form tells nobody who has an account.
+async function emailReset(env, b) {
+  const email = emailOf(b.email);
+  if (!email) return no("bad_email");
+  if (!(await emailSlot(env, email))) return json({ ok: true, sent: true });
+  return mailCode(env, email, "reset");
+}
+
+/// THE CODE COMES BACK, and completes what it was mailed for.
 async function emailVerify(request, env, b) {
   const email = emailOf(b.email);
   const code = String(b.code || "").trim();
   if (!email || !/^\d{6}$/.test(code)) return no("bad_code");
   const db = env.ACCOUNTS;
-  const row = await db.prepare("SELECT code_hash, expires_at, attempts FROM email_codes WHERE email = ?1").bind(email).first();
+  const row = await db.prepare(
+    "SELECT code_hash, expires_at, attempts, purpose, password_hash, account FROM email_codes WHERE email = ?1",
+  ).bind(email).first();
   if (!row || Date.parse(row.expires_at) < Date.now()) return no("expired");
   if (row.attempts >= CODE_ATTEMPTS) return no("too_many_attempts", 429);
   if (row.code_hash !== await hmac(env.AUTH_SECRET, `${email}:${code}`)) {
     await db.prepare("UPDATE email_codes SET attempts = attempts + 1 WHERE email = ?1").bind(email).run();
     return no("wrong_code");
   }
+  if (row.purpose === "reset") {
+    const password = passwordOf(b.password);
+    if (!password) return no("bad_password");
+    const slot = await emailSlot(env, email);
+    await db.prepare("DELETE FROM email_codes WHERE email = ?1").bind(email).run();
+    if (!slot) return no("expired");
+    // A NEW PASSWORD ENDS EVERY OTHER SIGN-IN: whoever knew the old one is out.
+    await db.batch([
+      db.prepare("UPDATE identities SET password_hash = ?1 WHERE provider = 'email' AND subject = ?2")
+        .bind(await hashPassword(env, password), email),
+      db.prepare("DELETE FROM sessions WHERE account = ?1").bind(slot.account),
+      db.prepare("DELETE FROM login_failures WHERE email = ?1").bind(email),
+    ]);
+    return json({ ok: true, outcome: "password_reset" }, 200, { "set-cookie": await newSession(env, slot.account) });
+  }
+  if (row.purpose === "link" && row.account !== await sessionAccount(env, request)) return no("not_signed_in", 401);
   await db.prepare("DELETE FROM email_codes WHERE email = ?1").bind(email).run();
-  const r = await arrive(env, request, { provider: "email", subject: email, label: email }, b.intent === "link" ? "link" : "login");
+  const r = await arrive(env, request, { provider: "email", subject: email, label: email, password_hash: row.password_hash },
+    row.purpose === "link" ? "link" : "login");
   return r.ok ? json({ ok: true, outcome: r.outcome }, 200, r.cookie ? { "set-cookie": r.cookie } : {}) : no(r.reason, 409);
+}
+
+/// SIGNING IN WITH A PASSWORD sends no mail. A wrong address and a wrong
+/// password read the same, and too many wrong ones close the address to
+/// passwords for the rest of the window.
+async function emailLogin(env, b) {
+  const email = emailOf(b.email);
+  const password = typeof b.password === "string" ? b.password : "";
+  if (!email || !password) return no("wrong_credentials", 401);
+  const db = env.ACCOUNTS;
+  const f = await db.prepare("SELECT failures, first_at FROM login_failures WHERE email = ?1").bind(email).first();
+  const lapsed = !f || Date.parse(f.first_at) < Date.now() - LOGIN_WINDOW_SECONDS * 1000;
+  if (!lapsed && f.failures >= LOGIN_FAILURES) return no("locked", 429);
+  const slot = await emailSlot(env, email);
+  if (slot && slot.password_hash && await passwordMatches(env, password, slot.password_hash)) {
+    await db.prepare("DELETE FROM login_failures WHERE email = ?1").bind(email).run();
+    return json({ ok: true, outcome: "signed_in" }, 200, { "set-cookie": await newSession(env, slot.account) });
+  }
+  await db.prepare(
+    `INSERT INTO login_failures (email, failures, first_at) VALUES (?1, 1, ?2)
+     ON CONFLICT (email) DO UPDATE SET failures = CASE WHEN ?3 THEN 1 ELSE failures + 1 END,
+       first_at = CASE WHEN ?3 THEN ?2 ELSE first_at END`,
+  ).bind(email, now(), lapsed ? 1 : 0).run();
+  return no("wrong_credentials", 401);
+}
+
+/// A NEW PASSWORD FOR THE SIGNED-IN ACCOUNT'S EMAIL SLOT. The old one is asked
+/// for where there is one; an address linked before passwords has none to ask.
+/// Every other sign-in ends.
+async function passwordChange(request, env, account, b) {
+  const db = env.ACCOUNTS;
+  const slot = await db.prepare("SELECT password_hash FROM identities WHERE account = ?1 AND provider = 'email'")
+    .bind(account).first();
+  if (!slot) return no("not_linked");
+  const password = passwordOf(b.password);
+  if (!password) return no("bad_password");
+  if (slot.password_hash && !(await passwordMatches(env, String(b.current || ""), slot.password_hash))) {
+    return no("wrong_password", 403);
+  }
+  const token = cookies(request)[SESSION_COOKIE] || "";
+  await db.batch([
+    db.prepare("UPDATE identities SET password_hash = ?1 WHERE account = ?2 AND provider = 'email'")
+      .bind(await hashPassword(env, password), account),
+    db.prepare("DELETE FROM sessions WHERE account = ?1 AND token_hash != ?2").bind(account, await sha256(token)),
+  ]);
+  return json({ ok: true, outcome: "password_changed" });
 }
 
 // ---- the account itself -------------------------------------------------------------
@@ -309,10 +453,11 @@ async function accountView(env, account) {
   const a = await env.ACCOUNTS.prepare("SELECT id, created_at FROM accounts WHERE id = ?1").bind(account).first();
   if (!a) return null;
   const { results } = await env.ACCOUNTS.prepare(
-    "SELECT provider, label, linked_at FROM identities WHERE account = ?1",
+    "SELECT provider, label, linked_at, password_hash IS NOT NULL AS has_password FROM identities WHERE account = ?1",
   ).bind(account).all();
   return { id: a.id, created_at: a.created_at,
-    identities: SLOTS.map((s) => results.find((r) => r.provider === s)).filter(Boolean) };
+    identities: SLOTS.map((s) => results.find((r) => r.provider === s)).filter(Boolean)
+      .map(({ has_password, ...r }) => (r.provider === "email" ? { ...r, has_password: !!has_password } : r)) };
 }
 
 /// EMPTYING A SLOT. The last one is the account itself, so it is refused
@@ -347,8 +492,9 @@ export async function accountRoute(request, env, path) {
     const account = await sessionAccount(env, request);
     return json({ ok: true, account: account ? await accountView(env, account) : null, providers });
   }
-  const post = ["/api/auth/email/start", "/api/auth/email/verify", "/api/auth/logout",
-    "/api/account/unlink", "/api/account/delete", "/api/account/export"];
+  const post = ["/api/auth/email/register", "/api/auth/email/verify", "/api/auth/email/login",
+    "/api/auth/email/reset", "/api/auth/email/link", "/api/auth/logout",
+    "/api/account/password", "/api/account/unlink", "/api/account/delete", "/api/account/export"];
   if (!post.includes(path)) return null;
   if (request.method !== "POST") return no("method", 405);
   if (!sameSite(request)) return no("cross_site", 403);
@@ -356,10 +502,16 @@ export async function accountRoute(request, env, path) {
   let b = {};
   try { b = JSON.parse((await request.text()) || "{}"); } catch (_) { return no("not_json"); }
 
-  if (path === "/api/auth/email/start" || path === "/api/auth/email/verify") {
+  if (path.startsWith("/api/auth/email/")) {
     if (!env.EMAIL) return no("unavailable", 503);
     if (await limited(env, request)) return no("rate_limited", 429);
-    return path.endsWith("/start") ? emailStart(request, env, b) : emailVerify(request, env, b);
+    if (path === "/api/auth/email/register") return emailRegister(env, b);
+    if (path === "/api/auth/email/verify") return emailVerify(request, env, b);
+    if (path === "/api/auth/email/login") return emailLogin(env, b);
+    if (path === "/api/auth/email/reset") return emailReset(env, b);
+    const signedIn = await sessionAccount(env, request);
+    if (!signedIn) return no("not_signed_in", 401);
+    return emailLink(env, signedIn, b);
   }
   if (path === "/api/auth/logout") {
     const token = cookies(request)[SESSION_COOKIE];
@@ -369,6 +521,7 @@ export async function accountRoute(request, env, path) {
   const account = await sessionAccount(env, request);
   if (!account) return no("not_signed_in", 401);
   if (path === "/api/account/unlink") return unlink(request, env, account, b);
+  if (path === "/api/account/password") return passwordChange(request, env, account, b);
   if (path === "/api/account/delete") {
     await env.ACCOUNTS.prepare("DELETE FROM accounts WHERE id = ?1").bind(account).run();
     return json({ ok: true, deleted: true }, 200, { "set-cookie": endSession() });

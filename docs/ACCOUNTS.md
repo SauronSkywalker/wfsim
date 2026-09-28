@@ -8,7 +8,14 @@ anything paid.
 ## The model
 
 **AN ACCOUNT IS A UUID, reached through four SLOTS**: Google, Discord, GitHub,
-and an email address — the first-party way in. At most one of each.
+and an email address with a password — the first-party way in. At most one of
+each. So there are two ways to sign in: a third party in one click, or an
+address and its password.
+
+**MAIL GOES OUT ONLY TO PROVE AN ADDRESS** — to register one, to link one, to
+reset its password. Signing in with a password sends nothing. No account exists
+until a registration's code comes back, so an address nobody proved never
+becomes an account.
 
 | rule | where it is held |
 | --- | --- |
@@ -51,8 +58,12 @@ whose secrets are not set draw no account control at all. Its links carry
 | --- | --- |
 | `GET /api/auth/<google\|discord\|github>/start?intent=login\|link&return=/path` | the OAuth round trip, PKCE and a signed state cookie |
 | `GET /api/auth/<provider>/callback` | back to `return` with `auth=<outcome>` or `auth_error=<reason>` |
-| `POST /api/auth/email/start` `{email}` | mails a six-digit code, one per minute per address |
-| `POST /api/auth/email/verify` `{email, code, intent}` | five tries, ten minutes |
+| `POST /api/auth/email/register` `{email, password}` | mails a code; `email_taken` if the address has an account |
+| `POST /api/auth/email/link` `{email, password}` | signed in: mails a code to fill or replace the email slot |
+| `POST /api/auth/email/reset` `{email}` | mails a code if the address has an account, and answers the same if not |
+| `POST /api/auth/email/verify` `{email, code, password?}` | completes what the code was mailed for; five tries, ten minutes |
+| `POST /api/auth/email/login` `{email, password}` | no mail; `wrong_credentials` alike for a wrong address or password, `locked` after five in fifteen minutes |
+| `POST /api/account/password` `{current?, password}` | signed in: `current` where the slot has a password |
 | `GET /api/account` | the account and its slots, and which ways in are configured |
 | `POST /api/account/unlink` `{provider, delete_account?}` | empties a slot |
 | `POST /api/account/delete`, `/api/account/export`, `/api/auth/logout` | as named |
@@ -69,7 +80,12 @@ change that page in the commit that changes what is kept.
 - A slot keeps the provider's id, a label shown to its owner (an address or a
   name) and when it was linked. Nothing else from a provider; the access token
   is read once for the id and dropped.
-- No IP address is written. The login-code rate limit keys on it in memory.
+- A password is at least 8 characters and nothing more is asked of it. It is
+  kept as PBKDF2-SHA256 at 100,000 rounds — a Worker's ceiling — over an HMAC
+  keyed with `AUTH_SECRET`, so a copy of the table alone cannot test a guess.
+  A reset or a change signs every other browser out.
+- No IP address is written. The rate limit on the email endpoints keys on it in
+  memory.
 - An email address never travels in a URL and is never logged. The mail
   service's own delivery log holds the recipient for up to 30 days; its message
   preview stays off, so no code is retained there.

@@ -1822,6 +1822,9 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
 .acc-l{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
 .acc-a{display:flex;gap:4px}
 .acc-row{display:flex;flex-wrap:wrap;gap:6px}
+.acc-or{font-size:12px;color:var(--text-2);text-align:center}
+.acc-link{background:none;border:0;padding:0;color:var(--accent);font:inherit;font-size:12px;cursor:pointer}
+.acc-form input{flex:1 1 100%}
 .acc-confirm{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;
   padding:8px;border:1px solid var(--critical);border-radius:6px}
 .tbmore{position:relative}
