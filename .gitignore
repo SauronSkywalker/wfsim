@@ -25,6 +25,7 @@ web/cache/
 .idea/
 .vscode/
 .claude/
+/.handoff.md
 *.swp
 .DS_Store
 Thumbs.db

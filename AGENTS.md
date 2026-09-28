@@ -64,6 +64,9 @@ Read the row for what you are about to touch before the code, not after.
   nothing in `engine/`. The updater lives in `app.js`, not in the shell.
 - `data/` — versioned game data; `data/README.md` is the reference graph.
 - `tests/golden/` — golden tests calibrated against in-game measurements.
+- `.handoff.md` — ignored shared work state. Read it first when present; keep
+  its objective, decisions, files, checks, blockers, and next step current
+  during work, then reset it to `idle` only after completion.
 - `private/` — **gitignored, and `git add -A` silently skips it.** Never report
   a change under it as shipped, and never let something the repo needs live only
   there.
@@ -211,10 +214,6 @@ RATCHET — lower it when a pass removes some, never raise it to make a red run
 green — and it is set CLOSE to the current size on purpose: a ratchet with
 slack in it does not bite, so adding a tripwire should cost removing one or
 moving something out.
-
-The budget exists because this file is injected into every session BEFORE the
-agent knows its task. Length here is not a token cost, it is an ATTENTION cost:
-every rule that does not apply today competes with the ones that do.
 
 **The test for a sentence is not "is it true".** It is:
 
