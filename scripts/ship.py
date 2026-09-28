@@ -95,7 +95,9 @@ def verify_mcp() -> int:
     want = re.search(r'ENGINE_DIGEST = "(\w+)"', MCP_ENGINE.read_text(encoding="utf-8")).group(1)
     body = json.dumps({"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {
         "protocolVersion": "2025-06-18", "capabilities": {}, "clientInfo": {"name": "ship", "version": "0"}}})
-    req = urllib.request.Request(MCP, data=body.encode(), headers={"content-type": "application/json"})
+    # A UA OF ITS OWN: the zone's browser integrity check refuses urllib's.
+    req = urllib.request.Request(MCP, data=body.encode(),
+                                 headers={"content-type": "application/json", "user-agent": "wfsim-ship"})
     try:
         with urllib.request.urlopen(req, timeout=60) as r:
             got = json.loads(r.read())["result"]["serverInfo"]["version"]
