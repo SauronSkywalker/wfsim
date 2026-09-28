@@ -82,6 +82,9 @@
   ],
   // HOW OFTEN ONE ADDRESS MAY ASK FOR A LOGIN CODE — the mail costs money and
   // lands in somebody's inbox. Keyed by the caller's IP, which is not stored.
+  // THE LOGIN CODE'S MAIL, through Cloudflare Email Service from the onboarded
+  // `wfsim.app` (docs/ACCOUNTS.md §Setup). Absent, email is not offered.
+  "send_email": [{ "name": "EMAIL" }],
   "ratelimits": [
     { "name": "AUTH_LIMIT", "namespace_id": "1001", "simple": { "limit": 10, "period": 60 } }
   ],
