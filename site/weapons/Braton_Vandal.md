@@ -10,9 +10,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 26.8924 | Primed Cryo Rounds, Malignant Force, Primary Acuity, Galvanized Aptitude, Galvanized Scope, Vile Acceleration, Vital Sense, Magnetic Capacity, Primary Deadhead |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 28.8811 | Primed Cryo Rounds, Malignant Force, Primary Acuity, Galvanized Aptitude, Galvanized Scope, Vile Acceleration, Vital Sense, Magnetic Capacity, Primary Deadhead |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 2.3477 | Primed Cryo Rounds, Infected Clip, Thermite Rounds, Primary Acuity, Galvanized Aptitude, Galvanized Scope, Vile Acceleration, Vital Sense, Primary Deadhead |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 29.8007 | Primed Cryo Rounds, Malignant Force, Primary Acuity, Galvanized Aptitude, Hammer Shot, Vile Acceleration, Vital Sense, Magnetic Capacity, Vigilante Supplies, Primary Deadhead |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 98.8696 | Primed Cryo Rounds, Malignant Force, Primary Acuity, Primed Shred, Galvanized Aptitude, Vile Acceleration, Vital Sense, Magnetic Capacity, Vigilante Supplies, Primary Deadhead |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 4.3463 | Primed Cryo Rounds, Malignant Force, Hellfire, Primary Acuity, Galvanized Aptitude, Hammer Shot, Vile Acceleration, Vital Sense, Vigilante Supplies, Primary Deadhead |
 
 ## In WFSim
 
