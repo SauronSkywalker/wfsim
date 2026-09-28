@@ -5,6 +5,37 @@
 
 use super::*;
 
+// THE WIELDER'S ARCANES, as the Tenno carries them: named by `data::tenno`
+// below the builder and the cast plan above it, so they live under both.
+/// **THE WIELDER'S ARCANES THAT MOVE A CAST** — whose number depends on what the
+/// frame did before it, so only the fight can spend them.
+#[derive(Debug, Clone, Default, PartialEq, serde::Deserialize, serde::Serialize)]
+pub struct CastArcanes {
+    /// Molt Vigor: added to the next Warframe cast after an Operator ability.
+    #[serde(default)]
+    pub after_operator_ability: f64,
+    /// Arcane Power Ramp: `(strength per stack, max stacks)`.
+    #[serde(default)]
+    pub per_cast_stack: Option<(f64, u32)>,
+    /// Molt Augmented: `(strength per stack, max stacks, stacks it opens with)`.
+    /// The opening stacks are already in the frame's own strength; a kill in
+    /// the fight adds one more, "Kills from all sources" (W`Molt_Augmented`).
+    #[serde(default)]
+    pub per_kill: Option<(f64, u32, u32)>,
+}
+
+impl CastArcanes {
+    /// A frame with none of them.
+    pub const NONE: CastArcanes = CastArcanes { after_operator_ability: 0.0, per_cast_stack: None, per_kill: None };
+}
+
+/// A buff the wielder's arcane arms on a weapon of `slot`, at its rank.
+#[derive(Debug, Clone, PartialEq)]
+pub struct WielderBuff {
+    pub slot: String,
+    pub buff: StackingBuff,
+}
+
 /// One rank-parameterized arcane effect (the loader's vocabulary — every
 /// structured kind in data/arcanes; kinds with no single-target sim payload
 /// load as `Inert` so the arcane still resolves).

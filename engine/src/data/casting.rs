@@ -20,6 +20,7 @@ use std::sync::{Arc, Mutex};
 use crate::data::abilities::{self, AbilityPick, ActiveAbility, Caster, CAST_SECONDS_UNMEASURED};
 use crate::data::apl::{Action, Apl, When};
 use crate::data::warframes::{focus_school, FrameEffect, FrameStat, NodeTrigger};
+use crate::model::CastArcanes;
 
 /// **HOW LONG AN OPERATOR TRIP TAKES**: Transference out and back, 1 s (M105),
 /// plus a Chained Sling and the school's ability where the trip has them, which
@@ -28,28 +29,6 @@ use crate::data::warframes::{focus_school, FrameEffect, FrameStat, NodeTrigger};
 pub const TRANSFERENCE_SECONDS: f64 = 1.0;
 pub const CHAINED_SLING_SECONDS_UNMEASURED: f64 = 1.0;
 pub const OPERATOR_ABILITY_SECONDS_UNMEASURED: f64 = 1.0;
-
-/// **THE WIELDER'S ARCANES THAT MOVE A CAST** — whose number depends on what the
-/// frame did before it, so only the fight can spend them.
-#[derive(Debug, Clone, Default, PartialEq, serde::Deserialize, serde::Serialize)]
-pub struct CastArcanes {
-    /// Molt Vigor: added to the next Warframe cast after an Operator ability.
-    #[serde(default)]
-    pub after_operator_ability: f64,
-    /// Arcane Power Ramp: `(strength per stack, max stacks)`.
-    #[serde(default)]
-    pub per_cast_stack: Option<(f64, u32)>,
-    /// Molt Augmented: `(strength per stack, max stacks, stacks it opens with)`.
-    /// The opening stacks are already in the frame's own strength; a kill in
-    /// the fight adds one more, "Kills from all sources" (W`Molt_Augmented`).
-    #[serde(default)]
-    pub per_kill: Option<(f64, u32, u32)>,
-}
-
-impl CastArcanes {
-    /// A frame with none of them.
-    pub const NONE: CastArcanes = CastArcanes { after_operator_ability: 0.0, per_cast_stack: None, per_kill: None };
-}
 
 /// A stretch of time Ability Strength is raised, and what raised it.
 #[derive(Debug, Clone, PartialEq)]

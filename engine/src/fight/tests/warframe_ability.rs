@@ -792,7 +792,7 @@ fn eternal_war_extends_warcry_while_melee_kills_land() {
         // whenever a window can grow, casting or not.
         let spec = crate::data::casting::spec(
             &crate::data::apl::Apl::default(), &caster, &picks, &assumed, "", None, "", "melee",
-            &crate::data::casting::CastArcanes::NONE,
+            &crate::model::CastArcanes::NONE,
         );
         p.abilities = spec.opening();
         p.frame = spec.needed().then(|| std::sync::Arc::new(spec));
@@ -832,7 +832,7 @@ fn casting_costs_shots_an_assumed_buff_does_not() {
         let rules = if cast { vec![Rule { action: Action::Cast { ability: "warcry".into() }, when: When::Always }] } else { vec![] };
         let spec = crate::data::casting::spec(
             &Apl(rules), &Caster::default(), &picks, &assumed, "", None, "", "melee",
-            &crate::data::casting::CastArcanes::NONE,
+            &crate::model::CastArcanes::NONE,
         );
         p.abilities = spec.opening();
         p.frame = spec.needed().then(|| std::sync::Arc::new(spec));

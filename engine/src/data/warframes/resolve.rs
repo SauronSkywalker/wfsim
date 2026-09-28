@@ -225,10 +225,10 @@ pub struct Resolved {
     /// ability's augment is on the frame casting it.
     pub augments: Vec<&'static str>,
     /// The arcanes that move a CAST's strength, which only the fight can spend.
-    pub cast_arcanes: crate::data::casting::CastArcanes,
+    pub cast_arcanes: crate::model::CastArcanes,
     /// The arcanes that arm a buff on a WEAPON (Arcane Fury), which only that
     /// weapon's fight can run.
-    pub weapon_buffs: Vec<WielderBuff>,
+    pub weapon_buffs: Vec<crate::model::WielderBuff>,
 }
 
 pub(super) fn by_rank(ladder: &[f64], rank: u32) -> f64 {
@@ -391,8 +391,8 @@ pub fn resolve(b: &Build) -> Result<Resolved, String> {
     let mut arcane_ids: Vec<&str> = Vec::new();
     // `(from, per, increase, cap)`, spent once Max Health is known.
     let mut per_health: Vec<(String, f64, f64, f64)> = Vec::new();
-    let mut cast_arcanes = crate::data::casting::CastArcanes::default();
-    let mut weapon_buffs: Vec<WielderBuff> = Vec::new();
+    let mut cast_arcanes = crate::model::CastArcanes::default();
+    let mut weapon_buffs: Vec<crate::model::WielderBuff> = Vec::new();
     for p in b.arcanes.iter().take(2) {
         let Some(a) = arcane_by_id(&p.id) else {
             refused.push(format!("unknown arcane: {}", p.id));
@@ -444,7 +444,7 @@ pub fn resolve(b: &Build) -> Result<Resolved, String> {
                     });
                 }
                 FrameEffect::Arcane(ArcaneRule::WeaponBuff { slot, trigger, grant, chance, duration, per_stack }) => {
-                    weapon_buffs.push(WielderBuff {
+                    weapon_buffs.push(crate::model::WielderBuff {
                         slot: slot.clone(),
                         buff: crate::model::StackingBuff {
                             id: a.id.as_str(),

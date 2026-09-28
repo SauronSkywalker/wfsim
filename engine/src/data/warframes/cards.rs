@@ -47,13 +47,6 @@ pub enum ArcaneRule {
     },
 }
 
-/// A buff the wielder's arcane arms on a weapon of `slot`, at its rank.
-#[derive(Debug, Clone, PartialEq)]
-pub struct WielderBuff {
-    pub slot: String,
-    pub buff: crate::model::StackingBuff,
-}
-
 #[derive(Debug, Default, Deserialize)]
 pub(super) struct SourceFile {
     #[serde(default)]

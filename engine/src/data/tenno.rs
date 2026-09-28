@@ -108,10 +108,10 @@ pub struct Tenno {
     pub summon_strength: Option<f64>,
     /// The wielder's arcanes that move a cast's strength (`data::casting`).
     #[serde(default)]
-    pub cast_arcanes: crate::data::casting::CastArcanes,
+    pub cast_arcanes: crate::model::CastArcanes,
     /// …and the ones that arm a buff on a weapon of their slot (Arcane Fury).
     #[serde(skip)]
-    pub weapon_buffs: Vec<crate::data::warframes::WielderBuff>,
+    pub weapon_buffs: Vec<crate::model::WielderBuff>,
 }
 
 fn full_strength() -> f64 {
