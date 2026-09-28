@@ -1584,6 +1584,38 @@ def ship_agent_files(by_slot: dict) -> None:
     put(APP / "llms.txt", f"# WFSim\n\n> {agent_summary()}\n\n## Start here\n\n{links}"
         f"\n## Weapons\n\n" + "".join(entry(s) for s in roster()))
 
+    # AUTH.MD STATES THAT THERE IS NONE, which is the truth an agent needs: a
+    # caller looking for a registration endpoint or a key stops looking here.
+    put(APP / "auth.md", f"""# WFSim auth.md
+
+WFSim needs no registration and issues no credentials. Every surface an agent
+can use is public, anonymous and read-only.
+
+## Agent audience
+
+Any agent answering a Warframe player about a weapon, its build or its measured
+numbers.
+
+## Where to call
+
+- MCP server: {MCP_URL} (Streamable HTTP). Send no `Authorization` header.
+- Any page as markdown: {SITE}/weapons/<Wiki_Name> with `Accept: text/markdown`,
+  or the same address with `.md` appended.
+- The published board: {SITE}/board/<weapon_id>.json
+
+## Registration
+
+None. There is no registration endpoint, no API key and no OAuth server.
+
+## Credentials
+
+None. A request carrying credentials is answered exactly as one without.
+
+## Limits
+
+The site's edge refuses the `Python-urllib` default user agent; send any other.
+""")
+
     wk = APP / ".well-known"
     skill = skill_md()
     put(wk / "agent-skills" / SKILL_NAME / "SKILL.md", skill)

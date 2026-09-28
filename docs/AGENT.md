@@ -296,6 +296,7 @@ serves it:
 | `/.well-known/agent-skills/index.json` | one skill: look a weapon up, read the board, quote a score |
 | `/.well-known/api-catalog` | RFC 9727: the MCP server and the board JSON, the two public read APIs |
 | `/.well-known/mcp/server-card.json` | the MCP server: its endpoint and its tools, from the headless table |
+| `/auth.md` | that there is no registration and no credential: every surface is public |
 | `/robots.txt` | each AI crawler named, `Content-Signal` granting search, ai-input, ai-train |
 
 A page with a twin (`markdownTwin` in `worker/index.js`) answers
@@ -306,7 +307,8 @@ unknown `/.well-known/` path is a 404, never the SPA.
 
 This is what Cloudflare's agent-readiness scan grades (`isitagentready.com`,
 `POST /api/scan`). Level 4 is what the site states truthfully: level 5 needs two
-of a Web Bot Auth key for bots it does not run, auth metadata for an API that
-has none, and every integration including an A2A agent it does not have. A
+of a Web Bot Auth key for bots it does not run, every integration including an
+A2A agent it does not have, and auth metadata — which `/auth.md` answers
+truthfully by stating there is no auth, and is one of the two at most. A
 twin states only what the page does, so a fact reaches it through the same
 function that writes the html, never a second one.
