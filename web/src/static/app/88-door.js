@@ -120,40 +120,9 @@ const agentNear = (id) => {
   return (ids.filter((x) => x.startsWith(head + ".")).length ? ids.filter((x) => x.startsWith(head + ".")) : ids).slice(0, 5);
 };
 
-const AGENT_KINDS = {
-  string: (v) => typeof v === "string" && !!v,
-  number: (v) => typeof v === "number" && Number.isFinite(v),
-  object: (v) => !!v && typeof v === "object" && !Array.isArray(v),
-  array: (v) => Array.isArray(v),
-  boolean: (v) => typeof v === "boolean",
-  scalar: (v) => typeof v === "boolean" || (typeof v === "number" && Number.isFinite(v)),
-  any: (v) => v !== undefined,
-  seat: (v) => agentSeat(v) >= 0,
-};
+const AGENT_KINDS = { ...HEADLESS_KINDS, seat: (v) => agentSeat(v) >= 0 };
 
-function agentCheckArgs(a, args) {
-  for (const [k, spec] of Object.entries(a.args || {})) {
-    const has = k in args && !(args[k] === null && !spec.nullable);
-    if (!has) {
-      if (spec.required) return agentNo("missing_argument", { argument: k, wants: spec.kind });
-      continue;
-    }
-    if (args[k] === null && spec.nullable) continue;
-    if (!AGENT_KINDS[spec.kind](args[k])) {
-      return agentNo("bad_argument", { argument: k, wants: spec.kind, got: args[k] });
-    }
-    if (spec.enum && !spec.enum().includes(args[k])) {
-      return agentNo("bad_argument", { argument: k, alternatives: spec.enum().slice(0, 8) });
-    }
-    if (spec.kind === "number" && (args[k] < spec.min || args[k] > spec.max)) {
-      return agentNo("out_of_range", { argument: k, min: spec.min, max: spec.max });
-    }
-  }
-  for (const k of Object.keys(args)) {
-    if (!(a.args || {})[k]) return agentNo("unknown_argument", { argument: k, wants: Object.keys(a.args || {}) });
-  }
-  return null;
-}
+const agentCheckArgs = (a, args) => headlessCheckArgs(a, args, AGENT_KINDS);
 
 /// WHAT CHANGED, so the caller never needs a screenshot to find out. The diff
 /// is over the observation's own sections, which is the same granularity the
@@ -223,21 +192,7 @@ const agentSkills = () => Object.entries(AGENT_SKILLS).map(([id, what]) => ({
 const agentTools = () => AGENT_ACTIONS.filter((a) => !a.hand).map((a) => ({
   name: a.id,
   description: a.what,
-  input_schema: {
-    type: "object",
-    properties: Object.fromEntries(Object.entries(a.args || {}).map(([k, s]) => [k, {
-      // A NULLABLE argument says so in its type, or a model that follows the
-      // schema can never send the null that empties a slot.
-      // AN "any" ARGUMENT HAS NO TYPE in the schema; the action checks it.
-      ...(s.kind === "any" ? {} : { type: ((ts) => (ts.length === 1 ? ts[0] : ts))(
-        [].concat(s.kind === "seat" ? ["string", "integer"] : s.kind === "scalar" ? ["boolean", "number"] : s.kind,
-          s.nullable ? ["null"] : [])) }),
-      description: s.what,
-      ...(s.kind === "array" ? { items: { type: "object" } } : {}),
-      ...(s.enum ? { enum: s.enum() } : {}),
-    }])),
-    required: Object.entries(a.args || {}).filter(([, s]) => s.required).map(([k]) => k),
-  },
+  input_schema: headlessSchema(a.args),
 }));
 
 const agentWeaponIds = () => (META.weapons || []).map((w) => w.id);
@@ -272,7 +227,6 @@ const HEADLESS_PAGE_HOST = {
   },
   api: (path, body) => api(path, body),
   tr: (s) => tr(s),
-  weapon_path: (id) => weaponPath(id),
   origin: LIVE_ORIGIN,
   screen_weapon: () => (weaponInfo($("weapon").value) || {}).id || null,
   screen_build: () => (weaponInfo($("weapon").value) ? buildPayload() : null),

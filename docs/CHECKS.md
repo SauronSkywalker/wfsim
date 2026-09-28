@@ -56,6 +56,14 @@ stop when asked. Every query must leave the observation byte-identical, and
 the stats read must name the mod behind a change. Then the refusals, each of which must come back as
 `ok:false` with a reason rather than as an exception.
 
+## `check_mcp_tools`
+
+The MCP server's queries, run with no page: `mcp/headless.js` against the
+engine `mcp/engine.js` bundles, with a host like the worker's — the board off
+`site/board/`, English, no screen. A weapon found by its Chinese name, a board
+read for a weapon nobody opened, a row's `build` reading the stats panel, and
+the refusals for a missing build and a mistyped weapon. No browser.
+
 ## `check_nona`
 
 Nona against a local stand-in provider speaking both protocols, streamed in

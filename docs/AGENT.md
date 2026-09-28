@@ -232,7 +232,7 @@ that keeps its own copy is the one that answers with last month's numbers.
 | `webapi` | the engine work a query asks for, as a route | the engine changes |
 | page door | the actions, and each query's call with the build on screen | a control is added (`check_agent_coverage`) |
 | Nona | her persona, conversation and memory; tools from `tools()` | never for a new query |
-| `/mcp` in `worker/index.js` | the MCP protocol over the table | the protocol changes |
+| `mcp/index.js` | the MCP server at `mcp.wfsim.app/mcp`, a worker of its own | the protocol changes |
 | Discord / QQ | how a result reads as a chat message | never for a new query |
 | skill, `llms.txt`, api catalog | written from the table by `build_site_app.py` | never by hand |
 
@@ -255,14 +255,29 @@ The rules the table keeps:
   other side"); what it wants from a build it cannot see is a link to the page.
 - **A PUBLISHED NAME IS WIRE.** A query's id and its arguments, once served, join
   `naming::FROZEN`: an agent that learned a tool keeps calling it by that name.
-- **THE TWO HALVES AGREE.** A check runs each headless query from the door
-  with the build on screen and from the table with that build as an argument,
-  and fails on any difference; another fails a query marked headless that the
-  table does not hold.
+- **THE TWO HALVES AGREE.** `check_agent_door` reads a board row's panel from
+  the row opened on screen and from its `build` sent as an argument, and fails
+  on any difference; `check_mcp_tools` runs every query in the worker's copy
+  with no page at all.
 
-Order of work: the table and its first queries with the door moved onto them;
-then `/mcp` with a server card, once a fight's CPU cost in a worker is measured;
-then the bots; auth only with accounts.
+## The MCP server
+
+`mcp/` is a worker of its own at `https://mcp.wfsim.app/mcp`: Streamable HTTP,
+no sessions, no sign-in, the headless table's queries as read-only tools. It
+bundles the engine rather than sharing the site's worker, because a site worker
+carrying six megabytes of wasm would start every page load colder.
+
+- `mcp/headless.js` is `87-headless.js`, copied by `gen_worker_parts.mjs`.
+- `mcp/engine.js` is written by `build_site_app.py`: the page's bindgen glue as
+  a module, importing the wasm from `site/pkg/` so no second binary is kept. A
+  worker cannot compile wasm from bytes at run time; an imported one is
+  compiled at upload. The engine starts on the first call that needs it.
+- The board comes from the site's worker over the `SITE` service binding, so it
+  is as current as the site; everything else is the bundled engine's.
+- `ship.py` deploys it after the site, and `--verify` asks it which engine it
+  runs against the digest `site/pkg/` serves. It lags silently otherwise.
+
+The bots come next, over the same table; auth only with accounts.
 
 ## Machine-readable
 
@@ -275,7 +290,8 @@ serves it:
 | `/index.md`, `/weapons.md`, `/weapons/<Wiki_Name>.md` | a page's markdown twin, from the same values as its html |
 | `/llms.txt` | llmstxt.org index: what WFSim is and every weapon's twin |
 | `/.well-known/agent-skills/index.json` | one skill: look a weapon up, read the board, quote a score |
-| `/.well-known/api-catalog` | RFC 9727: the board JSON is the one public read API |
+| `/.well-known/api-catalog` | RFC 9727: the MCP server and the board JSON, the two public read APIs |
+| `/.well-known/mcp/server-card.json` | the MCP server: its endpoint and its tools, from the headless table |
 | `/robots.txt` | each AI crawler named, `Content-Signal` granting search, ai-input, ai-train |
 
 A page with a twin (`markdownTwin` in `worker/index.js`) answers
@@ -287,6 +303,6 @@ unknown `/.well-known/` path is a 404, never the SPA.
 This is what Cloudflare's agent-readiness scan grades (`isitagentready.com`,
 `POST /api/scan`). Level 4 is what the site states truthfully: level 5 needs two
 of a Web Bot Auth key for bots it does not run, auth metadata for an API that
-has none, and an MCP server and A2A agent it does not have. A
+has none, and every integration including an A2A agent it does not have. A
 twin states only what the page does, so a fact reaches it through the same
 function that writes the html, never a second one.

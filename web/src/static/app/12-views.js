@@ -7,45 +7,10 @@
 // by two weapons — see `urlSlug`.
 // The weapon <select> stays the internal source of truth; the home grid
 // and the path just drive it.
-// The WIKI PAGE name behind a weapon's display name. A parenthesised
-// qualifier is OURS — "Larkspur Prime (Atmosphere)" is one wiki page with two
-// stat columns, and we ship the ground one — so it never reaches a URL.
-// `build_site_app.py`'s `wiki_name` splits on the same " (".
-const wikiWeaponName = (w) => (w.name_en || w.name).split(" (")[0];
-const wikiSlug = (w) => wikiWeaponName(w).replace(/ /g, "_");
-
-/// THE PATH SEGMENT A WEAPON LIVES AT — the wiki page name, and the ID where
-/// that name is not this weapon's alone.
-///
-/// URLs mirror wiki page names and ids never appear, which holds for every
-/// weapon whose display name is its own. Two Kitgun slots are ONE wiki page
-/// and two roster entries, so the rule maps them onto one address and the
-/// loser of that collision has NO URL AT ALL — nothing to link, nothing to
-/// prerender. An id is uglier than a wiki name and it is reachable.
-///
-/// THE LOWEST ID KEEPS THE WIKI NAME, so `/weapons/Tombfinger` is a stable
-/// address rather than one that follows roster order, and it stays the one the
-/// Slot control swaps INSIDE — switching slots does not navigate, which is
-/// what makes a Kitgun one page. `url_slug` in `build_site_app.py` is the same
-/// rule and has to stay it, or a link points at a page that was never written.
-let SLUG_OWNER = null;
-const urlSlug = (w) => {
-  // NOT CACHED BEFORE THE ROSTER LANDS: an empty `META.weapons` would freeze an
-  // empty map, after which every weapon's path is its id forever.
-  if (!SLUG_OWNER && (META.weapons || []).length) {
-    SLUG_OWNER = new Map();
-    for (const x of META.weapons || []) {
-      const g = wikiSlug(x);
-      if (!SLUG_OWNER.has(g) || x.id < SLUG_OWNER.get(g)) SLUG_OWNER.set(g, x.id);
-    }
-  }
-  const g = wikiSlug(w);
-  return !SLUG_OWNER || SLUG_OWNER.get(g) === w.id ? g : w.id;
-};
-const weaponPath = (id) => {
-  const w = (META.weapons || []).find((x) => x.id === id);
-  return "/weapons/" + (w ? urlSlug(w) : id);
-};
+// The path rules — `wikiWeaponName`, `wikiSlug`, `weaponSlug` — are the
+// headless part's (`87-headless.js`), so a link a query returns is this one.
+const urlSlug = (w) => weaponSlug(META.weapons || [], w);
+const weaponPath = (id) => headlessWeaponPath(META.weapons || [], id);
 function nav(path) {
   const moved = location.pathname !== path;
   if (moved) history.pushState(null, "", path);

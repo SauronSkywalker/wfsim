@@ -7,10 +7,11 @@ deploys `site/` by itself while the channel waits for a command run by hand, so
 a week of pushes reached the web and none of them reached an installed client.
 
 So there is ONE command. It builds `site/`, rebuilds the payload that declares
-what the client gets, commits, pushes, publishes the channel — and then
+what the client gets, commits, pushes, publishes the channel, deploys the MCP
+server (`mcp/`, which bundles the same engine) — and then
 VERIFIES, by fetching the manifest it just published and hashing every file it
 names against `site/`. A mirror that is only promised drifts; this one is read
-back.
+back, and the MCP server is asked which engine it runs.
 
     python scripts/ship.py              # build, commit, push, publish, verify
     python scripts/ship.py --dry-run    # every build, neither publish
@@ -24,6 +25,8 @@ import argparse
 import hashlib
 import json
 import pathlib
+import re
+import shutil
 import subprocess
 import sys
 import urllib.request
@@ -36,6 +39,9 @@ BUILT_MANIFEST = ROOT / "desktop" / "target" / "payload-manifest.json"
 # The first source in `release_desktop.SOURCES`, which is where a client looks
 # first and therefore what "published" means.
 CHANNEL = "https://wfsim-1388973035.cos.ap-shanghai.myqcloud.com"
+# The MCP server, and the file naming the engine it must be running.
+MCP = "https://mcp.wfsim.app/mcp"
+MCP_ENGINE = ROOT / "mcp" / "engine.js"
 
 
 def cargo() -> str:
@@ -78,6 +84,28 @@ def verify() -> int:
             print(f"  {p}")
         return 1
     print("mirror ok — every file the channel names is the file site/ holds")
+    return verify_mcp()
+
+
+def verify_mcp() -> int:
+    """Ask the MCP server which engine it runs, against the one `site/` serves.
+
+    It is deployed apart from the site, so it can lag it silently: an agent
+    would then read last release's numbers from a server that still answers."""
+    want = re.search(r'ENGINE_DIGEST = "(\w+)"', MCP_ENGINE.read_text(encoding="utf-8")).group(1)
+    body = json.dumps({"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {
+        "protocolVersion": "2025-06-18", "capabilities": {}, "clientInfo": {"name": "ship", "version": "0"}}})
+    req = urllib.request.Request(MCP, data=body.encode(), headers={"content-type": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            got = json.loads(r.read())["result"]["serverInfo"]["version"]
+    except Exception as e:  # noqa: BLE001 — any failure is the answer "not verified"
+        print(f"MCP UNREACHABLE — {MCP}: {e}")
+        return 1
+    if got != want:
+        print(f"MCP STALE — it runs engine {got}, site/ serves {want}")
+        return 1
+    print(f"mcp ok — {MCP} runs engine {got}, the one site/ serves")
     return 0
 
 
@@ -103,7 +131,7 @@ def main() -> None:
         ("git", "status", "--porcelain"), cwd=ROOT, capture_output=True, text=True, check=True
     ).stdout
     dirty = [ln[2:].strip() for ln in porcelain.splitlines() if ln.strip()]
-    unrecorded = [p for p in dirty if not p.startswith("site/")]
+    unrecorded = [p for p in dirty if not p.startswith("site/") and p != "mcp/engine.js"]
     if unrecorded and not args.dirty:
         print("ship: the tree carries changes outside site/:")
         for p in unrecorded[:20]:
@@ -143,14 +171,18 @@ def main() -> None:
     # channel ahead of the repository — the divergence this script exists to
     # end, arrived at from the other side.
     if not args.no_push:
-        if git("status", "--porcelain", "--", "site"):
-            run("git", "add", "site")
+        # `mcp/engine.js` names the wasm `site/pkg/` holds, so it moves with it.
+        if git("status", "--porcelain", "--", "site", "mcp/engine.js"):
+            run("git", "add", "site", "mcp/engine.js")
             run("git", "commit", "-m", "site: regenerate, and the desktop channel with it")
         else:
             print("\nsite/ is unchanged — nothing to commit")
         run("git", "push")
 
     run(*release)
+    # THE MCP SERVER AFTER THE PUSH, from the same tree: its engine is the one
+    # just published, and a server deployed ahead of the site answers with it.
+    run(shutil.which("npx") or "npx", "wrangler", "deploy", "-c", str(ROOT / "mcp" / "wrangler.jsonc"))
     sys.exit(verify())
 
 

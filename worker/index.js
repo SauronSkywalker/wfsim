@@ -650,6 +650,7 @@ const DISCOVERY_LINKS = [
   '</llms.txt>; rel="describedby"; type="text/plain"',
   '</.well-known/api-catalog>; rel="api-catalog"',
   '</.well-known/agent-skills/index.json>; rel="describedby"; type="application/json"',
+  '</.well-known/mcp/server-card.json>; rel="service-desc"; type="application/json"',
 ];
 
 // A `.well-known` document with no extension gets no media type from the asset

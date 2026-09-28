@@ -439,6 +439,21 @@ check("the board reads back, ranked, each row with its mods",
 check("a board row opens as the build", !!board.open && board.open.ok === true && board.onIt === true,
   JSON.stringify(board.open));
 
+// THE TWO HALVES AGREE: a row's `build`, sent as an argument the way a caller
+// with no page sends it, reads the same panel as the row opened on screen.
+const halves = await evaluate(`(async () => {
+  const read = await window.wfsim.do("builder.board.read", { riven: "without", limit: 1 });
+  const top = read.ok && read.rows.find(r => r.build);
+  if (!top) return { none: JSON.stringify(read).slice(0, 200) };
+  await window.wfsim.do("shell.preset.open", { bar: "build", preset: top.key });
+  const screen = await window.wfsim.do("builder.stats.read", {});
+  const sent = await window.wfsim.do("builder.stats.read", { build: top.build });
+  await window.wfsim.do("shell.preset.new", { bar: "build" });
+  const f = (x) => JSON.stringify([x.forms, x.conditionals, x.buffs, x.not_modelled]);
+  return { key: top.key, same: screen.ok && sent.ok && f(screen) === f(sent), screen: f(screen).slice(0, 160), sent: f(sent).slice(0, 160) };
+})()`, { awaitPromise: true });
+check("a board row's build reads the panel the opened row does", halves.same === true, JSON.stringify(halves));
+
 // ---- the fight's own editors: triggers, stat bonuses, class rules ------------
 
 const fight = await evaluate(`(async () => {

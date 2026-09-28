@@ -1,6 +1,6 @@
 // ---- THE SHARE CODE — the wire format, both directions -----------------
 //
-// SHARED WITH THE WORKER. `scripts/gen_worker_codec.mjs` copies this part
+// SHARED WITH THE WORKER. `scripts/gen_worker_parts.mjs` copies this part
 // verbatim into `worker/share_codec.js`, so the page that writes a link and the
 // edge that describes it read one grammar; `--check` in CI fails a stale copy.
 // What it needs from its host, and nothing else: `shareIndex()`,

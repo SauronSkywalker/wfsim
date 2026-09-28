@@ -341,7 +341,7 @@ So the worker restates the head for `/weapons/<name>/s/<id>`: title
 evolutions in ENGLISH (the one language both markets read), `og:url` naming
 the link, and `noindex` (the canonical still names the weapon). It decodes the
 stored code with THE PAGE'S CODEC — `29-share-codec.js`, copied verbatim into
-`worker/share_codec.js` by `scripts/gen_worker_codec.mjs`, whose `--check` runs
+`worker/share_codec.js` by `scripts/gen_worker_parts.mjs`, whose `--check` runs
 in CI — against `site/share-names.json`, which the site build writes from
 `data/share_order.yaml` and the data's English names. Nothing a sharer typed
 reaches a preview. Any failure serves the weapon page unchanged.
