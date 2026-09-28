@@ -95,6 +95,9 @@ for (const w of WEAPONS) {
     // EVERY FOLD OPEN: a control inside a shut block is still one a reader can
     // reach, and a block that ships shut would otherwise hide its whole feature.
     await evaluate(`document.querySelectorAll("[data-fold].shut").forEach(b => setFold(b, false))`);
+    // THE ACCOUNT CONTROL SHOWS ONLY WHERE THE SITE OFFERS A WAY IN, which a
+    // check's local server never does — shown here, so its exemption is tested.
+    await evaluate(`(() => { const a = document.getElementById("account"); if (a) a.hidden = false; })()`);
     await new Promise((r) => setTimeout(r, 500));
     const r = await evaluate(SCAN);
     r.hit.forEach((s) => hit.add(s));

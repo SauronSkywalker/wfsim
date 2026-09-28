@@ -1795,6 +1795,35 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
 . Below 700px this whole thing is `display:contents` and
    its children flatten into the phone menu — one copy of every control at both
    widths, which is the same trick `.topmenu` plays one level up. */
+/* THE ACCOUNT PANEL (`17-account.js`): a popover like the overflow's, and in
+   the phone menu a block of its own rather than flattened — it is a form. */
+.account{position:relative}
+.account-panel{display:none;position:absolute;top:calc(100% + 10px);right:0;z-index:61;
+  width:300px;flex-direction:column;gap:8px;padding:12px;
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  box-shadow:0 8px 28px rgba(0,0,0,.35);font-size:13px}
+.account.open .account-panel{display:flex}
+.account-btn.on{color:var(--accent)}
+.acc-h{font-weight:600}
+.acc-small{font-size:12px;color:var(--text-2)}
+.acc-note{font-size:12px;padding:6px 8px;border-radius:6px;background:var(--plane)}
+.acc-note.bad{color:var(--critical)}
+.acc-way{display:block;text-align:center;padding:7px 10px;border:1px solid var(--line);border-radius:8px;
+  background:var(--plane);color:var(--text);text-decoration:none;cursor:pointer;font:inherit}
+.acc-way:hover{border-color:var(--accent)}
+.acc-form{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.acc-form input{flex:1 1 140px;min-width:0;padding:6px 8px;border:1px solid var(--line);border-radius:6px;
+  background:var(--plane);color:var(--text);font:inherit}
+.acc-go,.acc-mini,.acc-danger{padding:4px 9px;border:1px solid var(--line);border-radius:6px;
+  background:var(--plane);color:var(--text);font:inherit;font-size:12px;cursor:pointer;text-decoration:none}
+.acc-danger,.acc-warn{color:var(--critical)}
+.acc-slot{display:grid;grid-template-columns:62px 1fr auto;gap:6px;align-items:center}
+.acc-p{font-weight:600;font-size:12px}
+.acc-l{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
+.acc-a{display:flex;gap:4px}
+.acc-row{display:flex;flex-wrap:wrap;gap:6px}
+.acc-confirm{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;
+  padding:8px;border:1px solid var(--critical);border-radius:6px}
 .tbmore{position:relative}
 .tbmore-panel{display:none;position:absolute;top:calc(100% + 10px);right:0;z-index:60;
   min-width:190px;flex-direction:column;gap:2px;padding:6px;
@@ -1860,6 +1889,7 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
   /* The overflow stops being one: its children join the phone menu directly,
      so the `⋯` has nothing left to open and the panel is not a box. */
   .tbmore,.tbmore-panel,.tbmore.open .tbmore-panel{display:contents}
+  .account-panel{position:static;width:auto;box-shadow:none}
   .topbar-inner .tbmore-btn{display:none}
   /* `.topbar-inner .tblinks>*` sets order:4 on the row's own children; the
      overflow's promoted children default to 0 and would jump ahead of the ask.

@@ -144,7 +144,9 @@ it and not a container per thing. The CONTENT is named one level down.
 | resource | name | what is inside |
 | --- | --- | --- |
 | Worker | `wfsim` | the site and its api |
+| Worker | `wfsim-mcp` | the MCP server — its own because it bundles the engine, which the site's cold start must not carry (`docs/AGENT.md`) |
 | D1 database | `wfsim` | the board's `inbox`, `builds`, `scores`, `batches`, `queue`; the money's `donations`, `donors`, `rates` |
+| D1 database | `wfsim-accounts` | `accounts`, `identities`, `sessions`, `email_codes` — personal data, restored apart and never in the public backup (`docs/ACCOUNTS.md`) |
 | Analytics Engine dataset | `wfsim` | usage points, one per thing a reader did (`docs/ANALYTICS.md`) |
 
 **A NAME DESCRIBES THE RESOURCE, NOT WHAT HAPPENS TO BE IN IT.** A bucket named

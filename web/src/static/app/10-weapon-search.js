@@ -360,7 +360,8 @@ async function init() {
   // (modified clicks — new tab etc. — keep native behavior; a full page load
   // also works thanks to the server's SPA fallback).
   document.addEventListener("click", (e) => {
-    const a = e.target.closest('a[href^="/"]');
+    // `data-native` leaves the app — a sign-in round trip, a page outside it.
+    const a = e.target.closest('a[href^="/"]:not([data-native])');
     if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
     e.preventDefault();
     nav(a.getAttribute("href"));

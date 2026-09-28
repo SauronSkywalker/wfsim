@@ -15,8 +15,7 @@ it is enforced.
 
 ## Read first
 
-Find the row for what you are about to touch. Read that document before the
-code, not after.
+Read the row for what you are about to touch before the code, not after.
 
 | you are touching | read |
 | --- | --- |
@@ -35,7 +34,7 @@ code, not after.
 | what the app does not model | `docs/UNMODELLED.md` |
 | where a value came from, and how to source the next one | `docs/DATA_SOURCES.md` |
 | a browser or node check | `docs/CHECKS.md` |
-| driving the page from outside — `window.wfsim`, an action | `docs/AGENT.md` |
+| the agent door, `window.wfsim`, the MCP server | `docs/AGENT.md` |
 | naming a field, or a cloud resource | `docs/NAMING.md` · a term you do not know `docs/GLOSSARY.md` |
 | what a form is CALLED on the page | `docs/FORM_NAMES.md` |
 | the worker fleet, sharding, the wasm build | `docs/WASM.md` |
@@ -44,6 +43,7 @@ code, not after.
 | the Windows client | `docs/DESKTOP.md` |
 | setup, profiling, what has been tried | `docs/DEVELOPMENT.md` |
 | how usage is counted | `docs/ANALYTICS.md` |
+| accounts, sign-in, privacy | `docs/ACCOUNTS.md` |
 
 ## Map
 

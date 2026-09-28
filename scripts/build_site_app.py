@@ -1442,6 +1442,7 @@ def prerender(flagged: str) -> None:
     # 200, which is a soft 404 for every crawler that asks.
     put(APP / "robots.txt", robots_txt())
     ship_agent_files(by_slot)
+    ship_privacy(flagged)
     named = ", ".join("/" + path for path, *_ in shell_pages)
     print(f"prerendered {len(urls) - 2 - len(shell_pages) - len(frame_urls) - len(companion_urls)} weapon pages + "
           f"{len(frame_urls)} Warframe pages + {len(companion_urls)} companion pages + /weapons + "
@@ -1560,6 +1561,96 @@ description: Look up a Warframe weapon's stats and its best measured riven-free 
 - Quote the "as of" date the page states; the board is rescored as builds arrive.
 """
 
+
+# WHAT WFSIM KEEPS ABOUT A PERSON, stated where Google, Discord and GitHub
+# require a sign-in's site to state it. A plain page outside the app: it has to
+# read with no script, and it is the one page a provider's reviewer opens.
+# docs/ACCOUNTS.md owns the rules; this states them to the reader, and changes
+# in the commit that changes one.
+PRIVACY_BODY = """
+<h1>Privacy</h1>
+<p>WFSim is a free Warframe calculator. Everything it does works without an
+account. This page says what it keeps, and why.</p>
+
+<h2>Without an account</h2>
+<ul>
+<li>Your builds, scenarios and rivens stay in your own browser.</li>
+<li>Usage is counted under a random id your browser keeps, with no IP address
+and no cookie; <a href="/support#usage">the support page</a> says what is counted
+and lets you turn it off.</li>
+<li>A build you send to the leaderboard carries the build and nothing about you.
+A short share link stores the build it links to.</li>
+</ul>
+
+<h2>With an account</h2>
+<p>An account is a random id. You reach it through up to four ways to sign in —
+Google, Discord, GitHub and an email address — and for each one you link WFSim
+keeps:</p>
+<ul>
+<li>which service it is, and that service's id for you;</li>
+<li>a name to show you on your account page: your Google address, your Discord
+or GitHub name, or your email address;</li>
+<li>when you linked it.</li>
+</ul>
+<p>It also keeps a signed-in browser as the hash of a random token (the cookie
+<code>wfsim_session</code>, 90 days), and a mailed login code as a hash for ten
+minutes. It does not keep passwords (there are none), your IP address, or the
+access token a service hands back — that is read once for your id and dropped.
+Two accounts are never merged by WFSim: a way to sign in belongs to one account,
+and moves only if you remove it from one and add it to another.</p>
+
+<h2>Who else handles it</h2>
+<ul>
+<li><b>Cloudflare</b> hosts the site and the database, and delivers login mail;
+its delivery log keeps the address a code was sent to for up to 30 days.</li>
+<li><b>Google, Discord and GitHub</b> handle a sign-in you choose to make with them.</li>
+</ul>
+<p>Nothing is sold, and nothing is shared for advertising.</p>
+
+<h2>Your control</h2>
+<ul>
+<li>Download everything held about your account from the account panel.</li>
+<li>Remove any way to sign in. Removing the last one deletes the account.</li>
+<li>Delete the account: it and everything synced to it are gone at once. The
+database keeps a point-in-time history for up to 30 days, after which no copy
+remains.</li>
+</ul>
+
+<h2>隐私（中文）</h2>
+<p>WFSim 是免费的 Warframe 计算器，不注册也能使用全部功能。</p>
+<ul>
+<li><b>不登录时：</b>配装、场景、紫卡只保存在你自己的浏览器里。使用统计记在浏览器保存的一个随机编号下，不记录 IP，不设置 cookie，可在
+<a href="/support#usage">支持页面</a>关闭。提交到排行榜的只有配装本身。</li>
+<li><b>登录后：</b>账号是一个随机编号，最多可绑定 Google、Discord、GitHub、邮箱四种登录方式。每种方式保存：是哪个服务、该服务给你的用户编号、账号页上显示给你看的名字（Google 邮箱、Discord 或 GitHub 用户名、你的邮箱），以及绑定时间。登录状态以随机令牌的哈希保存（cookie <code>wfsim_session</code>，90 天），邮件验证码以哈希保存 10 分钟。不保存密码、IP 地址，也不保存第三方返回的访问令牌。WFSim 从不合并两个账号。</li>
+<li><b>第三方：</b>Cloudflare 提供托管、数据库和登录邮件投递，其投递日志会保留收件地址最多 30 天；Google、Discord、GitHub 仅在你选择用它们登录时参与。不出售任何数据，不用于广告。</li>
+<li><b>你的权利：</b>可在账号面板下载你的全部数据、移除任何登录方式（移除最后一种即删除账号）、直接删除账号。删除立即生效；数据库的时间点历史最多保留 30 天。</li>
+</ul>
+"""
+
+
+def ship_privacy(flagged: str) -> None:
+    style = re.search(r'href="(/asset/style\.[^"]+\.css)"', flagged).group(1)
+    put(APP / "privacy" / "index.html", f"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy | WFSim</title>
+<meta name="description" content="What WFSim keeps about a person, with and without an account, and how to remove it.">
+<link rel="canonical" href="{SITE}/privacy">
+<link rel="stylesheet" href="{style}">
+<link rel="icon" type="image/svg+xml" href="/logo.svg">
+<style>.legal{{max-width:720px;margin:0 auto;padding:32px 16px 64px;line-height:1.6}}
+.legal h1{{margin-top:0}}.legal a{{color:var(--accent)}}</style>
+</head>
+<body>
+<main class="legal">
+<p><a href="/">WFSim</a></p>
+{PRIVACY_BODY.strip()}
+</main>
+</body>
+</html>
+""")
 
 def ship_agent_files(by_slot: dict) -> None:
     """The site as an agent reads it: markdown twins of the home page and the

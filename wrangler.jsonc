@@ -70,7 +70,20 @@
       "binding": "LIBRARY",
       "database_name": "wfsim",
       "database_id": "0fdd0713-cdd6-44ff-af38-efe6978c9e52"
+    },
+    // …EXCEPT THE ACCOUNTS, which are personal data: a database of their own,
+    // so a point-in-time restore of either never rolls the other back and
+    // nothing in it can reach the public library backup (docs/ACCOUNTS.md).
+    {
+      "binding": "ACCOUNTS",
+      "database_name": "wfsim-accounts",
+      "database_id": "ad0765fa-bf84-4cb9-95a1-4bd5b297b864"
     }
+  ],
+  // HOW OFTEN ONE ADDRESS MAY ASK FOR A LOGIN CODE — the mail costs money and
+  // lands in somebody's inbox. Keyed by the caller's IP, which is not stored.
+  "ratelimits": [
+    { "name": "AUTH_LIMIT", "namespace_id": "1001", "simple": { "limit": 10, "period": 60 } }
   ],
   // WHAT READERS DID — `POST /api/e`, docs/ANALYTICS.md. A dataset is created by
   // its first write; nothing to provision. Read back by `scripts/usage.py`.

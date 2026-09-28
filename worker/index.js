@@ -19,6 +19,7 @@
 // the same build produce ONE row, with no dedup pass and no counting.
 
 import { decodeShare, useShareHost } from "./share_codec.js";
+import { accountRoute } from "./accounts.js";
 
 const MAX_BYTES = 4096;        // a build is a few hundred bytes; this is slack
 // AN OUTER BOUND, NOT THE RULE — see below. It is `MAIN_SLOTS + 1`: eight main
@@ -695,6 +696,10 @@ export default {
       const headers = new Headers(doc.headers);
       headers.set("content-type", WELL_KNOWN_TYPES[path]);
       return new Response(doc.body, { status: doc.status, headers });
+    }
+    if (path.startsWith("/api/auth/") || path === "/api/account" || path.startsWith("/api/account/")) {
+      const r = await accountRoute(request, env, path);
+      if (r) return r;
     }
     const card = path.match(/^\/og\/s\/([0-9A-Za-z]{10})\.png$/);
     if (card) return shareCardResponse(card[1], request, env, ctx);
