@@ -859,7 +859,19 @@ pub fn parse_optimize(v: &Value) -> Result<OptimizePlan, Value> {
         }
         None => vec![fight.mode.clone()],
     };
-    let modes: Vec<ModeForms> = mode_ids.iter().map(|id| mode_forms(info, id)).collect();
+    // A GROUND COMBO IS PLAYED FROM A STANCE — the same refusal `sim_params`
+    // gives, so a search never ranks a mode the simulator will not play.
+    let unplayable = |m: &ModeForms| {
+        stance_def.is_none()
+            && wfsim_engine::data::weapons::spec(&m.fire_id).is_some_and(|s| {
+                wfsim_engine::data::weapons::combo_needs_a_stance(&info.id, s.form_kind())
+            })
+    };
+    let modes: Vec<ModeForms> =
+        mode_ids.iter().map(|id| mode_forms(info, id)).filter(|m| !unplayable(m)).collect();
+    if modes.is_empty() {
+        return Err(err_json(wfsim_engine::data::weapons::STANCELESS_COMBO));
+    }
     // THE VARIANT TABLE: every (mode, evolution set) the scope holds. One mode
     // is the ordinary case and reproduces exactly what a single `fire_id` did.
     // A VARIANT IS A (MODE, EVOLUTION SET, VALENCE) TRIPLE. Each is a fact about
@@ -2373,9 +2385,16 @@ mod optimizer_evolution_tests {
         let base = json!({
             "weapon": "praedos",
             "mods": { "primed_pressure_point": "fixed" },
+            "modes": { "heavy": "fixed" },
             "build_size": 8,
         });
-        let bare = super::parse_optimize(&base).expect("bare");
+        // A GROUND COMBO WITH NO STANCE IS REFUSED, not searched on a script
+        // the empty slot does not have (`combo_needs_a_stance`).
+        let mut combo = base.clone();
+        combo["modes"] = json!({ "base": "fixed" });
+        let e = super::parse_optimize(&combo).err().expect("a stanceless combo is refused");
+        assert!(e.to_string().contains("no stance in the slot"), "{e}");
+        let bare = super::parse_optimize(&base).expect("a heavy attack needs no stance");
         assert!(!bare.constraints.require.iter().any(|m| m == "sovereign_outcast"));
         assert_eq!(bare.build_size, 8);
         assert_eq!(bare.cap, 60);

@@ -238,7 +238,7 @@ mod wielder_tests {
             let mut m = serde_json::to_value(&b.scenario).expect("a scenario is json");
             let o = m.as_object_mut().expect("a mapping");
             o.insert("weapon".into(), json!("praedos"));
-            o.insert("mods".into(), json!(["primed_pressure_point", "organ_shatter"]));
+            o.insert("mods".into(), json!(["primed_pressure_point", "organ_shatter", "sovereign_outcast"]));
             o.insert("runs".into(), json!(6));
             for (k, v) in extra.as_object().expect("a mapping") {
                 o.insert(k.clone(), v.clone());

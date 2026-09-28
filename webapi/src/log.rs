@@ -47,11 +47,14 @@ pub fn log_json(v: &Value) -> Value {
         .iter()
         .filter_map(|id| pool.iter().find(|m| m.id == *id))
         .collect();
-    let (_, mut params) = sim_params(
+    let (_, mut params) = match sim_params(
         v, info, policy, &evo_refs, &refs, &tenno, &arena,
         cycle_from, single_form, infinite_ammo, ammo, frenzy_single, cycle_frenzy_lock,
         &frenzy_locks,
-    );
+    ) {
+        Ok(p) => p,
+        Err(e) => return e,
+    };
     // THE WHOLE ROSTER, because this replays the fight `simulate` measured. A
     // record drawn from the wielder alone is a true record of a different
     // engagement, which is the one kind of wrong nothing in it contradicts.

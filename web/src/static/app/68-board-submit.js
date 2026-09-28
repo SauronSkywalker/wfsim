@@ -1194,7 +1194,7 @@ async function runSim() {
     // says so. Nothing to report and nothing to complain about.
     if (r && r.cancelled) return;
     if (!r || r.ok === false) {
-      $("sim-results").innerHTML = `<div class="error">sim failed: ${r ? r.error : "no data"}</div>`;
+      $("sim-results").innerHTML = `<div class="error">sim failed: ${escHtml(r ? tr(r.error) : "no data")}</div>`;
       return;
     }
     // A NEW RUN IS A NEW VERDICT. `renderResults` draws the outcome line

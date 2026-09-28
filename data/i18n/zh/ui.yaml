@@ -167,6 +167,7 @@ ui:
   "your Warframe's shields, buffs included": 战甲的护盾，含增益
   "the wielder before the overrides below — every board is scored on the Prototype": 下方覆写之前的使用者数值 —— 所有榜单都按原型评分
   "fixed on this weapon — it cannot be removed, and its slot takes no Forma": 这把武器固定装备，不能卸下，槽位也不能 Forma
+  "no stance in the slot: stanceless combos are not modelled yet — equip a stance, or play heavy attacks, slide attacks or heavy slams": 架势槽是空的：无架势连段尚未建模——请装上一张架势，或改用重击、滑行攻击或重击震地
   "THE DAMAGE IS HYSTERIA'S AT 100% ABILITY STRENGTH. Every swing, slide and slam number on the page carries the Strength icon, so a Valkyr build with more strength deals proportionally more than this reports": "**伤害来自 Hysteria，按 100% 技能强度计**。技能页上每个挥砍、滑行和捶地数值都带强度图标，所以强度更高的 Valkyr 配装实际伤害会按比例高于此处"
   "Hysteria drains 5 energy a second while the claws are out; energy is not modelled, so they are held for the whole engagement": "Hysteria 开着利爪时每秒消耗 5 点能量；能量未建模，所以利爪全程保持"
   "RAGE, Valkyr's passive — +3% melee damage per hit and +12% per kill, up to +300%, additive with Pressure Point — is a Warframe passive and is not modelled, so a Valkyr build reads LOW here": "Rage（Valkyr 被动：每次命中 +3% 近战伤害、每次击杀 +12%，最高 +300%，与 Pressure Point 相加）是战甲被动，未建模，所以 Valkyr 配装在这里读数偏低"

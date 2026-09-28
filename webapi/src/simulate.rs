@@ -217,7 +217,7 @@ pub(crate) fn sim_params(
     frenzy_single: bool,
     cycle_frenzy_lock: wfsim_engine::fight::LockMode,
     frenzy_locks: &[BuffLock],
-) -> (ResolvedPanel, FightParams) {
+) -> Result<(ResolvedPanel, FightParams), Value> {
     let arcane_fx = {
         let ab = WeaponBase::from_data(incarnon_id(info).unwrap_or(&info.id), true, evo_refs);
         arcane_fx_for(v, info, &ab, policy)
@@ -252,7 +252,7 @@ pub(crate) fn sim_params(
             // you are holding. An Incarnon cycle reports the form it transforms
             // INTO because that is where its damage is; here the primary fire
             // is a real part of the engagement and the panel is its own.
-            return (base_panel, params);
+            return Ok((base_panel, params));
         }
         let params = FightParams::incarnon_cycle_from_panels(
             &incarnon_panel,
@@ -266,9 +266,16 @@ pub(crate) fn sim_params(
         let mut params = params;
         params.infinite_reserve = incarnon_panel.reserve_is_infinite(infinite_ammo);
         ammo.apply(&mut params);
-        (incarnon_panel, params)
+        Ok((incarnon_panel, params))
     } else {
         let panel = panel_of(single_form);
+        // A GROUND COMBO IS PLAYED FROM A STANCE, and every reader of a fight
+        // resolves here — so the refusal is one decision, not three.
+        if wfsim_engine::data::weapons::combo_needs_a_stance(&info.id, panel.form)
+            && !refs.iter().any(|m| m.stance.is_some())
+        {
+            return Err(err_json(wfsim_engine::data::weapons::STANCELESS_COMBO));
+        }
         // A MELEE INCARNON IS THE SAME WEAPON RESOLVED TWICE, and the second
         // resolve is this one without the tiers that turn it on. It is not a
         // form and unlocks no entry — `single_form` is unchanged — but the
@@ -289,7 +296,7 @@ pub(crate) fn sim_params(
         // Frenzy is the WEAPON's passive: it persists across its forms, so it rides whichever one is fired.
         d.frenzy = frenzy_single;
         d.locked_buffs = frenzy_locks.to_vec();
-        (panel, d)
+        Ok((panel, d))
     }
 }
 
@@ -411,7 +418,7 @@ pub(crate) fn seat_from(v: &Value, arena: &wfsim_engine::arena::Arena) -> Result
         v, info, policy, &evo_refs, &refs, &tenno, arena,
         cycle_from, single_form, infinite_ammo, ammo, frenzy_single, cycle_frenzy_lock,
         &frenzy_locks,
-    );
+    )?;
     Ok(params)
 }
 
@@ -517,11 +524,14 @@ fn simulate_from(v: &Value, work: Work, on_run: &mut impl FnMut(u32, u32)) -> Va
     // silences an arcane's buff), and an argument cannot be forgotten the way
     // a follow-up assignment can — the Incarnon cycle's inner base form never
     // got one.
-    let (report_panel, mut params) = sim_params(
+    let (report_panel, mut params) = match sim_params(
         v, info, policy, &evo_refs, &refs, &tenno, &arena,
         cycle_from, single_form, infinite_ammo, ammo, frenzy_single, cycle_frenzy_lock,
         &frenzy_locks,
-    );
+    ) {
+        Ok(p) => p,
+        Err(e) => return e,
+    };
     params.sample_by = metric.run;
     // EVERYTHING ELSE ACTING IN THIS FIGHT. Each entry is a request of its own
     // and resolves through the same path; the ARENA is this fight's, so no
@@ -1438,7 +1448,7 @@ mod asset_tests {
             o.insert("weapon".into(), serde_json::json!("praedos"));
             o.insert("mods".into(), serde_json::json!([
                 "primed_pressure_point", "sacrificial_steel", "organ_shatter",
-                "voltaic_strike", "shocking_touch", "condition_overload"]));
+                "voltaic_strike", "shocking_touch", "condition_overload", "sovereign_outcast"]));
             o.insert("arcane".into(), serde_json::json!(["melee_influence"]));
             o.insert("arcane_rank".into(), serde_json::json!([5]));
             o.insert("level".into(), serde_json::json!(60));
@@ -2021,6 +2031,28 @@ mod form_tests {
             !ok(&with(&["motus_impact", "shattering_storm", "crushing_ruin"])),
             "two stances is one slot too many",
         );
+    }
+
+    /// A GROUND COMBO WITH AN EMPTY STANCE SLOT IS REFUSED — the stanceless
+    /// combos publish no duration, and the entry's own script is a stance's.
+    /// What no stance changes still runs, and so does a fixed stance.
+    #[test]
+    fn a_stanceless_ground_combo_is_refused_and_nothing_else_is() {
+        let sim = |weapon: &str, mode: &str, mods: &[&str]| {
+            simulate_json(&json!({ "weapon": weapon, "mode": mode, "mods": mods, "runs": 1 }))
+        };
+        let refused = |r: &Value| r["error"].as_str().is_some_and(|e| e.contains("no stance in the slot"));
+        for mode in ["base", "forward", "block", "block_forward"] {
+            assert!(refused(&sim("magistar", mode, &[])), "{mode} with an empty slot");
+            assert!(!refused(&sim("magistar", mode, &["crushing_ruin"])), "{mode} with a stance");
+        }
+        for mode in ["heavy", "slide", "heavy_slam"] {
+            assert!(!refused(&sim("magistar", mode, &[])), "{mode} needs no stance");
+        }
+        assert!(!refused(&sim("valkyr_talons", "base", &["hysteria"])), "a fixed stance is seated");
+        // …AND THE REPLAY ASKS THE SAME QUESTION, through the same resolution.
+        let log = crate::log::log_json(&json!({ "weapon": "magistar", "mode": "base", "mods": [], "run": [0, 0] }));
+        assert!(refused(&log), "{log}");
     }
 
     /// A SET THAT ENHANCES ITS OWN MEMBERS SAYS SO ON THE CARD, and says it

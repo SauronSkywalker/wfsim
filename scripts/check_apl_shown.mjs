@@ -45,8 +45,8 @@ check("a cycle names both ends of the transmute, in scan order",
   && r.cycle.lines[0] === "transform_in,if=gauge.pct>=1"
   && r.cycle.lines[1] === "transform_out,if=gauge.pct<=0",
   JSON.stringify(r.cycle));
-check("a melee list names the PRESS, not a trigger pull",
-  JSON.stringify(r.melee.bare) === JSON.stringify(["reload,if=!can_fire", "slide"]),
+check("a melee list names the PRESS, not a trigger pull, and has no magazine to reload",
+  JSON.stringify(r.melee.bare) === JSON.stringify(["slide"]),
   JSON.stringify(r.melee.bare));
 check("...and a Tennokai build converts one swing, above the combo it replaces",
   r.melee.flash[0] === "heavy,if=tennokai",

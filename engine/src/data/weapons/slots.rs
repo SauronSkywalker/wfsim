@@ -79,3 +79,21 @@ pub fn has_exilus_slot(id: &str) -> bool {
 pub fn stance_polarity(id: &str) -> Option<Polarity> {
     spec(id)?.stance_polarity.as_deref().map(polarity)
 }
+
+/// Does firing `form` on `weapon` need a stance in the slot? A GROUND COMBO
+/// DOES: the stanceless combos publish damage and no duration
+/// (`Module:Stances/data`), so an empty slot has no script to time — and the
+/// entry's own script is a stance's, which an empty slot would get for free.
+/// Heavy, slide and slam are the same whatever is seated; a fixed stance is
+/// always seated.
+pub fn combo_needs_a_stance(weapon: &str, form: crate::model::FormKind) -> bool {
+    use crate::model::FormKind as F;
+    let Some(w) = spec(weapon) else { return false };
+    w.slot == "melee"
+        && w.fixed_stance.is_none()
+        && matches!(form, F::Neutral | F::Forward | F::Block | F::BlockForward)
+}
+
+/// The refusal a stanceless ground combo gets, in one wording for every caller.
+pub const STANCELESS_COMBO: &str =
+    "no stance in the slot: stanceless combos are not modelled yet — equip a stance, or play heavy attacks, slide attacks or heavy slams";
