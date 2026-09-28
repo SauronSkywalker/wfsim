@@ -166,6 +166,28 @@ ui:
   "only these can hold it": 只有这些战甲能使用
   "your Warframe's shields, buffs included": 战甲的护盾，含增益
   "the wielder before the overrides below — every board is scored on the Prototype": 下方覆写之前的使用者数值 —— 所有榜单都按原型评分
+  "#{r} on the board": "榜单第 {r} 名"
+  "In this build": "这套里的"
+  "builds here that carry it": "这里带它的配装"
+  "best build here without it, against this one": "这里不带它的最好配装（与这套相比）"
+  "every build here carries it": "这里所有配装都带它"
+  "I don't have it": "我没有"
+  "I don't have": "我没有"
+  "The gap is to the best board build without that piece — not a measured one-for-one swap.": "差距是和「不带这一件的最好榜单配装」相比，不是单独替换这一件实测出来的。"
+  "Compare others with this": "以它为对比基准"
+  "Stop comparing": "取消对比"
+  "Against the reference, #{r}": "与对比基准（第 {r} 名）相比"
+  "Piece by piece": "逐件看"
+  "reference": "对比基准"
+  "Comparing with": "对比基准："
+  "muted: the same as it; the percentage is against it": "变淡的是和它相同的部分，百分比是相对它的差距"
+  "Click a build to open it; from there, make it the reference to compare the others with.": "点一个配装展开详情；在详情里可以把它设为对比基准，其他配装就都和它比。"
+  "Overview": "总览"
+  "builds carrying it · the best of them": "带它的配装数 · 其中最好的排名"
+  "Riven stats": "紫卡属性"
+  "what the {n} builds here carry: how many carry each piece, and the best of them": "这里 {n} 个配装用了什么：每一件有多少配装带它，以及带它的最好配装"
+  "click: must have · again: I don't have · again: clear": "点一下：必须有 · 再点：我没有 · 再点：清除"
+  "what you don't have, or must have — mods, arcanes, evolutions, riven stats": "你没有的、或必须要有的——mod、赋能、进化、紫卡属性"
   "fixed on this weapon — it cannot be removed, and its slot takes no Forma": 这把武器固定装备，不能卸下，槽位也不能 Forma
   "no stance in the slot: stanceless combos are not modelled yet — equip a stance, or play heavy attacks, slide attacks or heavy slams": 架势槽是空的：无架势连段尚未建模——请装上一张架势，或改用重击、滑行攻击或重击震地
   "THE DAMAGE IS HYSTERIA'S AT 100% ABILITY STRENGTH. Every swing, slide and slam number on the page carries the Strength icon, so a Valkyr build with more strength deals proportionally more than this reports": "**伤害来自 Hysteria，按 100% 技能强度计**。技能页上每个挥砍、滑行和捶地数值都带强度图标，所以强度更高的 Valkyr 配装实际伤害会按比例高于此处"
@@ -271,8 +293,6 @@ ui:
   "Back to the top {n}": "收起，只看前 {n} 个"
   "Board rank": "排名"
   "Build finder": "配装查找器"
-  "click: must have · again: exclude · again: clear": "点一下：必须含 · 再点：排除 · 再点：取消"
-  "compare with #1": "对比 #1"
   "Configuration": "配置"
   "following…": 正在跟踪…
   "could not follow that one — try the run again": 跟踪失败，重跑一次试试
@@ -435,14 +455,9 @@ ui:
   "Eximus possible": 可以是精英
   "Eximus": 精英
   "In the bar": "已在栏里"
-  "in {n} builds": "{n} 个配装中"
-  "List": "列表"
   "Mine": "我的"
-  "Mod matrix": "MOD 矩阵"
-  "Mod usage": "MOD 使用率"
   "No build matches — remove a condition": "没有符合的配装 —— 去掉一个条件试试"
   "Nobody has submitted a build for this weapon yet": "这把武器还没有人提交过配装"
-  "must not have": "不含"
   "nothing is called “{q}”": "没有叫「{q}」的"
   "Open build": "打开"
   "Parts": "配件"
@@ -450,7 +465,6 @@ ui:
   "Fight": "战斗"
   "Not modelled here": "这里没有建模的部分"
   "Score": "分数"
-  "search mods, arcanes, evolutions or riven stats": "搜索 MOD、赋能、进化或裂罅词条"
   "Show {k} more of {n}": "再显示 {k} 个（共 {n} 个）"
   "Squad": 小队人数
   "Explosion on Kill": 击杀爆炸
@@ -568,8 +582,6 @@ ui:
   "It does take money and time to run. If it has ever saved you a Forma, you can chip in.":
     它确实要花钱和时间来维持。如果它替你省下过一根 Forma，可以来投喂一下。
   "take it out of the bar — the board keeps it": "从栏里拿掉 —— 榜单上它还在"
-  "the cards this weapon uses most come first": "这把武器最常用的卡排在前面"
-  "the matrix shows the first {n}": "矩阵只显示前 {n} 个"
   "the record is open in its own window": 战斗记录已在它自己的窗口里打开。
   "Show me": 切到那个窗口
   "Open in its own window": 在新窗口打开
@@ -577,12 +589,10 @@ ui:
   "one row per number the game popped — it opens in a window of its own, because the table is wider than this column": "每一个游戏里跳出的伤害数字一行 —— 它会在自己的窗口里打开，因为这张表比这一栏宽得多"
   "the same build — the difference is how the riven rolled": "同一套配装 —— 差别只在裂罅的数值"
   "the two beams CONVERGE on the crosshair and deal full damage there only once they are aligned (wiki). This arena lands both on the aimed body from the first tick, which is the ceiling": "两道光束会向准星汇聚，只有对齐之后才在准星处打出全额伤害（维基）。这个战场从第一跳起就让两道都落在瞄准的目标上，这是上限"
-  "This is #1.": "这就是 #1。"
   "this run measured {v} — #{n} of {of} in {group}, against the board as it stands": 这次跑出 {v} —— 以当前榜单为参照，在 {group} 里排第 {n}，同组共 {of} 套
   "release {r} · commit {c}": 版本 {r} · 提交 {c}
   "board {d} · scored {t} · {n} rows": 榜单 {d} · 结算于 {t} · 共 {n} 行
   "shell {v}": 客户端 {v}
-  "vs #1 ({score})": "对比 #1（{score}）"
   "{a}–{b} of {n}": 第 {a}–{b} 行，共 {n} 行
   "A stance decides what the weapon actually swings: it publishes a combo per mode, and installing one replaces the weapon's own. It also GRANTS capacity instead of costing it — 10 on a slot of its own polarity, 5 on a bare one, 4 on the wrong colour.": "架势决定这把武器实际挥出的是什么：它按 mode 各发布一套连段，装上就会顶掉武器自己的那套。它还**给予**容量而不是消耗容量——同极性槽位 10 点，无极性 5 点，极性不对 4 点。"
   "the LIFE STEAL this weapon is bought for: a heavy attack grants every attack 5% life steal plus 5% per combo level, permanently and shared with allies within 15 m for the rest of the mission. Nothing damages the Tenno in this arena and there are no allies in it, so what it heals is a number this fight has no use for": "这把武器被买来用的那个**吸血**：一次重击就永久让它的所有攻击获得 5% 吸血，每一级连击再加 5%，并且在剩余任务里对 15 米内的队友共享治疗。这个竞技场里没有任何东西会伤害 Tenno，也没有队友，所以它治的量对这场仗没有用处"

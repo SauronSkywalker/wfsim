@@ -247,11 +247,11 @@ build" is not something the builder can show.
 ## The build finder
 
 **EVERY BUILD IS IN THE BUILD BAR; THE FINDER ONLY FINDS.** The builder's top
-box, the build finder (`renderBuildFinder`), is the board's builds as a table:
-scoped by ruler, mode and riven, filtered by what a build CONTAINS (a mod, an
-arcane, an evolution, a riven stat — each required or excluded, from the search
-box or by clicking a card in the usage rail), sorted, and compared against its
-group's #1. It lists the top five of a scope until asked for more (twenty at a
+box, the build finder (`renderBuildFinder`), answers "what do I equip" first
+and "why" on request. It is the board's builds as a LIST, best first, scoped by
+ruler, mode and riven and filtered by what a build CONTAINS — a mod, an arcane,
+an evolution, a part, an element, a riven stat, each "must have" or "I don't
+have". It lists the top five of a scope until asked for more (twenty at a
 time, folded back in one click). It holds a query and never a selection. "Open"
 puts the build in the build bar as a read-only chip and makes it current; THE
 BAR IS THE ONE PLACE THAT SAYS WHICH BUILD IS OPEN — its selected chip names the
@@ -260,13 +260,33 @@ BUILDER ONLY: the simulator keeps the build bar and has no finder. It folds like
 every box on the page, to its title and count, and it SHIPS SHUT
 (§"Every box folds").
 
+**NOTHING IN IT IS A THRESHOLD SOMEBODY CHOSE.** Every number it shows is a
+count or a score off the board: no "just as good" band, no "core" cut, no
+colour for how bad a gap is — a gap is green or red by its sign alone. A
+judgement written into the page is one more constant to keep true for every
+weapon and ruler, and the reader can draw it from the counts.
+
+**THREE PARTS, IN ORDER OF HOW OFTEN THEY ARE WANTED.** The OVERVIEW, folded by
+default (fold `finder-overview`): per module, every piece the scope's builds
+carry, how many carry it and the rank of the best of them; a click cycles it
+through "must have", "I don't have" and clear. The LIST. And a row OPENED in
+place, the same for every row: the whole build and, piece by piece, how many
+builds here carry that piece and the best build here without it, against this
+one, with "I don't have it" beside each. That gap is to the best board build
+lacking the piece, not a measured one-for-one swap, and the page says so.
+
+**THE COMPARISON IS THE READER'S.** Any opened build can be made the reference:
+every other row then shows its gap to it, mutes what it shares with it, and an
+opened row lists what it has that the reference does not. There is no default
+reference — the board's #1 is only the reference if the reader makes it one.
+
 **A ROW IS THE SIMULATOR'S BUILD CARD.** `buildCardHtml` draws a build from a
 descriptor — mods, parts, arcane, evolutions, valence as chips with icons and
 full names — for the simulator's "what is being tested" block and for every
-finder row alike, so the page has one picture of a build. In the finder the mods
-run in the weapon's own usage order (the cards a scope shares lead, what differs
-trails), the riven rides in the mods as its stats, and with "compare with #1" on
-what the group's #1 also carries is muted and what it does not is marked.
+finder row alike, so the page has one picture of a build. THE MODS RUN IN THE
+ORDER THE BUILD WAS SAVED, the exilus last: elements combine in slot order, so
+a row sorted any other way can read as another element build. The riven rides
+in the mods as its stats.
 
 **A BOARD BUILD IN THE BAR IS KEPT BY WHAT IT IS.** A builtin id ends in its
 rank, and a rescore renumbers the board, so the bar stores the build's identity

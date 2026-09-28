@@ -489,13 +489,18 @@ reader met it.
 
 **THE FINDER FINDS, THE BAR HOLDS.** The build finder is a query over the
 board's builds and never a selection, so every row it lists must satisfy the
-query: a card required from the usage rail is carried by every listed build,
-excluded it is carried by none, and a third click clears it. "Open" makes the
-build current AND puts it in the build bar as a read-only chip, and the finder
-then says it is already there. It folds like every box and ships SHUT: opening
-it is what gets stored, the stored answer carries to the next weapon in both
-directions, a redraw keeps it, a click in its search box does not fold it, and
-the jump menu lists it by name.
+query: a card required from the overview is carried by every listed build,
+excluded it is carried by none, and a third click clears it; "I don't have it"
+on a piece of an opened row excludes it the same way. A row's mods are in the
+order the build was saved, exilus last. The overview ships shut; any row opens
+in place into the same detail, one at a time; any build can be made the
+reference, every other row then reads against it, an opened row lists what it
+has that the reference does not, and the reference is taken back as it was
+given. "Open" makes the build current AND puts it in the build bar as a
+read-only chip, and the finder then says it is already there. It folds like
+every box and ships SHUT: opening it is what gets stored, the stored answer
+carries to the next weapon in both directions, a redraw keeps it, a click in
+its search box does not fold it, and the jump menu lists it by name.
 
 **KEPT BY WHAT THE BUILD IS.** A board build's id ends in its rank, so the check
 drops the opened build's score to renumber it, leaves the weapon and comes back:

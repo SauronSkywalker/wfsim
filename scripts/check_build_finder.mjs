@@ -1,8 +1,9 @@
 // THE BUILD FINDER FINDS, THE BUILD BAR HOLDS, AND THE LINE SAYS WHAT IS OPEN.
 //
 // The finder is a query over the board's builds and never a selection: every
-// row it lists must satisfy the query, and "Open" puts that build in the build
-// bar as a read-only chip and makes it current. The chip is kept by WHAT THE
+// row it lists must satisfy the query, every row opens into the same detail,
+// the comparison is against a build the reader picked, and "Open" puts that
+// build in the build bar as a read-only chip and makes it current. The chip is kept by WHAT THE
 // BUILD IS, so a rescore that renumbers the board leaves it on the same build.
 // Asserted here too: the three states of "what is open", and the scenario bar
 // keeping its single control.
@@ -63,11 +64,57 @@ const r = await evaluate(`(async () => {
   out.oneCell = scoped.length > 0 && scoped.every((p) => p && p.benchmark === finder.b && p.mode === finder.mo);
   // A ROW IS THE SIMULATOR'S BUILD CARD, holding every card the build carries.
   const row0 = box().querySelector('tr.fr');
-  const mods0 = (byId(row0.dataset.frow).board.mods || []).filter(Boolean).length;
+  const b0 = byId(row0.dataset.frow).board;
+  const ex0 = b0.exilus && b0.exilus !== 'none' && !(b0.mods || []).includes(b0.exilus) ? [b0.exilus] : [];
+  const saved = [...(b0.mods || []).filter(Boolean), ...ex0];
   const secs = [...row0.querySelectorAll('.fd-card .sb-h')];
-  out.cardMods = secs.length ? secs[0].nextElementSibling.querySelectorAll('.sb-chip').length : -1;
-  out.boardMods = mods0;
+  const chips = secs.length ? [...secs[0].nextElementSibling.querySelectorAll('.sb-chip')] : [];
+  out.cardMods = secs.length ? chips.length : -1;
+  out.boardMods = saved.length;
   out.cardIcons = row0.querySelectorAll('.fd-card .sb-chip img').length;
+  // THE MODS RUN IN THE ORDER THE BUILD WAS SAVED: elements combine in slot
+  // order, so a row sorted any other way can read as another element build.
+  out.orderKept = chips.length === saved.length && saved.every((id, i) => {
+    const label = chips[i].textContent.trim();
+    if (id === BOARD_RIVEN_SLOT) return label.startsWith(tr('Riven'));
+    const m = modById(splitRank(id)[0]);
+    return !!m && label.startsWith(m.name);
+  });
+  out.savedOrder = saved.join(' ');
+  out.shownOrder = chips.map((c) => c.textContent.trim()).join(' | ');
+
+  // THE OVERVIEW SHIPS SHUT, and its fold is the reader's like every other.
+  const ov = () => box().querySelector('.fd-ov');
+  out.ovShut = !!ov() && ov().classList.contains('shut') && !seen(ov().querySelector('.fold-b'))
+    && JSON.parse(localStorage.getItem('wfsim-folds') || '{}')['finder-overview'] == null;
+
+  // EVERY ROW OPENS THE SAME WAY, in place: the whole build and, piece by
+  // piece, how many here carry it and the best build without it.
+  const rows = () => [...box().querySelectorAll('tr.fr[data-frow]')];
+  // A MISSING CONTROL IS A FAILED ASSERTION, never a thrown probe.
+  const tap = async (el) => { if (el) { el.click(); await sleep(250); } return !!el; };
+  await tap(rows()[0]);
+  out.detail0 = !!box().querySelector('tr.fdet .fd-why-row') && box().querySelectorAll('tr.fdet').length === 1;
+  await tap(rows()[1]);
+  out.detail1 = box().querySelectorAll('tr.fdet').length === 1
+    && box().querySelector('tr.fr.x') === rows()[1] && !!box().querySelector('tr.fdet .fd-why-row');
+  // THE COMPARISON IS THE READER'S: any build is made the reference, every
+  // other row reads against it, and it is taken back as it was given.
+  const refId = rows()[1].dataset.frow;
+  out.refOn = await tap(box().querySelector('tr.fdet [data-fref]')) && !!box().querySelector('.fd-refbar:not(.off)') && finder.ref === refId
+    && rows().filter((t) => t.dataset.frow !== refId).every((t) => !!t.querySelector('.fd-card.cmp'));
+  await tap(rows()[0]);
+  out.refDiff = !!box().querySelector('tr.fdet .fd-diff');
+  out.refOff = await tap(box().querySelector('.fd-refbar [data-fref]')) && !box().querySelector('.fd-refbar:not(.off)') && !box().querySelector('.fd-card.cmp');
+  // "I DON'T HAVE IT" on a piece is a condition like any other.
+  const nh = box().querySelector('tr.fdet [data-fnohave]');
+  out.noHave = nh ? nh.dataset.fnohave : '';
+  if (nh) { nh.click(); await sleep(300); }
+  out.noHaveKept = !!out.noHave && listed().map(byId).every((p) => !finderTokens(p).includes(out.noHave))
+    && !!box().querySelector('.fd-tok.exc');
+  const un = box().querySelector('[data-funtok]');
+  if (un) { un.click(); await sleep(250); }
+  if (box().querySelector('tr.fdet')) { box().querySelector('tr.fr.x').click(); await sleep(250); }
   // FIVE UNTIL ASKED: "more" adds rows, and "back to the top" folds them away.
   out.inScope = builtinBuilds().filter((p) => p.benchmark === finder.b && p.mode === finder.mo).length;
   const more = box().querySelector('[data-fmore]');
@@ -77,8 +124,9 @@ const r = await evaluate(`(async () => {
   if (less) { less.click(); await sleep(200); }
   out.afterLess = listed().length;
 
-  // REQUIRE, THEN EXCLUDE, the most-used card — by clicking it in the usage rail.
-  const u = box().querySelector('.fd-use.mods [data-fcyc]');
+  // REQUIRE, THEN EXCLUDE, the most-used card — by clicking it in the overview.
+  out.ovOpened = !!ov() && await tap(ov().querySelector(':scope > .fold-h')) && !ov().classList.contains('shut') && seen(ov().querySelector('.fold-b'));
+  const u = box().querySelector('.fd-ov .fd-use.mods [data-fcyc]') || box().querySelector('.fd-use.mods [data-fcyc]');
   out.token = u ? u.dataset.fcyc : '';
   u.click(); await sleep(300);
   const req = listed().map(byId);
@@ -185,6 +233,16 @@ check("...each row drawn as the build card, one chip per card the build carries"
   r.cardMods === r.boardMods && r.cardIcons > 0, `${r.cardMods} chips for ${r.boardMods} mods, ${r.cardIcons} icons`);
 check("...more on request, and folded back to five", r.inScope <= 5
   || (r.afterMore === Math.min(25, r.inScope) && r.afterLess === 5), `${r.afterMore} then ${r.afterLess}`);
+check("...its mods in the order the build was saved", r.orderKept === true,
+  `saved ${r.savedOrder} / shown ${r.shownOrder}`);
+check("the overview ships shut, with nothing stored yet", r.ovShut === true);
+check("...and opens on a click", r.ovOpened === true);
+check("a row opens in place into the whole build, piece by piece", r.detail0 === true);
+check("...and so does any other row, one open at a time", r.detail1 === true);
+check("any build can be made the reference, and every other row reads against it", r.refOn === true);
+check("...an opened row says what it has that the reference does not", r.refDiff === true);
+check("...and the comparison is taken back as it was given", r.refOff === true);
+check(`"I don't have it" on ${r.noHave || "a piece"} lists only builds without it`, r.noHaveKept === true);
 check(`requiring ${r.token} lists only builds carrying it`, r.reqAll && r.reqChip);
 check("...excluding it lists none that do", r.excNone && r.excChip);
 check("...and a third click clears the condition", r.cleared);
@@ -232,4 +290,4 @@ const openElsewhere = await carried("/weapons/Torid");
 check("...and opening it there opens it on a third weapon too",
   openElsewhere.shut === false && openElsewhere.stored === false, JSON.stringify(openElsewhere));
 
-process.exit(0);
+await app.finish("the finder finds, the bar holds");
