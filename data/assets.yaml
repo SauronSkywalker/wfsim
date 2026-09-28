@@ -659,13 +659,10 @@ weapons:
 mods:
   # Hysteria's stance card is in neither the module nor DE's export; the ability
   # page draws this file for it.
-  # A RIVEN's card, DE's own: every riven shares one image because the game
-  # draws them all the same — `OmegaMod.png` is the unveiled riven mod on
-  # /Lotus/Upgrades/Mods/Randomized/Lotus*RandomModRare. Rivens are made by
-  # the visitor, so no per-riven entry could exist; the client stamps this one
-  # onto each of them (see `rivenMods`).
-  # `wiki:` says where a file lives, explicitly; a parenthesis in a file name
-  # is a property of some names and not a statement about where the file is.
+  # Every riven uses DE's unveiled card `OmegaMod.png`
+  # (`/Lotus/Upgrades/Mods/Randomized/Lotus*RandomModRare`); visitor-made
+  # rivens have no per-riven asset, so `rivenMods` stamps this one.
+  # `wiki:` names the source; parentheses are only part of some file names.
   # Assault-rifle-only pool. Rifle Ammo Mutation and its Primed
   # version share one card art, which is DE's own doing.
   # DE's export gives Primed Chamber the SAME texture as Charged Chamber
@@ -1509,4 +1506,3 @@ artifact_arcanes:
   zid_an_osbok: "wiki:Zid-AnOsbok.png"
   zid_an_sek_eel: "wiki:Zid-AnSek-Eel.png"
   zid_an_uskos: "wiki:Zid-AnUskos.png"
-
