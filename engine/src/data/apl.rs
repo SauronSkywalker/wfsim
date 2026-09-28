@@ -102,6 +102,21 @@ impl Action {
     pub fn is_planned(&self) -> bool {
         matches!(self, Action::Cast { .. } | Action::Operator { .. })
     }
+
+    /// A MELEE PRESS — a swing has no magazine, so a list played on one has
+    /// no reload line to print.
+    pub fn is_swing(&self) -> bool {
+        matches!(
+            self,
+            Action::Neutral
+                | Action::Forward
+                | Action::Block
+                | Action::BlockForward
+                | Action::Slide
+                | Action::Heavy
+                | Action::HeavySlam
+        )
+    }
 }
 
 impl Action {
@@ -382,7 +397,9 @@ pub fn for_fight(inserted: &Apl, shape: &Shape) -> Apl {
     if shape.tennokai_heavy {
         out.push(rule(Action::Heavy, When::Tennokai));
     }
-    out.push(rule(Action::Reload, When::CannotFire));
+    if !shape.attack.is_swing() {
+        out.push(rule(Action::Reload, When::CannotFire));
+    }
     out.push(rule(shape.attack.clone(), When::Always));
     Apl(out)
 }
@@ -564,16 +581,14 @@ prio: 3
     /// spends combo there is no rule, because the flash pays the other way.
     #[test]
     fn a_melee_list_is_the_button_with_the_flash_above_it() {
+        // NO RELOAD LINE: a swing has no magazine, and a line that can never
+        // hold reads as a step the player takes.
+        let neutral = Shape { attack: Action::Neutral, has_cycle: false, tennokai_heavy: true };
+        assert_eq!(for_fight(&Apl::default(), &neutral).to_simc(), "heavy,if=tennokai\nneutral");
         let light = Shape { attack: Action::Slide, has_cycle: false, tennokai_heavy: true };
-        assert_eq!(
-            for_fight(&Apl::default(), &light).to_simc(),
-            "heavy,if=tennokai
-reload,if=!can_fire
-slide"
-        );
+        assert_eq!(for_fight(&Apl::default(), &light).to_simc(), "heavy,if=tennokai\nslide");
         let heavy = Shape { attack: Action::Heavy, has_cycle: false, tennokai_heavy: false };
-        assert_eq!(for_fight(&Apl::default(), &heavy).to_simc(), "reload,if=!can_fire
-heavy");
+        assert_eq!(for_fight(&Apl::default(), &heavy).to_simc(), "heavy");
         // AND THE TWO `heavy` LINES ARE TOLD APART BY THEIR CONDITION, which is
         // the only thing that distinguishes a converted swing from the press a
         // heavy build makes all engagement.
