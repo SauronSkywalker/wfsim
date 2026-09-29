@@ -10,9 +10,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.3451 | Malignant Force, Rime Rounds, Hellfire, Galvanized Chamber, Primed Firestorm, Serration, Vile Acceleration, Vital Sense, Pax Charge, Primary Merciless |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.4591 | Primed Cryo Rounds, Thermite Rounds, Galvanized Chamber, Primed Firestorm, Serration, Critical Delay, Hammer Shot, Vile Acceleration, Pax Charge, Primary Compression |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.08152 | Malignant Force, Rime Rounds, Hellfire, Galvanized Chamber, Primed Firestorm, Serration, Vile Acceleration, Vital Sense, Pax Charge, Primary Merciless |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.3691 | Primed Cryo Rounds, Malignant Force, Thermite Rounds, Galvanized Chamber, Primed Firestorm, Serration, Critical Delay, Vile Acceleration, Pax Charge, Primary Compression |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.3691 | Primed Cryo Rounds, Malignant Force, Thermite Rounds, Galvanized Chamber, Primed Firestorm, Serration, Critical Delay, Vile Acceleration, Pax Charge, Primary Compression |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.2321 | Primed Cryo Rounds, Malignant Force, Thermite Rounds, Galvanized Chamber, Primed Firestorm, Serration, Critical Delay, Vile Acceleration, Pax Charge, Primary Compression |
 
 ## Not modelled here
 
