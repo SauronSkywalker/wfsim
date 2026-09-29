@@ -10,9 +10,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.2262 | Primed Heated Charge, Pistol Pestilence, Frostbite, Galvanized Diffusion, Primed Target Cracker, Galvanized Shot, Lethal Torrent, Magnetic Might, Cascadia Flare |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.2262 | Primed Heated Charge, Pistol Pestilence, Frostbite, Galvanized Diffusion, Primed Target Cracker, Galvanized Shot, Lethal Torrent, Magnetic Might, Cascadia Flare |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.002611 | Primed Heated Charge, Pistol Pestilence, Frostbite, Galvanized Diffusion, Primed Target Cracker, Galvanized Shot, Lethal Torrent, Magnetic Might, Cascadia Flare |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 7.7705 | Scorch, Pistol Acuity, Primed Target Cracker, Galvanized Shot, Anemic Agility, Pistol Elementalist, Pressurized Magazine, Magnetic Might, Eject Magazine, Secondary Encumber |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 7.7705 | Scorch, Pistol Acuity, Primed Target Cracker, Galvanized Shot, Anemic Agility, Pistol Elementalist, Pressurized Magazine, Magnetic Might, Eject Magazine, Secondary Encumber |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.3734 | Primed Heated Charge, Scorch, Pistol Acuity, Galvanized Shot, Anemic Agility, Pistol Elementalist, Pressurized Magazine, Magnetic Might, Eject Magazine, Secondary Encumber |
 
 ## Not modelled here
 

@@ -10,8 +10,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 3.2723 | Primed Heated Charge, Scorch, Pistol Acuity, Primed Target Cracker, Pistol Elementalist, Pressurized Magazine, Magnetic Might, Sure Shot, Cascadia Flare |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 6.3296 | Primed Heated Charge, Scorch, Pistol Acuity, Primed Target Cracker, Pistol Elementalist, Pressurized Magazine, Magnetic Might, Sure Shot, Cascadia Flare |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 8.9447 | Primed Heated Charge, Galvanized Diffusion, Galvanized Shot, Primed Quickdraw, Lethal Torrent, Pistol Elementalist, Synth Charge, Magnetic Might, Eject Magazine, Cascadia Flare |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 15.5636 | Primed Heated Charge, Galvanized Diffusion, Galvanized Shot, Primed Quickdraw, Lethal Torrent, Pistol Elementalist, Synth Charge, Magnetic Might, Eject Magazine, Cascadia Flare |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | alternate | 0.5360 | Primed Heated Charge, Scorch, Pistol Acuity, Primed Target Cracker, Pistol Elementalist, Pressurized Magazine, Magnetic Might, Sure Shot, Cascadia Flare |
 
 ## Not modelled here
