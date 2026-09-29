@@ -343,9 +343,14 @@ function billingPriceRow(p) {
     <button class="run-btn btn-sm" data-auth="checkout" data-price="${escHtml(p.key)}">${aT(p.interval ? "Subscribe" : "Buy")}</button></div>`;
 }
 
+/// AN INVOICE'S STATE in the reader's words; a refund is read off its payment
+/// by the paid half, since Stripe leaves a refunded invoice `paid`.
+const INVOICE_STATUS = { paid: "Paid", refunded: "Refunded", partly_refunded: "Partly refunded",
+  open: "Unpaid", void: "Void", uncollectible: "Uncollectible" };
+
 function billingInvoiceRow(i) {
   return `<div class="kv"><dt>${escHtml(billingDate(i.created))}</dt>
-    <dd>${escHtml(billingMoney(i.total, i.currency))} · ${escHtml(i.number || "")} · ${aT(i.status === "paid" ? "Paid" : i.status)}</dd>
+    <dd>${escHtml(billingMoney(i.total, i.currency))} · ${escHtml(i.number || "")} · ${aT(INVOICE_STATUS[i.status] || i.status)}</dd>
     <span>${i.url ? `<a class="ghost-btn btn-sm" data-native target="_blank" rel="noopener" href="${escHtml(i.url)}">${aT("View")}</a>` : ""}
       ${i.pdf ? `<a class="ghost-btn btn-sm" data-native href="${escHtml(i.pdf)}">PDF</a>` : ""}</span></div>`;
 }
