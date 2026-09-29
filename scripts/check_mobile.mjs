@@ -31,6 +31,7 @@ const SCREENS = [
   ["tablet", 768, 1024, false],
   ["desktop", 1280, 900, false],
 ];
+const TOPMENU_MAX = 780;
 
 for (const [label, w, h, mobile] of SCREENS) {
   await send("Emulation.setDeviceMetricsOverride",
@@ -46,6 +47,10 @@ for (const [label, w, h, mobile] of SCREENS) {
   const r = await evaluate(`(async () => {
     const sleep = (ms) => new Promise(r => setTimeout(r, ms));
     history.pushState({}, '', '/weapons/Ocucor'); route(); await sleep(2600);
+    // The static check server has no account providers. Draw the signed-out
+    // production entry so phone geometry covers the control readers need.
+    accountState = { providers: ['email'], account: null, loaded: true };
+    renderAccountEntry();
     // A FULL build, because an empty slot is narrow and proves nothing: the
     // overflow came from the content of a filled card.
     const pool = (META.weapons.find(w => w.id === 'ocucor') || {}).mods || [];
@@ -202,7 +207,7 @@ for (const [label, w, h, mobile] of SCREENS) {
         // moved. '.qq-link' / '.dc-link' are BOTH here: one is on the bar and one
         // is in the overflow, and which is which follows the display language.
         // ...and the overflow BUTTON is not in it. It is a container, not a
-        // destination or a control: below 700px it is not drawn at all, because
+        // destination or a control: below 780px it is not drawn at all, because
         // the phone menu already holds what it would have opened.
         const ALL = BAR.filter((x) => x !== '#tbmore-toggle')
           .concat(['.gh-link', '.qq-link', '.dc-link', '#compute-select']);
@@ -215,7 +220,8 @@ for (const [label, w, h, mobile] of SCREENS) {
         const tog = document.querySelector('.menu-toggle');
         const more = document.querySelector('#tbmore-toggle');
         const closed = missing(BAR);
-        // Open BOTH: below 700px the hamburger holds everything and the '⋯' is
+        const accountClosed = missing(['#account']);
+        // Open BOTH: below 780px the hamburger holds everything and the '⋯' is
         // not drawn; above it the '⋯' holds the overflow and the hamburger is
         // not drawn. Clicking one that is not there is a no-op either way.
         if (tog) tog.click();
@@ -225,6 +231,7 @@ for (const [label, w, h, mobile] of SCREENS) {
         if (tog) tog.click();
         return {
           missingClosed: closed, missingOpen: opened,
+          accountClosed,
           toggleDisplay: tog ? getComputedStyle(tog).display : 'absent',
           moreDisplay: more ? getComputedStyle(more).display : 'absent',
         };
@@ -261,16 +268,18 @@ for (const [label, w, h, mobile] of SCREENS) {
   // are all on screen and inside it, once the menu is open.
   check(`${tag} every topbar destination and control is reachable`,
     r.missingOpen.length === 0, `unreachable: ${r.missingOpen.join(", ") || "none"}`);
+  check(`${tag} the account entry is visible without opening navigation`,
+    r.accountClosed.length === 0, `unreachable: ${r.accountClosed.join(", ") || "none"}`);
   // The hamburger is the phone's, and only the phone's: above the breakpoint
   // the same eight sit on the bar itself with nothing to open.
-  check(`${tag} the menu is ${w <= 700 ? "how a phone reaches them" : "not in the way"}`,
-    (r.toggleDisplay !== "none") === (w <= 700), `toggle display ${r.toggleDisplay}`);
+  check(`${tag} the menu is ${w <= TOPMENU_MAX ? "how a narrow screen reaches them" : "not in the way"}`,
+    (r.toggleDisplay !== "none") === (w <= TOPMENU_MAX), `toggle display ${r.toggleDisplay}`);
   // The `⋯` is the DESKTOP's overflow and only the desktop's: below the
   // breakpoint it is `display:contents` and its children join the phone menu
   // directly, so there would be nothing left for it to open.
-  check(`${tag} the overflow is ${w <= 700 ? "not a second menu on a phone" : "the desktop's"}`,
-    (r.moreDisplay !== "none") === (w > 700), `⋯ display ${r.moreDisplay}`);
-  if (w > 700) {
+  check(`${tag} the overflow is ${w <= TOPMENU_MAX ? "not a second menu on a narrow screen" : "the desktop's"}`,
+    (r.moreDisplay !== "none") === (w > TOPMENU_MAX), `⋯ display ${r.moreDisplay}`);
+  if (w > TOPMENU_MAX) {
     check(`${tag} ...and the bar itself shows what a reader acts on`,
       r.missingClosed.length === 0, `hidden until opened: ${r.missingClosed.join(", ")}`);
   }

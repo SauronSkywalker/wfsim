@@ -55,7 +55,7 @@ The shape a mature product has, because that is where the trust comes from:
 
 | surface | what it is |
 | --- | --- |
-| top bar | ONE entry: "Sign in", or an avatar whose menu holds settings, the reader's builds and sign-out |
+| top bar | ONE always-visible entry, including on phones: "Sign in", or an avatar whose menu holds settings, the reader's builds and sign-out |
 | `/login` | third parties in one click, then an email and a password; "Forgot password?" beside the password |
 | `/signup` | the same ways in; an email and a password, then a page for the mailed code — six boxes, a paste fills them, the last digit submits, a resend after a minute |
 | `/reset` | an email, then the code and a new password |

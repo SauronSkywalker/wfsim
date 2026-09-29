@@ -110,9 +110,9 @@
         </div>
       </div>
       <select id="weapon" hidden></select>
-      <!-- THE PHONE'S MENU. Everything after this line is ONE element on a
-           phone and eight on a desktop, and it is the same eight either way:
-           `.topmenu`/`.tblinks` are `display:contents` above 700px, so their
+      <!-- THE PHONE'S MENU. Navigation and settings after this line are ONE
+           element on a phone and the same desktop row at wider sizes:
+           `.topmenu`/`.tblinks` are `display:contents` above 780px, so their
            children are direct flex items of the bar and the desktop row is
            byte-for-byte the row that was here before. Below it they become a
            real box and this button opens it.
@@ -123,7 +123,7 @@
            swap rather than a mobile menu built from a list of links.
            WHAT IT MUST NOT LOSE: the site's two
            destinations AND the right-hand row. Before this, a phone saw
-           neither the nav (display:none under 700px) nor the support link, and
+           neither the nav (display:none under 780px) nor the support link, and
            the footer was the only way to either. -->
       <button id="menu-toggle" class="ghost-btn menu-toggle" aria-expanded="false"
               aria-controls="topmenu" aria-label="Menu" title="Menu" data-i18n-title>☰</button>
@@ -191,10 +191,7 @@
                `renderResults`, where it is drawn after the answer and states
                the work before it states the ask. -->
           <a class="sup-link ghost-btn" href="/support" title="Support WFSim — what it costs to run" data-i18n-title aria-label="Support"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 20.35l-1.32-1.2C6.03 14.92 3 12.17 3 8.79 3 6.03 5.16 3.87 7.92 3.87c1.56 0 3.06.72 4.04 1.86l.04.05.04-.05c.98-1.14 2.48-1.86 4.04-1.86C18.84 3.87 21 6.03 21 8.79c0 3.38-3.03 6.13-7.68 10.37l-1.32 1.19z"/></svg><span class="tbl" data-i18n>Support</span></a>
-          <!-- THE ACCOUNT ENTRY — "Sign in", or an avatar and its menu — drawn by
-               `17-account.js` only where the site offers a way in. -->
-          <div class="account" id="account" hidden></div>
-          <!-- The overflow. On a desktop it is a real popover; below 700px it
+          <!-- The overflow. On a desktop it is a real popover; below 780px it
                is `display:contents` and its children flatten into the phone
                menu exactly as they did before it existed — one copy of every
                control at both widths, which is the same trick `.topmenu`
@@ -232,6 +229,7 @@
           </div>
         </div>
       </div>
+      <div class="account" id="account" hidden></div>
     </div>
   </header>
 
