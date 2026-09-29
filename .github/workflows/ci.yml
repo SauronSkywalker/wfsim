@@ -159,6 +159,8 @@ jobs:
         run: node scripts/gen_worker_parts.mjs --check
       - name: The MCP server's queries run with no page
         run: node scripts/check_mcp_tools.mjs
+      - name: The MCP server knows who calls, and how often
+        run: node scripts/check_mcp_auth.mjs
       - name: The account rules hold against the real schema
         run: node scripts/check_accounts.mjs
       - name: Short share links store a build and nothing else

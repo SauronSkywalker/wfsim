@@ -94,3 +94,26 @@ CREATE TABLE IF NOT EXISTS login_failures (
   failures INTEGER NOT NULL,
   first_at TEXT NOT NULL
 );
+
+-- AN AGENT'S KEY (docs/ACCOUNTS.md §"Agents"). An agent registers with no
+-- account and gets a key at once; this keeps the key's hash, never the key.
+-- Claiming it — a code mailed to an address an account holds, read back by the
+-- agent — sets `account`, and the key then acts for that account in what the
+-- account may do. `claim_*` is a claim in flight: the address, the code's
+-- HMAC, when it lapses and how many wrong codes it has had. Deleting the
+-- account deletes its agents' keys.
+CREATE TABLE IF NOT EXISTS agent_keys (
+  id               TEXT PRIMARY KEY,
+  key_hash         TEXT NOT NULL UNIQUE,
+  name             TEXT NOT NULL,
+  created_at       TEXT NOT NULL,
+  last_used_at     TEXT,
+  account          TEXT REFERENCES accounts (id) ON DELETE CASCADE,
+  claimed_at       TEXT,
+  claim_email      TEXT,
+  claim_code_hash  TEXT,
+  claim_expires_at TEXT,
+  claim_sent_at    TEXT,
+  claim_attempts   INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS agent_keys_by_account ON agent_keys (account);

@@ -21,6 +21,7 @@
 import { decodeShare, useShareHost } from "./share_codec.js";
 import { accountRoute } from "./accounts.js";
 import { cloudPath, cloudRoute } from "./cloud.js";
+import { agentRoute } from "./agents.js";
 
 const MAX_BYTES = 4096;        // a build is a few hundred bytes; this is slack
 // AN OUTER BOUND, NOT THE RULE — see below. It is `MAIN_SLOTS + 1`: eight main
@@ -686,6 +687,10 @@ export default {
     const path = new URL(request.url).pathname;
     const twin = markdownTwin(path);
     if (twin) return agentPage(request, env, twin);
+    // THE AGENT DOCUMENTS AND ENDPOINTS, drawn by the worker from one set of
+    // constants (worker/agents.js) rather than served as files.
+    const agent = await agentRoute(request, env, path);
+    if (agent) return agent;
     // A `.well-known` path is a document or nothing: html here is the SPA
     // fallback claiming a path a client will parse.
     if (path.startsWith("/.well-known/")) {

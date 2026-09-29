@@ -677,13 +677,21 @@ ids is minted at boot and keeps them on the next load, a duplicated id is split,
 "+ new" and ⧉ mint fresh ones, and an edit and its undo keep the entry's. A
 riven is minted by the fold, which repoints the build that names it.
 
+## `check_mcp_auth`
+
+The MCP server's door, `mcp/index.js` with its engine stubbed: it describes
+itself as a protected resource, a tool call without a key spends the address's
+allowance and with one the key's, the handshake and the list spend nothing, a
+key that is not one is a 401, and a key is looked up once.
+
 ## `check_account_names`
 
-The name an account goes by, on the page, against an account API faked in the
+The account page's names and agents, and the name an account goes by, against an account API faked in the
 page: a born `user_` name reads as not chosen, the Profile form saves both
 names and the top bar shows the display name at once, a refusal is said in the
 card, and inside the day after a change the username field is shut while the
-display name still saves.
+display name still saves; the agents acting for the account are listed, and one
+click disconnects one.
 
 ## `check_sync_client`
 

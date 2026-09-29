@@ -1606,6 +1606,13 @@ that is read once for your id and dropped.
 Two accounts are never merged by WFSim: a way to sign in belongs to one account,
 and moves only if you remove it from one and add it to another.</p>
 
+<h2>AI agents</h2>
+<p>An AI agent can register with WFSim and get a key, which WFSim keeps only as a
+hash, with the name the agent gives and when it was last used. It acts for your
+account only after you give it a code WFSim mails to your address. Your account
+page lists every agent acting for it and disconnects one in a click; deleting
+the account deletes them.</p>
+
 <h2>If you buy something</h2>
 <p>Payment is taken by Stripe, through Link, which is the seller of record: it
 holds your card and billing details, and sends your receipts and invoices. WFSim
@@ -1794,38 +1801,6 @@ def ship_agent_files(by_slot: dict) -> None:
     put(APP / "index.md", f"# WFSim\n\n{agent_summary()}\n\nCalculator: {SITE}/\n\n{links}")
     put(APP / "llms.txt", f"# WFSim\n\n> {agent_summary()}\n\n## Start here\n\n{links}"
         f"\n## Weapons\n\n" + "".join(entry(s) for s in roster()))
-
-    # AUTH.MD STATES THAT THERE IS NONE, which is the truth an agent needs: a
-    # caller looking for a registration endpoint or a key stops looking here.
-    put(APP / "auth.md", f"""# WFSim auth.md
-
-WFSim needs no registration and issues no credentials. Every surface an agent
-can use is public, anonymous and read-only.
-
-## Agent audience
-
-Any agent answering a Warframe player about a weapon, its build or its measured
-numbers.
-
-## Where to call
-
-- MCP server: {MCP_URL} (Streamable HTTP). Send no `Authorization` header.
-- Any page as markdown: {SITE}/weapons/<Wiki_Name> with `Accept: text/markdown`,
-  or the same address with `.md` appended.
-- The published board: {SITE}/board/<weapon_id>.json
-
-## Registration
-
-None. There is no registration endpoint, no API key and no OAuth server.
-
-## Credentials
-
-None. A request carrying credentials is answered exactly as one without.
-
-## Limits
-
-The site's edge refuses the `Python-urllib` default user agent; send any other.
-""")
 
     wk = APP / ".well-known"
     skill = skill_md()

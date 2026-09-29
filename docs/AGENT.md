@@ -267,7 +267,7 @@ The rules the table keeps:
 ## The MCP server
 
 `mcp/` is a worker of its own at `https://mcp.wfsim.app/mcp`: Streamable HTTP,
-no sessions, no sign-in, the headless table's queries as read-only tools. It
+no sessions, the headless table's queries as read-only tools. It
 bundles the engine rather than sharing the site's worker, because a site worker
 carrying six megabytes of wasm would start every page load colder.
 
@@ -278,6 +278,11 @@ carrying six megabytes of wasm would start every page load colder.
   compiled at upload. The engine starts on the first call that needs it.
 - The board comes from the site's worker over the `SITE` service binding, so it
   is as current as the site; everything else is the bundled engine's.
+- A key is optional. A tool call without one spends the address's allowance,
+  with one the key's (`ADDRESS_LIMIT`, `KEY_LIMIT` in `mcp/wrangler.jsonc`, stated
+  as `MCP_LIMITS` in `worker/agents.js`); the handshake and the list spend
+  nothing. The key is asked about over `SITE` once a minute per isolate, and a
+  key that is not one is a 401 rather than read as none.
 - `ship.py` deploys it after the site, and `--verify` asks it which engine it
   runs against the digest `site/pkg/` serves. It lags silently otherwise.
 
@@ -296,7 +301,8 @@ serves it:
 | `/.well-known/agent-skills/index.json` | one skill: look a weapon up, read the board, quote a score |
 | `/.well-known/api-catalog` | RFC 9727: the MCP server and the board JSON, the two public read APIs |
 | `/.well-known/mcp/server-card.json` | the MCP server: its endpoint and its tools, from the headless table |
-| `/auth.md` | that there is no registration and no credential: every surface is public |
+| `/auth.md` | how an agent registers, claims a key for its person and uses it — drawn by the worker (`worker/agents.js`) |
+| `/.well-known/oauth-protected-resource`, `/.well-known/oauth-authorization-server` | RFC 9728 and RFC 8414, the second with auth.md's `agent_auth` block, from the same constants as `/auth.md` |
 | `/robots.txt` | each AI crawler named, `Content-Signal` granting search, ai-input, ai-train |
 
 A page with a twin (`markdownTwin` in `worker/index.js`) answers
@@ -306,9 +312,7 @@ way — which is why `/`, `/weapons` and `/weapons/*` run the worker first. An
 unknown `/.well-known/` path is a 404, never the SPA.
 
 This is what Cloudflare's agent-readiness scan grades (`isitagentready.com`,
-`POST /api/scan`). Level 4 is what the site states truthfully: level 5 needs two
-of a Web Bot Auth key for bots it does not run, every integration including an
-A2A agent it does not have, and auth metadata — which `/auth.md` answers
-truthfully by stating there is no auth, and is one of the two at most. A
-twin states only what the page does, so a fact reaches it through the same
-function that writes the html, never a second one.
+`POST /api/scan`). Its `authMd` check passes on a real registration: an
+anonymous key issued at once, a claim, and a revocation (docs/ACCOUNTS.md
+§"Agents"). A twin states only what the page does, so a fact reaches it through
+the same function that writes the html, never a second one.

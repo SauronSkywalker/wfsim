@@ -12,6 +12,7 @@ import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { accountRoute } from "../worker/accounts.js";
 import { cloudRoute, cloudPath } from "../worker/cloud.js";
+import { agentRoute, MCP_LIMITS } from "../worker/agents.js";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 let failed = 0;
@@ -376,6 +377,123 @@ const n3 = browser();
 await n3.oauth("github", { id: "71", name: "three" });
 nr = await setName(n3, { username: gone });
 check("a deleted account's name is held too", nr.reason === "username_taken", JSON.stringify(nr));
+
+// ---- agents: a key at once, and an account only when its person says so ------------------
+{
+
+const agentCall = async (method, path, { body, key, jar } = {}) => {
+  const headers = {};
+  if (key) headers.authorization = `Bearer ${key}`;
+  if (jar) headers.cookie = Object.entries(jar).map(([k, v]) => `${k}=${v}`).join("; ");
+  if (body !== undefined) { headers["content-type"] = "application/json"; if (jar) headers.origin = SITE; }
+  const r = await agentRoute(new Request(SITE + path, { method, headers, ...(body !== undefined ? { body: JSON.stringify(body) } : {}) }), env, path);
+  return { status: r.status, type: r.headers.get("content-type") || "", text: await r.text() };
+};
+const agentJson = async (...a) => { const r = await agentCall(...a); return { status: r.status, ...JSON.parse(r.text) }; };
+
+const prm = await agentJson("GET", "/.well-known/oauth-protected-resource");
+check("the protected resource names this site, its issuer and header bearers",
+  prm.resource === SITE && prm.authorization_servers[0] === SITE && prm.bearer_methods_supported.includes("header")
+    && prm.scopes_supported.length > 0, JSON.stringify(prm));
+const asm = await agentJson("GET", "/.well-known/oauth-authorization-server");
+const aa = asm.agent_auth || {};
+check("the authorization server is the same issuer, with a complete anonymous method",
+  asm.issuer === SITE && aa.skill === `${SITE}/auth.md` && aa.register_uri === aa.identity_endpoint
+    && aa.claim_uri === aa.claim_endpoint && aa.identity_types_supported.includes("anonymous")
+    && aa.anonymous.credential_types_supported.includes("api_key") && !!aa.anonymous.claim_uri && !!aa.revocation_uri,
+  JSON.stringify(asm));
+const md = await agentCall("GET", "/auth.md");
+check("/auth.md is markdown under an auth.md heading, naming the endpoints the metadata names",
+  md.type.startsWith("text/markdown") && /^# .*auth\.md/m.test(md.text)
+    && md.text.includes(aa.register_uri) && md.text.includes(aa.claim_uri), md.text.slice(0, 80));
+const agentBound = SITE + "/api/agent/auth";
+check("the endpoints the metadata names are the ones served", aa.register_uri === agentBound, aa.register_uri);
+
+const reg = await agentJson("POST", "/api/agent/auth", { body: { type: "anonymous", name: "Test Agent" } });
+const key = reg.credential && reg.credential.api_key;
+check("registering gives a key at once, before any claim", reg.status === 201 && /^wfa_/.test(key)
+  && JSON.stringify(reg.scopes) === JSON.stringify(["read"]), JSON.stringify(reg));
+check("...and only its hash is kept",
+  count("SELECT COUNT(*) n FROM agent_keys WHERE key_hash = ? OR key_hash = ?", key, key) === 0
+    && count("SELECT COUNT(*) n FROM agent_keys WHERE id = ?", reg.agent_id) === 1);
+let who = await agentJson("GET", "/api/agent/whoami", { key });
+check("the key says who it is, acting for nobody yet", who.ok && who.agent.name === "Test Agent" && who.account === null,
+  JSON.stringify(who));
+check("a key this server did not issue is refused",
+  (await agentJson("GET", "/api/agent/whoami", { key: "wfa_forged" })).reason === "bad_key");
+
+const before = mail.length;
+let cl = await agentJson("POST", "/api/agent/auth/claim", { key, body: { email: "nobody-here@example.com" } });
+check("a claim to an address no account holds answers as any other",
+  cl.ok && cl.sent === true && mail.length === before + 1 && /No WFSim account/.test(mail.at(-1).subject), JSON.stringify(cl));
+env.ACCOUNTS.raw.prepare("UPDATE agent_keys SET claim_sent_at = NULL WHERE id = ?").run(reg.agent_id);
+check("...and no code completes it",
+  (await agentJson("POST", "/api/agent/auth/claim/complete", { key, body: { code: "000000" } })).reason === "wrong_code");
+
+const owner = browser();
+await owner.email("agent-owner@example.com");
+const ownerMe = await owner.me();
+env.ACCOUNTS.raw.prepare("UPDATE agent_keys SET claim_sent_at = NULL, claim_attempts = 0 WHERE id = ?").run(reg.agent_id);
+cl = await agentJson("POST", "/api/agent/auth/claim", { key, body: { email: "Agent-Owner@example.com" } });
+const code = mail.at(-1).subject.slice(0, 6);
+check("a claim to an account's address mails that address a code", cl.ok && /^\d{6}$/.test(code)
+  && mail.at(-1).to === "agent-owner@example.com" && mail.at(-1).text.includes("Test Agent"), JSON.stringify(mail.at(-1)));
+check("...and a second claim within the minute waits",
+  (await agentJson("POST", "/api/agent/auth/claim", { key, body: { email: "agent-owner@example.com" } })).reason === "too_soon");
+check("a wrong code does not claim",
+  (await agentJson("POST", "/api/agent/auth/claim/complete", { key, body: { code: String((Number(code) + 1) % 1e6).padStart(6, "0") } })).reason === "wrong_code");
+const done = await agentJson("POST", "/api/agent/auth/claim/complete", { key, body: { code } });
+check("the right code claims the key for that account", done.ok && done.account.username === ownerMe.username
+  && done.scopes.includes("builds"), JSON.stringify(done));
+who = await agentJson("GET", "/api/agent/whoami", { key });
+check("...which the key now says", who.account && who.account.username === ownerMe.username, JSON.stringify(who));
+check("a claimed key is not claimed again",
+  (await agentJson("POST", "/api/agent/auth/claim", { key, body: { email: "x@example.com" } })).reason === "already_claimed");
+
+// THE KEY ON THE PAID HALF: a feature's route as its account, and nothing of billing.
+env.CLOUD = { fetch: async (req) => {
+  seen.push({ path: new URL(req.url).pathname, account: req.headers.get("x-wfsim-account"), auth: req.headers.get("authorization") });
+  return new Response(JSON.stringify({ ok: true, forwarded: true }));
+} };
+const viaKey = (path, k) => cloudRoute(new Request(SITE + path, { method: "POST",
+  headers: { "content-type": "application/json", authorization: `Bearer ${k}` }, body: "{}" }), env, path);
+const reg2 = await agentJson("POST", "/api/agent/auth", { body: { name: "Unclaimed" } });
+let n0 = seen.length;
+await viaKey("/api/cloud/sync", key);
+check("a claimed key reaches a feature as its account, and its key goes no further",
+  seen.length === n0 + 1 && seen.at(-1).account === ownerMe.id && seen.at(-1).auth === null, JSON.stringify(seen.at(-1)));
+n0 = seen.length;
+await viaKey("/api/billing/checkout", key);
+check("...but reaches billing as nobody", seen.length === n0 + 1 && seen.at(-1).account === null, JSON.stringify(seen.at(-1)));
+await viaKey("/api/cloud/sync", reg2.credential.api_key);
+check("an unclaimed key acts for nobody", seen.at(-1).account === null, JSON.stringify(seen.at(-1)));
+
+const listed = await agentJson("GET", "/api/account/agents", { jar: owner.jar });
+check("the account lists its agent", listed.ok && listed.agents.length === 1 && listed.agents[0].name === "Test Agent",
+  JSON.stringify(listed));
+const stranger = browser();
+await stranger.oauth("github", { id: "4242", name: "stranger" });
+check("another account cannot revoke it",
+  (await agentJson("POST", "/api/account/agents/revoke", { jar: stranger.jar, body: { id: reg.agent_id } })).ok
+    && (await agentJson("GET", "/api/agent/whoami", { key })).ok === true);
+await agentJson("POST", "/api/account/agents/revoke", { jar: owner.jar, body: { id: reg.agent_id } });
+check("its own account revokes it, and the key stops working",
+  (await agentJson("GET", "/api/agent/whoami", { key })).reason === "bad_key");
+const self = await agentJson("POST", "/api/agent/auth/revoke", { key: reg2.credential.api_key, body: {} });
+check("an agent may revoke its own key", self.ok && (await agentJson("GET", "/api/agent/whoami", { key: reg2.credential.api_key })).reason === "bad_key");
+
+const reg3 = await agentJson("POST", "/api/agent/auth", { body: { name: "Doomed" } });
+env.ACCOUNTS.raw.prepare("UPDATE agent_keys SET account = ? WHERE id = ?").run(ownerMe.id, reg3.agent_id);
+await owner.post("/api/account/delete", {});
+check("deleting the account deletes its agents' keys", count("SELECT COUNT(*) n FROM agent_keys WHERE id = ?", reg3.agent_id) === 0);
+
+// THE ALLOWANCE STATED IS THE ALLOWANCE ENFORCED.
+const mcpConf = readFileSync(resolve(ROOT, "mcp/wrangler.jsonc"), "utf8");
+const lim = (name) => Number((new RegExp(`"name": "${name}"[^}]*"limit": (\\d+)`).exec(mcpConf) || [])[1]);
+check("the MCP allowance auth.md states is the one its limiters enforce",
+  lim("ADDRESS_LIMIT") === MCP_LIMITS.per_address && lim("KEY_LIMIT") === MCP_LIMITS.per_key,
+  JSON.stringify([lim("ADDRESS_LIMIT"), lim("KEY_LIMIT"), MCP_LIMITS]));
+}
 
 console.log(failed ? `\n${failed} failed` : "\nthe account rules hold");
 process.exit(failed ? 1 : 0);

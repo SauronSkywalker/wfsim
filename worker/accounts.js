@@ -16,6 +16,7 @@
 // so the page offers only the ways in that work.
 
 import { cloudEnd, cloudExport } from "./cloud.js";
+import { agentsOf } from "./agents.js";
 
 export const SLOTS = ["google", "discord", "github", "email"];
 
@@ -52,7 +53,7 @@ const OAUTH_SECONDS = 600;
 const CODE_SECONDS = 600;
 const CODE_RESEND_SECONDS = 60;
 const CODE_ATTEMPTS = 5;
-const EMAIL_FROM = "WFSim <login@wfsim.app>";
+export const EMAIL_FROM = "WFSim <login@wfsim.app>";
 const PASSWORD_MIN = 8;
 const PASSWORD_MAX = 128;
 const LOGIN_FAILURES = 5;
@@ -80,13 +81,13 @@ const configured = (env) => [
 const enc = new TextEncoder();
 const b64url = (bytes) => btoa(String.fromCharCode(...new Uint8Array(bytes)))
   .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-const random = (n = 32) => b64url(crypto.getRandomValues(new Uint8Array(n)));
-const sha256 = async (s) => b64url(await crypto.subtle.digest("SHA-256", enc.encode(s)));
-async function hmac(key, s) {
+export const random = (n = 32) => b64url(crypto.getRandomValues(new Uint8Array(n)));
+export const sha256 = async (s) => b64url(await crypto.subtle.digest("SHA-256", enc.encode(s)));
+export async function hmac(key, s) {
   const k = await crypto.subtle.importKey("raw", enc.encode(key), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
   return b64url(await crypto.subtle.sign("HMAC", k, enc.encode(s)));
 }
-const now = () => new Date().toISOString();
+export const now = () => new Date().toISOString();
 /// `user_` and six random characters, free of every account's name.
 async function bornUsername(db) {
   for (;;) {
@@ -95,7 +96,7 @@ async function bornUsername(db) {
     if (!(await db.prepare("SELECT 1 FROM accounts WHERE username = ?1").bind(name).first())) return name;
   }
 }
-const later = (seconds) => new Date(Date.now() + seconds * 1000).toISOString();
+export const later = (seconds) => new Date(Date.now() + seconds * 1000).toISOString();
 
 export const json = (obj, status = 200, headers = {}) =>
   new Response(JSON.stringify(obj), { status, headers: { "content-type": "application/json", "cache-control": "no-store", ...headers } });
@@ -125,9 +126,11 @@ export function sameSite(request) {
     && (request.headers.get("content-type") || "").startsWith("application/json");
 }
 
-async function limited(env, request) {
+/// Over the per-address allowance for sign-in calls; `what` gives a kind of
+/// call a counter of its own.
+export async function limited(env, request, what = "") {
   if (!env.AUTH_LIMIT) return false;
-  const { success } = await env.AUTH_LIMIT.limit({ key: request.headers.get("cf-connecting-ip") || "unknown" });
+  const { success } = await env.AUTH_LIMIT.limit({ key: what + (request.headers.get("cf-connecting-ip") || "unknown") });
   return !success;
 }
 
@@ -316,11 +319,11 @@ const passwordOf = (p) => (typeof p === "string" && p.length >= PASSWORD_MIN && 
 
 // ---- email: the first-party way in --------------------------------------------------
 
-const emailOf = (s) => {
+export const emailOf = (s) => {
   const e = String(s || "").trim().toLowerCase();
   return /^[^\s@]{1,64}@[^\s@]{1,253}\.[^\s@]{2,}$/.test(e) && e.length <= 254 ? e : null;
 };
-const emailSlot = (env, email) => env.ACCOUNTS.prepare(
+export const emailSlot = (env, email) => env.ACCOUNTS.prepare(
   "SELECT account, password_hash FROM identities WHERE provider = 'email' AND subject = ?1").bind(email).first();
 
 const CODE_SUBJECTS = { register: "is your WFSim code", link: "is your WFSim code", reset: "resets your WFSim password" };
@@ -613,7 +616,8 @@ export async function accountRoute(request, env, path) {
     return json({ ok: true, deleted: true }, 200, { "set-cookie": endSession() });
   }
   // EVERYTHING HELD ABOUT THIS ACCOUNT, as it is held — docs/ACCOUNTS.md.
-  return json({ ok: true, account: await accountView(env, account), ...(await cloudExport(env, account)),
+  return json({ ok: true, account: await accountView(env, account), agents: await agentsOf(env, account),
+    ...(await cloudExport(env, account)),
     exported_at: now() }, 200,
     { "content-disposition": 'attachment; filename="wfsim-account.json"' });
 }

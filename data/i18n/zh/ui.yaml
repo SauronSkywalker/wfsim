@@ -2309,6 +2309,11 @@ ui:
   "above zero the two are worth more together than apart; below zero one dilutes the other": 大于零是协同：一起装比分开更值；小于零是稀释：一个削弱了另一个
   # ACCOUNTS — web/src/static/app/17-account.js.
   "Account settings": "账号设置"
+  "Connected agents": "已连接的 agent"
+  "connected {date}": "{date} 连接"
+  "last used {date}": "最后使用 {date}"
+  "No agent acts for this account.": "没有 agent 代表这个账号操作。"
+  "An AI agent connects by asking you for a code WFSim mails to your address. Disconnecting it stops its key at once.": "AI agent 需要向你索要 WFSim 发到你邮箱的验证码才能连接。断开后，它的 key 立即失效。"
   "Profile": "个人资料"
   "Username": "用户名"
   "Display name": "显示名"

@@ -10,5 +10,11 @@
   "compatibility_date": "2026-07-28",
   "routes": [{ "pattern": "mcp.wfsim.app", "custom_domain": true }],
   "services": [{ "binding": "SITE", "service": "wfsim" }],
+  // THE ALLOWANCE per minute, stated to agents as worker/agents.js MCP_LIMITS;
+  // check_agents holds the two equal.
+  "ratelimits": [
+    { "name": "ADDRESS_LIMIT", "namespace_id": "1002", "simple": { "limit": 30, "period": 60 } },
+    { "name": "KEY_LIMIT", "namespace_id": "1003", "simple": { "limit": 120, "period": 60 } }
+  ],
   "observability": { "enabled": true }
 }

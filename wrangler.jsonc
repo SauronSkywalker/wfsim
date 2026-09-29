@@ -44,7 +44,7 @@
     // …AND EVERY PAGE WITH A MARKDOWN TWIN, which the worker serves to
     // `Accept: text/markdown`, and `.well-known/`, which is a document or a 404.
     "run_worker_first": ["/api/*", "/asset/*", "/pkg/*", "/", "/weapons", "/weapons/*",
-                         "/.well-known/*", "/og/s/*"]
+                         "/.well-known/*", "/og/s/*", "/auth.md"]
   },
   // THE CARD'S FONTS ride in the bundle as bytes: a worker has no system fonts.
   "rules": [{ "type": "Data", "globs": ["**/*.ttf"], "fallthrough": true }],

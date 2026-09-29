@@ -25,6 +25,22 @@ becomes an account.
 | the account lives while a slot is filled | trigger `identities_last_slot`, so every path that empties the last slot deletes the account, and by cascade its sessions and documents |
 | a new account arrives with its first slot | one batch in `arrive` — no moment exists with a UUID and no way to reach it |
 
+## Agents
+
+**AN AGENT GETS A KEY AT ONCE, AND AN ACCOUNT ONLY WHEN ITS PERSON SAYS SO.**
+`worker/agents.js` issues the key, and draws `/auth.md` and the two OAuth
+metadata documents from the same constants as its endpoints.
+
+| rule | where it is held |
+| --- | --- |
+| registering needs nothing, is limited per address, and returns the key once; only its hash is kept | `register`, `agent_keys.key_hash` |
+| an unclaimed key nobody used for 90 days is dropped | `register` |
+| a claim mails a code to the address — or, where no account holds it, a mail saying so — and answers the same either way | `claim` |
+| the right code within ten minutes and five tries binds the key to the account | `claimComplete` |
+| a claimed key acts for its account on `/api/cloud/*` and nowhere in billing | `cloudRoute` → `agentAccount` |
+| the account page lists its agents and disconnects one in a click; an agent may revoke its own key | `/api/account/agents`, `AGENT_PATHS.revoke` |
+| deleting the account deletes its agents' keys; the export lists them | `ON DELETE CASCADE`, `agentsOf` |
+
 ## Names
 
 **EVERY ACCOUNT HAS A USERNAME**, the site's handle for it, and may have a

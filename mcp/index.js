@@ -15,8 +15,43 @@ const PROTOCOLS = ["2025-06-18", "2025-03-26"];
 const CORS = {
   "access-control-allow-origin": "*",
   "access-control-allow-methods": "POST, OPTIONS",
-  "access-control-allow-headers": "content-type, mcp-protocol-version, mcp-session-id",
+  "access-control-allow-headers": "authorization, content-type, mcp-protocol-version, mcp-session-id",
 };
+const RESOURCE = "https://mcp.wfsim.app/mcp";
+const METADATA = "/.well-known/oauth-protected-resource";
+
+/// WHO IS CALLING, as the site's worker says: an agent key's row, or null for
+/// none. A key is asked about once a minute per isolate, so a busy agent costs
+/// the site one lookup, not one per call.
+const KEY_TTL_MS = 60000;
+const keys = new Map();
+async function agentKey(env, request) {
+  const auth = request.headers.get("authorization") || "";
+  if (!auth) return null;
+  const hit = keys.get(auth);
+  if (hit && hit.until > Date.now()) return hit.agent;
+  let agent = false;
+  try {
+    const r = await env.SITE.fetch(new Request(`${SITE}/api/agent/whoami`, { headers: { authorization: auth } }));
+    const j = await r.json();
+    agent = r.ok && j.ok ? j.agent : false;
+  } catch (_) {
+    agent = false;
+  }
+  if (keys.size > 5000) keys.clear();
+  keys.set(auth, { agent, until: Date.now() + KEY_TTL_MS });
+  return agent;
+}
+
+/// THE ALLOWANCE (worker/agents.js MCP_LIMITS): per address without a key, per
+/// key with one. Only a tool call counts; the handshake and the list are free.
+async function overLimit(env, request, agent) {
+  const limiter = agent ? env.KEY_LIMIT : env.ADDRESS_LIMIT;
+  if (!limiter) return false;
+  const key = agent ? `key:${agent.id}` : `ip:${request.headers.get("cf-connecting-ip") || "unknown"}`;
+  const { success } = await limiter.limit({ key });
+  return !success;
+}
 
 // THE ENGINE STARTS ON THE FIRST CALL THAT NEEDS IT, not at load: a worker's
 // global scope has a startup budget, and `tools/list` needs no engine at all.
@@ -100,6 +135,12 @@ const json = (body, status = 200) =>
 export default {
   async fetch(request, env) {
     const path = new URL(request.url).pathname;
+    // RFC 9728: this server as a protected resource. A key is optional here;
+    // the site's worker issues it (its /auth.md).
+    if (path === METADATA) {
+      return json({ resource: RESOURCE, authorization_servers: [SITE], scopes_supported: ["read", "builds"],
+        bearer_methods_supported: ["header"], resource_name: "WFSim MCP", resource_documentation: `${SITE}/auth.md` });
+    }
     if (path !== "/mcp") {
       return path === "/" ? Response.redirect(`${SITE}/llms.txt`, 302) : new Response("not found", { status: 404 });
     }
@@ -116,6 +157,17 @@ export default {
     }
     // A NOTIFICATION HAS NO ID AND GETS NO ANSWER.
     if (msg.id === undefined) return new Response(null, { status: 202, headers: CORS });
+    // A KEY THAT IS NOT ONE is refused rather than read as none, so an agent
+    // learns its key is gone instead of quietly running on the smaller allowance.
+    const agent = await agentKey(env, request);
+    if (agent === false) {
+      return new Response(JSON.stringify({ jsonrpc: "2.0", id: msg.id, error: { code: -32001, message: "bad_key: register again at " + SITE + "/auth.md" } }),
+        { status: 401, headers: { "content-type": "application/json", "www-authenticate": `Bearer resource_metadata="https://mcp.wfsim.app${METADATA}"`, ...CORS } });
+    }
+    if (msg.method === "tools/call" && await overLimit(env, request, agent)) {
+      return new Response(JSON.stringify({ jsonrpc: "2.0", id: msg.id, error: { code: -32029, message: `rate_limited: see ${SITE}/auth.md` } }),
+        { status: 429, headers: { "content-type": "application/json", "retry-after": "60", ...CORS } });
+    }
     const out = await answer(env, msg);
     return json(out.error ? { jsonrpc: "2.0", id: msg.id, error: out.error } : { jsonrpc: "2.0", id: msg.id, result: out });
   },

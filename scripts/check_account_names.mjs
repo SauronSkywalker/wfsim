@@ -15,6 +15,8 @@ const r = await evaluate(`(async () => {
   const acct = { id: 'a1', created_at: '2026-09-01T00:00:00Z', username: 'user_k3x9q2', display_name: null,
     rename_after: null, identities: [{ provider: 'email', label: 'a@x' }] };
   const sent = [];
+  let agents = [{ id: 'g1', name: 'Claude', claimed_at: '2026-09-20T00:00:00Z', last_used_at: '2026-09-29T00:00:00Z' }];
+  const revoked = [];
   const realFetch = window.fetch;
   window.fetch = async (url, o = {}) => {
     const path = String(url);
@@ -28,6 +30,8 @@ const r = await evaluate(`(async () => {
       acct.display_name = b.display_name || null;
       return reply({ ok: true, account: acct });
     }
+    if (path === '/api/account/agents') return reply({ ok: true, agents });
+    if (path === '/api/account/agents/revoke') { const id = JSON.parse(o.body).id; revoked.push(id); agents = agents.filter((g) => g.id !== id); return reply({ ok: true }); }
     if (path.startsWith('/api/billing') || path.startsWith('/api/cloud')) return reply({ ok: true, configured: false });
     return realFetch(url, o);
   };
@@ -51,6 +55,11 @@ const r = await evaluate(`(async () => {
   block().querySelector('[data-auth=profile]').click(); await sleep(800);
   out.lastSent = sent[sent.length - 1];
   out.topBar2 = (document.querySelector('#acct-menu .who b') || {}).textContent || '';
+  const ag = () => document.querySelector('#agents');
+  out.agentListed = !!ag() && ag().textContent.includes('Claude') && !!ag().querySelector('[data-auth=agent-revoke]');
+  ag().querySelector('[data-auth=agent-revoke]').click(); await sleep(800);
+  out.revoked = JSON.stringify(revoked);
+  out.agentGone = !!ag() && !ag().textContent.includes('Claude') && !ag().querySelector('[data-auth=agent-revoke]');
   window.fetch = realFetch;
   return out;
 })()`);
@@ -64,5 +73,8 @@ check("inside the day after a change the username field is shut", r.shut === tru
 check("...and the display name still saves, sending no username",
   r.lastSent && !("username" in r.lastSent) && r.lastSent.display_name === "Ada" && r.topBar2 === "Ada",
   JSON.stringify([r.lastSent, r.topBar2]));
+
+check("the account page lists the agents acting for it", r.agentListed === true);
+check("...and one click disconnects one", r.revoked === '["g1"]' && r.agentGone === true, JSON.stringify([r.revoked, r.agentGone]));
 
 await app.finish("an account's name is set on the page and shown where the account is");

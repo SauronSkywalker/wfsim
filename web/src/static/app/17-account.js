@@ -84,6 +84,8 @@ let billingState = { configured: false, names: { offers: {}, meters: {} }, price
 /// The period the offer card shows before a reader subscribes.
 let billingPeriod = "month";
 let accountLoading = null;
+/// THE AGENTS ACTING FOR THIS ACCOUNT, as `/api/account/agents` last said.
+let agentsState = [];
 
 async function accountCall(method, path, body) {
   try {
@@ -104,13 +106,18 @@ function loadAccount() {
     accountState = r && r.ok
       ? { providers: r.providers || [], account: r.account, loaded: true }
       : { providers: [], account: null, loaded: true };
-    if (accountState.account && isSettings(authKindOf(location.pathname))) await loadBilling();
+    if (accountState.account && isSettings(authKindOf(location.pathname))) await Promise.all([loadBilling(), loadAgents()]);
     renderAccountEntry();
     const kind = authKindOf(location.pathname);
     if (kind) renderAuthPage(kind);
     if (accountState.account) syncSoon(0);
   })();
   return accountLoading;
+}
+
+async function loadAgents() {
+  const r = await accountCall("GET", "/api/account/agents");
+  agentsState = (r && r.ok && r.agents) || [];
 }
 
 async function loadBilling() {
@@ -510,6 +517,20 @@ function renderSyncStatus() {
   if (el) el.innerHTML = syncRowHtml();
 }
 
+/// THE AGENTS THAT ACT FOR THIS ACCOUNT — each one claimed with a code mailed
+/// here, each one revoked in one click, the way a mature product lists the
+/// apps it has let in (docs/ACCOUNTS.md §"Agents").
+function accountAgentsBlock() {
+  const day = (d) => (d ? new Date(d).toLocaleDateString(billingLocale(), { year: "numeric", month: "short", day: "numeric" }) : "—");
+  const rows = agentsState.map((g) => `<div class="kv"><dt>${escHtml(g.name)}</dt>
+      <dd>${escHtml(tr("connected {date}").replace("{date}", day(g.claimed_at)))} · ${escHtml(tr("last used {date}").replace("{date}", day(g.last_used_at)))}</dd>
+      <button class="ghost-btn btn-sm" data-auth="agent-revoke" data-id="${escHtml(g.id)}">${aT("Disconnect")}</button></div>`).join("");
+  return `<div class="block" id="agents"><div class="bh"><h2>${aT("Connected agents")}</h2></div><div class="bb">${
+    rows ? `<dl class="kvs">${rows}</dl>` : `<p class="set-note" style="margin:0">${aT("No agent acts for this account.")}</p>`}
+    <p class="set-note">${aT("An AI agent connects by asking you for a code WFSim mails to your address. Disconnecting it stops its key at once.")}
+      <a data-native href="/auth.md">auth.md</a></p></div></div>`;
+}
+
 function accountDataBlock() {
   return `<div class="block" id="data-privacy"><div class="bh"><h2>${aT("Data and privacy")}</h2></div><div class="bb"><dl class="kvs">
     <div class="kv" id="sync-row">${syncRowHtml()}</div>
@@ -532,7 +553,7 @@ function accountDangerBlock() {
 function accountPage(a) {
   return `<div class="settings">${settingsNav(a, "account")}
     <div class="set-main"><h1 class="page">${aT("Account settings")}</h1>
-      ${accountProfileBlock(a)}${accountMethods(a)}${accountEmailBlock(a)}${accountDataBlock()}${accountDangerBlock()}</div></div>`;
+      ${accountProfileBlock(a)}${accountMethods(a)}${accountEmailBlock(a)}${accountAgentsBlock()}${accountDataBlock()}${accountDangerBlock()}</div></div>`;
 }
 
 // ---- drawing a page ------------------------------------------------------------------------
@@ -688,6 +709,13 @@ async function authAct(el) {
       presetToast(tr("Saved."));
       authFlow = { ...authFlow, open: null, error: null };
       return loadAccount();
+    }
+    if (what === "agent-revoke") {
+      const r = await accountCall("POST", "/api/account/agents/revoke", { id: el.dataset.id });
+      if (!(r && r.ok)) return fail(r);
+      presetToast(tr("Disconnected."));
+      await loadAgents();
+      return renderAuthPage(kind);
     }
     if (what === "sync-now") { await syncNow(); return; }
     if (what === "sync-adopt") { await syncAdopt(); return; }

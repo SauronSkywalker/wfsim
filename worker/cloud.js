@@ -9,6 +9,7 @@
 // call from another site never reaches the binding.
 
 import { sessionAccount, sameSite, json, no } from "./accounts.js";
+import { agentAccount } from "./agents.js";
 
 const ACCOUNT_HEADER = "x-wfsim-account";
 const WEBHOOK = "/api/stripe/webhook";
@@ -24,7 +25,11 @@ export async function cloudRoute(request, env, path) {
   if (path !== WEBHOOK) {
     if (!["GET", "HEAD"].includes(request.method) && !sameSite(request)) return no("cross_site", 403);
     headers.delete("cookie");
-    const account = await sessionAccount(env, request);
+    // A CLAIMED AGENT'S KEY acts for its account on a feature's route, and on
+    // nothing of billing: an agent never buys, and never sees what was bought.
+    const account = await sessionAccount(env, request)
+      || (path.startsWith("/api/cloud/") ? await agentAccount(env, request) : null);
+    headers.delete("authorization");
     if (account) headers.set(ACCOUNT_HEADER, account);
   }
   const body = ["GET", "HEAD"].includes(request.method) ? undefined : await request.arrayBuffer();
