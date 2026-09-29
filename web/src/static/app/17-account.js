@@ -103,6 +103,7 @@ function loadAccount() {
     renderAccountEntry();
     const kind = authKindOf(location.pathname);
     if (kind) renderAuthPage(kind);
+    if (accountState.account) syncSoon(0);
   })();
   return accountLoading;
 }
@@ -144,7 +145,7 @@ function renderAccountEntry() {
         <div class="who"><span class="avatar">${escHtml(accountInitial(account))}</span><div><b>${escHtml(accountName(account))}</b>
           <span>${aT("Ways to sign in")}: ${account.identities.length}/${ACCOUNT_SLOTS.length}</span></div></div>
         <a href="/account" role="menuitem">${aT("Account settings")}</a>
-        <a class="off" role="menuitem" aria-disabled="true">${aT("My builds")} <small>${aT("sync · coming soon")}</small></a>
+        <a class="off" role="menuitem" aria-disabled="true">${aT("My builds")} <small>${aT("Coming soon")}</small></a>
         <hr><a href="#" role="menuitem" data-acct="logout">${aT("Sign out")}</a>
       </div>`
     : `<a class="signin-btn" href="/login?return=${encodeURIComponent(authKindOf(location.pathname) ? "/" : here)}">${aT("Sign in")}</a>`;
@@ -247,7 +248,7 @@ function authSignupCard() {
   const back = authReturn();
   if (authFlow.step === 2) return authCodeStep("Check your email", "Create account");
   return `<h2>${aT("Create a WFSim account")}</h2>
-    <p class="lede">${aT("Your builds follow you across devices.")}</p>
+    <p class="lede">${aT("An account is optional. WFSim works the same without one.")}</p>
     ${authError()}${authProviders("Sign up with {p}", back)}
     ${accountState.providers.includes("email") ? `${authField("auth-email", "Email", "email", "email")}
     ${authField("auth-password", "Password", "password", "new-password")}<span class="hint">${aT("At least 8 characters")}</span>
@@ -450,9 +451,39 @@ function settingsNav(a, here) {
     ${billingState.configured ? link("/account/billing", "billing", "Membership and billing") : ""}</nav>`;
 }
 
+/// THE SYNC ROW says where `syncStatus` stands and offers the one action that
+/// state calls for (docs/UI.md §"Build sync").
+function syncRowHtml() {
+  const s = syncStatus;
+  const row = (dd, act = "<span></span>") => `<dt>${aT("Build sync")}</dt><dd>${dd}</dd>${act}`;
+  if (s.state === "on") {
+    const when = new Date(s.at).toLocaleTimeString(billingLocale(), { hour: "2-digit", minute: "2-digit" });
+    return row(`<span class="tag ok">${aT("On")}</span> ${escHtml(tr("last synced {time}").replace("{time}", when))}${
+      s.full ? ` <span class="tag warn">${aT("Full: new items stay on this browser")}</span>` : ""}`,
+    `<button class="ghost-btn btn-sm" data-auth="sync-now">${aT("Sync now")}</button>`);
+  }
+  if (s.state === "other") {
+    return row(aT("This browser holds items synced with another account."),
+      `<button class="ghost-btn btn-sm" data-auth="sync-adopt">${aT("Add them to this account")}</button>`);
+  }
+  if (s.state === "error") {
+    return row(aT("Could not sync just now."), `<button class="ghost-btn btn-sm" data-auth="sync-now">${aT("Try again")}</button>`);
+  }
+  if (s.state === "not_included" && billingState.configured) {
+    return row(aT("Keeping builds, fights, searches and rivens the same on every device is part of WFSim Membership."),
+      `<a class="ghost-btn btn-sm" href="/account/billing">${aT("See membership")}</a>`);
+  }
+  if (s.state === "not_included") return row(`<span class="tag muted">${aT("Coming soon")}</span>`);
+  return row(`<span class="tag muted">${aT("Checking…")}</span>`);
+}
+function renderSyncStatus() {
+  const el = $("sync-row");
+  if (el) el.innerHTML = syncRowHtml();
+}
+
 function accountDataBlock() {
   return `<div class="block" id="data-privacy"><div class="bh"><h2>${aT("Data and privacy")}</h2></div><div class="bb"><dl class="kvs">
-    <div class="kv"><dt>${aT("Build sync")}</dt><dd><span class="tag muted">${aT("Coming soon")}</span></dd><span></span></div>
+    <div class="kv" id="sync-row">${syncRowHtml()}</div>
     <div class="kv"><dt>${aT("Your data")}</dt><dd>${aT("The account, its ways to sign in, and what it syncs")}</dd>
       <button class="ghost-btn btn-sm" data-auth="export">${aT("Download my data")}</button></div>
     <div class="kv"><dt>${aT("Privacy policy")}</dt><dd>${aT("What WFSim keeps, and why")}</dd>
@@ -603,6 +634,9 @@ async function authAct(el) {
     if (what === "delete") {
       const r = await accountCall("POST", "/api/account/delete", {});
       if (!(r && r.ok)) return fail(r);
+      // WHAT IT SYNCED WENT WITH IT; this browser keeps its own copy, and the
+      // next account to sign in here takes it as new rather than as another's.
+      try { localStorage.removeItem(SYNC_KEY); } catch (_) { /* nothing to forget */ }
       presetToast(tr("Account deleted."));
       await loadAccount();
       return nav("/");
@@ -617,6 +651,8 @@ async function authAct(el) {
       location.href = r.url;
       return;
     }
+    if (what === "sync-now") { await syncNow(); return; }
+    if (what === "sync-adopt") { await syncAdopt(); return; }
     if (what === "export") {
       const r = await accountCall("POST", "/api/account/export", {});
       if (!(r && r.ok)) return fail(r);

@@ -106,6 +106,12 @@ copy of it. `worker/cloud.js` is the whole of it here, and it forwards:
 | an account is deleted only once the private worker has ended its subscriptions | `cloudEnd`, `billing_open` |
 | with no binding, billing reads as off and nothing is ended | `cloudRoute`, `cloudEnd` |
 
+**BUILD SYNC IS THE FIRST PAID FEATURE**: the page's half is public
+(docs/UI.md §"Build sync") and the server's is `/api/cloud/sync` in the private
+worker, which serves only an account holding the `sync` feature. The `/account`
+page's data block says where sync stands and offers the one action the state
+calls for; the export carries what it holds.
+
 The settings nav links **Membership and billing** (`/account/billing`) only when
 `/api/billing` says it is configured, and the page shows the names, contents and
 prices the private worker sends: it knows no offer itself. `/terms` and `/refunds` are plain pages beside `/privacy`.

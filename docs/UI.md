@@ -252,6 +252,31 @@ deleted, and the editor stands down instead of showing a document that is not
 there. Presets are not — the modules behind them always have a state, and "no
 build" is not something the builder can show.
 
+## Build sync
+
+**A MEMBER'S SAVED ENTRIES ARE THE SAME ON EVERY BROWSER SIGNED IN TO THE
+ACCOUNT** — every list under `wfsim-presets-*` and `wfsim-customs-*`, entry by
+entry, matched by `id`. `web/src/static/app/37-sync.js` is the page's half;
+the server's half is the paid worker's `/api/cloud/sync` (docs/ACCOUNTS.md
+§"Paid features"), which keeps the newest write of each entry. localStorage
+stays the working copy: signed out, or without the feature, nothing runs.
+
+| rule | where it is held |
+| --- | --- |
+| a change is an entry whose signature moved since the last round; a deletion is an entry gone | `syncRound`, `wfsim-sync` |
+| a round runs after an edit settles, on sign-in, on coming back to the tab, and once on leaving it | `syncSoon`, `pagehide` |
+| the first round on a browser is a union: everything here is pushed, everything there pulled | `syncRound` |
+| the measured result never travels, and a pulled entry keeps this browser's | `syncBody`, `syncApply` |
+| an entry edited while the round ran keeps the edit; the next round pushes it | `syncApply` |
+| two entries sharing a name: the lowest id keeps it, the rest take "(2)", "(3)", and the rename is pushed | `syncApply` |
+| the active pointer follows a rename; the page re-applies an entry on screen that changed | `syncApply`, `syncShow` |
+| a browser that synced with another account merges nothing until the reader asks on `/account` | `other`, `syncAdopt` |
+| undo steps over a list that changed underneath them are dropped | `syncShow` |
+
+A custom enemy is still named in a fight as `custom:<name>`, not by its `id`:
+when two browsers each made an enemy of one name, both survive, and a fight
+made on the browser whose enemy was renamed reads the one that kept the name.
+
 ## The build finder
 
 **EVERY BUILD IS IN THE BUILD BAR; THE FINDER ONLY FINDS.** The builder's top

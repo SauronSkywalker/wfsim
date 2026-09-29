@@ -677,6 +677,15 @@ ids is minted at boot and keeps them on the next load, a duplicated id is split,
 "+ new" and ⧉ mint fresh ones, and an edit and its undo keep the entry's. A
 riven is minted by the fold, which repoints the build that names it.
 
+## `check_sync_client`
+
+Two browsers of one account end on the same entries, against a server faked in
+the page with the real one's rules: the first sync is a union, a name clash is
+settled the same way on both, an edit and a deletion reach the other browser,
+the measured result never travels, another account's entries wait to be asked
+for, an account without the feature pushes nothing, and a remote edit to the
+build on screen reaches the screen.
+
 ## `check_ability_casting`
 
 The fight offers a **Cast them** box, off by default — which is what every board

@@ -49,12 +49,14 @@ export async function cloudEnd(env, account) {
   }
 }
 
-/// What the paid half holds about an account, for its export; null with none bound.
+/// What the paid half holds about an account, for its export — `{ billing,
+/// sync }` as it sends them; empty with none bound.
 export async function cloudExport(env, account) {
-  if (!env.CLOUD) return null;
+  if (!env.CLOUD) return {};
   try {
-    return (await internal(env, "export", account)).billing ?? null;
+    const { ok, ...held } = await internal(env, "export", account);
+    return held;
   } catch (_) {
-    return null;
+    return {};
   }
 }

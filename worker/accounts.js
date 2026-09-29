@@ -531,7 +531,7 @@ export async function accountRoute(request, env, path) {
     return json({ ok: true, deleted: true }, 200, { "set-cookie": endSession() });
   }
   // EVERYTHING HELD ABOUT THIS ACCOUNT, as it is held — docs/ACCOUNTS.md.
-  return json({ ok: true, account: await accountView(env, account), billing: await cloudExport(env, account),
+  return json({ ok: true, account: await accountView(env, account), ...(await cloudExport(env, account)),
     exported_at: now() }, 200,
     { "content-disposition": 'attachment; filename="wfsim-account.json"' });
 }

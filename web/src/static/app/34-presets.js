@@ -484,6 +484,7 @@ const storePresetList = (d, ps, w) => {
   const put = () => {
     try {
       localStorage.setItem(key, JSON.stringify(flat));
+      syncSoon();
       return true;
     } catch (e) {
       if (!isQuota(e)) throw e;

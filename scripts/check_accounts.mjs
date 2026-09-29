@@ -284,7 +284,7 @@ env.CLOUD = { fetch: async (req) => {
     cookie: req.headers.get("cookie"), body: req.method === "POST" ? await req.text() : null });
   const path = new URL(req.url).pathname;
   if (path === "/internal/end") return new Response(JSON.stringify({ ok: endAnswer }));
-  if (path === "/internal/export") return new Response(JSON.stringify({ ok: true, billing: { customer: "cus_1" } }));
+  if (path === "/internal/export") return new Response(JSON.stringify({ ok: true, billing: { customer: "cus_1" }, sync: [{ id: "e1" }] }));
   return new Response(JSON.stringify({ ok: true, forwarded: true }));
 } };
 const cloud = (b, method, path, body, headers = {}) => cloudRoute(new Request(SITE + path, { method,
@@ -312,7 +312,8 @@ check("Stripe's webhook goes through as sent, and as nobody",
   seen.at(-1).body === raw && seen.at(-1).account === null, JSON.stringify(seen.at(-1)));
 
 const exported = await (await payer.post("/api/account/export", {})).json();
-check("the account export carries what the paid half holds", exported.billing?.customer === "cus_1", JSON.stringify(exported.billing));
+check("the account export carries what the paid half holds", exported.billing?.customer === "cus_1"
+  && exported.sync?.[0]?.id === "e1", JSON.stringify([exported.billing, exported.sync]));
 endAnswer = false;
 r = await (await payer.post("/api/account/delete", {})).json();
 check("an account whose subscription the paid half cannot end is kept",

@@ -1,0 +1,310 @@
+// ---- BUILD SYNC ------------------------------------------------------------
+//
+// docs/UI.md §"Build sync". What a reader saved — every preset and custom list —
+// kept the same on every browser signed in to one account, entry by entry,
+// matched by `id` (`mintPresetIds`). The server keeps the newest write of each
+// entry and hands back everything taken since this browser last asked; this
+// file decides what changed here, and folds in what changed elsewhere.
+//
+// localStorage stays the working copy. Signed out, or without the feature,
+// nothing here runs and the page is exactly what it was.
+const SYNC_KEY = "wfsim-sync";
+const SYNC_PATH = "/api/cloud/sync";
+/// How long after an edit it is pushed, so a burst of edits is one call.
+const SYNC_DELAY_MS = 2000;
+/// A return to the tab pulls at most this often.
+const SYNC_IDLE_MS = 30000;
+/// The server's `PUSH_MAX`.
+const SYNC_CHUNK = 200;
+const isSyncList = (k) => /^wfsim-(presets|customs)-/.test(k);
+
+/// WHERE SYNC STANDS, for the account page: `idle` before it has run, `on`,
+/// `not_included` (the account lacks the feature), `other` (this browser
+/// synced with another account), `error`.
+let syncStatus = { state: "idle", at: 0, full: false };
+let syncTimer = null, syncRunning = null, syncAgain = false;
+
+/// `{ account, cursor, known: { id: { list, sig, at } } }` — what this browser
+/// last agreed with the server about each entry. An entry whose signature has
+/// moved since is a local change; one that is gone is a local deletion.
+function syncState() {
+  try {
+    const s = JSON.parse(localStorage.getItem(SYNC_KEY));
+    if (s && typeof s === "object" && s.known) return s;
+  } catch (_) { /* none */ }
+  return null;
+}
+const saveSyncState = (s) => { try { localStorage.setItem(SYNC_KEY, JSON.stringify(s)); } catch (_) { /* resent next time */ } };
+
+/// WHAT TRAVELS is the entry less its measured result — the one part a click
+/// regenerates, and the bulk of a stored entry.
+const syncBody = (p) => { const { lastResult, ...rest } = p; return rest; };
+/// WHAT COUNTS AS A CHANGE: everything that travels except when it was saved,
+/// which an auto-save moves without changing anything.
+function syncSig(p) {
+  const { lastResult, savedAt, ...rest } = p;
+  const s = JSON.stringify(rest);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 0x01000193);
+  return (h >>> 0).toString(36) + ":" + s.length;
+}
+
+/// Every saved entry in this browser: id → { list, p }. A read-only board row
+/// is the board's, not the reader's.
+function syncLocal() {
+  const out = new Map();
+  for (const list of Object.keys(localStorage)) {
+    if (!isSyncList(list)) continue;
+    let ps;
+    try { ps = JSON.parse(localStorage.getItem(list)); } catch (_) { continue; }
+    if (!Array.isArray(ps)) continue;
+    for (const p of ps) if (p && p.id && !p.builtin && !out.has(p.id)) out.set(p.id, { list, p });
+  }
+  return out;
+}
+
+async function syncCall(body, keepalive) {
+  try {
+    const r = await fetch(SYNC_PATH, {
+      method: "POST", credentials: "same-origin", keepalive: !!keepalive,
+      headers: { "content-type": "application/json" }, body: JSON.stringify(body),
+    });
+    const j = await r.json().catch(() => null);
+    return j || { ok: false, reason: `http_${r.status}` };
+  } catch (_) {
+    return { ok: false, reason: "offline" };
+  }
+}
+
+/// Soon: after an edit settles, or now with `ms = 0`.
+function syncSoon(ms = SYNC_DELAY_MS) {
+  if (typeof accountState === "undefined" || !accountState.account) return;
+  // A STATUS IS ONE ACCOUNT'S: signing in as someone else asks again.
+  if (syncStatus.account !== accountState.account.id) syncStatus = { state: "idle", at: 0, full: false, account: accountState.account.id };
+  if (syncStatus.state === "not_included" || syncStatus.state === "other") return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(() => { syncTimer = null; syncNow(); }, ms);
+}
+
+/// One round: push what changed here, then pull what changed elsewhere. A
+/// round asked for while one runs runs once more after it.
+function syncNow() {
+  if (syncRunning) { syncAgain = true; return syncRunning; }
+  syncRunning = syncRound().finally(() => {
+    syncRunning = null;
+    if (syncAgain) { syncAgain = false; syncNow(); }
+  });
+  return syncRunning;
+}
+
+async function syncRound() {
+  const who = accountState.account && accountState.account.id;
+  if (!who) return;
+  let st = syncState();
+  // ANOTHER ACCOUNT'S ENTRIES ARE NOT MERGED WITHOUT A WORD: this browser
+  // synced with someone else, and signing in here must not hand their builds
+  // to this account. The account page offers the merge (`syncAdopt`).
+  if (st && st.account && st.account !== who) { setSyncStatus({ state: "other" }); return; }
+  const first = !st;
+  if (first) st = { account: who, cursor: 0, known: {} };
+  flushPresetSaves();
+
+  // 1. WHAT CHANGED HERE.
+  const local = syncLocal();
+  const sigs = new Map();
+  const changes = [];
+  const now = Date.now();
+  for (const [id, { list, p }] of local) {
+    const sig = syncSig(p);
+    sigs.set(id, sig);
+    const k = st.known[id];
+    if (k && k.sig === sig && k.list === list) continue;
+    // WHEN IT CHANGED: its own save time when that moved past what the server
+    // has, and otherwise now — a rename moves no save time and must still win.
+    const at = p.savedAt && (!k || p.savedAt > k.at) ? Math.min(p.savedAt, now) : now;
+    changes.push({ id, list, body: syncBody(p), updated_at: at, sig });
+  }
+  for (const [id, k] of Object.entries(st.known)) {
+    if (!local.has(id)) changes.push({ id, list: k.list, deleted: true, updated_at: now });
+  }
+
+  // 2. PUSH, in chunks the server takes.
+  for (let i = 0; i < changes.length; i += SYNC_CHUNK) {
+    const chunk = changes.slice(i, i + SYNC_CHUNK);
+    const r = await syncCall({ changes: chunk.map(({ sig, ...c }) => c), pull: false });
+    if (!r.ok) return syncRefused(r);
+    if (r.full) syncStatus.full = true;
+    for (const c of chunk) {
+      if (c.deleted) delete st.known[c.id];
+      else st.known[c.id] = { list: c.list, sig: c.sig, at: c.updated_at };
+    }
+    saveSyncState(st);
+  }
+
+  // 3. PULL, every page.
+  const pulled = [];
+  let r = await syncCall({ since: st.cursor });
+  if (!r.ok) return syncRefused(r);
+  pulled.push(...r.entries);
+  let cursor = r.cursor;
+  while (r.next) {
+    r = await syncCall({ after: r.next });
+    if (!r.ok) return syncRefused(r);
+    pulled.push(...r.entries);
+    cursor = Math.max(cursor, r.cursor);
+  }
+  const applied = syncApply(st, pulled, sigs);
+  st.cursor = Math.max(st.cursor || 0, cursor || 0);
+  saveSyncState(st);
+  const added = first ? changes.filter((c) => !c.deleted).length : 0;
+  setSyncStatus({ state: "on", at: Date.now() });
+  if (added) presetToast(tr("{n} saved items from this browser were added to your account").replace("{n}", added));
+  if (applied) syncShow(applied);
+}
+
+function syncRefused(r) {
+  if (r.reason === "not_included") setSyncStatus({ state: "not_included" });
+  else if (r.reason === "not_signed_in") setSyncStatus({ state: "idle" });
+  else setSyncStatus({ state: "error", reason: r.reason });
+}
+
+/// FOLD IN WHAT CHANGED ELSEWHERE. The server's copy wins over this browser's
+/// last agreed one — both pushes have landed, so what comes back IS the newest
+/// — except where this browser edited the entry while the round was running:
+/// that edit is newer still, and the next round pushes it. Returns what it
+/// changed, for `syncShow`, or null.
+function syncApply(st, entries, sigs) {
+  if (!entries.length) return null;
+  const lists = new Map();
+  const listOf = (k) => {
+    if (!lists.has(k)) {
+      let ps = [];
+      try { const v = JSON.parse(localStorage.getItem(k)); if (Array.isArray(v)) ps = v; } catch (_) { /* empty */ }
+      lists.set(k, ps);
+    }
+    return lists.get(k);
+  };
+  const changedLists = new Set(), ids = new Set(), renamed = new Map(), removed = new Set();
+  const current = syncLocal();
+  for (const e of entries) {
+    const here = current.get(e.id);
+    if (sigs.has(e.id) && (!here || syncSig(here.p) !== sigs.get(e.id))) continue;
+    if (e.body === null) {
+      if (here) {
+        const ps = listOf(here.list);
+        const at = ps.findIndex((p) => p && p.id === e.id);
+        if (at >= 0) { removed.add(ps[at].name); ps.splice(at, 1); changedLists.add(here.list); ids.add(e.id); }
+      }
+      delete st.known[e.id];
+      continue;
+    }
+    const sig = syncSig(e.body);
+    st.known[e.id] = { list: e.list, sig, at: e.updated_at };
+    if (here && here.list === e.list && syncSig(here.p) === sig) continue;
+    if (here && here.list !== e.list) {
+      const old = listOf(here.list);
+      const at = old.findIndex((p) => p && p.id === e.id);
+      if (at >= 0) { old.splice(at, 1); changedLists.add(here.list); }
+    }
+    const ps = listOf(e.list);
+    const at = ps.findIndex((p) => p && p.id === e.id);
+    const mine = at >= 0 ? ps[at] : null;
+    const next = { ...e.body, ...(mine && mine.lastResult ? { lastResult: mine.lastResult } : {}) };
+    if (at >= 0) ps[at] = next; else ps.push(next);
+    changedLists.add(e.list);
+    ids.add(e.id);
+  }
+  for (const k of changedLists) {
+    // TWO ENTRIES, ONE NAME: every browser has a "preset 1", and a name is what
+    // a bar and its active pointer go by. Settled once the whole pull is in, by
+    // a rule every browser computes alike — the lowest id keeps the name, the
+    // rest take "(2)", "(3)" — so no two browsers rename back and forth. A
+    // rename is a change here, and the next round pushes it.
+    const ps = lists.get(k);
+    const byName = new Map();
+    for (const p of ps) if (p && p.id) byName.set(p.name, [...(byName.get(p.name) || []), p]);
+    for (const [base, same] of byName) {
+      if (same.length < 2) continue;
+      same.sort((a, b) => (a.id < b.id ? -1 : 1));
+      for (const p of same.slice(1)) p.name = freeName(ps, (n) => (n === 1 ? base : `${base} (${n})`));
+    }
+    for (const p of ps) {
+      const was = p && current.get(p.id);
+      if (was && was.list === k && was.p.name !== p.name) renamed.set(was.p.name, p.name);
+    }
+  }
+  for (const k of changedLists) {
+    // …AND THE ACTIVE POINTER FOLLOWS A RENAME, or the reader is moved onto
+    // whichever entry now carries the old name.
+    const ptr = k.replace(/^wfsim-presets-/, "wfsim-preset-active-").replace(/^wfsim-customs-/, "wfsim-custom-open-");
+    const was = localStorage.getItem(ptr);
+    if (was !== null && renamed.has(was)) localStorage.setItem(ptr, renamed.get(was));
+    try { localStorage.setItem(k, JSON.stringify(lists.get(k))); }
+    catch (_) { noteInline(tr("this browser's storage is full - the change is on screen but was not saved")); }
+  }
+  return changedLists.size ? { lists: changedLists, ids, renamed, removed } : null;
+}
+
+/// MAKE THE PAGE SHOW IT, through the same trio undo restores through
+/// (`presetDoc`). An undo step taken before a list changed underneath it would
+/// write the old list back and push it, so those steps go.
+function syncShow({ lists, ids, renamed, removed }) {
+  undoStack = undoStack.filter((s) => !lists.has(presetListKey(s.domain, s.weapon)));
+  redoStack = redoStack.filter((s) => !lists.has(presetListKey(s.domain, s.weapon)));
+  const actives = {
+    [BUILDS]: () => activePreset, [SCENARIOS]: () => activeScenario, [OPT_DOMAIN]: () => activeOptPreset,
+    [WF_BUILDS]: () => wfActive, [COMP_BUILDS]: () => compActive, [OPS]: () => opActive, [RIVENS]: () => activeRiven,
+  };
+  for (const d of Object.keys(actives)) {
+    const w = undoOwner(d);
+    if (!lists.has(presetListKey(d, w))) continue;
+    const doc = presetDoc(d);
+    if (!doc) continue;
+    const list = loadPresetList(d, w);
+    const keyOf = (p) => (d === RIVENS ? p.id : presetId(p));
+    let act = actives[d]() || "";
+    if (renamed.has(act)) { act = renamed.get(act); doc.setActive(act); }
+    const cur = list.find((p) => keyOf(p) === act);
+    whileApplying(() => {
+      if (cur && ids.has(cur.id)) doc.apply(cur.state);
+      else if (!cur && removed.has(act) && list[0]) { doc.setActive(keyOf(list[0])); doc.apply(list[0].state); }
+    });
+    doc.rerender();
+  }
+}
+
+function setSyncStatus(s) {
+  syncStatus = { ...syncStatus, ...s };
+  if (typeof renderSyncStatus === "function") renderSyncStatus();
+}
+
+/// "ADD THEM TO THIS ACCOUNT": the one way another account's entries become
+/// this one's — what this browser holds is pushed as new, and nothing of the
+/// other account is touched.
+function syncAdopt() {
+  try { localStorage.removeItem(SYNC_KEY); } catch (_) { /* nothing to forget */ }
+  setSyncStatus({ state: "idle" });
+  return syncNow();
+}
+
+// WHEN: an edit (`storePresetList`), signing in (`loadAccount`), coming back to
+// the tab, and leaving it with an edit not yet pushed.
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible" && Date.now() - (syncStatus.at || 0) > SYNC_IDLE_MS) syncSoon(0);
+});
+window.addEventListener("pagehide", () => {
+  if (!syncTimer) return;
+  clearTimeout(syncTimer);
+  syncTimer = null;
+  const st = syncState();
+  if (!st || !accountState.account || st.account !== accountState.account.id) return;
+  const changes = [];
+  for (const [id, { list, p }] of syncLocal()) {
+    const k = st.known[id];
+    if (!k || k.sig !== syncSig(p) || k.list !== list) changes.push({ id, list, body: syncBody(p), updated_at: Date.now() });
+  }
+  // A PAGE ON ITS WAY OUT GETS ONE SMALL CALL: `keepalive` carries 64 KB, and
+  // what does not fit is pushed the next time this browser opens the site.
+  const body = { changes: changes.slice(0, SYNC_CHUNK), pull: false };
+  if (changes.length && JSON.stringify(body).length < 60000) syncCall(body, true);
+});
