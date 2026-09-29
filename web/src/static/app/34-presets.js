@@ -171,6 +171,41 @@ const presetActiveKey = (d, w) =>
     localStorage.removeItem(from);
   });
 })();
+
+/// EVERY STORED ENTRY CARRIES AN `id`, and the id is what makes it the same
+/// entry on another device: every device has a "preset 1", so a name cannot
+/// be what a sync matches on. Opaque, never shown, never changed by a rename.
+/// `randomUUID` exists only in a secure context; the fallback is as unique here.
+const presetNewId = () => (crypto.randomUUID ? crypto.randomUUID()
+  : Date.now().toString(36) + Math.random().toString(36).slice(2));
+/// Gives each entry that has none, or shares one with an earlier entry, an id
+/// of its own — IN PLACE, because the caller goes on holding these objects.
+/// True when it minted any. RIVENS ARE NOT MINTED HERE: a card's id is what a
+/// build's slot names, and `foldRivensIntoOneList` mints it together with
+/// repointing those slots.
+function mintPresetIds(ps) {
+  const seen = new Set();
+  let minted = false;
+  for (const p of ps) {
+    if (!p || typeof p !== "object") continue;
+    if (!p.id || seen.has(p.id)) { p.id = presetNewId(); minted = true; }
+    seen.add(p.id);
+  }
+  return minted;
+}
+const isRivenListKey = (k) => /^wfsim-customs-(.+-)?rivens$/.test(k);
+/// ONE-TIME MINT over every stored list, before anything reads one: undo
+/// snapshots the raw stored text, and an undo back to a list without ids
+/// would mint different ones — the same entry under a new identity.
+(function mintStoredPresetIds() {
+  for (const k of Object.keys(localStorage)) {
+    if (!/^wfsim-(presets|customs)-/.test(k) || isRivenListKey(k)) continue;
+    let list;
+    try { list = JSON.parse(localStorage.getItem(k)); } catch (_) { continue; }
+    if (!Array.isArray(list) || !mintPresetIds(list)) continue;
+    try { localStorage.setItem(k, JSON.stringify(list)); } catch (_) { /* minted again next load */ }
+  }
+})();
 /// ONE-TIME FOLD of every riven list this app has ever written into the ONE
 /// list, tagging each card with the scope it was filed under. It RUNS AFTER
 /// `META`, because a scope is something only the roster knows.
@@ -430,6 +465,11 @@ const storePresetList = (d, ps, w) => {
     const scope = rivenScope(weapon);
     ps = loadPresetWhole(d, weapon).filter((p) => (p.scope || "") !== scope)
       .concat(ps.map((p) => ({ ...p, scope })));
+  } else {
+    // A NEW ENTRY GETS ITS ID ON THE WAY IN, so no "+ new", copy or import
+    // has to remember to mint one — and before `recordUndo`, so the step it
+    // records is of the list as stored.
+    mintPresetIds(ps);
   }
   const isQuota = (e) => !!e && (e.name === "QuotaExceededError"
     || e.name === "NS_ERROR_DOM_QUOTA_REACHED" || e.code === 22 || e.code === 1014);

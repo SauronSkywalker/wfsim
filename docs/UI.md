@@ -156,6 +156,14 @@ its own module: `builder-builds` (a build), `simulator-scenarios` (a fight,
 buff settings included), `optimizer` (a search: the SCOPE and `finalists`, and
 nothing else — never buffs, never a run count, never a thread count).
 
+**EVERY STORED ENTRY CARRIES AN `id`**, opaque and never changed by a rename,
+because it is what a sync matches on: every device has a "preset 1". It is
+minted in one place, `mintPresetIds` — at boot over every stored list, and on
+the way into `storePresetList` — so no "+ new", copy or import mints its own. A
+riven's id is minted by `foldRivensIntoOneList` instead, together with
+repointing the slots that name it. The name stays what the bar and the active
+pointer use.
+
 **THE DEFAULT IS THE BLANK, AND NOTHING IS OWNED UNTIL IT IS MADE.** Every
 collection has a DEFAULT: the blank (`cfg.blank()`), always there, read-only,
 never stored and never listed in its own bar. Owning none, the bar is empty and

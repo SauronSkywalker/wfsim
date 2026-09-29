@@ -235,7 +235,7 @@ function compBarCfg() {
     noun: "companion",
     load: () => compList(comp.companion),
     usedBy: (p) => linkersOfCompanionPreset(comp.companion, p.id),
-    store: (ps) => storePresetList(COMP_BUILDS, opWithIds(ps), comp.companion),
+    store: (ps) => storePresetList(COMP_BUILDS, ps, comp.companion),
     active: () => compActive,
     setActive: (n) => {
       compActive = n;

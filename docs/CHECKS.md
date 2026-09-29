@@ -670,6 +670,13 @@ store nothing, and the first real edit stores exactly one. A bar with none is
 empty and says the editor stands on the default; a build edited back to the blank
 is deleted, and the next effective edit writes `preset 1` again.
 
+## `check_preset_ids`
+
+Every stored entry has an `id` of its own and keeps it: a list stored without
+ids is minted at boot and keeps them on the next load, a duplicated id is split,
+"+ new" and ⧉ mint fresh ones, and an edit and its undo keep the entry's. A
+riven is minted by the fold, which repoints the build that names it.
+
 ## `check_ability_casting`
 
 The fight offers a **Cast them** box, off by default — which is what every board

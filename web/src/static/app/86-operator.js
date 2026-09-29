@@ -7,21 +7,17 @@ const OPS = "operators";
 let op = null;
 let opActive = "";
 let opSaveTimer = null;
-/// THE OPERATOR BUILDS, EACH WITH AN `id` — the link a Warframe build stores. A
-/// name is not one: a rename would cut every link to it. A missing id is written
-/// straight to storage, past undo, since an undo that dropped it would re-mint it.
+/// A LIST WHOSE `id`s A LINK MAY STORE — a Warframe build links an Operator
+/// build by it. Every list is minted at load (`mintStoredPresetIds`); this
+/// covers one written since by an older tab, straight to storage and past
+/// undo, since an undo that dropped the id would mint another.
 function presetListWithIds(d, scope) {
   const ps = loadPresetList(d, scope);
-  if (ps.every((p) => p.id)) return ps;
-  const out = opWithIds(ps);
-  try { localStorage.setItem(presetListKey(d, scope), JSON.stringify(out)); } catch (_) { /* unsaved: minted again next read */ }
-  return out;
+  if (!mintPresetIds(ps)) return ps;
+  try { localStorage.setItem(presetListKey(d, scope), JSON.stringify(loadPresetWhole(d, scope))); } catch (_) { /* unsaved: minted again next read */ }
+  return ps;
 }
 const opList = () => presetListWithIds(OPS);
-// `randomUUID` exists only in a secure context; the fallback is as unique here.
-const opNewId = () => (crypto.randomUUID ? crypto.randomUUID()
-  : Date.now().toString(36) + Math.random().toString(36).slice(2));
-const opWithIds = (ps) => ps.map((p) => (p.id ? p : { ...p, id: opNewId() }));
 const focusSchool = (id) => (WFCAT && id && WFCAT.focus.find((s) => s.id === id)) || null;
 const opAMod = (id) => (WFCAT && id && WFCAT.artifact_mods.find((m) => m.id === id)) || null;
 const opAArcane = (id) => (WFCAT && id && WFCAT.artifact_arcanes.find((a) => a.id === id)) || null;
@@ -52,7 +48,7 @@ function opBarCfg() {
     noun: "operator",
     load: opList,
     usedBy: (p) => linkersOfOperatorPreset(p.id),
-    store: (ps) => storePresetList(OPS, opWithIds(ps)),
+    store: (ps) => storePresetList(OPS, ps),
     active: () => opActive,
     setActive: (n) => {
       opActive = n;
