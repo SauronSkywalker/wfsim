@@ -329,5 +329,53 @@ delete env.CLOUD;
 const off = await (await cloudRoute(new Request(SITE + "/api/billing"), env, "/api/billing")).json();
 check("with no paid half bound, billing reads as off", off.ok && off.configured === false, JSON.stringify(off));
 
+// ---- the name an account goes by -----------------------------------------------------------
+
+const setName = async (b, body) => (await b.post("/api/account/profile", body)).json();
+const ago = (id, hours) => env.ACCOUNTS.raw.prepare("UPDATE accounts SET username_changed_at = ? WHERE id = ?")
+  .run(new Date(Date.now() - hours * 3600e3).toISOString(), id);
+const n1 = browser(), n2 = browser();
+await n1.oauth("discord", { id: "d-name-1", name: "one" });
+await n2.oauth("discord", { id: "d-name-2", name: "two" });
+const one = await n1.me(), two = await n2.me();
+check("an account is born with a user_ name and no display name",
+  /^user_[a-z0-9]{6}$/.test(one.username) && one.display_name === null && one.username !== two.username, JSON.stringify(one));
+let nr = await setName(n1, { username: "Tenno_Ada" });
+check("the first change is at once, and a name is kept lowercase", nr.ok && nr.account.username === "tenno_ada", JSON.stringify(nr));
+nr = await setName(n1, { username: "ada_two" });
+check("...the next waits a day", nr.reason === "rename_too_soon" && !!nr.rename_after, JSON.stringify(nr));
+for (const [bad, why] of [["ab", "bad_username"], ["has space", "bad_username"], ["阿达", "bad_username"],
+  ["user_abcdef", "username_reserved"], ["Admin", "username_reserved"]]) {
+  nr = await setName(n2, { username: bad });
+  check(`"${bad}" is refused as ${why}`, nr.reason === why, JSON.stringify(nr));
+}
+nr = await setName(n2, { username: "TENNO_ADA" });
+check("a name another account holds is taken, whatever its case", nr.reason === "username_taken", JSON.stringify(nr));
+ago(one.id, 25);
+nr = await setName(n1, { username: "ada_two" });
+check("a day later it changes again", nr.ok && nr.account.username === "ada_two", JSON.stringify(nr));
+nr = await setName(n2, { username: "tenno_ada" });
+check("the name given up is held from anyone else", nr.reason === "username_taken", JSON.stringify(nr));
+ago(one.id, 25);
+nr = await setName(n1, { username: "tenno_ada" });
+check("...but its old owner may take it back", nr.ok && nr.account.username === "tenno_ada", JSON.stringify(nr));
+ago(one.id, 25);
+await setName(n1, { username: "ada_three" });
+env.ACCOUNTS.raw.prepare("UPDATE username_holds SET held_until = ?").run(new Date(Date.now() - 1000).toISOString());
+nr = await setName(n2, { username: "tenno_ada" });
+check("once the hold lapses the name is free", nr.ok && nr.account.username === "tenno_ada", JSON.stringify(nr));
+nr = await setName(n2, { display_name: "  阿达 · Ada  " });
+check("a display name is free text, trimmed", nr.ok && nr.account.display_name === "阿达 · Ada", JSON.stringify(nr));
+nr = await setName(n2, { display_name: "x".repeat(33) });
+check("...of at most 32 characters", nr.reason === "bad_display_name", JSON.stringify(nr));
+nr = await setName(n2, { display_name: "" });
+check("...and an empty one shows the username again", nr.ok && nr.account.display_name === null, JSON.stringify(nr));
+const gone = (await n2.me()).username;
+await n2.post("/api/account/delete", {});
+const n3 = browser();
+await n3.oauth("github", { id: "71", name: "three" });
+nr = await setName(n3, { username: gone });
+check("a deleted account's name is held too", nr.reason === "username_taken", JSON.stringify(nr));
+
 console.log(failed ? `\n${failed} failed` : "\nthe account rules hold");
 process.exit(failed ? 1 : 0);

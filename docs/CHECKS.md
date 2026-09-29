@@ -677,6 +677,14 @@ ids is minted at boot and keeps them on the next load, a duplicated id is split,
 "+ new" and ⧉ mint fresh ones, and an edit and its undo keep the entry's. A
 riven is minted by the fold, which repoints the build that names it.
 
+## `check_account_names`
+
+The name an account goes by, on the page, against an account API faked in the
+page: a born `user_` name reads as not chosen, the Profile form saves both
+names and the top bar shows the display name at once, a refusal is said in the
+card, and inside the day after a change the username field is shut while the
+display name still saves.
+
 ## `check_sync_client`
 
 Two browsers of one account end on the same entries, against a server faked in

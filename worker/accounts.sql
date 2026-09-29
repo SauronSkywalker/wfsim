@@ -7,11 +7,32 @@
 -- of one must not roll the other back; and because nothing in here may ever
 -- reach the public library backup, which reads `wfsim`.
 
--- A PERSON, and nothing about them but when the account began. Everything that
--- says who they are is a slot below.
+-- A PERSON: when the account began, and the name it goes by on the site.
+-- Everything that says who they are elsewhere is a slot below.
+--
+-- `username` is the site-wide handle: lowercase letters, digits and `_`,
+-- unique, born `user_` and six random characters, and changed by its owner at
+-- will — the first change at once, each later one a day after the last
+-- (`username_changed_at`). `display_name` is free text, unique to nobody, and
+-- null shows the username. Anything signed by an account stores its id, so a
+-- rename reaches everywhere at once.
 CREATE TABLE IF NOT EXISTS accounts (
-  id         TEXT PRIMARY KEY,
-  created_at TEXT NOT NULL
+  id                  TEXT PRIMARY KEY,
+  created_at          TEXT NOT NULL,
+  username            TEXT NOT NULL,
+  display_name        TEXT,
+  username_changed_at TEXT
+);
+CREATE UNIQUE INDEX IF NOT EXISTS accounts_username ON accounts (username);
+
+-- A NAME JUST GIVEN UP, held for its old owner until `held_until`, so nobody
+-- can take it the moment it is dropped and pass as them. The old owner may
+-- take it back meanwhile. Not tied to the account: a deleted account's name
+-- is held the same.
+CREATE TABLE IF NOT EXISTS username_holds (
+  username   TEXT PRIMARY KEY,
+  account    TEXT NOT NULL,
+  held_until TEXT NOT NULL
 );
 
 -- THE FOUR WAYS IN, at most one of each per account. `subject` is the

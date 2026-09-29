@@ -57,6 +57,17 @@ const PASSWORD_MIN = 8;
 const PASSWORD_MAX = 128;
 const LOGIN_FAILURES = 5;
 const LOGIN_WINDOW_SECONDS = 15 * 60;
+/// A USERNAME: lowercase letters, digits and `_`, typed in any case. `user_` is
+/// the system's — every account is born with one and nobody picks one — so a
+/// `user_` name always means "not chosen yet".
+const USERNAME = /^[a-z0-9_]{3,20}$/;
+const USERNAME_BORN = "user_";
+const USERNAMES_RESERVED = new Set(["wfsim", "nona", "admin", "administrator", "official", "support", "help",
+  "root", "system", "staff", "mod", "moderator", "de", "digital_extremes", "warframe", "api", "www", "account",
+  "login", "signup", "billing", "privacy", "terms", "null", "undefined"]);
+const RENAME_COOLDOWN_SECONDS = 24 * 3600;
+const USERNAME_HOLD_SECONDS = 7 * 24 * 3600;
+const DISPLAY_NAME_MAX = 32;
 
 const secretOf = (env, p) => ({ id: env[`${p.toUpperCase()}_CLIENT_ID`], secret: env[`${p.toUpperCase()}_CLIENT_SECRET`] });
 const configured = (env) => [
@@ -76,6 +87,14 @@ async function hmac(key, s) {
   return b64url(await crypto.subtle.sign("HMAC", k, enc.encode(s)));
 }
 const now = () => new Date().toISOString();
+/// `user_` and six random characters, free of every account's name.
+async function bornUsername(db) {
+  for (;;) {
+    const tail = Array.from(crypto.getRandomValues(new Uint8Array(6)), (b) => "abcdefghijklmnopqrstuvwxyz0123456789"[b % 36]).join("");
+    const name = USERNAME_BORN + tail;
+    if (!(await db.prepare("SELECT 1 FROM accounts WHERE username = ?1").bind(name).first())) return name;
+  }
+}
 const later = (seconds) => new Date(Date.now() + seconds * 1000).toISOString();
 
 export const json = (obj, status = 200, headers = {}) =>
@@ -181,7 +200,7 @@ export async function arrive(env, request, { provider, subject, label, password_
   // at which a UUID exists with nothing to reach it by.
   const account = crypto.randomUUID();
   await db.batch([
-    db.prepare("INSERT INTO accounts (id, created_at) VALUES (?1, ?2)").bind(account, now()),
+    db.prepare("INSERT INTO accounts (id, created_at, username) VALUES (?1, ?2, ?3)").bind(account, now(), await bornUsername(db)),
     db.prepare("INSERT INTO identities (provider, subject, account, label, linked_at, password_hash) VALUES (?1, ?2, ?3, ?4, ?5, ?6)")
       .bind(provider, subject, account, label, now(), password_hash),
   ]);
@@ -452,14 +471,74 @@ async function passwordChange(request, env, account, b) {
 // ---- the account itself -------------------------------------------------------------
 
 async function accountView(env, account) {
-  const a = await env.ACCOUNTS.prepare("SELECT id, created_at FROM accounts WHERE id = ?1").bind(account).first();
+  const a = await env.ACCOUNTS.prepare(
+    "SELECT id, created_at, username, display_name, username_changed_at FROM accounts WHERE id = ?1",
+  ).bind(account).first();
   if (!a) return null;
   const { results } = await env.ACCOUNTS.prepare(
     "SELECT provider, label, linked_at, password_hash IS NOT NULL AS has_password FROM identities WHERE account = ?1",
   ).bind(account).all();
-  return { id: a.id, created_at: a.created_at,
+  return { id: a.id, created_at: a.created_at, username: a.username, display_name: a.display_name,
+    rename_after: renameAfter(a),
     identities: SLOTS.map((s) => results.find((r) => r.provider === s)).filter(Boolean)
       .map(({ has_password, ...r }) => (r.provider === "email" ? { ...r, has_password: !!has_password } : r)) };
+}
+
+/// When this account may next change its username, or null for now: the first
+/// change is free, each later one waits a day after the last.
+const renameAfter = (a) => {
+  if (!a.username_changed_at) return null;
+  const at = new Date(Date.parse(a.username_changed_at) + RENAME_COOLDOWN_SECONDS * 1000).toISOString();
+  return at > now() ? at : null;
+};
+
+/// A GIVEN-UP NAME IS HELD for its old owner, so nobody takes it at once and
+/// passes as them. A `user_` name was never chosen and is not held.
+const holdUsername = (db, name, account) => (name.startsWith(USERNAME_BORN) ? null : db.prepare(
+  `INSERT INTO username_holds (username, account, held_until) VALUES (?1, ?2, ?3)
+   ON CONFLICT (username) DO UPDATE SET account = ?2, held_until = ?3`,
+).bind(name, account, later(USERNAME_HOLD_SECONDS)));
+
+/// THE NAME THE ACCOUNT GOES BY: `username` and `display_name`, either or both.
+async function profile(env, account, b) {
+  const db = env.ACCOUNTS;
+  const a = await db.prepare("SELECT username, username_changed_at FROM accounts WHERE id = ?1").bind(account).first();
+  if (!a) return no("not_signed_in", 401);
+  const writes = [];
+  if ("display_name" in b) {
+    const shown = String(b.display_name ?? "").replace(/[\u0000-\u001f\u007f]/g, "").trim();
+    if ([...shown].length > DISPLAY_NAME_MAX) return no("bad_display_name");
+    writes.push(db.prepare("UPDATE accounts SET display_name = ?1 WHERE id = ?2").bind(shown || null, account));
+  }
+  if ("username" in b) {
+    const name = String(b.username ?? "").trim().toLowerCase();
+    if (name !== a.username) {
+      if (!USERNAME.test(name)) return no("bad_username");
+      if (name.startsWith(USERNAME_BORN) || USERNAMES_RESERVED.has(name)) return no("username_reserved");
+      const after = renameAfter(a);
+      if (after) return no("rename_too_soon", 429, { rename_after: after });
+      const held = await db.prepare("SELECT account FROM username_holds WHERE username = ?1 AND held_until > ?2")
+        .bind(name, now()).first();
+      if (held && held.account !== account) return no("username_taken", 409);
+      if (await db.prepare("SELECT 1 FROM accounts WHERE username = ?1").bind(name).first()) return no("username_taken", 409);
+      writes.push(
+        db.prepare("UPDATE accounts SET username = ?1, username_changed_at = ?2 WHERE id = ?3").bind(name, now(), account),
+        db.prepare("DELETE FROM username_holds WHERE username = ?1 OR held_until <= ?2").bind(name, now()),
+      );
+      const hold = holdUsername(db, a.username, account);
+      if (hold) writes.push(hold);
+    }
+  }
+  // TWO READERS RACING FOR ONE NAME: the unique index lets one through.
+  try { if (writes.length) await db.batch(writes); } catch (_) { return no("username_taken", 409); }
+  return json({ ok: true, account: await accountView(env, account) });
+}
+
+/// A DELETED ACCOUNT'S NAME IS HELD like a given-up one.
+async function holdOnDelete(env, account) {
+  const a = await env.ACCOUNTS.prepare("SELECT username FROM accounts WHERE id = ?1").bind(account).first();
+  const hold = a && holdUsername(env.ACCOUNTS, a.username, account);
+  if (hold) await hold.run();
 }
 
 /// EMPTYING A SLOT. The last one is the account itself, so it is refused
@@ -473,6 +552,7 @@ async function unlink(request, env, account, b) {
   if (!has) return no("not_linked");
   if (n <= 1 && b.delete_account !== true) return no("last_slot", 409);
   if (n <= 1 && !(await cloudEnd(env, account))) return no("billing_open", 409);
+  if (n <= 1) await holdOnDelete(env, account);
   await env.ACCOUNTS.prepare("DELETE FROM identities WHERE account = ?1 AND provider = ?2").bind(account, b.provider).run();
   const gone = n <= 1;
   return json({ ok: true, deleted: gone }, 200, gone ? { "set-cookie": endSession() } : {});
@@ -497,7 +577,7 @@ export async function accountRoute(request, env, path) {
   }
   const post = ["/api/auth/email/register", "/api/auth/email/verify", "/api/auth/email/login",
     "/api/auth/email/reset", "/api/auth/email/link", "/api/auth/logout",
-    "/api/account/password", "/api/account/unlink", "/api/account/delete", "/api/account/export"];
+    "/api/account/password", "/api/account/unlink", "/api/account/delete", "/api/account/export", "/api/account/profile"];
   if (!post.includes(path)) return null;
   if (request.method !== "POST") return no("method", 405);
   if (!sameSite(request)) return no("cross_site", 403);
@@ -525,8 +605,10 @@ export async function accountRoute(request, env, path) {
   if (!account) return no("not_signed_in", 401);
   if (path === "/api/account/unlink") return unlink(request, env, account, b);
   if (path === "/api/account/password") return passwordChange(request, env, account, b);
+  if (path === "/api/account/profile") return profile(env, account, b);
   if (path === "/api/account/delete") {
     if (!(await cloudEnd(env, account))) return no("billing_open", 409);
+    await holdOnDelete(env, account);
     await env.ACCOUNTS.prepare("DELETE FROM accounts WHERE id = ?1").bind(account).run();
     return json({ ok: true, deleted: true }, 200, { "set-cookie": endSession() });
   }

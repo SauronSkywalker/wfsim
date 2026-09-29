@@ -25,6 +25,25 @@ becomes an account.
 | the account lives while a slot is filled | trigger `identities_last_slot`, so every path that empties the last slot deletes the account, and by cascade its sessions and documents |
 | a new account arrives with its first slot | one batch in `arrive` — no moment exists with a UUID and no way to reach it |
 
+## Names
+
+**EVERY ACCOUNT HAS A USERNAME**, the site's handle for it, and may have a
+display name. Anything an account signs stores the account's id, so a rename
+shows everywhere at once.
+
+| rule | where it is held |
+| --- | --- |
+| a new account is born `user_` and six random characters; every existing one was given one by `accounts-0003-usernames.sql` | `bornUsername`, `arrive` |
+| a username is 3–20 of `a-z`, `0-9`, `_`, typed in any case and kept lowercase, and unique | `USERNAME`, index `accounts_username` |
+| `user_` names and a reserved list are the system's; nobody picks one | `USERNAME_BORN`, `USERNAMES_RESERVED` |
+| the first change is at once; each later one waits a day after the last | `renameAfter`, `username_changed_at` |
+| a name given up, or a deleted account's, is held seven days for its old owner, who may take it back | `username_holds`, `holdUsername` |
+| a display name is free text, at most 32 characters, unique to nobody; empty shows the username | `profile` |
+
+`POST /api/account/profile` `{username?, display_name?}` changes either; the
+`/account` page's Profile block is the form, and the top bar shows the display
+name with `@username` under it.
+
 **THE SERVER NEVER MERGES.** An identity already on another account is refused
 (`taken`), never moved. A matching email address means nothing: a Google
 account whose address equals a linked email is a different slot and, signed in

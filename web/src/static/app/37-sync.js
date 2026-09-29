@@ -90,7 +90,8 @@ function syncSoon(ms = SYNC_DELAY_MS) {
 /// round asked for while one runs runs once more after it.
 function syncNow() {
   if (syncRunning) { syncAgain = true; return syncRunning; }
-  syncRunning = syncRound().finally(() => {
+  // SYNC NEVER TAKES THE PAGE DOWN: whatever a round throws is its status.
+  syncRunning = syncRound().catch((e) => setSyncStatus({ state: "error", reason: String(e && e.message || e) })).finally(() => {
     syncRunning = null;
     if (syncAgain) { syncAgain = false; syncNow(); }
   });
@@ -144,12 +145,12 @@ async function syncRound() {
   // 3. PULL, every page.
   const pulled = [];
   let r = await syncCall({ since: st.cursor });
-  if (!r.ok) return syncRefused(r);
+  if (!pulledPage(r)) return syncRefused(r);
   pulled.push(...r.entries);
   let cursor = r.cursor;
   while (r.next) {
     r = await syncCall({ after: r.next });
-    if (!r.ok) return syncRefused(r);
+    if (!pulledPage(r)) return syncRefused(r);
     pulled.push(...r.entries);
     cursor = Math.max(cursor, r.cursor);
   }
@@ -162,10 +163,13 @@ async function syncRound() {
   if (applied) syncShow(applied);
 }
 
+/// A page the server sent, in the shape a pull reads — or a refusal.
+const pulledPage = (r) => !!(r && r.ok && Array.isArray(r.entries));
+
 function syncRefused(r) {
   if (r.reason === "not_included") setSyncStatus({ state: "not_included" });
   else if (r.reason === "not_signed_in") setSyncStatus({ state: "idle" });
-  else setSyncStatus({ state: "error", reason: r.reason });
+  else setSyncStatus({ state: "error", reason: (r && r.reason) || "bad_reply" });
 }
 
 /// FOLD IN WHAT CHANGED ELSEWHERE. The server's copy wins over this browser's

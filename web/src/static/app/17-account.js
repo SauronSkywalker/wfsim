@@ -55,6 +55,11 @@ const ACCOUNT_SAYS = {
   not_on_sale: "That is not on sale right now.",
   no_customer: "This account has not bought anything yet.",
   stripe: "Stripe did not answer. Try again in a moment.",
+  bad_username: "A username is 3 to 20 letters, digits or underscores.",
+  username_reserved: "That username is reserved.",
+  username_taken: "That username is taken.",
+  rename_too_soon: "A username can change once a day.",
+  bad_display_name: "A display name is at most 32 characters.",
 };
 const accountSaid = (key) => tr(ACCOUNT_SAYS[key] || key);
 
@@ -126,7 +131,8 @@ function authReturn() {
 }
 const authStart = (p, intent, back) =>
   `/api/auth/${p}/start?intent=${intent}&return=${encodeURIComponent(back)}`;
-const accountName = (a) => (a && a.identities[0] && a.identities[0].label) || "WFSim";
+/// WHAT THE SITE CALLS AN ACCOUNT: its display name, or its username.
+const accountName = (a) => (a && (a.display_name || a.username)) || "WFSim";
 const accountInitial = (a) => (accountName(a).replace(/[^\p{L}\p{N}]/gu, "")[0] || "W").toUpperCase();
 const aT = (s) => escHtml(tr(s));
 
@@ -143,7 +149,7 @@ function renderAccountEntry() {
     ? `<button class="avatar" id="account-toggle" aria-haspopup="menu" aria-expanded="false" title="${aT("Account")}">${escHtml(accountInitial(account))}</button>
       <div class="acct-menu" id="acct-menu" role="menu" hidden>
         <div class="who"><span class="avatar">${escHtml(accountInitial(account))}</span><div><b>${escHtml(accountName(account))}</b>
-          <span>${aT("Ways to sign in")}: ${account.identities.length}/${ACCOUNT_SLOTS.length}</span></div></div>
+          <span>@${escHtml(account.username || "")}</span></div></div>
         <a href="/account" role="menuitem">${aT("Account settings")}</a>
         <a class="off" role="menuitem" aria-disabled="true">${aT("My builds")} <small>${aT("Coming soon")}</small></a>
         <hr><a href="#" role="menuitem" data-acct="logout">${aT("Sign out")}</a>
@@ -288,6 +294,29 @@ function accountMethods(a) {
     <span class="sub">${aT("Connected")} ${a.identities.length} / ${ACCOUNT_SLOTS.length}</span></div>
     <div class="bb" style="padding:0">${rows}</div></div>
     <p class="set-note">${aT("Keep at least one way to sign in. A way to sign in belongs to one account only; WFSim never merges accounts.")}</p>`;
+}
+
+/// THE NAME THE ACCOUNT GOES BY: a username, which is the site's handle for
+/// it, and a display name, which is free text. The first username change is
+/// at once, each later one a day after the last (docs/ACCOUNTS.md §"Names").
+function accountProfileBlock(a) {
+  const after = a.rename_after
+    ? tr("The username can change again after {time}.").replace("{time}",
+      new Date(a.rename_after).toLocaleString(billingLocale(), { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }))
+    : "";
+  const body = authFlow.open === "profile"
+    ? `<div class="inline-form">
+        <div class="field"><label for="auth-username">${aT("Username")}</label>
+          <input id="auth-username" type="text" autocomplete="username" maxlength="20" spellcheck="false" value="${escHtml(a.username)}"${a.rename_after ? " disabled" : ""}></div>
+        <div class="field"><label for="auth-display">${aT("Display name")}</label>
+          <input id="auth-display" type="text" autocomplete="nickname" maxlength="32" value="${escHtml(a.display_name || "")}" placeholder="${escHtml(a.username)}"></div>
+        <button class="run-btn" data-auth="profile">${aT("Save")}</button></div>${authError()}
+      <p class="set-note">${aT("Letters, digits and underscores for the username; anything for the display name. Everything you sign shows your current name.")}${after ? " " + escHtml(after) : ""}</p>`
+    : `<dl class="kvs"><div class="kv"><dt>${aT("Username")}</dt><dd>@${escHtml(a.username)}${
+        a.username.startsWith("user_") ? ` <span class="tag muted">${aT("not chosen yet")}</span>` : ""}</dd>
+        <button class="ghost-btn btn-sm" data-auth="open" data-open="profile">${aT("Edit")}</button></div>
+      <div class="kv"><dt>${aT("Display name")}</dt><dd>${a.display_name ? escHtml(a.display_name) : `<span class="set-note">${aT("Not set — the username is shown")}</span>`}</dd><span></span></div></dl>`;
+  return `<div class="block" id="profile"><div class="bh"><h2>${aT("Profile")}</h2></div><div class="bb">${body}</div></div>`;
 }
 
 function accountEmailBlock(a) {
@@ -503,7 +532,7 @@ function accountDangerBlock() {
 function accountPage(a) {
   return `<div class="settings">${settingsNav(a, "account")}
     <div class="set-main"><h1 class="page">${aT("Account settings")}</h1>
-      ${accountMethods(a)}${accountEmailBlock(a)}${accountDataBlock()}${accountDangerBlock()}</div></div>`;
+      ${accountProfileBlock(a)}${accountMethods(a)}${accountEmailBlock(a)}${accountDataBlock()}${accountDangerBlock()}</div></div>`;
 }
 
 // ---- drawing a page ------------------------------------------------------------------------
@@ -650,6 +679,15 @@ async function authAct(el) {
       if (!(r && r.ok)) { presetToast(accountSaid((r && r.reason) || "stripe")); return; }
       location.href = r.url;
       return;
+    }
+    if (what === "profile") {
+      const a = accountState.account;
+      const r = await accountCall("POST", "/api/account/profile", {
+        ...(a.rename_after ? {} : { username: authVal("auth-username") }), display_name: authVal("auth-display") });
+      if (!(r && r.ok)) return fail(r);
+      presetToast(tr("Saved."));
+      authFlow = { ...authFlow, open: null, error: null };
+      return loadAccount();
     }
     if (what === "sync-now") { await syncNow(); return; }
     if (what === "sync-adopt") { await syncAdopt(); return; }
