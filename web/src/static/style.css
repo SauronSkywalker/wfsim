@@ -1894,6 +1894,7 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
 .set-side .me div span{font-size:12px;color:var(--text-2)}
 .set-side a{padding:7px 10px;border-radius:8px;color:var(--text-2);text-decoration:none;font-size:13.5px}
 .set-side a:hover{background:var(--surface);color:var(--text)}
+.set-side a.on{background:var(--surface);color:var(--text);font-weight:600;box-shadow:0 0 0 1px var(--line) inset}
 .set-main{display:flex;flex-direction:column;min-width:0}
 .set-main h1.page{margin:0 0 14px;font-size:20px}
 .set-note{font-size:12.5px;color:var(--text-2);margin:-4px 0 14px}
@@ -1906,11 +1907,41 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
 .method .acts{display:flex;gap:6px;align-items:center}
 .settings .tag.ok{border-color:transparent;background:color-mix(in srgb,var(--good) 14%,transparent);color:var(--good-text)}
 .settings .tag.muted{background:var(--panel2);color:var(--muted)}
+.settings .tag.warn{border-color:transparent;background:color-mix(in srgb,var(--gold) 16%,transparent);color:var(--gold)}
+.settings .tag.bad{border-color:transparent;background:color-mix(in srgb,var(--critical) 14%,transparent);color:var(--critical)}
+/* /account/billing: the plan card, then the history table (17-account.js). */
+.plan{padding:18px 18px 16px;display:grid;gap:14px}
+.plan-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.plan-head h2{margin:0;font-size:17px}
+.plan-head .fd-seg{margin-left:auto}
+.plan .price{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.plan .price b{font-size:28px;font-weight:800;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.plan .price span{color:var(--text-2)}
+.plan .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 18px;margin:0;padding:12px 0 0;border-top:1px solid var(--line)}
+.plan .facts div{min-width:0}
+.plan .facts dt{font-size:12px;color:var(--text-2);margin-bottom:2px}
+.plan .facts dd{margin:0;font-size:13.5px;font-variant-numeric:tabular-nums}
+.plan .acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.plan .acts .run-btn{width:auto;margin:0;padding:9px 18px;font-size:14px}
+.plan .notice{padding:10px 12px;border-radius:9px;font-size:13px;line-height:1.5}
+.plan .notice.bad{background:color-mix(in srgb,var(--critical) 9%,transparent)}
+.plan .notice.bad b{color:var(--critical)}
+.plan .notice.warn{background:color-mix(in srgb,var(--gold) 10%,transparent)}
+.plan .includes{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.plan .includes li{display:flex;gap:8px;align-items:baseline;font-size:13.5px}
+.plan .includes li::before{content:"¹3";color:var(--good-text);font-weight:700}
+.plan .set-note{margin:0}
+.table-wrap{overflow-x:auto}
+table.bills{width:100%;border-collapse:collapse;font-size:13px;min-width:520px}
+table.bills th{text-align:left;font-weight:600;font-size:12px;color:var(--text-2);padding:8px 13px;border-bottom:1px solid var(--line)}
+table.bills td{padding:10px 13px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;vertical-align:middle}
+table.bills tr:last-child td{border-bottom:0}
+table.bills .num{text-align:right}
+table.bills td.links{white-space:nowrap;text-align:right}
+table.bills td.links a{color:var(--accent);text-decoration:none;margin-left:12px}
+.settings .empty{padding:22px 13px;color:var(--muted);font-size:13px;text-align:center}
 .btn-sm{height:30px;display:inline-flex;align-items:center;text-decoration:none;font-size:12.5px}
 .kvs{margin:0}
-.set-sub{margin:16px 0 6px;font-size:12px;font-weight:700;color:var(--text-2)}
-.set-sub:first-child{margin-top:0}
-.kvs .kv>span:last-child{display:flex;gap:6px;justify-content:flex-end}
 .kvs .kv{display:grid;grid-template-columns:120px 1fr auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
 .kvs .kv:first-child{border-top:0;padding-top:0}
 .kvs .kv dt{font-size:12.5px;color:var(--text-2)}
@@ -1933,6 +1964,7 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
   .settings{grid-template-columns:1fr}
   .set-side{position:static;flex-direction:row;flex-wrap:wrap}
   .set-side .me{flex-basis:100%}
+  .plan-head .fd-seg{margin-left:0}
   .inline-form,.kvs .kv{grid-template-columns:1fr}
 }
 .tbmore{position:relative}

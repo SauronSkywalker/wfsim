@@ -60,8 +60,9 @@ The shape a mature product has, because that is where the trust comes from:
 | `/signup` | the same ways in; an email and a password, then a page for the mailed code — six boxes, a paste fills them, the last digit submits, a resend after a minute |
 | `/reset` | an email, then the code and a new password |
 | `/account` | settings in `.block` sections — ways to sign in, email and password, data and privacy, and a danger zone that asks for `DELETE` typed before it deletes |
+| `/account/billing` | where billing is on: the plan card (state, price, next charge or end, card, the one action the state calls for), the billing history as a table, and who takes the money; every change is Stripe's portal |
 
-All four pages are one `<main id="auth-page">`, drawn by
+All five pages are one `<main id="auth-page">`, drawn by
 `web/src/static/app/17-account.js` from the route. Nothing draws where
 `/api/account` names no way in, so the dev server, the desktop shell and a site
 whose secrets are not set show no account control. A sign-in page returns the
@@ -105,9 +106,9 @@ copy of it. `worker/cloud.js` is the whole of it here, and it forwards:
 | an account is deleted only once the private worker has ended its subscriptions | `cloudEnd`, `billing_open` |
 | with no binding, billing reads as off and nothing is ended | `cloudRoute`, `cloudEnd` |
 
-The page draws **Membership and billing** on `/account` only when `/api/billing`
-says it is configured, and shows the names the private worker sends: it knows no
-offer itself. `/terms` and `/refunds` are plain pages beside `/privacy`.
+The settings nav links **Membership and billing** (`/account/billing`) only when
+`/api/billing` says it is configured, and the page shows the names, contents and
+prices the private worker sends: it knows no offer itself. `/terms` and `/refunds` are plain pages beside `/privacy`.
 
 ## Privacy
 
