@@ -4,14 +4,14 @@ Chinese name: 墓指
 
 Rifle · Primary · Mastery Rank 0. 48 base damage (impact 35, radiation 13), 24% crit chance, 2x crit multiplier, 24% status chance.
 
-## Best riven-free build on the WFSim board, as of 2026-09-28
+## Best riven-free build on the WFSim board, as of 2026-09-29
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.3451 | Malignant Force, Rime Rounds, Hellfire, Galvanized Chamber, Primed Firestorm, Serration, Vile Acceleration, Vital Sense, Pax Charge, Primary Merciless |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.3406 | Malignant Force, Rime Rounds, Hellfire, Galvanized Chamber, Primed Firestorm, Serration, Vile Acceleration, Vital Sense, Pax Charge, Primary Merciless |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.4591 | Primed Cryo Rounds, Thermite Rounds, Galvanized Chamber, Primed Firestorm, Serration, Critical Delay, Hammer Shot, Vile Acceleration, Pax Charge, Primary Compression |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.08152 | Malignant Force, Rime Rounds, Hellfire, Galvanized Chamber, Primed Firestorm, Serration, Vile Acceleration, Vital Sense, Pax Charge, Primary Merciless |
 
 ## Not modelled here
