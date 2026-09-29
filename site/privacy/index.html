@@ -66,6 +66,19 @@ its delivery log keeps the address a code was sent to for up to 30 days.</li>
 </ul>
 <p>Nothing is sold, and nothing is shared for advertising.</p>
 
+<h2>How it is kept safe</h2>
+<ul>
+<li>Every page and every call to the site goes over HTTPS.</li>
+<li>Passwords, sign-in tokens and emailed codes are kept only as hashes; a
+password's hash is also keyed with a secret the database does not hold, so a
+copy of the database alone cannot test a guess.</li>
+<li>Card and billing details never reach WFSim: Stripe holds them.</li>
+<li>Account data lives in its own database, apart from the one the public
+leaderboard is backed up from, and only the operator of WFSim can reach it.</li>
+<li>Sign-in endpoints are rate-limited, and a state-changing request is accepted
+only from the site itself.</li>
+</ul>
+
 <h2>Your control</h2>
 <ul>
 <li>Download everything held about your account from the account panel.</li>
@@ -83,6 +96,7 @@ remains.</li>
 <li><b>登录后：</b>账号是一个随机编号，最多可绑定 Google、Discord、GitHub、邮箱四种登录方式。每种方式保存：是哪个服务、该服务给你的用户编号、账号页上显示给你看的名字（Google 邮箱、Discord 或 GitHub 用户名、你的邮箱），以及绑定时间。使用邮箱时你会设置一个密码，WFSim 只保存它加盐的慢哈希，无法还原成密码。邮件只在需要验证邮箱时发送（注册、绑定、找回密码），其中的验证码以哈希保存 10 分钟。登录状态以随机令牌的哈希保存（cookie <code>wfsim_session</code>，90 天）。不保存 IP 地址，也不保存第三方返回的访问令牌。WFSim 从不合并两个账号。</li>
 <li><b>购买时：</b>付款由 Stripe（通过 Link，作为销售方）处理，卡号与账单信息由它保存，收据和发票也由它发送；WFSim 看不到卡号。WFSim 为购买过的账号保存：Stripe 客户编号、每项订阅的状态与已付周期、每笔一次性购买、以及计量功能的用量。删除账号会先取消订阅并删除这些记录；Stripe 按法律要求保留它自己的付款记录。</li>
 <li><b>第三方：</b>Cloudflare 提供托管、数据库和验证邮件投递，其投递日志会保留收件地址最多 30 天；Google、Discord、GitHub 仅在你选择用它们登录时参与。不出售任何数据，不用于广告。</li>
+<li><b>安全措施：</b>全站 HTTPS；密码、登录令牌和邮件验证码只以哈希保存，密码哈希还用一个不在数据库里的密钥加固，单拿到数据库也无法验证任何猜测；卡号与账单信息只由 Stripe 保存，从不经过 WFSim；账号数据放在独立的数据库，与排行榜公开备份的那个分开，只有 WFSim 的运营方能访问；登录接口有频率限制，修改数据的请求只接受来自本站的。</li>
 <li><b>你的权利：</b>可在账号面板下载你的全部数据、移除任何登录方式（移除最后一种即删除账号）、直接删除账号。删除立即生效；数据库的时间点历史最多保留 30 天。</li>
 </ul>
 </main>
