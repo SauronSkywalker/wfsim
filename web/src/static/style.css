@@ -1835,26 +1835,42 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
 .acct-menu a.off{color:var(--muted);cursor:default}
 .acct-menu a small{margin-left:auto;font-size:11px;color:var(--muted)}
 .acct-menu hr{border:0;border-top:1px solid var(--line);margin:4px 0}
-.auth-page{display:flex;justify-content:center;padding:44px 16px 56px}
-.auth-card{width:100%;max-width:392px;background:var(--surface);border:1px solid var(--line);border-radius:14px;
-  padding:28px;display:flex;flex-direction:column;gap:14px}
-.auth-card h2{margin:0;font-size:21px;text-align:center;text-wrap:balance}
-.auth-card .lede{margin:-6px 0 4px;text-align:center;color:var(--text-2);font-size:13px}
+.auth-page{position:relative;display:flex;justify-content:center;min-height:calc(100vh - 112px);padding:56px 16px 72px;
+  overflow:hidden;isolation:isolate}
+.auth-page::before{content:"";position:absolute;z-index:-1;inset:0;pointer-events:none;opacity:.58;
+  background:
+    radial-gradient(circle at 50% 35%,transparent 0 118px,color-mix(in srgb,var(--accent) 8%,transparent) 119px 120px,transparent 121px 178px,color-mix(in srgb,var(--gold) 7%,transparent) 179px 180px,transparent 181px),
+    linear-gradient(color-mix(in srgb,var(--line) 28%,transparent) 1px,transparent 1px),
+    linear-gradient(90deg,color-mix(in srgb,var(--line) 28%,transparent) 1px,transparent 1px);
+  background-size:auto,32px 32px,32px 32px}
+.auth-card{position:relative;width:100%;max-width:420px;background:color-mix(in srgb,var(--surface) 96%,transparent);
+  border:1px solid var(--line);border-radius:16px;padding:34px 32px 30px;display:flex;flex-direction:column;gap:15px;
+  box-shadow:0 18px 55px rgba(0,0,0,.11);overflow:hidden}
+.auth-card::before{content:"";position:absolute;inset:0 0 auto;height:3px;
+  background:linear-gradient(90deg,var(--gold) 0 30%,var(--accent) 30% 100%)}
+.auth-card::after{content:"";position:absolute;width:92px;height:92px;right:-48px;top:-48px;border-radius:50%;
+  border:1px solid color-mix(in srgb,var(--accent) 24%,transparent);box-shadow:0 0 0 18px color-mix(in srgb,var(--accent) 4%,transparent);
+  pointer-events:none}
+.auth-card h2{margin:0;font-size:22px;letter-spacing:-.015em;text-align:center;text-wrap:balance}
+.auth-card .lede{margin:-7px 0 5px;text-align:center;color:var(--text-2);font-size:13px}
 .auth-err{font-size:13px;padding:8px 10px;border-radius:8px;color:var(--critical);
   background:color-mix(in srgb,var(--critical) 9%,transparent);border:1px solid color-mix(in srgb,var(--critical) 35%,transparent)}
-.prov{display:flex;align-items:center;justify-content:center;gap:10px;height:40px;border:1px solid var(--line);border-radius:10px;
-  background:var(--surface);color:var(--text);font-weight:600;font-size:14px;text-decoration:none}
-.prov:hover{background:var(--plane)}
-.prov svg{width:18px;height:18px}
+.prov{display:flex;align-items:center;justify-content:flex-start;gap:11px;height:42px;padding:0 14px;border:1px solid var(--line);border-radius:9px;
+  background:var(--panel3);color:var(--text);font-weight:600;font-size:14px;text-decoration:none;
+  transition:border-color .15s,background .15s,transform .15s}
+.prov:hover{background:var(--panel2);border-color:color-mix(in srgb,var(--accent) 45%,var(--line));transform:translateY(-1px)}
+.prov svg{width:19px;height:19px;flex:none}
 .or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px}
 .or::before,.or::after{content:"";flex:1;border-top:1px solid var(--line)}
 .field{display:flex;flex-direction:column;gap:5px;text-align:left}
 .field label{font-size:12.5px;font-weight:600;display:flex;flex-direction:row;align-items:baseline;justify-content:space-between;gap:8px;color:var(--text)}
 .field label a{font-weight:400;color:var(--accent);text-decoration:none}
-.field input{height:38px;padding:0 11px;border:1px solid var(--line);border-radius:8px;background:var(--plane);color:var(--text);font:inherit}
-.field input:focus{outline:none;border-color:var(--accent)}
+.field input{height:41px;padding:0 12px;border:1px solid var(--line);border-radius:8px;background:var(--plane);color:var(--text);font:inherit;
+  transition:border-color .15s,box-shadow .15s,background .15s}
+.field input:hover{border-color:color-mix(in srgb,var(--text) 24%,var(--line))}
+.field input:focus{outline:none;border-color:var(--accent);background:var(--surface);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 13%,transparent)}
 .auth-card .hint{font-size:12px;color:var(--muted);margin-top:-9px}
-.auth-card .run-btn,.inline-code .run-btn{margin-top:4px}
+.auth-card .run-btn,.inline-code .run-btn{margin-top:5px;min-height:42px}
 .auth-foot{text-align:center;font-size:13px;color:var(--text-2)}
 .auth-foot a{color:var(--accent);text-decoration:none;font-weight:600}
 .auth-foot .muted{color:var(--muted)}
@@ -1866,6 +1882,11 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
 .code-boxes input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
 .mail-ico{width:48px;height:48px;border-radius:50%;background:var(--panel2);display:flex;align-items:center;justify-content:center;margin:0 auto}
 .mail-ico svg{width:22px;height:22px}
+@media(max-width:520px){
+  .auth-page{min-height:calc(100vh - 104px);padding:30px 12px 52px}
+  .auth-card{padding:29px 20px 24px;border-radius:13px}
+  .auth-card::after{right:-58px;top:-58px}
+}
 .settings{display:grid;grid-template-columns:200px 1fr;gap:22px;max-width:980px;margin:0 auto;padding:26px 16px 40px}
 .set-side{display:flex;flex-direction:column;gap:2px;position:sticky;top:70px;align-self:start}
 .set-side .me{display:flex;gap:10px;align-items:center;padding:0 6px 14px}

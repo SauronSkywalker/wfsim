@@ -350,7 +350,7 @@ function renderAuthPage(kind) {
     return;
   }
   main.innerHTML = kind === "account" ? accountPage(account)
-    : `<div class="auth-page"><div class="auth-card">${
+    : `<div class="auth-page"><div class="auth-card" data-auth-kind="${kind}">${
       kind === "signup" ? authSignupCard() : kind === "reset" ? authResetCard() : authLoginCard()}</div></div>`;
   if (kind === "account") {
     const del = $("auth-delete");
