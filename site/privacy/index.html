@@ -52,6 +52,13 @@ that is read once for your id and dropped.
 Two accounts are never merged by WFSim: a way to sign in belongs to one account,
 and moves only if you remove it from one and add it to another.</p>
 
+<h2>AI agents</h2>
+<p>An AI agent can register with WFSim and get a key, which WFSim keeps only as a
+hash, with the name the agent gives and when it was last used. It acts for your
+account only after you give it a code WFSim mails to your address. Your account
+page lists every agent acting for it and disconnects one in a click; deleting
+the account deletes them.</p>
+
 <h2>If you buy something</h2>
 <p>Payment is taken by Stripe, through Link, which is the seller of record: it
 holds your card and billing details, and sends your receipts and invoices. WFSim

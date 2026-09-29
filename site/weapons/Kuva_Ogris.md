@@ -11,7 +11,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 3.7281 | Malignant Force, Rime Rounds, Hellfire, Galvanized Chamber, Primed Firestorm, Serration, Nightwatch Napalm, Semi-Rifle Cannonade, Primary Compression |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 42.5097 | Malignant Force, Rime Rounds, Hellfire, Galvanized Chamber, Primed Firestorm, Serration, Nightwatch Napalm, Semi-Rifle Cannonade, Primary Crux |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 42.5041 | Malignant Force, Rime Rounds, Hellfire, Galvanized Chamber, Primed Firestorm, Serration, Nightwatch Napalm, Semi-Rifle Cannonade, Primary Crux |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.4040 | Malignant Force, Rime Rounds, Hellfire, Galvanized Chamber, Primed Firestorm, Serration, Nightwatch Napalm, Semi-Rifle Cannonade, Primary Compression |
 
 ## Not modelled here
