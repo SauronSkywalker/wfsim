@@ -22,3 +22,4 @@ Content-Signal: search=yes, ai-input=yes, ai-train=yes
 Allow: /
 
 Sitemap: https://wfsim.app/sitemap.xml
+Agentmap: https://wfsim.app/.well-known/ai-catalog.json

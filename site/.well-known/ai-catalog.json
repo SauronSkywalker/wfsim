@@ -1,0 +1,43 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "WFSim",
+    "identifier": "did:web:wfsim.app"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:wfsim.app:mcp:wfsim",
+      "displayName": "WFSim MCP server",
+      "type": "application/mcp-server-card+json",
+      "url": "https://wfsim.app/.well-known/mcp/server-card.json",
+      "representativeQueries": [
+        "best measured build for Soma Prime without a riven",
+        "stats panel for a Warframe weapon build",
+        "find a Warframe weapon by its Chinese name",
+        "save this build to my WFSim account"
+      ]
+    },
+    {
+      "identifier": "urn:air:wfsim.app:a2a:wfsim",
+      "displayName": "WFSim A2A agent",
+      "type": "application/a2a-agent-card+json",
+      "url": "https://wfsim.app/.well-known/agent-card.json",
+      "representativeQueries": [
+        "Warframe weapon leaderboard by benchmark fight",
+        "what does this Warframe build do to its stats",
+        "look up a Warframe weapon"
+      ]
+    },
+    {
+      "identifier": "urn:air:wfsim.app:skill:wfsim-weapon-builds",
+      "displayName": "WFSim weapon builds",
+      "type": "application/agent-skills+md",
+      "url": "https://wfsim.app/.well-known/agent-skills/wfsim-weapon-builds/SKILL.md",
+      "representativeQueries": [
+        "how strong is this Warframe weapon",
+        "quote a WFSim score with its ruler",
+        "link a reader to a build in the calculator"
+      ]
+    }
+  ]
+}
