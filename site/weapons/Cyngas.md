@@ -10,9 +10,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.6419 | Primed Combustion Rounds, Primed Polar Magazine, Primed Dual Rounds, Primed Rubedo-Lined Barrel, Automatic Trigger, Critical Focus, Hollowed Bullets, Magnetized Cycle, Primary Crux, Secondary Enervate |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 19.2452 | Primed Combustion Rounds, Primed Polar Magazine, Primed Dual Rounds, Primed Rubedo-Lined Barrel, Automatic Trigger, Critical Focus, Hollowed Bullets, Magnetized Cycle, Primary Crux, Secondary Enervate |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.08607 | Primed Combustion Rounds, Primed Polar Magazine, Primed Dual Rounds, Primed Rubedo-Lined Barrel, Automatic Trigger, Critical Focus, Hollowed Bullets, Magnetized Cycle, Primary Crux, Secondary Enervate |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.6406 | Primed Combustion Rounds, Primed Polar Magazine, Primed Dual Rounds, Primed Rubedo-Lined Barrel, Automatic Trigger, Critical Focus, Hollowed Bullets, Magnetized Cycle, Primary Crux, Secondary Enervate |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 17.9133 | Primed Combustion Rounds, Primed Polar Magazine, Primed Dual Rounds, Primed Rubedo-Lined Barrel, Automatic Trigger, Critical Focus, Hollowed Bullets, Magnetized Cycle, Primary Crux, Secondary Enervate |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.08592 | Primed Combustion Rounds, Primed Polar Magazine, Primed Dual Rounds, Primed Rubedo-Lined Barrel, Automatic Trigger, Critical Focus, Hollowed Bullets, Magnetized Cycle, Primary Crux, Secondary Enervate |
 
 ## Not modelled here
 

@@ -11,7 +11,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 26.4650 | Frostbite, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Hornet Strike, Primed Target Cracker, Lethal Torrent, Pistol Elementalist, Secondary Enervate |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 64.0086 | Primed Heated Charge, Frostbite, Primed Convulsion, Galvanized Diffusion, Hornet Strike, Primed Target Cracker, Lethal Torrent, Pistol Elementalist, Secondary Enervate |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 60.2788 | Primed Heated Charge, Frostbite, Primed Convulsion, Galvanized Diffusion, Hornet Strike, Primed Target Cracker, Lethal Torrent, Pistol Elementalist, Secondary Enervate |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 8.6674 | Frostbite, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Hornet Strike, Primed Target Cracker, Lethal Torrent, Pistol Elementalist, Secondary Enervate |
 
 ## In WFSim

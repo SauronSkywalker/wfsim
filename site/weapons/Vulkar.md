@@ -12,7 +12,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 | --- | --- | --- | ---: | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.2617 | Primed Cryo Rounds, Hellfire, Galvanized Chamber, Galvanized Aptitude, Galvanized Scope, Vile Acceleration, Vital Sense, Magnetic Capacity, Primary Crux |
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.2658 | Primed Cryo Rounds, Hellfire, Galvanized Chamber, Galvanized Aptitude, Galvanized Scope, Vile Acceleration, Vital Sense, Magnetic Capacity, Primary Crux |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.008962 | Primed Cryo Rounds, Hellfire, Galvanized Chamber, Galvanized Aptitude, Galvanized Scope, Vile Acceleration, Vital Sense, Magnetic Capacity, Primary Crux |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.008961 | Primed Cryo Rounds, Hellfire, Galvanized Chamber, Galvanized Aptitude, Galvanized Scope, Vile Acceleration, Vital Sense, Magnetic Capacity, Primary Crux |
 
 ## Not modelled here
 

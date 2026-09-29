@@ -11,7 +11,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 16.2100 | Primed Polar Magazine, Primed Venomous Clip, Primed Combustion Rounds, Primed Dual Rounds, Primed Rubedo-Lined Barrel, Critical Focus, Hollowed Bullets, Parallax Scope, Primary Crux, Cascadia Flare |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 215.2065 | Contamination Casing, Hypothermic Shell, Primed Combustion Rounds, Primed Dual Rounds, Primed Rubedo-Lined Barrel, Primed Ammo Chain, Hollowed Bullets, Magnetized Cycle, Primary Crux, Secondary Enervate |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 214.7638 | Contamination Casing, Hypothermic Shell, Primed Combustion Rounds, Primed Dual Rounds, Primed Rubedo-Lined Barrel, Primed Ammo Chain, Hollowed Bullets, Magnetized Cycle, Primary Crux, Secondary Enervate |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 2.7933 | Primed Polar Magazine, Primed Venomous Clip, Primed Combustion Rounds, Primed Dual Rounds, Primed Rubedo-Lined Barrel, Critical Focus, Hollowed Bullets, Parallax Scope, Primary Crux, Cascadia Flare |
 
 ## Not modelled here

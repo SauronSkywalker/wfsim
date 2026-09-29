@@ -11,7 +11,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 17.6696 | Primed Chilling Grasp, Toxic Barrage, Blaze, Galvanized Hell, Galvanized Savvy, Repeater Clip, Shotgun Barrage, Magnetic Strafe, Primary Deadhead |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 88.0385 | Primed Chilling Grasp, Toxic Barrage, Blaze, Galvanized Hell, Galvanized Savvy, Repeater Clip, Shotgun Barrage, Magnetic Strafe, Primary Deadhead |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 88.0376 | Primed Chilling Grasp, Toxic Barrage, Blaze, Galvanized Hell, Galvanized Savvy, Repeater Clip, Shotgun Barrage, Magnetic Strafe, Primary Deadhead |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.0467 | Incendiary Coat, Blaze, Galvanized Hell, Primed Point Blank, Primed Ravage, Galvanized Savvy, Critical Deceleration, Shotgun Barrage, Primary Crux |
 
 ## Not modelled here

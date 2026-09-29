@@ -10,9 +10,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 39.5579 | Primed Charged Shell, Galvanized Hell, Primed Point Blank, Primed Ravage, Galvanized Savvy, Critical Deceleration, Shotgun Elementalist, Shrapnel Shot, Primary Deadhead |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 49.6439 | Primed Chilling Grasp, Toxic Barrage, Blaze, Galvanized Hell, Primed Ravage, Galvanized Savvy, Critical Deceleration, Shrapnel Shot, Primary Deadhead |
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 192.2597 | Primed Chilling Grasp, Toxic Barrage, Blaze, Galvanized Hell, Primed Ravage, Galvanized Savvy, Critical Deceleration, Shrapnel Shot, Primary Deadhead |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.6984 | Primed Charged Shell, Toxic Barrage, Primed Chilling Grasp, Galvanized Hell, Primed Point Blank, Primed Ravage, Galvanized Savvy, Critical Deceleration, Primary Frostbite |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 3.7843 | Primed Chilling Grasp, Toxic Barrage, Blaze, Galvanized Hell, Primed Ravage, Galvanized Savvy, Critical Deceleration, Shrapnel Shot, Primary Deadhead |
 
 ## Not modelled here
 
