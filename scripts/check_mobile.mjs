@@ -31,7 +31,7 @@ const SCREENS = [
   ["tablet", 768, 1024, false],
   ["desktop", 1280, 900, false],
 ];
-const TOPMENU_MAX = 780;
+const TOPMENU_MAX = 768;
 
 for (const [label, w, h, mobile] of SCREENS) {
   await send("Emulation.setDeviceMetricsOverride",
@@ -207,7 +207,7 @@ for (const [label, w, h, mobile] of SCREENS) {
         // moved. '.qq-link' / '.dc-link' are BOTH here: one is on the bar and one
         // is in the overflow, and which is which follows the display language.
         // ...and the overflow BUTTON is not in it. It is a container, not a
-        // destination or a control: below 780px it is not drawn at all, because
+        // destination or a control: at 768px and below it is not drawn, because
         // the phone menu already holds what it would have opened.
         const ALL = BAR.filter((x) => x !== '#tbmore-toggle')
           .concat(['.gh-link', '.qq-link', '.dc-link', '#compute-select']);
@@ -221,7 +221,7 @@ for (const [label, w, h, mobile] of SCREENS) {
         const more = document.querySelector('#tbmore-toggle');
         const closed = missing(BAR);
         const accountClosed = missing(['#account']);
-        // Open BOTH: below 780px the hamburger holds everything and the '⋯' is
+        // Open BOTH: at 768px and below the hamburger holds everything and the '⋯' is
         // not drawn; above it the '⋯' holds the overflow and the hamburger is
         // not drawn. Clicking one that is not there is a no-op either way.
         if (tog) tog.click();

@@ -188,7 +188,7 @@ const QQ_GROUP = "995078378";
     .addEventListener("click", () => set(false));
   // Above the breakpoint the panel is `display:contents` again and the class
   // means nothing — but it would still be there on the way back down.
-  addEventListener("resize", () => { if (innerWidth > 780) set(false); });
+  addEventListener("resize", () => { if (innerWidth > 768) set(false); });
 })();
 
 // THE COMMUNITY LINK A READER CAN ACT ON GOES ON THE BAR;
@@ -210,7 +210,7 @@ function applyCommunityOrder() {
 }
 applyCommunityOrder();
 
-// The topbar overflow. Below 780px it is `display:contents` and the button is
+// The topbar overflow. At 768px and below it is `display:contents` and the button is
 // not drawn, so this only does anything on a desktop — but it binds either
 // way, because a resize crosses the breakpoint without reloading.
 (function () {

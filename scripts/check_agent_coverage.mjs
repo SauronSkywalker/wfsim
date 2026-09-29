@@ -30,6 +30,11 @@ const TODO_MAX = 0;
 const app = await openApp({ boot: 13000, base: process.env.WFSIM_BASE });
 const { evaluate, check, finish, send } = app;
 
+// COVERAGE IS THE DESKTOP SHAPE. Chrome's default viewport varies by runner
+// and can land inside the responsive menu, where closed controls are
+// deliberately not visible; check_mobile opens that menu and covers its shape.
+await send("Emulation.setDeviceMetricsOverride",
+  { width: 1280, height: 900, deviceScaleFactor: 1, mobile: false });
 await send("Page.addScriptToEvaluateOnNewDocument", {
   source: `(() => {
     const seen = new WeakSet();
