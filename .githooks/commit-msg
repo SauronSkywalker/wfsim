@@ -1,0 +1,3 @@
+#!/bin/sh
+# Strips AI-tool credit lines from the message; scripts/check_commit_trailers.mjs.
+exec node "$(git rev-parse --show-toplevel)/scripts/check_commit_trailers.mjs" --strip "$1"

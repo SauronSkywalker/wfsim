@@ -953,6 +953,17 @@ commentward does. A whole-repo average cannot honestly do more than that.
 `.md`, `.html` and `.css` are outside both, which is what makes "move the
 subject into `docs/`" an answer rather than a shuffle.
 
+## `check_commit_trailers`
+
+No commit in the pushed range credits an AI tool: no `Co-authored-by:` naming
+one, no "generated with" line, no robot marker. The rule belongs to the repo,
+not to any one agent's settings — each tool has its own switch and most default
+to adding the line, so only a check every tool's commits meet holds for all of
+them. CI reads the range a push or pull request adds; locally it reads
+`origin/main..HEAD`. `--strip <file>` is the same test as a commit-msg hook
+(`.githooks/commit-msg`, `git config core.hooksPath .githooks`), which deletes
+the lines before the commit exists. A human `Co-authored-by:` passes.
+
 ---
 
 ## A check cleans up after itself

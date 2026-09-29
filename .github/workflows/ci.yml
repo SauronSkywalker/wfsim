@@ -21,6 +21,25 @@ jobs:
       - name: Tests
         run: cargo test --workspace
 
+  # A commit names its author and no tool. Blobless, because only the messages
+  # are read; the range is what this push or pull request adds.
+  commits:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          filter: blob:none
+      - name: No commit credits an AI tool
+        env:
+          BEFORE: ${{ github.event.before }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          from="${BASE:-$BEFORE}"
+          if ! git cat-file -e "$from^{commit}" 2>/dev/null; then from="$HEAD_SHA~1"; fi
+          node scripts/check_commit_trailers.mjs "$from..$HEAD_SHA"
+
   # The page is not something `cargo test` can see. This drives headless
   # Chrome over the COMMITTED site/ — the artefact Cloudflare deploys — and
   # asserts the builder and the optimizer offer the same options and the same

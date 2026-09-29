@@ -420,13 +420,90 @@ See [`CORE.md`](CORE.md) §4 for the full architecture. In short:
 - `docs/` — `CORE.md` (design), `MECHANICS.md` (how numbers are computed),
   this file.
 - `tests/golden/` — golden tests calibrated against in-game measurements.
-- `AGENTS.md` (repo root) — the condensed rulebook for AI coding agents.
+- `AGENTS.md` (repo root) — the condensed rulebook for every coding agent,
+  whatever tool runs it; no tool gets a file of its own.
 
 ## 7. Docker (deferred)
 
 Intentionally **not** used during development. We will revisit containerized
 builds/packaging only once the simulator is feature-complete. Until then, mise
 is the single source of truth for the toolchain.
+
+## 8. Sharing the checkout
+
+Several agent sessions, from any tool, work this repository at once, often in
+the same checkout and on the same branch. Everything below follows from that.
+
+**Once per clone:** `git config core.hooksPath .githooks`, so a commit-msg hook
+strips AI-tool credit lines whichever tool commits (`docs/CHECKS.md`
+§`check_commit_trailers`).
+
+**One worktree per task.** `git fetch origin` then
+`git worktree add ../wfsim-<task> -b <task> origin/main`, even from inside
+another worktree: an old one usually holds another session's uncommitted work,
+and a commit or a `site/` build from it ships their half-finished state.
+
+**Stage by name, never `git add -A` / `commit -a`.** Another session's files sit
+beside yours, and `-A` puts their work under your message. Run `git add` and
+`git commit` in ONE command and read `git log --oneline -1` afterwards: a
+parallel `-A` in the gap between them takes your staged files into THEIR commit.
+Commit your own files early on a long edit, so a sweep finds nothing of yours.
+
+**Never `--amend` without confirming HEAD is yours**, in the same command
+(`git log -1 --format='%h %s'`). HEAD moves under you; amending then rewrites
+another session's commit. Repair an unpushed one with `git reset --soft
+<their-commit>`, never `reset --hard` — the tree may hold someone's live edits.
+Never rewrite a pushed commit.
+
+**The working tree, not HEAD, is what a binary measures.** `data/` is compiled
+in, so another session's uncommitted yaml changes your build's numbers and can
+move every board fingerprint. `git status` before and after any comparison.
+
+**After a rebase, count the replayed commits.** When main was rewritten, a
+branch cut from the old main replays commits main dropped on purpose;
+`git rebase --onto origin/main <last-foreign-commit>` and a
+`git diff --stat origin/main..HEAD` listing only your files.
+
+**Is it merged? Assert the content, not the ancestry.** A rebase-merge rewrites
+hashes, so `git branch --merged` and `git cherry` both report a landed branch as
+missing. Check that the specific things the branch introduced are on main.
+
+**In a rebase, `--theirs` is YOUR side.** For `site/board.json`, take the bot's
+file by hash (`git checkout <bot-commit> -- site/board.json`) — the bot rescored
+against the pushed engine.
+
+**Stop a server by the PID on its port**, never by image name: every session
+keeps its own `wfsim-web.exe`, and `taskkill /IM` takes theirs down too.
+
+**Build `site/` and ship from the main checkout.** A fresh worktree has no
+`web/cache/img`, so the build stops at the image gate after writing
+`index.html` and before the prerendered pages — a `site/` that looks built and
+names two generations of `app.js`. Commit in the worktree,
+`git merge --ff-only` it in the main checkout, and run `scripts/ship.py` there.
+Copy the cache if a worktree build is unavoidable, never link it:
+`git worktree remove --force` follows a junction and empties the original.
+
+**When `ship.py`'s push is rejected** by a board rescore landing first: rebase,
+push, `cargo build --manifest-path desktop/Cargo.toml` (the payload manifest
+now describes a tree that no longer exists), `scripts/release_desktop.py`, then
+`scripts/ship.py --verify`. Rerunning the whole of `ship.py` pays for the site
+build again.
+
+### Shell traps on Windows
+
+- Git Bash rewrites an argument starting with `/`, so a `/Lotus/...` path
+  reaches Python as `C:/Program Files/Git/Lotus/...` and `de_export.py show`
+  answers "not in the export". Prefix `MSYS_NO_PATHCONV=1`.
+- `subprocess.run(..., text=True)` without `encoding=` decodes as the console
+  codepage (GBK on a Chinese-locale machine); UTF-8 output then fails in the
+  reader thread and `stdout` comes back `None`. Pass
+  `encoding="utf-8", errors="replace"`.
+- A heredoc mangles `\n`, `\\`, backticks and `$` even when quoted. Write code
+  files directly, and run the file's parser (`node --check`, `cargo build`)
+  after generating one.
+- A long check piped through `tail` shows nothing until it exits, including the
+  progress lines that tell "working" from "hung". Run it bare and filter where
+  you read the output.
 
 ---
 

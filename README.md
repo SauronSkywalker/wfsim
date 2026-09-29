@@ -24,7 +24,7 @@ each. Fights are single-target or a formation; the crowd ruler is a 5x5. Gaps ar
 issues welcome.
 
 **On AI:** I use AI assistance while writing this code (see
-[AGENTS.md](AGENTS.md) / [CLAUDE.md](CLAUDE.md)). The simulator itself contains
+[AGENTS.md](AGENTS.md)). The simulator itself contains
 no AI: it is a deterministic damage model plus a Monte Carlo search over mod
 combinations. Every formula cites a wiki page, a datamine, or a measurement,
 and each in-game measurement is written up as its own file under

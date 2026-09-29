@@ -41,7 +41,7 @@ Read the row for what you are about to touch before the code, not after.
 | capacity and Forma | `docs/INVESTMENT.md` |
 | the update channel, mirrors, shells | `docs/DISTRIBUTION.md` |
 | the Windows client | `docs/DESKTOP.md` |
-| setup, profiling, what has been tried | `docs/DEVELOPMENT.md` |
+| setup, profiling, what has been tried, parallel work | `docs/DEVELOPMENT.md` |
 | how usage is counted | `docs/ANALYTICS.md` |
 | accounts, sign-in, privacy | `docs/ACCOUNTS.md` |
 
@@ -50,9 +50,8 @@ Read the row for what you are about to touch before the code, not after.
 - `engine/` — all game mechanics, and it knows NO weapon names: weapons, mods
   and the rest load from `data/`. Layered `rules/ model/ data/ build/` fight
   `board/`, each naming only those below (`docs/CORE.md` §4).
-  `engine::arena::Arena` is BOTH actors of a
-  fight; the web api and the optimizer build one from the same scenario and hand
-  it to the same constructor. Every formula carries a comment citing its source.
+  `engine::arena::Arena` is BOTH actors of a fight, built by the web api and
+  the optimizer through one constructor. Every formula cites its source.
 - `optimizer/` — build search. It only ever CALLS the engine — never add a
   simplified damage formula here.
 - `webapi/` — endpoint logic shared by `web/` (native) and `wasm/`.
@@ -64,12 +63,12 @@ Read the row for what you are about to touch before the code, not after.
   nothing in `engine/`. The updater lives in `app.js`, not in the shell.
 - `data/` — versioned game data; `data/README.md` is the reference graph.
 - `tests/golden/` — golden tests calibrated against in-game measurements.
-- `.handoff.md` — ignored shared work state. Read it first when present; keep
-  its objective, decisions, files, checks, blockers, and next step current
-  during work, then reset it to `idle` only after completion.
+- `.handoff.md` — ignored shared work state. Read it first when present, keep
+  it current while working, reset it to `idle` when done.
 - `private/` — **gitignored, and `git add -A` silently skips it.** Never report
   a change under it as shipped, and never let something the repo needs live only
-  there.
+  there. `private/agents/README.md` is the standing notes for ANY agent: read it
+  first. A lesson goes there or to `docs/`, never only into one tool's memory.
 
 ## Tripwires
 
@@ -101,8 +100,8 @@ Each of these fails silently. That is why it is here and not in a document.
   nothing local may write one. Running `wfsim-board` by hand in the repo
   rewrites `data/board_state.yaml` and the published files under it.
 - **Images are SAME-ORIGIN.** `site/img/` holds every file `data/assets.yaml`
-  references and the build FAILS on a missing one. Never hotlink a CDN — it
-  redirects to a host that is unreliable to blocked from mainland China.
+  references and the build FAILS on a missing one. Never hotlink a CDN: it
+  is unreliable to blocked from mainland China.
 
 ### Correctness
 
