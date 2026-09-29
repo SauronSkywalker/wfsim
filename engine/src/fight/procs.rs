@@ -889,6 +889,10 @@ pub(super) fn settle_procs(
                 1,
                 at,
             ),
+            // THE REST OF A SHOT THAT FILLED THE PILE ADDS NO STACK — see
+            // `DebuffState::blast_spent_by`. Only the stack: the proc is still a
+            // proc, and Cascadia Empowered below pays for it (M108).
+            DamageType::Blast if debuffs.blast_spent_by == Some((r.shots, at)) => {}
             DamageType::Blast => {
                 if let Some(c) = caps {
                     if debuffs.blast.len() >= c.general {
@@ -910,6 +914,7 @@ pub(super) fn settle_procs(
                     // hit at once, all stacks consumed (radial
                     // excluded — it never hits the host).
                     let fired: Vec<BlastStack> = debuffs.blast.drain(..).collect();
+                    debuffs.blast_spent_by = Some((r.shots, at));
                     let total: f64 = fired.iter().map(|b| b.value).sum();
                     // …AND THE OTHER HALF, which is the bigger one: a
                     // SIMULTANEOUS detonation reaches 5 m at ten times the

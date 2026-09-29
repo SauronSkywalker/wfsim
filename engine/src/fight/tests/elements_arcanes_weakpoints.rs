@@ -134,6 +134,54 @@ fn blast_stacks_fire_singly_on_fuse_expiry() {
     );
 }
 
+/// THE REST OF THE SHOT THAT FILLS A BLAST PILE IS LOST (MEASUREMENTS M108): a
+/// Boar Prime landing 8 Blast procs a shot detonates on its second shot and
+/// keeps nothing. Eight pellets, one forced Blast each: 8, then 10 and not 16,
+/// then 18 and not 24 — the third shot starts a pile of its own.
+#[test]
+fn the_shot_that_fills_a_blast_pile_keeps_no_stack_past_ten() {
+    let stacks_paid = |shots: f64| {
+        let p = FightParams {
+            multishot: 8.0,
+            magazine_size: shots,
+            infinite_reserve: false,
+            reserve_ammo: 0.0,
+            fire_rate: 10.0,
+            // Long enough for every leftover fuse to burn down.
+            duration_seconds: 20.0,
+            ..bare(DamageType::Blast)
+        };
+        monte_carlo(&p, 5, 1).mean_dot_damage / 22.5
+    };
+    for (shots, want) in [(1.0, 8.0), (2.0, 10.0), (3.0, 18.0)] {
+        let got = stacks_paid(shots);
+        assert!((got - want).abs() < 1e-9, "{shots} shots paid {got} stacks, want {want}");
+    }
+}
+
+/// …AND THE LOST PROC IS STILL A PROC (MEASUREMENTS M108): sixteen pellets,
+/// sixteen Blast icons and sixteen Cascadia Empowered 750s, but ten numbers on
+/// the host. Only the stack is lost.
+#[test]
+fn a_blast_proc_past_the_pile_still_fires_cascadia_empowered() {
+    let run = |cascadia: f64| {
+        let p = FightParams {
+            multishot: 16.0,
+            magazine_size: 1.0,
+            infinite_reserve: false,
+            reserve_ammo: 0.0,
+            duration_seconds: 20.0,
+            arcane: ArcaneFx { flat_damage_on_status: cascadia, ..ArcaneFx::none() },
+            ..bare(DamageType::Blast)
+        };
+        monte_carlo(&p, 5, 1)
+    };
+    let (plain, armed) = (run(0.0), run(750.0));
+    assert!((plain.mean_dot_damage / 22.5 - 10.0).abs() < 1e-9, "host paid {}", plain.mean_dot_damage);
+    let cascadia = armed.mean_damage - plain.mean_damage;
+    assert!((cascadia / 750.0 - 16.0).abs() < 1e-9, "Cascadia paid {cascadia}");
+}
+
 /// **ELEMENTAL DAMAGE DOES NOT REACH A BLAST DETONATION**, which is the one
 /// rule that makes Blast unlike every other damaging status: *"Unlike other
 /// damaging statuses, adding more elemental damage (Heat and Cold) will not

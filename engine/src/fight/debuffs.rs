@@ -145,6 +145,11 @@ pub(super) struct DebuffState {
     /// second one.
     pub(super) attractor: Vec<f64>,
     pub(super) blast: Vec<BlastStack>,
+    /// THE SHOT THAT FILLED THE PILE, as `(RunResult::shots, instant)`. A Blast
+    /// proc from that same shot after the pile went off is LOST, not the first
+    /// stack of the next pile: a Boar Prime at 8 procs a shot detonates on its
+    /// second shot and keeps nothing, at 17 pellets once a shot (MEASUREMENTS M108).
+    pub(super) blast_spent_by: Option<(u32, f64)>,
     /// APPEND THROUGH [`Self::push_dot`], never `dots.push`: it keeps
     /// `dots_due` a lower bound, and a tick pass that trusts a stale one skips
     /// a tick that was due.

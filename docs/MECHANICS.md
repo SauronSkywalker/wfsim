@@ -3715,6 +3715,14 @@ burns down its own 1.5 s deals the single-target hit and nothing else. The
 engine had the single-target half and its comment already said the radial was
 "excluded — it never hits the host"; there was no host's neighbour to hit.
 
+**THE SHOT THAT FILLS THE PILE KEEPS NOTHING PAST TEN** (MEASUREMENTS M108).
+A Boar Prime landing 8 procs a shot detonates on its second shot and the six
+left over add no stack; at ~17 pellets it detonates once a shot and leaves
+nothing. `DebuffState::blast_spent_by` names the shot and instant that filled
+the pile, and a Blast proc from both adds no stack — ONLY the stack is lost:
+16 pellets show 16 Blast icons and 16 Cascadia Empowered 750s, and the host
+pops 10.
+
 A detonation is a HIT and not a DoT, so it rides a second outbox
 (`DebuffState::area_hit`) — it lands once and carries no `dtype` for the
 neighbour to count as a status ("inherits no additional status effects"). A

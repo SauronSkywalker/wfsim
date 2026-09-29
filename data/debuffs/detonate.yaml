@@ -34,7 +34,8 @@ delayed_burst:
     # Triggers: the 10th stack applied, OR the host dies (a killing blow
     # that INFLICTS >=1 Blast proc counts even with zero prior stacks;
     # conversely the killing blow needn't proc Blast if stacks already
-    # exist).
+    # exist). The rest of the shot that applied the 10th adds no stack
+    # (MEASUREMENTS M108).
     # Effect: all stacks deal their single-target hits to the host at once
     # (10 stacks = 300% ModdedBase total), PLUS one merged radial instance
     # (the `radial` block) hitting surrounding enemies only.
