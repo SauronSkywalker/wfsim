@@ -1801,6 +1801,7 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
 .topbar-inner .topnav{order:2}
 .topbar-inner .wsearch{order:3}
 .topbar-inner .tblinks>*{order:4}
+.topbar-inner>.account{order:4}
 /* `.topbar-inner .ghost-btn` sets `display:inline-flex` for every button in
    the bar and outranks a single class, so hiding this one has to match that
    specificity — the same trap the icon links' width fell into above. */
@@ -1817,7 +1818,8 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
    product has. The settings page is built from `.block > .bh > .bb`. */
 .account{position:relative;display:flex;align-items:center}
 .signin-btn{display:inline-flex;align-items:center;height:28px;padding:0 12px;border-radius:8px;
-  border:1px solid var(--line);background:var(--surface);color:var(--text);font-weight:600;font-size:13px;text-decoration:none}
+  border:1px solid var(--line);background:var(--surface);color:var(--text);font-weight:600;font-size:13px;
+  text-decoration:none;white-space:nowrap}
 .signin-btn:hover{border-color:var(--accent)}
 .avatar{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;font-size:13px;
   display:inline-flex;align-items:center;justify-content:center;border:0;cursor:pointer;line-height:1;flex:none}
@@ -1941,7 +1943,7 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
 .tbcomm{display:contents}
 .topbar-inner .tbcomm>*{order:4}
 
-@media (max-width:700px){
+@media (max-width:780px){
   /* Below here the wrapper becomes a real box, hanging off the bar. The
      anchor is the bar itself so the panel tracks the sticky header. */
   .topbar-inner{position:relative}
