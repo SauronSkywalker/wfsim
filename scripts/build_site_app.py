@@ -1467,6 +1467,7 @@ CONTENT_SIGNAL = "Content-Signal: search=yes, ai-input=yes, ai-train=yes"
 # (`mcp/`) and the table it runs, read through `scripts/dump_headless.mjs` so
 # every surface below says what the server does and nothing it does not.
 MCP_URL = "https://mcp.wfsim.app/mcp"
+A2A_URL = "https://mcp.wfsim.app/a2a"
 AGENT_TERMS = "It runs in the browser, free, and its source is open (AGPL-3.0)."
 SKILL_NAME = "wfsim-weapon-builds"
 
@@ -1831,11 +1832,21 @@ def ship_agent_files(by_slot: dict) -> None:
         "tools": [{"name": t["name"], "title": t["id"], "description": t["description"],
                    "inputSchema": t["inputSchema"]} for t in headless()["tools"]],
     }, indent=2, ensure_ascii=False) + "\n")
-    # RFC 9727: the two public read APIs — the MCP server and the published board.
+    # THE A2A AGENT CARD, as `mcp/a2a.js` serves it at the endpoint's own host.
+    # Its version is the engine as written NOW, like the server card's: the
+    # dump may predate this build's `mcp/engine.js`.
+    put(wk / "agent-card.json", json.dumps({
+        **headless()["agent_card"],
+        "version": re.search(r'ENGINE_DIGEST = "(\w+)"', engine).group(1),
+    }, indent=2, ensure_ascii=False) + "\n")
+    # RFC 9727: the public read APIs — the MCP server, the A2A agent and the published board.
     skill_url = f"{SITE}/.well-known/agent-skills/{SKILL_NAME}/SKILL.md"
     put(wk / "api-catalog", json.dumps({"linkset": [
         {"anchor": f"{SITE}/.well-known/api-catalog",
-         "item": [{"href": MCP_URL}, {"href": f"{SITE}/board/index.json", "type": "application/json"}]},
+         "item": [{"href": MCP_URL}, {"href": A2A_URL},
+                  {"href": f"{SITE}/board/index.json", "type": "application/json"}]},
+        {"anchor": A2A_URL,
+         "service-desc": [{"href": f"{SITE}/.well-known/agent-card.json", "type": "application/json"}]},
         {"anchor": MCP_URL,
          "service-desc": [{"href": card, "type": "application/json"}],
          "service-doc": [{"href": skill_url, "type": "text/markdown"}]},

@@ -9,7 +9,8 @@ import { resolve, dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const { HEADLESS_QUERIES, HEADLESS_RETIRED, headlessCheckArgs, headlessSchema, headlessToolName, headlessUnknown } =
+const { HEADLESS_QUERIES, HEADLESS_RETIRED, headlessCheckArgs, headlessSchema, headlessToolName, headlessUnknown,
+  headlessSeat, headlessStateAxes } =
   await import(pathToFileURL(resolve(ROOT, "mcp/headless.js")));
 
 let failed = 0;
@@ -91,6 +92,31 @@ check("a retired name is refused with where it went",
   moved && moved.reason === "retired" && moved.use === "builder.board.read" && moved.tool === "builder_board_read",
   JSON.stringify(moved));
 check("a name nobody retired is not answered as retired", headlessUnknown("builder.never.was") === null);
+
+// A SAVED BUILD AND THE WIRE ARE ONE TRANSLATION BOTH WAYS: every riven-free
+// board row's build, stored as a saved build's state and read back, is the
+// build it was — across every weapon with a board, so an exilus, a stance, an
+// evolution, a valence, a Kitgun's parts and a second arcane seat all pass
+// through it.
+const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+const norm = (p) => ({
+  weapon: p.weapon, mods: (p.mods || []).filter(Boolean).slice().sort(),
+  arcane: (Array.isArray(p.arcane) ? p.arcane : [p.arcane]).filter((x) => x && x !== "none"),
+  evolutions: (p.evolutions || []).filter(Boolean).slice().sort(), mode: p.mode || null,
+  valence: p.valence_element ? [p.valence_element, p.valence_bonus] : null, assembly: p.assembly || null,
+});
+let trips = 0;
+const broken = [];
+for (const w of meta.weapons) {
+  const b = await run("builder.board.read", { weapon: w.id, limit: 1 });
+  for (const r of (b.rows || []).filter((x) => x.build)) {
+    trips++;
+    const back = headlessSeat(meta, { weapon: w.id, ...headlessStateAxes(meta, r.build, w.id) });
+    if (!same(norm(back), norm(r.build))) broken.push({ weapon: w.id, sent: norm(r.build), back: norm(back) });
+  }
+}
+check(`${trips} board builds, saved and read back, are the builds they were`, trips > 100 && broken.length === 0,
+  JSON.stringify(broken.slice(0, 2)));
 
 console.log(failed ? `\n${failed} failed` : "\nthe MCP server's queries run with no page");
 process.exit(failed ? 1 : 0);

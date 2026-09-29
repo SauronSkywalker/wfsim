@@ -3,12 +3,14 @@
 //
 // A WORKER OF ITS OWN, not a path on the site's: it bundles the engine, and a
 // site worker that carried it would start every page load that much colder.
-// It holds no state between requests (Streamable HTTP without sessions), and it
-// offers queries only — a caller with no page has no reader to act for
-// (docs/AGENT.md §"Headless queries").
+// It holds no state between requests (Streamable HTTP without sessions). It
+// offers the headless queries, and — to a key its person claimed — that
+// person's saved builds (docs/AGENT.md §"The MCP server").
 import { wasm_bindgen, module, ENGINE_DIGEST } from "./engine.js";
 import { HEADLESS_ABOUT, HEADLESS_QUERIES, HEADLESS_RETIRED, headlessCheckArgs, headlessNo, headlessSchema, headlessToolName,
   headlessUnknown } from "./headless.js";
+import { ACCOUNT_TOOLS, callAccount } from "./account.js";
+import { a2aAnswer, agentCard } from "./a2a.js";
 
 const SITE = "https://wfsim.app";
 const PROTOCOLS = ["2025-06-18", "2025-03-26"];
@@ -85,7 +87,9 @@ const host = (env) => ({
 
 const TOOLS = HEADLESS_QUERIES.map((q) => ({ q, name: headlessToolName(q.id) }));
 
-async function call(env, name, args) {
+async function call(env, name, args, auth) {
+  const own = ACCOUNT_TOOLS.find((x) => x.name === name);
+  if (own) return callAccount({ env, auth, host: host(env), api }, own, args);
   const t = TOOLS.find((x) => x.name === name);
   if (!t) {
     const old = Object.keys(HEADLESS_RETIRED).find((id) => headlessToolName(id) === name);
@@ -101,7 +105,7 @@ async function call(env, name, args) {
   }
 }
 
-async function answer(env, msg) {
+async function answer(env, msg, auth) {
   const { id, method, params } = msg;
   switch (method) {
     case "initialize": {
@@ -119,9 +123,12 @@ async function answer(env, msg) {
       return { tools: TOOLS.map(({ q, name }) => ({
         name, title: q.id, description: q.what, inputSchema: headlessSchema(q.args),
         annotations: { readOnlyHint: true, openWorldHint: false },
-      })) };
+      })).concat(ACCOUNT_TOOLS.map((t) => ({
+        name: t.name, title: t.title, description: t.what, inputSchema: headlessSchema(t.args),
+        annotations: { readOnlyHint: t.readOnly, destructiveHint: false, openWorldHint: false },
+      }))) };
     case "tools/call": {
-      const out = await call(env, params && params.name, params && params.arguments);
+      const out = await call(env, params && params.name, params && params.arguments, auth);
       return { content: [{ type: "text", text: JSON.stringify(out) }], structuredContent: out, isError: out.ok === false };
     }
     default:
@@ -132,6 +139,34 @@ async function answer(env, msg) {
 const json = (body, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json", ...CORS } });
 
+/// THE A2A ENDPOINT (`a2a.js`): the same key, the same allowance as a tool call.
+const A2A_VERSIONS = new Set(["", "1.0", "0.3"]);
+async function a2a(request, env) {
+  if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: { ...CORS, "access-control-allow-headers": `${CORS["access-control-allow-headers"]}, a2a-version` } });
+  if (request.method !== "POST") return new Response(null, { status: 405, headers: { allow: "POST", ...CORS } });
+  let msg;
+  try { msg = await request.json(); } catch (_) {
+    return json({ jsonrpc: "2.0", id: null, error: { code: -32700, message: "not JSON" } }, 400);
+  }
+  if (!msg || typeof msg !== "object" || msg.jsonrpc !== "2.0" || !msg.method) {
+    return json({ jsonrpc: "2.0", id: null, error: { code: -32600, message: "one JSON-RPC 2.0 request" } }, 400);
+  }
+  const version = (request.headers.get("a2a-version") || "").trim();
+  if (!A2A_VERSIONS.has(version)) {
+    return json({ jsonrpc: "2.0", id: msg.id ?? null, error: { code: -32009, message: `A2A ${version} is not supported; 1.0 is` } });
+  }
+  const agent = await agentKey(env, request);
+  if (agent === false) {
+    return json({ jsonrpc: "2.0", id: msg.id ?? null, error: { code: -32001, message: `bad_key: register again at ${SITE}/auth.md` } }, 401);
+  }
+  if (await overLimit(env, request, agent)) {
+    return new Response(JSON.stringify({ jsonrpc: "2.0", id: msg.id ?? null, error: { code: -32029, message: `rate_limited: see ${SITE}/auth.md` } }),
+      { status: 429, headers: { "content-type": "application/json", "retry-after": "60", ...CORS } });
+  }
+  const out = await a2aAnswer(msg, (q, args) => q.run(args, host(env)));
+  return json({ jsonrpc: "2.0", id: msg.id ?? null, ...out });
+}
+
 export default {
   async fetch(request, env) {
     const path = new URL(request.url).pathname;
@@ -141,6 +176,11 @@ export default {
       return json({ resource: RESOURCE, authorization_servers: [SITE], scopes_supported: ["read", "builds"],
         bearer_methods_supported: ["header"], resource_name: "WFSim MCP", resource_documentation: `${SITE}/auth.md` });
     }
+    if (path === "/.well-known/agent-card.json") {
+      return new Response(JSON.stringify(agentCard(ENGINE_DIGEST)), { headers: { "content-type": "application/json",
+        "cache-control": "public, max-age=3600", etag: `"${ENGINE_DIGEST}"`, ...CORS } });
+    }
+    if (path === "/a2a") return a2a(request, env);
     if (path !== "/mcp") {
       return path === "/" ? Response.redirect(`${SITE}/llms.txt`, 302) : new Response("not found", { status: 404 });
     }
@@ -168,7 +208,7 @@ export default {
       return new Response(JSON.stringify({ jsonrpc: "2.0", id: msg.id, error: { code: -32029, message: `rate_limited: see ${SITE}/auth.md` } }),
         { status: 429, headers: { "content-type": "application/json", "retry-after": "60", ...CORS } });
     }
-    const out = await answer(env, msg);
+    const out = await answer(env, msg, agent ? request.headers.get("authorization") : null);
     return json(out.error ? { jsonrpc: "2.0", id: msg.id, error: out.error } : { jsonrpc: "2.0", id: msg.id, result: out });
   },
 };

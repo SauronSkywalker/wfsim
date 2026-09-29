@@ -62,7 +62,10 @@ The MCP server's queries, run with no page: `mcp/headless.js` against the
 engine `mcp/engine.js` bundles, with a host like the worker's — the board off
 `site/board/`, English, no screen. A weapon found by its Chinese name, a board
 read for a weapon nobody opened, a row's `build` reading the stats panel, and
-the refusals for a missing build and a mistyped weapon. No browser.
+the refusals for a missing build and a mistyped weapon. And the one
+translation between a saved build and the wire, both ways: every riven-free
+board row's build of every weapon, stored as a saved build and read back, is
+the build it was. No browser.
 
 ## `check_nona`
 
@@ -682,7 +685,13 @@ riven is minted by the fold, which repoints the build that names it.
 The MCP server's door, `mcp/index.js` with its engine stubbed: it describes
 itself as a protected resource, a tool call without a key spends the address's
 allowance and with one the key's, the handshake and the list spend nothing, a
-key that is not one is a 401, and a key is looked up once.
+key that is not one is a 401, and a key is looked up once. The two build
+tools save a build as its weapon's preset in the page's own shape and read it
+back as the build it was, replace one by id, and say what is missing — a key, a
+claim, the membership. The A2A card carries every field A2A requires and lists
+exactly the queries the endpoint runs; a data part runs its skill, text finds a
+weapon, a 0.3 caller is answered in 0.3's shape, and tasks, streaming and an
+unknown version are refused with A2A's codes.
 
 ## `check_account_names`
 

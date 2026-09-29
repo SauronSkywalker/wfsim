@@ -106,6 +106,17 @@ const r = await evaluate(`(async () => {
   await syncNow(); await sleep(600);
   out.screen = (slots[0] || {}).mod || null;
 
+  // A LINK TO A BUILD THIS BROWSER DOES NOT HOLD YET opens it once the sync brings it.
+  srv.acc1.set('zz1', { list: L, body: { id: 'zz1', name: 'from an agent', savedAt: Date.now(), state: st('point_strike') },
+    updated_at: Date.now(), synced_at: clock++ });
+  // Arriving from elsewhere, as a link does: a weapon is opened, not re-shown.
+  history.pushState({}, '', '/weapons/Braton'); route(); await sleep(2500);
+  history.pushState({}, '', '/weapons/Torid?build=zz1'); route(); await sleep(3000);
+  out.linkBefore = activePreset;
+  await syncNow(); await sleep(800);
+  out.linkAfter = activePreset;
+  out.linkScreen = (slots[0] || {}).mod || null;
+
   // ANOTHER ACCOUNT: nothing merged until asked.
   await signIn('acc2');
   out.otherStatus = syncStatus.state;
@@ -135,6 +146,9 @@ check("...keeping its own measured result", r.aKeptResult === true);
 check("a deletion on one browser reaches the other", ok(r.bAfterDelete) === ok(["b1=preset 1 (2)"]), ok(r.bAfterDelete));
 check("an edit on one browser reaches the other", r.aSeesEdit === "hornet_strike", r.aSeesEdit);
 check("a remote edit to the build on screen reaches the screen", r.screen === "vital_sense", r.screen);
+check("a link to a saved build not here yet opens it once the sync brings it",
+  r.linkBefore !== "from an agent" && r.linkAfter === "from an agent" && r.linkScreen === "point_strike",
+  ok([r.linkBefore, r.linkAfter, r.linkScreen]));
 check("another account's entries are not merged without a word",
   r.otherStatus === "other" && r.acc2Before === 0, ok([r.otherStatus, r.acc2Before]));
 check("...until the reader adds them", r.acc2After > 0, r.acc2After);

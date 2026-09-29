@@ -275,6 +275,13 @@ function syncShow({ lists, ids, renamed, removed }) {
     });
     doc.rerender();
   }
+  // THE BUILD A LINK WAS WAITING FOR, now that it is here.
+  const want = buildWanted && buildWanted.weapon === presetWeapon()
+    && loadPresetList(BUILDS).find((p) => p.id === buildWanted.id);
+  if (want) {
+    buildWanted = null;
+    pickPreset(buildBarCfg(), presetId(want));
+  }
 }
 
 function setSyncStatus(s) {

@@ -157,33 +157,10 @@ function tennoPayload() {
 /// answers to "what is this build", and it is `buildState`'s axes that say
 /// which fields there are — so a new axis reaches both seats or neither.
 function seatPayload(st) {
-  return {
-    weapon: st.weapon,
-    // WHO HOLDS IT — the linked Warframe build, as the Warframe module reads
-    // it. Absent is the Prototype, or a locked weapon's own frame on the
-    // server.
-    wielder: wielderPayloadOf(st.wielder || { frame: PROTOTYPE_ID, preset: "" }),
-    evolutions: Object.values(st.evoSel || {}).filter(Boolean),
-    // One per pool, in the weapon's pool order — the server reads either
-    // this or a bare value, so an old saved build still means what it meant.
-    arcane: st.arcane,
-    arcane_rank: st.arcaneRank,
-    mods: (st.slots || []).filter((x) => x.mod).map(slotModId),
-    // HOW IT IS PLAYED, from the BUILD. Riding in the scenario as `form` lets
-    // the FIGHT decide how a weapon is fired, so the official ruler silently
-    // plays every Incarnon weapon through its cycle and "never transmuting"
-    // cannot be asked for.
-    mode: st.mode,
-    // THE VALENCE, as two flat fields rather than an object: `base_for` reads
-    // them off the request the same way it reads the deployment, and every
-    // path that builds a weapon for a request goes through it.
-    valence_element: (st.valence || {}).element,
-    valence_bonus: (st.valence || {}).bonus,
-    // THE PARTS, as an object, because they are one fact: `assembly_of` reads
-    // the pair and repairs it part by part. Omitted entirely on a weapon that
-    // has none, so the wire says nothing rather than saying `null`.
-    ...(st.assembly ? { assembly: { ...st.assembly } } : {}),
-  };
+  // The wire itself is `headlessSeat`'s, which a surface with no page shares;
+  // WHO HOLDS IT is the one field only a page can resolve — the linked
+  // Warframe build, and absent is the Prototype or a locked weapon's own frame.
+  return headlessSeat(META, st, wielderPayloadOf(st.wielder || { frame: PROTOTYPE_ID, preset: "" }));
 }
 
 /// THE OPEN BUILD, as a whole request — this seat plus what the READER brings.
@@ -223,58 +200,8 @@ function buildPayload() {
 /// the list is in. A BOARD ROW DOES: it carries `exilus` as its own field, and
 /// `boardEntries` is where that is read back into the slot.
 function stateFromBuild(p, weapon, exilusId) {
-  const w = weaponInfo(weapon) || {};
-  const ids = (p.mods || []).filter(Boolean);
-  // THE STANCE IS TOLD APART BY LOOKING AT IT, which is the whole reason it
-  // needs no field of its own on the wire — where the exilus id has to be
-  // PASSED IN, because an exilus-eligible mod is legal in a main slot and the
-  // list alone cannot say which entry came out of which slot.
-  const stanceId = ids.find((id) => (modById(splitRank(id)[0]) || {}).stance);
-  const main = ids.filter((id) => id !== exilusId && id !== stanceId);
-  const sl = Array.from({ length: 10 }, () => ({ mod: null, pol: null, rank: null }));
-  main.slice(0, 8).forEach((id, i) => { sl[i].mod = id; });
-  if (exilusId && exilusId !== "none" && ids.includes(exilusId)) {
-    sl[EXILUS].mod = exilusId;
-  } else if (main.length > 8) {
-    sl[EXILUS].mod = main[8];
-  }
-  if (stanceId) sl[STANCE].mod = stanceId;
-  // A RANK IS THE ONE THE ID NAMES, and the card's ceiling when it names none.
-  sl.forEach((s) => {
-    const [card, r] = splitRank(s.mod);
-    const m = card && modById(card);
-    if (m) { s.mod = card; s.rank = r ?? m.max_rank; }
-  });
-  const evo = { 1: null, 2: null, 3: null, 4: null };
-  (p.evolutions || []).forEach((id) => {
-    const t = (w.evolutions || []).find((tt) => tt.options.some((o) => o.id === id));
-    if (t) evo[t.tier] = id;
-  });
-  const nPools = arcanePools(weapon).length;
-  return buildState(weapon, {
-    // No wielder travels with a board row or a link: the weapon's own default.
-    wielder: null,
-    slots: sl,
-    evoSel: evo,
-    arcane: asArcaneList(p.arcane, nPools).map((x) => x || "none"),
-    arcaneRank: asArcaneList(p.arcane_rank, nPools).map((x) => x ?? null),
-    // BOTH HALVES OR NEITHER. `restoreState` cleans them against the weapon
-    // being opened, so a payload naming an element this spec does not offer
-    // lands on the default rather than on a weapon nobody has.
-    // `null` WHEN THE REQUEST CARRIES NONE, meaning "the weapon's own default"
-    // — which is what an omitting request meant and what the server itself
-    // used. It was `undefined`, on the same reasoning and one step short of it:
-    // `defaultMode`/`defaultValence`/`defaultAssembly` all read `null` as that
-    // instruction, and `undefined` is DELETED BY `JSON.stringify` on the way
-    // into a preset. So a producer that carefully NAMED the axis handed over an
-    // object that had lost it, which is precisely what `BUILD_AXES` exists to
-    // catch — and did (check_valence, 2026-08-24, on an optimizer winner's
-    // saved build).
-    mode: p.mode || null,
-    valence: p.valence_element
-      ? { element: p.valence_element, bonus: p.valence_bonus }
-      : null,
-    assembly: p.assembly || null,
-  });
+  // The axes are `headlessStateAxes`'s, shared with every surface with no page.
+  // No wielder travels with a board row or a link: the weapon's own default.
+  return buildState(weapon, headlessStateAxes(META, p, weapon, exilusId));
 }
 

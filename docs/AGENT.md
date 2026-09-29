@@ -264,6 +264,18 @@ The rules the table keeps:
   on any difference; `check_mcp_tools` runs every query in the worker's copy
   with no page at all.
 
+## The A2A agent
+
+`mcp/a2a.js`, in the MCP server's worker at `https://mcp.wfsim.app/a2a`:
+JSON-RPC, A2A 1.0 with 0.3's `message/send` read too. **A SKILL IS A HEADLESS
+QUERY AND NOTHING ELSE**, so a skill the card names is one a caller can run.
+`SendMessage` is answered with a message at once and no task is kept; there is
+no model behind it — a data part `{skill, args}` names the query, and plain
+text is read as a weapon to find. The same optional key and the same allowance
+as an MCP tool call. The card is `agentCard`, served at the endpoint's host and
+written to the site's `/.well-known/agent-card.json` by the build, versioned by
+the engine it runs.
+
 ## The MCP server
 
 `mcp/` is a worker of its own at `https://mcp.wfsim.app/mcp`: Streamable HTTP,
@@ -283,6 +295,15 @@ carrying six megabytes of wasm would start every page load colder.
   as `MCP_LIMITS` in `worker/agents.js`); the handshake and the list spend
   nothing. The key is asked about over `SITE` once a minute per isolate, and a
   key that is not one is a 401 rather than read as none.
+- Two tools are the MCP server's own, not the headless table's, because a page
+  holds its builds in its own storage: `account_builds_list` and
+  `account_builds_save` read and write a claimed key's person's synced builds
+  through `/api/cloud/sync`. They translate with `headlessSeat` and
+  `headlessStateAxes`, the one translation between a saved build and the wire,
+  which the page's `seatPayload` and `stateFromBuild` also call; a save the
+  engine's `/api/panel` cannot read is refused. Each hands back
+  `/weapons/<page>?build=<id>`, which opens that build, after the sync when the
+  browser does not hold it yet (`buildWanted`).
 - `ship.py` deploys it after the site, and `--verify` asks it which engine it
   runs against the digest `site/pkg/` serves. It lags silently otherwise.
 
@@ -300,7 +321,8 @@ serves it:
 | `/llms.txt` | llmstxt.org index: what WFSim is and every weapon's twin |
 | `/.well-known/agent-skills/index.json` | one skill: look a weapon up, read the board, quote a score |
 | `/.well-known/api-catalog` | RFC 9727: the MCP server and the board JSON, the two public read APIs |
-| `/.well-known/mcp/server-card.json` | the MCP server: its endpoint and its tools, from the headless table |
+| `/.well-known/mcp/server-card.json` | the MCP server: its endpoint and its tools, from the headless table and `mcp/account.js` |
+| `/.well-known/agent-card.json` | the A2A agent card, from `agentCard` in `mcp/a2a.js` — the function the endpoint serves it with |
 | `/auth.md` | how an agent registers, claims a key for its person and uses it — drawn by the worker (`worker/agents.js`) |
 | `/.well-known/oauth-protected-resource`, `/.well-known/oauth-authorization-server` | RFC 9728 and RFC 8414, the second with auth.md's `agent_auth` block, from the same constants as `/auth.md` |
 | `/robots.txt` | each AI crawler named, `Content-Signal` granting search, ai-input, ai-train |

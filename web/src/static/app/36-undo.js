@@ -624,6 +624,9 @@ function migratePresetsToWeaponScope() {
 // mental model, 2026-07-28: "if no presets exist, the current state IS
 // preset 1"). Restored across reloads.
 let activePreset = null;
+/// A SAVED BUILD A LINK NAMED BY ID that this browser does not hold yet —
+/// `{ weapon, id }` — which the build sync opens when it arrives (`syncShow`).
+let buildWanted = null;
 
 // A stored buff config outlives the RULE it was written under. A stacking buff
 // opens EARNED at zero, and `syncBuffConfig` only seeds an id it has never
@@ -709,7 +712,12 @@ function initPresets() {
 
   const here = presetWeapon();
   const last = resolveBoardActive(localStorage.getItem(presetActiveKey(BUILDS)));
-  activePreset = presetId(buildNamed(last)) || presetId(ps[0]);
+  // `?build=<id>` OPENS THAT SAVED BUILD — the link an agent hands back when it
+  // saves one — and waits for the sync when this browser does not hold it yet.
+  const wantId = new URLSearchParams(location.search).get("build");
+  const wanted = wantId ? ps.find((p) => p.id === wantId) : null;
+  buildWanted = wantId && !wanted ? { weapon: here, id: wantId } : null;
+  activePreset = presetId(wanted) || presetId(buildNamed(last)) || presetId(ps[0]);
   localStorage.setItem(presetActiveKey(BUILDS), activePreset);
   noteBoardActive(activePreset);
   // Applied under THIS weapon, never the payload's — a preset filed here

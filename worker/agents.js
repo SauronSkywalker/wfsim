@@ -94,6 +94,7 @@ builds.
 Everything a player can look up is public:
 
 - the MCP server: ${MCP_URL} (Streamable HTTP);
+- the A2A agent: https://mcp.wfsim.app/a2a (its card: ${origin}/.well-known/agent-card.json);
 - any page as markdown: ${origin}/weapons/<Wiki_Name> with \`Accept: text/markdown\`,
   or the same address with \`.md\` appended;
 - the published board: ${origin}/board/<weapon_id>.json.
@@ -169,9 +170,10 @@ Authorization: Bearer <api_key>
 \`\`\`
 
 says who the key is and what it may do. A claimed key's \`builds\` scope reads
-and writes the person's saved builds through \`POST ${origin}/api/cloud/sync\`,
-which WFSim Membership carries; without it that call answers
-\`403 not_included\`.
+and writes the person's saved builds — on the MCP server as the tools
+\`account_builds_list\` and \`account_builds_save\`, which hand back the link
+that opens each build, or directly through \`POST ${origin}/api/cloud/sync\`.
+WFSim Membership carries it; without it the tools answer \`not_a_member\`.
 
 ## Revoke
 

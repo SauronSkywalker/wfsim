@@ -245,6 +245,100 @@ function headlessBoardBuild(w, row) {
   };
 }
 
+// ---- a saved build and the build wire, both ways ------------------------------------
+//
+// THE ONE TRANSLATION between a saved build's state (`buildState`'s axes) and
+// the wire `/api/panel` and `/api/simulate` read. The page's `seatPayload` and
+// `stateFromBuild` are these plus what only a page knows — who holds the
+// weapon — and a surface with no page reads and writes saved builds through
+// them, so the two can never disagree about what a build is.
+
+const HEADLESS_EXILUS = 8;
+const HEADLESS_STANCE = 9;
+/// Every mod card by id, from `meta`'s own tables.
+let headlessModsMemo = null;
+function headlessModOf(meta) {
+  if (!headlessModsMemo || headlessModsMemo.meta !== meta) {
+    headlessModsMemo = { meta, by: new Map(Object.values(meta.mod_pools || {}).flat().map((m) => [m.id, m])) };
+  }
+  return (id) => headlessModsMemo.by.get(id);
+}
+/// A card and a rank as one wire id: `<card>@<rank>` below its max, the card alone at it.
+function headlessRankedId(meta, card, rank) {
+  const m = card && headlessModOf(meta)(card);
+  return m && !m.riven && rank != null && rank < m.max_rank ? `${card}@${rank}` : card;
+}
+const headlessSplitRank = (id) => {
+  const m = typeof id === "string" && !id.startsWith("riven:") ? /^(.+)@(\d+)$/.exec(id) : null;
+  return m ? [m[1], Number(m[2])] : [id, null];
+};
+const headlessArcaneList = (v, n) => {
+  const a = Array.isArray(v) ? v.slice() : v == null ? [] : [v];
+  while (a.length < n) a.push(undefined);
+  return a.slice(0, n);
+};
+
+/// A SAVED BUILD AS THE WIRE, less who holds it — `wielder`, which only a page
+/// with the frame's builds can resolve, is passed in, and absent means the
+/// weapon's own default holder.
+function headlessSeat(meta, st, wielder) {
+  return {
+    weapon: st.weapon,
+    wielder,
+    evolutions: Object.values(st.evoSel || {}).filter(Boolean),
+    arcane: st.arcane,
+    arcane_rank: st.arcaneRank,
+    mods: (st.slots || []).filter((x) => x.mod).map((s) => headlessRankedId(meta, s.mod, s.rank)),
+    mode: st.mode,
+    valence_element: (st.valence || {}).element,
+    valence_bonus: (st.valence || {}).bonus,
+    ...(st.assembly ? { assembly: { ...st.assembly } } : {}),
+  };
+}
+
+/// THE WIRE AS A SAVED BUILD'S AXES — every axis `buildState` names, the
+/// holder unset. `exilusId` says which mod sat in the exilus slot, which a flat
+/// list cannot; the stance tells itself apart by being one.
+function headlessStateAxes(meta, p, weapon, exilusId) {
+  const w = (meta.weapons || []).find((x) => x.id === weapon) || {};
+  const card = headlessModOf(meta);
+  const ids = (p.mods || []).filter(Boolean);
+  const stanceId = ids.find((id) => (card(headlessSplitRank(id)[0]) || {}).stance);
+  const main = ids.filter((id) => id !== exilusId && id !== stanceId);
+  const sl = Array.from({ length: 10 }, () => ({ mod: null, pol: null, rank: null }));
+  main.slice(0, 8).forEach((id, i) => { sl[i].mod = id; });
+  if (exilusId && exilusId !== "none" && ids.includes(exilusId)) {
+    sl[HEADLESS_EXILUS].mod = exilusId;
+  } else if (main.length > 8) {
+    sl[HEADLESS_EXILUS].mod = main[8];
+  }
+  if (stanceId) sl[HEADLESS_STANCE].mod = stanceId;
+  // A RANK IS THE ONE THE ID NAMES, and the card's ceiling when it names none.
+  sl.forEach((s) => {
+    const [c, r] = headlessSplitRank(s.mod);
+    const m = c && card(c);
+    if (m) { s.mod = c; s.rank = r ?? m.max_rank; }
+  });
+  const evo = { 1: null, 2: null, 3: null, 4: null };
+  (p.evolutions || []).forEach((id) => {
+    const t = (w.evolutions || []).find((tt) => tt.options.some((o) => o.id === id));
+    if (t) evo[t.tier] = id;
+  });
+  const nPools = (w.arcane_pools || []).length;
+  return {
+    wielder: null,
+    slots: sl,
+    evoSel: evo,
+    arcane: headlessArcaneList(p.arcane, nPools).map((x) => x || "none"),
+    arcaneRank: headlessArcaneList(p.arcane_rank, nPools).map((x) => x ?? null),
+    // `null`, never `undefined`, for "the weapon's own default": `undefined`
+    // is dropped by `JSON.stringify` on the way into a preset.
+    mode: p.mode || null,
+    valence: p.valence_element ? { element: p.valence_element, bonus: p.valence_bonus } : null,
+    assembly: p.assembly || null,
+  };
+}
+
 /// NAMES WFSIM HAS RETIRED, old id -> the query that replaces it, or null
 /// when nothing does. A caller that learned the old name is told where it went
 /// (docs/AGENT.md §"Headless queries"); the row goes whenever WFSim decides.
@@ -361,4 +455,5 @@ const HEADLESS_QUERIES = [
   },
 ];
 
-export { HEADLESS_ABOUT, HEADLESS_QUERIES, HEADLESS_RETIRED, headlessCheckArgs, headlessSchema, headlessNo, headlessToolName, headlessUnknown };
+export { HEADLESS_ABOUT, HEADLESS_QUERIES, HEADLESS_RETIRED, headlessCheckArgs, headlessSchema, headlessNo, headlessToolName, headlessUnknown,
+  headlessSeat, headlessStateAxes, headlessWeapon, headlessWeaponPath };
