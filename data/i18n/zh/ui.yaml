@@ -2395,7 +2395,6 @@ ui:
   "Ways to sign in": "登录方式"
   "Download my data": "下载我的数据"
   "Membership and billing": "会员与账单"
-  "WFSim membership": "WFSim 会员"
   "Granted until {date}": "赠送至 {date}"
   "A renewal failed; Stripe is retrying, and access continues meanwhile.": "续费扣款失败，Stripe 正在重试，期间可照常使用。"
   "Ends on {date}": "{date} 到期结束"

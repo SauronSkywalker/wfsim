@@ -15,7 +15,7 @@
 // provider's secrets are absent, and `/api/account` says which are configured,
 // so the page offers only the ways in that work.
 
-import { endBilling, billingExport } from "./billing.js";
+import { cloudEnd, cloudExport } from "./cloud.js";
 
 export const SLOTS = ["google", "discord", "github", "email"];
 
@@ -472,7 +472,7 @@ async function unlink(request, env, account, b) {
     .bind(account, b.provider).first();
   if (!has) return no("not_linked");
   if (n <= 1 && b.delete_account !== true) return no("last_slot", 409);
-  if (n <= 1 && !(await endBilling(env, account))) return no("billing_open", 409);
+  if (n <= 1 && !(await cloudEnd(env, account))) return no("billing_open", 409);
   await env.ACCOUNTS.prepare("DELETE FROM identities WHERE account = ?1 AND provider = ?2").bind(account, b.provider).run();
   const gone = n <= 1;
   return json({ ok: true, deleted: gone }, 200, gone ? { "set-cookie": endSession() } : {});
@@ -526,12 +526,12 @@ export async function accountRoute(request, env, path) {
   if (path === "/api/account/unlink") return unlink(request, env, account, b);
   if (path === "/api/account/password") return passwordChange(request, env, account, b);
   if (path === "/api/account/delete") {
-    if (!(await endBilling(env, account))) return no("billing_open", 409);
+    if (!(await cloudEnd(env, account))) return no("billing_open", 409);
     await env.ACCOUNTS.prepare("DELETE FROM accounts WHERE id = ?1").bind(account).run();
     return json({ ok: true, deleted: true }, 200, { "set-cookie": endSession() });
   }
   // EVERYTHING HELD ABOUT THIS ACCOUNT, as it is held — docs/ACCOUNTS.md.
-  return json({ ok: true, account: await accountView(env, account), billing: await billingExport(env, account),
+  return json({ ok: true, account: await accountView(env, account), billing: await cloudExport(env, account),
     exported_at: now() }, 200,
     { "content-disposition": 'attachment; filename="wfsim-account.json"' });
 }

@@ -11,6 +11,7 @@ import { readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { accountRoute } from "../worker/accounts.js";
+import { cloudRoute, cloudPath } from "../worker/cloud.js";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 let failed = 0;
@@ -25,7 +26,6 @@ function d1() {
   const db = new DatabaseSync(":memory:");
   db.exec("PRAGMA foreign_keys = ON");
   db.exec(readFileSync(resolve(ROOT, "worker/accounts.sql"), "utf8"));
-  db.exec(readFileSync(resolve(ROOT, "worker/billing.sql"), "utf8"));
   const stmt = (sql, args = []) => ({
     sql, args,
     bind: (...a) => stmt(sql, a),
@@ -272,6 +272,61 @@ check("linking needs a signed-in account", notYet.searchParams.get("auth_error")
 const bare = await (await accountRoute(new Request(SITE + "/api/account"), {}, "/api/account")).json();
 check("with nothing configured the page is offered no way in", bare.ok && bare.providers.length === 0 && bare.account === null,
   JSON.stringify(bare));
+
+// ---- the paid half: forwarded, never trusted from the browser ---------------------------
+
+// A STAND-IN FOR THE PRIVATE WORKER: it records what reached it, and answers
+// `/internal/end` as told.
+const seen = [];
+let endAnswer = true;
+env.CLOUD = { fetch: async (req) => {
+  seen.push({ path: new URL(req.url).pathname, account: req.headers.get("x-wfsim-account"),
+    cookie: req.headers.get("cookie"), body: req.method === "POST" ? await req.text() : null });
+  const path = new URL(req.url).pathname;
+  if (path === "/internal/end") return new Response(JSON.stringify({ ok: endAnswer }));
+  if (path === "/internal/export") return new Response(JSON.stringify({ ok: true, billing: { customer: "cus_1" } }));
+  return new Response(JSON.stringify({ ok: true, forwarded: true }));
+} };
+const cloud = (b, method, path, body, headers = {}) => cloudRoute(new Request(SITE + path, { method,
+  headers: { cookie: Object.entries(b.jar).map(([k, v]) => `${k}=${v}`).join("; "),
+    ...(body !== undefined ? { "content-type": "application/json", origin: SITE } : {}), ...headers },
+  ...(body !== undefined ? { body: typeof body === "string" ? body : JSON.stringify(body) } : {}) }), env, path);
+
+check("every paid path is the private worker's, and no other",
+  ["/api/billing", "/api/billing/checkout", "/api/cloud/riven", "/api/stripe/webhook"].every(cloudPath)
+    && !["/api/account", "/api/board/submit", "/api/billingx"].some(cloudPath));
+const payer = browser();
+await payer.oauth("github", { id: "99", name: "payer" });
+const payerId = (await payer.me()).id;
+await cloud(payer, "GET", "/api/billing");
+check("a signed-in reader reaches the paid half as their account, with no cookie",
+  seen.at(-1).account === payerId && seen.at(-1).cookie === null, JSON.stringify(seen.at(-1)));
+await cloud(browser(), "GET", "/api/billing", undefined, { "x-wfsim-account": payerId });
+check("an account header a browser sends is dropped", seen.at(-1).account === null, JSON.stringify(seen.at(-1)));
+const before = seen.length;
+const crossed = await cloud(payer, "POST", "/api/billing/checkout", { price: "member_month" }, { origin: "https://evil.example" });
+check("a paid call from another site never reaches the paid half", crossed.status === 403 && seen.length === before);
+const raw = '{"id":"evt_1","type":"invoice.paid"}';
+await cloud(payer, "POST", "/api/stripe/webhook", raw, { "content-type": "application/json", origin: "https://stripe.com" });
+check("Stripe's webhook goes through as sent, and as nobody",
+  seen.at(-1).body === raw && seen.at(-1).account === null, JSON.stringify(seen.at(-1)));
+
+const exported = await (await payer.post("/api/account/export", {})).json();
+check("the account export carries what the paid half holds", exported.billing?.customer === "cus_1", JSON.stringify(exported.billing));
+endAnswer = false;
+r = await (await payer.post("/api/account/delete", {})).json();
+check("an account whose subscription the paid half cannot end is kept",
+  r.reason === "billing_open" && count("SELECT COUNT(*) n FROM accounts WHERE id = ?", payerId) === 1, JSON.stringify(r));
+r = await (await payer.post("/api/account/unlink", { provider: "github", delete_account: true })).json();
+check("...by either way of deleting it", r.reason === "billing_open" && count("SELECT COUNT(*) n FROM accounts WHERE id = ?", payerId) === 1,
+  JSON.stringify(r));
+endAnswer = true;
+r = await (await payer.post("/api/account/delete", {})).json();
+check("once it is ended the account goes", r.ok && count("SELECT COUNT(*) n FROM accounts WHERE id = ?", payerId) === 0
+  && seen.filter((x) => x.path === "/internal/end" && x.account === payerId).length === 3, JSON.stringify(r));
+delete env.CLOUD;
+const off = await (await cloudRoute(new Request(SITE + "/api/billing"), env, "/api/billing")).json();
+check("with no paid half bound, billing reads as off", off.ok && off.configured === false, JSON.stringify(off));
 
 console.log(failed ? `\n${failed} failed` : "\nthe account rules hold");
 process.exit(failed ? 1 : 0);

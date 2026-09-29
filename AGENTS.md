@@ -43,7 +43,7 @@ Read the row for what you are about to touch before the code, not after.
 | the Windows client | `docs/DESKTOP.md` |
 | setup, profiling, what has been tried, parallel work | `docs/DEVELOPMENT.md` |
 | how usage is counted | `docs/ANALYTICS.md` |
-| accounts, privacy, billing | `docs/ACCOUNTS.md`, `BILLING.md` |
+| accounts, privacy, billing | `docs/ACCOUNTS.md` |
 
 ## Map
 
@@ -69,6 +69,8 @@ Read the row for what you are about to touch before the code, not after.
   a change under it as shipped, and never let something the repo needs live only
   there. `private/agents/README.md` is the standing notes for ANY agent: read it
   first. A lesson goes there or to `docs/`, never only into one tool's memory.
+- **WHAT IS SOLD LIVES IN `wfsim-cloud`** (private, `private/cloud`), never
+  here: public code for a paid feature is a free copy.
 
 ## Tripwires
 
@@ -85,9 +87,8 @@ Each of these fails silently. That is why it is here and not in a document.
   reads the data compiled into the previous binary. When proving a check bites,
   revert the data, `touch` any `.rs` in that crate, then run.
 - **Regenerate the site after frontend or engine changes**: `python
-  scripts/build_site_app.py`, and commit the regenerated `site/`. It also
-  prerenders one page per weapon plus `sitemap.xml` — without them every URL is
-  a soft 404 to a crawler. wasm-bindgen-cli must match Cargo.lock.
+  scripts/build_site_app.py`, and commit the regenerated `site/` (crawlers
+  read its prerendered pages). wasm-bindgen-cli must match Cargo.lock.
 - **SHIPPING IS `python scripts/ship.py`, not a push.** A push deploys `site/`
   and NOTHING reaches the desktop client, whose content channel is published
   separately; the two then drift silently, and the client is the site — same
@@ -156,11 +157,11 @@ Each of these fails silently. That is why it is here and not in a document.
   inside a saved preset, a share link or a board record keeps the name it has
   (`naming::FROZEN`, which may only shrink).
 - English everywhere in the repo. All-lowercase commit subjects, `area: what
-  changed and why it is right`. No AI attribution. No marketing copy — the one
+  changed and why it is right`. No marketing copy — the one
   exception is the home hero, which may make a CHECKABLE bold claim.
-- **No attributions and no dated decisions** anywhere in the repo's prose. A
-  rule has no author and no date; a measurement has a source, never a person.
-  `docs/MEASUREMENTS.md` is the one exception, where the provenance IS the data.
+- **No attributions and no dated decisions** in prose (`check_comment_style`),
+  nor AI credit in a commit (`check_commit_trailers`); `docs/MEASUREMENTS.md`
+  is the one exception, where the provenance IS the data.
 - The product name is **WFSim**, wordmark never translated; in Chinese prose
   **WF模拟**. 沃肥模拟 is the community nickname and stays out of the product.
 

@@ -1,0 +1,60 @@
+// ---- THE PAID HALF, FORWARDED ------------------------------------------------------
+//
+// Everything that is sold runs in a separate, private worker behind the CLOUD
+// service binding (docs/ACCOUNTS.md §"Paid features"). This file is the whole
+// of it on the public side: it forwards, and knows nothing of what is sold.
+//
+// THE ACCOUNT TRAVELS AS A HEADER ONLY THIS WORKER SETS. A browser's own
+// `x-wfsim-account` is dropped before the session is read, and a state-changing
+// call from another site never reaches the binding.
+
+import { sessionAccount, sameSite, json, no } from "./accounts.js";
+
+const ACCOUNT_HEADER = "x-wfsim-account";
+const WEBHOOK = "/api/stripe/webhook";
+
+export const cloudPath = (path) =>
+  path === "/api/billing" || path.startsWith("/api/billing/") || path.startsWith("/api/cloud/") || path.startsWith("/api/stripe/");
+
+export async function cloudRoute(request, env, path) {
+  if (!env.CLOUD) return path === "/api/billing" ? json({ ok: true, configured: false }) : no("unavailable", 503);
+  const headers = new Headers(request.headers);
+  headers.delete(ACCOUNT_HEADER);
+  // THE WEBHOOK GOES THROUGH UNTOUCHED: Stripe signs the raw body, and is no reader.
+  if (path !== WEBHOOK) {
+    if (!["GET", "HEAD"].includes(request.method) && !sameSite(request)) return no("cross_site", 403);
+    headers.delete("cookie");
+    const account = await sessionAccount(env, request);
+    if (account) headers.set(ACCOUNT_HEADER, account);
+  }
+  const body = ["GET", "HEAD"].includes(request.method) ? undefined : await request.arrayBuffer();
+  return env.CLOUD.fetch(new Request(request.url, { method: request.method, headers, body }));
+}
+
+async function internal(env, what, account) {
+  const r = await env.CLOUD.fetch(new Request(`https://cloud.internal/internal/${what}`,
+    { method: "POST", headers: { [ACCOUNT_HEADER]: account } }));
+  return r.json();
+}
+
+/// BEFORE AN ACCOUNT IS DELETED its subscriptions end, or it would go on being
+/// charged. False when the paid half could not end them — and then the account
+/// is kept. With no paid half bound there is nothing to end.
+export async function cloudEnd(env, account) {
+  if (!env.CLOUD) return true;
+  try {
+    return (await internal(env, "end", account)).ok === true;
+  } catch (_) {
+    return false;
+  }
+}
+
+/// What the paid half holds about an account, for its export; null with none bound.
+export async function cloudExport(env, account) {
+  if (!env.CLOUD) return null;
+  try {
+    return (await internal(env, "export", account)).billing ?? null;
+  } catch (_) {
+    return null;
+  }
+}

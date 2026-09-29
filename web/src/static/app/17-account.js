@@ -69,9 +69,9 @@ let authFlow = { kind: null, step: 1, email: "", sentAt: 0, error: null, open: n
 let authTimer = null;
 
 let accountState = { providers: [], account: null, loaded: false };
-/// BILLING, as `/api/billing` last said it (docs/BILLING.md): off until the
+/// BILLING, as `/api/billing` last said it (docs/ACCOUNTS.md §"Paid features"): off until the
 /// server says Stripe is configured, and drawn only on /account.
-let billingState = { configured: false, prices: [], features: [], meters: {}, held: [], invoices: [] };
+let billingState = { configured: false, names: { offers: {}, meters: {} }, prices: [], features: [], meters: {}, held: [], invoices: [] };
 let accountLoading = null;
 
 async function accountCall(method, path, body) {
@@ -105,7 +105,7 @@ async function loadBilling() {
   const b = await accountCall("GET", "/api/billing");
   if (!(b && b.ok && b.configured)) { billingState = { ...billingState, configured: false }; return; }
   const inv = await accountCall("GET", "/api/billing/invoices");
-  billingState = { configured: true, prices: b.prices || [], features: b.features || [],
+  billingState = { configured: true, names: b.names || { offers: {}, meters: {} }, prices: b.prices || [], features: b.features || [],
     meters: b.meters || {}, held: b.held || [], invoices: (inv && inv.ok && inv.invoices) || [] };
 }
 
@@ -315,10 +315,12 @@ function accountEmailBlock(a) {
 
 // ---- membership and billing -------------------------------------------------------------
 
-/// WHAT AN OFFER AND A METER ARE CALLED on the page. The catalog itself lives in
-/// worker/billing.js; an id missing here shows as itself.
-const BILLING_NAMES = { member: "WFSim membership" };
-const METER_NAMES = {};
+/// WHAT AN OFFER OR A METER IS CALLED, as the paid half names it in the
+/// reader's language: the page itself knows none of them.
+const billingName = (kind, id) => {
+  const n = (billingState.names[kind] || {})[id] || {};
+  return n[LANG] || n.en || id;
+};
 const billingLocale = () => (LANG === "zh" ? "zh-CN" : "en-US");
 const billingDate = (d) => new Date(d).toLocaleDateString(billingLocale(), { year: "numeric", month: "long", day: "numeric" });
 const billingMoney = (amount, currency) =>
@@ -329,14 +331,14 @@ function billingHeldRow(h) {
     : h.status === "past_due" ? "A renewal failed; Stripe is retrying, and access continues meanwhile."
       : h.cancel_at_period_end ? "Ends on {date}"
         : h.status ? "Renews on {date}" : "Active until {date}";
-  return `<div class="kv"><dt>${aT(BILLING_NAMES[h.offer] || h.offer)}</dt>
+  return `<div class="kv"><dt>${escHtml(billingName("offers", h.offer))}</dt>
     <dd>${escHtml(tr(when).replace("{date}", billingDate(h.period_end)))} <span class="tag ok">${aT("Active")}</span></dd>
     ${h.status ? `<button class="ghost-btn btn-sm" data-auth="portal">${aT("Manage")}</button>` : "<span></span>"}</div>`;
 }
 
 function billingPriceRow(p) {
   const per = p.interval === "month" ? "per month" : p.interval === "year" ? "per year" : "once";
-  return `<div class="kv"><dt>${aT(BILLING_NAMES[p.offer] || p.offer)}</dt>
+  return `<div class="kv"><dt>${escHtml(billingName("offers", p.offer))}</dt>
     <dd>${escHtml(billingMoney(p.amount, p.currency))} ${aT(per)}</dd>
     <button class="run-btn btn-sm" data-auth="checkout" data-price="${escHtml(p.key)}">${aT(p.interval ? "Subscribe" : "Buy")}</button></div>`;
 }
@@ -356,7 +358,7 @@ function accountBillingBlock() {
   const { held, prices, meters, invoices } = billingState;
   const heldOffers = new Set(held.map((h) => h.offer));
   const onSale = prices.filter((p) => !(p.interval && heldOffers.has(p.offer)));
-  const meterRows = Object.entries(meters).map(([m, v]) => `<div class="kv"><dt>${aT(METER_NAMES[m] || m)}</dt>
+  const meterRows = Object.entries(meters).map(([m, v]) => `<div class="kv"><dt>${escHtml(billingName("meters", m))}</dt>
     <dd>${escHtml(tr("{included} left this period, {pack} bought").replace("{included}", v.included).replace("{pack}", v.pack))}</dd><span></span></div>`).join("");
   const section = (title, rows) => (rows ? `<h3 class="set-sub">${aT(title)}</h3><dl class="kvs">${rows}</dl>` : "");
   const empty = !held.length && !onSale.length && !invoices.length;

@@ -2,7 +2,6 @@
 --
 --   npx wrangler d1 create wfsim-accounts
 --   npx wrangler d1 execute wfsim-accounts --remote --file worker/accounts.sql
---   npx wrangler d1 execute wfsim-accounts --remote --file worker/billing.sql
 --
 -- APART, because D1 restores a whole database to a point in time, and a restore
 -- of one must not roll the other back; and because nothing in here may ever

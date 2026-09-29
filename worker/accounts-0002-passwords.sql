@@ -1,5 +1,5 @@
 -- ONE-OFF: the live `wfsim-accounts`, created before passwords, brought up to
--- `worker/accounts.sql`. Applied once; a fresh database takes accounts.sql and billing.sql.
+-- `worker/accounts.sql`. Applied once; a fresh database takes accounts.sql alone.
 --
 --   npx wrangler d1 execute wfsim-accounts --remote --file worker/accounts-0002-passwords.sql
 ALTER TABLE identities ADD COLUMN password_hash TEXT;

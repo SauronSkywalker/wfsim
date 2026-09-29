@@ -3,7 +3,7 @@
 An account is optional. Everything WFSim does works without one, and a reader
 who never signs in has the site exactly as it was. What an account adds is a
 place for a person's own things to live beyond one browser, and a holder for
-anything paid (`docs/BILLING.md`).
+anything paid (§"Paid features").
 
 ## The model
 
@@ -88,6 +88,26 @@ router leaves to the browser.
 
 A state-changing call is JSON from this origin; the session cookie is
 `HttpOnly; Secure; SameSite=Lax`, a random token whose hash is the table's key.
+
+## Paid features
+
+**WHAT IS SOLD IS NOT IN THIS REPOSITORY.** Billing and every paid feature run
+in a separate private worker, `wfsim-cloud`, reached only through the site
+worker's `CLOUD` service binding; public code for a paid feature would be a free
+copy of it. `worker/cloud.js` is the whole of it here, and it forwards:
+
+| rule | where it is held |
+| --- | --- |
+| every path under `/api/billing`, `/api/cloud/` and `/api/stripe/` goes to the private worker | `cloudPath` |
+| the signed-in account travels as `x-wfsim-account`; a browser's own header is dropped, and so is the cookie | `cloudRoute` |
+| a state-changing paid call from another site never leaves this worker | `cloudRoute` → `sameSite` |
+| Stripe's webhook goes through as sent, as nobody | `cloudRoute` |
+| an account is deleted only once the private worker has ended its subscriptions | `cloudEnd`, `billing_open` |
+| with no binding, billing reads as off and nothing is ended | `cloudRoute`, `cloudEnd` |
+
+The page draws **Membership and billing** on `/account` only when `/api/billing`
+says it is configured, and shows the names the private worker sends: it knows no
+offer itself. `/terms` and `/refunds` are plain pages beside `/privacy`.
 
 ## Privacy
 

@@ -1644,8 +1644,8 @@ remains.</li>
 
 # WHO RUNS WFSIM, WHAT A PURCHASE IS, AND HOW MONEY COMES BACK. Stripe's
 # Managed Payments sells through Link, so Link's own terms govern the payment;
-# these state what WFSim promises about the product. docs/BILLING.md owns the
-# rules — a refund taking back what it bought is `worker/billing.js` §reverse.
+# these state what WFSim promises about the product, and change in the commit
+# that changes a rule they state.
 CONTACT = "magenie33@moginlabs.com"
 
 TERMS_BODY = f"""
