@@ -43,7 +43,7 @@ Read the row for what you are about to touch before the code, not after.
 | the Windows client | `docs/DESKTOP.md` |
 | setup, profiling, what has been tried, parallel work | `docs/DEVELOPMENT.md` |
 | how usage is counted | `docs/ANALYTICS.md` |
-| accounts, sign-in, privacy | `docs/ACCOUNTS.md` |
+| accounts, privacy, billing | `docs/ACCOUNTS.md`, `BILLING.md` |
 
 ## Map
 
@@ -64,7 +64,7 @@ Read the row for what you are about to touch before the code, not after.
 - `data/` — versioned game data; `data/README.md` is the reference graph.
 - `tests/golden/` — golden tests calibrated against in-game measurements.
 - `.handoff.md` — ignored shared work state. Read it first when present, keep
-  it current while working, reset it to `idle` when done.
+  it current, reset it to `idle` when done.
 - `private/` — **gitignored, and `git add -A` silently skips it.** Never report
   a change under it as shipped, and never let something the repo needs live only
   there. `private/agents/README.md` is the standing notes for ANY agent: read it

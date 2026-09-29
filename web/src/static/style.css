@@ -1908,6 +1908,9 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
 .settings .tag.muted{background:var(--panel2);color:var(--muted)}
 .btn-sm{height:30px;display:inline-flex;align-items:center;text-decoration:none;font-size:12.5px}
 .kvs{margin:0}
+.set-sub{margin:16px 0 6px;font-size:12px;font-weight:700;color:var(--text-2)}
+.set-sub:first-child{margin-top:0}
+.kvs .kv>span:last-child{display:flex;gap:6px;justify-content:flex-end}
 .kvs .kv{display:grid;grid-template-columns:120px 1fr auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
 .kvs .kv:first-child{border-top:0;padding-top:0}
 .kvs .kv dt{font-size:12.5px;color:var(--text-2)}

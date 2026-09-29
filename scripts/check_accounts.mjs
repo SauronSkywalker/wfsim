@@ -25,6 +25,7 @@ function d1() {
   const db = new DatabaseSync(":memory:");
   db.exec("PRAGMA foreign_keys = ON");
   db.exec(readFileSync(resolve(ROOT, "worker/accounts.sql"), "utf8"));
+  db.exec(readFileSync(resolve(ROOT, "worker/billing.sql"), "utf8"));
   const stmt = (sql, args = []) => ({
     sql, args,
     bind: (...a) => stmt(sql, a),

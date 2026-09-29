@@ -3,7 +3,7 @@
 An account is optional. Everything WFSim does works without one, and a reader
 who never signs in has the site exactly as it was. What an account adds is a
 place for a person's own things to live beyond one browser, and a holder for
-anything paid.
+anything paid (`docs/BILLING.md`).
 
 ## The model
 

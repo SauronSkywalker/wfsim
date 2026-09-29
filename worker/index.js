@@ -20,6 +20,7 @@
 
 import { decodeShare, useShareHost } from "./share_codec.js";
 import { accountRoute } from "./accounts.js";
+import { billingRoute, billingNightly } from "./billing.js";
 
 const MAX_BYTES = 4096;        // a build is a few hundred bytes; this is slack
 // AN OUTER BOUND, NOT THE RULE — see below. It is `MAIN_SLOTS + 1`: eight main
@@ -701,6 +702,10 @@ export default {
       const r = await accountRoute(request, env, path);
       if (r) return r;
     }
+    if (path.startsWith("/api/billing") || path === "/api/stripe/webhook") {
+      const r = await billingRoute(request, env, path);
+      if (r) return r;
+    }
     const card = path.match(/^\/og\/s\/([0-9A-Za-z]{10})\.png$/);
     if (card) return shareCardResponse(card[1], request, env, ctx);
     if (path === "/api/e") {
@@ -766,5 +771,10 @@ export default {
     // binding is what keeps this script from becoming a thing the site depends
     // on: it adds one path and forwards the rest.
     return asset;
+  },
+  // THE NIGHTLY BILLING SYNC (worker/billing.js): every mirror re-read from
+  // Stripe, whatever the webhook did or did not deliver.
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(billingNightly(env));
   },
 };

@@ -85,6 +85,8 @@
   // THE LOGIN CODE'S MAIL, through Cloudflare Email Service from the onboarded
   // `wfsim.app` (docs/ACCOUNTS.md §Setup). Absent, email is not offered.
   "send_email": [{ "name": "EMAIL" }],
+  // worker/billing.js §billingNightly
+  "triggers": { "crons": ["17 3 * * *"] },
   "ratelimits": [
     { "name": "AUTH_LIMIT", "namespace_id": "1001", "simple": { "limit": 10, "period": 60 } }
   ],

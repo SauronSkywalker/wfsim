@@ -15,6 +15,8 @@
 // provider's secrets are absent, and `/api/account` says which are configured,
 // so the page offers only the ways in that work.
 
+import { endBilling, billingExport } from "./billing.js";
+
 export const SLOTS = ["google", "discord", "github", "email"];
 
 /// THE THIRD-PARTY WAYS IN. Each asks for the least that names a person: the
@@ -76,9 +78,9 @@ async function hmac(key, s) {
 const now = () => new Date().toISOString();
 const later = (seconds) => new Date(Date.now() + seconds * 1000).toISOString();
 
-const json = (obj, status = 200, headers = {}) =>
+export const json = (obj, status = 200, headers = {}) =>
   new Response(JSON.stringify(obj), { status, headers: { "content-type": "application/json", "cache-control": "no-store", ...headers } });
-const no = (reason, status = 400, extra = {}) => json({ ok: false, reason, ...extra }, status);
+export const no = (reason, status = 400, extra = {}) => json({ ok: false, reason, ...extra }, status);
 
 function cookies(request) {
   const out = {};
@@ -98,7 +100,7 @@ const safeReturn = (r) => (typeof r === "string" && /^\/(?!\/)[^\\\s]*$/.test(r)
 /// A STATE-CHANGING CALL COMES FROM THIS SITE, as JSON. The session cookie is
 /// SameSite=Lax, and this is the second half: a cross-site form cannot send
 /// JSON, and a cross-site fetch carries a foreign Origin.
-function sameSite(request) {
+export function sameSite(request) {
   const origin = request.headers.get("origin");
   return (!origin || origin === new URL(request.url).origin)
     && (request.headers.get("content-type") || "").startsWith("application/json");
@@ -114,7 +116,7 @@ async function limited(env, request) {
 
 /// The account signed in on this request, or null. The cookie holds a random
 /// token; the table holds only its hash, so a copy of the table signs nobody in.
-async function sessionAccount(env, request) {
+export async function sessionAccount(env, request) {
   const token = cookies(request)[SESSION_COOKIE];
   if (!token || !env.ACCOUNTS) return null;
   const row = await env.ACCOUNTS.prepare(
@@ -470,6 +472,7 @@ async function unlink(request, env, account, b) {
     .bind(account, b.provider).first();
   if (!has) return no("not_linked");
   if (n <= 1 && b.delete_account !== true) return no("last_slot", 409);
+  if (n <= 1 && !(await endBilling(env, account))) return no("billing_open", 409);
   await env.ACCOUNTS.prepare("DELETE FROM identities WHERE account = ?1 AND provider = ?2").bind(account, b.provider).run();
   const gone = n <= 1;
   return json({ ok: true, deleted: gone }, 200, gone ? { "set-cookie": endSession() } : {});
@@ -523,10 +526,12 @@ export async function accountRoute(request, env, path) {
   if (path === "/api/account/unlink") return unlink(request, env, account, b);
   if (path === "/api/account/password") return passwordChange(request, env, account, b);
   if (path === "/api/account/delete") {
+    if (!(await endBilling(env, account))) return no("billing_open", 409);
     await env.ACCOUNTS.prepare("DELETE FROM accounts WHERE id = ?1").bind(account).run();
     return json({ ok: true, deleted: true }, 200, { "set-cookie": endSession() });
   }
   // EVERYTHING HELD ABOUT THIS ACCOUNT, as it is held — docs/ACCOUNTS.md.
-  return json({ ok: true, account: await accountView(env, account), exported_at: now() }, 200,
+  return json({ ok: true, account: await accountView(env, account), billing: await billingExport(env, account),
+    exported_at: now() }, 200,
     { "content-disposition": 'attachment; filename="wfsim-account.json"' });
 }
