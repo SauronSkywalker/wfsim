@@ -1943,7 +1943,7 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
 .tbcomm{display:contents}
 .topbar-inner .tbcomm>*{order:4}
 
-@media (max-width:780px){
+@media (max-width:768px){
   /* Below here the wrapper becomes a real box, hanging off the bar. The
      anchor is the bar itself so the panel tracks the sticky header. */
   .topbar-inner{position:relative}
