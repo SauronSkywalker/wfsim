@@ -1490,7 +1490,8 @@ def robots_txt() -> str:
     agents = "".join(f"User-agent: {a}\n" for a in AI_CRAWLERS)
     return (f"User-agent: *\n{CONTENT_SIGNAL}\nAllow: /\n\n"
             f"{agents}{CONTENT_SIGNAL}\nAllow: /\n\n"
-            f"Sitemap: {SITE}/sitemap.xml\n")
+            f"Sitemap: {SITE}/sitemap.xml\n"
+            f"Agentmap: {SITE}/.well-known/ai-catalog.json\n")
 
 
 def md_cell(text: str) -> str:
@@ -1839,8 +1840,34 @@ def ship_agent_files(by_slot: dict) -> None:
         **headless()["agent_card"],
         "version": re.search(r'ENGINE_DIGEST = "(\w+)"', engine).group(1),
     }, indent=2, ensure_ascii=False) + "\n")
-    # RFC 9727: the public read APIs — the MCP server, the A2A agent and the published board.
     skill_url = f"{SITE}/.well-known/agent-skills/{SKILL_NAME}/SKILL.md"
+    # THE AI CATALOG (ARD, ai-catalog 1.0): every agent-facing document above,
+    # each entry by the url it is already served at, so the catalog states
+    # nothing those documents do not.
+    host = SITE.split("://", 1)[1]
+    put(wk / "ai-catalog.json", json.dumps({
+        "specVersion": "1.0",
+        "host": {"displayName": "WFSim", "identifier": f"did:web:{host}"},
+        "entries": [
+            {"identifier": f"urn:air:{host}:mcp:wfsim", "displayName": "WFSim MCP server",
+             "type": "application/mcp-server-card+json", "url": card,
+             "representativeQueries": ["best measured build for Soma Prime without a riven",
+                                       "stats panel for a Warframe weapon build",
+                                       "find a Warframe weapon by its Chinese name",
+                                       "save this build to my WFSim account"]},
+            {"identifier": f"urn:air:{host}:a2a:wfsim", "displayName": "WFSim A2A agent",
+             "type": "application/a2a-agent-card+json", "url": f"{SITE}/.well-known/agent-card.json",
+             "representativeQueries": ["Warframe weapon leaderboard by benchmark fight",
+                                       "what does this Warframe build do to its stats",
+                                       "look up a Warframe weapon"]},
+            {"identifier": f"urn:air:{host}:skill:{SKILL_NAME}", "displayName": "WFSim weapon builds",
+             "type": "application/agent-skills+md", "url": skill_url,
+             "representativeQueries": ["how strong is this Warframe weapon",
+                                       "quote a WFSim score with its ruler",
+                                       "link a reader to a build in the calculator"]},
+        ],
+    }, indent=2) + "\n")
+    # RFC 9727: the public read APIs — the MCP server, the A2A agent and the published board.
     put(wk / "api-catalog", json.dumps({"linkset": [
         {"anchor": f"{SITE}/.well-known/api-catalog",
          "item": [{"href": MCP_URL}, {"href": A2A_URL},

@@ -680,6 +680,22 @@ ids is minted at boot and keeps them on the next load, a duplicated id is split,
 "+ new" and ⧉ mint fresh ones, and an edit and its undo keep the entry's. A
 riven is minted by the fold, which repoints the build that names it.
 
+## `check_webmcp`
+
+The browser's agent gets the door's table: with a stand-in `document.modelContext`
+installed before the page's scripts, the tools are registered while the page
+boots without breaking the boot, the live set once booted is every tool the
+door lists with the choices only `META` knows, the first set is taken back by
+its signal, and a tool answers as the door does.
+
+## `check_agent_discovery`
+
+What an agent reads to find WFSim, in the built `site/`: the AI catalog names
+only documents the site serves, each entry by exactly one of `url` or `data`
+under a `urn:air:` identifier and a media type; robots.txt and the page's head
+point at it; and the A2A card the build wrote is the one `mcp/a2a.js` serves.
+Run after a site build.
+
 ## `check_mcp_auth`
 
 The MCP server's door, `mcp/index.js` with its engine stubbed: it describes

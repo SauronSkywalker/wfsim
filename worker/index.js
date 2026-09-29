@@ -659,6 +659,8 @@ const DISCOVERY_LINKS = [
 // A `.well-known` document with no extension gets no media type from the asset
 // layer, and a scanner that reads the header takes it for something else.
 const WELL_KNOWN_TYPES = { "/.well-known/api-catalog": "application/linkset+json" };
+// …and the two a registry reads from another origin, which ARD requires to allow.
+const WELL_KNOWN_OPEN = new Set(["/.well-known/ai-catalog.json", "/.well-known/agent-card.json"]);
 
 async function agentPage(request, env, twin) {
   const link = [`<${twin}>; rel="alternate"; type="text/markdown"`, ...DISCOVERY_LINKS].join(", ");
@@ -698,9 +700,10 @@ export default {
       if ((doc.headers.get("content-type") || "").includes("text/html")) {
         return new Response("not found", { status: 404, headers: { "content-type": "text/plain" } });
       }
-      if (!WELL_KNOWN_TYPES[path]) return doc;
+      if (!WELL_KNOWN_TYPES[path] && !WELL_KNOWN_OPEN.has(path)) return doc;
       const headers = new Headers(doc.headers);
-      headers.set("content-type", WELL_KNOWN_TYPES[path]);
+      if (WELL_KNOWN_TYPES[path]) headers.set("content-type", WELL_KNOWN_TYPES[path]);
+      if (WELL_KNOWN_OPEN.has(path)) headers.set("access-control-allow-origin", "*");
       return new Response(doc.body, { status: doc.status, headers });
     }
     if (path.startsWith("/api/auth/") || path === "/api/account" || path.startsWith("/api/account/")) {

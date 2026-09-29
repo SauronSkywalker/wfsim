@@ -102,6 +102,8 @@ jobs:
       # copy of a rule behaves identically until one of them is edited.
       - name: The agent door is one door
         run: node scripts/check_agent_door.mjs
+      - name: The browser's agent gets the door's table
+        run: node scripts/check_webmcp.mjs
       # NONA RUNS ON THE DOOR, against a local stand-in provider: her tools are
       # the door's table at request time, and her first change branches the
       # reader's build. Neither is visible until a reader loses a build.
@@ -161,6 +163,8 @@ jobs:
         run: node scripts/check_mcp_tools.mjs
       - name: The MCP server knows who calls, and how often
         run: node scripts/check_mcp_auth.mjs
+      - name: What an agent reads to find WFSim is what the site serves
+        run: node scripts/check_agent_discovery.mjs
       - name: The account rules hold against the real schema
         run: node scripts/check_accounts.mjs
       - name: Short share links store a build and nothing else

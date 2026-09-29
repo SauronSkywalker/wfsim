@@ -264,6 +264,15 @@ The rules the table keeps:
   on any difference; `check_mcp_tools` runs every query in the worker's copy
   with no page at all.
 
+## WebMCP
+
+`91-webmcp.js` hands the door's table to the browser's own agent through
+`document.modelContext.registerTool` (`navigator.modelContext` on older Chrome):
+every tool `window.wfsim.tools()` lists, under the MCP spelling, run through
+`agentDo`. It registers as the script loads, when a browser looks, and again
+once the page has booted, because an argument's choices come from `META`; the
+first set is taken back by its signal. A call made before the boot waits for it.
+
 ## The A2A agent
 
 `mcp/a2a.js`, in the MCP server's worker at `https://mcp.wfsim.app/a2a`:
@@ -323,6 +332,7 @@ serves it:
 | `/.well-known/api-catalog` | RFC 9727: the MCP server and the board JSON, the two public read APIs |
 | `/.well-known/mcp/server-card.json` | the MCP server: its endpoint and its tools, from the headless table and `mcp/account.js` |
 | `/.well-known/agent-card.json` | the A2A agent card, from `agentCard` in `mcp/a2a.js` — the function the endpoint serves it with |
+| `/.well-known/ai-catalog.json` | ARD's catalog (ai-catalog 1.0): the MCP server card, the A2A card and the skill, each by the url it is served at; `Agentmap:` in robots.txt and `<link rel="ai-catalog">` in the page's head point at it |
 | `/auth.md` | how an agent registers, claims a key for its person and uses it — drawn by the worker (`worker/agents.js`) |
 | `/.well-known/oauth-protected-resource`, `/.well-known/oauth-authorization-server` | RFC 9728 and RFC 8414, the second with auth.md's `agent_auth` block, from the same constants as `/auth.md` |
 | `/robots.txt` | each AI crawler named, `Content-Signal` granting search, ai-input, ai-train |
