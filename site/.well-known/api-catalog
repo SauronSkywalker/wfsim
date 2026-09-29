@@ -7,7 +7,19 @@
           "href": "https://mcp.wfsim.app/mcp"
         },
         {
+          "href": "https://mcp.wfsim.app/a2a"
+        },
+        {
           "href": "https://wfsim.app/board/index.json",
+          "type": "application/json"
+        }
+      ]
+    },
+    {
+      "anchor": "https://mcp.wfsim.app/a2a",
+      "service-desc": [
+        {
+          "href": "https://wfsim.app/.well-known/agent-card.json",
           "type": "application/json"
         }
       ]

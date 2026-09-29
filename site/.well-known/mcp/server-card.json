@@ -85,6 +85,50 @@
         },
         "required": []
       }
+    },
+    {
+      "name": "account_builds_list",
+      "title": "account.builds.list",
+      "description": "List the builds saved in the person's WFSim account, each with its `build` (what builder_stats_read takes) and the link that opens it. Needs a key the person claimed, and WFSim Membership: https://wfsim.app/auth.md",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "weapon": {
+            "type": "string",
+            "description": "only this weapon id"
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "account_builds_save",
+      "title": "account.builds.save",
+      "description": "Save a build to the person's WFSim account, where every browser they sign in on shows it. A new build unless `id` names one to replace. Needs a key the person claimed, and WFSim Membership: https://wfsim.app/auth.md",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "build": {
+            "type": "object",
+            "description": "the build: {weapon, mods: [mod ids], arcane: [arcane ids], evolutions: [ids], mode} — a board row's `build` is one"
+          },
+          "name": {
+            "type": "string",
+            "description": "what the person sees it called, at most 24 characters"
+          },
+          "exilus": {
+            "type": "string",
+            "description": "which of `mods` sits in the exilus slot"
+          },
+          "id": {
+            "type": "string",
+            "description": "a saved build's id, to replace it"
+          }
+        },
+        "required": [
+          "build"
+        ]
+      }
     }
   ]
 }

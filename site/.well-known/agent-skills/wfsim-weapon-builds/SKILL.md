@@ -14,6 +14,8 @@ https://mcp.wfsim.app/mcp (Streamable HTTP, no sign-in) offers these tools, all 
 - `builder_weapons_find`: Find weapons by name, in any language WFSim speaks.
 - `builder_board_read`: Read a weapon's leaderboard: the measured best builds per ruler (the benchmark fight), mode, and with or without a riven, ranked. Each row carries the link that opens it, and a riven-free row its `build`, which the stats read takes.
 - `builder_stats_read`: Read the stats panel for a build: every stat per form and part, base and final, with the mod each change came from, and what the weapon's model does not cover.
+- `account_builds_list`: List the builds saved in the person's WFSim account, each with its `build` (what builder_stats_read takes) and the link that opens it. Needs a key the person claimed, and WFSim Membership: https://wfsim.app/auth.md
+- `account_builds_save`: Save a build to the person's WFSim account, where every browser they sign in on shows it. A new build unless `id` names one to replace. Needs a key the person claimed, and WFSim Membership: https://wfsim.app/auth.md
 
 ## Look up a weapon
 
