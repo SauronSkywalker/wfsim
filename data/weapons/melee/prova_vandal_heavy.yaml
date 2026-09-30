@@ -1,12 +1,11 @@
 id: prova_vandal_heavy
 name: Prova Vandal
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: prova_vandal
 form: heavy
 transform_group: prova_vandal
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: heavy_charge_share_assumed
     published: 0.7
     charge: 0.2333

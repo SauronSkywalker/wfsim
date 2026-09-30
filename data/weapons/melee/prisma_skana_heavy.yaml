@@ -1,12 +1,11 @@
 id: prisma_skana_heavy
 name: Prisma Skana
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: prisma_skana
 form: heavy
 transform_group: prisma_skana
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_incarnon_unmodelled
   - reason: heavy_charge_share_assumed
     published: 0.6

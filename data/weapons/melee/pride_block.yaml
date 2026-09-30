@@ -1,6 +1,6 @@
 id: pride_block
 name: Pride
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: pride
 form: block
 transform_group: pride
@@ -8,8 +8,9 @@ co_behavior: additive_with_base_damage
 unmodeled:
   - "one attack input's own animation length is not published anywhere: the wiki gives a combo's total duration at 1.0x attack speed and one entry per input, so the combo's DURATION is exact and the split between its INPUTS is even. It moves a status tick's start by fractions of a second inside a combo and moves no total"
   - "Power Spike's partial combo decay is a Warframe passive and is not modelled: this counter drops to zero when its clock runs out, so a build running that passive keeps far more of it than this reports"
-  - reason: melee_placeholder
   - reason: melee_slide_unpublished
+  - reason: melee_passive_unmodelled
+    passive: "Coronal Ejection: each enemy a slam hits grants +15% Status Chance, up to 10 stacks, for 10 s"
 attack:
   # see notes: swing_trigger_pull_engine
   trigger: melee

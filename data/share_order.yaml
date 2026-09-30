@@ -7,8 +7,8 @@
 #
 # Never edit by hand: run the generator, which only ever appends.
 #
-digest: 2f24f4c1dacc9732
-count: 3406
+digest: 9b4e8c8e25471017
+count: 3405
 ids:
   - acceltra
   - acceltra_prime
@@ -2924,7 +2924,6 @@ ids:
   - quassus_block
   - quassus_block_forward
   - quassus_forward
-  - quassus_heavy
   - quassus_heavy_slam
   - quassus_prime
   - quassus_prime_block

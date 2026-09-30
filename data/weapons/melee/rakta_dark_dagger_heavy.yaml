@@ -1,12 +1,11 @@
 id: rakta_dark_dagger_heavy
 name: Rakta Dark Dagger
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: rakta_dark_dagger
 form: heavy
 transform_group: rakta_dark_dagger
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: heavy_charge_share_assumed
     published: 0.4
     charge: 0.1333

@@ -1,12 +1,11 @@
 id: prisma_dual_cleavers_heavy
 name: Prisma Dual Cleavers
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: prisma_dual_cleavers
 form: heavy
 transform_group: prisma_dual_cleavers
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: heavy_charge_share_assumed
     published: 0.7
     charge: 0.2333

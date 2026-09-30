@@ -1,12 +1,11 @@
 id: ninkondi_prime_heavy
 name: Ninkondi Prime
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: ninkondi_prime
 form: heavy
 transform_group: ninkondi_prime
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: heavy_charge_share_assumed
     published: 0.5
     charge: 0.1667

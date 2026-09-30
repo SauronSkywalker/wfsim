@@ -1,12 +1,11 @@
 id: reaper_prime_heavy
 name: Reaper Prime
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: reaper_prime
 form: heavy
 transform_group: reaper_prime
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_slide_unpublished
   - reason: heavy_charge_share_assumed
     published: 1.0
