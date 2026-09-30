@@ -34,7 +34,7 @@ seven different builds being ranked, which is what the board is for.
 | `slide` | slide | Hell's Wave | 200% (360deg, forced Impact) |
 | `heavy_slam` | heavy, airborne | — | 630 Blast, 10 m sphere |
 
-**THE ROSTER HOLDS THREE CLASSES**, and the second one is what proves the first
+**THREE CLASSES WERE WRITTEN BY HAND** (every other class is a placeholder, §9), and the second one is what proves the first
 was not hard-coded. A Tonfa (the Praedos) differs from a hammer in every number
 the class owns — 1.17 attack speed against 0.833, a **4x** heavy against 6x,
 0.6 Follow Through against 0.4, a 0.4 s heavy CHARGE against the hammer's
@@ -777,3 +777,45 @@ Intermediate / Expert` internal tiers of the same mod under one display name:
 joining by NAME put a phantom Pressure Point (+200%, rank 10) in front of this
 work, and the bare path is the player's card. Join by `uniqueName`, and let the
 wiki settle every number.
+
+---
+
+## 9. THE PLACEHOLDERS — every other melee weapon, from two modules
+
+Every non-Exalted melee weapon the wiki's module holds is in the roster. Six
+were written by hand off their pages (Magistar, Sancti Magistar, Okina, Okina
+Prime, Praedos, Valkyr Talons); the rest are PLACEHOLDERS, generated from
+`Module:Weapons/data/melee` and `Module:Stances/data` alone, and every form of
+one says so (`reason: melee_placeholder`). What a placeholder is:
+
+| form | where its numbers come from |
+| --- | --- |
+| neutral (the weapon) | the infobox: swing damage, crit, status, attack speed, reach, Follow Through, combo clock, polarities, disposition; its slam is `Slam Attack` at 100% |
+| forward / block / block_forward | the same attack and NO script — the stance supplies it, and an empty slot is refused |
+| heavy | the CLASS's heavy block, scaled so one heavy totals the infobox's `HeavyAttack`; wind-up split by `heavy_charge_share_assumed` |
+| slide | the class's slide block, each hit at the infobox's `SlideAttack`, timed by the block's `Duration` |
+| heavy_slam | `Heavy Slam Attack` as a slam sphere on the 2.0 s stand-in recovery |
+
+**THE INFOBOX WINS THE HEAVY, and says where it disagrees.** Seventy-seven
+weapons' `HeavyAttack` differs from their class table — every Dual Sword and
+Tonfa reads 4x against 5x, every Dagger and Dual Dagger 2x against 5x — which
+is the Tonfa and Okina reconciliation (`notes: tonfa_heavy_and_slide`,
+`dual_daggers_heavy`) applied to the whole roster. Each one carries
+`melee_heavy_total_disputed` with both numbers.
+
+**A STANCE CARD SUPPLIES THE GROUND COMBOS AND NOTHING ELSE**, unless the
+module gives that stance a slide of its own. Heavy and slide are the weapon's,
+because the infobox totals are per weapon and a card is shared by the class.
+The seven hand-written hammer, Tonfa and Dual Dagger cards predate this and
+DO carry their class's heavy and slide, which then replace the weapon's — so a
+Wolf Sledge (a 4x infobox heavy) swings the 6x Crushing Ruin carries. Moving
+those two blocks off the cards is the fix, and it waits on the Wolf Sledge's
+own page.
+
+**A STANCE THAT LACKS A COMBO REFUSES THAT MODE** (`stance_supplies`,
+`STANCE_LACKS_COMBO`) rather than playing the weapon's empty script.
+
+Turning a placeholder into an entry is the Praedos's work, one weapon at a
+time: read the page's `==Characteristics==` and `==Notes==`, carry what they
+say, and drop `melee_placeholder`. What every placeholder still lacks is listed
+in docs/UNMODELLED.md §"THE MELEE PLACEHOLDERS".

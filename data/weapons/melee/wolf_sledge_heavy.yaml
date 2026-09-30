@@ -1,0 +1,42 @@
+id: wolf_sledge_heavy
+name: Wolf Sledge
+# see notes: melee_placeholder_intake
+inherits: wolf_sledge
+form: heavy
+transform_group: wolf_sledge
+co_behavior: additive_with_base_damage
+unmodeled:
+  - reason: melee_placeholder
+  - reason: melee_attack_unmodelled
+    attacks: "Throw, Throw Bounce Explosion and Throw Recall Explosion"
+  - reason: heavy_charge_share_assumed
+    published: 1.2
+    charge: 0.4
+    swing: 0.8
+  - reason: melee_heavy_total_disputed
+    infobox: 4
+    table: 6
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 1.0
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.17
+  crit_multiplier: 1.9
+  status_chance: 0.33
+  punch_through_m: 0.0
+  range_m: 3.1
+  follow_through: 0.4
+  heavy: { multiplier: 4.0, windup_seconds: 0.4 }
+  spends_combo: true
+  damage: { impact: 132.09, puncture: 7.77, slash: 119.14 }   # total 259
+  # see notes: combo_points_from_multiplier
+  combo_script:
+    - { multiplier: 4.0, windup_seconds: 0.4, delay_seconds: 0.8, forced_procs: [lifted], combo_points: 0, combo_points_base: 0 }
+    - { multiplier: 4.0, windup_seconds: 0.4, delay_seconds: 0.8, forced_procs: [knockdown], combo_points: 0, combo_points_base: 0 }
+
+source:
+  url: https://wiki.warframe.com/w/Wolf_Sledge

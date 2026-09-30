@@ -1,0 +1,32 @@
+id: twin_basolk_slide
+name: Twin Basolk
+# see notes: melee_placeholder_intake
+inherits: twin_basolk
+form: slide
+transform_group: twin_basolk
+co_behavior: additive_with_base_damage
+unmodeled:
+  - reason: melee_placeholder
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 1.0
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.05
+  crit_multiplier: 2.0
+  status_chance: 0.4
+  punch_through_m: 0.0
+  range_m: 2.4
+  # see notes: slide_ignores_follow_through
+  follow_through: 1.0
+  heavy: { multiplier: 4.0, windup_seconds: 0.2333 }
+  damage: { impact: 55, puncture: 15, slash: 55, heat: 85 }   # total 210
+  # see notes: combo_points_from_multiplier
+  combo_script:
+    - { multiplier: 2.0, delay_seconds: 1.2, all_around: true, combo_points: 2, combo_points_base: 2 }
+
+source:
+  url: https://wiki.warframe.com/w/Twin_Basolk

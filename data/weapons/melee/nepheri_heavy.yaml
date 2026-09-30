@@ -1,0 +1,44 @@
+id: nepheri_heavy
+name: Nepheri
+# see notes: melee_placeholder_intake
+inherits: nepheri
+form: heavy
+transform_group: nepheri
+co_behavior: additive_with_base_damage
+unmodeled:
+  - reason: melee_placeholder
+  - reason: melee_attack_unmodelled
+    attacks: Fireballs
+  - reason: melee_own_combo_unmodelled
+    combos: "neutral combo"
+  - reason: heavy_charge_share_assumed
+    published: 0.5
+    charge: 0.1667
+    swing: 0.3333
+  - reason: melee_heavy_total_disputed
+    infobox: 2
+    table: 5
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 1.0
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.21
+  crit_multiplier: 2.3
+  status_chance: 0.33
+  punch_through_m: 0.0
+  range_m: 1.9
+  follow_through: 0.8
+  heavy: { multiplier: 2.0, windup_seconds: 0.1667 }
+  spends_combo: true
+  damage: { impact: 21, puncture: 63, slash: 85, heat: 92 }   # total 261
+  # see notes: combo_points_from_multiplier
+  combo_script:
+    - { multiplier: 1.0, hits: 2, windup_seconds: 0.1667, delay_seconds: 0.3333, forced_procs: [slash, knockdown], combo_points: 0, combo_points_base: 0 }
+    - { multiplier: 1.0, hits: 2, windup_seconds: 0.1667, delay_seconds: 0.3333, forced_procs: [slash, knockdown], combo_points: 0, combo_points_base: 0 }
+
+source:
+  url: https://wiki.warframe.com/w/Nepheri

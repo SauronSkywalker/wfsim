@@ -1,0 +1,62 @@
+id: kuva_ghoulsaw
+name: Kuva Ghoulsaw
+slot: melee
+class: assault_saw
+# see notes: melee_placeholder_intake
+form: neutral
+default_form: true
+transform_group: kuva_ghoulsaw
+mod_pools: [melee, assault_saw]
+mastery_rank: 13
+max_rank: 40
+
+accuracy: ~
+riven_family: Ghoulsaw
+disposition: 0.8
+polarities: [madurai, naramon]
+stance_polarity: naramon
+introduced: "Update 42"
+# DE's export keys this item as below; the wiki module writes /Lotus/Weapons/Grineer/Melee/GrnGhoulSaw/GrnKuvaGhoulSawPlayer
+internal_name: /Lotus/Weapons/Grineer/KuvaLich/Melee/Ghoulsaw/KuvaGhoulSaw
+
+ammo_max: ~
+
+combo_duration_seconds: 5.0
+
+co_behavior: additive_with_base_damage
+
+unmodeled:
+  - "one attack input's own animation length is not published anywhere: the wiki gives a combo's total duration at 1.0x attack speed and one entry per input, so the combo's DURATION is exact and the split between its INPUTS is even. It moves a status tick's start by fractions of a second inside a combo and moves no total"
+  - "Power Spike's partial combo decay is a Warframe passive and is not modelled: this counter drops to zero when its clock runs out, so a build running that passive keeps far more of it than this reports"
+  - reason: melee_placeholder
+  - reason: melee_valence_unmodelled
+    family: Kuva
+
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 1.2
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.25
+  crit_multiplier: 2.1
+  status_chance: 0.32
+  punch_through_m: 0.0
+  range_m: 2.15
+  follow_through: 1.0
+  heavy: { multiplier: 6.0, windup_seconds: 0.3333 }
+  damage: { impact: 40.09, puncture: 48.53, slash: 122.38 }   # total 211
+  slam:
+    damage: { impact: 211 }
+    radius_m: 7.0
+    blast_kind: slam
+    status_chance: 0.1
+    falloff_start_m: 0.0
+    falloff_reduction: 0.5
+    forced_procs: [impact]
+    takes_multishot: false
+
+source:
+  url: https://wiki.warframe.com/w/Kuva_Ghoulsaw

@@ -1,0 +1,35 @@
+id: innodem_slide
+name: Innodem
+# see notes: melee_placeholder_intake
+inherits: innodem
+form: slide
+transform_group: innodem
+co_behavior: additive_with_base_damage
+unmodeled:
+  - reason: melee_placeholder
+  - reason: melee_attack_unmodelled
+    attacks: "Dagger Projectile"
+  - reason: melee_incarnon_unmodelled
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 0.75
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.22
+  crit_multiplier: 2.0
+  status_chance: 0.22
+  punch_through_m: 0.0
+  range_m: 1.8
+  # see notes: slide_ignores_follow_through
+  follow_through: 1.0
+  heavy: { multiplier: 2.0, windup_seconds: 0.1333 }
+  damage: { impact: 36, puncture: 144, slash: 180 }   # total 360
+  # see notes: combo_points_from_multiplier
+  combo_script:
+    - { multiplier: 2.0, delay_seconds: 0.53, all_around: true, forced_procs: [impact], combo_points: 2, combo_points_base: 2 }
+
+source:
+  url: https://wiki.warframe.com/w/Innodem

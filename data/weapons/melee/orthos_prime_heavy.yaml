@@ -1,0 +1,37 @@
+id: orthos_prime_heavy
+name: Orthos Prime
+# see notes: melee_placeholder_intake
+inherits: orthos_prime
+form: heavy
+transform_group: orthos_prime
+co_behavior: additive_with_base_damage
+unmodeled:
+  - reason: melee_placeholder
+  - reason: heavy_charge_share_assumed
+    published: 0.9
+    charge: 0.3
+    swing: 0.6
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 1.17
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.24
+  crit_multiplier: 2.2
+  status_chance: 0.36
+  punch_through_m: 0.0
+  range_m: 3.0
+  follow_through: 0.6
+  heavy: { multiplier: 6.0, windup_seconds: 0.3 }
+  spends_combo: true
+  damage: { impact: 35.1, puncture: 35.1, slash: 163.8 }   # total 234
+  # see notes: combo_points_from_multiplier
+  combo_script:
+    - { multiplier: 6.0, windup_seconds: 0.3, delay_seconds: 0.6, forced_procs: [knockdown], combo_points: 0, combo_points_base: 0 }
+    - { multiplier: 6.0, windup_seconds: 0.3, delay_seconds: 0.6, forced_procs: [knockdown], combo_points: 0, combo_points_base: 0 }
+
+source:
+  url: https://wiki.warframe.com/w/Orthos_Prime

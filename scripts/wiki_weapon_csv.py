@@ -209,7 +209,8 @@ SKIP_CLASS = {
     # An EXALTED weapon is summoned by an ability, so it is the Warframe layer
     # docs/UNMODELLED.md holds open — there is no Tenno holding one.
     "Exalted Weapon",
-    # docs/UNMODELLED.md §"no melee": the arena is a shooting range.
+    # MELEE is in the roster, read from Module:Weapons/data/melee rather than
+    # this CSV (docs/MELEE.md §9), so a melee row here is not a gap.
     "Melee",
 }
 SKIP_SLOT = {

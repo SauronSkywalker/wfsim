@@ -97,3 +97,14 @@ pub fn combo_needs_a_stance(weapon: &str, form: crate::model::FormKind) -> bool 
 /// The refusal a stanceless ground combo gets, in one wording for every caller.
 pub const STANCELESS_COMBO: &str =
     "no stance in the slot: stanceless combos are not modelled yet — equip a stance, or play heavy attacks, slide attacks or heavy slams";
+
+/// …and does the SEATED stance supply this form's combo? A card carries a
+/// combo only where `Module:Stances/data` publishes its duration, so a card
+/// can lack one form — and the entry's own script is then an empty slot's.
+pub fn stance_supplies(stance: Option<crate::model::StanceCombos>, form: FormKind) -> bool {
+    stance.is_some_and(|c| c.iter().any(|(f, _)| *f == form.id()))
+}
+
+/// The refusal a combo gets when the seated stance does not supply it.
+pub const STANCE_LACKS_COMBO: &str =
+    "this stance publishes no timing for this combo, so it is not modelled — pick another combo or another stance";

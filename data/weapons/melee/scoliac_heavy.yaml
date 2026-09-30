@@ -1,0 +1,37 @@
+id: scoliac_heavy
+name: Scoliac
+# see notes: melee_placeholder_intake
+inherits: scoliac
+form: heavy
+transform_group: scoliac
+co_behavior: additive_with_base_damage
+unmodeled:
+  - reason: melee_placeholder
+  - reason: heavy_charge_share_assumed
+    published: 0.4
+    charge: 0.1333
+    swing: 0.2667
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 1.25
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.13
+  crit_multiplier: 1.5
+  status_chance: 0.29
+  punch_through_m: 0.0
+  range_m: 2.5
+  follow_through: 0.5
+  heavy: { multiplier: 4.5, windup_seconds: 0.1333 }
+  spends_combo: true
+  damage: { impact: 22.5, puncture: 22.5, slash: 105 }   # total 150
+  # see notes: combo_points_from_multiplier
+  combo_script:
+    - { multiplier: 4.5, windup_seconds: 0.1333, delay_seconds: 0.2667, forced_procs: [slash, knockdown], combo_points: 0, combo_points_base: 0 }
+    - { multiplier: 4.5, windup_seconds: 0.1333, delay_seconds: 0.2667, forced_procs: [slash, knockdown], combo_points: 0, combo_points_base: 0 }
+
+source:
+  url: https://wiki.warframe.com/w/Scoliac

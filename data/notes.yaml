@@ -333,6 +333,37 @@ notes:
     the combo table is identical at every rank — so the ladder would say nothing
     the grant does not, and a `max_rank` here would make the card ask for drain
     it does not cost (`ModDef.base_drain` is `base + max_rank`).
+  melee_placeholder_intake: |
+    A PLACEHOLDER ENTRY, generated from two wiki modules and nothing else —
+    its own page is not read yet, and `reason: melee_placeholder` says so on
+    every form. docs/MELEE.md §9 is the rule; in short:
+    - the swing, reach, follow through, polarities, disposition and combo
+      clock are `Module:Weapons/data/melee`'s infobox fields;
+    - the four ground combos carry NO script: a stance supplies it, and an
+      empty slot is refused (`combo_needs_a_stance`);
+    - the heavy is the CLASS's heavy block from `Module:Stances/data`, scaled
+      so one heavy attack totals the infobox's `HeavyAttack`; its wind-up is
+      split by `heavy_charge_share_assumed`;
+    - the slide is the class's slide block, each hit at the infobox's
+      `SlideAttack`, timed by the block's `Duration`;
+    - the slam is the infobox's `Slam Attack` at 100% (half its 2x), and the
+      heavy slam its `Heavy Slam Attack` on the 2.0 s stand-in recovery.
+  stance_from_the_module: |
+    A STANCE TRANSCRIBED MECHANICALLY from `Module:Stances/data`, and its card
+    fields from `Module:Mods/data`. One `Attacks` entry is one input and the
+    combo's `Duration` is split evenly across the inputs
+    (`combo_clock_is_the_input`); `Dmg` is the row's multiplier, `Hits` its
+    instances, `Types = "360"` a spin (`all_around`), `"Slam"` the weapon's
+    own slam at that multiple, and `ImpactMultiplier` / `SlashMultiplier` the
+    physical bonus. `Procs`: Knockback forces Impact, Bleed Slash, and
+    Knockdown / Lifted / Puncture themselves; the rest are crowd control with
+    no payload here and are dropped. A combo the module gives no `Duration` is
+    left out, and the mode is refused under this card.
+  stance_ranged_rows: |
+    SOME ROWS HERE ARE SHOTS OR THROWS — `Types = "Ranged"` in the module —
+    and they are played as swings at the row's multiplier, in reach, with no
+    travel, spread or falloff. The number is the module's; the delivery is
+    not modelled.
   tonfa_heavy_and_slide: |
     DISCORD SEWN AND FEUDING BLOOD — the Tonfa's own heavy and slide, identical
     on both stances because they are the CLASS's rather than the card's.

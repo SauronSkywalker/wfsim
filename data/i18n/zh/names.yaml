@@ -590,6 +590,1493 @@ weapons:
   okina_prime_slide: 翁 Prime
   okina_prime_heavy_slam: 翁 Prime
 
+  # THE MELEE PLACEHOLDER INTAKE — DE's own strings (DE's Public Export in
+  # Chinese, joined on internal name); every form carries its weapon's.
+  ack_and_brunt: 认知 & 冲击
+  ack_and_brunt_block: 认知 & 冲击
+  ack_and_brunt_block_forward: 认知 & 冲击
+  ack_and_brunt_forward: 认知 & 冲击
+  ack_and_brunt_heavy: 认知 & 冲击
+  ack_and_brunt_heavy_slam: 认知 & 冲击
+  amanata: 天薙刀
+  amanata_block: 天薙刀
+  amanata_block_forward: 天薙刀
+  amanata_forward: 天薙刀
+  amanata_heavy_slam: 天薙刀
+  amanata_slide: 天薙刀
+  amphis: 双头蛇
+  amphis_block: 双头蛇
+  amphis_block_forward: 双头蛇
+  amphis_forward: 双头蛇
+  amphis_heavy: 双头蛇
+  amphis_heavy_slam: 双头蛇
+  amphis_slide: 双头蛇
+  anku: 夺魂死神
+  anku_block: 夺魂死神
+  anku_block_forward: 夺魂死神
+  anku_forward: 夺魂死神
+  anku_heavy: 夺魂死神
+  anku_heavy_slam: 夺魂死神
+  ankyros: 甲龙双拳
+  ankyros_block: 甲龙双拳
+  ankyros_block_forward: 甲龙双拳
+  ankyros_forward: 甲龙双拳
+  ankyros_heavy: 甲龙双拳
+  ankyros_heavy_slam: 甲龙双拳
+  ankyros_prime: 甲龙双拳 Prime
+  ankyros_prime_block: 甲龙双拳 Prime
+  ankyros_prime_block_forward: 甲龙双拳 Prime
+  ankyros_prime_forward: 甲龙双拳 Prime
+  ankyros_prime_heavy: 甲龙双拳 Prime
+  ankyros_prime_heavy_slam: 甲龙双拳 Prime
+  arca_titron: 弧电振子锤
+  arca_titron_block: 弧电振子锤
+  arca_titron_block_forward: 弧电振子锤
+  arca_titron_forward: 弧电振子锤
+  arca_titron_heavy: 弧电振子锤
+  arca_titron_heavy_slam: 弧电振子锤
+  arca_titron_slide: 弧电振子锤
+  argo_and_vel: 星舟 & 帆
+  argo_and_vel_block: 星舟 & 帆
+  argo_and_vel_block_forward: 星舟 & 帆
+  argo_and_vel_forward: 星舟 & 帆
+  argo_and_vel_heavy: 星舟 & 帆
+  argo_and_vel_heavy_slam: 星舟 & 帆
+  arum_spinosa: 疆南星刺
+  arum_spinosa_block: 疆南星刺
+  arum_spinosa_block_forward: 疆南星刺
+  arum_spinosa_forward: 疆南星刺
+  arum_spinosa_heavy: 疆南星刺
+  arum_spinosa_heavy_slam: 疆南星刺
+  atterax: 阿特拉克斯
+  atterax_block: 阿特拉克斯
+  atterax_block_forward: 阿特拉克斯
+  atterax_forward: 阿特拉克斯
+  atterax_heavy: 阿特拉克斯
+  atterax_heavy_slam: 阿特拉克斯
+  atterax_slide: 阿特拉克斯
+  azothane: 溶灵尊
+  azothane_block: 溶灵尊
+  azothane_block_forward: 溶灵尊
+  azothane_forward: 溶灵尊
+  azothane_heavy: 溶灵尊
+  azothane_heavy_slam: 溶灵尊
+  bo: 玻之武杖
+  bo_block: 玻之武杖
+  bo_block_forward: 玻之武杖
+  bo_forward: 玻之武杖
+  bo_heavy: 玻之武杖
+  bo_heavy_slam: 玻之武杖
+  bo_prime: 玻之武杖 Prime
+  bo_prime_block: 玻之武杖 Prime
+  bo_prime_block_forward: 玻之武杖 Prime
+  bo_prime_forward: 玻之武杖 Prime
+  bo_prime_heavy: 玻之武杖 Prime
+  bo_prime_heavy_slam: 玻之武杖 Prime
+  bo_prime_slide: 玻之武杖 Prime
+  bo_slide: 玻之武杖
+  boltace: 螺钉拐刃
+  boltace_block: 螺钉拐刃
+  boltace_block_forward: 螺钉拐刃
+  boltace_forward: 螺钉拐刃
+  boltace_heavy: 螺钉拐刃
+  boltace_heavy_slam: 螺钉拐刃
+  boltace_slide: 螺钉拐刃
+  broken_scepter: 破损珽杖
+  broken_scepter_block: 破损珽杖
+  broken_scepter_block_forward: 破损珽杖
+  broken_scepter_forward: 破损珽杖
+  broken_scepter_heavy: 破损珽杖
+  broken_scepter_heavy_slam: 破损珽杖
+  broken_scepter_slide: 破损珽杖
+  broken_war: 破碎的战争之剑
+  broken_war_block: 破碎的战争之剑
+  broken_war_block_forward: 破碎的战争之剑
+  broken_war_forward: 破碎的战争之剑
+  broken_war_heavy: 破碎的战争之剑
+  broken_war_heavy_slam: 破碎的战争之剑
+  broken_war_slide: 破碎的战争之剑
+  cadus: 卡德斯
+  cadus_block: 卡德斯
+  cadus_block_forward: 卡德斯
+  cadus_forward: 卡德斯
+  cadus_heavy: 卡德斯
+  cadus_heavy_slam: 卡德斯
+  cadus_slide: 卡德斯
+  cassowar: 鹤鸵长戟
+  cassowar_block: 鹤鸵长戟
+  cassowar_block_forward: 鹤鸵长戟
+  cassowar_forward: 鹤鸵长戟
+  cassowar_heavy: 鹤鸵长戟
+  cassowar_heavy_slam: 鹤鸵长戟
+  cassowar_slide: 鹤鸵长戟
+  caustacyst: 灼蚀变体镰
+  caustacyst_block: 灼蚀变体镰
+  caustacyst_block_forward: 灼蚀变体镰
+  caustacyst_forward: 灼蚀变体镰
+  caustacyst_heavy: 灼蚀变体镰
+  caustacyst_heavy_slam: 灼蚀变体镰
+  ceramic_dagger: 陶瓷匕首
+  ceramic_dagger_block: 陶瓷匕首
+  ceramic_dagger_block_forward: 陶瓷匕首
+  ceramic_dagger_forward: 陶瓷匕首
+  ceramic_dagger_heavy: 陶瓷匕首
+  ceramic_dagger_heavy_slam: 陶瓷匕首
+  ceramic_dagger_slide: 陶瓷匕首
+  cerata: 裸鳃刃
+  cerata_block: 裸鳃刃
+  cerata_block_forward: 裸鳃刃
+  cerata_forward: 裸鳃刃
+  cerata_heavy_slam: 裸鳃刃
+  cerata_slide: 裸鳃刃
+  ceti_lacera: 天仓·悲痛之刃
+  ceti_lacera_block: 天仓·悲痛之刃
+  ceti_lacera_block_forward: 天仓·悲痛之刃
+  ceti_lacera_forward: 天仓·悲痛之刃
+  ceti_lacera_heavy: 天仓·悲痛之刃
+  ceti_lacera_heavy_slam: 天仓·悲痛之刃
+  cobra_and_crane: 眼镜蛇 & 鹤
+  cobra_and_crane_block: 眼镜蛇 & 鹤
+  cobra_and_crane_block_forward: 眼镜蛇 & 鹤
+  cobra_and_crane_forward: 眼镜蛇 & 鹤
+  cobra_and_crane_heavy: 眼镜蛇 & 鹤
+  cobra_and_crane_heavy_slam: 眼镜蛇 & 鹤
+  cobra_and_crane_prime: 眼镜蛇 & 鹤 Prime
+  cobra_and_crane_prime_block: 眼镜蛇 & 鹤 Prime
+  cobra_and_crane_prime_block_forward: 眼镜蛇 & 鹤 Prime
+  cobra_and_crane_prime_forward: 眼镜蛇 & 鹤 Prime
+  cobra_and_crane_prime_heavy: 眼镜蛇 & 鹤 Prime
+  cobra_and_crane_prime_heavy_slam: 眼镜蛇 & 鹤 Prime
+  coda_caustacyst: 终幕·灼蚀变体镰
+  coda_caustacyst_block: 终幕·灼蚀变体镰
+  coda_caustacyst_block_forward: 终幕·灼蚀变体镰
+  coda_caustacyst_forward: 终幕·灼蚀变体镰
+  coda_caustacyst_heavy: 终幕·灼蚀变体镰
+  coda_caustacyst_heavy_slam: 终幕·灼蚀变体镰
+  coda_hirudo: 终幕·蚂蟥
+  coda_hirudo_block: 终幕·蚂蟥
+  coda_hirudo_block_forward: 终幕·蚂蟥
+  coda_hirudo_forward: 终幕·蚂蟥
+  coda_hirudo_heavy: 终幕·蚂蟥
+  coda_hirudo_heavy_slam: 终幕·蚂蟥
+  coda_hirudo_slide: 终幕·蚂蟥
+  coda_mire: 终幕·米尔
+  coda_mire_block: 终幕·米尔
+  coda_mire_block_forward: 终幕·米尔
+  coda_mire_forward: 终幕·米尔
+  coda_mire_heavy: 终幕·米尔
+  coda_mire_heavy_slam: 终幕·米尔
+  coda_mire_slide: 终幕·米尔
+  coda_motovore: 终幕·噬轮
+  coda_motovore_block: 终幕·噬轮
+  coda_motovore_block_forward: 终幕·噬轮
+  coda_motovore_forward: 终幕·噬轮
+  coda_motovore_heavy: 终幕·噬轮
+  coda_motovore_heavy_slam: 终幕·噬轮
+  coda_motovore_slide: 终幕·噬轮
+  coda_pathocyst: 终幕·病囊飞刃
+  coda_pathocyst_block: 终幕·病囊飞刃
+  coda_pathocyst_block_forward: 终幕·病囊飞刃
+  coda_pathocyst_forward: 终幕·病囊飞刃
+  coda_pathocyst_heavy_slam: 终幕·病囊飞刃
+  coda_pathocyst_slide: 终幕·病囊飞刃
+  corufell: 闪劫
+  corufell_block: 闪劫
+  corufell_block_forward: 闪劫
+  corufell_forward: 闪劫
+  corufell_heavy: 闪劫
+  corufell_heavy_slam: 闪劫
+  corufell_prime: 闪劫 Prime
+  corufell_prime_block: 闪劫 Prime
+  corufell_prime_block_forward: 闪劫 Prime
+  corufell_prime_forward: 闪劫 Prime
+  corufell_prime_heavy: 闪劫 Prime
+  corufell_prime_heavy_slam: 闪劫 Prime
+  cronus: 克洛诺斯
+  cronus_block: 克洛诺斯
+  cronus_block_forward: 克洛诺斯
+  cronus_forward: 克洛诺斯
+  cronus_heavy: 克洛诺斯
+  cronus_heavy_slam: 克洛诺斯
+  cronus_slide: 克洛诺斯
+  dakra_prime: 达克拉 Prime
+  dakra_prime_block: 达克拉 Prime
+  dakra_prime_block_forward: 达克拉 Prime
+  dakra_prime_forward: 达克拉 Prime
+  dakra_prime_heavy: 达克拉 Prime
+  dakra_prime_heavy_slam: 达克拉 Prime
+  dakra_prime_slide: 达克拉 Prime
+  dark_dagger: 暗黑匕首
+  dark_dagger_block: 暗黑匕首
+  dark_dagger_block_forward: 暗黑匕首
+  dark_dagger_forward: 暗黑匕首
+  dark_dagger_heavy: 暗黑匕首
+  dark_dagger_heavy_slam: 暗黑匕首
+  dark_dagger_slide: 暗黑匕首
+  dark_split_sword: 暗黑分合剑
+  dark_split_sword_block: 暗黑分合剑
+  dark_split_sword_block_forward: 暗黑分合剑
+  dark_split_sword_forward: 暗黑分合剑
+  dark_split_sword_heavy: 暗黑分合剑
+  dark_split_sword_heavy_slam: 暗黑分合剑
+  dark_split_sword_slide: 暗黑分合剑
+  dark_sword: 暗黑长剑
+  dark_sword_block: 暗黑长剑
+  dark_sword_block_forward: 暗黑长剑
+  dark_sword_forward: 暗黑长剑
+  dark_sword_heavy: 暗黑长剑
+  dark_sword_heavy_slam: 暗黑长剑
+  dark_sword_slide: 暗黑长剑
+  destreza: 技巧之剑
+  destreza_block: 技巧之剑
+  destreza_block_forward: 技巧之剑
+  destreza_forward: 技巧之剑
+  destreza_heavy: 技巧之剑
+  destreza_heavy_slam: 技巧之剑
+  destreza_prime: 技巧之剑 Prime
+  destreza_prime_block: 技巧之剑 Prime
+  destreza_prime_block_forward: 技巧之剑 Prime
+  destreza_prime_forward: 技巧之剑 Prime
+  destreza_prime_heavy: 技巧之剑 Prime
+  destreza_prime_heavy_slam: 技巧之剑 Prime
+  destreza_prime_slide: 技巧之剑 Prime
+  destreza_slide: 技巧之剑
+  dex_dakra: Dex 达克拉双剑
+  dex_dakra_block: Dex 达克拉双剑
+  dex_dakra_block_forward: Dex 达克拉双剑
+  dex_dakra_forward: Dex 达克拉双剑
+  dex_dakra_heavy: Dex 达克拉双剑
+  dex_dakra_heavy_slam: Dex 达克拉双剑
+  dex_dakra_slide: Dex 达克拉双剑
+  dex_nikana: Dex 侍刃
+  dex_nikana_block: Dex 侍刃
+  dex_nikana_block_forward: Dex 侍刃
+  dex_nikana_forward: Dex 侍刃
+  dex_nikana_heavy: Dex 侍刃
+  dex_nikana_heavy_slam: Dex 侍刃
+  dex_nikana_slide: Dex 侍刃
+  dorrclave: 怒斩
+  dorrclave_block: 怒斩
+  dorrclave_block_forward: 怒斩
+  dorrclave_forward: 怒斩
+  dorrclave_heavy: 怒斩
+  dorrclave_heavy_slam: 怒斩
+  dragon_nikana: 龙之侍刃
+  dragon_nikana_block: 龙之侍刃
+  dragon_nikana_block_forward: 龙之侍刃
+  dragon_nikana_forward: 龙之侍刃
+  dragon_nikana_heavy: 龙之侍刃
+  dragon_nikana_heavy_slam: 龙之侍刃
+  dragon_nikana_slide: 龙之侍刃
+  dual_cleavers: 斩肉双刀
+  dual_cleavers_block: 斩肉双刀
+  dual_cleavers_block_forward: 斩肉双刀
+  dual_cleavers_forward: 斩肉双刀
+  dual_cleavers_heavy: 斩肉双刀
+  dual_cleavers_heavy_slam: 斩肉双刀
+  dual_cleavers_slide: 斩肉双刀
+  dual_ether: 苍穹双剑
+  dual_ether_block: 苍穹双剑
+  dual_ether_block_forward: 苍穹双剑
+  dual_ether_forward: 苍穹双剑
+  dual_ether_heavy: 苍穹双剑
+  dual_ether_heavy_slam: 苍穹双剑
+  dual_ether_slide: 苍穹双剑
+  dual_heat_swords: 烈焰双剑
+  dual_heat_swords_block: 烈焰双剑
+  dual_heat_swords_block_forward: 烈焰双剑
+  dual_heat_swords_forward: 烈焰双剑
+  dual_heat_swords_heavy: 烈焰双剑
+  dual_heat_swords_heavy_slam: 烈焰双剑
+  dual_heat_swords_slide: 烈焰双剑
+  dual_ichor: 恶脓双斧
+  dual_ichor_block: 恶脓双斧
+  dual_ichor_block_forward: 恶脓双斧
+  dual_ichor_forward: 恶脓双斧
+  dual_ichor_heavy: 恶脓双斧
+  dual_ichor_heavy_slam: 恶脓双斧
+  dual_ichor_slide: 恶脓双斧
+  dual_kamas: 双短柄战镰
+  dual_kamas_block: 双短柄战镰
+  dual_kamas_block_forward: 双短柄战镰
+  dual_kamas_forward: 双短柄战镰
+  dual_kamas_heavy: 双短柄战镰
+  dual_kamas_heavy_slam: 双短柄战镰
+  dual_kamas_prime: 双短柄战镰 Prime
+  dual_kamas_prime_block: 双短柄战镰 Prime
+  dual_kamas_prime_block_forward: 双短柄战镰 Prime
+  dual_kamas_prime_forward: 双短柄战镰 Prime
+  dual_kamas_prime_heavy: 双短柄战镰 Prime
+  dual_kamas_prime_heavy_slam: 双短柄战镰 Prime
+  dual_kamas_prime_slide: 双短柄战镰 Prime
+  dual_kamas_slide: 双短柄战镰
+  dual_keres: 凯瑞斯双刀
+  dual_keres_block: 凯瑞斯双刀
+  dual_keres_block_forward: 凯瑞斯双刀
+  dual_keres_forward: 凯瑞斯双刀
+  dual_keres_heavy: 凯瑞斯双刀
+  dual_keres_heavy_slam: 凯瑞斯双刀
+  dual_keres_prime: 凯瑞斯双刀 Prime
+  dual_keres_prime_block: 凯瑞斯双刀 Prime
+  dual_keres_prime_block_forward: 凯瑞斯双刀 Prime
+  dual_keres_prime_forward: 凯瑞斯双刀 Prime
+  dual_keres_prime_heavy: 凯瑞斯双刀 Prime
+  dual_keres_prime_heavy_slam: 凯瑞斯双刀 Prime
+  dual_keres_prime_slide: 凯瑞斯双刀 Prime
+  dual_keres_slide: 凯瑞斯双刀
+  dual_raza: 锋月双斧
+  dual_raza_block: 锋月双斧
+  dual_raza_block_forward: 锋月双斧
+  dual_raza_forward: 锋月双斧
+  dual_raza_heavy: 锋月双斧
+  dual_raza_heavy_slam: 锋月双斧
+  dual_raza_slide: 锋月双斧
+  dual_skana: 空刃双刀
+  dual_skana_block: 空刃双刀
+  dual_skana_block_forward: 空刃双刀
+  dual_skana_forward: 空刃双刀
+  dual_skana_heavy: 空刃双刀
+  dual_skana_heavy_slam: 空刃双刀
+  dual_skana_slide: 空刃双刀
+  dual_viciss: 双子恶行
+  dual_viciss_block: 双子恶行
+  dual_viciss_block_forward: 双子恶行
+  dual_viciss_forward: 双子恶行
+  dual_viciss_heavy: 双子恶行
+  dual_viciss_heavy_slam: 双子恶行
+  dual_viciss_slide: 双子恶行
+  dual_zoren: 佐伦双斧
+  dual_zoren_block: 佐伦双斧
+  dual_zoren_block_forward: 佐伦双斧
+  dual_zoren_forward: 佐伦双斧
+  dual_zoren_heavy: 佐伦双斧
+  dual_zoren_heavy_slam: 佐伦双斧
+  dual_zoren_prime: 佐伦双斧 Prime
+  dual_zoren_prime_block: 佐伦双斧 Prime
+  dual_zoren_prime_block_forward: 佐伦双斧 Prime
+  dual_zoren_prime_forward: 佐伦双斧 Prime
+  dual_zoren_prime_heavy: 佐伦双斧 Prime
+  dual_zoren_prime_heavy_slam: 佐伦双斧 Prime
+  dual_zoren_prime_slide: 佐伦双斧 Prime
+  dual_zoren_slide: 佐伦双斧
+  edun: 雷石祭
+  edun_block: 雷石祭
+  edun_block_forward: 雷石祭
+  edun_forward: 雷石祭
+  edun_heavy: 雷石祭
+  edun_heavy_slam: 雷石祭
+  edun_slide: 雷石祭
+  ekhein: 映声战锤
+  ekhein_block: 映声战锤
+  ekhein_block_forward: 映声战锤
+  ekhein_forward: 映声战锤
+  ekhein_heavy: 映声战锤
+  ekhein_heavy_slam: 映声战锤
+  ekhein_slide: 映声战锤
+  endura: 三叶坚韧
+  endura_block: 三叶坚韧
+  endura_block_forward: 三叶坚韧
+  endura_forward: 三叶坚韧
+  endura_heavy: 三叶坚韧
+  endura_heavy_slam: 三叶坚韧
+  endura_slide: 三叶坚韧
+  ether_daggers: 苍穹匕首
+  ether_daggers_block: 苍穹匕首
+  ether_daggers_block_forward: 苍穹匕首
+  ether_daggers_forward: 苍穹匕首
+  ether_daggers_heavy: 苍穹匕首
+  ether_daggers_heavy_slam: 苍穹匕首
+  ether_daggers_slide: 苍穹匕首
+  ether_reaper: 苍穹死神
+  ether_reaper_block: 苍穹死神
+  ether_reaper_block_forward: 苍穹死神
+  ether_reaper_forward: 苍穹死神
+  ether_reaper_heavy: 苍穹死神
+  ether_reaper_heavy_slam: 苍穹死神
+  ether_sword: 苍穹之剑
+  ether_sword_block: 苍穹之剑
+  ether_sword_block_forward: 苍穹之剑
+  ether_sword_forward: 苍穹之剑
+  ether_sword_heavy: 苍穹之剑
+  ether_sword_heavy_slam: 苍穹之剑
+  ether_sword_slide: 苍穹之剑
+  falcor: 猎鹰轮
+  falcor_block: 猎鹰轮
+  falcor_block_forward: 猎鹰轮
+  falcor_forward: 猎鹰轮
+  falcor_heavy_slam: 猎鹰轮
+  falcor_slide: 猎鹰轮
+  fang: 狼牙
+  fang_block: 狼牙
+  fang_block_forward: 狼牙
+  fang_forward: 狼牙
+  fang_heavy: 狼牙
+  fang_heavy_slam: 狼牙
+  fang_prime: 狼牙 Prime
+  fang_prime_block: 狼牙 Prime
+  fang_prime_block_forward: 狼牙 Prime
+  fang_prime_forward: 狼牙 Prime
+  fang_prime_heavy: 狼牙 Prime
+  fang_prime_heavy_slam: 狼牙 Prime
+  fang_prime_slide: 狼牙 Prime
+  fang_slide: 狼牙
+  fragor: 重击巨锤
+  fragor_block: 重击巨锤
+  fragor_block_forward: 重击巨锤
+  fragor_forward: 重击巨锤
+  fragor_heavy: 重击巨锤
+  fragor_heavy_slam: 重击巨锤
+  fragor_prime: 重击巨锤 Prime
+  fragor_prime_block: 重击巨锤 Prime
+  fragor_prime_block_forward: 重击巨锤 Prime
+  fragor_prime_forward: 重击巨锤 Prime
+  fragor_prime_heavy: 重击巨锤 Prime
+  fragor_prime_heavy_slam: 重击巨锤 Prime
+  fragor_prime_slide: 重击巨锤 Prime
+  fragor_slide: 重击巨锤
+  furax: 弗拉克斯
+  furax_block: 弗拉克斯
+  furax_block_forward: 弗拉克斯
+  furax_forward: 弗拉克斯
+  furax_heavy: 弗拉克斯
+  furax_heavy_slam: 弗拉克斯
+  furax_wraith: 弗拉克斯·亡魂
+  furax_wraith_block: 弗拉克斯·亡魂
+  furax_wraith_block_forward: 弗拉克斯·亡魂
+  furax_wraith_forward: 弗拉克斯·亡魂
+  furax_wraith_heavy: 弗拉克斯·亡魂
+  furax_wraith_heavy_slam: 弗拉克斯·亡魂
+  galariak_prime: 加拉亚 Prime
+  galariak_prime_block: 加拉亚 Prime
+  galariak_prime_block_forward: 加拉亚 Prime
+  galariak_prime_forward: 加拉亚 Prime
+  galariak_prime_heavy: 加拉亚 Prime
+  galariak_prime_heavy_slam: 加拉亚 Prime
+  galatine: 迦伦提恩
+  galatine_block: 迦伦提恩
+  galatine_block_forward: 迦伦提恩
+  galatine_forward: 迦伦提恩
+  galatine_heavy: 迦伦提恩
+  galatine_heavy_slam: 迦伦提恩
+  galatine_prime: 迦伦提恩 Prime
+  galatine_prime_block: 迦伦提恩 Prime
+  galatine_prime_block_forward: 迦伦提恩 Prime
+  galatine_prime_forward: 迦伦提恩 Prime
+  galatine_prime_heavy: 迦伦提恩 Prime
+  galatine_prime_heavy_slam: 迦伦提恩 Prime
+  galatine_prime_slide: 迦伦提恩 Prime
+  galatine_slide: 迦伦提恩
+  galvacord: 电流刺索
+  galvacord_block: 电流刺索
+  galvacord_block_forward: 电流刺索
+  galvacord_forward: 电流刺索
+  galvacord_heavy: 电流刺索
+  galvacord_heavy_slam: 电流刺索
+  galvacord_slide: 电流刺索
+  garuda_prime_talons: Garuda Prime 之爪
+  garuda_prime_talons_block: Garuda Prime 之爪
+  garuda_prime_talons_block_forward: Garuda Prime 之爪
+  garuda_prime_talons_forward: Garuda Prime 之爪
+  garuda_prime_talons_heavy: Garuda Prime 之爪
+  garuda_prime_talons_heavy_slam: Garuda Prime 之爪
+  garuda_prime_talons_slide: Garuda Prime 之爪
+  garuda_talons: Garuda 之爪
+  garuda_talons_block: Garuda 之爪
+  garuda_talons_block_forward: Garuda 之爪
+  garuda_talons_forward: Garuda 之爪
+  garuda_talons_heavy: Garuda 之爪
+  garuda_talons_heavy_slam: Garuda 之爪
+  garuda_talons_slide: Garuda 之爪
+  gazal_machete: 加扎勒反曲刀
+  gazal_machete_block: 加扎勒反曲刀
+  gazal_machete_block_forward: 加扎勒反曲刀
+  gazal_machete_forward: 加扎勒反曲刀
+  gazal_machete_heavy: 加扎勒反曲刀
+  gazal_machete_heavy_slam: 加扎勒反曲刀
+  gazal_machete_slide: 加扎勒反曲刀
+  ghoulsaw: 尸鬼电锯
+  ghoulsaw_block: 尸鬼电锯
+  ghoulsaw_block_forward: 尸鬼电锯
+  ghoulsaw_forward: 尸鬼电锯
+  ghoulsaw_heavy: 尸鬼电锯
+  ghoulsaw_heavy_slam: 尸鬼电锯
+  ghoulsaw_slide: 尸鬼电锯
+  glaive: 战刃
+  glaive_block: 战刃
+  glaive_block_forward: 战刃
+  glaive_forward: 战刃
+  glaive_heavy_slam: 战刃
+  glaive_prime: 战刃 Prime
+  glaive_prime_block: 战刃 Prime
+  glaive_prime_block_forward: 战刃 Prime
+  glaive_prime_forward: 战刃 Prime
+  glaive_prime_heavy_slam: 战刃 Prime
+  glaive_prime_slide: 战刃 Prime
+  glaive_slide: 战刃
+  gram: 格拉姆
+  gram_block: 格拉姆
+  gram_block_forward: 格拉姆
+  gram_forward: 格拉姆
+  gram_heavy: 格拉姆
+  gram_heavy_slam: 格拉姆
+  gram_prime: 格拉姆 Prime
+  gram_prime_block: 格拉姆 Prime
+  gram_prime_block_forward: 格拉姆 Prime
+  gram_prime_forward: 格拉姆 Prime
+  gram_prime_heavy: 格拉姆 Prime
+  gram_prime_heavy_slam: 格拉姆 Prime
+  gram_prime_slide: 格拉姆 Prime
+  gram_slide: 格拉姆
+  guandao: 关刀
+  guandao_block: 关刀
+  guandao_block_forward: 关刀
+  guandao_forward: 关刀
+  guandao_heavy: 关刀
+  guandao_heavy_slam: 关刀
+  guandao_prime: 关刀 Prime
+  guandao_prime_block: 关刀 Prime
+  guandao_prime_block_forward: 关刀 Prime
+  guandao_prime_forward: 关刀 Prime
+  guandao_prime_heavy: 关刀 Prime
+  guandao_prime_heavy_slam: 关刀 Prime
+  guandao_prime_slide: 关刀 Prime
+  guandao_slide: 关刀
+  gunsen: 军扇
+  gunsen_block: 军扇
+  gunsen_block_forward: 军扇
+  gunsen_forward: 军扇
+  gunsen_heavy: 军扇
+  gunsen_heavy_slam: 军扇
+  gunsen_prime: 军扇 Prime
+  gunsen_prime_block: 军扇 Prime
+  gunsen_prime_block_forward: 军扇 Prime
+  gunsen_prime_forward: 军扇 Prime
+  gunsen_prime_heavy: 军扇 Prime
+  gunsen_prime_heavy_slam: 军扇 Prime
+  halikar: 哈利卡
+  halikar_block: 哈利卡
+  halikar_block_forward: 哈利卡
+  halikar_forward: 哈利卡
+  halikar_heavy_slam: 哈利卡
+  halikar_slide: 哈利卡
+  halikar_wraith: 哈利卡·亡魂
+  halikar_wraith_block: 哈利卡·亡魂
+  halikar_wraith_block_forward: 哈利卡·亡魂
+  halikar_wraith_forward: 哈利卡·亡魂
+  halikar_wraith_heavy_slam: 哈利卡·亡魂
+  halikar_wraith_slide: 哈利卡·亡魂
+  harmony: 和谐
+  harmony_block: 和谐
+  harmony_block_forward: 和谐
+  harmony_forward: 和谐
+  harmony_heavy: 和谐
+  harmony_heavy_slam: 和谐
+  hate: 憎恨
+  hate_block: 憎恨
+  hate_block_forward: 憎恨
+  hate_forward: 憎恨
+  hate_heavy: 憎恨
+  hate_heavy_slam: 憎恨
+  heat_dagger: 烈焰匕首
+  heat_dagger_block: 烈焰匕首
+  heat_dagger_block_forward: 烈焰匕首
+  heat_dagger_forward: 烈焰匕首
+  heat_dagger_heavy: 烈焰匕首
+  heat_dagger_heavy_slam: 烈焰匕首
+  heat_dagger_slide: 烈焰匕首
+  heat_sword: 烈焰长剑
+  heat_sword_block: 烈焰长剑
+  heat_sword_block_forward: 烈焰长剑
+  heat_sword_forward: 烈焰长剑
+  heat_sword_heavy: 烈焰长剑
+  heat_sword_heavy_slam: 烈焰长剑
+  heat_sword_slide: 烈焰长剑
+  heliocor: 赫利俄光锤
+  heliocor_block: 赫利俄光锤
+  heliocor_block_forward: 赫利俄光锤
+  heliocor_forward: 赫利俄光锤
+  heliocor_heavy: 赫利俄光锤
+  heliocor_heavy_slam: 赫利俄光锤
+  heliocor_slide: 赫利俄光锤
+  hespar: 暮斩
+  hespar_block: 暮斩
+  hespar_block_forward: 暮斩
+  hespar_forward: 暮斩
+  hespar_heavy: 暮斩
+  hespar_heavy_slam: 暮斩
+  hirudo: 蚂蟥
+  hirudo_block: 蚂蟥
+  hirudo_block_forward: 蚂蟥
+  hirudo_forward: 蚂蟥
+  hirudo_heavy: 蚂蟥
+  hirudo_heavy_slam: 蚂蟥
+  hirudo_slide: 蚂蟥
+  innodem: 清刚
+  innodem_block: 清刚
+  innodem_block_forward: 清刚
+  innodem_forward: 清刚
+  innodem_heavy: 清刚
+  innodem_heavy_slam: 清刚
+  innodem_slide: 清刚
+  jat_kittag: 喷射战锤
+  jat_kittag_block: 喷射战锤
+  jat_kittag_block_forward: 喷射战锤
+  jat_kittag_forward: 喷射战锤
+  jat_kittag_heavy: 喷射战锤
+  jat_kittag_heavy_slam: 喷射战锤
+  jat_kittag_slide: 喷射战锤
+  jat_kusar: 喷射锁镰
+  jat_kusar_block: 喷射锁镰
+  jat_kusar_block_forward: 喷射锁镰
+  jat_kusar_forward: 喷射锁镰
+  jat_kusar_heavy: 喷射锁镰
+  jat_kusar_heavy_slam: 喷射锁镰
+  jaw_sword: 蛇颚刀
+  jaw_sword_block: 蛇颚刀
+  jaw_sword_block_forward: 蛇颚刀
+  jaw_sword_forward: 蛇颚刀
+  jaw_sword_heavy: 蛇颚刀
+  jaw_sword_heavy_slam: 蛇颚刀
+  jaw_sword_slide: 蛇颚刀
+  kama: 短柄战镰
+  kama_block: 短柄战镰
+  kama_block_forward: 短柄战镰
+  kama_forward: 短柄战镰
+  kama_heavy: 短柄战镰
+  kama_heavy_slam: 短柄战镰
+  kama_slide: 短柄战镰
+  karyst: 凯洛斯特
+  karyst_block: 凯洛斯特
+  karyst_block_forward: 凯洛斯特
+  karyst_forward: 凯洛斯特
+  karyst_heavy: 凯洛斯特
+  karyst_heavy_slam: 凯洛斯特
+  karyst_prime: 凯洛斯特 Prime
+  karyst_prime_block: 凯洛斯特 Prime
+  karyst_prime_block_forward: 凯洛斯特 Prime
+  karyst_prime_forward: 凯洛斯特 Prime
+  karyst_prime_heavy: 凯洛斯特 Prime
+  karyst_prime_heavy_slam: 凯洛斯特 Prime
+  karyst_prime_slide: 凯洛斯特 Prime
+  karyst_slide: 凯洛斯特
+  keratinos: 卡提努之爪
+  keratinos_block: 卡提努之爪
+  keratinos_block_forward: 卡提努之爪
+  keratinos_forward: 卡提努之爪
+  keratinos_heavy: 卡提努之爪
+  keratinos_heavy_slam: 卡提努之爪
+  keratinos_slide: 卡提努之爪
+  kesheg: 怯薛
+  kesheg_block: 怯薛
+  kesheg_block_forward: 怯薛
+  kesheg_forward: 怯薛
+  kesheg_heavy: 怯薛
+  kesheg_heavy_slam: 怯薛
+  kesheg_slide: 怯薛
+  kestrel: 红隼
+  kestrel_block: 红隼
+  kestrel_block_forward: 红隼
+  kestrel_forward: 红隼
+  kestrel_heavy_slam: 红隼
+  kestrel_prime: 红隼 Prime
+  kestrel_prime_block: 红隼 Prime
+  kestrel_prime_block_forward: 红隼 Prime
+  kestrel_prime_forward: 红隼 Prime
+  kestrel_prime_heavy_slam: 红隼 Prime
+  kestrel_prime_slide: 红隼 Prime
+  kestrel_slide: 红隼
+  kogake: 科加基
+  kogake_block: 科加基
+  kogake_block_forward: 科加基
+  kogake_forward: 科加基
+  kogake_heavy: 科加基
+  kogake_heavy_slam: 科加基
+  kogake_prime: 科加基 Prime
+  kogake_prime_block: 科加基 Prime
+  kogake_prime_block_forward: 科加基 Prime
+  kogake_prime_forward: 科加基 Prime
+  kogake_prime_heavy: 科加基 Prime
+  kogake_prime_heavy_slam: 科加基 Prime
+  kogake_prime_slide: 科加基 Prime
+  kogake_slide: 科加基
+  korrudo: 库鲁多
+  korrudo_block: 库鲁多
+  korrudo_block_forward: 库鲁多
+  korrudo_forward: 库鲁多
+  korrudo_heavy: 库鲁多
+  korrudo_heavy_slam: 库鲁多
+  korrudo_slide: 库鲁多
+  korumm: 雷霆暴君
+  korumm_block: 雷霆暴君
+  korumm_block_forward: 雷霆暴君
+  korumm_forward: 雷霆暴君
+  korumm_heavy: 雷霆暴君
+  korumm_heavy_slam: 雷霆暴君
+  korumm_slide: 雷霆暴君
+  kreska: 直镐
+  kreska_block: 直镐
+  kreska_block_forward: 直镐
+  kreska_forward: 直镐
+  kreska_heavy: 直镐
+  kreska_heavy_slam: 直镐
+  kreska_slide: 直镐
+  krohkur: 克鲁古尔
+  krohkur_block: 克鲁古尔
+  krohkur_block_forward: 克鲁古尔
+  krohkur_forward: 克鲁古尔
+  krohkur_heavy: 克鲁古尔
+  krohkur_heavy_slam: 克鲁古尔
+  krohkur_slide: 克鲁古尔
+  kronen: 皇家拐刃
+  kronen_block: 皇家拐刃
+  kronen_block_forward: 皇家拐刃
+  kronen_forward: 皇家拐刃
+  kronen_heavy: 皇家拐刃
+  kronen_heavy_slam: 皇家拐刃
+  kronen_prime: 皇家拐刃 Prime
+  kronen_prime_block: 皇家拐刃 Prime
+  kronen_prime_block_forward: 皇家拐刃 Prime
+  kronen_prime_forward: 皇家拐刃 Prime
+  kronen_prime_heavy: 皇家拐刃 Prime
+  kronen_prime_heavy_slam: 皇家拐刃 Prime
+  kronen_prime_slide: 皇家拐刃 Prime
+  kronen_slide: 皇家拐刃
+  kuva_ghoulsaw: 赤毒·尸鬼电锯
+  kuva_ghoulsaw_block: 赤毒·尸鬼电锯
+  kuva_ghoulsaw_block_forward: 赤毒·尸鬼电锯
+  kuva_ghoulsaw_forward: 赤毒·尸鬼电锯
+  kuva_ghoulsaw_heavy: 赤毒·尸鬼电锯
+  kuva_ghoulsaw_heavy_slam: 赤毒·尸鬼电锯
+  kuva_ghoulsaw_slide: 赤毒·尸鬼电锯
+  kuva_shildeg: 赤毒·希尔德
+  kuva_shildeg_block: 赤毒·希尔德
+  kuva_shildeg_block_forward: 赤毒·希尔德
+  kuva_shildeg_forward: 赤毒·希尔德
+  kuva_shildeg_heavy: 赤毒·希尔德
+  kuva_shildeg_heavy_slam: 赤毒·希尔德
+  kuva_shildeg_slide: 赤毒·希尔德
+  lacera: 悲痛之刃
+  lacera_block: 悲痛之刃
+  lacera_block_forward: 悲痛之刃
+  lacera_forward: 悲痛之刃
+  lacera_heavy: 悲痛之刃
+  lacera_heavy_slam: 悲痛之刃
+  lecta: 勒克塔
+  lecta_block: 勒克塔
+  lecta_block_forward: 勒克塔
+  lecta_forward: 勒克塔
+  lecta_heavy: 勒克塔
+  lecta_heavy_slam: 勒克塔
+  lecta_slide: 勒克塔
+  lesion: 病变
+  lesion_block: 病变
+  lesion_block_forward: 病变
+  lesion_forward: 病变
+  lesion_heavy: 病变
+  lesion_heavy_slam: 病变
+  lesion_slide: 病变
+  machete: 马谢特砍刀
+  machete_block: 马谢特砍刀
+  machete_block_forward: 马谢特砍刀
+  machete_forward: 马谢特砍刀
+  machete_heavy: 马谢特砍刀
+  machete_heavy_slam: 马谢特砍刀
+  machete_slide: 马谢特砍刀
+  machete_wraith: 马谢特砍刀·亡魂
+  machete_wraith_block: 马谢特砍刀·亡魂
+  machete_wraith_block_forward: 马谢特砍刀·亡魂
+  machete_wraith_forward: 马谢特砍刀·亡魂
+  machete_wraith_heavy: 马谢特砍刀·亡魂
+  machete_wraith_heavy_slam: 马谢特砍刀·亡魂
+  machete_wraith_slide: 马谢特砍刀·亡魂
+  masseter: 咀嚼金杖
+  masseter_block: 咀嚼金杖
+  masseter_block_forward: 咀嚼金杖
+  masseter_forward: 咀嚼金杖
+  masseter_heavy: 咀嚼金杖
+  masseter_heavy_slam: 咀嚼金杖
+  masseter_prime: 咀嚼金杖 Prime
+  masseter_prime_block: 咀嚼金杖 Prime
+  masseter_prime_block_forward: 咀嚼金杖 Prime
+  masseter_prime_forward: 咀嚼金杖 Prime
+  masseter_prime_heavy: 咀嚼金杖 Prime
+  masseter_prime_heavy_slam: 咀嚼金杖 Prime
+  masseter_prime_slide: 咀嚼金杖 Prime
+  masseter_slide: 咀嚼金杖
+  mios: 牡狮神
+  mios_block: 牡狮神
+  mios_block_forward: 牡狮神
+  mios_forward: 牡狮神
+  mios_heavy: 牡狮神
+  mios_heavy_slam: 牡狮神
+  mire: 米尔
+  mire_block: 米尔
+  mire_block_forward: 米尔
+  mire_forward: 米尔
+  mire_heavy: 米尔
+  mire_heavy_slam: 米尔
+  mire_slide: 米尔
+  mk1_bo: MK1-玻之武杖
+  mk1_bo_block: MK1-玻之武杖
+  mk1_bo_block_forward: MK1-玻之武杖
+  mk1_bo_forward: MK1-玻之武杖
+  mk1_bo_heavy: MK1-玻之武杖
+  mk1_bo_heavy_slam: MK1-玻之武杖
+  mk1_bo_slide: MK1-玻之武杖
+  mk1_furax: MK1-弗拉克斯
+  mk1_furax_block: MK1-弗拉克斯
+  mk1_furax_block_forward: MK1-弗拉克斯
+  mk1_furax_forward: MK1-弗拉克斯
+  mk1_furax_heavy: MK1-弗拉克斯
+  mk1_furax_heavy_slam: MK1-弗拉克斯
+  nami_skyla: 海波斯库拉对剑
+  nami_skyla_block: 海波斯库拉对剑
+  nami_skyla_block_forward: 海波斯库拉对剑
+  nami_skyla_forward: 海波斯库拉对剑
+  nami_skyla_heavy: 海波斯库拉对剑
+  nami_skyla_heavy_slam: 海波斯库拉对剑
+  nami_skyla_prime: 海波斯库拉对剑 Prime
+  nami_skyla_prime_block: 海波斯库拉对剑 Prime
+  nami_skyla_prime_block_forward: 海波斯库拉对剑 Prime
+  nami_skyla_prime_forward: 海波斯库拉对剑 Prime
+  nami_skyla_prime_heavy: 海波斯库拉对剑 Prime
+  nami_skyla_prime_heavy_slam: 海波斯库拉对剑 Prime
+  nami_skyla_prime_slide: 海波斯库拉对剑 Prime
+  nami_skyla_slide: 海波斯库拉对剑
+  nami_solo: 海波单剑
+  nami_solo_block: 海波单剑
+  nami_solo_block_forward: 海波单剑
+  nami_solo_forward: 海波单剑
+  nami_solo_heavy: 海波单剑
+  nami_solo_heavy_slam: 海波单剑
+  nami_solo_slide: 海波单剑
+  nepheri: 赤炎流星
+  nepheri_block: 赤炎流星
+  nepheri_block_forward: 赤炎流星
+  nepheri_forward: 赤炎流星
+  nepheri_heavy: 赤炎流星
+  nepheri_heavy_slam: 赤炎流星
+  nepheri_slide: 赤炎流星
+  nikana: 侍刃
+  nikana_block: 侍刃
+  nikana_block_forward: 侍刃
+  nikana_forward: 侍刃
+  nikana_heavy: 侍刃
+  nikana_heavy_slam: 侍刃
+  nikana_prime: 侍刃 Prime
+  nikana_prime_block: 侍刃 Prime
+  nikana_prime_block_forward: 侍刃 Prime
+  nikana_prime_forward: 侍刃 Prime
+  nikana_prime_heavy: 侍刃 Prime
+  nikana_prime_heavy_slam: 侍刃 Prime
+  nikana_prime_slide: 侍刃 Prime
+  nikana_slide: 侍刃
+  ninkondi: 降灵追猎者
+  ninkondi_block: 降灵追猎者
+  ninkondi_block_forward: 降灵追猎者
+  ninkondi_forward: 降灵追猎者
+  ninkondi_heavy: 降灵追猎者
+  ninkondi_heavy_slam: 降灵追猎者
+  ninkondi_prime: 降灵追猎者 Prime
+  ninkondi_prime_block: 降灵追猎者 Prime
+  ninkondi_prime_block_forward: 降灵追猎者 Prime
+  ninkondi_prime_forward: 降灵追猎者 Prime
+  ninkondi_prime_heavy: 降灵追猎者 Prime
+  ninkondi_prime_heavy_slam: 降灵追猎者 Prime
+  ninkondi_prime_slide: 降灵追猎者 Prime
+  ninkondi_slide: 降灵追猎者
+  obex: 奥比克斯
+  obex_block: 奥比克斯
+  obex_block_forward: 奥比克斯
+  obex_forward: 奥比克斯
+  obex_heavy: 奥比克斯
+  obex_heavy_slam: 奥比克斯
+  obex_slide: 奥比克斯
+  ohma: 欧玛
+  ohma_block: 欧玛
+  ohma_block_forward: 欧玛
+  ohma_forward: 欧玛
+  ohma_heavy: 欧玛
+  ohma_heavy_slam: 欧玛
+  ohma_slide: 欧玛
+  orthos: 欧特鲁斯
+  orthos_block: 欧特鲁斯
+  orthos_block_forward: 欧特鲁斯
+  orthos_forward: 欧特鲁斯
+  orthos_heavy: 欧特鲁斯
+  orthos_heavy_slam: 欧特鲁斯
+  orthos_prime: 欧特鲁斯 Prime
+  orthos_prime_block: 欧特鲁斯 Prime
+  orthos_prime_block_forward: 欧特鲁斯 Prime
+  orthos_prime_forward: 欧特鲁斯 Prime
+  orthos_prime_heavy: 欧特鲁斯 Prime
+  orthos_prime_heavy_slam: 欧特鲁斯 Prime
+  orthos_prime_slide: 欧特鲁斯 Prime
+  orthos_slide: 欧特鲁斯
+  orvius: 灵枢
+  orvius_block: 灵枢
+  orvius_block_forward: 灵枢
+  orvius_forward: 灵枢
+  orvius_heavy_slam: 灵枢
+  orvius_slide: 灵枢
+  pangolin_prime: 鲮鲤剑 Prime
+  pangolin_prime_block: 鲮鲤剑 Prime
+  pangolin_prime_block_forward: 鲮鲤剑 Prime
+  pangolin_prime_forward: 鲮鲤剑 Prime
+  pangolin_prime_heavy: 鲮鲤剑 Prime
+  pangolin_prime_heavy_slam: 鲮鲤剑 Prime
+  pangolin_prime_slide: 鲮鲤剑 Prime
+  pangolin_sword: 鲮鲤剑
+  pangolin_sword_block: 鲮鲤剑
+  pangolin_sword_block_forward: 鲮鲤剑
+  pangolin_sword_forward: 鲮鲤剑
+  pangolin_sword_heavy: 鲮鲤剑
+  pangolin_sword_heavy_slam: 鲮鲤剑
+  pangolin_sword_slide: 鲮鲤剑
+  paracesis: 心智之殁
+  paracesis_block: 心智之殁
+  paracesis_block_forward: 心智之殁
+  paracesis_forward: 心智之殁
+  paracesis_heavy: 心智之殁
+  paracesis_heavy_slam: 心智之殁
+  paracesis_slide: 心智之殁
+  pathocyst: 病囊飞刃
+  pathocyst_block: 病囊飞刃
+  pathocyst_block_forward: 病囊飞刃
+  pathocyst_forward: 病囊飞刃
+  pathocyst_heavy_slam: 病囊飞刃
+  pathocyst_slide: 病囊飞刃
+  pennant: 尖幡
+  pennant_block: 尖幡
+  pennant_block_forward: 尖幡
+  pennant_forward: 尖幡
+  pennant_heavy: 尖幡
+  pennant_heavy_slam: 尖幡
+  plasma_sword: 等离子长剑
+  plasma_sword_block: 等离子长剑
+  plasma_sword_block_forward: 等离子长剑
+  plasma_sword_forward: 等离子长剑
+  plasma_sword_heavy: 等离子长剑
+  plasma_sword_heavy_slam: 等离子长剑
+  plasma_sword_slide: 等离子长剑
+  pride: 骄傲
+  pride_block: 骄傲
+  pride_block_forward: 骄傲
+  pride_forward: 骄傲
+  pride_heavy: 骄傲
+  pride_heavy_slam: 骄傲
+  prisma_dual_cleavers: 棱晶·斩肉双刀
+  prisma_dual_cleavers_block: 棱晶·斩肉双刀
+  prisma_dual_cleavers_block_forward: 棱晶·斩肉双刀
+  prisma_dual_cleavers_forward: 棱晶·斩肉双刀
+  prisma_dual_cleavers_heavy: 棱晶·斩肉双刀
+  prisma_dual_cleavers_heavy_slam: 棱晶·斩肉双刀
+  prisma_dual_cleavers_slide: 棱晶·斩肉双刀
+  prisma_machete: 棱晶·马谢特砍刀
+  prisma_machete_block: 棱晶·马谢特砍刀
+  prisma_machete_block_forward: 棱晶·马谢特砍刀
+  prisma_machete_forward: 棱晶·马谢特砍刀
+  prisma_machete_heavy: 棱晶·马谢特砍刀
+  prisma_machete_heavy_slam: 棱晶·马谢特砍刀
+  prisma_machete_slide: 棱晶·马谢特砍刀
+  prisma_obex: 棱晶·奥比克斯
+  prisma_obex_block: 棱晶·奥比克斯
+  prisma_obex_block_forward: 棱晶·奥比克斯
+  prisma_obex_forward: 棱晶·奥比克斯
+  prisma_obex_heavy: 棱晶·奥比克斯
+  prisma_obex_heavy_slam: 棱晶·奥比克斯
+  prisma_obex_slide: 棱晶·奥比克斯
+  prisma_ohma: 棱晶·欧玛
+  prisma_ohma_block: 棱晶·欧玛
+  prisma_ohma_block_forward: 棱晶·欧玛
+  prisma_ohma_forward: 棱晶·欧玛
+  prisma_ohma_heavy: 棱晶·欧玛
+  prisma_ohma_heavy_slam: 棱晶·欧玛
+  prisma_ohma_slide: 棱晶·欧玛
+  prisma_skana: 棱晶·空刃
+  prisma_skana_block: 棱晶·空刃
+  prisma_skana_block_forward: 棱晶·空刃
+  prisma_skana_forward: 棱晶·空刃
+  prisma_skana_heavy: 棱晶·空刃
+  prisma_skana_heavy_slam: 棱晶·空刃
+  prisma_skana_slide: 棱晶·空刃
+  prova: 普罗沃
+  prova_block: 普罗沃
+  prova_block_forward: 普罗沃
+  prova_forward: 普罗沃
+  prova_heavy: 普罗沃
+  prova_heavy_slam: 普罗沃
+  prova_slide: 普罗沃
+  prova_vandal: 普罗沃·破坏者
+  prova_vandal_block: 普罗沃·破坏者
+  prova_vandal_block_forward: 普罗沃·破坏者
+  prova_vandal_forward: 普罗沃·破坏者
+  prova_vandal_heavy: 普罗沃·破坏者
+  prova_vandal_heavy_slam: 普罗沃·破坏者
+  prova_vandal_slide: 普罗沃·破坏者
+  pulmonars: 感染连枷
+  pulmonars_block: 感染连枷
+  pulmonars_block_forward: 感染连枷
+  pulmonars_forward: 感染连枷
+  pulmonars_heavy: 感染连枷
+  pulmonars_heavy_slam: 感染连枷
+  pulmonars_slide: 感染连枷
+  pupacyst: 毒囊骨茧
+  pupacyst_block: 毒囊骨茧
+  pupacyst_block_forward: 毒囊骨茧
+  pupacyst_forward: 毒囊骨茧
+  pupacyst_heavy: 毒囊骨茧
+  pupacyst_heavy_slam: 毒囊骨茧
+  pupacyst_slide: 毒囊骨茧
+  quassus: 威震武扇
+  quassus_block: 威震武扇
+  quassus_block_forward: 威震武扇
+  quassus_forward: 威震武扇
+  quassus_heavy: 威震武扇
+  quassus_heavy_slam: 威震武扇
+  quassus_prime: 威震武扇 Prime
+  quassus_prime_block: 威震武扇 Prime
+  quassus_prime_block_forward: 威震武扇 Prime
+  quassus_prime_forward: 威震武扇 Prime
+  quassus_prime_heavy: 威震武扇 Prime
+  quassus_prime_heavy_slam: 威震武扇 Prime
+  rakta_dark_dagger: 绯红·暗黑匕首
+  rakta_dark_dagger_block: 绯红·暗黑匕首
+  rakta_dark_dagger_block_forward: 绯红·暗黑匕首
+  rakta_dark_dagger_forward: 绯红·暗黑匕首
+  rakta_dark_dagger_heavy: 绯红·暗黑匕首
+  rakta_dark_dagger_heavy_slam: 绯红·暗黑匕首
+  rakta_dark_dagger_slide: 绯红·暗黑匕首
+  reaper_prime: 收割者 Prime
+  reaper_prime_block: 收割者 Prime
+  reaper_prime_block_forward: 收割者 Prime
+  reaper_prime_forward: 收割者 Prime
+  reaper_prime_heavy: 收割者 Prime
+  reaper_prime_heavy_slam: 收割者 Prime
+  redeemer: 救赎者
+  redeemer_block: 救赎者
+  redeemer_block_forward: 救赎者
+  redeemer_forward: 救赎者
+  redeemer_heavy_slam: 救赎者
+  redeemer_prime: 救赎者 Prime
+  redeemer_prime_block: 救赎者 Prime
+  redeemer_prime_block_forward: 救赎者 Prime
+  redeemer_prime_forward: 救赎者 Prime
+  redeemer_prime_heavy_slam: 救赎者 Prime
+  redeemer_prime_slide: 救赎者 Prime
+  redeemer_slide: 救赎者
+  ripkas: 锐卡斯
+  ripkas_block: 锐卡斯
+  ripkas_block_forward: 锐卡斯
+  ripkas_forward: 锐卡斯
+  ripkas_heavy: 锐卡斯
+  ripkas_heavy_slam: 锐卡斯
+  ripkas_slide: 锐卡斯
+  rumblejack: 电匕怪杰
+  rumblejack_block: 电匕怪杰
+  rumblejack_block_forward: 电匕怪杰
+  rumblejack_forward: 电匕怪杰
+  rumblejack_heavy: 电匕怪杰
+  rumblejack_heavy_slam: 电匕怪杰
+  rumblejack_slide: 电匕怪杰
+  ruvox: 古声
+  ruvox_block: 古声
+  ruvox_block_forward: 古声
+  ruvox_forward: 古声
+  ruvox_heavy: 古声
+  ruvox_heavy_slam: 古声
+  sampotes: 三宝聚
+  sampotes_block: 三宝聚
+  sampotes_block_forward: 三宝聚
+  sampotes_forward: 三宝聚
+  sampotes_heavy: 三宝聚
+  sampotes_heavy_slam: 三宝聚
+  sampotes_slide: 三宝聚
+  sarofang: 沙罗之牙
+  sarofang_block: 沙罗之牙
+  sarofang_block_forward: 沙罗之牙
+  sarofang_forward: 沙罗之牙
+  sarofang_heavy: 沙罗之牙
+  sarofang_heavy_slam: 沙罗之牙
+  sarofang_prime: 沙罗之牙 Prime
+  sarofang_prime_block: 沙罗之牙 Prime
+  sarofang_prime_block_forward: 沙罗之牙 Prime
+  sarofang_prime_forward: 沙罗之牙 Prime
+  sarofang_prime_heavy: 沙罗之牙 Prime
+  sarofang_prime_heavy_slam: 沙罗之牙 Prime
+  sarofang_prime_slide: 沙罗之牙 Prime
+  sarofang_slide: 沙罗之牙
+  sarpa: 蛇刃
+  sarpa_block: 蛇刃
+  sarpa_block_forward: 蛇刃
+  sarpa_forward: 蛇刃
+  sarpa_heavy_slam: 蛇刃
+  sarpa_slide: 蛇刃
+  scindo: 分裂斩斧
+  scindo_block: 分裂斩斧
+  scindo_block_forward: 分裂斩斧
+  scindo_forward: 分裂斩斧
+  scindo_heavy: 分裂斩斧
+  scindo_heavy_slam: 分裂斩斧
+  scindo_prime: 分裂斩斧 Prime
+  scindo_prime_block: 分裂斩斧 Prime
+  scindo_prime_block_forward: 分裂斩斧 Prime
+  scindo_prime_forward: 分裂斩斧 Prime
+  scindo_prime_heavy: 分裂斩斧 Prime
+  scindo_prime_heavy_slam: 分裂斩斧 Prime
+  scindo_prime_slide: 分裂斩斧 Prime
+  scindo_slide: 分裂斩斧
+  scoliac: 脊椎节鞭
+  scoliac_block: 脊椎节鞭
+  scoliac_block_forward: 脊椎节鞭
+  scoliac_forward: 脊椎节鞭
+  scoliac_heavy: 脊椎节鞭
+  scoliac_heavy_slam: 脊椎节鞭
+  scoliac_slide: 脊椎节鞭
+  secura_lecta: 保障·勒克塔
+  secura_lecta_block: 保障·勒克塔
+  secura_lecta_block_forward: 保障·勒克塔
+  secura_lecta_forward: 保障·勒克塔
+  secura_lecta_heavy: 保障·勒克塔
+  secura_lecta_heavy_slam: 保障·勒克塔
+  secura_lecta_slide: 保障·勒克塔
+  serro: 电能斩锯
+  serro_block: 电能斩锯
+  serro_block_forward: 电能斩锯
+  serro_forward: 电能斩锯
+  serro_heavy: 电能斩锯
+  serro_heavy_slam: 电能斩锯
+  serro_slide: 电能斩锯
+  shaku: 双节尺棍
+  shaku_block: 双节尺棍
+  shaku_block_forward: 双节尺棍
+  shaku_forward: 双节尺棍
+  shaku_heavy: 双节尺棍
+  shaku_heavy_slam: 双节尺棍
+  shaku_slide: 双节尺棍
+  sheev: 希芙
+  sheev_block: 希芙
+  sheev_block_forward: 希芙
+  sheev_forward: 希芙
+  sheev_heavy: 希芙
+  sheev_heavy_slam: 希芙
+  sheev_slide: 希芙
+  sibear: 西伯利亚冰锤
+  sibear_block: 西伯利亚冰锤
+  sibear_block_forward: 西伯利亚冰锤
+  sibear_forward: 西伯利亚冰锤
+  sibear_heavy: 西伯利亚冰锤
+  sibear_heavy_slam: 西伯利亚冰锤
+  sibear_slide: 西伯利亚冰锤
+  sigma_and_octantis: 西格玛 & 南极座
+  sigma_and_octantis_block: 西格玛 & 南极座
+  sigma_and_octantis_block_forward: 西格玛 & 南极座
+  sigma_and_octantis_forward: 西格玛 & 南极座
+  sigma_and_octantis_heavy: 西格玛 & 南极座
+  sigma_and_octantis_heavy_slam: 西格玛 & 南极座
+  silva_and_aegis: 席瓦 & 神盾
+  silva_and_aegis_block: 席瓦 & 神盾
+  silva_and_aegis_block_forward: 席瓦 & 神盾
+  silva_and_aegis_forward: 席瓦 & 神盾
+  silva_and_aegis_heavy: 席瓦 & 神盾
+  silva_and_aegis_heavy_slam: 席瓦 & 神盾
+  silva_and_aegis_prime: 席瓦 & 神盾 Prime
+  silva_and_aegis_prime_block: 席瓦 & 神盾 Prime
+  silva_and_aegis_prime_block_forward: 席瓦 & 神盾 Prime
+  silva_and_aegis_prime_forward: 席瓦 & 神盾 Prime
+  silva_and_aegis_prime_heavy: 席瓦 & 神盾 Prime
+  silva_and_aegis_prime_heavy_slam: 席瓦 & 神盾 Prime
+  skana: 空刃
+  skana_block: 空刃
+  skana_block_forward: 空刃
+  skana_forward: 空刃
+  skana_heavy: 空刃
+  skana_heavy_slam: 空刃
+  skana_prime: 空刃 Prime
+  skana_prime_block: 空刃 Prime
+  skana_prime_block_forward: 空刃 Prime
+  skana_prime_forward: 空刃 Prime
+  skana_prime_heavy: 空刃 Prime
+  skana_prime_heavy_slam: 空刃 Prime
+  skana_prime_slide: 空刃 Prime
+  skana_slide: 空刃
+  skiajati: 影生
+  skiajati_block: 影生
+  skiajati_block_forward: 影生
+  skiajati_forward: 影生
+  skiajati_heavy: 影生
+  skiajati_heavy_slam: 影生
+  skiajati_slide: 影生
+  slaytra: 屠煞
+  slaytra_block: 屠煞
+  slaytra_block_forward: 屠煞
+  slaytra_forward: 屠煞
+  slaytra_heavy: 屠煞
+  slaytra_heavy_slam: 屠煞
+  slaytra_slide: 屠煞
+  spinnerex: 丝蛛皇
+  spinnerex_block: 丝蛛皇
+  spinnerex_block_forward: 丝蛛皇
+  spinnerex_forward: 丝蛛皇
+  spinnerex_heavy: 丝蛛皇
+  spinnerex_heavy_slam: 丝蛛皇
+  spinnerex_slide: 丝蛛皇
+  stropha: 诡计之刃
+  stropha_block: 诡计之刃
+  stropha_block_forward: 诡计之刃
+  stropha_forward: 诡计之刃
+  stropha_heavy_slam: 诡计之刃
+  stropha_slide: 诡计之刃
+  sun_and_moon: 赤阳 & 幽月
+  sun_and_moon_block: 赤阳 & 幽月
+  sun_and_moon_block_forward: 赤阳 & 幽月
+  sun_and_moon_forward: 赤阳 & 幽月
+  sun_and_moon_heavy: 赤阳 & 幽月
+  sun_and_moon_heavy_slam: 赤阳 & 幽月
+  sun_and_moon_slide: 赤阳 & 幽月
+  syam: 业珀
+  syam_block: 业珀
+  syam_block_forward: 业珀
+  syam_forward: 业珀
+  syam_heavy: 业珀
+  syam_heavy_slam: 业珀
+  syam_slide: 业珀
+  sydon: 恶龙
+  sydon_block: 恶龙
+  sydon_block_forward: 恶龙
+  sydon_forward: 恶龙
+  sydon_heavy: 恶龙
+  sydon_heavy_slam: 恶龙
+  sydon_slide: 恶龙
+  synoid_heliocor: 枢议·赫利俄光锤
+  synoid_heliocor_block: 枢议·赫利俄光锤
+  synoid_heliocor_block_forward: 枢议·赫利俄光锤
+  synoid_heliocor_forward: 枢议·赫利俄光锤
+  synoid_heliocor_heavy: 枢议·赫利俄光锤
+  synoid_heliocor_heavy_slam: 枢议·赫利俄光锤
+  synoid_heliocor_slide: 枢议·赫利俄光锤
+  tak_and_lug: 塔克 & 卢格
+  tak_and_lug_block: 塔克 & 卢格
+  tak_and_lug_block_forward: 塔克 & 卢格
+  tak_and_lug_forward: 塔克 & 卢格
+  tak_and_lug_heavy: 塔克 & 卢格
+  tak_and_lug_heavy_slam: 塔克 & 卢格
+  tatsu: 龙辰
+  tatsu_block: 龙辰
+  tatsu_block_forward: 龙辰
+  tatsu_forward: 龙辰
+  tatsu_heavy: 龙辰
+  tatsu_heavy_slam: 龙辰
+  tatsu_prime: 龙辰 Prime
+  tatsu_prime_block: 龙辰 Prime
+  tatsu_prime_block_forward: 龙辰 Prime
+  tatsu_prime_forward: 龙辰 Prime
+  tatsu_prime_heavy: 龙辰 Prime
+  tatsu_prime_heavy_slam: 龙辰 Prime
+  tekko: 铁钩手甲
+  tekko_block: 铁钩手甲
+  tekko_block_forward: 铁钩手甲
+  tekko_forward: 铁钩手甲
+  tekko_heavy: 铁钩手甲
+  tekko_heavy_slam: 铁钩手甲
+  tekko_prime: 铁钩手甲 Prime
+  tekko_prime_block: 铁钩手甲 Prime
+  tekko_prime_block_forward: 铁钩手甲 Prime
+  tekko_prime_forward: 铁钩手甲 Prime
+  tekko_prime_heavy: 铁钩手甲 Prime
+  tekko_prime_heavy_slam: 铁钩手甲 Prime
+  telos_boltace: 终极·螺钉拐刃
+  telos_boltace_block: 终极·螺钉拐刃
+  telos_boltace_block_forward: 终极·螺钉拐刃
+  telos_boltace_forward: 终极·螺钉拐刃
+  telos_boltace_heavy: 终极·螺钉拐刃
+  telos_boltace_heavy_slam: 终极·螺钉拐刃
+  telos_boltace_slide: 终极·螺钉拐刃
+  tenet_agendus: 信条·集议
+  tenet_agendus_block: 信条·集议
+  tenet_agendus_block_forward: 信条·集议
+  tenet_agendus_forward: 信条·集议
+  tenet_agendus_heavy: 信条·集议
+  tenet_agendus_heavy_slam: 信条·集议
+  tenet_exec: 信条·枢密
+  tenet_exec_block: 信条·枢密
+  tenet_exec_block_forward: 信条·枢密
+  tenet_exec_forward: 信条·枢密
+  tenet_exec_heavy: 信条·枢密
+  tenet_exec_heavy_slam: 信条·枢密
+  tenet_exec_slide: 信条·枢密
+  tenet_grigori: 信条·格里高利
+  tenet_grigori_block: 信条·格里高利
+  tenet_grigori_block_forward: 信条·格里高利
+  tenet_grigori_forward: 信条·格里高利
+  tenet_grigori_heavy: 信条·格里高利
+  tenet_grigori_heavy_slam: 信条·格里高利
+  tenet_livia: 信条·莉薇娅
+  tenet_livia_block: 信条·莉薇娅
+  tenet_livia_block_forward: 信条·莉薇娅
+  tenet_livia_forward: 信条·莉薇娅
+  tenet_livia_heavy: 信条·莉薇娅
+  tenet_livia_heavy_slam: 信条·莉薇娅
+  thalys: 大力士
+  thalys_block: 大力士
+  thalys_block_forward: 大力士
+  thalys_forward: 大力士
+  thalys_heavy: 大力士
+  thalys_heavy_slam: 大力士
+  tipedo: 提佩多
+  tipedo_block: 提佩多
+  tipedo_block_forward: 提佩多
+  tipedo_forward: 提佩多
+  tipedo_heavy: 提佩多
+  tipedo_heavy_slam: 提佩多
+  tipedo_prime: 提佩多 Prime
+  tipedo_prime_block: 提佩多 Prime
+  tipedo_prime_block_forward: 提佩多 Prime
+  tipedo_prime_forward: 提佩多 Prime
+  tipedo_prime_heavy: 提佩多 Prime
+  tipedo_prime_heavy_slam: 提佩多 Prime
+  tipedo_prime_slide: 提佩多 Prime
+  tipedo_slide: 提佩多
+  tonbo: 蜻蛉薙
+  tonbo_block: 蜻蛉薙
+  tonbo_block_forward: 蜻蛉薙
+  tonbo_forward: 蜻蛉薙
+  tonbo_heavy: 蜻蛉薙
+  tonbo_heavy_slam: 蜻蛉薙
+  tonbo_slide: 蜻蛉薙
+  tonkkatt: 通卡拐刃
+  tonkkatt_block: 通卡拐刃
+  tonkkatt_block_forward: 通卡拐刃
+  tonkkatt_forward: 通卡拐刃
+  tonkkatt_heavy: 通卡拐刃
+  tonkkatt_heavy_slam: 通卡拐刃
+  tonkkatt_slide: 通卡拐刃
+  twin_basolk: 双子巴萨克
+  twin_basolk_block: 双子巴萨克
+  twin_basolk_block_forward: 双子巴萨克
+  twin_basolk_forward: 双子巴萨克
+  twin_basolk_heavy: 双子巴萨克
+  twin_basolk_heavy_slam: 双子巴萨克
+  twin_basolk_slide: 双子巴萨克
+  twin_krohkur: 双子克鲁古尔
+  twin_krohkur_block: 双子克鲁古尔
+  twin_krohkur_block_forward: 双子克鲁古尔
+  twin_krohkur_forward: 双子克鲁古尔
+  twin_krohkur_heavy: 双子克鲁古尔
+  twin_krohkur_heavy_slam: 双子克鲁古尔
+  twin_krohkur_slide: 双子克鲁古尔
+  vastilok: 瓦斯提枪刃
+  vastilok_block: 瓦斯提枪刃
+  vastilok_block_forward: 瓦斯提枪刃
+  vastilok_forward: 瓦斯提枪刃
+  vastilok_heavy_slam: 瓦斯提枪刃
+  vastilok_slide: 瓦斯提枪刃
+  vaykor_sydon: 勇气·恶龙
+  vaykor_sydon_block: 勇气·恶龙
+  vaykor_sydon_block_forward: 勇气·恶龙
+  vaykor_sydon_forward: 勇气·恶龙
+  vaykor_sydon_heavy: 勇气·恶龙
+  vaykor_sydon_heavy_slam: 勇气·恶龙
+  vaykor_sydon_slide: 勇气·恶龙
+  venato: 脉纹
+  venato_block: 脉纹
+  venato_block_forward: 脉纹
+  venato_forward: 脉纹
+  venato_heavy: 脉纹
+  venato_heavy_slam: 脉纹
+  venato_prime: 脉纹 Prime
+  venato_prime_block: 脉纹 Prime
+  venato_prime_block_forward: 脉纹 Prime
+  venato_prime_forward: 脉纹 Prime
+  venato_prime_heavy: 脉纹 Prime
+  venato_prime_heavy_slam: 脉纹 Prime
+  venka: 凯旋之爪
+  venka_block: 凯旋之爪
+  venka_block_forward: 凯旋之爪
+  venka_forward: 凯旋之爪
+  venka_heavy: 凯旋之爪
+  venka_heavy_slam: 凯旋之爪
+  venka_prime: 凯旋之爪 Prime
+  venka_prime_block: 凯旋之爪 Prime
+  venka_prime_block_forward: 凯旋之爪 Prime
+  venka_prime_forward: 凯旋之爪 Prime
+  venka_prime_heavy: 凯旋之爪 Prime
+  venka_prime_heavy_slam: 凯旋之爪 Prime
+  venka_prime_slide: 凯旋之爪 Prime
+  venka_slide: 凯旋之爪
+  verdilac: 蝰首骨妖
+  verdilac_block: 蝰首骨妖
+  verdilac_block_forward: 蝰首骨妖
+  verdilac_forward: 蝰首骨妖
+  verdilac_heavy: 蝰首骨妖
+  verdilac_heavy_slam: 蝰首骨妖
+  verdilac_slide: 蝰首骨妖
+  vericres: 真月武扇
+  vericres_block: 真月武扇
+  vericres_block_forward: 真月武扇
+  vericres_forward: 真月武扇
+  vericres_heavy: 真月武扇
+  vericres_heavy_slam: 真月武扇
+  vitrica: 金璃剑
+  vitrica_block: 金璃剑
+  vitrica_block_forward: 金璃剑
+  vitrica_forward: 金璃剑
+  vitrica_heavy: 金璃剑
+  vitrica_heavy_slam: 金璃剑
+  vitrica_slide: 金璃剑
+  volnus: 创伤
+  volnus_block: 创伤
+  volnus_block_forward: 创伤
+  volnus_forward: 创伤
+  volnus_heavy: 创伤
+  volnus_heavy_slam: 创伤
+  volnus_prime: 创伤 Prime
+  volnus_prime_block: 创伤 Prime
+  volnus_prime_block_forward: 创伤 Prime
+  volnus_prime_forward: 创伤 Prime
+  volnus_prime_heavy: 创伤 Prime
+  volnus_prime_heavy_slam: 创伤 Prime
+  volnus_prime_slide: 创伤 Prime
+  volnus_slide: 创伤
+  war: 战争之剑
+  war_block: 战争之剑
+  war_block_forward: 战争之剑
+  war_forward: 战争之剑
+  war_heavy: 战争之剑
+  war_heavy_slam: 战争之剑
+  war_prime: 战争之剑 Prime
+  war_prime_block: 战争之剑 Prime
+  war_prime_block_forward: 战争之剑 Prime
+  war_prime_forward: 战争之剑 Prime
+  war_prime_heavy: 战争之剑 Prime
+  war_prime_heavy_slam: 战争之剑 Prime
+  wolf_sledge: 恶狼战锤
+  wolf_sledge_block: 恶狼战锤
+  wolf_sledge_block_forward: 恶狼战锤
+  wolf_sledge_forward: 恶狼战锤
+  wolf_sledge_heavy: 恶狼战锤
+  wolf_sledge_heavy_slam: 恶狼战锤
+  wolf_sledge_slide: 恶狼战锤
+  wrath: 愤怒
+  wrath_block: 愤怒
+  wrath_block_forward: 愤怒
+  wrath_forward: 愤怒
+  wrath_heavy: 愤怒
+  wrath_heavy_slam: 愤怒
+  xoris: 驱魔之刃
+  xoris_block: 驱魔之刃
+  xoris_block_forward: 驱魔之刃
+  xoris_forward: 驱魔之刃
+  xoris_heavy_slam: 驱魔之刃
+  xoris_slide: 驱魔之刃
+  zenistar: 天顶之星
+  zenistar_block: 天顶之星
+  zenistar_block_forward: 天顶之星
+  zenistar_forward: 天顶之星
+  zenistar_heavy: 天顶之星
+  zenistar_heavy_slam: 天顶之星
+  zenistar_slide: 天顶之星
+
 enemies:
   demolisher_devourer: 爆破型吞噬者
   thrax_centurion: 凶魂百夫长
@@ -1094,6 +2581,55 @@ mods:
   vile_discharge: 邪恶释放
   volatile_variant: 易爆变体
   wild_frenzy: 猛烈发狂
+  astral_twilight: 星界微光
+  atlantis_vulcan: 深渊之火
+  bleeding_willow: 血色万柳
+  blind_justice: 无明制裁
+  brutal_tide: 残暴浪潮
+  bullet_dance: 刀锋弹舞
+  burning_wasp: 炙热黄蜂
+  butchers_revelry: 屠戮盛宴
+  carving_mantis: 雕斩螳螂
+  cleaving_whirlwind: 弧刃回天
+  coiling_viper: 毒蛇螺旋
+  crimson_dervish: 赤红狂舞
+  crossing_snakes: 双蛇牙突
+  cyclone_kraken: 飓风海怪
+  decisive_judgement: 果断裁决
+  defiled_snapdragon: 积秽骁龙
+  eleventh_storm: 终焉风暴
+  final_harbinger: 最终先驱
+  flailing_branch: 多流抽击
+  four_riders: 天启异象
+  fracturing_wind: 破碎之风
+  gaias_tragedy: 母神悲歌
+  galeforce_dawn: 狂风压境
+  gleaming_talon: 微光利爪
+  grim_fury: 冷面狂怒
+  high_noon: 正午
+  homing_fang: 连牙追袭
+  iron_phoenix: 钢铁凤凰
+  malicious_raptor: 恶毒猛禽
+  mountains_edge: 山之锋芒
+  pointed_wind: 尖锐之风
+  reaping_spiral: 收割螺旋
+  rending_crane: 撕裂鹤击
+  seismic_palm: 震撼冲拳
+  shimmering_blight: 飞光荒疫
+  slicing_feathers: 割裂羽翼
+  stalking_fan: 缠旋风切
+  stinging_thorn: 螫刺狂棘
+  sundering_weave: 分裂编织
+  swirling_tiger: 旋风虎击
+  swooping_falcon: 猎鹰俯击
+  tempo_royale: 皇家节奏
+  tranquil_cleave: 秋风落叶
+  twirling_spire: 回转尖峰
+  vengeful_revenant: 复仇亡灵
+  vermillion_storm: 朱红暴风
+  votive_onslaught: 埋首猛击
+  vulpine_mask: 狡狐诈面
+  wise_razor: 慧黠斩剃
 
 arcanes:
   akimbo_slip_shot: 双枪·滑射

@@ -1,0 +1,60 @@
+id: halikar
+name: Halikar
+slot: melee
+class: glaive
+# see notes: melee_placeholder_intake
+form: neutral
+default_form: true
+transform_group: halikar
+mod_pools: [melee, glaive]
+mastery_rank: 7
+max_rank: 30
+
+accuracy: ~
+riven_family: Halikar
+disposition: 1.44
+polarities: [madurai, naramon]
+stance_polarity: naramon
+introduced: "Update 15.0"
+internal_name: /Lotus/Weapons/Grineer/Melee/GrnBoomerang/GrnBoomerang
+
+ammo_max: ~
+
+combo_duration_seconds: 5.0
+
+co_behavior: additive_with_base_damage
+
+unmodeled:
+  - "one attack input's own animation length is not published anywhere: the wiki gives a combo's total duration at 1.0x attack speed and one entry per input, so the combo's DURATION is exact and the split between its INPUTS is even. It moves a status tick's start by fractions of a second inside a combo and moves no total"
+  - "Power Spike's partial combo decay is a Warframe passive and is not modelled: this counter drops to zero when its clock runs out, so a build running that passive keeps far more of it than this reports"
+  - reason: melee_placeholder
+  - reason: melee_attack_unmodelled
+    attacks: "Throw, Throw Bounce Explosion, Throw Recall Explosion, Charged Throw, Charged Throw Bounce Explosion and Charged Throw Recall Explosion"
+  - reason: glaive_heavy_is_a_throw
+
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 1.17
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.17
+  crit_multiplier: 2.0
+  status_chance: 0.29
+  punch_through_m: 0.0
+  range_m: 1.2
+  follow_through: 0.7
+  damage: { impact: 14.9, puncture: 119.2, slash: 14.9 }   # total 149
+  slam:
+    damage: { magnetic: 149 }
+    radius_m: 5.0
+    blast_kind: slam
+    falloff_start_m: 0.0
+    falloff_reduction: 0.5
+    forced_procs: [impact]
+    takes_multishot: false
+
+source:
+  url: https://wiki.warframe.com/w/Halikar

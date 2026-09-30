@@ -1,0 +1,57 @@
+id: heat_sword
+name: Heat Sword
+slot: melee
+class: sword
+# see notes: melee_placeholder_intake
+form: neutral
+default_form: true
+transform_group: heat_sword
+mod_pools: [melee, sword]
+mastery_rank: 3
+max_rank: 30
+
+accuracy: ~
+disposition: 1.48
+polarities: [naramon]
+stance_polarity: madurai
+introduced: "Update 5.0"
+internal_name: /Lotus/Weapons/Tenno/Melee/Swords/HeatSword/HeatLongSword
+
+ammo_max: ~
+
+combo_duration_seconds: 5.0
+
+co_behavior: additive_with_base_damage
+
+unmodeled:
+  - "one attack input's own animation length is not published anywhere: the wiki gives a combo's total duration at 1.0x attack speed and one entry per input, so the combo's DURATION is exact and the split between its INPUTS is even. It moves a status tick's start by fractions of a second inside a combo and moves no total"
+  - "Power Spike's partial combo decay is a Warframe passive and is not modelled: this counter drops to zero when its clock runs out, so a build running that passive keeps far more of it than this reports"
+  - reason: melee_placeholder
+
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 0.917
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.05
+  crit_multiplier: 1.5
+  status_chance: 0.2
+  punch_through_m: 0.0
+  range_m: 2.5
+  follow_through: 0.6
+  heavy: { multiplier: 5.0, windup_seconds: 0.2 }
+  damage: { impact: 14.7, puncture: 14.7, slash: 117.6 }   # total 147
+  slam:
+    damage: { heat: 147 }
+    radius_m: 7.0
+    blast_kind: slam
+    falloff_start_m: 0.0
+    falloff_reduction: 0.5
+    forced_procs: [impact, heat]
+    takes_multishot: false
+
+source:
+  url: https://wiki.warframe.com/w/Heat_Sword

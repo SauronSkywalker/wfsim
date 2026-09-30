@@ -143,3 +143,26 @@ reasons:
     text: "this weapon is SILENT and this arena has nobody to alert — stealth is worth nothing here and a great deal in a real mission"
   spool_rebuilds_after_reload:
     text: "the spool rebuilds after every reload: the page says burst firing MAINTAINS it, so a player whose pauses are short enough keeps more of the listed rate than this sim does — here the only pauses are the reloads the weapon forces. The spool itself IS modelled"
+  # THE MELEE PLACEHOLDER INTAKE — every melee weapon the roster holds on
+  # the wiki infobox and its class's shared tables alone, before its own page
+  # is read. docs/UNMODELLED.md §"THE MELEE PLACEHOLDERS".
+  melee_placeholder:
+    text: "PLACEHOLDER: this weapon's numbers are its wiki infobox's and its class's shared tables, and its own page has not been audited yet — a passive, a special attack or any mechanic the page describes beyond the swing, slide and slam numbers is not modelled"
+  melee_attack_unmodelled:
+    text: "not modelled — {attacks}: of this weapon's attacks only the swing, the slam and the heavy slam are"
+  glaive_heavy_is_a_throw:
+    text: "a glaive's heavy attack is a THROW, which is not modelled, so it has no heavy mode here and a Tennokai window converts nothing"
+  gunblade_heavy_is_a_shot:
+    text: "a gunblade's heavy attack FIRES, which is not modelled, so it has no heavy mode here and a Tennokai window converts nothing"
+  melee_heavy_unpublished:
+    text: "the wiki publishes no heavy attack figure for this weapon, so it has no heavy mode here"
+  melee_slide_unpublished:
+    text: "the wiki publishes no slide attack figure or no slide duration for this weapon, so it has no slide mode here"
+  melee_own_combo_unmodelled:
+    text: "the wiki's stance tables give this weapon combos of its OWN ({combos}), which replace the equipped stance's and are not transcribed: the stance's (or its class's) are played in their place"
+  melee_heavy_total_disputed:
+    text: "the heavy attack is this weapon's infobox figure, {infobox}x; its class's heavy table implies {table}x, and nobody has measured which is right"
+  melee_incarnon_unmodelled:
+    text: "its Incarnon evolutions and Incarnon Form are not modelled"
+  melee_valence_unmodelled:
+    text: "its {family} valence bonus is not modelled: the build cannot state the element and bonus this copy rolled, so it reads without one"

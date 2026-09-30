@@ -1,0 +1,62 @@
+id: corufell
+name: Corufell
+slot: melee
+class: heavy_scythe
+# see notes: melee_placeholder_intake
+form: neutral
+default_form: true
+transform_group: corufell
+mod_pools: [melee, heavy_scythe]
+mastery_rank: 8
+max_rank: 30
+
+accuracy: ~
+riven_family: Corufell
+disposition: 1.05
+polarities: [madurai]
+stance_polarity: madurai
+introduced: "Update 32.3"
+internal_name: /Lotus/Weapons/Tenno/Archwing/Melee/ExaltedArchScythe/ExaltedAWScytheWeapon
+
+ammo_max: ~
+
+combo_duration_seconds: 5.0
+
+co_behavior: additive_with_base_damage
+
+unmodeled:
+  - "one attack input's own animation length is not published anywhere: the wiki gives a combo's total duration at 1.0x attack speed and one entry per input, so the combo's DURATION is exact and the split between its INPUTS is even. It moves a status tick's start by fractions of a second inside a combo and moves no total"
+  - "Power Spike's partial combo decay is a Warframe passive and is not modelled: this counter drops to zero when its clock runs out, so a build running that passive keeps far more of it than this reports"
+  - reason: melee_placeholder
+  - reason: melee_attack_unmodelled
+    attacks: "Charged Projectile"
+  - reason: melee_slide_unpublished
+
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 1.0
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.26
+  crit_multiplier: 2.4
+  status_chance: 0.14
+  punch_through_m: 0.0
+  range_m: 2.6
+  follow_through: 0.4
+  heavy: { multiplier: 1.0, windup_seconds: 0.4333 }
+  damage: { impact: 96, puncture: 68, slash: 36 }   # total 200
+  slam:
+    damage: { blast: 200 }
+    radius_m: 8.0
+    blast_kind: slam
+    status_chance: 0.1
+    falloff_start_m: 0.0
+    falloff_reduction: 0.5
+    forced_procs: [impact]
+    takes_multishot: false
+
+source:
+  url: https://wiki.warframe.com/w/Corufell

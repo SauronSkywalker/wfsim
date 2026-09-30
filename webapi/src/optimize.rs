@@ -862,15 +862,22 @@ pub fn parse_optimize(v: &Value) -> Result<OptimizePlan, Value> {
     // A GROUND COMBO IS PLAYED FROM A STANCE — the same refusal `sim_params`
     // gives, so a search never ranks a mode the simulator will not play.
     let unplayable = |m: &ModeForms| {
-        stance_def.is_none()
-            && wfsim_engine::data::weapons::spec(&m.fire_id).is_some_and(|s| {
-                wfsim_engine::data::weapons::combo_needs_a_stance(&info.id, s.form_kind())
-            })
+        wfsim_engine::data::weapons::spec(&m.fire_id).is_some_and(|s| {
+            wfsim_engine::data::weapons::combo_needs_a_stance(&info.id, s.form_kind())
+                && !wfsim_engine::data::weapons::stance_supplies(
+                    stance_def.as_ref().and_then(|m| m.stance),
+                    s.form_kind(),
+                )
+        })
     };
     let modes: Vec<ModeForms> =
         mode_ids.iter().map(|id| mode_forms(info, id)).filter(|m| !unplayable(m)).collect();
     if modes.is_empty() {
-        return Err(err_json(wfsim_engine::data::weapons::STANCELESS_COMBO));
+        return Err(err_json(if stance_def.is_some() {
+            wfsim_engine::data::weapons::STANCE_LACKS_COMBO
+        } else {
+            wfsim_engine::data::weapons::STANCELESS_COMBO
+        }));
     }
     // THE VARIANT TABLE: every (mode, evolution set) the scope holds. One mode
     // is the ordinary case and reproduces exactly what a single `fire_id` did.

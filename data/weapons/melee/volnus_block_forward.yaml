@@ -1,0 +1,30 @@
+id: volnus_block_forward
+name: Volnus
+# see notes: melee_placeholder_intake
+inherits: volnus
+form: block_forward
+transform_group: volnus
+co_behavior: additive_with_base_damage
+unmodeled:
+  - "one attack input's own animation length is not published anywhere: the wiki gives a combo's total duration at 1.0x attack speed and one entry per input, so the combo's DURATION is exact and the split between its INPUTS is even. It moves a status tick's start by fractions of a second inside a combo and moves no total"
+  - "Power Spike's partial combo decay is a Warframe passive and is not modelled: this counter drops to zero when its clock runs out, so a build running that passive keeps far more of it than this reports"
+  - reason: melee_placeholder
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 1.2
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.18
+  crit_multiplier: 1.6
+  status_chance: 0.3
+  punch_through_m: 0.0
+  range_m: 2.9
+  follow_through: 0.6
+  heavy: { multiplier: 6.0, windup_seconds: 0.3667 }
+  damage: { impact: 48.4, puncture: 70.4, slash: 101.2 }   # total 220
+
+source:
+  url: https://wiki.warframe.com/w/Volnus

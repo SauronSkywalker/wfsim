@@ -1,0 +1,37 @@
+id: synoid_heliocor_heavy
+name: Synoid Heliocor
+# see notes: melee_placeholder_intake
+inherits: synoid_heliocor
+form: heavy
+transform_group: synoid_heliocor
+co_behavior: additive_with_base_damage
+unmodeled:
+  - reason: melee_placeholder
+  - reason: heavy_charge_share_assumed
+    published: 1.2
+    charge: 0.4
+    swing: 0.8
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 1.08
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.16
+  crit_multiplier: 2.0
+  status_chance: 0.4
+  punch_through_m: 0.0
+  range_m: 2.5
+  follow_through: 0.4
+  heavy: { multiplier: 6.0, windup_seconds: 0.4 }
+  spends_combo: true
+  damage: { impact: 238, puncture: 28, slash: 14 }   # total 280
+  # see notes: combo_points_from_multiplier
+  combo_script:
+    - { multiplier: 6.0, windup_seconds: 0.4, delay_seconds: 0.8, forced_procs: [lifted], combo_points: 0, combo_points_base: 0 }
+    - { multiplier: 6.0, windup_seconds: 0.4, delay_seconds: 0.8, forced_procs: [knockdown], combo_points: 0, combo_points_base: 0 }
+
+source:
+  url: https://wiki.warframe.com/w/Synoid_Heliocor

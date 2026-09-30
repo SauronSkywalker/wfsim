@@ -1,0 +1,40 @@
+id: fang_prime_heavy
+name: Fang Prime
+# see notes: melee_placeholder_intake
+inherits: fang_prime
+form: heavy
+transform_group: fang_prime
+co_behavior: additive_with_base_damage
+unmodeled:
+  - reason: melee_placeholder
+  - reason: heavy_charge_share_assumed
+    published: 0.5
+    charge: 0.1667
+    swing: 0.3333
+  - reason: melee_heavy_total_disputed
+    infobox: 2
+    table: 5
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 1.0
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.26
+  crit_multiplier: 2.6
+  status_chance: 0.26
+  punch_through_m: 0.0
+  range_m: 1.75
+  follow_through: 0.8
+  heavy: { multiplier: 2.0, windup_seconds: 0.1667 }
+  spends_combo: true
+  damage: { impact: 26.7, puncture: 124.6, slash: 26.7 }   # total 178
+  # see notes: combo_points_from_multiplier
+  combo_script:
+    - { multiplier: 1.0, hits: 2, windup_seconds: 0.1667, delay_seconds: 0.3333, forced_procs: [slash, knockdown], combo_points: 0, combo_points_base: 0 }
+    - { multiplier: 1.0, hits: 2, windup_seconds: 0.1667, delay_seconds: 0.3333, forced_procs: [slash, knockdown], combo_points: 0, combo_points_base: 0 }
+
+source:
+  url: https://wiki.warframe.com/w/Fang_Prime

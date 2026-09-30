@@ -12,23 +12,22 @@
 # app refuses by RULE (flawed variants, riven placeholders, Conclave-only),
 # and the rule rides beside it.
 #
-# 395 of 629 carried, 216 excluded by rule, 18 still to transcribe.
+# 444 of 719 carried, 243 excluded by rule, 32 still to transcribe.
 #
 # Per pool (carried / in export, gap):
-#   archgun         37 /  39, gap 0
-#   assault_rifle    8 /  15, gap 0
-#   bow              1 /  10, gap 4
-#   dual_daggers     4 /   5, gap 0
-#   hammer           2 /   3, gap 0
-#   melee           91 / 143, gap 0
-#   pistol          81 / 140, gap 5
-#   primary         10 /  10, gap 0
-#   rifle           72 / 120, gap 1
-#   shotgun         76 / 119, gap 1
-#   sniper           3 /  14, gap 7
-#   tome             8 /   8, gap 0
-#   tonfa            2 /   3, gap 0
-#   valkyr_talons    0 /   0, gap 0
+#   archgun            37/ 39 gap 0   assault_rifle       8/ 15 gap 0   assault_saw         1/  1 gap 0
+#   blade_and_whip      1/  2 gap 0   bow                 1/ 10 gap 4   claws               3/ 10 gap 0
+#   dagger              3/  6 gap 1   dual_daggers        4/  5 gap 0   dual_nikanas        1/  1 gap 0
+#   dual_swords         3/  4 gap 0   fist                3/  4 gap 0   glaive              2/ 16 gap 11
+#   gunblade            2/  2 gap 0   hammer              2/  3 gap 0   heavy_blade         3/  4 gap 0
+#   heavy_scythe        1/  1 gap 0   machete             2/  3 gap 0   melee              91/143 gap 0
+#   nikana              3/  4 gap 0   nunchaku            1/  2 gap 0   pistol             81/140 gap 5
+#   polearm             3/  5 gap 1   primary            10/ 10 gap 0   rapier              1/  2 gap 0
+#   rifle              72/120 gap 1   scythe              2/  3 gap 0   shotgun            76/119 gap 1
+#   sniper              3/ 14 gap 7   sparring            2/  3 gap 0   staff               1/  2 gap 0
+#   sword               4/  5 gap 0   sword_and_shield    2/  3 gap 0   tome                8/  8 gap 0
+#   tonfa               2/  3 gap 0   two_handed_nikana   1/  1 gap 0   valkyr_talons       0/  0 gap 0
+#   warfan              2/  2 gap 0   whip                2/  4 gap 1
 mods:
   - name: Ammo Chain
     pool: archgun
@@ -255,6 +254,19 @@ mods:
     internal_name: /Lotus/Upgrades/Mods/PvPMods/Rifle/RestoreShieldsOnKillMod
     carried: excluded
     reason: "Conclave: a PvP-path mod the wiki mod tables leave tagged \"Exclusive to PvP\" (the PvE-legal ones are carried and pinned by name in the engine)"
+  - name: Butcher's Revelry
+    pool: assault_saw
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/SawBladeCmbOneMeleeTree
+    carried: data/mods/assault_saw/butchers_revelry.yaml
+  - name: Defiled Snapdragon
+    pool: blade_and_whip
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/SwordWhipCmbOneMeleeTree
+    carried: data/mods/blade_and_whip/defiled_snapdragon.yaml
+  - name: Tainted Hydra
+    pool: blade_and_whip
+    internal_name: /Lotus/Upgrades/Mods/PvPMods/Stances/PvPSwordWhipStanceOne
+    carried: excluded
+    reason: "Conclave: a PvP-path mod the wiki mod tables leave tagged \"Exclusive to PvP\" (the PvE-legal ones are carried and pinned by name in the engine)"
   - name: Arrow Mutation
     pool: bow
     internal_name: /Lotus/Upgrades/Mods/Rifle/Expert/WeaponBowConvertAmmoModExpert
@@ -300,6 +312,79 @@ mods:
     internal_name: /Lotus/Upgrades/Mods/Rifle/Intermediate/BowExplosionChanceModIntermediate
     carried: excluded
     reason: "DE's own internal tier of a card the player holds under the same name (the bare path is the released one, and the wiki's rank table matches it)"
+  - name: Assassin Posture
+    pool: claws
+    internal_name: /Lotus/Types/Friendly/Pets/BeastWeapons/Stances/BeastVIPStance
+    carried: excluded
+    reason: "companion posture: a Kubrow or Kavat's stance under the shared `Claws` tag, seated on the beast"
+  - name: Balanced Posture
+    pool: claws
+    internal_name: /Lotus/Types/Friendly/Pets/BeastWeapons/Stances/BeastNeutralStance
+    carried: excluded
+    reason: "companion posture: a Kubrow or Kavat's stance under the shared `Claws` tag, seated on the beast"
+  - name: Elusive Posture
+    pool: claws
+    internal_name: /Lotus/Types/Friendly/Pets/BeastWeapons/Stances/BeastPacifistStance
+    carried: excluded
+    reason: "companion posture: a Kubrow or Kavat's stance under the shared `Claws` tag, seated on the beast"
+  - name: Four Riders
+    pool: claws
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/ClawCmbThreeMeleeTree
+    carried: data/mods/claws/four_riders.yaml
+  - name: Frenzied Posture
+    pool: claws
+    internal_name: /Lotus/Types/Friendly/Pets/BeastWeapons/Stances/BeastSpreadAttacksStance
+    carried: excluded
+    reason: "companion posture: a Kubrow or Kavat's stance under the shared `Claws` tag, seated on the beast"
+  - name: Malicious Raptor
+    pool: claws
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/ClawCmbOneMeleeTree
+    carried: data/mods/claws/malicious_raptor.yaml
+  - name: Persistent Posture
+    pool: claws
+    internal_name: /Lotus/Types/Friendly/Pets/BeastWeapons/Stances/BeastPersistentStance
+    carried: excluded
+    reason: "companion posture: a Kubrow or Kavat's stance under the shared `Claws` tag, seated on the beast"
+  - name: Protector Posture
+    pool: claws
+    internal_name: /Lotus/Types/Friendly/Pets/BeastWeapons/Stances/BeastProtectorStance
+    carried: excluded
+    reason: "companion posture: a Kubrow or Kavat's stance under the shared `Claws` tag, seated on the beast"
+  - name: Scarlet Hurricane
+    pool: claws
+    internal_name: /Lotus/Upgrades/Mods/PvPMods/Stances/PvPClawStanceOne
+    carried: excluded
+    reason: "Conclave: a PvP-path mod the wiki mod tables leave tagged \"Exclusive to PvP\" (the PvE-legal ones are carried and pinned by name in the engine)"
+  - name: Vermillion Storm
+    pool: claws
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/ClawCmbTwoMeleeTree
+    carried: data/mods/claws/vermillion_storm.yaml
+  - name: Covert Lethality
+    pool: dagger
+    internal_name: /Lotus/Upgrades/Mods/Melee/WeaponMeleeStealthLethalMod
+    carried: ~
+  - name: Heartseeker
+    pool: dagger
+    internal_name: /Lotus/Upgrades/Mods/PvPMods/Melee/DaggerMeleeAutoTargetBonus
+    carried: excluded
+    reason: "Conclave: a PvP-path mod the wiki mod tables leave tagged \"Exclusive to PvP\" (the PvE-legal ones are carried and pinned by name in the engine)"
+  - name: Homing Fang
+    pool: dagger
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/DaggerCmbOneMeleeTree
+    carried: data/mods/dagger/homing_fang.yaml
+  - name: Piercing Fury
+    pool: dagger
+    internal_name: /Lotus/Upgrades/Mods/PvPMods/Stances/PvPDaggerStanceOne
+    carried: excluded
+    reason: "Conclave: a PvP-path mod the wiki mod tables leave tagged \"Exclusive to PvP\" (the PvE-legal ones are carried and pinned by name in the engine)"
+  - name: Pointed Wind
+    pool: dagger
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/DaggerCmbTwoMeleeTree
+    carried: data/mods/dagger/pointed_wind.yaml
+  - name: Stinging Thorn
+    pool: dagger
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/DaggerCmbThreeMeleeTree
+    carried: data/mods/dagger/stinging_thorn.yaml
   - name: Amar's Contempt
     pool: dual_daggers
     internal_name: /Lotus/Upgrades/Mods/Sets/Amar/AmarMeleeMod
@@ -321,6 +406,119 @@ mods:
     pool: dual_daggers
     internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/DualDaggerCmbThreeMeleeTree
     carried: data/mods/dual_daggers/spinning_needle.yaml
+  - name: Mountain's Edge
+    pool: dual_nikanas
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/DualKatanaCmbOneMeleeTree
+    carried: data/mods/dual_nikanas/mountains_edge.yaml
+  - name: Carving Mantis
+    pool: dual_swords
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/DualSwordCmbThreeMeleeTree
+    carried: data/mods/dual_swords/carving_mantis.yaml
+  - name: Crossing Snakes
+    pool: dual_swords
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/DualSwordCmbTwoMeleeTree
+    carried: data/mods/dual_swords/crossing_snakes.yaml
+  - name: Dividing Blades
+    pool: dual_swords
+    internal_name: /Lotus/Upgrades/Mods/PvPMods/Stances/PvPDualSwordStanceOne
+    carried: excluded
+    reason: "Conclave: a PvP-path mod the wiki mod tables leave tagged \"Exclusive to PvP\" (the PvE-legal ones are carried and pinned by name in the engine)"
+  - name: Swirling Tiger
+    pool: dual_swords
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/DualSwordCmbOneMeleeTree
+    carried: data/mods/dual_swords/swirling_tiger.yaml
+  - name: Fracturing Wind
+    pool: fist
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/FistCmbOneMeleeTree
+    carried: data/mods/fist/fracturing_wind.yaml
+  - name: Gaia's Tragedy
+    pool: fist
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/FistCmbThreeMeleeTree
+    carried: data/mods/fist/gaias_tragedy.yaml
+  - name: Quaking Hand
+    pool: fist
+    internal_name: /Lotus/Upgrades/Mods/PvPMods/Stances/PvPFistStanceOne
+    carried: excluded
+    reason: "Conclave: a PvP-path mod the wiki mod tables leave tagged \"Exclusive to PvP\" (the PvE-legal ones are carried and pinned by name in the engine)"
+  - name: Seismic Palm
+    pool: fist
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/FistCmbTwoMeleeTree
+    carried: data/mods/fist/seismic_palm.yaml
+  - name: Astral Twilight
+    pool: glaive
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/GlaiveCmbTwoMeleeTree
+    carried: data/mods/glaive/astral_twilight.yaml
+  - name: Celestial Nightfall
+    pool: glaive
+    internal_name: /Lotus/Upgrades/Mods/PvPMods/Stances/PvPGlaiveStanceOne
+    carried: excluded
+    reason: "Conclave: a PvP-path mod the wiki mod tables leave tagged \"Exclusive to PvP\" (the PvE-legal ones are carried and pinned by name in the engine)"
+  - name: Combo Fury
+    pool: glaive
+    internal_name: /Lotus/Upgrades/Mods/Melee/WeaponGlaiveOnKillBuffSecondary
+    carried: ~
+  - name: Combo Killer
+    pool: glaive
+    internal_name: /Lotus/Upgrades/Mods/Melee/WeaponGlaiveSecondaryHeadshotKillMod
+    carried: ~
+  - name: Gleaming Talon
+    pool: glaive
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/GlaiveCmbOneMeleeTree
+    carried: data/mods/glaive/gleaming_talon.yaml
+  - name: Mark of the Beast
+    pool: glaive
+    internal_name: /Lotus/Upgrades/Mods/Melee/WeaponGlaiveOnSixKillsBuffSecondary
+    carried: ~
+  - name: Power Throw
+    pool: glaive
+    internal_name: /Lotus/Upgrades/Mods/Melee/Beginner/WeaponGlaivePowerthrowModBeginner
+    carried: excluded
+    reason: "DE's own internal tier of a card the player holds under the same name (the bare path is the released one, and the wiki's rank table matches it)"
+  - name: Power Throw
+    pool: glaive
+    internal_name: /Lotus/Upgrades/Mods/Melee/Expert/WeaponGlaivePowerthrowModExpert
+    carried: ~
+  - name: Power Throw
+    pool: glaive
+    internal_name: /Lotus/Upgrades/Mods/Melee/WeaponGlaivePowerthrowMod
+    carried: ~
+  - name: Quick Return
+    pool: glaive
+    internal_name: /Lotus/Upgrades/Mods/Melee/WeaponGlaiveReflectionDecreaseMod
+    carried: ~
+  - name: Rebound
+    pool: glaive
+    internal_name: /Lotus/Upgrades/Mods/Melee/WeaponGlaiveReflectionIncreaseMod
+    carried: ~
+  - name: Volatile Quick Return
+    pool: glaive
+    internal_name: /Lotus/Upgrades/Mods/Melee/WeaponGlaiveExplodingReflectionDecreaseMod
+    carried: ~
+  - name: Volatile Rebound
+    pool: glaive
+    internal_name: /Lotus/Upgrades/Mods/Melee/WeaponGlaiveExplodingReflectionIncreaseMod
+    carried: ~
+  - name: Whirlwind
+    pool: glaive
+    internal_name: /Lotus/Upgrades/Mods/Melee/Beginner/WeaponGlaiveSpeedModBeginner
+    carried: excluded
+    reason: "DE's own internal tier of a card the player holds under the same name (the bare path is the released one, and the wiki's rank table matches it)"
+  - name: Whirlwind
+    pool: glaive
+    internal_name: /Lotus/Upgrades/Mods/Melee/Expert/WeaponGlaiveSpeedModExpert
+    carried: ~
+  - name: Whirlwind
+    pool: glaive
+    internal_name: /Lotus/Upgrades/Mods/Melee/WeaponGlaiveSpeedMod
+    carried: ~
+  - name: Bullet Dance
+    pool: gunblade
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/GunbladeCmbTwoMeleeTree
+    carried: data/mods/gunblade/bullet_dance.yaml
+  - name: High Noon
+    pool: gunblade
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/GunbladeCmbOneMeleeTree
+    carried: data/mods/gunblade/high_noon.yaml
   - name: Crashing Havoc
     pool: hammer
     internal_name: /Lotus/Upgrades/Mods/PvPMods/Stances/PvPHammerStanceOne
@@ -334,6 +532,40 @@ mods:
     pool: hammer
     internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/HammerCmbOneMeleeTree
     carried: data/mods/hammer/shattering_storm.yaml
+  - name: Cleaving Whirlwind
+    pool: heavy_blade
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/AxeCmbTwoMeleeTree
+    carried: data/mods/heavy_blade/cleaving_whirlwind.yaml
+  - name: Noble Cadence
+    pool: heavy_blade
+    internal_name: /Lotus/Upgrades/Mods/PvPMods/Stances/PvPHeavyBladeStanceOne
+    carried: excluded
+    reason: "Conclave: a PvP-path mod the wiki mod tables leave tagged \"Exclusive to PvP\" (the PvE-legal ones are carried and pinned by name in the engine)"
+  - name: Rending Crane
+    pool: heavy_blade
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/AxeCmbOneMeleeTree
+    carried: data/mods/heavy_blade/rending_crane.yaml
+  - name: Tempo Royale
+    pool: heavy_blade
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/AxeCmbThreeMeleeTree
+    carried: data/mods/heavy_blade/tempo_royale.yaml
+  - name: Galeforce Dawn
+    pool: heavy_scythe
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/HeavyScytheCmbOneMeleeTree
+    carried: data/mods/heavy_scythe/galeforce_dawn.yaml
+  - name: Cyclone Kraken
+    pool: machete
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/MacheteCmbTwoMeleeTree
+    carried: data/mods/machete/cyclone_kraken.yaml
+  - name: Rending Wind
+    pool: machete
+    internal_name: /Lotus/Upgrades/Mods/PvPMods/Stances/PvPMacheteStanceOne
+    carried: excluded
+    reason: "Conclave: a PvP-path mod the wiki mod tables leave tagged \"Exclusive to PvP\" (the PvE-legal ones are carried and pinned by name in the engine)"
+  - name: Sundering Weave
+    pool: machete
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/MacheteCmbOneMeleeTree
+    carried: data/mods/machete/sundering_weave.yaml
   - name: Air Martial
     pool: melee
     internal_name: /Lotus/Upgrades/Mods/PvPMods/Melee/AirborneMeleeAutoTargetBonus
@@ -958,6 +1190,32 @@ mods:
     internal_name: /Lotus/Upgrades/Mods/Randomized/RawModularMeleeRandomMod
     carried: excluded
     reason: "riven placeholder: the unrolled riven, which is the riven editor's output rather than a pool entry"
+  - name: Blind Justice
+    pool: nikana
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/KatanaCmbThreeMeleeTree
+    carried: data/mods/nikana/blind_justice.yaml
+  - name: Decisive Judgement
+    pool: nikana
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/KatanaCmbTwoMeleeTree
+    carried: data/mods/nikana/decisive_judgement.yaml
+  - name: Fateful Truth
+    pool: nikana
+    internal_name: /Lotus/Upgrades/Mods/PvPMods/Stances/PvPKatanaStanceOne
+    carried: excluded
+    reason: "Conclave: a PvP-path mod the wiki mod tables leave tagged \"Exclusive to PvP\" (the PvE-legal ones are carried and pinned by name in the engine)"
+  - name: Tranquil Cleave
+    pool: nikana
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/KatanaCmbOneMeleeTree
+    carried: data/mods/nikana/tranquil_cleave.yaml
+  - name: Atlantis Vulcan
+    pool: nunchaku
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/NunchakuCmbOneMeleeTree
+    carried: data/mods/nunchaku/atlantis_vulcan.yaml
+  - name: Mafic Rain
+    pool: nunchaku
+    internal_name: /Lotus/Upgrades/Mods/PvPMods/Stances/PvPNunchakuStanceOne
+    carried: excluded
+    reason: "Conclave: a PvP-path mod the wiki mod tables leave tagged \"Exclusive to PvP\" (the PvE-legal ones are carried and pinned by name in the engine)"
   - name: Accelerated Isotope
     pool: pistol
     internal_name: /Lotus/Upgrades/Mods/Pistol/DualStat/RadiationFireratePistolMod
@@ -1572,6 +1830,27 @@ mods:
     pool: pistol
     internal_name: /Lotus/Upgrades/Mods/Pistol/WeaponAmmoMaxMod
     carried: data/mods/pistol/trick_mag.yaml
+  - name: Argent Scourge
+    pool: polearm
+    internal_name: /Lotus/Upgrades/Mods/PvPMods/Stances/PvPPolearmStanceOne
+    carried: excluded
+    reason: "Conclave: a PvP-path mod the wiki mod tables leave tagged \"Exclusive to PvP\" (the PvE-legal ones are carried and pinned by name in the engine)"
+  - name: Bleeding Willow
+    pool: polearm
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/PolearmCmbTwoMeleeTree
+    carried: data/mods/polearm/bleeding_willow.yaml
+  - name: Boreal's Contempt
+    pool: polearm
+    internal_name: /Lotus/Upgrades/Mods/Sets/Boreal/BorealMeleeMod
+    carried: ~
+  - name: Shimmering Blight
+    pool: polearm
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/PolearmCmbOneMeleeTree
+    carried: data/mods/polearm/shimmering_blight.yaml
+  - name: Twirling Spire
+    pool: polearm
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/PolearmCmbThreeMeleeTree
+    carried: data/mods/polearm/twirling_spire.yaml
   - name: Aero Periphery
     pool: primary
     internal_name: /Lotus/Upgrades/Mods/Sets/Hawk/HawkModC
@@ -1612,6 +1891,15 @@ mods:
     pool: primary
     internal_name: /Lotus/Upgrades/Mods/Sets/Vigilante/PrimaryVigilanteSuppliesMod
     carried: data/mods/primary/vigilante_supplies.yaml
+  - name: Cunning Aspect
+    pool: rapier
+    internal_name: /Lotus/Upgrades/Mods/PvPMods/Stances/PvPRapierStanceOne
+    carried: excluded
+    reason: "Conclave: a PvP-path mod the wiki mod tables leave tagged \"Exclusive to PvP\" (the PvE-legal ones are carried and pinned by name in the engine)"
+  - name: Vulpine Mask
+    pool: rapier
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/RapierCmbOneMeleeTree
+    carried: data/mods/rapier/vulpine_mask.yaml
   - name: Aerial Ace
     pool: rifle
     internal_name: /Lotus/Upgrades/Mods/Rifle/Event/Arbitration/JumpRefreshOnKillRifleMod
@@ -2139,6 +2427,19 @@ mods:
     pool: rifle
     internal_name: /Lotus/Upgrades/Mods/Rifle/DualStat/WildfireMod
     carried: data/mods/rifle/wildfire.yaml
+  - name: Reaping Spiral
+    pool: scythe
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/ScytheCmbOneMeleeTree
+    carried: data/mods/scythe/reaping_spiral.yaml
+  - name: Shadow Harvest
+    pool: scythe
+    internal_name: /Lotus/Upgrades/Mods/PvPMods/Stances/PvPScytheStanceOne
+    carried: excluded
+    reason: "Conclave: a PvP-path mod the wiki mod tables leave tagged \"Exclusive to PvP\" (the PvE-legal ones are carried and pinned by name in the engine)"
+  - name: Stalking Fan
+    pool: scythe
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/ScytheCmbTwoMeleeTree
+    carried: data/mods/scythe/stalking_fan.yaml
   - name: Accelerated Blast
     pool: shotgun
     internal_name: /Lotus/Upgrades/Mods/Shotgun/DualStat/AcceleratedBlastMod
@@ -2717,6 +3018,62 @@ mods:
     pool: sniper
     internal_name: /Lotus/Upgrades/Mods/Rifle/SniperHeadshotMultiplierMod
     carried: ~
+  - name: Brutal Tide
+    pool: sparring
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/PunchKickCmbTwoMeleeTree
+    carried: data/mods/sparring/brutal_tide.yaml
+  - name: Grim Fury
+    pool: sparring
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/PunchKickCmbOneMeleeTree
+    carried: data/mods/sparring/grim_fury.yaml
+  - name: Vicious Approach
+    pool: sparring
+    internal_name: /Lotus/Upgrades/Mods/PvPMods/Stances/PvPPunchKickStanceOne
+    carried: excluded
+    reason: "Conclave: a PvP-path mod the wiki mod tables leave tagged \"Exclusive to PvP\" (the PvE-legal ones are carried and pinned by name in the engine)"
+  - name: Crashing Timber
+    pool: staff
+    internal_name: /Lotus/Upgrades/Mods/PvPMods/Stances/PvPStavesStanceOne
+    carried: excluded
+    reason: "Conclave: a PvP-path mod the wiki mod tables leave tagged \"Exclusive to PvP\" (the PvE-legal ones are carried and pinned by name in the engine)"
+  - name: Flailing Branch
+    pool: staff
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/StaffCmbTwoMeleeTree
+    carried: data/mods/staff/flailing_branch.yaml
+  - name: Crimson Dervish
+    pool: sword
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/CrimsonDervishMeleeTree
+    carried: data/mods/sword/crimson_dervish.yaml
+  - name: Iron Phoenix
+    pool: sword
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/IronPhoenixMeleeTree
+    carried: data/mods/sword/iron_phoenix.yaml
+  - name: Rising Steel
+    pool: sword
+    internal_name: /Lotus/Upgrades/Mods/PvPMods/Stances/PvPSwordStanceOne
+    carried: excluded
+    reason: "Conclave: a PvP-path mod the wiki mod tables leave tagged \"Exclusive to PvP\" (the PvE-legal ones are carried and pinned by name in the engine)"
+  - name: Swooping Falcon
+    pool: sword
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/SwordCmbTwoMeleeTree
+    carried: data/mods/sword/swooping_falcon.yaml
+  - name: Vengeful Revenant
+    pool: sword
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/StalkerSwordMeleeTree
+    carried: data/mods/sword/vengeful_revenant.yaml
+  - name: Eleventh Storm
+    pool: sword_and_shield
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/SwordShieldCmbOneMeleeTree
+    carried: data/mods/sword_and_shield/eleventh_storm.yaml
+  - name: Final Harbinger
+    pool: sword_and_shield
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/RegorSwordShieldMeleeTree
+    carried: data/mods/sword_and_shield/final_harbinger.yaml
+  - name: Last Herald
+    pool: sword_and_shield
+    internal_name: /Lotus/Upgrades/Mods/PvPMods/Stances/PvPSwordShieldStanceOne
+    carried: excluded
+    reason: "Conclave: a PvP-path mod the wiki mod tables leave tagged \"Exclusive to PvP\" (the PvE-legal ones are carried and pinned by name in the engine)"
   - name: Fass Canticle
     pool: tome
     internal_name: /Lotus/Upgrades/Grimoire/FassAuraMod
@@ -2762,3 +3119,32 @@ mods:
     internal_name: /Lotus/Upgrades/Mods/PvPMods/Stances/PvPTonfaStanceOne
     carried: excluded
     reason: "Conclave: a PvP-path mod the wiki mod tables leave tagged \"Exclusive to PvP\" (the PvE-legal ones are carried and pinned by name in the engine)"
+  - name: Wise Razor
+    pool: two_handed_nikana
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/LongKatanaCmbOneMeleeTree
+    carried: data/mods/two_handed_nikana/wise_razor.yaml
+  - name: Slicing Feathers
+    pool: warfan
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/WarfanCmbOneMeleeTree
+    carried: data/mods/warfan/slicing_feathers.yaml
+  - name: Votive Onslaught
+    pool: warfan
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/WarfanCmbTwoMeleeTree
+    carried: data/mods/warfan/votive_onslaught.yaml
+  - name: Burning Wasp
+    pool: whip
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/WhipCmbOneMeleeTree
+    carried: data/mods/whip/burning_wasp.yaml
+  - name: Coiling Viper
+    pool: whip
+    internal_name: /Lotus/Weapons/Tenno/Melee/MeleeTrees/WhipCmbTwoMeleeTree
+    carried: data/mods/whip/coiling_viper.yaml
+  - name: Lashing Coil
+    pool: whip
+    internal_name: /Lotus/Upgrades/Mods/PvPMods/Stances/PvPWhipStanceOne
+    carried: excluded
+    reason: "Conclave: a PvP-path mod the wiki mod tables leave tagged \"Exclusive to PvP\" (the PvE-legal ones are carried and pinned by name in the engine)"
+  - name: Nira's Contempt
+    pool: whip
+    internal_name: /Lotus/Upgrades/Mods/Sets/Nira/NiraMeleeMod
+    carried: ~

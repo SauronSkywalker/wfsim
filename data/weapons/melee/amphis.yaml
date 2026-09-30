@@ -1,0 +1,58 @@
+id: amphis
+name: Amphis
+slot: melee
+class: staff
+# see notes: melee_placeholder_intake
+form: neutral
+default_form: true
+transform_group: amphis
+mod_pools: [melee, staff]
+mastery_rank: 5
+max_rank: 30
+
+accuracy: ~
+disposition: 1.5
+polarities: [naramon]
+stance_polarity: madurai
+introduced: "Update 6.5"
+internal_name: /Lotus/Weapons/Tenno/Melee/Staff/GrnStaff
+
+ammo_max: ~
+
+combo_duration_seconds: 5.0
+
+co_behavior: additive_with_base_damage
+
+unmodeled:
+  - "one attack input's own animation length is not published anywhere: the wiki gives a combo's total duration at 1.0x attack speed and one entry per input, so the combo's DURATION is exact and the split between its INPUTS is even. It moves a status tick's start by fractions of a second inside a combo and moves no total"
+  - "Power Spike's partial combo decay is a Warframe passive and is not modelled: this counter drops to zero when its clock runs out, so a build running that passive keeps far more of it than this reports"
+  - reason: melee_placeholder
+
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 1.25
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.13
+  crit_multiplier: 1.7
+  status_chance: 0.21
+  punch_through_m: 0.0
+  range_m: 3.0
+  follow_through: 0.5
+  heavy: { multiplier: 5.0, windup_seconds: 0.1667 }
+  damage: { impact: 91, puncture: 19.5, slash: 19.5 }   # total 130
+  slam:
+    damage: { electricity: 130 }
+    radius_m: 6.0
+    blast_kind: slam
+    status_chance: 0.1
+    falloff_start_m: 0.0
+    falloff_reduction: 0.5
+    forced_procs: [impact]
+    takes_multishot: false
+
+source:
+  url: https://wiki.warframe.com/w/Amphis

@@ -1,0 +1,41 @@
+id: dual_ichor_heavy
+name: Dual Ichor
+# see notes: melee_placeholder_intake
+inherits: dual_ichor
+form: heavy
+transform_group: dual_ichor
+co_behavior: additive_with_base_damage
+unmodeled:
+  - reason: melee_placeholder
+  - reason: melee_incarnon_unmodelled
+  - reason: heavy_charge_share_assumed
+    published: 0.7
+    charge: 0.2333
+    swing: 0.4667
+  - reason: melee_heavy_total_disputed
+    infobox: 4
+    table: 5
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 1.08
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.25
+  crit_multiplier: 3.0
+  status_chance: 0.15
+  punch_through_m: 0.0
+  range_m: 2.3
+  follow_through: 0.5
+  heavy: { multiplier: 4.0, windup_seconds: 0.2333 }
+  spends_combo: true
+  damage: { impact: 19, puncture: 11, slash: 45, toxin: 47 }   # total 122
+  # see notes: combo_points_from_multiplier
+  combo_script:
+    - { multiplier: 2.0, hits: 2, windup_seconds: 0.2333, delay_seconds: 0.4667, forced_procs: [knockdown], combo_points: 0, combo_points_base: 0 }
+    - { multiplier: 2.0, hits: 2, windup_seconds: 0.2333, delay_seconds: 0.4667, forced_procs: [knockdown], combo_points: 0, combo_points_base: 0 }
+
+source:
+  url: https://wiki.warframe.com/w/Dual_Ichor

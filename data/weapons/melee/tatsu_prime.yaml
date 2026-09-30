@@ -1,0 +1,64 @@
+id: tatsu_prime
+name: Tatsu Prime
+slot: melee
+class: two_handed_nikana
+# see notes: melee_placeholder_intake
+form: neutral
+default_form: true
+transform_group: tatsu_prime
+mod_pools: [melee, two_handed_nikana]
+mastery_rank: 14
+max_rank: 30
+
+accuracy: ~
+riven_family: Tatsu
+disposition: 0.9
+polarities: [madurai, madurai]
+stance_polarity: madurai
+introduced: "Update 32.0.9"
+internal_name: /Lotus/Weapons/Tenno/Melee/Swords/PrimeTatsu/PrimeTatsuWeapon
+
+ammo_max: ~
+
+combo_duration_seconds: 5.0
+
+co_behavior: additive_with_base_damage
+
+unmodeled:
+  - "one attack input's own animation length is not published anywhere: the wiki gives a combo's total duration at 1.0x attack speed and one entry per input, so the combo's DURATION is exact and the split between its INPUTS is even. It moves a status tick's start by fractions of a second inside a combo and moves no total"
+  - "Power Spike's partial combo decay is a Warframe passive and is not modelled: this counter drops to zero when its clock runs out, so a build running that passive keeps far more of it than this reports"
+  - reason: melee_placeholder
+  - reason: melee_attack_unmodelled
+    attacks: "Soul Swarm Projectile"
+  - reason: melee_own_combo_unmodelled
+    combos: "slide attack"
+  - reason: melee_slide_unpublished
+
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 1.17
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.22
+  crit_multiplier: 2.4
+  status_chance: 0.3
+  punch_through_m: 0.0
+  range_m: 3.0
+  follow_through: 0.7
+  heavy: { multiplier: 6.0, windup_seconds: 0.2333 }
+  damage: { impact: 20, puncture: 54, slash: 76, radiation: 80 }   # total 230
+  slam:
+    damage: { impact: 230 }
+    radius_m: 7.0
+    blast_kind: slam
+    status_chance: 0.1
+    falloff_start_m: 0.0
+    falloff_reduction: 0.5
+    forced_procs: [impact]
+    takes_multishot: false
+
+source:
+  url: https://wiki.warframe.com/w/Tatsu_Prime

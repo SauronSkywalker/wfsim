@@ -1,0 +1,58 @@
+id: sibear
+name: Sibear
+slot: melee
+class: hammer
+# see notes: melee_placeholder_intake
+form: neutral
+default_form: true
+transform_group: sibear
+mod_pools: [melee, hammer]
+mastery_rank: 6
+max_rank: 30
+
+accuracy: ~
+disposition: 1.35
+polarities: [vazarin]
+stance_polarity: madurai
+introduced: "Update 18.8"
+internal_name: /Lotus/Weapons/Tenno/Melee/Hammer/IceHammer/IceHammer
+
+ammo_max: ~
+
+combo_duration_seconds: 5.0
+
+co_behavior: additive_with_base_damage
+
+unmodeled:
+  - "one attack input's own animation length is not published anywhere: the wiki gives a combo's total duration at 1.0x attack speed and one entry per input, so the combo's DURATION is exact and the split between its INPUTS is even. It moves a status tick's start by fractions of a second inside a combo and moves no total"
+  - "Power Spike's partial combo decay is a Warframe passive and is not modelled: this counter drops to zero when its clock runs out, so a build running that passive keeps far more of it than this reports"
+  - reason: melee_placeholder
+  - reason: melee_incarnon_unmodelled
+
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 1.0
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.15
+  crit_multiplier: 2.0
+  status_chance: 0.3
+  punch_through_m: 0.0
+  range_m: 2.6
+  follow_through: 0.4
+  heavy: { multiplier: 6.0, windup_seconds: 0.4 }
+  damage: { impact: 70, puncture: 20, slash: 50, cold: 130 }   # total 270
+  slam:
+    damage: { cold: 270 }
+    radius_m: 9.0
+    blast_kind: slam
+    falloff_start_m: 0.0
+    falloff_reduction: 0.5
+    forced_procs: []
+    takes_multishot: false
+
+source:
+  url: https://wiki.warframe.com/w/Sibear

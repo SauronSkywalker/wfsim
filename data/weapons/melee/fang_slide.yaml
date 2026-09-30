@@ -1,0 +1,32 @@
+id: fang_slide
+name: Fang
+# see notes: melee_placeholder_intake
+inherits: fang
+form: slide
+transform_group: fang
+co_behavior: additive_with_base_damage
+unmodeled:
+  - reason: melee_placeholder
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 0.917
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.08
+  crit_multiplier: 1.5
+  status_chance: 0.16
+  punch_through_m: 0.0
+  range_m: 1.65
+  # see notes: slide_ignores_follow_through
+  follow_through: 1.0
+  heavy: { multiplier: 2.0, windup_seconds: 0.1667 }
+  damage: { impact: 16.2, puncture: 75.6, slash: 16.2 }   # total 108
+  # see notes: combo_points_from_multiplier
+  combo_script:
+    - { multiplier: 2.0, delay_seconds: 0.67, all_around: true, forced_procs: [impact], combo_points: 2, combo_points_base: 2 }
+
+source:
+  url: https://wiki.warframe.com/w/Fang

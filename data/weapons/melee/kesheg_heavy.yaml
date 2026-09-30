@@ -1,0 +1,37 @@
+id: kesheg_heavy
+name: Kesheg
+# see notes: melee_placeholder_intake
+inherits: kesheg
+form: heavy
+transform_group: kesheg
+co_behavior: additive_with_base_damage
+unmodeled:
+  - reason: melee_placeholder
+  - reason: heavy_charge_share_assumed
+    published: 0.9
+    charge: 0.3
+    swing: 0.6
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 0.833
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.19
+  crit_multiplier: 2.5
+  status_chance: 0.23
+  punch_through_m: 0.0
+  range_m: 2.9
+  follow_through: 0.6
+  heavy: { multiplier: 6.0, windup_seconds: 0.3 }
+  spends_combo: true
+  damage: { impact: 96.4, puncture: 24.1, slash: 120.5 }   # total 241
+  # see notes: combo_points_from_multiplier
+  combo_script:
+    - { multiplier: 6.0, windup_seconds: 0.3, delay_seconds: 0.6, forced_procs: [knockdown], combo_points: 0, combo_points_base: 0 }
+    - { multiplier: 6.0, windup_seconds: 0.3, delay_seconds: 0.6, forced_procs: [knockdown], combo_points: 0, combo_points_base: 0 }
+
+source:
+  url: https://wiki.warframe.com/w/Kesheg

@@ -1,0 +1,64 @@
+id: quassus
+name: Quassus
+slot: melee
+class: warfan
+# see notes: melee_placeholder_intake
+form: neutral
+default_form: true
+transform_group: quassus
+mod_pools: [melee, warfan]
+mastery_rank: 8
+max_rank: 30
+
+accuracy: ~
+riven_family: Quassus
+disposition: 1.15
+polarities: []
+stance_polarity: naramon
+introduced: "Update 29"
+internal_name: /Lotus/Weapons/Tenno/Melee/Warfan/TnBrokenFrameWarfan/TnBrokenFrameWarfanWeapon
+
+ammo_max: ~
+
+combo_duration_seconds: 5.0
+
+co_behavior: additive_with_base_damage
+
+unmodeled:
+  - "one attack input's own animation length is not published anywhere: the wiki gives a combo's total duration at 1.0x attack speed and one entry per input, so the combo's DURATION is exact and the split between its INPUTS is even. It moves a status tick's start by fractions of a second inside a combo and moves no total"
+  - "Power Spike's partial combo decay is a Warframe passive and is not modelled: this counter drops to zero when its clock runs out, so a build running that passive keeps far more of it than this reports"
+  - reason: melee_placeholder
+  - reason: melee_attack_unmodelled
+    attacks: "First Heavy Attack - Ethereal Daggers and Second Heavy Attack - Ethereal Daggers"
+  - reason: melee_own_combo_unmodelled
+    combos: "heavy attack"
+  - reason: melee_slide_unpublished
+
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 0.833
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.3
+  crit_multiplier: 2.0
+  status_chance: 0.12
+  punch_through_m: 0.0
+  range_m: 1.7
+  follow_through: 0.7
+  heavy: { multiplier: 4.0, windup_seconds: 0.1667 }
+  damage: { impact: 27.6, puncture: 46, slash: 156.4 }   # total 230
+  slam:
+    damage: { impact: 230 }
+    radius_m: 5.0
+    blast_kind: slam
+    status_chance: 0.1
+    falloff_start_m: 0.0
+    falloff_reduction: 0.5
+    forced_procs: [impact]
+    takes_multishot: false
+
+source:
+  url: https://wiki.warframe.com/w/Quassus

@@ -426,6 +426,45 @@ the explosion's rolled statuses. What is left:
 - **Edges, not gaps**: Sprint Speed, Parkour Velocity, Swordsman's Celerity and
   the held 5% Movement Speed (`no_movement`), Standoff (`no_holster`).
 
+## THE MELEE PLACEHOLDERS — every melee weapon, most of them unaudited
+
+Every non-Exalted melee weapon in `Module:Weapons/data/melee` is in the roster,
+and all but six (Magistar, Sancti Magistar, Okina, Okina Prime, Praedos, Valkyr
+Talons) are PLACEHOLDERS: generated from the wiki's two modules and not yet
+checked against their own pages (docs/MELEE.md §9 says how). Every form of one
+carries `reason: melee_placeholder`, and the gaps the modules themselves show
+carry a reason of their own:
+
+| gap | reason | on |
+| --- | --- | --- |
+| an attack beyond swing, slam and heavy slam — a throw, a shot, a projectile, a pool | `melee_attack_unmodelled` (names them) | the weapon |
+| a glaive's heavy (the throw) and a gunblade's (the shot): no heavy mode | `glaive_heavy_is_a_throw`, `gunblade_heavy_is_a_shot` | every glaive and gunblade |
+| no heavy or no slide figure/duration published: no such mode | `melee_heavy_unpublished`, `melee_slide_unpublished` | Amanata's heavy; the slide of War, War Prime and every Blade and Whip, Fist, Scythe, Heavy Scythe, Sword and Shield, Two-Handed Nikana and Warfan — the class's slide block has no `Duration` |
+| combos the stance module gives the WEAPON itself | `melee_own_combo_unmodelled` | Korumm, Syam, Zenistar, … |
+| infobox heavy total against the class table's | `melee_heavy_total_disputed` | where the two differ |
+| Incarnon Genesis / Form | `melee_incarnon_unmodelled` | the Incarnon melee |
+| the Kuva / Tenet / Coda valence bonus | `melee_valence_unmodelled` | the adversary melee |
+
+**Left out, not placeholdered.** The **Vinquibus**'s melee row is the bayonet of
+the primary already in the roster (same `internal_name`); the **Dark
+Split-Sword**'s Dual Swords half is declared on its Heavy Blade entry; **Zaws**
+are modular and out by class like the rest of `Module:Weapons/data/modular`;
+**Harrowing Spire**, the Bayonet stance, therefore has no weapon to sit on.
+
+**The stances.** Every PvE stance card is in, transcribed from
+`Module:Stances/data` (`notes: stance_from_the_module`). Two combos have no
+published duration and are left off their card — Gleaming Talon's block combo
+and Wise Razor's — so that mode is refused under that card
+(`STANCE_LACKS_COMBO`). Gunblade and glaive rows the module marks `Ranged` are
+played as swings (`notes: stance_ranged_rows`). **Clashing Forest** is not in
+DE's export, so its Chinese name is EMPTY — the CN wiki was unreachable — and
+its art is the wiki's.
+
+**Mods the new pools expose and nobody has transcribed**: eleven glaive throw
+cards, Covert Lethality, Boreal's Contempt and Nira's Contempt
+(`data/surveys/pool_mods.yaml`). Melee WEAPON augments (Blade of Truth, Justice
+Blades, …) are not surveyed at all: `survey_weapon_mods.py` reads gun types only.
+
 ## Open decisions, not missing machinery
 
 These are things the engine COULD do today and deliberately does not, because

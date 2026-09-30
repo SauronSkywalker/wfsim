@@ -1,0 +1,31 @@
+id: hespar_forward
+name: Hespar
+# see notes: melee_placeholder_intake
+inherits: hespar
+form: forward
+transform_group: hespar
+co_behavior: additive_with_base_damage
+unmodeled:
+  - "one attack input's own animation length is not published anywhere: the wiki gives a combo's total duration at 1.0x attack speed and one entry per input, so the combo's DURATION is exact and the split between its INPUTS is even. It moves a status tick's start by fractions of a second inside a combo and moves no total"
+  - "Power Spike's partial combo decay is a Warframe passive and is not modelled: this counter drops to zero when its clock runs out, so a build running that passive keeps far more of it than this reports"
+  - reason: melee_placeholder
+  - reason: melee_slide_unpublished
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 1.0
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.24
+  crit_multiplier: 2.2
+  status_chance: 0.28
+  punch_through_m: 0.0
+  range_m: 2.8
+  follow_through: 0.4
+  heavy: { multiplier: 18.0, windup_seconds: 0.3333 }
+  damage: { impact: 112, puncture: 33.6, slash: 134.4 }   # total 280
+
+source:
+  url: https://wiki.warframe.com/w/Hespar

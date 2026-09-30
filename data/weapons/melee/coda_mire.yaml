@@ -1,0 +1,61 @@
+id: coda_mire
+name: Coda Mire
+slot: melee
+class: sword
+# see notes: melee_placeholder_intake
+form: neutral
+default_form: true
+transform_group: coda_mire
+mod_pools: [melee, sword]
+mastery_rank: 17
+max_rank: 40
+
+accuracy: ~
+riven_family: Mire
+disposition: 0.75
+polarities: [vazarin]
+stance_polarity: madurai
+introduced: "Update 38.5"
+internal_name: /Lotus/Weapons/Infested/InfestedLich/Melee/CodaMire
+
+ammo_max: ~
+
+combo_duration_seconds: 5.0
+
+co_behavior: additive_with_base_damage
+
+unmodeled:
+  - "one attack input's own animation length is not published anywhere: the wiki gives a combo's total duration at 1.0x attack speed and one entry per input, so the combo's DURATION is exact and the split between its INPUTS is even. It moves a status tick's start by fractions of a second inside a combo and moves no total"
+  - "Power Spike's partial combo decay is a Warframe passive and is not modelled: this counter drops to zero when its clock runs out, so a build running that passive keeps far more of it than this reports"
+  - reason: melee_placeholder
+  - reason: melee_valence_unmodelled
+    family: Coda
+
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 1.083
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.18
+  crit_multiplier: 2.4
+  status_chance: 0.4
+  punch_through_m: 0.0
+  range_m: 2.7
+  follow_through: 0.6
+  heavy: { multiplier: 5.0, windup_seconds: 0.2 }
+  damage: { impact: 45, puncture: 45, slash: 66, toxin: 79 }   # total 235
+  slam:
+    damage: { toxin: 235 }
+    radius_m: 7.0
+    blast_kind: slam
+    status_chance: 0.31
+    falloff_start_m: 0.0
+    falloff_reduction: 0.5
+    forced_procs: [impact, toxin]
+    takes_multishot: false
+
+source:
+  url: https://wiki.warframe.com/w/Coda_Mire

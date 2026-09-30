@@ -1,0 +1,32 @@
+id: ohma_slide
+name: Ohma
+# see notes: melee_placeholder_intake
+inherits: ohma
+form: slide
+transform_group: ohma
+co_behavior: additive_with_base_damage
+unmodeled:
+  - reason: melee_placeholder
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 0.917
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.15
+  crit_multiplier: 2.0
+  status_chance: 0.3
+  punch_through_m: 0.0
+  range_m: 2.5
+  # see notes: slide_ignores_follow_through
+  follow_through: 1.0
+  heavy: { multiplier: 4.0, windup_seconds: 0.2333 }
+  damage: { impact: 76, slash: 38, electricity: 110 }   # total 224
+  # see notes: combo_points_from_multiplier
+  combo_script:
+    - { multiplier: 2.0, hits: 2, delay_seconds: 0.74, all_around: true, combo_points: 2, combo_points_base: 2 }
+
+source:
+  url: https://wiki.warframe.com/w/Ohma

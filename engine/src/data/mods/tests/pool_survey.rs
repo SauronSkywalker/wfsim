@@ -26,7 +26,12 @@ fn the_pool_mods_we_still_owe_only_goes_down() {
     // Pressure Point variant that carries neither marker. That is the
     // repo's `internal_name` rule made executable: joining by NAME is what
     // put a phantom +200% Pressure Point in front of the melee intake.
-    const OWED: usize = 18;
+    //
+    // RAISED 18 -> 32 BY THE MELEE PLACEHOLDER INTAKE, deliberately: every
+    // class got its pool, and fourteen class cards that were invisible before
+    // are owed now — eleven glaive throw cards, Covert Lethality, Boreal's
+    // Contempt and Nira's Contempt. The survey names each one.
+    const OWED: usize = 32;
     let text = crate::data::file("surveys/pool_mods.yaml")
         .expect("data/surveys/pool_mods.yaml — run scripts/survey_pool_mods.py");
     let mut total = 0usize;

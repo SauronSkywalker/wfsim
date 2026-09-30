@@ -13,7 +13,8 @@ and batch C (sniper) is part of it (Vectis).
 `python scripts/wiki_weapon_csv.py coverage` answers "what does the game have
 that we do not" from the wiki's own `Weapon Comparison/CSV` — 508 weapons in one
 fetch, joined on `internal_name`. It reports **nothing missing**: 355 held, 153
-out of scope by a documented decision (melee, modular, Amps, Railjack, Exalted).
+out of scope by a documented decision (modular, Amps, Railjack, Exalted) or held
+from another source (melee: docs/MELEE.md §9).
 
 The section below said the same thing by hand on 2026-08-20 and could not stay
 true on its own — a weapon DE ships tomorrow makes it wrong, silently. Read

@@ -1,0 +1,60 @@
+id: kestrel
+name: Kestrel
+slot: melee
+class: glaive
+# see notes: melee_placeholder_intake
+form: neutral
+default_form: true
+transform_group: kestrel
+mod_pools: [melee, glaive]
+mastery_rank: 0
+max_rank: 30
+
+accuracy: ~
+riven_family: Kestrel
+disposition: 1.45
+polarities: [madurai, naramon]
+stance_polarity: naramon
+introduced: "Update 8.1"
+internal_name: /Lotus/Weapons/Tenno/Melee/Glaives/Boomerang/BoomerangWeapon
+
+ammo_max: ~
+
+combo_duration_seconds: 5.0
+
+co_behavior: additive_with_base_damage
+
+unmodeled:
+  - "one attack input's own animation length is not published anywhere: the wiki gives a combo's total duration at 1.0x attack speed and one entry per input, so the combo's DURATION is exact and the split between its INPUTS is even. It moves a status tick's start by fractions of a second inside a combo and moves no total"
+  - "Power Spike's partial combo decay is a Warframe passive and is not modelled: this counter drops to zero when its clock runs out, so a build running that passive keeps far more of it than this reports"
+  - reason: melee_placeholder
+  - reason: melee_attack_unmodelled
+    attacks: "Throw, Throw Bounce Explosion, Throw Recall Explosion, Charged Throw, Charged Throw Bounce Explosion and Charged Throw Recall Explosion"
+  - reason: glaive_heavy_is_a_throw
+
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 1.08
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.1
+  crit_multiplier: 2.0
+  status_chance: 0.1
+  punch_through_m: 0.0
+  range_m: 1.2
+  follow_through: 0.7
+  damage: { impact: 58.8, puncture: 12.6, slash: 12.6 }   # total 84
+  slam:
+    damage: { magnetic: 84 }
+    radius_m: 5.0
+    blast_kind: slam
+    falloff_start_m: 0.0
+    falloff_reduction: 0.5
+    forced_procs: [impact]
+    takes_multishot: false
+
+source:
+  url: https://wiki.warframe.com/w/Kestrel

@@ -67,6 +67,36 @@ POOL_TAG = {
     # …AND A CLASS'S OWN MELEE CARD beside its stances (Amar's Contempt).
     ('STANCE', 'Dual Daggers'): 'dual_daggers',
     ('MELEE', 'Dual Daggers'): 'dual_daggers',
+    # EVERY OTHER CLASS, named as DE's `compatName` spells it — mostly plural.
+    ('STANCE', 'Assault Saw'): 'assault_saw',
+    ('STANCE', 'Blade And Whip'): 'blade_and_whip',
+    ('STANCE', 'Claws'): 'claws',
+    ('STANCE', 'Daggers'): 'dagger',
+    ('MELEE', 'Daggers'): 'dagger',
+    ('STANCE', 'Dual Nikanas'): 'dual_nikanas',
+    ('STANCE', 'Dual Swords'): 'dual_swords',
+    ('STANCE', 'Fists'): 'fist',
+    ('STANCE', 'Glaives'): 'glaive',
+    # The glaive's own cards, filed under the THROW they modify.
+    ('MELEE', 'Thrown Melee'): 'glaive',
+    ('STANCE', 'Gunblade'): 'gunblade',
+    ('STANCE', 'Heavy Blade'): 'heavy_blade',
+    ('STANCE', 'Heavy Scythe'): 'heavy_scythe',
+    ('STANCE', 'Machetes'): 'machete',
+    ('STANCE', 'Nikanas'): 'nikana',
+    ('STANCE', 'Nunchaku'): 'nunchaku',
+    ('STANCE', 'Polearms'): 'polearm',
+    ('MELEE', 'Polearms'): 'polearm',
+    ('STANCE', 'Rapiers'): 'rapier',
+    ('STANCE', 'Scythes'): 'scythe',
+    ('STANCE', 'Sparring'): 'sparring',
+    ('STANCE', 'Staves'): 'staff',
+    ('STANCE', 'Sword And Shield'): 'sword_and_shield',
+    ('STANCE', 'Swords'): 'sword',
+    ('STANCE', 'Two-Handed Nikana'): 'two_handed_nikana',
+    ('STANCE', 'Warfans'): 'warfan',
+    ('STANCE', 'Whips'): 'whip',
+    ('MELEE', 'Whips'): 'whip',
 }
 
 # A POOL NO EXPORT TAG CAN FILL, by declaration: the card in it is not an item.
@@ -158,6 +188,10 @@ def rule_out(uniq, name, carried_names):
     if uniq.endswith('WeaponMeleeDamageOnHeavyKillMod'):
         return ("an unreleased variant sharing a released card's display name — the wiki's "
                 "Pressure Point rank table is the bare path's, +120% at rank 5")
+    # A COMPANION'S POSTURE. DE files a Kubrow or Kavat stance under `Claws`,
+    # the same tag the Tenno claws' stances carry; it seats on the beast.
+    if '/Pets/' in uniq:
+        return "companion posture: a Kubrow or Kavat's stance under the shared `Claws` tag, seated on the beast"
     if '/PvPMods/' in uniq:
         return 'Conclave: a PvP-path mod the wiki mod tables leave tagged "Exclusive to PvP" (the PvE-legal ones are carried and pinned by name in the engine)'
     return None
@@ -264,9 +298,11 @@ def main():
         '#',
         '# Per pool (carried / in export, gap):',
     ]
-    for p in pools:
-        total, held, gap = tally[p]
-        lines.append('#   %-14s %3d / %3d, gap %d' % (p, held, total, gap))
+    # THREE A LINE: one a line ran past the twenty-line comment ceiling once
+    # every melee class had a pool.
+    cells = ['%-17s %3d/%3d gap %-2d' % ((p,) + tuple(tally[p][i] for i in (1, 0, 2))) for p in pools]
+    for i in range(0, len(cells), 3):
+        lines.append('#   ' + '  '.join(cells[i:i + 3]).rstrip())
     lines.append('mods:')
     for r in rows:
         lines.append('  - name: %s' % r['name'])

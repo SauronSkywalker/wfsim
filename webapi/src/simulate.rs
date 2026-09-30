@@ -271,10 +271,12 @@ pub(crate) fn sim_params(
         let panel = panel_of(single_form);
         // A GROUND COMBO IS PLAYED FROM A STANCE, and every reader of a fight
         // resolves here — so the refusal is one decision, not three.
-        if wfsim_engine::data::weapons::combo_needs_a_stance(&info.id, panel.form)
-            && !refs.iter().any(|m| m.stance.is_some())
-        {
-            return Err(err_json(wfsim_engine::data::weapons::STANCELESS_COMBO));
+        if wfsim_engine::data::weapons::combo_needs_a_stance(&info.id, panel.form) {
+            use wfsim_engine::data::weapons::{stance_supplies, STANCELESS_COMBO, STANCE_LACKS_COMBO};
+            let seated = refs.iter().find_map(|m| m.stance);
+            if !stance_supplies(seated, panel.form) {
+                return Err(err_json(if seated.is_some() { STANCE_LACKS_COMBO } else { STANCELESS_COMBO }));
+            }
         }
         // A MELEE INCARNON IS THE SAME WEAPON RESOLVED TWICE, and the second
         // resolve is this one without the tiers that turn it on. It is not a

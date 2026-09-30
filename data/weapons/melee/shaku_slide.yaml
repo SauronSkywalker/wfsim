@@ -1,0 +1,32 @@
+id: shaku_slide
+name: Shaku
+# see notes: melee_placeholder_intake
+inherits: shaku
+form: slide
+transform_group: shaku
+co_behavior: additive_with_base_damage
+unmodeled:
+  - reason: melee_placeholder
+attack:
+  # see notes: swing_trigger_pull_engine
+  trigger: melee
+  shot_type: hit_scan
+  fire_rate: 1.17
+  multishot: 1.0
+  ammo_cost: 0
+  no_magazine: true
+  crit_chance: 0.18
+  crit_multiplier: 2.0
+  status_chance: 0.34
+  punch_through_m: 0.0
+  range_m: 2.21
+  # see notes: slide_ignores_follow_through
+  follow_through: 1.0
+  heavy: { multiplier: 5.0, windup_seconds: 0.1667 }
+  damage: { impact: 180 }   # total 180
+  # see notes: combo_points_from_multiplier
+  combo_script:
+    - { multiplier: 2.0, hits: 3, delay_seconds: 1.05, all_around: true, forced_procs: [impact], combo_points: 2, combo_points_base: 2 }
+
+source:
+  url: https://wiki.warframe.com/w/Shaku
