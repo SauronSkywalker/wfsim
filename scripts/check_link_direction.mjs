@@ -32,7 +32,9 @@ const r = await evaluate(`(async () => {
     .map(c => ({ name: c.dataset.name, by: (c.querySelector('.pby') || {}).title || '' }));
   const listed = chips();
   // CHOOSING ON THE FRAME'S OWN PAGE: the second preset.
-  const two = document.querySelector('#preset-bar-warframes .pchip[data-name="preset 2"]'); two.click(); await sleep(1200);
+  // A CHIP IS KNOWN BY ITS ENTRY'S ID; this one is the entry called "preset 2".
+  const twoSel = () => '#preset-bar-warframes .pchip[data-name="' + (wfBarCfg().load().find((p) => p.name === 'preset 2') || {}).id + '"]';
+  const two = document.querySelector(twoSel()); two.click(); await sleep(1200);
   const chosen = { active: wfActive };
 
   history.pushState({}, '', '/weapons/Praedos'); route(); await sleep(3500);
@@ -43,8 +45,8 @@ const r = await evaluate(`(async () => {
 })()`);
 console.log(JSON.stringify(r, null, 1));
 const by = (n) => (r.listed.find((c) => c.name === n) || {}).by || "";
-check("each preset says who links it", by("preset 1").includes(r.names.praedos) && by("preset 2").includes(r.names.braton), JSON.stringify(r.listed));
-check("choosing one on the frame's own page is only that page's", r.chosen.active === "preset 2");
+check("each preset says who links it", by("p1").includes(r.names.praedos) && by("p2").includes(r.names.braton), JSON.stringify(r.listed));
+check("choosing one on the frame's own page is only that page's", r.chosen.active === "p2");
 check("...and it moved neither weapon's link",
   r.praedos.shown === "p1" && r.braton.shown === "p2", JSON.stringify([r.praedos, r.braton]));
 // A PRESET THAT IS LINKED IS DELETED ON THE SECOND CLICK, and every link to it
@@ -52,7 +54,8 @@ check("...and it moved neither weapon's link",
 const d = await evaluate(`(async () => {
   const sleep = (ms) => new Promise(r => setTimeout(r, ms));
   history.pushState({}, '', '/warframes/Prototype'); route(); await sleep(3500);
-  document.querySelector('#preset-bar-warframes .pchip[data-name="preset 2"]').click(); await sleep(800);
+  const twoSel = () => '#preset-bar-warframes .pchip[data-name="' + (wfBarCfg().load().find((p) => p.name === 'preset 2') || {}).id + '"]';
+  document.querySelector(twoSel()).click(); await sleep(800);
   const del = () => document.querySelector('#preset-bar-warframes .pchip.sel .pop.del');
   del().click(); await sleep(400);
   const armed = { text: del().textContent, kept: presetListWithIds(WF_BUILDS, 'prototype').length };
