@@ -574,6 +574,25 @@ nobody checked — which is worse than the honest block this has now, because it
 would read as measured. Recorded here so the question survives (see also
 docs/MEASUREMENTS.md when it is answered).
 
+### A buff one form of a cycle has alone — OPEN, and it wants a MEASUREMENT (Onos)
+
+An Incarnon CYCLE shares one stack count per stacking buff between its two
+forms, and each form converts the stacks at its own rate. A buff only ONE form
+has breaks that: a base-form-only evolution's (Onos's Sequential Skullbuster,
+`base_form_only: true`) is in the base form and not in the Incarnon one.
+
+**Today it pays nothing in the cycle** (`with_cycle_buffs_aligned`, asserted by
+`a_buff_one_form_of_a_cycle_has_alone_pays_nothing_and_breaks_nothing`). In the
+base mode it pays in full; the cycle's number is the cycle without it. It is the
+only such buff in the data, and every weapon whose two forms list the same
+buffs — all of the others — is untouched by the rule.
+
+What would make it right is two facts nobody has measured: whether its stacks
+are earned while the weapon is in the OTHER form, and whether they survive the
+transform. Guessing either would be a precision nobody checked, and the stacks
+are counted in the per-shot loop, so the answer also decides where the form is
+read there.
+
 ### The 99-stack Mounting Momentum edge
 
 Reaching the cap needs a magazine that never empties, which is a firing pattern

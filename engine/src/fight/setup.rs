@@ -1502,6 +1502,7 @@ impl FightParams {
             }),
             ..Self::from_panel(armed, arena, arcane)
         }
+        .with_cycle_buffs_aligned()
     }
 
     /// The REAL Incarnon cycle engagement from both forms' resolved panels. It
@@ -1568,6 +1569,29 @@ impl FightParams {
             }),
             ..Self::from_panel(incarnon, arena, arcane)
         }
+        .with_cycle_buffs_aligned()
+    }
+
+    /// ONE LIST OF STACKING BUFFS FOR BOTH FORMS OF A CYCLE. The stacks are
+    /// shared — one buff, one count across the engagement — and indexed by
+    /// THIS form's list, so the other form's list is laid out on it: the same
+    /// buff where both have it (its own per-stack value), worth nothing a stack
+    /// where only this form has it. A buff only the OTHER form has — a
+    /// base-form-only evolution's, Onos's Sequential Skullbuster — has no stack
+    /// in the cycle and pays nothing there (docs/UNMODELLED.md §"A buff one
+    /// form of a cycle has alone"); it indexed past the shared stacks before.
+    /// Two lists that already agree come out as they went in.
+    fn with_cycle_buffs_aligned(mut self) -> Self {
+        let outer = self.stacking_buffs.clone();
+        if let Some(c) = self.cycle.as_mut() {
+            let form = &c.base_form.stacking_buffs;
+            c.base_form.stacking_buffs = outer
+                .iter()
+                .map(|o| form.iter().find(|b| b.id == o.id).copied()
+                    .unwrap_or(crate::model::StackingBuff { per_stack: 0.0, ..*o }))
+                .collect();
+        }
+        self
     }
 
     /// The EXTRA HIT bracket of this form's BASE ATTACK:
