@@ -2,7 +2,7 @@ id: zenistar
 name: Zenistar
 slot: melee
 class: heavy_blade
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 form: neutral
 default_form: true
 transform_group: zenistar
@@ -10,6 +10,8 @@ mod_pools: [melee, heavy_blade]
 mastery_rank: 6
 max_rank: 30
 
+# THE HEAVY ATTACK IS THE DISC, not a swing (page, ==Mechanics==), so there is
+# no heavy form; the module's `HeavyAttack` 1788 is the class's 6x, not this.
 accuracy: ~
 disposition: 1.15
 polarities: [madurai]
@@ -26,11 +28,10 @@ co_behavior: additive_with_base_damage
 unmodeled:
   - "one attack input's own animation length is not published anywhere: the wiki gives a combo's total duration at 1.0x attack speed and one entry per input, so the combo's DURATION is exact and the split between its INPUTS is even. It moves a status tick's start by fractions of a second inside a combo and moves no total"
   - "Power Spike's partial combo decay is a Warframe passive and is not modelled: this counter drops to zero when its clock runs out, so a build running that passive keeps far more of it than this reports"
-  - reason: melee_placeholder
   - reason: melee_attack_unmodelled
-    attacks: "Attacks While Disc Deployed, Disc Impact, Disc Explosion and Disc Aura"
-  - reason: melee_own_combo_unmodelled
-    combos: "heavy attack"
+    attacks: "Attacks While Disc Deployed"
+  - reason: melee_heavy_is_special
+    what: "a thrown disc: 75 Impact on contact, a 350 Heat burst, then a 4 m aura of 50 Heat every 0.8 s for 10 s, longer with the combo multiplier"
 
 attack:
   # see notes: swing_trigger_pull_engine
@@ -46,7 +47,6 @@ attack:
   punch_through_m: 0.0
   range_m: 2.6
   follow_through: 0.6
-  heavy: { multiplier: 6.0, windup_seconds: 0.3667 }
   damage: { impact: 80, slash: 68, heat: 150 }   # total 298
   slam:
     damage: { impact: 298 }

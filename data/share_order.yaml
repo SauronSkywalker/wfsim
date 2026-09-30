@@ -7,8 +7,8 @@
 #
 # Never edit by hand: run the generator, which only ever appends.
 #
-digest: 812e70b2f7e8eed0
-count: 3408
+digest: b4fa19defafe8334
+count: 3407
 ids:
   - acceltra
   - acceltra_prime
@@ -3365,7 +3365,6 @@ ids:
   - zenistar_block
   - zenistar_block_forward
   - zenistar_forward
-  - zenistar_heavy
   - zenistar_heavy_slam
   - zenistar_slide
   - astral_twilight

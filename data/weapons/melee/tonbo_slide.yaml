@@ -1,12 +1,10 @@
 id: tonbo_slide
 name: Tonbo
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: tonbo
 form: slide
 transform_group: tonbo
 co_behavior: additive_with_base_damage
-unmodeled:
-  - reason: melee_placeholder
 attack:
   # see notes: swing_trigger_pull_engine
   trigger: melee

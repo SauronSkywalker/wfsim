@@ -1,12 +1,11 @@
 id: war_prime_heavy
 name: War Prime
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: war_prime
 form: heavy
 transform_group: war_prime
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_slide_unpublished
   - reason: heavy_charge_share_assumed
     published: 1.1
@@ -24,6 +23,9 @@ attack:
   crit_multiplier: 3.2
   status_chance: 0.32
   punch_through_m: 0.0
+  # "Every hit on enemies that are not ragdolled procs an Impact status
+  # effect" (page); a ragdolled body is not told apart here.
+  forced_procs: [impact]
   range_m: 3.2
   follow_through: 0.6
   heavy: { multiplier: 6.0, windup_seconds: 0.3667 }

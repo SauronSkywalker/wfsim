@@ -2,7 +2,7 @@ id: xoris
 name: Xoris
 slot: melee
 class: glaive
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 form: neutral
 default_form: true
 transform_group: xoris
@@ -19,15 +19,15 @@ internal_name: /Lotus/Weapons/Corpus/Melee/Glaive/CrpGhostCatcherGlaive/CrpGhost
 
 ammo_max: ~
 
-# the module states no combo duration; five seconds is the wiki's default
-combo_duration_seconds: 5.0
+# INFINITE, the page's own characteristic: "Infinite combo duration" —
+# the counter never times out, and heavy attacks still spend it.
+combo_duration_seconds: .inf
 
 co_behavior: additive_with_base_damage
 
 unmodeled:
   - "one attack input's own animation length is not published anywhere: the wiki gives a combo's total duration at 1.0x attack speed and one entry per input, so the combo's DURATION is exact and the split between its INPUTS is even. It moves a status tick's start by fractions of a second inside a combo and moves no total"
   - "Power Spike's partial combo decay is a Warframe passive and is not modelled: this counter drops to zero when its clock runs out, so a build running that passive keeps far more of it than this reports"
-  - reason: melee_placeholder
   - reason: melee_attack_unmodelled
     attacks: "Throw, Throw Bounce Explosion, Throw Recall Explosion, Charged Throw, Charged Throw Bounce Explosion and Charged Throw Recall Explosion"
   - reason: glaive_heavy_is_a_throw

@@ -1,12 +1,11 @@
 id: tonkkatt_heavy
 name: Tonkkatt
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: tonkkatt
 form: heavy
 transform_group: tonkkatt
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: heavy_charge_share_assumed
     published: 0.7
     charge: 0.2333
@@ -14,6 +13,8 @@ unmodeled:
   - reason: melee_heavy_total_disputed
     infobox: 4
     table: 5
+  - reason: melee_passive_unmodelled
+    passive: "raising the combo multiplier grants +4% Heat for 15 s, up to 30 stacks, refreshed by each new stack"
 attack:
   # see notes: swing_trigger_pull_engine
   trigger: melee

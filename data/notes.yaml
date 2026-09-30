@@ -336,7 +336,11 @@ notes:
   melee_placeholder_intake: |
     A PLACEHOLDER ENTRY, generated from two wiki modules and nothing else —
     its own page is not read yet, and `reason: melee_placeholder` says so on
-    every form. docs/MELEE.md §9 is the rule; in short:
+    every form. docs/MELEE.md §9 is the rule; its numbers are built as
+    `notes: melee_from_the_modules` says.
+  melee_from_the_modules: |
+    A MELEE ENTRY'S NUMBERS FROM THE TWO WIKI MODULES, where its own page states
+    nothing else (docs/MELEE.md §9):
     - the swing, reach, follow through, polarities, disposition and combo
       clock are `Module:Weapons/data/melee`'s infobox fields;
     - the four ground combos carry NO script: a stance supplies it, and an

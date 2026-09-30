@@ -1,12 +1,11 @@
 id: xoris_slide
 name: Xoris
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: xoris
 form: slide
 transform_group: xoris
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_attack_unmodelled
     attacks: "Throw, Throw Bounce Explosion, Throw Recall Explosion, Charged Throw, Charged Throw Bounce Explosion and Charged Throw Recall Explosion"
   - reason: glaive_heavy_is_a_throw

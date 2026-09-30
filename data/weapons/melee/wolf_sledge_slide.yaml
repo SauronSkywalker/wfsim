@@ -1,12 +1,11 @@
 id: wolf_sledge_slide
 name: Wolf Sledge
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: wolf_sledge
 form: slide
 transform_group: wolf_sledge
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_attack_unmodelled
     attacks: "Throw, Throw Bounce Explosion and Throw Recall Explosion"
 attack:

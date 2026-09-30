@@ -1,12 +1,11 @@
 id: verdilac_slide
 name: Verdilac
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: verdilac
 form: slide
 transform_group: verdilac
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_attack_unmodelled
     attacks: "Energy Wave and Energy Wave Explosion"
   - reason: melee_own_combo_unmodelled

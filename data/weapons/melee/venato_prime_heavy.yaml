@@ -1,17 +1,18 @@
 id: venato_prime_heavy
 name: Venato Prime
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: venato_prime
 form: heavy
 transform_group: venato_prime
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_slide_unpublished
   - reason: heavy_charge_share_assumed
     published: 1.0
     charge: 0.3333
     swing: 0.6667
+  - reason: melee_passive_unmodelled
+    passive: "a status it applies has a 100% chance to also apply Tau; wielded by Caliban, attacks have a 50% chance of an extra combo point"
 attack:
   # see notes: swing_trigger_pull_engine
   trigger: melee

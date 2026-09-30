@@ -1,12 +1,11 @@
 id: tenet_agendus_heavy
 name: Tenet Agendus
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: tenet_agendus
 form: heavy
 transform_group: tenet_agendus
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_attack_unmodelled
     attacks: "Energy Disk"
   - reason: melee_own_combo_unmodelled

@@ -2,7 +2,7 @@ id: tenet_exec
 name: Tenet Exec
 slot: melee
 class: heavy_blade
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 form: neutral
 default_form: true
 transform_group: tenet_exec
@@ -26,11 +26,12 @@ co_behavior: additive_with_base_damage
 unmodeled:
   - "one attack input's own animation length is not published anywhere: the wiki gives a combo's total duration at 1.0x attack speed and one entry per input, so the combo's DURATION is exact and the split between its INPUTS is even. It moves a status tick's start by fractions of a second inside a combo and moves no total"
   - "Power Spike's partial combo decay is a Warframe passive and is not modelled: this counter drops to zero when its clock runs out, so a build running that passive keeps far more of it than this reports"
-  - reason: melee_placeholder
   - reason: melee_own_combo_unmodelled
     combos: "heavy slam and slam attack"
   - reason: melee_valence_unmodelled
     family: Tenet
+  - reason: melee_passive_unmodelled
+    passive: "a slam's shockwave: three explosions 5 m apart in a line, and three such lines from a heavy slam"
 
 attack:
   # see notes: swing_trigger_pull_engine

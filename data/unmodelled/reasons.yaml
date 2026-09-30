@@ -154,6 +154,10 @@ reasons:
     text: "a glaive's heavy attack is a THROW, which is not modelled, so it has no heavy mode here and a Tennokai window converts nothing"
   gunblade_heavy_is_a_shot:
     text: "a gunblade's heavy attack FIRES, which is not modelled, so it has no heavy mode here and a Tennokai window converts nothing"
+  melee_heavy_is_special:
+    text: "this weapon's heavy attack is {what}, which is not modelled, so it has no heavy mode here and a Tennokai window converts nothing"
+  melee_passive_unmodelled:
+    text: "not modelled — {passive}"
   melee_heavy_unpublished:
     text: "the wiki publishes no heavy attack figure for this weapon, so it has no heavy mode here"
   melee_slide_unpublished:

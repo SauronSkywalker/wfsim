@@ -1,12 +1,11 @@
 id: tenet_exec_heavy
 name: Tenet Exec
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: tenet_exec
 form: heavy
 transform_group: tenet_exec
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_own_combo_unmodelled
     combos: "heavy slam and slam attack"
   - reason: melee_valence_unmodelled
@@ -15,6 +14,8 @@ unmodeled:
     published: 1.1
     charge: 0.3667
     swing: 0.7333
+  - reason: melee_passive_unmodelled
+    passive: "a slam's shockwave: three explosions 5 m apart in a line, and three such lines from a heavy slam"
 attack:
   # see notes: swing_trigger_pull_engine
   trigger: melee

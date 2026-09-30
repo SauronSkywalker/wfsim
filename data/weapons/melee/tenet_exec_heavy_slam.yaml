@@ -1,17 +1,18 @@
 id: tenet_exec_heavy_slam
 name: Tenet Exec
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: tenet_exec
 form: heavy_slam
 transform_group: tenet_exec
 co_behavior: additive_with_base_damage
 unmodeled:
   - "THE CLIMB IS NOT CHARGED: this loop takes the 150% radius a slam dropped from 15 m gets, and the seconds spent getting up there are free. A player who hops instead trades that radius back down towards the 2.5 m / listed radius floor, and this arena has no vertical axis to tell the two apart"
-  - reason: melee_placeholder
   - reason: melee_own_combo_unmodelled
     combos: "heavy slam and slam attack"
   - reason: melee_valence_unmodelled
     family: Tenet
+  - reason: melee_passive_unmodelled
+    passive: "a slam's shockwave: three explosions 5 m apart in a line, and three such lines from a heavy slam"
 attack:
   # see notes: swing_trigger_pull_engine
   trigger: melee

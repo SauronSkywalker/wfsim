@@ -1,12 +1,10 @@
 id: twin_krohkur_slide
 name: Twin Krohkur
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: twin_krohkur
 form: slide
 transform_group: twin_krohkur
 co_behavior: additive_with_base_damage
-unmodeled:
-  - reason: melee_placeholder
 attack:
   # see notes: swing_trigger_pull_engine
   trigger: melee

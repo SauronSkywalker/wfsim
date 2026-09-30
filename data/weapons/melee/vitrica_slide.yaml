@@ -1,12 +1,11 @@
 id: vitrica_slide
 name: Vitrica
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: vitrica
 form: slide
 transform_group: vitrica
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_attack_unmodelled
     attacks: "Glass Explosion"
   - reason: melee_own_combo_unmodelled
