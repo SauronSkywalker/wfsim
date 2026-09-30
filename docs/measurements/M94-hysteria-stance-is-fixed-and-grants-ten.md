@@ -21,7 +21,7 @@ the Exalted stance slot. The grant is the ordinary stance rule
 ### Where it is read
 
 `data/mods/valkyr_talons/hysteria.yaml` (Zenurik), `fixed_stance:` on
-`data/weapons/melee/valkyr_talons.yaml`, `board::builds::validate_with` (a build without
+`data/weapons/exalted/valkyr_talons.yaml`, `board::builds::validate_with` (a build without
 it is refused), and the builder's stance slot, which seats it and offers neither
 removal nor a polarity. `a_fixed_stance_is_required_and_grants_its_capacity`
 holds the 10.

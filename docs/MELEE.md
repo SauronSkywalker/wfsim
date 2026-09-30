@@ -733,7 +733,7 @@ vanish the moment a stance went in the slot.
 ## 7c. AN EXALTED WEAPON — Valkyr Talons
 
 An ability's weapon, and still a melee weapon: seven modes like any other, one
-entry per mode (`data/weapons/melee/valkyr_talons*.yaml`). Three things differ.
+entry per mode (`data/weapons/exalted/valkyr_talons*.yaml`). Three things differ.
 
 - **ITS DAMAGE IS THE ABILITY'S, AT 100% STRENGTH.** Hysteria's page puts the
   Strength icon on every swing, slide and slam number, and the module's are

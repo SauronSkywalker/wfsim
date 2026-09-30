@@ -1,0 +1,24 @@
+# THE EQUIPMENT SLOTS — where a thing is equipped, in the order the home page lists them.
+#
+# A weapon's `slot` names one of these; its `weapon_type` says what kind of
+# weapon it is, and the two differ only where the slot is not a type (a
+# sentinel weapon's own slot, an Exalted weapon). `name` is the game's own
+# English; the Chinese is transcribed in data/i18n/zh/ui.yaml.
+#
+# `de_category` is DE's Public Export `productCategory` for what the slot
+# holds — the official grouping this table follows. Two ids predate the
+# official names and stay because saved scenarios key their class rules on
+# them: `sentinel` is the Companion Weapon slot and `archgun` the Arch-Gun's.
+#
+# `holds` says which list fills the section: `weapon` is the weapon roster
+# filtered by `slot`; the others are their own rosters.
+slots:
+  - { id: warframe, name: Warframe, holds: warframe, de_category: [Suits] }
+  - { id: primary, name: Primary, holds: weapon, de_category: [LongGuns] }
+  - { id: secondary, name: Secondary, holds: weapon, de_category: [Pistols] }
+  - { id: melee, name: Melee, holds: weapon, de_category: [Melee] }
+  - { id: exalted, name: Exalted Weapon, holds: weapon, de_category: [SpecialItems] }
+  - { id: companion, name: Companion, holds: companion, de_category: [Sentinels, KubrowPets] }
+  - { id: sentinel, name: Companion Weapon, holds: weapon, de_category: [SentinelWeapons] }
+  - { id: archgun, name: Arch-Gun, holds: weapon, de_category: [SpaceGuns] }
+  - { id: operator, name: Operator, holds: operator, de_category: [] }

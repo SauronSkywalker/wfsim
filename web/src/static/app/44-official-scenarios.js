@@ -358,7 +358,7 @@ function applyWeaponInner(id, presetMods) {
   // pools rather than counting them: "primary + secondary", not "2 slots".
   $("arcane-sub").textContent = w.sentinel
     ? tr("sentinels cannot equip arcanes")
-    : (w.arcane_pools || []).map((p) => tr(SLOT_LABEL[p] || p)).join(" + ");
+    : (w.arcane_pools || []).map((p) => tr(ARC_POOL_LABEL[p] || p)).join(" + ");
   // The previous weapon's arcanes may not fit this one, slot by slot.
   arcanes = arcanesFor(w.id, arcanes);
   arcaneRanks = asArcaneList(arcaneRanks, arcanes.length).map((x) => x ?? null);

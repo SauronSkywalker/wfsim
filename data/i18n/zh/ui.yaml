@@ -359,7 +359,7 @@ ui:
   "what the fight hands this weapon — a squadmate's Roar, your own frame's, an arcane or a companion's precept — assumed up while ticked. WHEN an ability is cast is the action priority list's question and not this block's": 战斗给这把武器的加成——队友的战吼、你自己 Warframe 的技能、赋能或同伴的专属 MOD——勾选即视为一直生效。技能什么时候施放由行动优先级列表决定，不归这里管
   "critical damage added flat to the finished multiplier, after the mods and before the crit tier — the same +x on every weapon, so it is worth more the lower the weapon's own crit damage": 暴击伤害以固定值加到最终倍率上，在 MOD 之后、暴击等级之前——每把武器加的都是同样的倍数，所以武器自身暴伤越低它越值钱
   "Arcanes": 赋能
-  "Arch-Guns": 空战武器
+  "Arch-Guns": 曲翼枪械
   "Archwing": 空战
   Armor: 护甲
   "Atmosphere": 地面
@@ -714,7 +714,7 @@ ui:
   "Precision Strike and the launcher-exclusive Adhesive Blast are outside the pools this roster loads": "「Precision Strike」以及榴弹发射器专属的「Adhesive Blast」都不在本武器库载入的卡池里"
   "Presets": 预设
   "Primary Compression's 444% case is not modelled — the catalog gives this weapon a second effectiveness for aiming DURING the alt-fire, and this arena has no such state; the ordinary 100% is what is applied": 主武器压缩的 444% 情形尚未建模 —— 目录给这把武器额外写了一个「副射击蓄力期间瞄准」的效力值，而这个战场没有那种状态；这里应用的是常规的 100%
-  "Primary": 主武器
+  "Primary": 主要武器
   "Procs": 触发数量
   "Projectile Speed": 抛射物飞行速度
   "Punch Through": 穿透
@@ -766,7 +766,7 @@ ui:
   "Searches": 搜索方案
   "Search…": 搜索…
   "Second Pyrana Prime": 第二把食人鱼 Prime
-  "Secondary": 副武器
+  "Secondary": 次要武器
   "Search": 搜索
   "Select": "选择"
   "Self-Stagger Reduction": 自我击退减免
@@ -1138,8 +1138,10 @@ ui:
   "default": 默认
   # Primary / Secondary are already above — a class column reuses them rather
   # than growing a second spelling of the same word.
-  "Arch-Gun": 空战武器
-  "Companion": 守护武器
+  "Arch-Gun": 曲翼枪械
+  "Companion": 同伴
+  "Companion Weapon": 同伴武器
+  "Exalted Weapon": 显赫武器
   "empty": 空
   "{n} entries": "{n} 项"
   "baseline — the floor every board is scored on": 基准战甲 —— 所有榜单都按它计算
@@ -2296,9 +2298,9 @@ ui:
   "Cast them": 实际释放
   "cast them instead of assuming them: each is cast at the start and recast the moment it lapses, paying energy out of the Warframe's own pool, and a cast that roots the frame takes the shooting time with it. Off is what every board row was measured under": 真的去释放，而不是默认它一直在：开场释放一次，失效的瞬间再放一次，能量从战甲自己的能量池里扣；会定身的释放还会把射击时间一起拿走。不勾选时就是所有榜单行的测量口径。
   "early access — a cast time is one unmeasured second for every ability, and no energy regen is modelled, so a pool is a budget of casts": 早期功能 —— 每个技能的施放时间目前都是同一个未实测的 1 秒，且没有建模任何能量回复，所以能量池就是能放几次的预算
-  "Companions": 守护
-  "Companion builds": 守护配装
-  "Companion floor": 守护保底
+  "Companions": 同伴
+  "Companion builds": 同伴配装
+  "Companion floor": 同伴保底
   "Precept": 指令
   "seated": 已装在别的槽位
   "empty slot": 空槽位

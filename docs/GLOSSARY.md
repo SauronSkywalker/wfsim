@@ -16,6 +16,24 @@ term in code. Prefer the wiki's word unless it is ambiguous.
 
 ---
 
+## Slot, weapon type and class
+
+Three questions about a weapon, three fields, never one standing in for another:
+
+| field | answers | values |
+| --- | --- | --- |
+| `slot` | WHERE it is equipped — the arsenal slot, and what the home page and the board group by | `data/equipment_slots.yaml`, which follows DE's `productCategory` |
+| `weapon_type` | WHAT KIND of weapon it is — primary, secondary, melee, Arch-Gun | a closed enum, stated on every weapon |
+| `class` | which family inside the type — rifle, heavy blade, … | the wiki module's `Class` |
+
+`slot` and `weapon_type` agree on almost every weapon and are both stated. They
+differ where the slot is not a type: a companion weapon (`slot: sentinel`, the
+Companion Weapon slot) and an Exalted weapon (`slot: exalted`). A RULE — a
+stance, a melee combo, an arcane seat, an ammo pickup, a shard gate — reads
+`WeaponSpec::rules_slot`, which is the slot itself except on an Exalted weapon,
+where it is the weapon type. "type" alone is never a field name: `shot_type`,
+damage types and the wiki's own "Type" row (our `class`) all claim it.
+
 ## Status effect naming
 
 Official proc names are inconsistent across sources (the in-game UI, the

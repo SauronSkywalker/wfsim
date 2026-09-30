@@ -100,7 +100,7 @@ impl Board {
             base_max_rank: spec.max_rank,
             main: w::innate_slots(id).to_vec(),
             exilus: w::has_exilus_slot(id).then(|| w::exilus_polarity(id)),
-            grant: (spec.slot == "melee").then(|| GrantSlot {
+            grant: (spec.rules_slot() == "melee").then(|| GrantSlot {
                 innate: w::stance_polarity(id),
                 in_pool: false,
                 fixed: spec.fixed_stance.is_some(),

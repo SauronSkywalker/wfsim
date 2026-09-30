@@ -1023,9 +1023,10 @@ pub struct WeaponBase {
     /// rather than the class: Rifle Amp "also affects bows, sniper rifles
     /// and launchers", which is the `rifle` pool and not any one class.
     pub mod_pools: &'static [&'static str],
-    /// …AND THE EQUIPMENT SLOT, which is narrower than the class and wider than
-    /// a pool. It is the gate an ARCHON SHARD names: Crimson's "Primary Status
-    /// Chance" pays a bow and a shotgun alike.
+    /// …AND THE SLOT WHOSE RULES IT READS (`WeaponSpec::rules_slot`), which is
+    /// narrower than the class and wider than a pool. It is the gate an ARCHON
+    /// SHARD names: Crimson's "Primary Status Chance" pays a bow and a shotgun
+    /// alike. An Exalted weapon carries its type here, not `exalted`.
     pub slot: &'static str,
     /// Incarnon-form transformation economy. `Some` marks this form's
     /// magazine as CHARGE-BACKED (a fixed "Max Charges" resource fed by the

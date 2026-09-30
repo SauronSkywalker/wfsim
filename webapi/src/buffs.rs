@@ -486,7 +486,7 @@ pub(crate) fn enumerate_buffs(
     }
     // RAGE IS THE WIELDER'S, earned by a melee weapon: a card in whole percent
     // that opens the meter and, locked, holds it (`wfsim_engine::data::rage`).
-    let melee = wfsim_engine::data::weapons::spec(&info.id).is_some_and(|s| s.slot == "melee");
+    let melee = wfsim_engine::data::weapons::spec(&info.id).is_some_and(|s| s.rules_slot() == "melee");
     if let Some(s) = wfsim_engine::data::warframes::warframe(&tenno.id).and_then(|f| f.rage).filter(|_| melee) {
         push(BuffMeta {
             id: wfsim_engine::data::rage::BUFF_ID.into(),
@@ -576,7 +576,7 @@ pub(crate) fn enumerate_buffs(
     }
     // THE WIELDER'S ARCANES THAT ARM A BUFF ON THIS WEAPON (Arcane Fury) —
     // carded under the arcane's own name, by the id `resolve` hands the fight.
-    let slot = wfsim_engine::data::weapons::spec(&info.id).map_or("", |s| s.slot.as_str());
+    let slot = wfsim_engine::data::weapons::spec(&info.id).map_or("", |s| s.rules_slot());
     for w in tenno.weapon_buffs.iter().filter(|w| w.slot == slot) {
         if !locked(w.buff.grant.locked_stat()) && !out.iter().any(|x| x.id == w.buff.id) {
             out.push(BuffMeta {

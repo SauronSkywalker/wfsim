@@ -620,7 +620,7 @@ pub(crate) fn parse_fight(v: &Value) -> Result<Fight, Value> {
             augments: &seated,
         },
         wfsim_engine::data::weapons::spec(&info.id).map_or("", |s| s.class.as_str()),
-        wfsim_engine::data::weapons::spec(&info.id).map_or("", |s| s.slot.as_str()),
+        wfsim_engine::data::weapons::spec(&info.id).map_or("", |s| s.rules_slot()),
     );
     // …AND WHETHER THEY ARE CAST OR ASSUMED, WHICH IS THE ACTION LIST'S ANSWER.
     // An ability the list names is cast — energy out of the pool and, when it

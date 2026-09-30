@@ -197,6 +197,15 @@ pub(super) fn render_admissions(v: &mut serde_norway::Value, path: &str) {
 }
 
 impl WeaponSpec {
+    /// WHICH SLOT'S RULES THIS WEAPON READS — its own slot, except that an
+    /// EXALTED weapon reads its type's: Valkyr Talons swing, take a stance and
+    /// draw melee arcane buffs as a melee weapon does. `slot` itself is where
+    /// it is equipped, and only grouping reads that. Whether every such rule
+    /// really reaches an Exalted weapon in game is unmeasured, rule by rule.
+    pub fn rules_slot(&self) -> &str {
+        if self.slot == "exalted" { self.weapon_type.as_str() } else { &self.slot }
+    }
+
     /// Does entering this form cost a METER the fight has to fill?
     ///
     /// The one question `has_gauge_switched_form` and the sim's cycle both ask,

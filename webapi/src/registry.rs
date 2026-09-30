@@ -219,7 +219,7 @@ pub(crate) fn weapons() -> &'static [WeaponInfo] {
                     id: s.id.clone(),
                     name: s.name.clone(),
                     mod_pools: if s.mod_pools.is_empty() {
-                        vec![s.slot.clone()]
+                        vec![s.rules_slot().to_string()]
                     } else {
                         s.mod_pools.clone()
                     },

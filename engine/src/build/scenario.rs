@@ -111,7 +111,7 @@ impl Capability {
         // …AND ONE PLACE READS MELEE, for the same reason. A swing is not
         // aimed and cannot be put on a head, and both of those are the GAME's
         // rules rather than ours — see `absence`.
-        let melee = spec.slot == "melee";
+        let melee = spec.rules_slot() == "melee";
         match self {
             Capability::ChoosesAim => !companion && !melee,
             Capability::AimsAtHead => !companion && !melee,
@@ -120,7 +120,7 @@ impl Capability {
             // whether the game gives any way to refill it.
             Capability::HasReserve => spec.ammo_max.is_some_and(|a| a > 0.0),
             Capability::CanResupply => !spec.no_resupply,
-            Capability::CanQuickMelee => spec.slot == "melee",
+            Capability::CanQuickMelee => spec.rules_slot() == "melee",
         }
     }
 
@@ -143,7 +143,7 @@ impl Capability {
     /// losing the control, and a disabled box with a one-word tooltip reads as
     /// broken.
     pub fn why_absent(self, spec: &crate::data::weapons::WeaponSpec) -> &'static str {
-        let melee = spec.slot == "melee";
+        let melee = spec.rules_slot() == "melee";
         match self {
             Capability::ChoosesAim if melee => {
                 "a melee swing is not aimed down sights, so nothing gated on aiming pays here"
@@ -384,7 +384,7 @@ pub const WEAPON_CLASSES: &[&str] = &["primary", "secondary", "archgun", "sentin
 /// Which class's rules this weapon reads.
 pub fn class_of(weapon_id: &str) -> Option<&'static str> {
     let spec = crate::data::weapons::spec(weapon_id)?;
-    WEAPON_CLASSES.iter().copied().find(|c| *c == spec.slot)
+    WEAPON_CLASSES.iter().copied().find(|c| *c == spec.rules_slot())
 }
 
 /// What an axis is, for this weapon, under this scenario.
@@ -502,7 +502,7 @@ pub fn overridable_pairs() -> Vec<(&'static str, &'static str)> {
                 r.cap.absence() == Absence::HouseRule
                     && crate::data::weapons::all()
                         .iter()
-                        .any(|w| w.slot == *class && !r.cap.of(w))
+                        .any(|w| w.rules_slot() == *class && !r.cap.of(w))
             });
             if argues {
                 out.push((*class, a.id));

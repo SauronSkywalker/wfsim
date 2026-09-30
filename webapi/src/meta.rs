@@ -480,12 +480,12 @@ pub fn meta_json() -> Value {
                 // `board::builds::carries_wielder` is the same answer the
                 // board's door gives, read from one place.
                 "exalted": wfsim_engine::board::builds::carries_wielder(&w.id),
-                // The EQUIPMENT slot ("primary" / "secondary"), which is what
-                // the home grid groups by. `arcane_slot` happens to hold the
-                // same string today because a weapon draws its arcane from its
-                // own slot — but that is a coincidence of the arcane rule, not
-                // a name the UI should be reading for grouping.
+                // WHERE IT IS EQUIPPED (`data/equipment_slots.yaml`), which is
+                // what the home grid groups by, and WHAT KIND OF WEAPON IT IS
+                // beside it. They differ on a companion weapon and an Exalted
+                // one; the rules a weapon reads follow the type there.
                 "slot": w.slot,
+                "weapon_type": wfsim_engine::data::weapons::spec(&w.id).map(|s| s.weapon_type.as_str()),
                 "uses_arcane": w.uses_arcane,
                 // The POOLS, in slot order — the page draws one picker per
                 // entry and sends one arcane per entry.
@@ -853,6 +853,11 @@ pub fn meta_json() -> Value {
 
     json!({
         "weapons": weapons,
+        // THE EQUIPMENT SLOTS in home-page order, each with the roster that
+        // fills it — the page groups by this list and adds no slot of its own.
+        "equipment_slots": wfsim_engine::data::equipment_slots::all().iter()
+            .map(|e| json!({"id": e.id, "name": e.name, "holds": e.holds}))
+            .collect::<Vec<_>>(),
         // One pool per mod CLASS present in data/mods/ — a weapon's
         // `mod_class` (derived from its mod_eligibility) indexes into this.
         // Adding data/mods/rifle/ publishes a rifle pool with no code change.

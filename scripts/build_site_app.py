@@ -97,6 +97,11 @@ def past_the_scanner(do):
             time.sleep(0.2 * (attempt + 1))
 
 
+def equipment_slots() -> list[dict]:
+    """`data/equipment_slots.yaml`, in the order it declares."""
+    return yaml.safe_load((ROOT / "data" / "equipment_slots.yaml").read_text(encoding="utf-8"))["slots"]
+
+
 def roster() -> list[dict]:
     """The weapons that get a page: one per WEAPON, not per form.
 
@@ -1339,15 +1344,20 @@ def prerender(flagged: str) -> None:
     # THE ROUTER ALREADY SERVES IT: an unmatched path takes `on-home`, and the
     # home view IS the weapon grid, so the visitor lands on the list this page
     # describes. The block below is that grid in HTML, for whoever runs no JS.
+    # BY EQUIPMENT SLOT, in the order and under the names
+    # data/equipment_slots.yaml declares — the table the home grid reads too.
     by_slot: dict = {}
     for s in roster():
         by_slot.setdefault(s["slot"], []).append(s)
     grid = ""
-    for slot in sorted(by_slot):
+    for slot in equipment_slots():
+        ws = by_slot.get(slot["id"])
+        if slot["holds"] != "weapon" or not ws:
+            continue
         links = ", ".join(f'<a href="{wiki_path(s)}">{html_mod.escape(s["name"])}</a>'
-                          for s in by_slot[slot])
-        grid += (f"    <h2>{html_mod.escape(slot.title())} "
-                 f"({len(by_slot[slot])})</h2>\n    <p>{links}</p>\n")
+                          for s in ws)
+        grid += (f"    <h2>{html_mod.escape(slot['name'])} "
+                 f"({len(ws)})</h2>\n    <p>{links}</p>\n")
     wl_desc = (
         f"Every Warframe weapon WFSim models: {len(roster())} across "
         f"{len(by_slot)} slots. Each one can be built, simulated and optimized "

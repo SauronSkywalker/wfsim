@@ -21,6 +21,7 @@ pub mod boards;
 pub mod companions;
 pub mod buff_events;
 pub mod enemies;
+pub mod equipment_slots;
 pub mod evolutions;
 pub mod factions;
 pub mod i18n;

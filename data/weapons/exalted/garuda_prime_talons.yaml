@@ -1,6 +1,6 @@
 id: garuda_prime_talons
 name: Garuda Prime Talons
-slot: melee
+slot: exalted
 weapon_type: melee
 class: claws
 # see notes: melee_from_the_modules

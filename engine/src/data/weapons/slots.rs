@@ -16,7 +16,7 @@ pub fn arcane_pools(weapon: &str) -> Vec<&'static str> {
     if s.class.contains("sentinel") {
         return Vec::new();
     }
-    let own = match s.slot.as_str() {
+    let own = match s.rules_slot() {
         // "Archguns possess two Arcane Enhancement slots to equip one Primary
         // Arcane and one Secondary Arcane" (wiki, Arch-Gun).
         "archgun" => vec!["primary", "secondary"],
@@ -72,7 +72,7 @@ pub fn exilus_polarity(id: &str) -> Option<Polarity> {
 /// (`rules::capacity::plan_forma`).
 pub fn has_exilus_slot(id: &str) -> bool {
     let Some(s) = spec(id) else { return false };
-    !s.class.contains("sentinel") && matches!(s.slot.as_str(), "primary" | "secondary" | "melee")
+    !s.class.contains("sentinel") && matches!(s.rules_slot(), "primary" | "secondary" | "melee")
 }
 
 /// …AND THE STANCE SLOT'S, which is a capacity GRANT rather than a discount.
@@ -89,7 +89,7 @@ pub fn stance_polarity(id: &str) -> Option<Polarity> {
 pub fn combo_needs_a_stance(weapon: &str, form: crate::model::FormKind) -> bool {
     use crate::model::FormKind as F;
     let Some(w) = spec(weapon) else { return false };
-    w.slot == "melee"
+    w.rules_slot() == "melee"
         && w.fixed_stance.is_none()
         && matches!(form, F::Neutral | F::Forward | F::Block | F::BlockForward)
 }

@@ -399,7 +399,7 @@ pub fn base_panel_assembled(
         // LEAKED ONCE so the panel can answer "what is this" and "what does it
         // draw" without a lookup — the two questions the Amp auras ask.
         class: Box::leak(s.class.clone().into_boxed_str()),
-        slot: Box::leak(s.slot.clone().into_boxed_str()),
+        slot: Box::leak(s.rules_slot().to_string().into_boxed_str()),
         // Filled in by `apply_valence`; zero until then, and zero forever on a
         // weapon that never came out of a Lich.
         valence_bonus: 0.0,

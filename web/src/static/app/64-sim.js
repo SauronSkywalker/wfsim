@@ -315,7 +315,7 @@ function houseRulesRow(w) {
   const here = w && w.weapon_class;
   const NAMES = {
     primary: tr("Primary"), secondary: tr("Secondary"),
-    archgun: tr("Arch-Gun"), sentinel: tr("Companion"),
+    archgun: tr("Arch-Gun"), sentinel: tr("Companion Weapon"),
   };
   const cols = classes.map((cls) => {
     const pairs = overridablePairs().filter((p) => p[0] === cls);

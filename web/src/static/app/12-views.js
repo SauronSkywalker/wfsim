@@ -290,34 +290,18 @@ async function route() {
 const modSuffix = () => (location.pathname.match(/\/(simulator|optimizer|rivens|benchmark)\/?$/) || [null, ""])[1];
 const weaponModPath = (id) => weaponPath(id) + (modSuffix() ? "/" + modSuffix() : "");
 
-// The home grid groups by EQUIPMENT SLOT in loadout order:
-// one flat list stops being readable as soon as the roster holds more than one
-// slot's worth. A slot with no weapons renders nothing at all rather than an
-// empty heading, and an unknown slot still gets its weapons shown.
-// Equipment slots, in the order the arsenal shows them. "sentinel" is a real
-// slot, not a kind of primary: a sentinel weapon rides the companion and draws
-// from the rifle mod pool without ever occupying a weapon slot.
-const SLOT_ORDER = ["primary", "secondary", "kitgun", "melee", "sentinel", "archgun"];
-const SLOT_LABEL = { primary: "Primary", secondary: "Secondary", melee: "Melee",
-  kitgun: "Kitguns", sentinel: "Sentinel Weapons", archgun: "Arch-Guns", other: "Other" };
+// WHAT AN ARCANE SEAT IS CALLED: the pool it draws, which is a weapon type or
+// a Kitgun's own. "add Kitgun arcane" is the sentence, so the Kitgun label is
+// singular here.
+const ARC_POOL_LABEL = { primary: "Primary", secondary: "Secondary", melee: "Melee",
+  kitgun: "Kitgun", archgun: "Arch-Gun" };
 
-// WHAT AN ARCANE SEAT IS CALLED, which is the weapon-group label everywhere but
-// one: the group heading is the plural "Kitguns" because it heads a list of
-// them, and "add Kitguns arcane" is not a sentence. One override rather than a
-// second full table, so a seat added later still reads.
-const ARC_POOL_LABEL = { ...SLOT_LABEL, kitgun: "Kitgun" };
 
-/// WHICH GROUP A WEAPON IS LISTED UNDER — its slot, except that a MODULAR
-/// weapon gets its own.
-///
-/// A Kitgun is one weapon with a roster entry per slot, so listing it by slot
-/// puts the same name and the same picture in two groups, both linking to the
-/// same page. Its own group says what it actually is, and says it once.
-const weaponCategory = (w) => (w.assembly ? "kitgun" : (w.slot || ""));
-
-/// ONE CARD PER MODULAR WEAPON. The chamber IS the weapon — one mastery track,
-/// one riven, one wiki page — so its two slot entries are one entry here, and
-/// which one the card opens is settled on the page by the Slot control.
+/// ONE ROW PER MODULAR WEAPON, in a list that picks a WEAPON (search, the fight
+/// roster). The chamber IS the weapon — one mastery track, one riven, one wiki
+/// page — so its two slot entries are one row there, and which one it opens is
+/// settled on the page by the Slot control. The home page groups by SLOT
+/// instead, so a Kitgun appears there once per slot.
 ///
 /// IT OPENS THE PRIMARY, stated rather than left to roster ORDER — which
 /// happens to be alphabetical and happens to put `_primary` before
@@ -337,40 +321,33 @@ const oneCardPerChamber = (ws) => {
 
 function renderHome() {
   renderHomeFacts();
-  const frames = $("warframe-grid");
-  if (frames) {
-    frames.innerHTML = `<section class="wgroup"><div class="wgrid">${wfFrames().map((f) => `<a class="wcard" href="${warframePath(f)}">
+  const box = $("home-sections");
+  if (!box) return;
+  const tag = (t) => `<span class="tag">${escHtml(tr(t))}</span>`;
+  const frameCard = (f) => `<a class="wcard" href="${warframePath(f)}">
       ${imgTag(IMG(f.image), "wc-img")}
       <div class="wc-info"><div class="wc-name">${escHtml(f.name)}</div>
-      <div class="wc-tags"><span class="tag">${escHtml(tr("Builder"))}</span></div></div></a>`).join("")}</div></section>`;
-  }
-  const companions = $("companion-grid");
-  if (companions) {
-    companions.innerHTML = `<section class="wgroup"><div class="wgrid">${compHosts().map((c) => `<a class="wcard" href="${companionPath(c)}">
+      <div class="wc-tags">${tag("Builder")}</div></div></a>`;
+  const companionCard = (c) => `<a class="wcard" href="${companionPath(c)}">
       ${imgTag(null, "wc-img")}
       <div class="wc-info"><div class="wc-name">${escHtml(c.name)}</div>
-      <div class="wc-tags"><span class="tag">${escHtml(tr("Builder"))}</span></div></div></a>`).join("")}</div></section>`;
-  }
-  // THE OPERATOR IS ITS OWN GROUP, never a Warframe: a player has exactly one,
+      <div class="wc-tags">${tag("Builder")}</div></div></a>`;
+  // THE OPERATOR IS ITS OWN SLOT, never a Warframe: a player has exactly one,
   // where a Warframe is one of many they can own.
-  const operator = $("operator-grid");
-  if (operator) {
-    operator.innerHTML = `<section class="wgroup"><div class="wgrid"><a class="wcard" href="/operator">
+  const operatorCard = () => `<a class="wcard" href="/operator">
       ${imgTag(IMG(META && META.operator_image), "wc-img")}
       <div class="wc-info"><div class="wc-name">${escHtml(tr("Operator"))}</div>
-      <div class="wc-tags"><span class="tag">${escHtml(tr("Focus school"))}</span></div></div></a></div></section>`;
-  }
-  const grid = $("weapon-grid");
-  if (!grid) return;
-  const card = (w) => {
+      <div class="wc-tags">${tag("Focus school")}</div></div></a>`;
+  // A WEAPON CARD'S TAGS say what differs INSIDE its slot: its class, a Kitgun,
+  // an Incarnon, and its weapon type wherever the slot is not one (a companion
+  // weapon, an Exalted weapon). A Kitgun sits in each slot its grips reach —
+  // one card per slot, each opening that slot's entry.
+  const weaponCard = (w) => {
     const tags = [
-      // TRANSLATED, like the group heading above it. `tr` falls through to the
-      // English for a subtype no overlay names, so this costs nothing on the
-      // ones nobody has translated and stops the Kitgun card reading half in
-      // one language.
-      `<span class="tag">${escHtml(tr(w.subtype || w.mod_class))}</span>`,
+      tag(w.subtype || w.mod_class),
+      w.assembly && (w.subtype || w.mod_class) !== "Kitgun" ? tag("Kitgun") : "",
       w.uses_evo2 ? `<span class="tag">Incarnon</span>` : "",
-      w.sentinel ? `<span class="tag">Sentinel</span>` : "",
+      w.weapon_type && w.weapon_type !== w.slot ? tag(ARC_POOL_LABEL[w.weapon_type] || w.weapon_type) : "",
     ].join("");
     return `<a class="wcard" href="/weapons/${urlSlug(w)}">
       ${imgTag(IMG(w.image), "wc-img")}
@@ -380,16 +357,21 @@ function renderHome() {
       </div>
     </a>`;
   };
-  const all = oneCardPerChamber(META.weapons || []);
-  const groups = SLOT_ORDER
-    .map((s) => [s, all.filter((w) => weaponCategory(w) === s)])
-    .filter(([, ws]) => ws.length);
-  const rest = all.filter((w) => !SLOT_ORDER.includes(weaponCategory(w)));
-  if (rest.length) groups.push(["other", rest]);
-  grid.innerHTML = groups.map(([slot, ws]) => `
-    <section class="wgroup">
-      <h3 class="wgroup-h">${tr(SLOT_LABEL[slot] || slot)}</h3>
-      <div class="wgrid">${ws.map(card).join("")}</div>
-    </section>`).join("");
+  const cards = (slot) => {
+    if (slot.holds === "warframe") return wfFrames().map(frameCard);
+    if (slot.holds === "companion") return compHosts().map(companionCard);
+    if (slot.holds === "operator") return [operatorCard()];
+    return (META.weapons || []).filter((w) => w.slot === slot.id).map(weaponCard);
+  };
+  // A SLOT WITH NOTHING IN IT IS NOT LISTED: a heading over an empty grid
+  // promises a roster that is not there.
+  box.innerHTML = ((META && META.equipment_slots) || []).map((slot) => {
+    const list = cards(slot);
+    return list.length ? `
+    <section class="wgroup" id="home-${slot.id}">
+      <h2 class="home-h">${escHtml(tr(slot.name))} <span class="muted">${list.length}</span></h2>
+      <div class="wgrid">${list.join("")}</div>
+    </section>` : "";
+  }).join("");
 }
 

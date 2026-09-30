@@ -326,14 +326,9 @@
     <p class="hero-sub hero-lead" data-i18n>Builder, simulator, optimizer.</p>
     <div class="hero-facts" id="home-facts" hidden></div>
     <p class="hero-note"><span data-i18n>Every formula cites its source, and every golden test is calibrated against a real in-game run.</span> <a href="/support" data-i18n>Why you can check it</a></p>
-    <h2 class="home-h" data-i18n>Warframes</h2>
-    <div id="warframe-grid"></div>
-    <h2 class="home-h" data-i18n>Operator</h2>
-    <div id="operator-grid"></div>
-    <h2 class="home-h" data-i18n>Companions</h2>
-    <div id="companion-grid"></div>
-    <h2 class="home-h" data-i18n>Weapons</h2>
-    <div id="weapon-grid"></div>
+    <!-- ONE SECTION PER EQUIPMENT SLOT, in `META.equipment_slots` order
+         (data/equipment_slots.yaml) — the page names no slot of its own. -->
+    <div id="home-sections"></div>
   </main>
 
   <!-- THE BOARD — what is strong under a given ruler, and what nobody has
