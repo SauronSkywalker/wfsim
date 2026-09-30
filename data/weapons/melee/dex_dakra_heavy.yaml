@@ -1,12 +1,11 @@
 id: dex_dakra_heavy
 name: Dex Dakra
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: dex_dakra
 form: heavy
 transform_group: dex_dakra
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: heavy_charge_share_assumed
     published: 0.7
     charge: 0.2333

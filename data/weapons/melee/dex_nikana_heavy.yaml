@@ -1,16 +1,17 @@
 id: dex_nikana_heavy
 name: Dex Nikana
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: dex_nikana
 form: heavy
 transform_group: dex_nikana
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: heavy_charge_share_assumed
     published: 0.5
     charge: 0.1667
     swing: 0.3333
+  - reason: melee_passive_unmodelled
+    passive: "its combo multiplier rises every 11 hits rather than 20, and stops at 11x"
 attack:
   # see notes: swing_trigger_pull_engine
   trigger: melee

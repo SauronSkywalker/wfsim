@@ -7,8 +7,8 @@
 #
 # Never edit by hand: run the generator, which only ever appends.
 #
-digest: 9b4e8c8e25471017
-count: 3405
+digest: a0b58f304bbe5b9d
+count: 3402
 ids:
   - acceltra
   - acceltra_prime
@@ -2076,13 +2076,11 @@ ids:
   - corufell_block
   - corufell_block_forward
   - corufell_forward
-  - corufell_heavy
   - corufell_heavy_slam
   - corufell_prime
   - corufell_prime_block
   - corufell_prime_block_forward
   - corufell_prime_forward
-  - corufell_prime_heavy
   - corufell_prime_heavy_slam
   - cronus
   - cronus_block
@@ -2255,7 +2253,6 @@ ids:
   - edun_block
   - edun_block_forward
   - edun_forward
-  - edun_heavy
   - edun_heavy_slam
   - edun_slide
   - ekhein

@@ -1,12 +1,11 @@
 id: destreza_slide
 name: Destreza
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: destreza
 form: slide
 transform_group: destreza
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_incarnon_unmodelled
 attack:
   # see notes: swing_trigger_pull_engine

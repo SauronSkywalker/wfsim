@@ -784,13 +784,11 @@ weapons:
   corufell_block: 闪劫
   corufell_block_forward: 闪劫
   corufell_forward: 闪劫
-  corufell_heavy: 闪劫
   corufell_heavy_slam: 闪劫
   corufell_prime: 闪劫 Prime
   corufell_prime_block: 闪劫 Prime
   corufell_prime_block_forward: 闪劫 Prime
   corufell_prime_forward: 闪劫 Prime
-  corufell_prime_heavy: 闪劫 Prime
   corufell_prime_heavy_slam: 闪劫 Prime
   cronus: 克洛诺斯
   cronus_block: 克洛诺斯
@@ -963,7 +961,6 @@ weapons:
   edun_block: 雷石祭
   edun_block_forward: 雷石祭
   edun_forward: 雷石祭
-  edun_heavy: 雷石祭
   edun_heavy_slam: 雷石祭
   edun_slide: 雷石祭
   ekhein: 映声战锤

@@ -1,12 +1,11 @@
 id: dual_skana_heavy
 name: Dual Skana
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: dual_skana
 form: heavy
 transform_group: dual_skana
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: heavy_charge_share_assumed
     published: 0.7
     charge: 0.2333

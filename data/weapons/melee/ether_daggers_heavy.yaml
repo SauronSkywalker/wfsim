@@ -1,12 +1,11 @@
 id: ether_daggers_heavy
 name: Ether Daggers
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: ether_daggers
 form: heavy
 transform_group: ether_daggers
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: heavy_charge_share_assumed
     published: 0.5
     charge: 0.1667

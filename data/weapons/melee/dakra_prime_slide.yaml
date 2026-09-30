@@ -1,12 +1,10 @@
 id: dakra_prime_slide
 name: Dakra Prime
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: dakra_prime
 form: slide
 transform_group: dakra_prime
 co_behavior: additive_with_base_damage
-unmodeled:
-  - reason: melee_placeholder
 attack:
   # see notes: swing_trigger_pull_engine
   trigger: melee

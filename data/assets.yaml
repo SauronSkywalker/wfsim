@@ -849,13 +849,11 @@ weapons:
   corufell_block: ExaltedAWScytheWeapon.png
   corufell_block_forward: ExaltedAWScytheWeapon.png
   corufell_forward: ExaltedAWScytheWeapon.png
-  corufell_heavy: ExaltedAWScytheWeapon.png
   corufell_heavy_slam: ExaltedAWScytheWeapon.png
   corufell_prime: CorufellPrime.png
   corufell_prime_block: CorufellPrime.png
   corufell_prime_block_forward: CorufellPrime.png
   corufell_prime_forward: CorufellPrime.png
-  corufell_prime_heavy: CorufellPrime.png
   corufell_prime_heavy_slam: CorufellPrime.png
   cronus: Cronus.png
   cronus_block: Cronus.png
@@ -1028,7 +1026,6 @@ weapons:
   edun_block: DaxDuviriPolearm.png
   edun_block_forward: DaxDuviriPolearm.png
   edun_forward: DaxDuviriPolearm.png
-  edun_heavy: DaxDuviriPolearm.png
   edun_heavy_slam: DaxDuviriPolearm.png
   edun_slide: DaxDuviriPolearm.png
   ekhein: EntSphereHammer.png

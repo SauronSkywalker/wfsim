@@ -1,6 +1,6 @@
 id: dual_skana_block
 name: Dual Skana
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: dual_skana
 form: block
 transform_group: dual_skana
@@ -8,7 +8,6 @@ co_behavior: additive_with_base_damage
 unmodeled:
   - "one attack input's own animation length is not published anywhere: the wiki gives a combo's total duration at 1.0x attack speed and one entry per input, so the combo's DURATION is exact and the split between its INPUTS is even. It moves a status tick's start by fractions of a second inside a combo and moves no total"
   - "Power Spike's partial combo decay is a Warframe passive and is not modelled: this counter drops to zero when its clock runs out, so a build running that passive keeps far more of it than this reports"
-  - reason: melee_placeholder
 attack:
   # see notes: swing_trigger_pull_engine
   trigger: melee

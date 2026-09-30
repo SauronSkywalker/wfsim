@@ -1,12 +1,11 @@
 id: fragor_heavy
 name: Fragor
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: fragor
 form: heavy
 transform_group: fragor
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: heavy_charge_share_assumed
     published: 1.2
     charge: 0.4
