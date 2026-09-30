@@ -21,7 +21,7 @@ const r = await evaluate(`(async () => {
   // THE FAKE SERVER: per account, id -> { list, body, updated_at, synced_at }.
   const srv = { acc1: new Map(), acc2: new Map() };
   window.__b1Pushes = [];
-  let clock = 1, who = 'acc1', calls = 0, allowance = null;
+  let clock = 1, who = 'acc1', calls = 0, allowance = null, refuse = new Set();
   const realFetch = window.fetch;
   window.fetch = async (url, o = {}) => {
     const path = String(url);
@@ -33,13 +33,15 @@ const r = await evaluate(`(async () => {
     if (who === 'acc3') return reply({ ok: false, reason: 'not_included' }, 403);
     const b = JSON.parse(o.body || '{}');
     const db = srv[who];
+    const refused = [];
     for (const c of b.changes || []) {
+      if (refuse.has(c.id)) { refused.push(c.id); continue; }
       if (c.id === 'b1') window.__b1Pushes.push({ at: c.updated_at, mod: c.body && c.body.state && c.body.state.slots[0].mod, name: c.body && c.body.name });
       const had = db.get(c.id);
       if (had && !(c.updated_at > had.updated_at)) continue;
       db.set(c.id, { list: c.list, body: c.deleted ? null : JSON.parse(JSON.stringify(c.body)), updated_at: c.updated_at, synced_at: clock++ });
     }
-    const allow = allowance ? { allowance } : {};
+    const allow = allowance ? { allowance, refused } : {};
     if (b.pull === false) return reply({ ok: true, full: false, ...allow });
     const since = b.after ? b.after.t : (b.since || 0);
     const rows = [...db.entries()].filter(([, e]) => e.synced_at > since).sort((a, b) => a[1].synced_at - b[1].synced_at);
@@ -177,6 +179,14 @@ const r = await evaluate(`(async () => {
   out.allowance = [srv.acc1.has('n2'), (builds().find((p) => p.id === 'n3') || {}).cloud_sync === false, srv.acc1.has('n3')];
   const note = document.getElementById('page-note'); if (note) note.remove();
   out.refused = setCloudSync(L, 'n1', true) === false && !!document.getElementById('page-note');
+  // …AND WHAT THE SERVER REFUSES stays here, whatever the page counted.
+  refuse = new Set(['n4']);
+  allowance = { presets: 999 };
+  add('n4');
+  await syncNow();
+  const k4 = (JSON.parse(localStorage.getItem('wfsim-sync') || '{}').known || {}).n4;
+  out.serverRefused = (builds().find((p) => p.id === 'n4') || {}).cloud_sync === false && !k4 && !srv.acc1.has('n4');
+  refuse = new Set();
   allowance = null;
 
   // ANOTHER ACCOUNT: nothing merged until asked.
@@ -219,6 +229,7 @@ check("with \"upload new items\" off, a new entry stays on this browser", r.auto
 check("the entry that fills the allowance is taken, the one past it stays here",
   ok(r.allowance) === ok([true, true, false]), ok(r.allowance));
 check("...and turning one on past it is refused, out loud", r.refused === true);
+check("an item the server refuses stays on this browser, and is not taken as synced", r.serverRefused === true);
 check("another account's entries are not merged without a word",
   r.otherStatus === "other" && r.acc2Before === 0, ok([r.otherStatus, r.acc2Before]));
 check("...until the reader adds them", r.acc2After > 0, r.acc2After);

@@ -2379,6 +2379,16 @@ ui:
   "last synced {time}": "上次同步于 {time}"
   "Full: new items stay on this browser": "已满：新内容只保存在这台浏览器上"
   "Sync now": "立即同步"
+  "{n} new items stay on this browser: the account's sync allowance is used": "{n} 个新建项留在这个浏览器：账户的同步额度已用完"
+  "Pricing": 价格
+  "Free": 免费
+  "The builder, simulator, optimizer and leaderboard, with no account": "配装器、模拟器、优化器和排行榜，不需要账号"
+  "Saving on your browser, with no limit": "在浏览器里保存，不限数量"
+  "Syncing to your account: {a} presets and {b} customs": "同步到账户：{a} 个预设和 {b} 个自定义项"
+  "Syncing to your account": 同步到账户
+  "Membership is not on sale yet.": 会员尚未开售。
+  "Sign in to subscribe": 登录后订阅
+  "Sold by Mogin Labs Pte. Ltd., Singapore. Payments are handled by Stripe.": "销售方为新加坡 Mogin Labs Pte. Ltd.，付款由 Stripe 处理。"
   "What syncs": "同步内容"
   "presets {a} · customs {b}": "预设 {a} · 自定义 {b}"
   "The cloud on each item switches it; saving on this browser is never limited.": "每一项上的云朵可以单独开关；在这个浏览器里保存不受任何限制。"

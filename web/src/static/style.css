@@ -3223,3 +3223,9 @@ iframe.wld-frame{width:100%;height:480px;border:1px solid var(--line);border-rad
 .pchip .pcloud.on svg{fill:currentColor}
 .pchip .pcloud:hover{color:var(--text)}
 .pchip .pcloud:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-radius:3px}
+
+/* The pricing page (17-account.js `pricingPage`): the free column beside the
+   membership, one column on a phone. */
+.pricing{max-width:880px;margin:0 auto;padding:24px 16px 48px;display:grid;gap:16px}
+.pricing .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;align-items:start}
+.pricing .plans .block{margin:0}

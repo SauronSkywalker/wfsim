@@ -17,7 +17,7 @@ const ACCOUNT_SLOTS = [
   { id: "email", name: "Email" },
 ];
 const AUTH_PATHS = { "/login": "login", "/signup": "signup", "/reset": "reset", "/account": "account",
-  "/account/billing": "billing" };
+  "/account/billing": "billing", "/pricing": "pricing" };
 const authKindOf = (path) => AUTH_PATHS[path.replace(/\/$/, "")] || null;
 /// The pages of a signed-in account; every other kind is a way in.
 const isSettings = (kind) => kind === "account" || kind === "billing";
@@ -107,6 +107,7 @@ function loadAccount() {
       ? { providers: r.providers || [], account: r.account, loaded: true }
       : { providers: [], account: null, loaded: true };
     if (accountState.account && isSettings(authKindOf(location.pathname))) await Promise.all([loadBilling(), loadAgents()]);
+    if (authKindOf(location.pathname) === "pricing") await loadBilling();
     renderAccountEntry();
     const kind = authKindOf(location.pathname);
     if (kind) renderAuthPage(kind);
@@ -123,8 +124,9 @@ async function loadAgents() {
 async function loadBilling() {
   const b = await accountCall("GET", "/api/billing");
   if (!(b && b.ok && b.configured)) { billingState = { ...billingState, configured: false }; return; }
-  const inv = await accountCall("GET", "/api/billing/invoices");
+  const inv = accountState.account ? await accountCall("GET", "/api/billing/invoices") : null;
   billingState = { configured: true, names: b.names || { offers: {}, meters: {} }, prices: b.prices || [], features: b.features || [],
+    free: b.free || {},
     meters: b.meters || {}, held: b.held || [], subscription: b.subscription || null,
     invoices: (inv && inv.ok && inv.invoices) || [] };
 }
@@ -424,7 +426,7 @@ function billingHeld(s) {
 }
 
 /// THE OFFER, BEFORE A READER HOLDS IT: its price by period, what it contains
-/// as the catalog lists it, and one button.
+/// as the catalog lists it, and one button — a way to sign in, signed out.
 function billingOffer() {
   const subs = billingState.prices.filter((p) => p.interval);
   if (!subs.length) return `<div class="plan"><p class="set-note">${aT("Nothing is on sale yet.")}</p></div>`;
@@ -442,7 +444,9 @@ function billingOffer() {
     <div class="plan-head"><h2>${escHtml(billingName("offers", offer))}</h2>${toggle}</div>
     <div class="price"><b>${escHtml(billingMoney(pick.amount, pick.currency))}</b><span>${aT(PER_INTERVAL[pick.interval] || "")}${perMonth}</span></div>
     ${includes.length ? `<ul class="includes">${includes.map((x) => `<li>${escHtml(x)}</li>`).join("")}</ul>` : ""}
-    <div class="acts"><button class="run-btn" data-auth="checkout" data-price="${escHtml(pick.key)}">${aT(pick.interval === "year" ? "Subscribe yearly" : "Subscribe monthly")}</button>
+    <div class="acts">${accountState.account
+      ? `<button class="run-btn" data-auth="checkout" data-price="${escHtml(pick.key)}">${aT(pick.interval === "year" ? "Subscribe yearly" : "Subscribe monthly")}</button>`
+      : `<a class="run-btn" href="/login?return=${encodeURIComponent("/pricing")}">${aT("Sign in to subscribe")}</a>`}
       <span class="set-note">${aT("Cancel any time. The builder, simulator, optimizer and leaderboard need no membership.")}</span></div></div>`;
 }
 
@@ -474,6 +478,32 @@ function billingPage(a) {
       <section class="block"><div class="bh"><h2>${aT("Billing history")}</h2>${n ? `<span class="sub">${n}</span>` : ""}</div>${billingHistory()}</section>
       <p class="set-note">${aT("Payments are handled by Stripe and appear on your statement as LINK.COM* WFSIM.APP. Stripe emails a receipt and an invoice for every payment.")}
         <a data-native href="/terms">${aT("Terms")}</a> · <a data-native href="/refunds">${aT("Refunds")}</a> · <a data-native href="/privacy">${aT("Privacy")}</a></p></div></div>`;
+}
+
+/// THE PRICE PAGE, signed in or not: what is free and what the membership adds,
+/// side by side. Every number is the server's (`/api/billing`): the offer, its
+/// prices, and the free allowance — none of which applies until it is on sale.
+function pricingPage() {
+  const sync = billingState.configured && (billingState.free || {}).sync_allowance;
+  const held = billingState.subscription;
+  const free = `<section class="block"><div class="plan">
+    <div class="plan-head"><h2>${aT("Free")}</h2></div>
+    <ul class="includes">
+      <li>${aT("The builder, simulator, optimizer and leaderboard, with no account")}</li>
+      <li>${aT("Saving on your browser, with no limit")}</li>
+      <li>${escHtml(sync
+        ? tr("Syncing to your account: {a} presets and {b} customs").replace("{a}", sync.presets).replace("{b}", sync.customs)
+        : tr("Syncing to your account"))}</li>
+    </ul></div></section>`;
+  const member = !billingState.configured
+    ? `<section class="block"><div class="plan"><p class="set-note">${aT("Membership is not on sale yet.")}</p></div></section>`
+    : held ? `<section class="block"><div class="plan"><div class="plan-head"><h2>${escHtml(billingName("offers", held.offer))}</h2>
+        <span class="tag ok">${aT("Active")}</span></div><div class="acts"><a class="ghost-btn btn-sm" href="/account/billing">${aT("Membership and billing")}</a></div></div></section>`
+      : `<section class="block">${billingOffer()}</section>`;
+  return `<div class="pricing"><h1 class="page">${aT("Pricing")}</h1>
+    <div class="plans">${free}${member}</div>
+    <p class="set-note">${aT("Sold by Mogin Labs Pte. Ltd., Singapore. Payments are handled by Stripe.")}
+      <a data-native href="/terms">${aT("Terms")}</a> · <a data-native href="/refunds">${aT("Refunds")}</a> · <a data-native href="/privacy">${aT("Privacy")}</a></p></div>`;
 }
 
 /// THE SETTINGS PAGES' OWN NAVIGATION: who is signed in, then one link per page.
@@ -578,12 +608,13 @@ function renderAuthPage(kind) {
   if (!accountState.loaded) { main.innerHTML = ""; return; }
   const { account, providers } = accountState;
   // A SIGNED-IN READER HAS NO SIGN-IN PAGE, and a signed-out one no settings.
-  if (account && !isSettings(kind)) { nav(authReturn()); return; }
+  if (account && !isSettings(kind) && kind !== "pricing") { nav(authReturn()); return; }
   if (!account && isSettings(kind)) {
     history.replaceState(null, "", `/login?return=${encodeURIComponent(location.pathname)}`); route(); return;
   }
   // BILLING IS A PAGE ONLY WHERE IT IS ON: anyone else is on the account page.
   if (kind === "billing" && !billingState.configured) { history.replaceState(null, "", "/account"); route(); return; }
+  if (kind === "pricing") { main.innerHTML = pricingPage(); return; }
   if (!account && !providers.length) {
     main.innerHTML = `<div class="auth-page"><div class="auth-card"><h2>${aT("Accounts are not available here")}</h2>
       <p class="lede">${aT("Sign in on wfsim.app.")}</p></div></div>`;

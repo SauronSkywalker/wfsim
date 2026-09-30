@@ -211,7 +211,14 @@ async function syncRound() {
     if (!r.ok) return syncRefused(r);
     syncAllowance = r.allowance || null;
     if (r.full) syncStatus.full = true;
+    // PAST THE ALLOWANCE the server refuses a new item by id: it stays here.
+    const refused = new Set(r.refused || []);
+    if (refused.size) {
+      for (const c of chunk) if (refused.has(c.id)) setCloudSync(c.list, c.id, false);
+      presetToast(tr("{n} new items stay on this browser: the account's sync allowance is used").replace("{n}", refused.size));
+    }
     for (const c of chunk) {
+      if (refused.has(c.id)) continue;
       if (c.deleted) delete st.known[c.id];
       else if (c.off) st.known[c.id] = { list: c.list, off: true, at: c.updated_at };
       else st.known[c.id] = { list: c.list, sig: c.sig, at: c.updated_at };

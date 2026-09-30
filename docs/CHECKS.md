@@ -729,7 +729,17 @@ the page with the real one's rules: the first sync is a union, a name clash is
 settled the same way on both, an edit and a deletion reach the other browser,
 the measured result never travels, another account's entries wait to be asked
 for, an account without the feature pushes nothing, and a remote edit to the
-build on screen reaches the screen.
+build on screen reaches the screen. The cloud on a chip keeps an entry on one
+browser and tells the others to keep theirs; with "upload new items" off a new
+entry stays here; the allowance the server states is kept to, and an item the
+server refuses stays here.
+
+## `check_pricing`
+
+`/pricing` against a billing API faked in the page: not on sale it says so and
+states no allowance; on sale it shows the offer, its price and the free
+allowance the server states, a way to sign in when signed out, a subscribe
+button when signed in, and a member's own plan.
 
 ## `check_ability_casting`
 
