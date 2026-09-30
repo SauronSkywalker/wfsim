@@ -1,6 +1,7 @@
 id: astilla
 name: Astilla
 slot: primary
+weapon_type: primary
 # A SHOTGUN THAT FIRES ONE SLUG. Seventy Impact with a guaranteed proc, and then
 # the slug shatters into a 2.4 m glass explosion worth 120 — so almost two
 # thirds of the weapon is the part that goes off after it lands.

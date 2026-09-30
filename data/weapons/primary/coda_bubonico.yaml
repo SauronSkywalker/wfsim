@@ -1,6 +1,7 @@
 id: coda_bubonico
 name: Coda Bubonico
 slot: primary
+weapon_type: primary
 # AN ARM CANNON THAT SPOOLS ITS FIRE RATE, seven pellets a barrage with 1.9 m of
 # innate punch through — the deepest in this batch, and enough to reach the
 # fourth body in a line.

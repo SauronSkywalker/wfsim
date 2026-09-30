@@ -1,6 +1,7 @@
 id: dual_ether
 name: Dual Ether
 slot: melee
+weapon_type: melee
 class: dual_swords
 # see notes: melee_from_the_modules
 form: neutral

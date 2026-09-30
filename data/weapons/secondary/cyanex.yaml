@@ -1,6 +1,7 @@
 id: cyanex
 name: Cyanex
 slot: secondary
+weapon_type: secondary
 # HOMING FLECHETTES WITH A SMALL BLAST — 0.7 metres, the narrowest explosion in
 # the roster — and an alternate fire that empties the magazine.
 class: pistol

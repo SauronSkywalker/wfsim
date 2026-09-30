@@ -1,6 +1,7 @@
 id: kogake_prime
 name: Kogake Prime
 slot: melee
+weapon_type: melee
 class: sparring
 # see notes: melee_from_the_modules
 form: neutral

@@ -1,6 +1,7 @@
 id: akmagnus_prime
 name: Akmagnus Prime
 slot: secondary
+weapon_type: secondary
 # THE MAGNUS PRIME'S SHOT, TWICE OVER — identical damage, crit and status to the
 # single, with double the magazine and a wider cone. Both carry the same
 # "Chamber Cascade" ammo-efficiency passive, which pays nothing against the

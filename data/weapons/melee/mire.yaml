@@ -1,6 +1,7 @@
 id: mire
 name: Mire
 slot: melee
+weapon_type: melee
 class: sword
 # see notes: melee_from_the_modules
 form: neutral

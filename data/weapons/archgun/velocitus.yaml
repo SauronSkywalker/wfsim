@@ -1,6 +1,7 @@
 id: velocitus
 name: Velocitus
 slot: archgun
+weapon_type: archgun
 class: archgun
 # THE CHARGED SHOT is the form the arsenal shows and the one this weapon is
 # built for; `velocitus_uncharged` is the sibling. Same convention as the

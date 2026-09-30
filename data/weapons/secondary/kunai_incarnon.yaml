@@ -1,6 +1,7 @@
 id: kunai_incarnon
 name: Kunai (Incarnon Form)
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: incarnon
 

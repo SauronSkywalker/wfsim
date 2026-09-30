@@ -1,6 +1,7 @@
 id: okina_prime
 name: Okina Prime
 slot: melee
+weapon_type: melee
 class: dual_daggers
 # THE STATIONARY COMBO, and the arsenal's own form — so its mode is `base`.
 form: neutral

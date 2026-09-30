@@ -1,6 +1,7 @@
 id: bubonico
 name: Bubonico
 slot: primary
+weapon_type: primary
 # THE ARM CANNON, and unlike three other weapons in this batch its adversary
 # variant did NOT add a firing mode — the Coda keeps both of these and raises
 # the numbers. What the Coda did add is 1.9 m of innate punch through and a fire

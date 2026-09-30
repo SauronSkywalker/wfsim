@@ -1,6 +1,7 @@
 id: dual_heat_swords
 name: Dual Heat Swords
 slot: melee
+weapon_type: melee
 class: dual_swords
 # see notes: melee_from_the_modules
 form: neutral

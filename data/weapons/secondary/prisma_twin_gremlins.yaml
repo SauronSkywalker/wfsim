@@ -1,6 +1,7 @@
 id: prisma_twin_gremlins
 name: Prisma Twin Gremlins
 slot: secondary
+weapon_type: secondary
 # THE TWIN GREMLINS WITH A 0.9-SECOND RELOAD, half again the crit chance and a
 # cone a quarter as wide. It is the tightest-shooting weapon in this batch.
 class: dual_pistols

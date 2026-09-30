@@ -1,6 +1,7 @@
 id: hikou_prime
 name: Hikou Prime
 slot: secondary
+weapon_type: secondary
 # THE HIKOU AT 36 A STAR AND A HALF-SECOND RELOAD, with the status chance raised
 # from 10% to 28%. Almost all of it is Puncture where the ordinary spreads it.
 class: pistol

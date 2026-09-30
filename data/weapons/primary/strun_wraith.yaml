@@ -1,6 +1,7 @@
 id: strun_wraith
 name: Strun Wraith
 slot: primary
+weapon_type: primary
 class: shotgun
 form: base
 default_form: true

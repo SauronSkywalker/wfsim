@@ -1,6 +1,7 @@
 id: mk1_strun_incarnon
 name: MK1-Strun (Incarnon Form)
 slot: primary
+weapon_type: primary
 class: shotgun
 form: incarnon
 

@@ -1,6 +1,7 @@
 id: kompressa_prime
 name: Kompressa Prime
 slot: secondary
+weapon_type: secondary
 # THE KOMPRESSA AT NEARLY TRIPLE THE CRIT CHANCE, a 46-damage bubble and a 2.8 m
 # radius. The lowest riven disposition in the secondary roster, which is the
 # game's own verdict on it.

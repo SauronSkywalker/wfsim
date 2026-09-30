@@ -1,6 +1,7 @@
 id: nunchasa
 name: Nunchasa
 slot: primary
+weapon_type: primary
 # NARIN'S SIGNATURE BOW, half Puncture and half Cold, drawn rather than tapped.
 #
 # ITS ALT FIRE IS A SECOND CHARGED SHOT and is not here: a group registers one

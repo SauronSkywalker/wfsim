@@ -1,6 +1,7 @@
 id: akbolto_prime
 name: Akbolto Prime
 slot: secondary
+weapon_type: secondary
 # A 36% CRIT BOLT PISTOL — more than double the ordinary Akbolto's, at a
 # slightly lower damage per bolt and a faster projectile (100 m/s against 75).
 # Four innate polarities, which is the most in the secondary roster.

@@ -1,6 +1,7 @@
 id: riot_848
 name: Riot-848
 slot: secondary
+weapon_type: secondary
 # BULLETS THAT LODGE AND COME BACK. The primary fire is 12 pure Puncture; the
 # 48-damage Blast in the module is what happens ON RELOAD, when up to 32
 # embedded rounds go off and fly home — so it is NOT an on-impact explosion and

@@ -1,6 +1,7 @@
 id: jat_kittag
 name: Jat Kittag
 slot: melee
+weapon_type: melee
 class: hammer
 # see notes: melee_from_the_modules
 form: neutral

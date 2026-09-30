@@ -2,6 +2,7 @@ id: dual_decurion
 name: Dual Decurion
 # see notes: arch_gun_own_equipment
 slot: archgun
+weapon_type: archgun
 class: archgun
 form: base
 default_form: true

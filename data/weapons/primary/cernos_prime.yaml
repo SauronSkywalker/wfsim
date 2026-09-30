@@ -1,6 +1,7 @@
 id: cernos_prime
 name: Cernos Prime
 slot: primary
+weapon_type: primary
 # BOW — the first charge-trigger weapon in the roster.
 class: bow
 # The fully drawn shot — the form the arsenal shows and the one a bow is

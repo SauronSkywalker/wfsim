@@ -1,6 +1,7 @@
 id: synoid_gammacor_incarnon
 name: Synoid Gammacor (Incarnon Form)
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: incarnon
 

@@ -1,6 +1,7 @@
 id: hystrix
 name: Hystrix
 slot: secondary
+weapon_type: secondary
 # A QUILL PISTOL WITH FOUR ELEMENTS, cycled with Alternate Fire. This entry is
 # the POISON quill, which is the arsenal's own display.
 class: pistol

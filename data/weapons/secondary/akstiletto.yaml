@@ -1,6 +1,7 @@
 id: akstiletto
 name: Akstiletto
 slot: secondary
+weapon_type: secondary
 # TWENTY-EIGHT ROUNDS AND A 1.1-SECOND RELOAD, which is the fastest in the
 # family. Mostly Impact, and the Prime is the same gun with a lower fire rate
 # and two thirds again the damage.

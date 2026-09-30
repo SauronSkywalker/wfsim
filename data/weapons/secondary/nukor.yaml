@@ -1,6 +1,7 @@
 id: nukor
 name: Nukor
 slot: secondary
+weapon_type: secondary
 # THE ORDINARY NUKOR, and the one thing it does NOT have is the Kuva variant's
 # chain: this beam reaches 25 m and stops at what it hits. A 4x critical
 # multiplier off a 3% chance, which is the shape the whole family is built on.

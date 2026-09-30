@@ -1,6 +1,7 @@
 id: lenz
 name: Lenz
 slot: primary
+weapon_type: primary
 # A BOW THAT FIRES A COLD BUBBLE. The arrow itself is 50 Impact; what kills is
 # the BUBBLE COLLAPSE — 660 Blast in 7.2 metres — which is what `radial:` below
 # carries.

@@ -1,6 +1,7 @@
 id: zhuge_prime
 name: Zhuge Prime
 slot: primary
+weapon_type: primary
 # THE ZHUGE WITH AN EXPLOSION ON EVERY BOLT: 50 on impact and 40 more in a 2.6 m
 # radius, 0.6 seconds later. Silent on the bolt and not on the blast, and like
 # the ordinary Zhuge it counts as a bow for fire-rate mods.

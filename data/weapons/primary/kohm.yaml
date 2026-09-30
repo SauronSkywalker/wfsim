@@ -1,6 +1,7 @@
 id: kohm
 name: Kohm
 slot: primary
+weapon_type: primary
 # TWELVE PELLETS AT FULL SPOOL, four shells a shot, and 1.5 metres of innate
 # punch through — three whole bodies of material. This entry IS the spooled
 # state, which is the arsenal's own display (`_TooltipAttackDisplay: 2`).

@@ -4,6 +4,7 @@ name: Larkspur
 # ordinary weapon that one is the Prime of, and the routine's "a Prime and its
 # ordinary are ONE intake" is why it is here.
 slot: archgun
+weapon_type: archgun
 class: archgun
 form: base
 default_form: true

@@ -1,6 +1,7 @@
 id: bronco_incarnon
 name: Bronco (Incarnon Form)
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: incarnon
 

@@ -1,6 +1,7 @@
 id: braton_incarnon
 name: Braton (Incarnon Form)
 slot: primary
+weapon_type: primary
 class: rifle
 form: incarnon
 

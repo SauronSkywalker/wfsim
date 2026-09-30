@@ -1,6 +1,7 @@
 id: trumna_prime
 name: Trumna Prime
 slot: primary
+weapon_type: primary
 # THE TRUMNA AT 250 ROUNDS and more of everything, with the same 1.6 m blast on
 # every round.
 class: rifle

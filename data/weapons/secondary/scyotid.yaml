@@ -1,6 +1,7 @@
 id: scyotid
 name: Scyotid
 slot: secondary
+weapon_type: secondary
 # A FOUR-FLECHETTE TOXIN THROWER with 1.6 metres of innate punch through — three
 # bodies' worth — and an alternate fire that is a SNARE rather than a shot.
 class: pistol

@@ -2,8 +2,8 @@ id: tazicor
 name: Tazicor
 # see notes: robotic_companion_weapon_moa
 slot: sentinel
+weapon_type: primary
 class: sentinel_weapon
-weapon_category: primary
 form: base
 default_form: true
 

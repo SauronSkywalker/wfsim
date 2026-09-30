@@ -1,6 +1,7 @@
 id: velox_prime
 name: Velox Prime
 slot: secondary
+weapon_type: secondary
 # THE VELOX WITH A THIRD MORE STATUS AND TWO MORE ROUNDS A SECOND — 32% against
 # 22%, 17/s against 15/s — out of a smaller magazine. The empty-reload passive is
 # the same and is admitted for the same reason.

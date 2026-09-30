@@ -1,6 +1,7 @@
 id: acrid
 name: Acrid
 slot: secondary
+weapon_type: secondary
 # A PURE TOXIN DART WITH A GUARANTEED TOXIN PROC — 43 damage a shot and a proc
 # every time, which is what the weapon is actually for: Toxin bypasses shields
 # outright, so the proc is worth more than the number beside it.

@@ -1,6 +1,7 @@
 id: stropha
 name: Stropha
 slot: melee
+weapon_type: melee
 class: gunblade
 # see notes: melee_from_the_modules
 form: neutral

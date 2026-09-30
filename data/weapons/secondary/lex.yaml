@@ -1,6 +1,7 @@
 id: lex
 name: Lex
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: base
 default_form: true

@@ -1,6 +1,7 @@
 id: kuva_kohm
 name: Kuva Kohm
 slot: primary
+weapon_type: primary
 # A SPOOLING SHOTGUN, and the ramp is the weapon: the pellet count climbs from
 # ONE to TWELVE over the spool, the fire rate from a fifth to full, and the
 # ammo cost from one shell to four. This entry is the FULLY SPOOLED state,

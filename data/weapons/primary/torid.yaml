@@ -1,6 +1,7 @@
 id: torid
 name: Torid
 slot: primary
+weapon_type: primary
 # LAUNCHER — takes the Rifle Mods pool (wiki Rifle_Mods: Assault Rifles, Bows,
 # Launchers, Snipers, Spearguns, Crossbows and Arm-Cannons all draw from it;
 # Shotguns are the pool that does not).

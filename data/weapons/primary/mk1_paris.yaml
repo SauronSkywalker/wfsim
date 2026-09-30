@@ -1,6 +1,7 @@
 id: mk1_paris
 name: MK1-Paris
 slot: primary
+weapon_type: primary
 class: bow
 form: charged
 default_form: true

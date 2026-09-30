@@ -1,6 +1,7 @@
 id: spectra_vandal
 name: Spectra Vandal
 slot: secondary
+weapon_type: secondary
 # A CUTTING LASER WITH A 25% RAMP FLOOR — the roster's other beam floors are
 # 20%, 25% and 70%, and this one shares the Flux Rifle's. It also carries half a
 # metre of innate punch through, which is exactly one body's worth.

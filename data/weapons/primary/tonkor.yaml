@@ -1,6 +1,7 @@
 id: tonkor
 name: Tonkor
 slot: primary
+weapon_type: primary
 # 650 BLAST IN SEVEN METRES out of a one-round magazine, at a 25% crit chance.
 # The Kuva variant is this weapon rebuilt; what this one still has is the 7.5 m
 # arming distance the Kuva's page says it dropped.

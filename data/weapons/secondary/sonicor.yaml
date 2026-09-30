@@ -1,6 +1,7 @@
 id: sonicor
 name: Sonicor
 slot: secondary
+weapon_type: secondary
 # A CONCUSSION CANNON: 150 Impact that ragdolls whatever it touches, and a 5 m
 # blast with NO falloff at all. Its projectile has zero crit chance and zero
 # status — every point of both belongs to the explosion.

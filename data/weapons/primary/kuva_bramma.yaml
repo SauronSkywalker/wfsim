@@ -1,6 +1,7 @@
 id: kuva_bramma
 name: Kuva Bramma
 slot: primary
+weapon_type: primary
 # A BOW THAT FIRES ARTILLERY. The arrow is 187; its explosion is 839 in 8.3 m;
 # and then it "splits into 3 smaller bomblets" that explode again — the third
 # part is the one this engine cannot carry, and the entry says so.

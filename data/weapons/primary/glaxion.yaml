@@ -1,6 +1,7 @@
 id: glaxion
 name: Glaxion
 slot: primary
+weapon_type: primary
 # THE ORDINARY COLD BEAM, and the reason to have it: the Tenet Glaxion CHAINS to
 # three enemies and this one does not chain at all. Same gun, same element, and
 # the whole difference between them in a room is a sentence the base page does

@@ -1,6 +1,7 @@
 id: tysis
 name: Tysis
 slot: secondary
+weapon_type: secondary
 # THE ORIGINAL DoT DART, and the second of the three weapons in the whole game
 # whose module carries a `ShotType: DoT` attack — the other two are its Coda
 # variant and the Synoid Simulor. Most of what it deals is that DoT, and the

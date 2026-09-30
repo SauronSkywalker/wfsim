@@ -1,6 +1,7 @@
 id: cantare
 name: Cantare
 slot: secondary
+weapon_type: secondary
 # THROWN BLADES THAT COME BACK, and the return is the weapon: reloading pulls
 # the lodged blades home through anything in their path at a critical chance SET
 # to 300%. This engine reloads without firing anything, so what is here is the

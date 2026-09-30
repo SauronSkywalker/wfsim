@@ -1,6 +1,7 @@
 id: pyrana_prime
 name: Pyrana Prime
 slot: secondary
+weapon_type: secondary
 # TEN PELLETS OF TWENTY-FOUR, and a passive that summons a SECOND PYRANA
 # (`kill_streak_summon`), which is most of what the Prime is worth.
 class: shotgun_sidearm

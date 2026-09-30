@@ -1,6 +1,7 @@
 id: ax_52
 name: AX-52
 slot: primary
+weapon_type: primary
 # A 1999 ASSAULT RIFLE WHOSE WHOLE IDENTITY IS A CHOICE THE ARENA CANNOT MAKE.
 # Its page states one bonus for hip-firing and a different one for aiming, and
 # this arena aims by default — so the aimed half is the one that applies, and

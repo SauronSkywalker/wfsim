@@ -1,6 +1,7 @@
 id: arca_scisco
 name: Arca Scisco
 slot: secondary
+weapon_type: secondary
 # A SCOPED CORPUS PISTOL WHOSE WHOLE IDENTITY IS A STACKING BUFF THIS ENGINE
 # CANNOT FIRE: every shot adds 4 flat points of critical AND status chance, to
 # five stacks. What is here is the weapon on its first shot, every shot.

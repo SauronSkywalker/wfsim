@@ -1,6 +1,7 @@
 id: efv_5_jupiter
 name: EFV-5 Jupiter
 slot: primary
+weapon_type: primary
 # A 1999 ASSAULT RIFLE WITH A SHOTGUN IN ITS ALTERNATE FIRE: a one-second charge
 # spends fifteen rounds on eleven pellets of 127, each with a guaranteed
 # Corrosive proc.

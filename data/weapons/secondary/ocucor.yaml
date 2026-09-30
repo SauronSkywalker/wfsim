@@ -1,6 +1,7 @@
 id: ocucor
 name: Ocucor
 slot: secondary
+weapon_type: secondary
 # THE ROSTER'S FIRST BEAM PISTOL. Verglas Prime is the only other continuous
 # weapon here and it is a sentinel weapon drawing rifle mods, so this is the
 # first time `continuous` and the PISTOL pool meet — which is what makes

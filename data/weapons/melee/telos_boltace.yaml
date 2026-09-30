@@ -1,6 +1,7 @@
 id: telos_boltace
 name: Telos Boltace
 slot: melee
+weapon_type: melee
 class: tonfa
 # see notes: melee_from_the_modules
 form: neutral

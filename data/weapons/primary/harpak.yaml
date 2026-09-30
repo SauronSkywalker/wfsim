@@ -1,6 +1,7 @@
 id: harpak
 name: Harpak
 slot: primary
+weapon_type: primary
 # A THREE-ROUND HARPOON BURST, and an alternate fire that throws ONE harpoon with
 # a guaranteed Puncture proc and reels the target in. The pull is the weapon's
 # reason to exist and it is a crowd-control effect this arena cannot use.

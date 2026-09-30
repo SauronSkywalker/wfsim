@@ -1,6 +1,7 @@
 id: mk1_kunai_incarnon
 name: MK1-Kunai (Incarnon Form)
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: incarnon
 

@@ -1,6 +1,7 @@
 id: hystrix_prime
 name: Hystrix Prime
 slot: secondary
+weapon_type: secondary
 # THE HYSTRIX WITH PRIME NUMBERS and the same four quills. This entry is the
 # POISON one.
 class: pistol

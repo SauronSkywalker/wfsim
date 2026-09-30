@@ -1,6 +1,7 @@
 id: ghoulsaw
 name: Ghoulsaw
 slot: melee
+weapon_type: melee
 class: assault_saw
 # see notes: melee_from_the_modules
 form: neutral

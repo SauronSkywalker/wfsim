@@ -1,6 +1,7 @@
 id: tenet_plinx
 name: Tenet Plinx
 slot: secondary
+weapon_type: secondary
 # MASTERY RANK 6, which makes it far and away the cheapest thing in this batch,
 # and a 44% crit chance on the primary fire. Its alternate fire is where the
 # weapon actually lives — see that entry, and note that its damage is

@@ -1,6 +1,7 @@
 id: synapse
 name: Synapse
 slot: primary
+weapon_type: primary
 # THE HIGHEST BASE CRIT CHANCE ON A BEAM IN THE ROSTER (39%), and one of only
 # three weapons anywhere that state an innate HEADSHOT bonus in the module's
 # `ExtraHeadshotDmg` column as a real additive number rather than as the -2 that

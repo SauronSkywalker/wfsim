@@ -1,6 +1,7 @@
 id: ballistica_prime_incarnon
 name: Ballistica Prime (Incarnon Form)
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: incarnon
 

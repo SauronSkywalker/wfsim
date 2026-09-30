@@ -1,6 +1,7 @@
 id: aksomati_prime
 name: Aksomati Prime
 slot: secondary
+weapon_type: secondary
 # THIRTEEN ROUNDS A SECOND OUT OF AN EIGHTY-ROUND MAGAZINE, and the module gives
 # its trigger as Auto-Spool: the listed rate is where it ENDS UP, not where it
 # starts. Its page publishes no spool numbers at all — only that accuracy

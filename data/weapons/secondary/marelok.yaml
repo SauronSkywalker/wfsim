@@ -1,6 +1,7 @@
 id: marelok
 name: Marelok
 slot: secondary
+weapon_type: secondary
 # A LEVER-ACTION GRINEER PISTOL AT 160 A SHOT AND 30% STATUS out of six rounds.
 # The Vaykor variant is this weapon with ten rounds and a fifth more damage.
 class: pistol

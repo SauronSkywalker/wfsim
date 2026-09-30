@@ -1,6 +1,7 @@
 id: coda_hema
 name: Coda Hema
 slot: primary
+weapon_type: primary
 # A BURST RIFLE THAT PAYS FOR ITS AMMO IN HEALTH. The cost is real and this
 # arena cannot charge it — nobody shoots back and nothing here has a health
 # pool to spend (docs/UNMODELLED.md), so what the sim shows is the weapon with

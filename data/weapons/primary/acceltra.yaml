@@ -1,6 +1,7 @@
 id: acceltra
 name: Acceltra
 slot: primary
+weapon_type: primary
 # A ROCKET RIFLE AT TWELVE ROUNDS A SECOND. Every rocket is a guaranteed Impact
 # proc and a 4 m explosion, and the whole magazine of 48 goes out in four
 # seconds — which is why its reserve is only 96.

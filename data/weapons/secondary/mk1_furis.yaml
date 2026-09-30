@@ -1,6 +1,7 @@
 id: mk1_furis
 name: MK1-Furis
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: base
 default_form: true          # the arsenal's form (module _TooltipAttackDisplay)

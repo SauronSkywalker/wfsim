@@ -1,6 +1,7 @@
 id: baza_prime
 name: Baza Prime
 slot: primary
+weapon_type: primary
 # THE FASTEST-FIRING SILENT RIFLE, and the reason its falloff is worth reading:
 # a hit-scan weapon almost never carries one, and this one starts losing damage
 # at 30 m. See `falloff` below.

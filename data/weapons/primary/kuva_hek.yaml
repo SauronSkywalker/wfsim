@@ -1,6 +1,7 @@
 id: kuva_hek
 name: Kuva Hek
 slot: primary
+weapon_type: primary
 # FOUR BARRELS. Normal fire is one of them — seven pellets — and the alt-fire
 # "shoots four shots simultaneously", 28 pellets for the whole magazine. This
 # entry is the single barrel, which is the arsenal's own display (module

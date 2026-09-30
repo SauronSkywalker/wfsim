@@ -1,6 +1,7 @@
 id: paracyst
 name: Paracyst
 slot: primary
+weapon_type: primary
 # AN INFESTED BURST RIFLE with a HARPOON in its alternate fire that reels the
 # target in — crowd control this arena cannot use.
 class: rifle

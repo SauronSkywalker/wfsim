@@ -1,6 +1,7 @@
 id: rakta_cernos
 name: Rakta Cernos
 slot: primary
+weapon_type: primary
 # THE RED VEIL'S CERNOS: a quarter-second draw against the ordinary's half, and
 # 470 damage against 380. The fastest-drawing bow in the roster.
 class: bow

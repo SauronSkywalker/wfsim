@@ -1,6 +1,7 @@
 id: quatz
 name: Quatz
 slot: secondary
+weapon_type: secondary
 # HIP-FIRE IS AUTOMATIC AND AIMED FIRE IS A FOUR-ROUND BURST — the mode is the
 # AIM STATE rather than a trigger, which is a combination this simulator can be
 # set to in a way the game cannot. The arsenal shows the automatic.

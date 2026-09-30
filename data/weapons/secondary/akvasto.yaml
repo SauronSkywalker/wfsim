@@ -1,6 +1,7 @@
 id: akvasto
 name: Akvasto
 slot: secondary
+weapon_type: secondary
 # NINETY DAMAGE A SHOT OUT OF TWELVE ROUNDS, half of it Slash. The Prime keeps
 # the ninety and moves it: 77 Slash of it, against this one's 45.
 class: dual_pistols

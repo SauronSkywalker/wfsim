@@ -1,6 +1,7 @@
 id: stug_incarnon
 name: Stug (Incarnon Form)
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: incarnon
 

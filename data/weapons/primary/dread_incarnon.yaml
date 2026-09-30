@@ -1,6 +1,7 @@
 id: dread_incarnon
 name: Dread (Incarnon Form)
 slot: primary
+weapon_type: primary
 class: bow
 form: incarnon
 

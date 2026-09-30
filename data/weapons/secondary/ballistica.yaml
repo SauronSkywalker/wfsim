@@ -1,6 +1,7 @@
 id: ballistica
 name: Ballistica
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: charged
 default_form: true

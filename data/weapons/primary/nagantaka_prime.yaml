@@ -1,6 +1,7 @@
 id: nagantaka_prime
 name: Nagantaka Prime
 slot: primary
+weapon_type: primary
 # THE NAGANTAKA AT 173 A BOLT AND 25% CRIT, out of eleven rounds rather than
 # nine, with a tighter burst delay. Silent in BOTH modes, which the ordinary is
 # not.

@@ -1,6 +1,7 @@
 id: tigris_prime
 name: Tigris Prime
 slot: primary
+weapon_type: primary
 # EIGHT PELLETS OF 195 — 1560 a shell against the ordinary Tigris's 1050 — out
 # of the same two-round duplex magazine, with a shallower falloff. The pellet
 # count is the whole of the Prime.

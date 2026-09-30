@@ -1,6 +1,7 @@
 id: acceltra_prime
 name: Acceltra Prime
 slot: primary
+weapon_type: primary
 # THE ACCELTRA AT 44 AN IMPACT AND A 5 M BLAST, with three times the status
 # chance and a 1.6-second reload. Ten rounds a second rather than twelve, which
 # is the one number that went down.

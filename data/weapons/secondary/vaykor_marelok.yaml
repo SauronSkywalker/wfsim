@@ -1,6 +1,7 @@
 id: vaykor_marelok
 name: Vaykor Marelok
 slot: secondary
+weapon_type: secondary
 # STEEL MERIDIAN'S MARELOK: ten rounds instead of six, 160 damage becomes 160
 # with the Impact raised, a 20% crit chance against 15%, and 35% status. The
 # hardest-hitting semi-auto pistol in this batch.

@@ -1,6 +1,7 @@
 id: vulkar_wraith
 name: Vulkar Wraith
 slot: primary
+weapon_type: primary
 class: sniper
 form: base
 default_form: true

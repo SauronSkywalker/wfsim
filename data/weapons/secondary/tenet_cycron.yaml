@@ -1,6 +1,7 @@
 id: tenet_cycron
 name: Tenet Cycron
 slot: secondary
+weapon_type: secondary
 # A BATTERY BEAM THAT CHAINS, and the chain does NOT compound — the other half
 # of the pair the Tenet Glaxion's comment describes. Its ramp floor is 30% where
 # the engine's default is 20%, which is the second thing the two do not share.

@@ -1,6 +1,7 @@
 id: karyst
 name: Karyst
 slot: melee
+weapon_type: melee
 class: dagger
 # see notes: melee_from_the_modules
 form: neutral

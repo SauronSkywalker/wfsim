@@ -1,6 +1,7 @@
 id: kuva_chakkhurr
 name: Kuva Chakkhurr
 slot: primary
+weapon_type: primary
 # A HAND CANNON: 260 Impact a shot at 1.17/s, 50% crit, and an explosion after
 # it lands. Its headshot bonus is the interesting part — this repo already knew
 # the answer for it before the weapon existed, because the Cernos Prime's file

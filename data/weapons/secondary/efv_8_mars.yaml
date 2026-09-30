@@ -1,6 +1,7 @@
 id: efv_8_mars
 name: EFV-8 Mars
 slot: secondary
+weapon_type: secondary
 # A 1999 PISTOL with a grenade in its alternate fire — a three-metre blast.
 class: pistol
 form: base

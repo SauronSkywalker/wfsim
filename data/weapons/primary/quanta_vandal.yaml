@@ -1,6 +1,7 @@
 id: quanta_vandal
 name: Quanta Vandal
 slot: primary
+weapon_type: primary
 # THE VANDAL BUYS THE BEAM AND NOTHING ELSE. Its cube is the ordinary Quanta's
 # to the last digit — 100 Electricity, 150 Blast, 0.5 m — while the beam gains
 # six crit points, a fifth of a multiplier and nearly double the status chance.

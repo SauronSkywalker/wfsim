@@ -1,6 +1,7 @@
 id: onos_incarnon
 name: Onos (Incarnon Form)
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: incarnon
 

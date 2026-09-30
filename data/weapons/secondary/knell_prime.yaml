@@ -1,6 +1,7 @@
 id: knell_prime
 name: Knell Prime
 slot: secondary
+weapon_type: secondary
 # ONE ROUND IN THE MAGAZINE AND A TWO-SECOND RELOAD, bought back entirely by
 # `weakpoint_stacks:` below — without it this weapon is one shot every two
 # seconds.

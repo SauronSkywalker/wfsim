@@ -1,6 +1,7 @@
 id: ogris
 name: Ogris
 slot: primary
+weapon_type: primary
 # SIX HUNDRED BLAST IN A 7.1 METRE RADIUS, off a 0.3-second charge. Pure Blast on
 # both halves, a 35% status chance, and the widest ordinary explosion in this
 # batch.

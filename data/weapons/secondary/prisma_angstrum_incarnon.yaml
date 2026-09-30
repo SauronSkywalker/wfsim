@@ -1,6 +1,7 @@
 id: prisma_angstrum_incarnon
 name: Prisma Angstrum (Incarnon Form)
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: incarnon
 

@@ -1,6 +1,7 @@
 id: prisma_obex
 name: Prisma Obex
 slot: melee
+weapon_type: melee
 class: sparring
 # see notes: melee_from_the_modules
 form: neutral

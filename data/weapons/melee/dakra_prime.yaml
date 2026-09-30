@@ -1,6 +1,7 @@
 id: dakra_prime
 name: Dakra Prime
 slot: melee
+weapon_type: melee
 class: sword
 # see notes: melee_from_the_modules
 form: neutral

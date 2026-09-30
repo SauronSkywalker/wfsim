@@ -1,6 +1,7 @@
 id: strun_prime
 name: Strun Prime
 slot: primary
+weapon_type: primary
 class: shotgun
 form: base
 default_form: true

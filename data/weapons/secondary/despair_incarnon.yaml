@@ -1,6 +1,7 @@
 id: despair_incarnon
 name: Despair (Incarnon Form)
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: incarnon
 

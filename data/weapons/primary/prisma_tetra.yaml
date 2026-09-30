@@ -1,6 +1,7 @@
 id: prisma_tetra
 name: Prisma Tetra
 slot: primary
+weapon_type: primary
 # THE PRISMA IS THE TETRA, SCALED. Every stat is higher and not one mechanic is
 # new — no alternate fire, same two damage types, same cone, same projectile
 # speed. It is the control case for the Tenet: that variant gained a whole

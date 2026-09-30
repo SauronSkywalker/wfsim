@@ -1,6 +1,7 @@
 id: aegrit
 name: Aegrit
 slot: secondary
+weapon_type: secondary
 # A STICKY MINE WORTH 797 BLAST IN NINE METRES — the largest explosion in the
 # secondary roster, off a direct hit worth nine. Everything about it is the
 # detonation, and the detonation is a second trigger this sim does not have.

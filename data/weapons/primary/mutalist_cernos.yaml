@@ -1,6 +1,7 @@
 id: mutalist_cernos
 name: Mutalist Cernos
 slot: primary
+weapon_type: primary
 # AN INFESTED BOW WHOSE DRAWN ARROW LEAVES A TOXIN CLOUD. The charged shot is
 # the arsenal's own; the cloud is carried below as `lingering:`.
 class: bow

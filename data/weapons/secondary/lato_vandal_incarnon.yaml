@@ -1,6 +1,7 @@
 id: lato_vandal_incarnon
 name: Lato Vandal (Incarnon Form)
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: incarnon
 

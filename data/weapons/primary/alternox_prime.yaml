@@ -1,6 +1,7 @@
 id: alternox_prime
 name: Alternox Prime
 slot: primary
+weapon_type: primary
 # THE ALTERNOX AT A 42-ROUND MAGAZINE and more of everything.
 class: rifle
 form: base

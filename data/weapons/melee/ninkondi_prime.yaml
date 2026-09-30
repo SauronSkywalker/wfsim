@@ -1,6 +1,7 @@
 id: ninkondi_prime
 name: Ninkondi Prime
 slot: melee
+weapon_type: melee
 class: nunchaku
 # see notes: melee_from_the_modules
 form: neutral

@@ -1,6 +1,7 @@
 id: scourge
 name: Scourge
 slot: primary
+weapon_type: primary
 class: rifle
 form: base
 default_form: true

@@ -1,6 +1,7 @@
 id: grinlok
 name: Grinlok
 slot: primary
+weapon_type: primary
 # A LEVER-ACTION RIFLE AT 187 DAMAGE A SHOT AND 1.67 A SECOND, with a 35% status
 # chance that is the highest in this batch's rifles. Mostly Impact and Slash.
 class: rifle

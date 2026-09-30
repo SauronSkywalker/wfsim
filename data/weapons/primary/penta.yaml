@@ -1,6 +1,7 @@
 id: penta
 name: Penta
 slot: primary
+weapon_type: primary
 # THE ORIGINAL GRENADE LAUNCHER: five grenades, one a second, 350 Blast in a 4 m
 # radius each. It is detonated BY HAND, which is the whole weapon and the one
 # thing this sim cannot do — see the admission.

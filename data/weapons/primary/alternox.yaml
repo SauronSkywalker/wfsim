@@ -1,6 +1,7 @@
 id: alternox
 name: Alternox
 slot: primary
+weapon_type: primary
 # A ZARIMAN RIFLE. The primary fire is an ordinary projectile; the alternate
 # plants a charge that burns and then explodes in six metres.
 class: rifle

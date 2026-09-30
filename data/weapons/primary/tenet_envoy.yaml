@@ -1,6 +1,7 @@
 id: tenet_envoy
 name: Tenet Envoy
 slot: primary
+weapon_type: primary
 # A GUIDED ROCKET LAUNCHER, and the biggest single explosion in this batch: 640
 # Cold in an 8 metre radius. The guidance is the part this arena has no hand
 # for — see the unmodelled list — and it costs nothing here, because a rocket

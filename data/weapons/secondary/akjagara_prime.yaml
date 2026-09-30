@@ -1,6 +1,7 @@
 id: akjagara_prime
 name: Akjagara Prime
 slot: secondary
+weapon_type: secondary
 # A TWO-ROUND BURST WITH NO DELAY BETWEEN THE ROUNDS — the module gives
 # BurstDelay 0, so both barrels land in the same instant and the listed fire
 # rate of 5 is 10 rounds a second. It also carries a fifth of a metre of innate

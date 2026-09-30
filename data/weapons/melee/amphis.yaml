@@ -1,6 +1,7 @@
 id: amphis
 name: Amphis
 slot: melee
+weapon_type: melee
 class: staff
 # see notes: melee_from_the_modules
 form: neutral

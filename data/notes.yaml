@@ -1000,7 +1000,7 @@ notes:
   rifle_mods_pool_per: |
     RIFLE MODS, and the PRIMARY pool with them. The pool is PER WEAPON on this
     class and the page's own "Mod Pool" row says Rifle; a sentinel weapon is
-    also a primary-kind weapon (`weapon_category`), so it draws what fits any
+    also a primary weapon by type (`weapon_type`), so it draws what fits any
     primary — the Vigilante set among them, which wiki `Vigilante_Supplies`
     places on "a sentinel's weapon". DE's `SENTINEL_WEAPON` incompatibility
     tag (the Amalgam cards) is what keeps the rest off.
@@ -1032,7 +1032,7 @@ notes:
     would be wrong by the card's own definition.
   sentinel_weapon_own_equipment: |
     SENTINEL WEAPON — its own equipment slot, on the companion rather than in the
-    Warframe's primary slot, whatever kind of weapon it is (`weapon_category`).
+    Warframe's primary slot, whatever type of weapon it is (`weapon_type`).
     NO exilus slot and NO arcane; both follow from `class` containing
     "sentinel", so their absence here is a fact rather than an omission.
   sentinel_weapons_draw_from: |

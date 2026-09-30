@@ -1,6 +1,7 @@
 id: valkyr_talons
 name: Valkyr Talons
 slot: melee
+weapon_type: melee
 class: claws
 # THE STATIONARY COMBO, and the arsenal's own form — so its mode is `base`.
 form: neutral

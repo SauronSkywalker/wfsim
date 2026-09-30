@@ -1,6 +1,7 @@
 id: argonak
 name: Argonak
 slot: primary
+weapon_type: primary
 # TWO TRIGGERS, ONE DAMAGE FIGURE. The Argonak's semi-auto and full-auto modes
 # deal exactly the same 57 a shot and differ in everything else: 27% crit at
 # 4.33 a second against 9% at 6, and the status chance runs the other way. The

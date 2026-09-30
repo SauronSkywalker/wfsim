@@ -1,6 +1,7 @@
 id: strun_wraith_incarnon
 name: Strun Wraith (Incarnon Form)
 slot: primary
+weapon_type: primary
 class: shotgun
 form: incarnon
 

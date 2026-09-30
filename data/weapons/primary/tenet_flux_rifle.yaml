@@ -1,6 +1,7 @@
 id: tenet_flux_rifle
 name: Tenet Flux Rifle
 slot: primary
+weapon_type: primary
 # THE PLAINEST TENET WEAPON, and worth having for that: no alt-fire, no gauge,
 # no explosion — an auto rifle with the valence axis bolted on, which is what
 # makes it the one entry where the progenitor bonus can be read on its own.

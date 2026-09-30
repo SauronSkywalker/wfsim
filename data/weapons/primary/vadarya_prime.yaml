@@ -1,6 +1,7 @@
 id: vadarya_prime
 name: Vadarya Prime
 slot: primary
+weapon_type: primary
 class: sniper
 # A CHARGE TRIGGER IS THE CHARGED FORM, and nothing else is. This weapon has
 # only the one — "Auto Charge" is how it always fires.

@@ -1,6 +1,7 @@
 id: vastilok
 name: Vastilok
 slot: melee
+weapon_type: melee
 class: gunblade
 # see notes: melee_from_the_modules
 form: neutral

@@ -1,6 +1,7 @@
 id: brakk
 name: Brakk
 slot: secondary
+weapon_type: secondary
 # TEN PELLETS OF TWENTY, five rounds, and a one-second reload — the Grineer hand
 # cannon, and the shortest reload of any shotgun sidearm in the roster.
 class: shotgun_sidearm

@@ -1,6 +1,7 @@
 id: afuris_prime
 name: Afuris Prime
 slot: secondary
+weapon_type: secondary
 # THE AFURIS WITH TRIPLE THE CRIT AND TWO AND A HALF TIMES THE STATUS off the
 # same fire rate, and a cone less than half as wide. The reload nearly halves
 # too, which is where most of the sustained gain actually comes from.

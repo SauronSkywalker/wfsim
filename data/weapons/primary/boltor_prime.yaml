@@ -1,6 +1,7 @@
 id: boltor_prime
 name: Boltor Prime
 slot: primary
+weapon_type: primary
 class: rifle
 form: base
 default_form: true          # the arsenal's form (module _TooltipAttackDisplay)

@@ -1,6 +1,7 @@
 id: dual_toxocyst_incarnon
 name: Dual Toxocyst (Incarnon Form)
 slot: secondary
+weapon_type: secondary
 class: dual_pistols
 form: incarnon
 

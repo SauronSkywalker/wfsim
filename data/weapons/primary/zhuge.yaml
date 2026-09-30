@@ -1,6 +1,7 @@
 id: zhuge
 name: Zhuge
 slot: primary
+weapon_type: primary
 # A SILENT REPEATING CROSSBOW AT A HUNDRED DAMAGE A BOLT AND 35% STATUS. Like
 # the Attica it "counts as a bow in regards to fire rate mods" and like the
 # Attica it does not charge, which is exactly the split `class: crossbow`

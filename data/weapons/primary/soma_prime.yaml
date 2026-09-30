@@ -1,6 +1,7 @@
 id: soma_prime
 name: Soma Prime
 slot: primary
+weapon_type: primary
 class: rifle
 form: base
 default_form: true

@@ -1,6 +1,7 @@
 id: coda_catabolyst
 name: Coda Catabolyst
 slot: secondary
+weapon_type: secondary
 # A BEAM WITH A BLAST ON THE END OF IT — the roster's second beam to carry a
 # damage radius — and a reload that throws the magazine as three grenades.
 class: pistol

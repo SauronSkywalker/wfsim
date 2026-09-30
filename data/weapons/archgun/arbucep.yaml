@@ -5,6 +5,7 @@ name: Arbucep
 # 2026-08-15 because none of the three approximations available then was
 # honest; the engine grew the two mechanics instead (owner: 引擎支持做好).
 slot: archgun
+weapon_type: archgun
 class: archgun
 form: base
 default_form: true

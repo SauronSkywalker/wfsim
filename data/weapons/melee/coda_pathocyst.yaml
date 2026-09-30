@@ -1,6 +1,7 @@
 id: coda_pathocyst
 name: Coda Pathocyst
 slot: melee
+weapon_type: melee
 class: glaive
 # see notes: melee_from_the_modules
 form: neutral

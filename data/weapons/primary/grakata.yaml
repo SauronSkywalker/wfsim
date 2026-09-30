@@ -1,6 +1,7 @@
 id: grakata
 name: Grakata
 slot: primary
+weapon_type: primary
 # TWENTY ROUNDS A SECOND AT ELEVEN DAMAGE A SHOT — the Grineer answer to volume,
 # and the family the Prisma and the Twin Grakatas are built on.
 class: rifle

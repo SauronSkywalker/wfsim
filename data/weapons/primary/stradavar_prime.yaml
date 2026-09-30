@@ -1,6 +1,7 @@
 id: stradavar_prime
 name: Stradavar Prime
 slot: primary
+weapon_type: primary
 # THE STRADAVAR WITH A 2.6x MULTIPLIER on full auto and a semi-auto that costs
 # TWO rounds a shot for 80 damage, a metre of punch through and a 2.8x
 # multiplier. The two modes are further apart on the Prime than on any other

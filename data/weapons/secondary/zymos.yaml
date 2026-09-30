@@ -1,6 +1,7 @@
 id: zymos
 name: Zymos
 slot: secondary
+weapon_type: secondary
 # AN INFESTED PISTOL WHOSE HEADSHOTS SPAWN HOMING SPORES. The shot is a 3.3 m
 # blast; the spores are two further attacks this engine has no shape for.
 class: pistol

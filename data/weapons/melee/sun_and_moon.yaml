@@ -1,6 +1,7 @@
 id: sun_and_moon
 name: "Sun & Moon"
 slot: melee
+weapon_type: melee
 class: dual_nikanas
 # see notes: melee_from_the_modules
 form: neutral

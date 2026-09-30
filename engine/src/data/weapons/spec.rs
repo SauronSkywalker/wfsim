@@ -178,13 +178,12 @@ pub struct WeaponSpec {
     pub accuracy: Option<f64>,
     pub slot: String,
     pub class: String,
-    /// WHICH OF THE THREE a sentinel weapon is — primary, secondary or melee.
-    /// A sentinel weapon carries TWO tags: `slot: sentinel` says where it sits,
-    /// this says what kind of weapon it is, and its mod pools follow the second
-    /// (a primary-kind one draws the Primary pool, Vigilante set included).
-    /// Stated on sentinel weapons only; read through [`WeaponSpec::category`].
-    #[serde(default)]
-    pub weapon_category: Option<String>,
+    /// WHAT KIND OF WEAPON IT IS, beside where it is equipped (`slot`). The
+    /// two agree on almost every weapon and are both stated anyway: a sentinel
+    /// weapon sits in `slot: sentinel` and is a primary, secondary or melee
+    /// weapon, and its mod pools follow the TYPE (a primary one draws the
+    /// Primary pool, Vigilante set included).
+    pub weapon_type: WeaponType,
     /// Which DEPLOYMENT the fields on this entry describe (Arch-Guns:
     /// "atmosphere"). `None` = the weapon has only one.
     #[serde(default)]
@@ -606,4 +605,26 @@ pub struct ScopeSpec {
     /// Lanka's +50% would be worth 50% of 25% instead of 50 points.
     #[serde(default)]
     pub crit_chance_post_mod: f64,
+}
+
+/// The closed vocabulary of [`WeaponSpec::weapon_type`]. An unknown value is a
+/// parse error, not a new kind of weapon.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum WeaponType {
+    Primary,
+    Secondary,
+    Melee,
+    Archgun,
+}
+
+impl WeaponType {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Primary => "primary",
+            Self::Secondary => "secondary",
+            Self::Melee => "melee",
+            Self::Archgun => "archgun",
+        }
+    }
 }

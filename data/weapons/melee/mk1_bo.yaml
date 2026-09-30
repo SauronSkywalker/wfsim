@@ -1,6 +1,7 @@
 id: mk1_bo
 name: Mk1-Bo
 slot: melee
+weapon_type: melee
 class: staff
 # see notes: melee_from_the_modules
 form: neutral

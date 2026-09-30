@@ -1,6 +1,7 @@
 id: aklex_prime
 name: Aklex Prime
 slot: secondary
+weapon_type: secondary
 # THE AKLEX AT 150 A SHOT AND NEARLY DOUBLE THE FIRE RATE, with two and a half
 # times the status chance. The cone, the reload and the crit multiplier are
 # untouched.

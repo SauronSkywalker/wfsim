@@ -1,6 +1,7 @@
 id: afentis
 name: Afentis
 slot: primary
+weapon_type: primary
 # A SPEARGUN WHOSE SPEARS EXPLODE: 100 on impact and 800 Blast in three metres.
 # The arsenal shows the THROW (`_TooltipAttackDisplay: 2`), which is the other
 # entry.

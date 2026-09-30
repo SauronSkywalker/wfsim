@@ -1486,7 +1486,7 @@ fn an_evolutions_flat_damage_stays_out_of_the_co_term_by_default() {
 /// follow from `mod_pools` and `slot`.
 /// A weapon's pool is the union of the pools it draws. The Torid sees the
 /// primary-wide mods AND the rifle class pool, and so does Verglas Prime: a
-/// sentinel weapon of the primary kind (`weapon_category`).
+/// sentinel weapon of the primary type (`weapon_type`).
 /// A compat tag is not the whole restriction. Sinister Reach and
 /// Combustion Beam are tagged PRIMARY and still cannot go on the Torid
 /// — they need a CONTINUOUS weapon, and the Torid is a
@@ -1637,6 +1637,7 @@ fn perks_accept_both_reference_and_inline_forms() {
 id: test_gun
 name: Test Gun
 slot: secondary
+weapon_type: secondary
 class: pistols
 form: base
 magazine: 10
@@ -1697,20 +1698,22 @@ fn the_one_x_heads_are_the_ones_the_wiki_names() {
     assert_eq!(have, want);
 }
 
-/// A SENTINEL WEAPON CARRIES TWO TAGS — where it sits (`slot: sentinel`) and
-/// what kind of weapon it is (`weapon_category`) — and its pool follows the
-/// second: a primary-kind one draws the Primary pool, and no other kind does.
-/// Only a sentinel weapon states the category; everyone else's is its slot.
+/// EVERY WEAPON STATES ITS TYPE beside its slot. Where the slot names a type
+/// the two agree; where it does not (a sentinel weapon's own slot) the type is
+/// the weapon's own, and its pool follows it: a primary one draws the Primary
+/// pool, and no other type does.
 #[test]
-fn a_sentinel_weapon_is_also_a_primary_secondary_or_melee_weapon() {
-    for w in all().iter().filter(|w| w.inherits.is_none()) {
-        let sentinel = w.class.contains("sentinel");
-        assert_eq!(w.weapon_category.is_some(), sentinel, "{}: category stated iff sentinel", w.id);
-        let cat = w.category();
-        assert!(["primary", "secondary", "melee", "archgun"].contains(&cat), "{}: {cat}", w.id);
-        if sentinel {
-            let primary_pool = w.mod_pools.iter().any(|p| p == "primary");
-            assert_eq!(primary_pool, cat == "primary", "{}: {cat} kind, pools {:?}", w.id, w.mod_pools);
+fn a_weapon_type_matches_its_slot_except_where_the_slot_is_not_a_type() {
+    for w in all().iter() {
+        let t = w.weapon_type.as_str();
+        let slot_is_a_type = ["primary", "secondary", "melee", "archgun"].contains(&w.slot.as_str());
+        if !slot_is_a_type {
+            if w.inherits.is_none() {
+                let primary_pool = w.mod_pools.iter().any(|p| p == "primary");
+                assert_eq!(primary_pool, t == "primary", "{}: {t} type, pools {:?}", w.id, w.mod_pools);
+            }
+        } else {
+            assert_eq!(t, w.slot, "{}: slot {} but weapon_type {t}", w.id, w.slot);
         }
     }
 }

@@ -1,6 +1,7 @@
 id: euphona_prime
 name: Euphona Prime
 slot: secondary
+weapon_type: secondary
 # TWO WEAPONS IN ONE HAND. The primary fire is a 325-damage slug at a 30% crit
 # chance and no falloff — the highest base damage of any non-shotgun secondary —
 # and the alternate is ten pellets of 88 that lose 99% of it by twelve metres.

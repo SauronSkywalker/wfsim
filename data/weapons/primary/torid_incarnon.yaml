@@ -1,6 +1,7 @@
 id: torid_incarnon
 name: Torid (Incarnon Form)
 slot: primary
+weapon_type: primary
 class: launcher
 # Gauge-switched: entering it costs a full charge meter and a transmute
 # animation, which is what gives the sim a two-form CYCLE to run.

@@ -1,6 +1,7 @@
 id: twin_rogga
 name: Twin Rogga
 slot: secondary
+weapon_type: secondary
 # FIFTEEN PELLETS A PULL OUT OF A TWO-ROUND MAGAZINE — 705 damage a shot, the
 # hardest-hitting entry in this batch, and then a reload. The Queensguard's
 # sidearm, and the only shotgun among the twenty-five.

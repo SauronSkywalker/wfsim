@@ -1,6 +1,7 @@
 id: fusilai
 name: Fusilai
 slot: secondary
+weapon_type: secondary
 # GLASS KNIVES, SILENT, THROWN ONE AT A TIME on the primary fire and THREE IN A
 # FAN on the alternate — at three rounds of the magazine per fan, which is half
 # of it.

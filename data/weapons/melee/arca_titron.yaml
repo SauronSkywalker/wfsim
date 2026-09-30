@@ -1,6 +1,7 @@
 id: arca_titron
 name: Arca Titron
 slot: melee
+weapon_type: melee
 class: hammer
 # see notes: melee_from_the_modules
 form: neutral

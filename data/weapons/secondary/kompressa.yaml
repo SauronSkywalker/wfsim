@@ -1,6 +1,7 @@
 id: kompressa
 name: Kompressa
 slot: secondary
+weapon_type: secondary
 # FOUR BUBBLES A SHOT, each worth 2 Viral on contact and 42 more in a 2.4 m
 # radius. The direct hit is almost nothing and the explosion is the weapon,
 # which is why its cone is 30 degrees wide and it does not matter.

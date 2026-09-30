@@ -1,6 +1,7 @@
 id: guandao
 name: Guandao
 slot: melee
+weapon_type: melee
 class: polearm
 # see notes: melee_from_the_modules
 form: neutral

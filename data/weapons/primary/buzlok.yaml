@@ -1,6 +1,7 @@
 id: buzlok
 name: Buzlok
 slot: primary
+weapon_type: primary
 # A HOMING RIFLE WHOSE ALTERNATE FIRE IS A TRACER, not a weapon: three damage,
 # and it makes every following round home on what it stuck to AND grants +50%
 # ABSOLUTE critical chance for twenty seconds. That buff is most of the weapon

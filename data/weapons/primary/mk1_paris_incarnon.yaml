@@ -1,6 +1,7 @@
 id: mk1_paris_incarnon
 name: MK1-Paris (Incarnon Form)
 slot: primary
+weapon_type: primary
 class: bow
 form: incarnon
 

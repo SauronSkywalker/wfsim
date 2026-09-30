@@ -1,6 +1,7 @@
 id: prisma_angstrum
 name: Prisma Angstrum
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: charged
 default_form: true

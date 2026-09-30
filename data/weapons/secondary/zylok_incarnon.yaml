@@ -1,6 +1,7 @@
 id: zylok_incarnon
 name: Zylok (Incarnon Form)
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: incarnon
 

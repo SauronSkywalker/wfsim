@@ -1,6 +1,7 @@
 id: nagantaka
 name: Nagantaka
 slot: primary
+weapon_type: primary
 # A SLASH CROSSBOW WITH A GUARANTEED IMPACT PROC, and an alternate fire that
 # empties the magazine at 2.3x the listed rate. Silent on the semi-auto and not
 # on the burst, and like every crossbow it counts as a bow for fire-rate mods.

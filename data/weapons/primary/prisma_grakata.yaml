@@ -1,6 +1,7 @@
 id: prisma_grakata
 name: Prisma Grakata
 slot: primary
+weapon_type: primary
 # THE GRAKATA WITH A HUNDRED AND TWENTY ROUNDS AND A 2.5x CRIT MULTIPLIER — a
 # third more damage per shot, 21.67 rounds a second, and a reserve of a
 # thousand.

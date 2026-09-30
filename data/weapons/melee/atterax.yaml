@@ -1,6 +1,7 @@
 id: atterax
 name: Atterax
 slot: melee
+weapon_type: melee
 class: whip
 # see notes: melee_from_the_modules
 form: neutral

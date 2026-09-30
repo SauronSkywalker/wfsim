@@ -1,6 +1,7 @@
 id: reconifex
 name: Reconifex
 slot: primary
+weapon_type: primary
 # A TWO-HUNDRED-ROUND BELT WITH A FIVE-SECOND RELOAD, and an ACTIVE RELOAD that
 # is the whole point of carrying it: hitting the button inside a window turns
 # the reload into one second AND makes the magazine Heat with guaranteed status.

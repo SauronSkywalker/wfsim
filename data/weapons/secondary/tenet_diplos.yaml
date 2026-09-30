@@ -1,6 +1,7 @@
 id: tenet_diplos
 name: Tenet Diplos
 slot: secondary
+weapon_type: secondary
 # THE BRIEFCASE PISTOLS. Its alternate fire is the roster's first attack that is
 # INHERENTLY multi-target — aiming locks onto up to 8 enemies and fires two
 # seeking rounds at each — and that is exactly the part this arena cannot pick

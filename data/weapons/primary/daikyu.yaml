@@ -1,6 +1,7 @@
 id: daikyu
 name: Daikyu
 slot: primary
+weapon_type: primary
 # SEVEN HUNDRED DAMAGE AN ARROW AND THREE METRES OF PUNCH THROUGH, the deepest
 # of any bow — six bodies' worth at `space::BODY_MATERIAL_M`. It cannot be
 # half-drawn, so every shot carries it, and every shot carries a guaranteed

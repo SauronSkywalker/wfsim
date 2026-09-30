@@ -1,6 +1,7 @@
 id: amprex
 name: Amprex
 slot: primary
+weapon_type: primary
 # THE CHAIN LIGHTNING RIFLE. Its beam reaches 18 m and then jumps: three
 # enemies, 10 m apart, each hop at half the last one's damage — and a body
 # reached by PUNCH THROUGH starts a chain of its own, which is the wiki's own

@@ -1,6 +1,7 @@
 id: laetum
 name: Laetum
 slot: secondary
+weapon_type: secondary
 # Single Pistol — takes the Pistol Mods pool (wiki Pistol_Mods), same
 # eligibility path as the Dual Toxocyst entry.
 class: pistol

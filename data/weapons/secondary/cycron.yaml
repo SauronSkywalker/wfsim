@@ -1,6 +1,7 @@
 id: cycron
 name: Cycron
 slot: secondary
+weapon_type: secondary
 # THE TENET VERSION CHANGED THE ELEMENT, which is the sharpest difference in
 # this batch: this beam deals Puncture, Radiation and Slash, and the Tenet
 # Cycron deals pure Heat. It also does not CHAIN — the Tenet's two 7 m hops at

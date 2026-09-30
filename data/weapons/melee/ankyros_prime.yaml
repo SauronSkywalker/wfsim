@@ -1,6 +1,7 @@
 id: ankyros_prime
 name: Ankyros Prime
 slot: melee
+weapon_type: melee
 class: fist
 # see notes: melee_from_the_modules
 form: neutral

@@ -1,6 +1,7 @@
 id: kuva_zarr
 name: Kuva Zarr
 slot: primary
+weapon_type: primary
 # TWO WEAPONS ON ONE TRIGGER. Cannon Mode is artillery — a 673 Blast shell in
 # 7 m plus three bomblets; Barrage Mode is a ten-pellet shotgun with 1.6 m of
 # punch through. This entry is the CANNON, which is the arsenal's own display

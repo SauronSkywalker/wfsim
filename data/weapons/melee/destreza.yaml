@@ -1,6 +1,7 @@
 id: destreza
 name: Destreza
 slot: melee
+weapon_type: melee
 class: rapier
 # see notes: melee_from_the_modules
 form: neutral

@@ -1,6 +1,7 @@
 id: kulstar
 name: Kulstar
 slot: secondary
+weapon_type: secondary
 # A ROCKET PISTOL THAT SPLITS: a 3.9 m blast, and then three cluster bombs that
 # explode again.
 class: pistol

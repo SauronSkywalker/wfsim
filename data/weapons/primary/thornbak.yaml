@@ -1,6 +1,7 @@
 id: thornbak
 name: Thornbak
 slot: primary
+weapon_type: primary
 # A FOUR-ROUND BURST WITH EQUAL PHYSICAL DAMAGE and no mastery requirement at
 # all — the module gives MR 0, which no other rifle in this roster does.
 class: rifle

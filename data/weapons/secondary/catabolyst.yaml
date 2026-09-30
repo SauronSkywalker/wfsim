@@ -1,6 +1,7 @@
 id: catabolyst
 name: Catabolyst
 slot: secondary
+weapon_type: secondary
 # A BEAM WITH A BLAST ON THE END OF IT, and the weapon whose reload is the
 # point: it throws a grenade every time. ONE grenade, where the Coda throws
 # three — that is the adversary variant's real addition.

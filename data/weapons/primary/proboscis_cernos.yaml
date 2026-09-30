@@ -1,6 +1,7 @@
 id: proboscis_cernos
 name: Proboscis Cernos
 slot: primary
+weapon_type: primary
 # A BOW THAT FIRES A GRAPPLING PARASITE: 279 on the arrow and 1003 Viral in
 # seven metres, which is the largest single explosion in the primary roster.
 class: bow

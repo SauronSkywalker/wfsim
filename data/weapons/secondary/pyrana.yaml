@@ -1,6 +1,7 @@
 id: pyrana
 name: Pyrana
 slot: secondary
+weapon_type: secondary
 # TWELVE PELLETS OF TWENTY-TWO out of ten rounds at 4.17 a second — 264 a pull,
 # 84% of it Slash. The Prime trades two pellets for more damage on each and a
 # real passive.

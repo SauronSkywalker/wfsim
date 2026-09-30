@@ -1,6 +1,7 @@
 id: vinquibus
 name: Vinquibus
 slot: primary
+weapon_type: primary
 # A BAYONET RIFLE THAT TAKES THE MELEE SLOT WITH IT, and the only entry in the
 # roster whose published polarities include one this engine's polarity set does
 # not have. Both are admitted below; what is here is the rifle half, which is a

@@ -17,6 +17,7 @@ id: tombfinger_primary
 name: Tombfinger
 wiki_name: Tombfinger
 slot: primary
+weapon_type: primary
 class: rifle
 form: charged
 default_form: true

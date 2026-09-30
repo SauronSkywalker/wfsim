@@ -1,6 +1,7 @@
 id: evensong
 name: Evensong
 slot: primary
+weapon_type: primary
 # A BOW WHOSE DRAWN ARROW EXPLODES — a four-metre blast on the charged shot,
 # which is the arsenal's own (`_TooltipAttackDisplay: 2`).
 class: bow

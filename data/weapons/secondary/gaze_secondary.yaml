@@ -10,6 +10,7 @@ id: gaze_secondary
 name: Gaze
 wiki_name: Gaze
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: base
 default_form: true

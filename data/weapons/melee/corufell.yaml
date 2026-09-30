@@ -1,6 +1,7 @@
 id: corufell
 name: Corufell
 slot: melee
+weapon_type: melee
 class: heavy_scythe
 # see notes: melee_from_the_modules
 form: neutral

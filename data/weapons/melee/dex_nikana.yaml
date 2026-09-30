@@ -1,6 +1,7 @@
 id: dex_nikana
 name: Dex Nikana
 slot: melee
+weapon_type: melee
 class: nikana
 # see notes: melee_from_the_modules
 form: neutral

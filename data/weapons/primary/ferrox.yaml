@@ -1,6 +1,7 @@
 id: ferrox
 name: Ferrox
 slot: primary
+weapon_type: primary
 # THE SPEARGUN THE TENET VERSION IS BUILT ON, and the pair the Primary
 # Compression catalog covers in ONE row with two numbers: "3.6 m (4.0 m)". The
 # parenthetical is the Tenet's, which is the catalog naming both variants in one

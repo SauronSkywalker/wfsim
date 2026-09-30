@@ -1,6 +1,7 @@
 id: akstiletto_prime
 name: Akstiletto Prime
 slot: secondary
+weapon_type: secondary
 # THE AKSTILETTO SLOWED DOWN AND HIT HARDER: 36 a shot against 28, at 7.08
 # rounds a second against 10, with the status chance raised from 18% to 30%.
 class: dual_pistols

@@ -1,6 +1,7 @@
 id: tigris
 name: Tigris
 slot: primary
+weapon_type: primary
 # TWO BARRELS AND A DUPLEX TRIGGER: the first shell on the button press, the
 # second on its release. Five pellets of 210 apiece, 84% of it Slash, and then a
 # reload — 2100 damage a shot is the highest per-pull figure in the roster's

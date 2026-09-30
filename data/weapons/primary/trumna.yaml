@@ -1,6 +1,7 @@
 id: trumna
 name: Trumna
 slot: primary
+weapon_type: primary
 # A 200-ROUND RIFLE WHOSE EVERY ROUND CARRIES A 1.6 M BLAST, and an alternate
 # fire that lobs grenades built out of the rounds it has already spent.
 class: rifle

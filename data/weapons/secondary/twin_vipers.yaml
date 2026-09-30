@@ -1,6 +1,7 @@
 id: twin_vipers
 name: Twin Vipers
 slot: secondary
+weapon_type: secondary
 # TWENTY-FIVE ROUNDS A SECOND, the fastest fire rate in the roster, out of
 # twenty-eight rounds — so the magazine is gone in a little over a second and
 # the two-second reload is most of the fight.

@@ -1,6 +1,7 @@
 id: tenet_spirex
 name: Tenet Spirex
 slot: secondary
+weapon_type: secondary
 # A SLUG THAT EXPLODES ON CONTACT — "the Corpus's answer to the Kuva Seer", by
 # the page's own comparison, and like the Seer its CO row is Multiplying.
 class: pistol

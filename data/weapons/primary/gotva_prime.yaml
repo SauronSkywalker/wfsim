@@ -1,6 +1,7 @@
 id: gotva_prime
 name: Gotva Prime
 slot: primary
+weapon_type: primary
 # THE FIRST ASSAULT RIFLE IN THE ROSTER. Class "Rifle" on the wiki, which is
 # what carries `CompatibilityTags = { "ASSAULT_AMMO" }` — the tag gating the 15
 # mods no weapon here could reach before (Tactical Reload, Spring-Loaded

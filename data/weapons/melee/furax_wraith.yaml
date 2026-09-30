@@ -1,6 +1,7 @@
 id: furax_wraith
 name: Furax Wraith
 slot: melee
+weapon_type: melee
 class: fist
 # see notes: melee_from_the_modules
 form: neutral

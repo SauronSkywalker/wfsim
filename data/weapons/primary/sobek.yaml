@@ -1,6 +1,7 @@
 id: sobek
 name: Sobek
 slot: primary
+weapon_type: primary
 # TWENTY ROUNDS OUT OF A SHOTGUN, five pellets of 70 apiece, and a falloff
 # window that only starts at 20 m — the longest in this batch's shotguns.
 class: shotgun

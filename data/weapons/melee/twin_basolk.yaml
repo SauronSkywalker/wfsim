@@ -1,6 +1,7 @@
 id: twin_basolk
 name: Twin Basolk
 slot: melee
+weapon_type: melee
 class: dual_swords
 # see notes: melee_from_the_modules
 form: neutral

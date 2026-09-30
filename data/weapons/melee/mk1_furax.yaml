@@ -1,6 +1,7 @@
 id: mk1_furax
 name: Mk1-Furax
 slot: melee
+weapon_type: melee
 class: fist
 # see notes: melee_from_the_modules
 form: neutral

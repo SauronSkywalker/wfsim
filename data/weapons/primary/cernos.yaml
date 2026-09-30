@@ -1,6 +1,7 @@
 id: cernos
 name: Cernos
 slot: primary
+weapon_type: primary
 # A SILENT IMPACT BOW. The arsenal shows the CHARGED shot — the module's
 # `_TooltipAttackDisplay` is 2 — which is 380 damage with a metre of punch
 # through after half a second's draw; the tapped shot is half of it and carries

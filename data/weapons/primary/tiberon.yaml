@@ -1,6 +1,7 @@
 id: tiberon
 name: Tiberon
 slot: primary
+weapon_type: primary
 # A THREE-ROUND BURST AT 44 A ROUND, 26% crit and a 2.4x multiplier. The Prime
 # is the same weapon with a fire-mode selector; this one is the burst alone.
 class: rifle

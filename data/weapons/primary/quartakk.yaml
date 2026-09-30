@@ -1,6 +1,7 @@
 id: quartakk
 name: Quartakk
 slot: primary
+weapon_type: primary
 # FOUR BARRELS FIRED AT ONCE. The module gives a burst of 4 with a delay of
 # ZERO, which is the page's own "uniquely fires all four shots simultaneously
 # instead of consecutively" — so a pull is 196 damage in one instant, and half a

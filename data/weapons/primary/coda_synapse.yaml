@@ -1,6 +1,7 @@
 id: coda_synapse
 name: Coda Synapse
 slot: primary
+weapon_type: primary
 # THE ROSTER'S FIRST WEAPON WITH AN INNATE HEADSHOT BONUS THAT IS NOT A BOW'S,
 # and the counterpart to the Tenet Arca Plasmor arriving beside it: the module
 # states this one's as `ExtraHeadshotDmg = 0.2` and that one's as -2, which is

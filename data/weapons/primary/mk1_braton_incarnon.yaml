@@ -1,6 +1,7 @@
 id: mk1_braton_incarnon
 name: MK1-Braton (Incarnon Form)
 slot: primary
+weapon_type: primary
 class: rifle
 form: incarnon
 

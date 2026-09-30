@@ -1,6 +1,7 @@
 id: seer
 name: Seer
 slot: secondary
+weapon_type: secondary
 # EQUAL PHYSICAL DAMAGE, three times 33.67, on a projectile at 200 m/s. A
 # Mastery Rank 0 Grineer pistol, and one of the three highest riven dispositions
 # in the roster's secondaries.

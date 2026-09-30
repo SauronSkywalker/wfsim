@@ -1,6 +1,7 @@
 id: kuva_brakk
 name: Kuva Brakk
 slot: secondary
+weapon_type: secondary
 # A SHOTGUN SIDEARM: ten pellets out of a pistol, and the roster's second
 # weapon of that class. Its page sells it on the pair of facts that fight each
 # other — "Very high burst and sustained DPS" against "Significant damage

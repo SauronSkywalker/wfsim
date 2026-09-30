@@ -1,6 +1,7 @@
 id: knell
 name: Knell
 slot: secondary
+weapon_type: secondary
 # THE ORDINARY KNELL: one round, a two-second reload, and the same Death Knell
 # passive the Prime carries. The Prime doubles the crit chance, raises the
 # multiplier from 1.5x to 2x and doubles the status — this one is 150 damage a

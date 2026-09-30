@@ -1,6 +1,7 @@
 id: tipedo_prime
 name: Tipedo Prime
 slot: melee
+weapon_type: melee
 class: staff
 # see notes: melee_from_the_modules
 form: neutral

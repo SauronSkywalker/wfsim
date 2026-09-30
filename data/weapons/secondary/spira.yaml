@@ -1,6 +1,7 @@
 id: spira
 name: Spira
 slot: secondary
+weapon_type: secondary
 # THROWN DAGGERS AT A 30% CRITICAL CHANCE — the highest of any thrown weapon in
 # the roster — silent, perfectly accurate, and 82 damage a dagger.
 class: pistol

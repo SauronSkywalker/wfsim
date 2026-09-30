@@ -1,6 +1,7 @@
 id: kuva_twin_stubbas
 name: Kuva Twin Stubbas
 slot: secondary
+weapon_type: secondary
 # The plainest adversary secondary: dual autos, one attack, no prose beyond the
 # shared Kuva boilerplate. "This weapon does primarily Slash damage."
 class: dual_pistols

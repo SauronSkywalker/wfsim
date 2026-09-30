@@ -1,6 +1,7 @@
 id: twin_grakatas
 name: Twin Grakatas
 slot: secondary
+weapon_type: secondary
 # THE ONLY WEAPON IN THE FAMILY THAT FIRES TWO BULLETS AND SPENDS TWO ROUNDS
 # FOR THEM — innate multishot 2 at an ammo cost of 2, which is a real cost
 # rather than free extra pellets, and the reason its reserve is 1200.

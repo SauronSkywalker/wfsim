@@ -1,6 +1,7 @@
 id: sicarus_incarnon
 name: Sicarus (Incarnon Form)
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: incarnon
 

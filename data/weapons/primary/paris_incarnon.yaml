@@ -1,6 +1,7 @@
 id: paris_incarnon
 name: Paris (Incarnon Form)
 slot: primary
+weapon_type: primary
 class: bow
 form: incarnon
 

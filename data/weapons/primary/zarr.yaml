@@ -1,6 +1,7 @@
 id: zarr
 name: Zarr
 slot: primary
+weapon_type: primary
 # CANNON MODE: a mortar round with a 4.9 m blast that then throws six cluster
 # bombs. The arsenal shows it (`_TooltipAttackDisplay: 2`), and the Kuva variant
 # is this weapon rebuilt.

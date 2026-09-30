@@ -1,6 +1,7 @@
 id: mk1_strun
 name: MK1-Strun
 slot: primary
+weapon_type: primary
 class: shotgun
 form: base
 default_form: true

@@ -1,6 +1,7 @@
 id: quellor
 name: Quellor
 slot: primary
+weapon_type: primary
 # THREE HUNDRED ROUNDS AT A 38% STATUS CHANCE, with half a metre of punch
 # through — and an alternate fire that spends FIFTY of them on a 1400-damage
 # charged Cold shot.

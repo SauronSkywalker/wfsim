@@ -1,6 +1,7 @@
 id: kuva_tonkor
 name: Kuva Tonkor
 slot: primary
+weapon_type: primary
 # A GRENADE LAUNCHER WITH NO ARMING DISTANCE: the Kuva version "removes the
 # minimum arming distance", so its grenades "explode on impact and even at
 # closer ranges — which can stagger its wielder". One round a magazine, so the

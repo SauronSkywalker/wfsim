@@ -1,6 +1,7 @@
 id: talons
 name: Talons
 slot: secondary
+weapon_type: secondary
 # THROWN BLAST MINES: 250 Blast in a four-metre radius when stuck to something,
 # with a guaranteed Puncture proc, and eight may be laid at once.
 class: pistol

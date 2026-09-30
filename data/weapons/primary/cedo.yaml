@@ -1,6 +1,7 @@
 id: cedo
 name: Cedo
 slot: primary
+weapon_type: primary
 # A SHOTGUN THAT THROWS A GLAIVE. The primary fire is a hit-scan spread; the
 # alternate throws a disc that explodes in six metres.
 class: shotgun

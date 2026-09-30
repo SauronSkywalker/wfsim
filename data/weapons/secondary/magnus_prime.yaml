@@ -1,6 +1,7 @@
 id: magnus_prime
 name: Magnus Prime
 slot: secondary
+weapon_type: secondary
 # THE SINGLE, and the Akmagnus Prime is this shot fired from two hands: same 98
 # damage, same 28% crit and status, half the magazine and a tighter cone. The
 # "Chamber Cascade" passive is shared and pays nothing here for the same reason.

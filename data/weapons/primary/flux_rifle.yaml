@@ -1,6 +1,7 @@
 id: flux_rifle
 name: Flux Rifle
 slot: primary
+weapon_type: primary
 # A BEAM WITH A BATTERY AND INNATE PUNCH THROUGH, and the entry that shows how
 # far a Tenet variant can move a weapon: the TENET Flux Rifle is an Auto
 # HIT-SCAN rifle with a 300 m reach and no punch through, where this is a 30 m

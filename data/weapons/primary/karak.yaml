@@ -1,6 +1,7 @@
 id: karak
 name: Karak
 slot: primary
+weapon_type: primary
 # THE MASTERY RANK 1 GRINEER RIFLE. Twenty-nine damage a shot at 11.67 a second,
 # and the weapon the Kuva Karak is built from.
 class: rifle

@@ -1,6 +1,7 @@
 id: tiberon_prime
 name: Tiberon Prime
 slot: primary
+weapon_type: primary
 # THREE TRIGGERS ON ONE RIFLE, cycled with Alternate Fire — burst, semi-auto and
 # full auto. This entry is the BURST, which is the arsenal's own display, and the
 # other two are `tiberon_prime_semi` and `tiberon_prime_auto`. The same shape the

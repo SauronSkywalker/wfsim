@@ -1,6 +1,7 @@
 id: jat_kusar
 name: Jat Kusar
 slot: melee
+weapon_type: melee
 class: blade_and_whip
 # see notes: melee_from_the_modules
 form: neutral

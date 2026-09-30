@@ -1,6 +1,7 @@
 id: burston_prime
 name: Burston Prime
 slot: primary
+weapon_type: primary
 # THE ROSTER'S FIRST BURST WEAPON, and the reason `attack.burst` exists. A
 # burst trigger is not a slower auto: the listed fire rate counts BURSTS, so
 # reading it as rounds per second understates this weapon by its burst count.

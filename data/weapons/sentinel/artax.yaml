@@ -2,8 +2,8 @@ id: artax
 name: Artax
 # see notes: sentinel_weapon_own_equipment
 slot: sentinel
+weapon_type: primary
 class: sentinel_weapon
-weapon_category: primary
 form: base
 default_form: true
 

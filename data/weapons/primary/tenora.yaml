@@ -1,6 +1,7 @@
 id: tenora
 name: Tenora
 slot: primary
+weapon_type: primary
 # A 150-ROUND SPOOLING RIFLE with a charged alternate that spends TEN rounds on
 # a 240-damage Puncture shot at a 3x multiplier. The arsenal shows the automatic
 # fire, which is this entry.

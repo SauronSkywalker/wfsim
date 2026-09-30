@@ -1,6 +1,7 @@
 id: quassus
 name: Quassus
 slot: melee
+weapon_type: melee
 class: warfan
 # see notes: melee_from_the_modules
 form: neutral

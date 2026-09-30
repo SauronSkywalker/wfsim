@@ -1,6 +1,7 @@
 id: supra_vandal
 name: Supra Vandal
 slot: primary
+weapon_type: primary
 # THE SUPRA'S SHOT OUT OF THREE HUNDRED ROUNDS, and a spool that starts four
 # times higher: 40% of the listed rate rather than 10%, full from the fourth
 # round rather than the fifth.

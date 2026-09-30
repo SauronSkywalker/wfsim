@@ -5,6 +5,7 @@ name: Larkspur Prime
 # either: Archguns "are not considered either primary or secondary weapons",
 # which is also why they carry two arcane slots of their own (see below).
 slot: archgun
+weapon_type: archgun
 class: archgun
 # The normal fire, and the form the arsenal shows. The alt-fire is the
 # sibling entry `larkspur_prime_charged` (`form: charged`), reached for FREE

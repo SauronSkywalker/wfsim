@@ -1,6 +1,7 @@
 id: arca_plasmor
 name: Arca Plasmor
 slot: primary
+weapon_type: primary
 # THE SECOND WEAPON IN THE ROSTER WHOSE HEAD IS WORTH NOTHING — "Has a headshot
 # multiplier of 1x", stated of the DIRECT hit exactly as the Tenet version
 # states it. The module encodes both as `ExtraHeadshotDmg = -2`; see

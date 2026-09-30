@@ -1,6 +1,7 @@
 id: aklex
 name: Aklex
 slot: secondary
+weapon_type: secondary
 # TWO LEX, ONE TRIGGER: 130 Puncture a shot at 1.58 rounds a second from a
 # twelve-round magazine with a three-second reload. Almost all of it is one
 # damage type, which is what makes the Lex family read the way it does.

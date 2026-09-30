@@ -1,6 +1,7 @@
 id: phantasma_prime
 name: Phantasma Prime
 slot: primary
+weapon_type: primary
 # A BEAM SHOTGUN — six continuous beams, which is a combination the roster has
 # not held before: `continuous` has meant one beam (Verglas Prime, the Torid's
 # Incarnon, the Ocucor) and `shotgun` has meant a pellet spread. Here the

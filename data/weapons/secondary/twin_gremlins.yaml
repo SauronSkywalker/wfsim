@@ -1,6 +1,7 @@
 id: twin_gremlins
 name: Twin Gremlins
 slot: secondary
+weapon_type: secondary
 # EQUAL PHYSICAL DAMAGE, three times 12.33, on a bolt at 90 m/s. The Prisma is
 # the same weapon rebuilt around a faster reload and a tighter cone.
 class: dual_pistols

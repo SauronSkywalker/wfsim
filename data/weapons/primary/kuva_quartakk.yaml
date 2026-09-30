@@ -1,6 +1,7 @@
 id: kuva_quartakk
 name: Kuva Quartakk
 slot: primary
+weapon_type: primary
 # TWO MODES CHOSEN BY AIMING, not by a trigger: full-auto from the hip, four
 # simultaneous rounds down the sights. This entry is the AIMED burst, which is
 # the arsenal's own display (module `_TooltipAttackDisplay: 2`); the hip-fire

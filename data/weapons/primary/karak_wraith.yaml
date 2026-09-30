@@ -1,6 +1,7 @@
 id: karak_wraith
 name: Karak Wraith
 slot: primary
+weapon_type: primary
 # The plain auto-rifle baseline: MR7, no gimmick, the shape most players learn
 # the game on. Worth having precisely because it is unremarkable — a roster of
 # only outliers cannot show what a mod is worth on an ordinary gun.

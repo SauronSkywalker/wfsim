@@ -1,6 +1,7 @@
 id: tenet_tetra
 name: Tenet Tetra
 slot: primary
+weapon_type: primary
 # THE HIGHEST DISPOSITION IN THIS BATCH (1.25x) on an ordinary auto rifle, whose
 # alternate fire spends the WHOLE REMAINING MAGAZINE on one 1000-damage grenade
 # — see the alt-fire entry, and note that its damage scales with how full the

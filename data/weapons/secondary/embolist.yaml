@@ -1,6 +1,7 @@
 id: embolist
 name: Embolist
 slot: secondary
+weapon_type: secondary
 # A NINE-METRE TOXIN SPRAY WITH A ONE-METRE SPHERE AT THE END OF IT, and a 41%
 # status chance that is the highest in this batch. The shortest reach of any
 # weapon in the roster, and the ramp floor to match it: 45%, the highest of any

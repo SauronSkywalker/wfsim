@@ -1,6 +1,7 @@
 id: nataruk
 name: Nataruk
 slot: primary
+weapon_type: primary
 # A ZARIMAN BOW WITH A TIMED RELEASE. This entry is the QUICK shot; the other is
 # the PERFECT one, which is what the arsenal displays
 # (`_TooltipAttackDisplay: 3`).

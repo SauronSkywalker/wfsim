@@ -1,6 +1,7 @@
 id: miter_incarnon
 name: Miter (Incarnon Form)
 slot: primary
+weapon_type: primary
 class: rifle
 form: incarnon
 

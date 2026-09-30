@@ -1,6 +1,7 @@
 id: akbolto
 name: Akbolto
 slot: secondary
+weapon_type: secondary
 # BOLTS, NOT BULLETS: a projectile at 75 m/s that is 90% Puncture, and the
 # family's own trick is what happens AFTER the kill — the corpse follows the
 # bolt. That is a ragdoll this arena has no floor for; see the admission.

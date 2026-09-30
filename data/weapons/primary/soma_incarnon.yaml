@@ -1,6 +1,7 @@
 id: soma_incarnon
 name: Soma (Incarnon Form)
 slot: primary
+weapon_type: primary
 class: rifle
 form: incarnon
 

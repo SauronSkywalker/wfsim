@@ -1,6 +1,7 @@
 id: gorgon_wraith
 name: Gorgon Wraith
 slot: primary
+weapon_type: primary
 class: rifle
 form: base
 default_form: true

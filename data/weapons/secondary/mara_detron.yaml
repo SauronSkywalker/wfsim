@@ -1,6 +1,7 @@
 id: mara_detron
 name: Mara Detron
 slot: secondary
+weapon_type: secondary
 # THE SAME SHOT, AIMED BETTER. Baro's Detron carries the identical seven-pellet
 # 40 Radiation payload and differs in three numbers: half the cone (6-9 degrees
 # against 12-16), double the crit chance, and a falloff window that starts and

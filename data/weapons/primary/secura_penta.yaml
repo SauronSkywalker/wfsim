@@ -1,6 +1,7 @@
 id: secura_penta
 name: Secura Penta
 slot: primary
+weapon_type: primary
 # THE PERRIN SEQUENCE'S PENTA: seven grenades, twice the fire rate, and a 26%
 # crit chance against the ordinary's 10% — at 300 Blast in a 6 m radius rather
 # than 350 in 4 m. More reach, less damage, far more crit.

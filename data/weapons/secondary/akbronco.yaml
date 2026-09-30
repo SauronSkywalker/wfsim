@@ -1,6 +1,7 @@
 id: akbronco
 name: Akbronco
 slot: secondary
+weapon_type: secondary
 # TWO BRONCOS, ONE TRIGGER. Seven pellets of 42 apiece from each pull, and a
 # status chance of 3.14% that is the lowest in the roster — the Prime's is four
 # times it off the same shot.

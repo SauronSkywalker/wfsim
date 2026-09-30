@@ -1,6 +1,7 @@
 id: grimoire
 name: Grimoire
 slot: secondary
+weapon_type: secondary
 # A TOME, which is its own weapon class in DE's data and the only one in this
 # roster. It throws a 100-Electricity page with a one-metre blast, and its
 # ACTIVE attack is three and a half times that in six metres.

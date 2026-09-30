@@ -1,6 +1,7 @@
 id: atomos_incarnon
 name: Atomos (Incarnon Form)
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: incarnon
 

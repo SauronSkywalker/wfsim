@@ -1,6 +1,7 @@
 id: stubba
 name: Stubba
 slot: secondary
+weapon_type: secondary
 # A FIFTY-SEVEN ROUND GRINEER MACHINE PISTOL at 33 damage a shot and a 23% crit
 # chance. The Kuva variant is this weapon with a progenitor element on it.
 class: pistol

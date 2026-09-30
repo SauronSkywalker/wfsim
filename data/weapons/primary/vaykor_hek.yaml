@@ -1,6 +1,7 @@
 id: vaykor_hek
 name: Vaykor Hek
 slot: primary
+weapon_type: primary
 # STEEL MERIDIAN'S HEK: eight rounds instead of four, 3 rounds a second instead
 # of 2.17, and a crit chance raised from 10% to 25%. The pellets and their
 # damage are the ordinary Hek's, unchanged.

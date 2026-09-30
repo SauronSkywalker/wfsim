@@ -1,6 +1,7 @@
 id: athodai
 name: Athodai
 slot: secondary
+weapon_type: secondary
 # A HEAT PISTOL WHOSE ALTERNATE FIRE EMPTIES THE MAGAZINE AS A CONE — two metres
 # of punch through, thirteen metres of reach, and 88 Heat a round. Its Overdrive
 # passive is a weak-point KILL trigger this engine has no shape for.

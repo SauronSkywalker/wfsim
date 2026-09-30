@@ -10,6 +10,7 @@ id: vermisplicer_secondary
 name: Vermisplicer
 wiki_name: Vermisplicer
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: base
 default_form: true

@@ -1,6 +1,7 @@
 id: fragor_prime
 name: Fragor Prime
 slot: melee
+weapon_type: melee
 class: hammer
 # see notes: melee_from_the_modules
 form: neutral

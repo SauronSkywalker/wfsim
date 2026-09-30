@@ -1,6 +1,7 @@
 id: sagek_prime
 name: Sagek Prime
 slot: secondary
+weapon_type: secondary
 # A PRIME WITH NO ORDINARY VERSION IN THIS ROSTER and a status chance of ONE
 # PERCENT — which is deliberate, because its passive is a status BURST: a crit
 # has a 6% chance to set the next shot's status chance to 500%. That set is not

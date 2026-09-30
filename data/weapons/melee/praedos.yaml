@@ -1,6 +1,7 @@
 id: praedos
 name: Praedos
 slot: melee
+weapon_type: melee
 class: tonfa
 # THE STATIONARY COMBO, and the arsenal's own form — so its mode is `base`.
 form: neutral

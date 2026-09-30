@@ -1,6 +1,7 @@
 id: viper_wraith
 name: Viper Wraith
 slot: secondary
+weapon_type: secondary
 # THE VIPER AT TWENTY ROUNDS AND 18 DAMAGE A SHOT, with a cone half as wide and
 # a 2x critical multiplier. Almost all of it is Impact where the ordinary
 # spreads it.

@@ -1,6 +1,7 @@
 id: akmagnus
 name: Akmagnus
 slot: secondary
+weapon_type: secondary
 # THE ORDINARY AKMAGNUS. Identical damage to the Magnus and the Akmagnus Prime
 # — 98 a shot, in the same three types — and what the Prime bought was crit
 # multiplier, status, a shorter reload and a thousand metres of reach.

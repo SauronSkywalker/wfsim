@@ -1,6 +1,7 @@
 id: cinta
 name: Cinta
 slot: primary
+weapon_type: primary
 # AN ENTRATI BOW WITH A TIMED RELEASE. The arsenal shows the QUICK shot, which
 # is this entry; the full draw is the other. A PERFECT release — a window on the
 # draw worth more than the full one — is admitted there rather than carried as a

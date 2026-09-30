@@ -1,6 +1,7 @@
 id: astilla_prime
 name: Astilla Prime
 slot: primary
+weapon_type: primary
 # THE ASTILLA AT A HUNDRED IMPACT AND A 140-DAMAGE SHATTER, out of 24 rounds
 # rather than 16, with a falloff window that starts at 60 m instead of 40.
 class: shotgun

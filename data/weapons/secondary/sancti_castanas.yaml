@@ -1,6 +1,7 @@
 id: sancti_castanas
 name: Sancti Castanas
 slot: secondary
+weapon_type: secondary
 # NEW LOKA'S CASTANAS: 300 Electricity against the ordinary's 160, at three
 # times the crit chance, with the same guaranteed Electricity proc and the same
 # 3.6 m radius.

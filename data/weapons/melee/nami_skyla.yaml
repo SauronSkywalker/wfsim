@@ -1,6 +1,7 @@
 id: nami_skyla
 name: Nami Skyla
 slot: melee
+weapon_type: melee
 class: dual_swords
 # see notes: melee_from_the_modules
 form: neutral

@@ -1,6 +1,7 @@
 id: dera
 name: Dera
 slot: primary
+weapon_type: primary
 class: rifle
 form: base
 default_form: true

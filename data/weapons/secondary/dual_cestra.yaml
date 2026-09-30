@@ -1,6 +1,7 @@
 id: dual_cestra
 name: Dual Cestra
 slot: secondary
+weapon_type: secondary
 # A HUNDRED AND TWENTY ROUNDS AT 18.75 A SECOND, and a three-and-a-half second
 # reload to pay for it — the longest in the family. Projectiles at 100 m/s
 # rather than hit-scan, which is what a Corpus plasma sidearm is.

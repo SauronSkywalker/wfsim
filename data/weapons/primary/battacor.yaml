@@ -1,6 +1,7 @@
 id: battacor
 name: Battacor
 slot: primary
+weapon_type: primary
 # A CORPUS BURST RIFLE whose secondary fire charges a hit-scan beam with a 3.4 m
 # explosion. The burst is this entry.
 class: rifle

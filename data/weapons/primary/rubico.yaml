@@ -1,6 +1,7 @@
 id: rubico
 name: Rubico
 slot: primary
+weapon_type: primary
 class: sniper
 form: base
 default_form: true

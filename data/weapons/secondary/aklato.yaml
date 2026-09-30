@@ -1,6 +1,7 @@
 id: aklato
 name: Aklato
 slot: secondary
+weapon_type: secondary
 # THE STARTER AKIMBO. Forty damage a shot, mostly Slash, out of the widest cone
 # in the family — and the highest riven disposition in the roster's secondaries,
 # which is the game's own verdict on it.

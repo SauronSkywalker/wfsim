@@ -1,6 +1,7 @@
 id: exergis
 name: Exergis
 slot: primary
+weapon_type: primary
 # ONE SHELL IN THE CHAMBER AND 540 DAMAGE IN IT — three pellets of 180 across
 # four damage types, one of them Radiation, and then a reload. It also carries
 # half a metre of innate punch through, which the arena has had something to

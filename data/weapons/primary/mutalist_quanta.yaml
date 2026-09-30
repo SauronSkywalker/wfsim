@@ -1,6 +1,7 @@
 id: mutalist_quanta
 name: Mutalist Quanta
 slot: primary
+weapon_type: primary
 # AN INFESTED ENERGY RIFLE whose alternate fire lays an ORB that explodes. The
 # primary fire is this entry.
 class: rifle

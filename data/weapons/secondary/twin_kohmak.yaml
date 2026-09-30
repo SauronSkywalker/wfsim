@@ -1,6 +1,7 @@
 id: twin_kohmak
 name: Twin Kohmak
 slot: secondary
+weapon_type: secondary
 # TWO KOHMAKS: the same five spooled pellets at 6.67 shots a second out of
 # eighty rounds, in a cone a quarter wider.
 class: dual_shotguns

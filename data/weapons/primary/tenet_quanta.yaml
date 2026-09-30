@@ -1,6 +1,7 @@
 id: tenet_quanta
 name: Tenet Quanta
 slot: primary
+weapon_type: primary
 # TWO BEAMS AT ONCE — "Primary Fire shoots two concentrated continuous beams
 # with innate multishot of 2" — which is why its listed total damage (36) is
 # twice its per-beam damage (18). Its alternate fire lobs a cube; see that

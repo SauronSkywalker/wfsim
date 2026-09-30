@@ -1,6 +1,7 @@
 id: kuva_sobek
 name: Kuva Sobek
 slot: primary
+weapon_type: primary
 # A PLAIN AUTO SHOTGUN, and the only Kuva primary whose page has nothing to say
 # beyond its numbers: five pellets, 75% Impact, no charge, no second mode, no
 # spool.

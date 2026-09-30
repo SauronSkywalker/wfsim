@@ -1,6 +1,7 @@
 id: kohmak
 name: Kohmak
 slot: secondary
+weapon_type: secondary
 # THE KOHM'S SIDEARM: five pellets at full spool rather than twelve, at 1.67
 # shells a shot. This entry is the spooled state — and note the punch through
 # is the SINGLE-PELLET attack's alone, so the spooled shot has none.

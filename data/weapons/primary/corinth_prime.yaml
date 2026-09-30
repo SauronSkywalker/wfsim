@@ -1,6 +1,7 @@
 id: corinth_prime
 name: Corinth Prime
 slot: primary
+weapon_type: primary
 # THE CORINTH AT A WIDER BLAST (9.8 m) and more of everything else. The buckshot
 # is this entry.
 class: shotgun

@@ -1,6 +1,7 @@
 id: boar_prime
 name: Boar Prime
 slot: primary
+weapon_type: primary
 # SHOTGUN — the first one in the roster, and the reason `data/mods/shotgun/`
 # exists. A shotgun is NOT a subset of Rifle: DE tags its mods `Shotgun` and
 # the two pools share nothing but the `PRIMARY` tag (wiki Shotgun_Mods;

@@ -1,6 +1,7 @@
 id: tenet_ferrox
 name: Tenet Ferrox
 slot: primary
+weapon_type: primary
 # THE FIRST CHARGE-TRIGGER WEAPON WITH A FULLY AUTOMATIC FIRING FUNCTION, by the
 # page's own claim: hold the trigger and it charges, fires and charges again.
 # A speargun like the Scourge pair, so its alternate fire throws the weapon —

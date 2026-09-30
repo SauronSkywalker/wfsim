@@ -1,6 +1,7 @@
 id: tenet_detron
 name: Tenet Detron
 slot: secondary
+weapon_type: secondary
 # TEN PELLETS OF RADIATION out of a sidearm, and the roster's second Mag Burst
 # after the Kuva Kraken's. Its CO rows are the interesting part: the catalog
 # names BOTH of its attacks and calls both ORDINARY, which is the only way a

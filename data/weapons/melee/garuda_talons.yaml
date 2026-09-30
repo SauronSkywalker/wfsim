@@ -1,6 +1,7 @@
 id: garuda_talons
 name: Garuda Talons
 slot: melee
+weapon_type: melee
 class: claws
 # see notes: melee_from_the_modules
 form: neutral

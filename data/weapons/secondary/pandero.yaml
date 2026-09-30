@@ -1,6 +1,7 @@
 id: pandero
 name: Pandero
 slot: secondary
+weapon_type: secondary
 # EIGHT ROUNDS AT A 30% CRIT CHANCE AND A 2.8x MULTIPLIER, and an alternate fire
 # that empties the magazine in one pull at the same damage a round.
 class: pistol

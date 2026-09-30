@@ -1,6 +1,7 @@
 id: ignis
 name: Ignis
 slot: primary
+weapon_type: primary
 # A FLAMETHROWER WITH A THREE-METRE SPHERE AT THE END OF IT. The beam reaches
 # 20 m and detonates a 3 m blast where it lands, which is what the AOE tag on
 # this weapon means — and, like every AoE continuous weapon, that radius takes

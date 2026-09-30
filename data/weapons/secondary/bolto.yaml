@@ -1,6 +1,7 @@
 id: bolto
 name: Bolto
 slot: secondary
+weapon_type: secondary
 # THE SINGLE BOLTO, and the Akbolto is this bolt fired from two hands — same 64
 # damage, same 16% crit, at 3.33 a second against 4.5.
 class: pistol

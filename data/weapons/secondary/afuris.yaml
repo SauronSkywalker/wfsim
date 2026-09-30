@@ -1,6 +1,7 @@
 id: afuris
 name: Afuris
 slot: secondary
+weapon_type: secondary
 # TWELVE AND A HALF ROUNDS A SECOND OUT OF A SEVENTY-ROUND MAGAZINE, at 20
 # damage a shot — the family's starting point, and the Afuris Prime and the Dex
 # Furis are the same gun with the numbers moved.

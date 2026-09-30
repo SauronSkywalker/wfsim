@@ -1,6 +1,7 @@
 id: aeolak
 name: Aeolak
 slot: primary
+weapon_type: primary
 # A DUVIRI RIFLE WITH A GRENADE IN ITS ALTERNATE FIRE: 60 a shot with a metre of
 # punch through, and an alt that spends ten rounds on 789 Blast in seven metres.
 class: rifle

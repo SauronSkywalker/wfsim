@@ -1,6 +1,7 @@
 id: shedu
 name: Shedu
 slot: primary
+weapon_type: primary
 form: base
 default_form: true          # the arsenal's form (module _TooltipAttackDisplay)
 # wiki module `Class: "Rifle"`, and DE's own path is a rifle path — an

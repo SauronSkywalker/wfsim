@@ -1,6 +1,7 @@
 id: castanas
 name: Castanas
 slot: secondary
+weapon_type: secondary
 # A STICKY ELECTRIC MINE: 160 Electricity with a guaranteed Electricity proc,
 # detonated by hand in a 3.6 m radius. Silent, and six can be laid at once.
 class: pistol

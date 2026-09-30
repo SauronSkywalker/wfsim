@@ -1,6 +1,7 @@
 id: detron
 name: Detron
 slot: secondary
+weapon_type: secondary
 # SEVEN PELLETS OF RADIATION, and no Mag Burst: the Tenet Detron's magazine dump
 # is a TENET addition and this page has no alternate fire at all. What the Tenet
 # also changed is the shot itself — 10 pellets of 26 there against 7 of 40 here,

@@ -1,6 +1,7 @@
 id: enkaus
 name: Enkaus
 slot: primary
+weapon_type: primary
 # A 36-METRE BEAM with a grenade in its alternate fire — the arsenal shows the
 # ALT (`_TooltipAttackDisplay: 2`), and this entry is the beam it is not.
 class: rifle

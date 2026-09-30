@@ -1,6 +1,7 @@
 id: laetum_incarnon
 name: Laetum (Incarnon Form)
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: incarnon
 

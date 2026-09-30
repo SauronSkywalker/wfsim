@@ -1,6 +1,7 @@
 id: hek
 name: Hek
 slot: primary
+weapon_type: primary
 # SEVEN PELLETS OF 75 — 525 a shot out of four rounds, and the weapon the Vaykor
 # variant is built from. Its exclusive mod trebles the pellet count
 # (data/mods/shotgun/scattered_justice.yaml).

@@ -1,6 +1,7 @@
 id: drakgoon
 name: Drakgoon
 slot: primary
+weapon_type: primary
 # A FLAK CANNON WHOSE CHARGE TIGHTENS THE CONE. The arsenal shows the charged
 # shot: ten pellets of 70, 80% of it Slash, with two metres of punch through.
 # The Kuva variant is this weapon rebuilt.

@@ -1,6 +1,7 @@
 id: burston
 name: Burston
 slot: primary
+weapon_type: primary
 # The Burston Prime's base variant, and the second half of the roster's first
 # burst FAMILY. Everything structural is the Prime's — see
 # data/weapons/primary/burston_prime.yaml for what a burst trigger costs.

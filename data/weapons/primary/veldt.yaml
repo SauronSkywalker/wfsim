@@ -1,6 +1,7 @@
 id: veldt
 name: Veldt
 slot: primary
+weapon_type: primary
 # A TENNO REVOLVER RIFLE AT 90 A SHOT, mostly Slash, on a projectile rather than
 # hit-scan. Its alternate fire only adjusts the zoom, which is why the module
 # gives it one attack.

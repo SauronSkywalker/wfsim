@@ -1,6 +1,7 @@
 id: sepulcrum
 name: Sepulcrum
 slot: secondary
+weapon_type: secondary
 # A BURST PISTOL WHOSE ROUNDS CARRY A 1.6 M BLAST, and a lock-on mode that
 # paints several targets and fires homing missiles at them.
 class: pistol

@@ -1,6 +1,7 @@
 id: pandero_prime
 name: Pandero Prime
 slot: secondary
+weapon_type: secondary
 # THE PANDERO AT 104 A SHOT AND A 24% STATUS CHANCE — up from 80 and 10% — with
 # the crit chance and multiplier untouched.
 class: pistol

@@ -1,6 +1,7 @@
 id: latron_wraith_incarnon
 name: Latron Wraith (Incarnon Form)
 slot: primary
+weapon_type: primary
 class: rifle
 form: incarnon
 

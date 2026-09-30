@@ -1,6 +1,7 @@
 id: gorgon_wraith_incarnon
 name: Gorgon Wraith (Incarnon Form)
 slot: primary
+weapon_type: primary
 class: rifle
 form: incarnon
 

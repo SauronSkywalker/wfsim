@@ -1,6 +1,7 @@
 id: dual_coda_torxica
 name: Dual Coda Torxica
 slot: secondary
+weapon_type: secondary
 # THE SPORE PISTOLS, and the spores are the weapon. What the stats describe is
 # an ordinary pair of auto pistols; what the page describes is a KILL that
 # spreads a 50% damage vulnerability to three more enemies for 20 seconds. This

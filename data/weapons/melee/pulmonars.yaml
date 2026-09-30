@@ -1,6 +1,7 @@
 id: pulmonars
 name: Pulmonars
 slot: melee
+weapon_type: melee
 class: nunchaku
 # see notes: melee_from_the_modules
 form: neutral

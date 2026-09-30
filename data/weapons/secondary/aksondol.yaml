@@ -1,6 +1,7 @@
 id: aksondol
 name: Aksondol
 slot: secondary
+weapon_type: secondary
 # NARIN'S SIGNATURE DUAL PISTOLS, half Puncture and half Cold on a 10-shot-a-
 # second hitscan pull out of an 8-round magazine — so the reload is most of the
 # weapon's clock, and the reload is also where its own mechanic lives. That

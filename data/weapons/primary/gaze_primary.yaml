@@ -11,6 +11,7 @@ id: gaze_primary
 name: Gaze
 wiki_name: Gaze
 slot: primary
+weapon_type: primary
 class: rifle
 form: base
 default_form: true

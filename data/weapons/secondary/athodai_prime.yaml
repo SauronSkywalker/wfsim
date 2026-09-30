@@ -1,6 +1,7 @@
 id: athodai_prime
 name: Athodai Prime
 slot: secondary
+weapon_type: secondary
 # THE ATHODAI AT 40% CRIT ON THE PRIMARY FIRE and a 100-Heat alternate reaching
 # sixteen metres, with a 35% status chance against the ordinary's 24%.
 class: pistol

@@ -1,6 +1,7 @@
 id: kuva_karak
 name: Kuva Karak
 slot: primary
+weapon_type: primary
 # THE ADVERSARY BASELINE. An ordinary auto-rifle carrying the one axis nothing
 # else in the roster has — see the Kuva Nukor, which is where that axis was
 # built. Worth having for the same reason the Karak Wraith is: the plainest

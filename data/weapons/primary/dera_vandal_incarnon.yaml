@@ -1,6 +1,7 @@
 id: dera_vandal_incarnon
 name: Dera Vandal (Incarnon Form)
 slot: primary
+weapon_type: primary
 class: rifle
 form: incarnon
 

@@ -1,6 +1,7 @@
 id: venka_prime
 name: Venka Prime
 slot: melee
+weapon_type: melee
 class: claws
 # see notes: melee_from_the_modules
 form: neutral

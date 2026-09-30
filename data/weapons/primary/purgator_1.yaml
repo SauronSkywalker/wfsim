@@ -1,6 +1,7 @@
 id: purgator_1
 name: Purgator 1
 slot: primary
+weapon_type: primary
 # A LAUNCHER WITH NO EXPLOSION. The module gives it one attack and no radial at
 # all: it is a 781-damage single-target slug with a guaranteed Impact proc, and
 # what it leaves behind is a GAS cloud on the bodies it KILLS — a mechanic keyed

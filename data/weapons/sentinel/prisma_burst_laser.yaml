@@ -2,8 +2,8 @@ id: prisma_burst_laser
 name: Prisma Burst Laser
 # see notes: sentinel_weapon_own_equipment
 slot: sentinel
+weapon_type: secondary
 class: sentinel_weapon
-weapon_category: secondary
 form: base
 default_form: true
 

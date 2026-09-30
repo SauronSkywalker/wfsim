@@ -1,6 +1,7 @@
 id: attica
 name: Attica
 slot: primary
+weapon_type: primary
 # A SILENT AUTOMATIC CROSSBOW, and one of the two weapons in the roster that
 # are a BOW for exactly one rule: "Counts as a bow in regards to fire rate mods,
 # doubling the fire rate bonus" (wiki), which is why `class: crossbow` earns the

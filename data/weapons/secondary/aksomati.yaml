@@ -1,6 +1,7 @@
 id: aksomati
 name: Aksomati
 slot: secondary
+weapon_type: secondary
 # THE ORDINARY AKSOMATI, and the one of the two that publishes its spool: six
 # shots before the fire rate is optimal. The starting fraction is NOT published,
 # so there is no `sustained_fire_rate:` here — the roster's rule is that a spool

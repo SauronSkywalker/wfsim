@@ -1,6 +1,7 @@
 id: sancti_tigris
 name: Sancti Tigris
 slot: primary
+weapon_type: primary
 # NEW LOKA'S TIGRIS: six pellets of 210 rather than the ordinary's five, at a
 # 15% crit chance against 10%, out of the same two-round duplex magazine.
 class: shotgun

@@ -1,6 +1,7 @@
 id: panthera
 name: Panthera
 slot: primary
+weapon_type: primary
 # A SAW-BLADE RIFLE. Primary fire throws bouncing blades for two rounds apiece;
 # the alternate deploys ONE levitating sawblade six metres out that grinds
 # continuously and only spends ammo when it is dealing damage.

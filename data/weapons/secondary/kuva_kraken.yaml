@@ -1,6 +1,7 @@
 id: kuva_kraken
 name: Kuva Kraken
 slot: secondary
+weapon_type: secondary
 # A BURST PISTOL WITH A MAGAZINE DUMP. Normal fire is a three-round burst; the
 # alt-fire "expels all remaining ammunition in the magazine in a single burst"
 # at 20 rounds a second, which is a burst whose COUNT IS THE MAGAZINE — see

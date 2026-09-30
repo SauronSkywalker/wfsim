@@ -1,6 +1,7 @@
 id: basmu
 name: Basmu
 slot: primary
+weapon_type: primary
 # A SENTIENT RIFLE whose rounds carry a 1.7 m Electricity blast, and whose
 # alternate fire is a held beam.
 class: rifle

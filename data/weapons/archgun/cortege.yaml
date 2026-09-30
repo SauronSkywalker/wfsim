@@ -1,6 +1,7 @@
 id: cortege
 name: Cortege
 slot: archgun
+weapon_type: archgun
 class: archgun
 # THE PRIMARY FIRE — a held Heat beam. Its alt-fire is `cortege_alt`, and that
 # one is NOT free: it has to be earned. See that entry.

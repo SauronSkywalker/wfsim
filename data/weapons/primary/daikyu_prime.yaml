@@ -1,6 +1,7 @@
 id: daikyu_prime
 name: Daikyu Prime
 slot: primary
+weapon_type: primary
 # THE DAIKYU WITH A QUICK SHOT. The ordinary one can only be fired fully drawn;
 # the Prime fires from 25% of the draw for half the damage, which is what the
 # two entries are. 750 damage fully drawn, three metres of punch through on

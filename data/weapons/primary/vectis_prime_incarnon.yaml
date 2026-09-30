@@ -1,6 +1,7 @@
 id: vectis_prime_incarnon
 name: Vectis Prime (Incarnon Form)
 slot: primary
+weapon_type: primary
 class: sniper
 form: incarnon
 

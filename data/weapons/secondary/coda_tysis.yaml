@@ -1,6 +1,7 @@
 id: coda_tysis
 name: Coda Tysis
 slot: secondary
+weapon_type: secondary
 # THE ONE WEAPON IN THIS BATCH WHOSE NUMBER IS MATERIALLY UNDERSTATED, and it is
 # stated here rather than discovered: 70% of what this dart deals is a DoT the
 # engine has no shape for. See the unmodelled list.

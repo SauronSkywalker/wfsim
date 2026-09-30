@@ -1,6 +1,7 @@
 id: phenmor
 name: Phenmor
 slot: primary
+weapon_type: primary
 # wiki module `Class: "Rifle"`, `CompatibilityTags: [ASSAULT_AMMO, PROJECTILE]`,
 # same as the Burston Prime and the Karak Wraith, so the same three pools:
 # primary-wide, Rifle, and the Assault Rifle sub-pool.

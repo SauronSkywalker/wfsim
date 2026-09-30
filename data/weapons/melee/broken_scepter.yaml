@@ -1,6 +1,7 @@
 id: broken_scepter
 name: Broken Scepter
 slot: melee
+weapon_type: melee
 class: staff
 # see notes: melee_from_the_modules
 form: neutral

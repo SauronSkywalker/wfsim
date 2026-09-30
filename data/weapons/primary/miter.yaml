@@ -1,6 +1,7 @@
 id: miter
 name: Miter
 slot: primary
+weapon_type: primary
 class: rifle
 form: charged
 default_form: true

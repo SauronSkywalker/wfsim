@@ -1,6 +1,7 @@
 id: boar
 name: Boar
 slot: primary
+weapon_type: primary
 # THE BOAR PRIME'S BASE VARIANT, and the roster's first pair of them. Nothing
 # here is a new mechanic — that is the point of entering it: the Prime already
 # pinned every rule this weapon uses, so what this entry tests is whether a

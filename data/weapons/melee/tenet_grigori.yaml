@@ -1,6 +1,7 @@
 id: tenet_grigori
 name: Tenet Grigori
 slot: melee
+weapon_type: melee
 class: scythe
 # see notes: melee_from_the_modules
 form: neutral

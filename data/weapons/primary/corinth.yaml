@@ -1,6 +1,7 @@
 id: corinth
 name: Corinth
 slot: primary
+weapon_type: primary
 # A PUMP SHOTGUN WITH AN AIR-BURST GRENADE. The buckshot is this entry; the
 # alternate lobs a round that detonates in a 9.4 m radius.
 class: shotgun

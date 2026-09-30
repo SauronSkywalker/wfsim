@@ -1,6 +1,7 @@
 id: akzani
 name: Akzani
 slot: secondary
+weapon_type: secondary
 # TWENTY ROUNDS A SECOND OUT OF A HUNDRED-ROUND MAGAZINE, at twelve damage a
 # shot. It is the fastest-firing weapon in the family and the weakest per shot,
 # which is the whole design.

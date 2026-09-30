@@ -1,6 +1,7 @@
 id: simulor
 name: Simulor
 slot: primary
+weapon_type: primary
 # A RIFLE THAT LAYS GRAVITY ORBS. Each orb hangs where it lands and explodes in
 # five metres; orbs that MERGE explode harder, which is the weapon's whole point
 # and a state this engine does not track.

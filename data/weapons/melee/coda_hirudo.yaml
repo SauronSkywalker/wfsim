@@ -1,6 +1,7 @@
 id: coda_hirudo
 name: Coda Hirudo
 slot: melee
+weapon_type: melee
 class: sparring
 # see notes: melee_from_the_modules
 form: neutral

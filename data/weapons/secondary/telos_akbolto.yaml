@@ -1,6 +1,7 @@
 id: telos_akbolto
 name: Telos Akbolto
 slot: secondary
+weapon_type: secondary
 # THE ARBITERS' AKBOLTO: 70 a bolt against the ordinary's 64, at 5 rounds a
 # second against 4.5, with the status chance raised from 2.2% to 29% — which is
 # more than a tenfold change and the real difference between them.

@@ -1,6 +1,7 @@
 id: synoid_simulor
 name: Synoid Simulor
 slot: primary
+weapon_type: primary
 # CEPHALON SUDA'S SIMULOR, with a sixteen-round magazine and a SINGULARITY when
 # the orbs are fully stacked — a fourth attack this engine has no shape for.
 class: rifle

@@ -1,6 +1,7 @@
 id: twin_vipers_wraith
 name: Twin Vipers Wraith
 slot: secondary
+weapon_type: secondary
 # THE SAME TWENTY-FIVE ROUNDS A SECOND out of forty rounds instead of
 # twenty-eight, at 18 damage against 17 — and almost all of the Wraith's is
 # Impact where the ordinary spreads it. Lower status, higher crit.

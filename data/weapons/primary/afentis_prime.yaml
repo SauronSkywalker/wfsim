@@ -1,6 +1,7 @@
 id: afentis_prime
 name: Afentis Prime
 slot: primary
+weapon_type: primary
 # THE AFENTIS WITH A 5.5-METRE BLAST rather than three, and the lowest riven
 # disposition in the primary roster.
 class: rifle

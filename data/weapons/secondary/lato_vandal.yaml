@@ -1,6 +1,7 @@
 id: lato_vandal
 name: Lato Vandal
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: base
 default_form: true

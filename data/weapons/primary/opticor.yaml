@@ -1,6 +1,7 @@
 id: opticor
 name: Opticor
 slot: primary
+weapon_type: primary
 # A TWO-SECOND CHARGE FOR THE HARDEST SINGLE SHOT IN THE ROSTER, with a
 # six-metre explosion behind it. The charge is the arsenal's own display.
 class: rifle

@@ -1,6 +1,7 @@
 id: vasto_incarnon
 name: Vasto (Incarnon Form)
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: incarnon
 

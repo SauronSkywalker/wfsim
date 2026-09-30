@@ -1,6 +1,7 @@
 id: azima
 name: Azima
 slot: secondary
+weapon_type: secondary
 # A SEVENTY-FIVE ROUND SLASH PISTOL whose alternate fire throws the WHOLE
 # magazine into a deployed turret. The turret is a second weapon that fires
 # itself, and this engine has no shape for one — see the admission.

@@ -1,6 +1,7 @@
 id: snipetron
 name: Snipetron
 slot: primary
+weapon_type: primary
 class: sniper
 form: base
 default_form: true

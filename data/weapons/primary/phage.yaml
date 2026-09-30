@@ -1,6 +1,7 @@
 id: phage
 name: Phage
 slot: primary
+weapon_type: primary
 # SEVEN BEAMS AT ONCE, and the roster's FOURTH beam ramp floor: this one starts
 # at 70% of its damage rather than the 20% "most weapons" get. See
 # `beam_ramp_floor` below — it is the one number on this page a class rule would

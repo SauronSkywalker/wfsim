@@ -1,6 +1,7 @@
 id: viper
 name: Viper
 slot: secondary
+weapon_type: secondary
 # FOURTEEN ROUNDS AT 14.38 A SECOND WITH A 0.7-SECOND RELOAD — the magazine is
 # gone in a second and back in less than one, which is the whole design.
 class: pistol

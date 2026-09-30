@@ -1,6 +1,7 @@
 id: vasto_prime
 name: Vasto Prime
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: base
 default_form: true

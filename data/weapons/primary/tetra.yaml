@@ -1,6 +1,7 @@
 id: tetra
 name: Tetra
 slot: primary
+weapon_type: primary
 # ONE ATTACK, AND THAT IS THE FINDING. The Tenet Tetra's magazine-eating grenade
 # is a TENET addition, not a Tetra mechanic — this page has no alternate fire at
 # all, and neither does the Prisma. Three weapons in one family and only the

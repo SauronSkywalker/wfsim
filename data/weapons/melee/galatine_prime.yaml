@@ -1,6 +1,7 @@
 id: galatine_prime
 name: Galatine Prime
 slot: melee
+weapon_type: melee
 class: heavy_blade
 # see notes: melee_from_the_modules
 form: neutral

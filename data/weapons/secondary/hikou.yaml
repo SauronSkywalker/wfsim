@@ -1,6 +1,7 @@
 id: hikou
 name: Hikou
 slot: secondary
+weapon_type: secondary
 # THROWN STARS AT 6.67 A SECOND WITH A 0.75-SECOND RELOAD — twenty-six damage a
 # star, silent, and perfectly accurate. The Prime is the same weapon with nearly
 # double the damage and almost triple the status.

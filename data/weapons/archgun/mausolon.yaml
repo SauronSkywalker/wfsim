@@ -1,6 +1,7 @@
 id: mausolon
 name: Mausolon
 slot: archgun
+weapon_type: archgun
 class: archgun
 # THE AUTO FIRE is the arsenal's form; `mausolon_charged` is the alt-fire,
 # reached for free by holding the other button.

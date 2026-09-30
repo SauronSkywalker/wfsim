@@ -1,6 +1,7 @@
 id: zenith
 name: Zenith
 slot: primary
+weapon_type: primary
 # THE ARSENAL SHOWS THE SEMI-AUTO, which is this entry — the module's
 # `_TooltipAttackDisplay` is 2, and this is one of the few weapons in the roster
 # where the default form is not the first attack. It costs three rounds a shot

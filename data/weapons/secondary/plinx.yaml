@@ -1,6 +1,7 @@
 id: plinx
 name: Plinx
 slot: secondary
+weapon_type: secondary
 # ONE ATTACK, AND NO MAGAZINE-EATING SLUG. The Tenet Plinx's charged alternate
 # fire — the one whose damage is multiplied by the magazine — is a TENET
 # addition. This is a semi-auto hit-scan pistol with a battery and nothing else,

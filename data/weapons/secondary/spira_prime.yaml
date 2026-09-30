@@ -1,6 +1,7 @@
 id: spira_prime
 name: Spira Prime
 slot: secondary
+weapon_type: secondary
 # THE SPIRA AT A 3x CRITICAL MULTIPLIER and a 0.75-second reload, with almost
 # all of its 60 damage in Puncture. Same 30% crit chance, nearly double the
 # status.

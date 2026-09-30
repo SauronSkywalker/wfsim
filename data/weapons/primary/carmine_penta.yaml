@@ -1,6 +1,7 @@
 id: carmine_penta
 name: Carmine Penta
 slot: primary
+weapon_type: primary
 # THE PENTA WITH TEN GRENADES AND 2.7 A SECOND — the Corpus launcher's fast
 # variant, at the ordinary Penta's damage. Same 4 m blast, same 350 Blast in it.
 class: launcher

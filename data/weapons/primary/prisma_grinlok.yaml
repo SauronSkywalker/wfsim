@@ -1,6 +1,7 @@
 id: prisma_grinlok
 name: Prisma Grinlok
 slot: primary
+weapon_type: primary
 # A SEMI-AUTO rifle. The roster's rifles are otherwise full-auto, and the
 # trigger is what decides cadence, so this is the entry that proves the axis is
 # not shotgun-only.

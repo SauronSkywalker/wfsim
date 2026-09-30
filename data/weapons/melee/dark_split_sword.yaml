@@ -1,6 +1,7 @@
 id: dark_split_sword
 name: Dark Split-Sword
 slot: melee
+weapon_type: melee
 class: heavy_blade
 # see notes: melee_from_the_modules
 form: neutral

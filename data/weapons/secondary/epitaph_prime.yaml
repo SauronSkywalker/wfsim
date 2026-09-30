@@ -1,6 +1,7 @@
 id: epitaph_prime
 name: Epitaph Prime
 slot: secondary
+weapon_type: secondary
 # THE EPITAPH WITH A TEN-METRE UNCHARGED BLAST and more of everything. The
 # charged shot is the arsenal's own and is this entry.
 class: pistol

@@ -1,6 +1,7 @@
 id: tenet_agendus
 name: Tenet Agendus
 slot: melee
+weapon_type: melee
 class: sword_and_shield
 # see notes: melee_from_the_modules
 form: neutral

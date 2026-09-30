@@ -1,6 +1,7 @@
 id: zakti_prime
 name: Zakti Prime
 slot: secondary
+weapon_type: secondary
 # THE ZAKTI AT EIGHT ROUNDS, four times the crit chance and twice the status —
 # 42% — with a 100-damage cloud in 3.8 m. The status chance is what the Prime is
 # actually for: a Gas cloud that procs is worth more than one that does not.

@@ -1,6 +1,7 @@
 id: convectrix
 name: Convectrix
 slot: primary
+weapon_type: primary
 # TWO BEAMS THAT CONVERGE. Twelve damage a tick from each of two beams at a 45%
 # status chance — the highest in the roster's primaries — with 0.6 m of innate
 # punch through and a 30 m reach.

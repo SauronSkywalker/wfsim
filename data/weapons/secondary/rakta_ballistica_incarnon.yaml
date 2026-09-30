@@ -1,6 +1,7 @@
 id: rakta_ballistica_incarnon
 name: Rakta Ballistica (Incarnon Form)
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: incarnon
 

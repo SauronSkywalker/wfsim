@@ -1,6 +1,7 @@
 id: hema
 name: Hema
 slot: primary
+weapon_type: primary
 # THE RIFLE THAT COSTS BLOOD, and the original of the pair — the Coda version
 # keeps the mechanic and raises every number. The cost is real and this arena
 # cannot charge it: nobody shoots back and nothing here has a health pool to

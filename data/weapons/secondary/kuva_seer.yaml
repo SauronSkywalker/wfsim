@@ -1,6 +1,7 @@
 id: kuva_seer
 name: Kuva Seer
 slot: secondary
+weapon_type: secondary
 # A PISTOL THAT EXPLODES. Every shot detonates in 2.3 m of Corrosive, and the
 # page is explicit that the two halves are separate instances: "Initial hit and
 # explosion apply status separately."

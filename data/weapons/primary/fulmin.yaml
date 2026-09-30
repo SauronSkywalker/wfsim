@@ -1,6 +1,7 @@
 id: fulmin
 name: Fulmin
 slot: primary
+weapon_type: primary
 # A BATTERY RIFLE WITH TWO COMPLETELY DIFFERENT GUNS IN IT. Full auto is a
 # 33-damage hit-scan at 9.33 a second; semi-auto is a 500-damage silent
 # projectile that costs TEN rounds and forces an Impact proc. The arsenal shows

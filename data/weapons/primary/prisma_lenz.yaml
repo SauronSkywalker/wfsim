@@ -1,6 +1,7 @@
 id: prisma_lenz
 name: Prisma Lenz
 slot: primary
+weapon_type: primary
 # THE LENZ WITH BARO'S NUMBERS, and the same bubble: 7.2 metres of Blast on
 # collapse.
 class: bow

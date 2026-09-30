@@ -1,6 +1,7 @@
 id: coda_bassocyst
 name: Coda Bassocyst
 slot: primary
+weapon_type: primary
 # 808 DAMAGE A SHOT THROUGH AN UNLIMITED NUMBER OF BODIES — the second infinite
 # body punch through in this batch, beside the Tenet Arca Plasmor. Its alternate
 # fire is a Mercy-finisher tool rather than a way to fight, and is recorded as a

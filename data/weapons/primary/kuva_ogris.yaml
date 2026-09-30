@@ -1,6 +1,7 @@
 id: kuva_ogris
 name: Kuva Ogris
 slot: primary
+weapon_type: primary
 # A ROCKET LAUNCHER, and the explosion is the whole weapon: 687 against the
 # rocket's own 27. Three magazine, seven reserve, and no way to refill either
 # in a hurry.

@@ -1,6 +1,7 @@
 id: hind
 name: Hind
 slot: primary
+weapon_type: primary
 # THE ORDINARY HIND: a five-round burst and a semi-auto, cycled with Alternate
 # Fire. The Kuva variant added a THIRD mode; this one has two, and the arsenal
 # shows the burst.

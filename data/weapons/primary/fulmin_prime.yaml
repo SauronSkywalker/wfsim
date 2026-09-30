@@ -1,6 +1,7 @@
 id: fulmin_prime
 name: Fulmin Prime
 slot: primary
+weapon_type: primary
 # THE FULMIN AT AN EIGHTY-ROUND BATTERY AND 34% CRIT on the automatic mode, with
 # the semi-auto raised from 500 to 550 and its status chance from 16% to 22%.
 class: rifle

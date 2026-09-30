@@ -1,6 +1,7 @@
 id: opticor_vandal
 name: Opticor Vandal
 slot: primary
+weapon_type: primary
 # THE OPTICOR AT A 0.6-SECOND CHARGE rather than two, out of eight rounds
 # rather than five, with a 4.6 m blast instead of six.
 class: rifle

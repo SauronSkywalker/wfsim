@@ -1,6 +1,7 @@
 id: pox
 name: Pox
 slot: secondary
+weapon_type: secondary
 # A SILENT THROWN SPORE, and the only weapon in this batch whose CLOUD takes
 # Condition Overload — at 250% of its own base, which is a catalog row nothing
 # else in the roster has. See `co_behavior` below and the unmodelled list.

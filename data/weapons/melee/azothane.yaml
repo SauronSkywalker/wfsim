@@ -1,6 +1,7 @@
 id: azothane
 name: Azothane
 slot: melee
+weapon_type: melee
 class: two_handed_nikana
 # see notes: melee_from_the_modules
 form: neutral

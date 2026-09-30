@@ -1,6 +1,7 @@
 id: dex_furis
 name: Dex Furis
 slot: secondary
+weapon_type: secondary
 # THE AFURIS AT TWENTY ROUNDS A SECOND, out of a hundred-round magazine, with
 # more than double the status chance. An anniversary weapon, and the family's
 # third member.

@@ -1,6 +1,7 @@
 id: tenet_arca_plasmor
 name: Tenet Arca Plasmor
 slot: primary
+weapon_type: primary
 # THE FIRST WEAPON IN THE ROSTER WHOSE HEAD IS WORTH NOTHING, and the reason
 # `WeaponSpec::headshot_multiplier` exists: "Has a headshot multiplier of 1x" is
 # its own line in the disadvantages, about the DIRECT hit rather than about an

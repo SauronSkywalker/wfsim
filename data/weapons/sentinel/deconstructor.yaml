@@ -7,8 +7,8 @@ name: Deconstructor
 # a shape this engine already has — so it is recorded rather than left out,
 # with the two things it cannot do stated below.
 slot: sentinel
+weapon_type: melee
 class: sentinel_weapon
-weapon_category: melee
 form: base
 default_form: true
 

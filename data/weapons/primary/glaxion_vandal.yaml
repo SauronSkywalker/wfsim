@@ -1,6 +1,7 @@
 id: glaxion_vandal
 name: Glaxion Vandal
 slot: primary
+weapon_type: primary
 # THE VANDAL IS NOT A BIGGER GLAXION — it gains a mechanic the other two do not
 # have: a 2 m COLD BLOTCH at the end of the beam, which is a damage radius and
 # makes this the only member of the family that hits more than one body without

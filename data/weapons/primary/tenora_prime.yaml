@@ -1,6 +1,7 @@
 id: tenora_prime
 name: Tenora Prime
 slot: primary
+weapon_type: primary
 # THE TENORA AT 200 ROUNDS AND A 30% CRIT CHANCE, with the charged shot raised
 # to 280 damage and a 40% crit chance. Same spool, same ten-round charge cost.
 class: rifle

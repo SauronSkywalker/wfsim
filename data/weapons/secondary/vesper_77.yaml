@@ -1,6 +1,7 @@
 id: vesper_77
 name: Vesper 77
 slot: secondary
+weapon_type: secondary
 # A SILENCED 1999 PISTOL WITH A LASER SIGHT, and the first entry in the roster
 # whose aim bonus has no zoom level attached to it: aiming grants +40% critical
 # damage and the page publishes no magnification at all. That is what `scope:`

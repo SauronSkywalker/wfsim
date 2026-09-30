@@ -1,6 +1,7 @@
 id: paris_prime
 name: Paris Prime
 slot: primary
+weapon_type: primary
 class: bow
 form: charged
 default_form: true

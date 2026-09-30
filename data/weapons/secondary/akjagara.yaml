@@ -1,6 +1,7 @@
 id: akjagara
 name: Akjagara
 slot: secondary
+weapon_type: secondary
 # THE ORDINARY AKJAGARA, and the Prime is this weapon with three times the crit
 # chance and a cone half as wide. The two-round burst with NO delay between the
 # rounds is the family's shape and is shared.

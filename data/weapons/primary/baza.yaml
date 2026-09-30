@@ -1,6 +1,7 @@
 id: baza
 name: Baza
 slot: primary
+weapon_type: primary
 # THE ORDINARY BAZA. Same damage per shot as the Prime and the same 16.67 rounds
 # a second; what the Prime bought is crit chance, status, twenty more rounds, a
 # faster reload and a falloff window that starts 8 m further out.

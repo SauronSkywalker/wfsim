@@ -1,6 +1,7 @@
 id: kuva_hind
 name: Kuva Hind
 slot: primary
+weapon_type: primary
 # THREE TRIGGERS ON ONE GUN, cycled with Alternate Fire: "three togglable
 # firing modes: 5-round burst, semi-auto, and full-auto". This entry is the
 # BURST, which is the arsenal's own display (module `_TooltipAttackDisplay: 1`);

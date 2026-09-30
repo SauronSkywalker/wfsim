@@ -1,6 +1,7 @@
 id: ambassador
 name: Ambassador
 slot: primary
+weapon_type: primary
 # AN AUTOMATIC RIFLE WITH A CHARGED SNIPER SHOT IN IT. The automatic fire is
 # this entry; the charge is a hit-scan shot with a 6 m explosion behind it.
 class: rifle

@@ -1,6 +1,7 @@
 id: rauta
 name: Rauta
 slot: primary
+weapon_type: primary
 # A MELEE COMBO BATTERY WEARING A SHOTGUN'S BODY. Eight pellets of 130, and its
 # published reason to exist is that each pellet adds 2 to the MELEE combo count
 # — which is worth exactly nothing in an arena with no melee in it. What is left

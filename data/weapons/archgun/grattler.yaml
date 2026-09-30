@@ -1,6 +1,7 @@
 id: grattler
 name: Grattler
 slot: archgun
+weapon_type: archgun
 class: archgun
 form: base
 default_form: true

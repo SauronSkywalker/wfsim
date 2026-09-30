@@ -1,6 +1,7 @@
 id: panthera_prime
 name: Panthera Prime
 slot: primary
+weapon_type: primary
 # THE PANTHERA WITH AN EXPLOSION ON EVERY SAW BLADE — 1.6 metres — and the same
 # deployed sawblade in its alternate fire.
 class: rifle

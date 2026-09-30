@@ -1,6 +1,7 @@
 id: rakta_ballistica
 name: Rakta Ballistica
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: charged
 default_form: true

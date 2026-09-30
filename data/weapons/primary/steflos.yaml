@@ -1,6 +1,7 @@
 id: steflos
 name: Steflos
 slot: primary
+weapon_type: primary
 # A SEED POD THAT GETS BIGGER THE MORE IT HITS. 320 damage a shot, mostly Heat,
 # on a projectile with a 0.6-second life that grows by half on every enemy it
 # touches — a travel mechanic this engine has no clock for, admitted below.

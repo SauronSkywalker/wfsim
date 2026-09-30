@@ -1,6 +1,7 @@
 id: sicarus_prime_incarnon
 name: Sicarus Prime (Incarnon Form)
 slot: secondary
+weapon_type: secondary
 class: pistol
 form: incarnon
 

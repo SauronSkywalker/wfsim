@@ -1,6 +1,7 @@
 id: haalvu
 name: Haalvu
 slot: primary
+weapon_type: primary
 # A SENTIENT MINIGUN FIRING TAU. Thirteen rounds a second out of a 150-round
 # battery, and an alternate fire that splits the barrels into miniature rifles
 # which lock onto up to FOUR enemies at once — a multi-target mode this engine

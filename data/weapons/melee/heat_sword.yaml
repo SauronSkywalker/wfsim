@@ -1,6 +1,7 @@
 id: heat_sword
 name: Heat Sword
 slot: melee
+weapon_type: melee
 class: sword
 # see notes: melee_from_the_modules
 form: neutral

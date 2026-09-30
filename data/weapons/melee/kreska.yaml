@@ -1,6 +1,7 @@
 id: kreska
 name: Kreska
 slot: melee
+weapon_type: melee
 class: machete
 # see notes: melee_from_the_modules
 form: neutral

@@ -1,6 +1,7 @@
 id: coda_pox
 name: Coda Pox
 slot: secondary
+weapon_type: secondary
 # A THROWN SPORE THAT LEAVES A CLOUD — a `lingering:` rather than a `radial:`,
 # which is the difference between a blast and four seconds of standing in it.
 # It is also SILENT on the throw and ALARMING on the cloud, which is a

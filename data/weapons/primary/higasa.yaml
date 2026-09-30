@@ -1,6 +1,7 @@
 id: higasa
 name: Higasa
 slot: primary
+weapon_type: primary
 # A GUNBRELLA. Five-round bursts of Puncture, and an alternate fire that spends
 # a GAUGE filled by kills on a 390-damage Blast laser — a form you earn rather
 # than one you can simply hold, which is why THAT ENTRY (`higasa_charged`)

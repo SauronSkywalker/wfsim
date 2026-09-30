@@ -1,6 +1,7 @@
 id: fang
 name: Fang
 slot: melee
+weapon_type: melee
 class: dual_daggers
 # see notes: melee_from_the_modules
 form: neutral

@@ -1,6 +1,7 @@
 id: corvas
 name: Corvas
 slot: archgun
+weapon_type: archgun
 class: archgun
 form: charged
 default_form: true

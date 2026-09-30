@@ -1,6 +1,7 @@
 id: prova_vandal
 name: Prova Vandal
 slot: melee
+weapon_type: melee
 class: machete
 # see notes: melee_from_the_modules
 form: neutral

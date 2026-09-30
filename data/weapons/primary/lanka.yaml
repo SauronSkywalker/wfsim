@@ -1,6 +1,7 @@
 id: lanka
 name: Lanka
 slot: primary
+weapon_type: primary
 class: sniper
 # THE FULL DRAW is the form this weapon is played as;
 # `lanka_uncharged` is the partial one — the Cernos Prime

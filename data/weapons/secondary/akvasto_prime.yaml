@@ -1,6 +1,7 @@
 id: akvasto_prime
 name: Akvasto Prime
 slot: secondary
+weapon_type: secondary
 # THE SAME 110 A SHOT AS THE AKVASTO IS NOT — it is 110 against 90, and 70% of
 # it is Slash where the ordinary is 50%. Same twelve rounds, same fire rate,
 # a tighter cone and a faster reload.

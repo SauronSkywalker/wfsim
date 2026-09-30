@@ -1,6 +1,7 @@
 id: kuva_drakgoon
 name: Kuva Drakgoon
 slot: primary
+weapon_type: primary
 # A CHARGE SHOTGUN. Uncharged it throws a 60-80 degree wall of shrapnel; drawn,
 # it tightens to a slug and doubles its Slash. This entry is the CHARGED shot,
 # which is the arsenal's own display (module `_TooltipAttackDisplay: 2`); the

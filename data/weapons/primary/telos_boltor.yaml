@@ -1,6 +1,7 @@
 id: telos_boltor
 name: Telos Boltor
 slot: primary
+weapon_type: primary
 class: rifle
 form: base
 default_form: true          # the arsenal's form (module _TooltipAttackDisplay)

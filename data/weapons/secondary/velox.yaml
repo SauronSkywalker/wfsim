@@ -1,6 +1,7 @@
 id: velox
 name: Velox
 slot: secondary
+weapon_type: secondary
 # A SIXTY-TWO ROUND MACHINE PISTOL that reloads half again as fast when it is
 # run completely dry — a mechanic that rewards emptying the magazine, and one
 # this engine's single reload time cannot express. See the admission.

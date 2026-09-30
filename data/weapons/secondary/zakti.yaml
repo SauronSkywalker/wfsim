@@ -1,6 +1,7 @@
 id: zakti
 name: Zakti
 slot: secondary
+weapon_type: secondary
 # A THREE-DART GAS PISTOL. Thirty on impact with a guaranteed Impact proc, and
 # then 80 Gas in a 3.5 m radius one second later with NO falloff — full damage
 # to the rim. A 0.8-second reload, which is what makes three rounds workable.

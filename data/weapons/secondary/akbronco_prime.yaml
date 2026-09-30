@@ -1,6 +1,7 @@
 id: akbronco_prime
 name: Akbronco Prime
 slot: secondary
+weapon_type: secondary
 # THE SAME SEVEN PELLETS AT 50 APIECE, out of double the magazine and with four
 # times the status chance — 12.86% against the ordinary Akbronco's 3.14%. That
 # and a longer falloff window are the whole of the Prime.

@@ -1,6 +1,7 @@
 id: paris
 name: Paris
 slot: primary
+weapon_type: primary
 class: bow
 form: charged
 default_form: true

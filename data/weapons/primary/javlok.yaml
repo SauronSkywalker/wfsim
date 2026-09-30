@@ -1,6 +1,7 @@
 id: javlok
 name: Javlok
 slot: primary
+weapon_type: primary
 # A SPEARGUN THAT SHOOTS FIRE. The charged shot is a 2.4 m Heat blast; the
 # alternate THROWS the spear itself for a six-metre one.
 class: rifle

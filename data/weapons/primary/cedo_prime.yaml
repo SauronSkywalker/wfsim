@@ -1,6 +1,7 @@
 id: cedo_prime
 name: Cedo Prime
 slot: primary
+weapon_type: primary
 # THE CEDO WITH MORE OF EVERYTHING and the same glaive in its alternate fire.
 class: shotgun
 form: base

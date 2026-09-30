@@ -1,6 +1,7 @@
 id: staticor
 name: Staticor
 slot: secondary
+weapon_type: secondary
 # A CHARGED ENERGY THROWER: one second of charge for a 9.6 m Radiation blast,
 # which is the arsenal's own display (`_TooltipAttackDisplay: 4`).
 class: pistol

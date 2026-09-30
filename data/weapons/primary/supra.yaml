@@ -1,6 +1,7 @@
 id: supra
 name: Supra
 slot: primary
+weapon_type: primary
 # A HUNDRED AND EIGHTY ROUNDS AT 12.5 A SECOND — once it gets there. It starts
 # at a TENTH of its listed rate and climbs 22.5% a shot, so it is full from the
 # fifth round and the first four are the slowest in the roster.

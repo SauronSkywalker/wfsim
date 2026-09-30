@@ -1,6 +1,7 @@
 id: tenet_glaxion
 name: Tenet Glaxion
 slot: primary
+weapon_type: primary
 # A CHAINING COLD BEAM, and the roster's fourth COMPOUNDING chain. Its pair with
 # the Tenet Cycron is the reason `ChainSpec::compounds` is a field at all: one
 # page says "of the previous chain's damage" and the other "of the main beam's

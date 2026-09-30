@@ -1,6 +1,7 @@
 id: ignis_wraith
 name: Ignis Wraith
 slot: primary
+weapon_type: primary
 # THE IGNIS AT 27 METRES AND 200 ROUNDS, with half again the crit chance. Its
 # beam is 0.15 m thick — the widest of any continuous weapon — and the 3 m
 # sphere at the end takes the total reach to 30 m, which is the number its own

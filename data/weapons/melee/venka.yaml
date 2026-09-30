@@ -1,6 +1,7 @@
 id: venka
 name: Venka
 slot: melee
+weapon_type: melee
 class: claws
 # see notes: melee_from_the_modules
 form: neutral

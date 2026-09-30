@@ -1,6 +1,7 @@
 id: stradavar
 name: Stradavar
 slot: primary
+weapon_type: primary
 # FULL AUTO FOR VOLUME, SEMI-AUTO FOR PUNCTURE. The automatic mode is 28 a shot
 # spread evenly; the semi is 50 a shot with 60% of it Puncture, at half the fire
 # rate and a wider crit chance. The arsenal shows the automatic.

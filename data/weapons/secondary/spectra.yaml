@@ -1,6 +1,7 @@
 id: spectra
 name: Spectra
 slot: secondary
+weapon_type: secondary
 # THE ORDINARY SPECTRA: an 18-metre cutting laser with half a metre of innate
 # punch through — one body's worth exactly — and the same 25% ramp floor its
 # Vandal carries. The Vandal reaches 22 m and hits a fifth harder.

@@ -1,6 +1,7 @@
 id: epitaph
 name: Epitaph
 slot: secondary
+weapon_type: secondary
 # A ZARIMAN PISTOL WHOSE CHARGED SHOT IS THE ARSENAL'S OWN — a 0.36 s charge for
 # a Cold projectile. The UNCHARGED shot is the one with the explosion.
 class: pistol
