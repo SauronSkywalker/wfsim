@@ -303,6 +303,22 @@ function foldRivensIntoOneList() {
   if (touched) localStorage.setItem(KEY, JSON.stringify(all));
 }
 
+/// HOW MUCH THIS BROWSER HAS SAVED, per pool the build sync will count:
+/// `presets` (builds, fights, searches, Warframe, companion and Operator
+/// builds) and `customs` (rivens, enemies). A board row opened into a bar is
+/// the board's, not the reader's, and is not counted.
+function savedCounts() {
+  const out = { presets: 0, customs: 0 };
+  for (const k of Object.keys(localStorage)) {
+    const pool = k.startsWith("wfsim-presets-") ? "presets" : k.startsWith("wfsim-customs-") ? "customs" : null;
+    if (!pool) continue;
+    let list;
+    try { list = JSON.parse(localStorage.getItem(k)); } catch (_) { continue; }
+    if (Array.isArray(list)) out[pool] += list.filter((p) => p && !p.builtin).length;
+  }
+  return out;
+}
+
 // Parsed lists, memoised on the RAW STRING. The stored text IS the
 // invalidation — nothing to keep in sync, and a stale read is impossible.
 // Worth having because `gainKey()` resolves a whole scenario and is called

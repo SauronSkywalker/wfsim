@@ -79,6 +79,7 @@ with this thing, not how many times: forty edits to one build are one build.
 | `share.open` | a shared build landed in a reader's app | weapon id | — |
 | `board.submit` | a build reached the board's inbox | weapon id | — |
 | `desktop.download` | a desktop download link was clicked | — | — |
+| `presets.saved` | the engine has answered `/api/meta` | `presets` or `customs` — the pool a sync allowance would count | how many this browser holds, board rows opened into a bar not counted |
 
 An `engine.fail` from a visitor with no `app.boot` is a reader the site lost
 before it could do anything — the one failure the edge cannot see.

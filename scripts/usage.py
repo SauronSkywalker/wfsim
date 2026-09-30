@@ -165,6 +165,21 @@ def main():
     for e in sorted(per):
         print(f"\n{e}: " + ", ".join(f"{s} {n}" for s, n in per[e][:args.top]))
 
+    # HOW MUCH A BROWSER KEEPS: per pool, each browser's largest count in the
+    # window, so a sync allowance is set against the spread rather than a guess.
+    held = sql(account, token, f"""
+        SELECT blob2 AS cid, blob3 AS subject, MAX(double2) AS n
+        FROM {DATASET} WHERE {since} AND blob1 = 'presets.saved'
+        GROUP BY cid, subject LIMIT 100000""")
+    pools = defaultdict(list)
+    for r in held:
+        pools[r["subject"]].append(int(float(r["n"])))
+    for pool in sorted(pools):
+        xs = pools[pool]
+        over = ", ".join(f"≥{t} {pct(sum(x >= t for x in xs), len(xs))}" for t in (25, 50, 100, 200))
+        print(f"\nsaved {pool} per browser ({len(xs)} browsers): p50 {quantile(xs, .5)}  p75 {quantile(xs, .75)}  "
+              f"p90 {quantile(xs, .9)}  p99 {quantile(xs, .99)}  max {max(xs)}  |  {over}")
+
     # THE MOST ACTIVE VISITORS. A visitor is a random per-browser id and nothing
     # more: this ranks browsers, and says who they are only if they tell us
     # (their id is on /support). Days seen first, then results produced.

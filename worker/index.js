@@ -577,6 +577,7 @@ export const USAGE_EVENTS = [
   "builder.weapon", "builder.warframe", "builder.operator", "builder.riven",
   "simulator.run", "optimizer.run",
   "share.create", "share.open", "board.submit", "desktop.download",
+  "presets.saved",
 ];
 /// The wire's schema, written into every point so a later change stays readable.
 export const USAGE_SCHEMA = 1;

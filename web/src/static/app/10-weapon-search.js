@@ -297,6 +297,10 @@ async function init() {
   // THE ENGINE ANSWERED: the denominator every other point is read against,
   // with how the page was reached and how long the reader waited for it.
   track("app.boot", usageArrival(), Math.round(performance.now()));
+  // HOW MUCH IS SAVED HERE, which is what a sync allowance would be measured in.
+  const saved = savedCounts();
+  track("presets.saved", "presets", saved.presets);
+  track("presets.saved", "customs", saved.customs);
   const boardBoot = loadBoard(bootWeapon);
   applyI18n();
   fillSelect("weapon", META.weapons);
