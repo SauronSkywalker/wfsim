@@ -1,12 +1,11 @@
 id: kuva_shildeg_slide
 name: Kuva Shildeg
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: kuva_shildeg
 form: slide
 transform_group: kuva_shildeg
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_valence_unmodelled
     family: Kuva
 attack:

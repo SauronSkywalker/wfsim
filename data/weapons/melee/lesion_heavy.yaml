@@ -1,16 +1,17 @@
 id: lesion_heavy
 name: Lesion
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: lesion
 form: heavy
 transform_group: lesion
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: heavy_charge_share_assumed
     published: 0.9
     charge: 0.3
     swing: 0.6
+  - reason: melee_passive_unmodelled
+    passive: "Frenzy: applying a status grants +15% attack speed, +100% Toxin and +25% flat Status Chance for 6 s, not refreshed while active"
 attack:
   # see notes: swing_trigger_pull_engine
   trigger: melee

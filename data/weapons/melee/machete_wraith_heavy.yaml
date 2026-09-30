@@ -1,12 +1,11 @@
 id: machete_wraith_heavy
 name: Machete Wraith
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: machete_wraith
 form: heavy
 transform_group: machete_wraith
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: heavy_charge_share_assumed
     published: 0.7
     charge: 0.2333

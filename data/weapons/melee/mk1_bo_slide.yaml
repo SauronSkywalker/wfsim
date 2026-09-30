@@ -1,12 +1,11 @@
 id: mk1_bo_slide
 name: Mk1-Bo
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: mk1_bo
 form: slide
 transform_group: mk1_bo
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_incarnon_unmodelled
 attack:
   # see notes: swing_trigger_pull_engine

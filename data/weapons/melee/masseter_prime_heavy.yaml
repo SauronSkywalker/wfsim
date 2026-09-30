@@ -1,16 +1,17 @@
 id: masseter_prime_heavy
 name: Masseter Prime
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: masseter_prime
 form: heavy
 transform_group: masseter_prime
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: heavy_charge_share_assumed
     published: 1.1
     charge: 0.3667
     swing: 0.7333
+  - reason: melee_passive_unmodelled
+    passive: "a stance's mini-slam, one without the full slam visual, is multiplied by the combo multiplier and can crit"
 attack:
   # see notes: swing_trigger_pull_engine
   trigger: melee

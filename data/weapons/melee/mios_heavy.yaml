@@ -1,12 +1,11 @@
 id: mios_heavy
 name: Mios
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: mios
 form: heavy
 transform_group: mios
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_slide_unpublished
   - reason: heavy_charge_share_assumed
     published: 0.4

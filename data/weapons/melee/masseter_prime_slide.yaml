@@ -1,12 +1,13 @@
 id: masseter_prime_slide
 name: Masseter Prime
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: masseter_prime
 form: slide
 transform_group: masseter_prime
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
+  - reason: melee_passive_unmodelled
+    passive: "a stance's mini-slam, one without the full slam visual, is multiplied by the combo multiplier and can crit"
 attack:
   # see notes: swing_trigger_pull_engine
   trigger: melee
