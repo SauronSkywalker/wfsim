@@ -49,6 +49,7 @@ import re
 import sys
 import time
 import urllib.request
+from bot_auth import bot_headers
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -110,7 +111,8 @@ def count(slug, extra="", tries=6):
     err = "?"
     for attempt in range(tries):
         try:
-            with urllib.request.urlopen(API % slug + extra, timeout=30) as r:
+            url = API % slug + extra
+            with urllib.request.urlopen(urllib.request.Request(url, headers=bot_headers(url)), timeout=30) as r:
                 return len(json.load(r)["payload"]["auctions"]), None
         except Exception as e:  # 429 is routine: the API is rate limited
             err = str(e)[:60]

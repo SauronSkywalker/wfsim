@@ -40,6 +40,7 @@ import os
 import re
 import sys
 import urllib.request
+from bot_auth import bot_headers
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -55,7 +56,7 @@ def fetch():
     single-quoted strings — despite the `.json` extension, so `json.load` on it
     fails at line 3 every time.
     """
-    req = urllib.request.Request(URL, headers={"User-Agent": "wfsim-dev/1.0"})
+    req = urllib.request.Request(URL, headers=bot_headers(URL, {"User-Agent": "wfsim-dev/1.0"}))
     with urllib.request.urlopen(req, timeout=120) as r:
         t = r.read().decode("utf-8")
     t = re.sub(r"([{,]\s*)([A-Za-z_][A-Za-z0-9_]*)(\s*:)", r'\1"\2"\3', t)

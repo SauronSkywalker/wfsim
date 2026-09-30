@@ -336,6 +336,7 @@ serves it:
 | `/auth.md` | how an agent registers, claims a key for its person and uses it — drawn by the worker (`worker/agents.js`) |
 | `/.well-known/oauth-protected-resource`, `/.well-known/oauth-authorization-server` | RFC 9728 and RFC 8414, the second with auth.md's `agent_auth` block, from the same constants as `/auth.md` |
 | `/robots.txt` | each AI crawler named, `Content-Signal` granting search, ai-input, ai-train |
+| `/.well-known/http-message-signatures-directory` | the Web Bot Auth key directory (§"Web Bot Auth"), drawn by `worker/bot_auth.js` |
 
 A page with a twin (`markdownTwin` in `worker/index.js`) answers
 `Accept: text/markdown` with it when markdown ranks at least as high as html,
@@ -348,3 +349,23 @@ This is what Cloudflare's agent-readiness scan grades (`isitagentready.com`,
 anonymous key issued at once, a claim, and a revocation (docs/ACCOUNTS.md
 §"Agents"). A twin states only what the page does, so a fact reaches it through
 the same function that writes the html, never a second one.
+
+## Web Bot Auth
+
+WFSim's own tooling fetches other sites — DE's public export, warframe.market,
+the wiki — and signs those requests so a site can tell they are WFSim's (IETF
+webbotauth: `draft-meunier-web-bot-auth-architecture`, and the directory draft).
+
+| part | where |
+| --- | --- |
+| the key | one Ed25519 JWK: `private/web-bot-auth.jwk`, and the same key as the site worker's secret `WEB_BOT_AUTH_JWK` |
+| the directory | `/.well-known/http-message-signatures-directory`: the public key only, and the response signed by it under `tag="http-message-signatures-directory"` |
+| the requests | `bot_headers` in `scripts/bot_auth.py`: `Signature-Agent: "https://wfsim.app"`, and a signature over `@authority` and `signature-agent` under `tag="web-bot-auth"`, five minutes long |
+
+The `keyid` is the key's RFC 7638 thumbprint. A checkout without the key file
+sends its requests unsigned: a signature is an identity, and only the key's
+holder has one. **A NEW REQUEST TO ANOTHER SITE GOES THROUGH `bot_headers`.**
+Rotating the key is a new file and `wrangler secret put WEB_BOT_AUTH_JWK` from
+it; a site that cached the old directory stops trusting the old key within its
+five-minute cache. `check_bot_auth.mjs` holds the signer to RFC 8032's vectors
+and both signatures to Node's verifier, offline.

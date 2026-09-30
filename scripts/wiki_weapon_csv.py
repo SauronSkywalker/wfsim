@@ -50,6 +50,7 @@ import os
 import re
 import sys
 import urllib.request
+from bot_auth import bot_headers
 from pathlib import Path
 
 import yaml
@@ -72,7 +73,7 @@ def fetch(refresh=False):
     """The page's raw wikitext, cached. One request, ~740 KB."""
     if CACHE.exists() and not refresh:
         return CACHE.read_text(encoding="utf-8")
-    req = urllib.request.Request(URL, headers={"User-Agent": AGENT})
+    req = urllib.request.Request(URL, headers=bot_headers(URL, {"User-Agent": AGENT}))
     with urllib.request.urlopen(req, timeout=120) as r:
         text = r.read().decode("utf-8")
     CACHE.parent.mkdir(parents=True, exist_ok=True)

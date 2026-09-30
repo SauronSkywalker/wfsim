@@ -29,6 +29,7 @@ import lzma
 import struct
 import sys
 import urllib.request
+from bot_auth import bot_headers
 from functools import cache
 from pathlib import Path
 
@@ -42,7 +43,7 @@ UA = {"User-Agent": "wfsim-data/1.0"}
 
 
 def _get(url: str) -> bytes:
-    with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=120) as r:
+    with urllib.request.urlopen(urllib.request.Request(url, headers=bot_headers(url, UA)), timeout=120) as r:
         return r.read()
 
 

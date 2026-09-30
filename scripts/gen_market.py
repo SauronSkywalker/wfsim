@@ -26,6 +26,7 @@ import json
 import re
 import sys
 import urllib.request
+from bot_auth import bot_headers
 from pathlib import Path
 
 import yaml
@@ -36,7 +37,8 @@ API = "https://api.warframe.market/v2"
 
 
 def fetch(path):
-    with urllib.request.urlopen(f"{API}{path}", timeout=60) as r:
+    url = f"{API}{path}"
+    with urllib.request.urlopen(urllib.request.Request(url, headers=bot_headers(url)), timeout=60) as r:
         return json.load(r)["data"]
 
 

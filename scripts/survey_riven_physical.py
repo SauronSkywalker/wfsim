@@ -40,6 +40,7 @@ import sys
 import time
 import urllib.parse
 import urllib.request
+from bot_auth import bot_headers
 from itertools import permutations
 from pathlib import Path
 
@@ -135,7 +136,7 @@ def get(url, tries=6):
     err = "?"
     for attempt in range(tries):
         try:
-            with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=30) as r:
+            with urllib.request.urlopen(urllib.request.Request(url, headers=bot_headers(url, UA)), timeout=30) as r:
                 return json.load(r), None
         except Exception as e:  # 429 is routine; back off and ask again
             err = str(e)[:80]

@@ -34,6 +34,7 @@ import os
 import re
 import sys
 import urllib.request
+from bot_auth import bot_headers
 
 import yaml
 
@@ -67,7 +68,7 @@ AOE_WORDS = ('aoe', 'radial', 'cloud', 'explosion', 'blast', 'bomblet', 'detonat
 
 def wikitext(fetch):
     if fetch or not os.path.exists(CACHE):
-        req = urllib.request.Request(URL, headers={'User-Agent': 'wfsim/1.0'})
+        req = urllib.request.Request(URL, headers=bot_headers(URL, {'User-Agent': 'wfsim/1.0'}))
         text = urllib.request.urlopen(req, timeout=60).read().decode('utf-8')
         os.makedirs(os.path.dirname(CACHE), exist_ok=True)
         io.open(CACHE, 'w', encoding='utf-8').write(text)
