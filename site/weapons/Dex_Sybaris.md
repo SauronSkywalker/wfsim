@@ -10,9 +10,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 9.4329 | High Voltage, Malignant Force, Hellfire, Galvanized Chamber, Galvanized Aptitude, Galvanized Scope, Critical Delay, Vital Sense, Stabilizer, Primary Deadhead |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 13.7412 | High Voltage, Malignant Force, Hellfire, Galvanized Chamber, Galvanized Aptitude, Galvanized Scope, Critical Delay, Vital Sense, Stabilizer, Primary Deadhead |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 0.4381 | High Voltage, Malignant Force, Hellfire, Galvanized Chamber, Galvanized Aptitude, Galvanized Scope, Critical Delay, Vital Sense, Stabilizer, Primary Deadhead |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 9.2711 | High Voltage, Malignant Force, Hellfire, Galvanized Chamber, Galvanized Aptitude, Galvanized Scope, Critical Delay, Vital Sense, Stabilizer, Primary Deadhead |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 13.0578 | High Voltage, Malignant Force, Hellfire, Galvanized Chamber, Galvanized Aptitude, Galvanized Scope, Critical Delay, Vital Sense, Stabilizer, Primary Deadhead |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 0.4378 | High Voltage, Malignant Force, Hellfire, Galvanized Chamber, Galvanized Aptitude, Galvanized Scope, Critical Delay, Vital Sense, Stabilizer, Primary Deadhead |
 
 ## In WFSim
 

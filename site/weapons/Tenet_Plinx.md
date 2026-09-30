@@ -12,7 +12,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 | --- | --- | --- | ---: | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 17.9338 | Primed Heated Charge, Galvanized Diffusion, Primed Target Cracker, Galvanized Crosshairs, Galvanized Shot, Primed Quickdraw, Lethal Torrent, Synth Charge, Eject Magazine, Cascadia Flare |
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 51.7510 | Primed Heated Charge, Galvanized Diffusion, Primed Target Cracker, Galvanized Crosshairs, Galvanized Shot, Primed Quickdraw, Lethal Torrent, Synth Charge, Eject Magazine, Cascadia Flare |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | alternate | 1.5481 | Primed Heated Charge, Scorch, Pistol Acuity, Primed Target Cracker, Galvanized Shot, Creeping Bullseye, Pistol Elementalist, Semi-Pistol Cannonade, Secondary Deadhead |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | alternate | 1.5596 | Primed Heated Charge, Scorch, Pistol Acuity, Primed Target Cracker, Galvanized Shot, Creeping Bullseye, Pistol Elementalist, Semi-Pistol Cannonade, Secondary Deadhead |
 
 ## In WFSim
 
