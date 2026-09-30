@@ -13,6 +13,8 @@ unmodeled:
   - reason: melee_heavy_total_disputed
     infobox: 4
     table: 5
+  - reason: melee_passive_unmodelled
+    passive: "wielded by Khora, 20% Heavy Attack Efficiency"
 attack:
   # see notes: swing_trigger_pull_engine
   trigger: melee
