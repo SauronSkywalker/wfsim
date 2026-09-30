@@ -32,11 +32,60 @@ const presetFilters = {}; // per-bar filter text — survives re-renders, not pe
 const presetId = (p) => (p || {}).builtin || (p || {}).id || "";
 const presetLabel = (p) => (p || {}).name || "";
 
+/// EVERY ENTRY A BAR CAN OPEN: the reader's own, and what its collection
+/// publishes (an official ruler, a board build), which are read-only.
+const barEntries = (cfg) => cfg.load().concat(cfg.published ? cfg.published() : []);
+
+// ---- published entries opened into a bar ----------------------------------------------
+//
+// A BAR WHOSE COLLECTION PUBLISHES ENTRIES keeps the ones opened into it — docs/
+// UI.md §"Presets and customs". `cfg.pins` says where, and how an entry is
+// known: by what it IS (`ref`, compared by `same`), never by a rank a rescore
+// renumbers or a position. The open one is always among them, however it was
+// opened. Nothing is pruned on a miss: a source not loaded yet misses them all.
+const pinRefs = (cfg) => {
+  try { return JSON.parse(localStorage.getItem(cfg.pins.key()) || "[]"); } catch (_) { return []; }
+};
+const storePinRefs = (cfg, refs) => {
+  try { localStorage.setItem(cfg.pins.key(), JSON.stringify(refs)); } catch (_) { /* a private window keeps none */ }
+};
+function rememberPublished(cfg, p) {
+  const ref = cfg.pins.ref(p);
+  const refs = pinRefs(cfg);
+  if (!refs.some((r) => cfg.pins.same(r, ref))) storePinRefs(cfg, refs.concat([ref]));
+}
+/// The published entries in the bar, in the order they were opened.
+function openedPublished(cfg) {
+  const all = cfg.published();
+  const act = all.find((p) => presetId(p) === cfg.active());
+  if (act) rememberPublished(cfg, act);
+  const out = [];
+  for (const ref of pinRefs(cfg)) {
+    const p = all.find((x) => cfg.pins.same(cfg.pins.ref(x), ref));
+    if (p && !out.includes(p)) out.push(p);
+  }
+  return out;
+}
+/// × ON A PUBLISHED ENTRY: out of the bar, and off the page if it was the one
+/// open — onto your first entry, else the collection's default (`cfg.fallback`,
+/// or the blank), which is exactly what deleting your last one leaves.
+function unpinPublished(cfg, id) {
+  const p = cfg.published().find((x) => presetId(x) === id);
+  if (p) storePinRefs(cfg, pinRefs(cfg).filter((r) => !cfg.pins.same(r, cfg.pins.ref(p))));
+  if (id === cfg.active()) {
+    const next = cfg.load()[0] || (cfg.fallback ? cfg.fallback() : null);
+    cfg.setActive(next ? presetId(next) : "");
+    whileApplying(() => cfg.apply(next ? next.state : cfg.blank()));
+    if (!next && cfg.pristine) cfg.pristine();
+  }
+  cfg.rerender();
+}
+
 const pickPreset = (cfg, key) => {
   flushPresetSaves();
-  const ps = cfg.load();
-  const p = presetFind(ps, key);
+  const p = presetFind(barEntries(cfg), key);
   if (!p || presetId(p) === cfg.active()) return;
+  if (p.builtin && cfg.pins) rememberPublished(cfg, p);
   cfg.setActive(presetId(p));
   whileApplying(() => cfg.apply(p.state)); // a load is not an edit
   cfg.rerender();
@@ -86,7 +135,7 @@ function deleteIfBlank(cfg, stored) {
 const copyActivePreset = (cfg) => {
   flushPresetSaves();
   const ps = cfg.load();
-  const base = presetLabel(presetFind(ps, cfg.active()));
+  const base = presetLabel(presetFind(barEntries(cfg), cfg.active()));
   const e = presetEntry(freeName(ps, (n) => base + " copy" + (n > 1 ? " " + n : "")), cfg.snapshot());
   ps.push(e);
   cfg.store(ps);
@@ -95,42 +144,6 @@ const copyActivePreset = (cfg) => {
   return e.id;
 };
 
-// THE BENCHMARK BAR — the official SCENARIOS, one per ruler, in a bar of their
-// own above the player's. Same chip styling, deliberately: it is the same kind
-// of thing to pick. A different component, also deliberately: none of it is
-// yours, so there is no new, rename, delete, filter or undo — only select and ⧉.
-//
-// ONE CONTROL: picking the ruler IS picking the scenario. The board's BUILDS
-// are not here — they are the build finder's (`renderBuildFinder`), because a
-// build is found by what it contains rather than by walking four menus.
-function renderBenchmarkBarIn(bar, cfg) {
-  if (!bar) return;
-  const ps = cfg.load().filter((p) => p.builtin);
-  const active = cfg.active();
-  const noun = cfg.noun || "preset";
-  const sel = ps.find((p) => presetId(p) === active) || null;
-  bar.hidden = false;
-  bar.innerHTML =
-    `<span class="plabel bench" title="${escHtml(cfg.benchHint || "")}">${escHtml(cfg.benchLabel)} <b>${ps.length}</b></span>` +
-    ddButton(`dd-bench-${cfg.domain}`, {
-      value: sel ? presetId(sel) : (ps[0] ? presetId(ps[0]) : ""),
-      search: ps.length > 1,
-      // ONLY AN EMPTY LIST IS DISABLED: picking here is what loads a scenario,
-      // so a single entry still has to be clickable.
-      disabled: ps.length === 0,
-      title: cfg.benchHint || "",
-      items: ps.map((p) => ({ value: presetId(p), label: p.group || p.name })),
-      onPick: (v) => pickPreset(cfg, v),
-    }) +
-    (sel
-      ? `<button class="pop dup" title="${escHtml(
-          tr("copy it into a {thing} of your own — the official one cannot be edited")
-            .replace("{thing}", tr(noun)))}">⧉</button>`
-      : "");
-  const dup = bar.querySelector(".pop.dup");
-  if (dup) dup.addEventListener("click", (e) => { e.stopPropagation(); copyActivePreset(cfg); });
-}
-
 function renderPresetBarIn(bar, cfg) {
   // WHAT ONE OF THESE IS CALLED. "Preset" is the CATEGORY — a saved state of
   // a module, as opposed to a custom — and no collection is named after its
@@ -138,12 +151,12 @@ function renderPresetBarIn(bar, cfg) {
   // search a search; the noun names new ones and every tooltip that has to
   // refer to one.
   const noun = cfg.noun || "preset";
-  // YOURS, and then — where the collection has any — the READ-ONLY entries you
-  // opened (a board build). `ps` stays yours alone, so the filter threshold and
-  // the delete rule count the presets you own; the label counts every build in
-  // the bar, because every build is in it.
-  const ps = cfg.load().filter((p) => !p.builtin);
-  const ro = cfg.opened ? cfg.opened() : [];
+  // YOURS, and then — where the collection publishes any — the READ-ONLY
+  // entries opened into it (a board build, an official ruler). `ps` is yours
+  // alone, so the filter threshold and the delete rule count what you own; the
+  // label counts every entry in the bar, because every one is in it.
+  const ps = cfg.load();
+  const ro = cfg.pins ? openedPublished(cfg) : [];
   const active = cfg.active();
   const ftext = presetFilters[bar.id] || "";
   const f = ftext.trim().toLowerCase();
@@ -192,8 +205,19 @@ function renderPresetBarIn(bar, cfg) {
     (ps.length > PRESET_FILTER_AT ? `<input class="pfilter" type="text" placeholder="${escHtml(tr("filter…"))}" value="${escHtml(ftext)}">` : "") +
     (ro.length ? `<span class="pgroup">${escHtml(tr("Mine"))}</span>` : "") +
     defaultNote + shown.map(chip).join("") +
-    (ro.length
-      ? `<span class="psep" aria-hidden="true"></span><span class="pgroup">${escHtml(tr("From the board · read-only"))}</span>` + ro.map(roChip).join("")
+    (ro.length || cfg.openable
+      ? `<span class="psep" aria-hidden="true"></span><span class="pgroup">${escHtml(cfg.roGroup)}</span>` + ro.map(roChip).join("")
+      : "") +
+    // …AND THE WAY IN, where the bar is it: a published entry picked from a list
+    // lands in the group above like any other. A board build's way in is the
+    // build finder, which searches rather than lists.
+    (cfg.openable
+      ? `<span class="popen">${ddButton(`dd-open-${cfg.domain}`, {
+          value: "", search: true, title: cfg.openHint || "",
+          placeholder: `+ ${cfg.openLabel}`,
+          items: cfg.openable().map((p) => ({ value: presetId(p), label: p.group || p.name })),
+          onPick: (v) => pickPreset(cfg, v),
+        })}</span>`
       : "") +
     // One template, not two words joined by a space: Chinese does not put one
     // between them, so concatenating produced "新建空白 配装".
@@ -275,13 +299,9 @@ function renderPresetBarIn(bar, cfg) {
       return;
     }
     deleteArmed = null;
-    // YOURS ONLY, which is what the bar drawing these chips already counts
-    // (`renderPresetBarIn` filters `!p.builtin`). Counting the joint list here
-    // meant that on a weapon WITH board rows, deleting your last build fell
-    // through to a BENCHMARK build — so the page answered "you deleted your
-    // build" by loading somebody else's, and the bar's count and this handler's
-    // disagreed about what a collection contains.
-    const ps2 = cfg.load().filter((p) => !p.builtin && presetId(p) !== cfg.active());
+    // YOURS ONLY: `load()` is the reader's own, so deleting your last build
+    // leaves the default rather than falling through to a published one.
+    const ps2 = cfg.load().filter((p) => presetId(p) !== cfg.active());
     // EVERY COLLECTION MAY GO TO ZERO, not only the OPTIONAL ones. A module
     // always has a state and "no build" is not a thing the builder can show —
     // both true, and neither needs a stored row: nothing is

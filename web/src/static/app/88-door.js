@@ -269,7 +269,7 @@ const agentBuildState = (id) => (activePreset === id ? snapshotState()
 /// THE PRESET BARS the door reaches: the build's and the fight's. Picking,
 /// "+ new" and duplicate are the moves; rename and delete stay a reader's.
 const AGENT_BARS = { build: () => buildBarCfg(), scenario: () => scenarioBarCfg(), search: () => optBarCfg() };
-const agentPresetRows = (cfg) => cfg.load().map((p) => ({
+const agentPresetRows = (cfg) => barEntries(cfg).map((p) => ({
   id: presetId(p), name: presetLabel(p), active: presetId(p) === cfg.active(),
   ...(cfg.readonly && cfg.readonly(p) ? { read_only: true } : {}),
 }));

@@ -156,6 +156,18 @@ its own module: `builder-builds` (a build), `simulator-scenarios` (a fight,
 buff settings included), `optimizer` (a search: the SCOPE and `finalists`, and
 nothing else — never buffs, never a run count, never a thread count).
 
+**EVERY PRESET BAR IS ONE COMPONENT, THE BUILD BAR'S** (`renderPresetBarIn`):
+your own entries, then — where the collection PUBLISHES entries — a read-only
+group of the ones opened into it, then "+ new". A published entry is one the
+reader did not make: a board build, an official ruler. It is read-only
+(⧉ copies it into one of your own, × takes it out of the bar without touching
+it), it is kept in the bar by what it IS (`cfg.pins`, never by a rank), and the
+open one is always among them. It comes in from the collection's way in: the
+build finder for a board build, the bar's own list for a ruler. A bar's
+`load()` is the reader's own entries alone; `published()` is the collection's
+published ones, and a collection publishes exactly when its bar config has
+them. No separate bar exists for published entries.
+
 **EVERY SAVED COLLECTION IS ONE ROW OF `COLLECTIONS`** (`34-presets.js`): its
 `kind` — preset or custom — and its `scope`, what one entry is about (a weapon,
 a riven family, a frame, a companion, or `global`). Anything new a reader can
@@ -185,8 +197,9 @@ a preset edited back to the blank is DELETED — by CONTENT it is the default
 again, so what is left is the default. Only an edit deletes it: a blank one made
 by "+ new" stays until it has been worked on. Whether a state is the blank is read
 from its content (`cfg.isBlank`), never from a stored flag. A build compares
-against the blank of its weapon once one has been seen. A scenario has no
-default: owning none, the fight is a pinned official ruler. "Active" means the
+against the blank of its weapon once one has been seen. A scenario's default
+is the first official ruler, open read-only in its bar, so a first number is
+one the board can compare. "Active" means the
 state you are in.
 
 **A LINK NAMES A PRESET BY ID, OR NONE.** Named, it means that preset; the

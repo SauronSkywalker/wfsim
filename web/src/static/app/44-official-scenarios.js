@@ -32,16 +32,27 @@ const officialScenarioActive = () => !!(scenarioNamed(activeScenario) || {}).bui
 // the official note, which performs the identical copy. A second hand-written
 // config there is how the two come to copy different things.
 function scenarioBarCfg() {
-  return {
+  const cfg = {
     domain: SCENARIOS,
     label: tr("Scenarios"),
     noun: "scenario",
-    load: scenarioList,
-    // An official scenario is not stored, so it can never be written back —
-    // this is the line that makes "read-only" a property of the DATA rather
-    // than of the buttons drawn over it.
-    store: (ps) => storePresetList(SCENARIOS, ps.filter((p) => !p.builtin)),
+    load: () => loadPresetList(SCENARIOS),
+    store: (ps) => storePresetList(SCENARIOS, ps),
+    // THE OFFICIAL RULERS, read-only, as the build bar's board builds are: one
+    // is opened into the bar from its list and kept there by its id. An official
+    // scenario is never stored, so it can never be written back.
+    published: builtinScenarios,
+    pins: { key: () => "wfsim-opened-scenarios", ref: (p) => ({ id: p.builtin }), same: (a, b) => a.id === b.id },
+    roGroup: tr("Benchmarks · read-only"),
+    openable: builtinScenarios,
+    openLabel: tr("benchmark"),
+    openHint: tr("the official rulers — the same fight on every weapon"),
     readonly: (p) => !!p.builtin,
+    roTitle: () => tr("the official rulers — the same fight on every weapon"),
+    unpin: (id) => unpinPublished(cfg, id),
+    // Owning nothing, the fight is the first ruler: a first number is then a
+    // number the board can compare.
+    fallback: () => builtinScenarios()[0] || null,
     active: () => activeScenario,
     setActive: (n) => { activeScenario = n; localStorage.setItem(presetActiveKey(SCENARIOS), scenarioKey(n)); },
     snapshot: snapshotScenario,
@@ -51,6 +62,7 @@ function scenarioBarCfg() {
     pinned: true,
     rerender: scenariosChanged,
   };
+  return cfg;
 }
 
 /// "Give me an editable copy of the fight I am looking at" — the one
@@ -58,11 +70,7 @@ function scenarioBarCfg() {
 const copyActiveScenario = () => copyActivePreset(scenarioBarCfg());
 
 function renderScenarioBar() {
-  const scenariosCfg = scenarioBarCfg();
-  // ONE QUESTION: WHICH RULER. An official scenario is one per ruler, so the
-  // other three axes would be controls answering nothing.
-  renderBenchmarkBarIn($("bench-bar-simulator-scenarios"), { ...scenariosCfg, axes: ["ruler"], benchLabel: tr("Benchmark scenarios"), benchHint: tr("the official rulers — the same fight on every weapon") });
-  renderPresetBarIn($("preset-bar-simulator-scenarios"), scenariosCfg);
+  renderPresetBarIn($("preset-bar-simulator-scenarios"), scenarioBarCfg());
 }
 
 function fillSelect(id, items) {

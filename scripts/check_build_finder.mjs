@@ -166,7 +166,7 @@ const r = await evaluate(`(async () => {
     ? { ...row, score: top, shown: top.toFixed(4) } : row));
   const moved = builtinBuilds().find((x) => boardRowIdentity(x.board) === ident && x.benchmark === p.benchmark && x.mode === p.mode);
   out.renumbered = !!moved && presetId(moved) !== target;
-  out.followed = openedBoardBuilds().some((x) => presetId(x) === presetId(moved));
+  out.followed = openedPublished(buildBarCfg()).some((x) => presetId(x) === presetId(moved));
   // …AND THE PAGE REOPENS ON IT, not on whatever holds its old rank now.
   await open('Braton');
   await open('Ballistica_Prime');
@@ -191,7 +191,7 @@ const r = await evaluate(`(async () => {
   out.ownEditable = !document.getElementById('mod-block').classList.contains('locked-hard');
 
   // THE SCENARIO BAR ASKS ONE QUESTION.
-  const sbar = document.getElementById('bench-bar-simulator-scenarios');
+  const sbar = document.getElementById('preset-bar-simulator-scenarios');
   out.scenarioShape = sbar
     ? Array.from(sbar.querySelectorAll('button.dd')).map((d) => d.id.replace(/-simulator-scenarios$/, ''))
     : [];
@@ -263,7 +263,7 @@ check("a board row says it is one WHERE IT IS OPEN: a locked chip, and inert blo
   r.officialChipLocked && r.officialLocked, `chip ${r.officialChipLocked}, locked ${r.officialLocked}`);
 check("...and a copy of it is an ordinary build you can edit",
   r.ownChip && r.ownEditable, `chip ${r.ownChip}, editable ${r.ownEditable}`);
-check("the SCENARIO bar asks one question", JSON.stringify(r.scenarioShape) === JSON.stringify(["dd-bench"]),
+check("the SCENARIO bar asks one question: which ruler to open", JSON.stringify(r.scenarioShape) === JSON.stringify(["dd-open"]),
   JSON.stringify(r.scenarioShape));
 check(`a weapon with no rows shows the finder's empty state (${r.bareId || "none found"})`, !!r.bareId && r.bareEmpty === true);
 // ---- ACROSS WEAPONS, ACROSS LOADS ---------------------------------------

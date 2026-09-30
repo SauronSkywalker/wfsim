@@ -47,32 +47,22 @@ const PROBE = (lang) => `(async () => {
   switchWeapon('boar_prime'); await sleep(250);
 
   // 3. OPEN IT — by id, which is what a stored pointer holds.
-  // THE BENCHMARK BAR, not the player's. Official entries were split out of
-  // the preset bar into a bar of their own — so this also
-  // asserts the split: finding the official chip in the preset bar would mean
-  // it leaked back into the collection that is supposed to be yours.
-  const bar = $('bench-bar-simulator-scenarios');
+  // THE READ-ONLY GROUP of the one scenario bar, as a board build sits in the
+  // build bar's: never among your own chips, where it would read as yours.
   const own = $('preset-bar-simulator-scenarios');
-  out.barVisible = !bar.hidden;
-  out.notInOwnBar = ![...own.querySelectorAll('.pchip')].some((c) => c.dataset.name === out.name);
-  // THE OFFICIAL BAR IS ONE DROPDOWN now — a benchmark is picked from a list
-  // rather than scanned along a row, because there are rulers now and will be
-  // dozens. Read-only is still a property of the DATA (the bar's store filters
-  // builtins), which the later steps here assert.
-  bar.querySelector('[data-dd]').click(); await sleep(800);
-  // BY ID. A dropdown row's value is the ruler's id, not the translated
-  // sentence it shows — the same distinction the active pointer draws, and the
-  // one that sends the quick calc to the wrong fight when it is missed.
+  out.barVisible = !!own && !own.hidden;
+  out.notInOwnBar = ![...own.querySelectorAll('.pchip:not(.ro)')].some((c) => c.dataset.name === out.id);
+  // THE WAY IN is the bar's own list of rulers. BY ID: a row's value is the
+  // ruler's id, not the translated sentence it shows.
+  $('dd-open-simulator-scenarios').click(); await sleep(800);
   const chip = [...document.querySelectorAll('#dd-menu .opt[data-v]')]
     .find((c) => c.dataset.v === out.id);
   out.chipFound = !!chip;
-  // READ-ONLY IS NOT A CLASS ANY MORE. The bar offers a COPY and nothing else
-  // — no new, no rename, no delete — and the collection's store refuses to
-  // write a builtin at all. Both are asserted here and below; a marking on a
-  // dropdown row would only have been decoration over them.
-  out.chipMarked = !!bar.querySelector('.pop.dup')
-    && !bar.querySelector('.pop.ren') && !bar.querySelector('.pop.del');
   chip.click(); await sleep(700);
+  // OPEN, IT IS A READ-ONLY CHIP: a copy and nothing that would edit it.
+  const ro = $('preset-bar-simulator-scenarios').querySelector('.pchip.ro.sel');
+  out.chipMarked = !!ro && !!ro.querySelector('.pop.dup')
+    && !ro.querySelector('.pop.ren') && !ro.querySelector('.pop.del');
   out.active = activeScenario;
   out.isOfficial = officialScenarioActive();
 
@@ -107,12 +97,13 @@ const PROBE = (lang) => `(async () => {
   out.officialStateIntact = scenarioNamed(out.id).state.level === wasLevel;
 
   // 7. AND IT CAN BE COPIED into an ordinary, editable scenario.
-  // Copy is offered BESIDE the dropdown, and nothing else is: no rename, no
-  // delete, because none of it is yours.
-  out.hasCopy = !!bar.querySelector('.pop.dup');
-  out.hasRename = !!bar.querySelector('.pop.ren');
-  out.hasDelete = !!bar.querySelector('.pop.del');
-  bar.querySelector('.pop.dup').click();
+  // Copy is offered on its chip, and nothing else is: no rename, no delete,
+  // because none of it is yours.
+  const roChip = $('preset-bar-simulator-scenarios').querySelector('.pchip.ro.sel');
+  out.hasCopy = !!roChip.querySelector('.pop.dup');
+  out.hasRename = !!roChip.querySelector('.pop.ren');
+  out.hasDelete = !!roChip.querySelector('.pop.del');
+  roChip.querySelector('.pop.dup').click();
   await sleep(700);
   out.copyIsOwn = !officialScenarioActive();
   out.copyStored = loadPresetList('simulator-scenarios').some((p) => presetId(p) === activeScenario);
@@ -134,7 +125,7 @@ for (const lang of ["en", "zh"]) {
   const missing = (r.everyWeapon || []).filter((w) => !w.has).map((w) => w.id);
   check(`it is on all ${r.everyWeapon.length} weapons`, missing.length === 0, missing.join(","));
   check("it offers a copy and nothing that would edit it", r.chipFound && r.chipMarked);
-  check("...in the BENCHMARK bar, not yours", r.barVisible && r.notInOwnBar);
+  check("...in the bar's read-only group, not among yours", r.barVisible && r.notInOwnBar);
   check("opening it makes it the active fight", r.isOfficial === true, r.active);
   // 180 s since 2026-08-10, down from 300 — see data/benchmarks/standard_single_target.yaml
   // for the argument, which cuts both ways and is why the number moved.
@@ -280,10 +271,9 @@ const CONSENT_PROBE = `(async () => {
   out.offOfficialText = ($('board-consent').textContent || '').trim().slice(0, 200);
 
   // Open the official scenario.
-  const bar = $('bench-bar-simulator-scenarios');
-  // By its READ-ONLY mark, not by name: the name is translated and this probe
-  // runs after the language ones, so matching on it couples two checks.
-  bar.querySelector('[data-dd]').click(); await sleep(800);
+  // From the bar's list of rulers, by its first row rather than by name: the
+  // name is translated and this probe runs after the language ones.
+  $('dd-open-simulator-scenarios').click(); await sleep(800);
   const off = document.querySelector('#dd-menu .opt[data-v]');
   out.chipSeen = !!off;
   if (off) off.click();

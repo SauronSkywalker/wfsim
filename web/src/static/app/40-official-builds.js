@@ -758,7 +758,7 @@ const benchmarkName = (id) => {
 /// build was to be a bar. The router selects one too, when a board row names
 /// the ruler it came from.
 function buildBarCfg() {
-  return {
+  const cfg = {
     domain: BUILDS,
     label: tr("Builds"),
     noun: BUILD_NOUN,
@@ -769,8 +769,13 @@ function buildBarCfg() {
       const b = bar.querySelector(".share");
       if (b) b.onclick = (e) => { e.stopPropagation(); openSharePanel(bar); };
     },
-    load: buildList,
-    store: (ps) => storePresetList(BUILDS, ps.filter((p) => !p.builtin)),
+    load: () => loadPresetList(BUILDS),
+    store: (ps) => storePresetList(BUILDS, ps),
+    // THE BOARD'S BUILDS, read-only; one opened from the finder or a board link
+    // is kept by what it is, never by its rank (`boardRef`).
+    published: builtinBuilds,
+    pins: { key: () => openedBoardKey(presetWeapon()), ref: boardRef, same: sameBoardRef },
+    roGroup: tr("From the board · read-only"),
     readonly: (p) => !!p.builtin,
     roTitle: (p) =>
       tr("a benchmark build — measured under") + " " + benchmarkName(p.benchmark),
@@ -788,9 +793,9 @@ function buildBarCfg() {
     isBlank: (st) => pristineBuild !== null && JSON.stringify(canon(st)) === pristineBuild,
     pristine: notePristineBuild,
     rerender: () => { renderPresetBar(); lockOfficialBuild(); },
-    opened: openedBoardBuilds,
-    unpin: unpinBoardBuild,
+    unpin: (id) => unpinPublished(cfg, id),
   };
+  return cfg;
 }
 
 /// A BUILD'S CONTENTS, IN ONE LINE — every axis it varies on and no other.

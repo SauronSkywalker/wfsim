@@ -298,16 +298,9 @@ body.on-wbench [data-module="builder"]{display:none}
 
 /* Preset bar above the Mods block: chips CRUD in place. */
 .preset-bar{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:0 0 12px;padding:8px 12px;background:var(--panel2);border:1px solid var(--line);border-radius:10px}
-/* The official SCENARIO bar. A gold left edge and a tighter box, so it reads as
-   a header over the bar below rather than as a second collection of your own.
-   ONE DROPDOWN rather than chips: one entry per ruler, picked from a list. */
-.bench-bar{margin-bottom:6px;padding:6px 12px;border-left:2px solid var(--gold)}
-/* Sized to its content, not to the bar: it sits beside a label and a copy
-   button, and a full-width control there would read as the bar itself. */
-.bench-bar .dd{height:26px;min-width:150px;max-width:min(360px,60vw)}
-.bench-bar .dd[disabled]{cursor:default;opacity:.72}
-.bench-bar .dd[disabled]:hover{border-color:var(--line)}
-.bench-bar .dd[disabled] .dd-c{opacity:.35}
+/* THE WAY IN to a bar's published entries, where the bar is it (an official
+   ruler): sized to its content like a chip, since it sits among chips. */
+.preset-bar .popen .dd{height:26px;min-width:120px;max-width:min(300px,60vw)}
 /* THE BUILD FINDER — a table of the board's builds. It holds a QUERY and never a
    selection, so it carries no gold edge and no "selected" chip: what is open is
    the build bar's to say. */

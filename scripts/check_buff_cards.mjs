@@ -344,7 +344,7 @@ const bev = await evaluate(`(async () => {
     headers: at('sim-limits', 'data-bevg'),
     lockedUnderOfficial: [...document.querySelectorAll('#sim-limits [data-bev]')].every(x => x.disabled),
   };
-  const dup = document.querySelector('#bench-bar-simulator-scenarios .pop.dup');
+  const dup = document.querySelector('#preset-bar-simulator-scenarios .pchip.ro.sel .pop.dup');
   if (dup) { dup.click(); await sleep(1200); }
   const grp = document.querySelector('#sim-limits [data-bevg="kill"]');
   if (grp) { grp.click(); await sleep(700); }

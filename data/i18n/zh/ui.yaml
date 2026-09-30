@@ -358,7 +358,8 @@ ui:
   "Base level": 基准等级
   "Beam Range": 光束长度
   "Benchmark builds": 基准配装
-  "Benchmark scenarios": 基准场景
+  "Benchmarks · read-only": "基准场景 · 只读"
+  "benchmark": 基准场景
   "Benchmark": 基准榜
   "Biggest hit": 单发最高
   "Biotic Rounds, the AX-52-exclusive mod — a weapon-exclusive card outside the pools this roster loads": "「Biotic Rounds」，AX-52 的专属 MOD——这是一张武器专属卡，不在本武器库载入的卡池里"

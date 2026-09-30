@@ -11,20 +11,8 @@
 // pruned on a miss: a board that has not loaded yet misses everything.
 const LOCK_SVG = '<svg class="plock" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="2.2" y="5.2" width="7.6" height="5.3" rx="1.2"/><path d="M4 5.2V3.8a2 2 0 0 1 4 0v1.4"/></svg>';
 const openedBoardKey = (w) => `wfsim-opened-board-${w}`;
-const openedRefs = (w) => {
-  try { return JSON.parse(localStorage.getItem(openedBoardKey(w)) || "[]"); } catch (_) { return []; }
-};
-const storeOpenedRefs = (w, refs) => {
-  try { localStorage.setItem(openedBoardKey(w), JSON.stringify(refs)); } catch (_) { /* a private window keeps none */ }
-};
 const boardRef = (p) => ({ b: p.benchmark, m: p.mode, k: p.riven ? "r" : "p", id: boardRowIdentity(p.board || {}) });
 const sameBoardRef = (a, b) => a.b === b.b && a.m === b.m && a.k === b.k && a.id === b.id;
-const rememberBoardBuild = (p) => {
-  const w = presetWeapon();
-  const refs = openedRefs(w);
-  const ref = boardRef(p);
-  if (!refs.some((r) => sameBoardRef(r, ref))) storeOpenedRefs(w, refs.concat([ref]));
-};
 /// …AND THE OPEN ONE BY WHAT IT IS. The active pointer holds a builtin id, which
 /// is a rank, so opening a board build also records its ref and boot resolves
 /// the ref (`resolveBoardActive`). Both do nothing while the weapon's board is
@@ -49,39 +37,6 @@ function resolveBoardActive(last) {
   const p = builtinBuilds().find((x) => sameBoardRef(boardRef(x), ref));
   return p ? presetId(p) : "";
 }
-/// The board builds in the bar, in the order they were opened. The OPEN one is
-/// always among them, however it was opened — the finder, a board link, or a
-/// cold load restoring it.
-function openedBoardBuilds() {
-  const all = builtinBuilds();
-  const act = all.find((p) => presetId(p) === activePreset);
-  if (act) rememberBoardBuild(act);
-  const out = [];
-  for (const ref of openedRefs(presetWeapon())) {
-    const p = all.find((x) => sameBoardRef(boardRef(x), ref));
-    if (p && !out.includes(p)) out.push(p);
-  }
-  return out;
-}
-/// × ON A BOARD BUILD: out of the bar, and off the page if it was the one open —
-/// onto your first build, or the blank one if you own none, which is exactly
-/// what deleting your last build leaves.
-function unpinBoardBuild(id) {
-  const cfg = buildBarCfg();
-  const p = builtinBuilds().find((x) => presetId(x) === id);
-  if (p) {
-    const ref = boardRef(p);
-    storeOpenedRefs(presetWeapon(), openedRefs(presetWeapon()).filter((r) => !sameBoardRef(r, ref)));
-  }
-  if (id === activePreset) {
-    const own = cfg.load().filter((x) => !x.builtin);
-    cfg.setActive(own.length ? presetId(own[0]) : "");
-    whileApplying(() => cfg.apply(own.length ? own[0].state : cfg.blank()));
-    if (!own.length && cfg.pristine) cfg.pristine();
-  }
-  cfg.rerender();
-}
-
 // ---- THE BUILD FINDER -------------------------------------------------------
 //
 // THE BOARD'S BUILDS AS A LIST, best first: scoped by ruler, mode and riven,
@@ -238,7 +193,7 @@ function renderBuildFinder() {
       valence: r.valence ? `${DT(r.valence)} +${Math.round(((valenceSpec(w.id) || {}).max || 0) * 1000) / 10}%` : null,
     }) + `</div>`;
   };
-  const inBar = new Set(openedBoardBuilds().map(presetId));
+  const inBar = new Set(openedPublished(buildBarCfg()).map(presetId));
   const openBtn = (p) => inBar.has(presetId(p))
     ? `<button type="button" class="fd-open in" data-fopen="${escHtml(presetId(p))}">${escHtml(tr("In the bar"))}</button>`
     : `<button type="button" class="fd-open" data-fopen="${escHtml(presetId(p))}">${escHtml(tr("Open build"))}</button>`;
@@ -469,7 +424,7 @@ function renderBuildFinder() {
       e.stopPropagation();
       const p = byId(el.dataset.fopen);
       if (!p) return;
-      rememberBoardBuild(p);
+      rememberPublished(buildBarCfg(), p);
       if (presetId(p) === activePreset) return renderPresetBar();
       return pickPreset(buildBarCfg(), presetId(p));
     }
