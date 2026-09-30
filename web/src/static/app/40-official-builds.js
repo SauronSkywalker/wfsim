@@ -740,7 +740,7 @@ function applyBenchLink(w, benchId, wantMode, wantRiven) {
 }
 
 const buildList = () => builtinBuilds().concat(loadPresetList(BUILDS));
-const buildNamed = (n) => buildList().find((p) => p.name === n || p.builtin === n);
+const buildNamed = (n) => presetFind(buildList(), n);
 /// Is the build on screen one of the official ones? Then nothing may write it.
 const officialBuildActive = () => !!(buildNamed(activePreset) || {}).builtin;
 

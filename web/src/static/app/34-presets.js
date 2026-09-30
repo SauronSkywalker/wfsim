@@ -16,25 +16,24 @@
 // build worth having comes from the board or from a share link. No count cap:
 // presets live in the reader's localStorage rather than with us.
 const presetWeapon = () => ($("weapon") && $("weapon").value) || "";
-// PRESETS vs CUSTOMS — two kinds of collection, and the difference is who
-// consumes them.
-//
-// A PRESET is a saved state of something that always exists: the builder
-// always has a build, the simulator a fight, the optimizer a search. Only its
-// own module reads it, there is always at least one, and "active" means the
-// state you are currently in.
-//
-// A CUSTOM is a thing you MADE, and the other modules consume it: a riven
-// becomes a mod in the pool, a custom enemy becomes an entry in the scenario's
-// enemy list. Owning none is ordinary, each one carries its own identity
-// rather than a label you invented, and deleting one breaks references
-// elsewhere — which a preset delete can never do. The mental model is a FILE:
-// it sits in a list, you open one to edit it, and you can have none open.
-//
-// Different noun, different key. Everything BELOW the key is shared —
-// storage, undo, per-weapon scoping — because none of that depends on which
-// kind it is.
-const CUSTOM_DOMAINS = new Set(["rivens", "enemies"]);
+/// EVERY SAVED COLLECTION, declared once — docs/UI.md §"Presets and customs".
+/// `kind` is which of the two it is: a PRESET is a saved state of a module that
+/// always has one, read by that module alone; a CUSTOM is a thing you made that
+/// OTHER modules consume, so owning none is ordinary and deleting one breaks
+/// references. `scope` is what one entry is ABOUT — a weapon, a riven family, a
+/// frame, a companion, or nothing (`global`). Anything new a reader can save is
+/// one more row, and storage, undo, sync and the counts read it.
+const COLLECTIONS = [
+  { domain: "builder-builds", kind: "preset", scope: "weapon" },
+  { domain: "simulator-scenarios", kind: "preset", scope: "global" },
+  { domain: "optimizer", kind: "preset", scope: "weapon" },
+  { domain: "warframes", kind: "preset", scope: "frame" },
+  { domain: "companions", kind: "preset", scope: "companion" },
+  { domain: "operators", kind: "preset", scope: "global" },
+  { domain: "rivens", kind: "custom", scope: "riven_family" },
+  { domain: "enemies", kind: "custom", scope: "global" },
+];
+const CUSTOM_DOMAINS = new Set(COLLECTIONS.filter((c) => c.kind === "custom").map((c) => c.domain));
 const isCustomDomain = (d) => CUSTOM_DOMAINS.has(d);
 
 // …AND ONE COLLECTION THAT IS NOT A WEAPON'S: the FIGHT.
@@ -63,7 +62,10 @@ const isCustomDomain = (d) => CUSTOM_DOMAINS.has(d);
 /// saved cards to an address the page no longer computes. So the store is one
 /// list, the card carries its own `scope`, and changing a family does exactly
 /// what it says — it changes which weapons the card appears under.
-const SHARED_DOMAINS = new Set(["simulator-scenarios", "enemies", "rivens", "operators"]);
+/// ONE LIST FOR THE ROSTER where an entry is about no weapon of its own — and a
+/// riven's family, which its card carries as `scope` (below).
+const SHARED_DOMAINS = new Set(COLLECTIONS.filter((c) => c.scope === "global" || c.scope === "riven_family")
+  .map((c) => c.domain));
 const isSharedDomain = (d) => SHARED_DOMAINS.has(d);
 
 /// WHOSE RIVEN THIS IS — the weapon FAMILY, never the entry: *"Riven mods can
@@ -194,6 +196,14 @@ function mintPresetIds(ps) {
   return minted;
 }
 const isRivenListKey = (k) => /^wfsim-customs-(.+-)?rivens$/.test(k);
+/// A NEW ENTRY, with its id from the start: everything that points at an entry
+/// — the open one, a link, a fight's target, a seat — points by id.
+const presetEntry = (name, state) => ({ id: presetNewId(), name, savedAt: Date.now(), state });
+/// THE ENTRY A POINTER NAMES: by id (or an official entry's `builtin`), and by
+/// name only for what an older page stored or a caller typed.
+const presetFind = (list, key) => (key
+  ? list.find((p) => p && (p.builtin || p.id) === key) || list.find((p) => p && p.name === key) || null
+  : null);
 /// ONE-TIME MINT over every stored list, before anything reads one: undo
 /// snapshots the raw stored text, and an undo back to a list without ids
 /// would mint different ones — the same entry under a new identity.
@@ -204,6 +214,53 @@ const isRivenListKey = (k) => /^wfsim-customs-(.+-)?rivens$/.test(k);
     try { list = JSON.parse(localStorage.getItem(k)); } catch (_) { continue; }
     if (!Array.isArray(list) || !mintPresetIds(list)) continue;
     try { localStorage.setItem(k, JSON.stringify(list)); } catch (_) { /* minted again next load */ }
+  }
+})();
+/// ONE-TIME: every stored pointer to the open entry, from the NAME an older page
+/// wrote to the entry's id. A riven's pointer was always an id.
+(function pointersToIds() {
+  for (const k of Object.keys(localStorage)) {
+    const m = /^wfsim-(preset-active|custom-open)-(.+)$/.exec(k);
+    if (!m) continue;
+    let ps;
+    try { ps = JSON.parse(localStorage.getItem((m[1] === "preset-active" ? "wfsim-presets-" : "wfsim-customs-") + m[2])); } catch (_) { continue; }
+    const v = localStorage.getItem(k);
+    if (!Array.isArray(ps) || !v || ps.some((p) => p && (p.id === v || p.builtin === v))) continue;
+    const hit = ps.find((p) => p && p.name === v);
+    if (hit && hit.id) localStorage.setItem(k, hit.id);
+  }
+})();
+/// ONE-TIME: a weapon's Forma group ("plan together") listed its builds by NAME;
+/// it lists them by id. A Warframe's group always did.
+(function formaGroupsToIds() {
+  for (const k of Object.keys(localStorage)) {
+    const m = /^wfsim-forma-group-(.+)$/.exec(k);
+    if (!m || m[1].startsWith("warframe-")) continue;
+    let g, ps;
+    try { g = JSON.parse(localStorage.getItem(k)); ps = JSON.parse(localStorage.getItem(`wfsim-presets-${m[1]}-builder-builds`)); } catch (_) { continue; }
+    if (!Array.isArray(g) || !Array.isArray(ps)) continue;
+    const out = g.map((v) => (ps.some((p) => p && (p.id === v || p.builtin === v)) ? v
+      : ((ps.find((p) => p && p.name === v) || {}).id || v)));
+    if (JSON.stringify(out) !== JSON.stringify(g)) localStorage.setItem(k, JSON.stringify(out));
+  }
+})();
+/// ONE-TIME: a fight named its custom target `custom:<name>`, and now names it
+/// `custom:<id>`, so a rename moves nothing and two targets may share a name.
+(function enemyRefsToIds() {
+  let en;
+  try { en = JSON.parse(localStorage.getItem("wfsim-customs-enemies")); } catch (_) { return; }
+  if (!Array.isArray(en)) return;
+  const to = new Map(en.filter((p) => p && p.id && p.name).map((p) => [`custom:${p.name}`, `custom:${p.id}`]));
+  if (!to.size) return;
+  const walk = (v) => (typeof v === "string" ? (to.get(v) ?? v) : Array.isArray(v) ? v.map(walk)
+    : v && typeof v === "object" ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, walk(x)])) : v);
+  for (const k of Object.keys(localStorage)) {
+    if (!k.startsWith("wfsim-presets-")) continue;
+    const raw = localStorage.getItem(k);
+    let list;
+    try { list = JSON.parse(raw); } catch (_) { continue; }
+    const out = JSON.stringify(walk(list));
+    if (out !== raw) { try { localStorage.setItem(k, out); } catch (_) { /* again next load */ } }
   }
 })();
 /// ONE-TIME FOLD of every riven list this app has ever written into the ONE
@@ -369,7 +426,7 @@ const DEFAULT_PRESET_ID = "default";
 /// `null` is the blank.
 const presetToOpen = (list, want, last) => (want
   ? list.find((x) => x.id === want) || null
-  : list.find((x) => x.name === last) || list[0] || null);
+  : presetFind(list, last) || list[0] || null);
 /// …and whether a name is one. It ASKS the generator rather than matching a
 /// shape of its own, so changing the shape above cannot leave this behind.
 ///
@@ -450,8 +507,8 @@ function shedOtherResults(skip) {
 /// FOR, and dropping it means the run that just finished was thrown away by the
 /// act of saving it.
 const PRESET_SHED = [
-  (ps, active) => ps.forEach((x) => { if (x.name !== active) x.lastResult = null; }),
-  (ps, active) => ps.forEach((x) => { if (x.name === active) x.lastResult = null; }),
+  (ps, active) => ps.forEach((x) => { if (presetId(x) !== active) x.lastResult = null; }),
+  (ps, active) => ps.forEach((x) => { if (presetId(x) === active) x.lastResult = null; }),
 ];
 
 /// A ONE-LINE NOTICE, in the page. No native dialog — `alert` is blocked in the

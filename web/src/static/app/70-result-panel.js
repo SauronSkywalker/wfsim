@@ -14,7 +14,7 @@ function simKey() {
 
 function saveSimResult(r) {
   const ps = loadPresetList(BUILDS);
-  const at = ps.findIndex((p) => p.name === activePreset);
+  const at = ps.findIndex((p) => presetId(p) === activePreset);
   if (at < 0) return;
   ps[at].lastResult = { r, at: Date.now(), key: simKey() };
   // …AND IN MEMORY FIRST, which is where the REPLAY stays for good. See
@@ -27,7 +27,7 @@ function saveSimResult(r) {
 // build in this fight, else a fresh run. Reusing a stale one would be worse than having none — the card
 // would attach a measurement to a build that never produced it.
 async function resultForShare() {
-  const p = loadPresetList(BUILDS).find((x) => x.name === activePreset);
+  const p = loadPresetList(BUILDS).find((x) => presetId(x) === activePreset);
   if (p && p.lastResult && p.lastResult.r && p.lastResult.key === simKey()) return p.lastResult;
   // The PANEL first, awaited. `refreshPanel` is debounced and returns before
   // it has answered, so a share clicked seconds after an edit was composing
@@ -65,7 +65,7 @@ const resultMemKey = () => JSON.stringify([presetWeapon(), activePreset]);
 function renderStoredSimResult() {
   const box = $("sim-results");
   if (!box) return;
-  let p = loadPresetList(BUILDS).find((x) => x.name === activePreset);
+  let p = loadPresetList(BUILDS).find((x) => presetId(x) === activePreset);
   // WHAT IS ON SCREEN WINS over what reached the disk, and only for the build
   // it was measured on — a cache that outlived its build would attach a number
   // to something that never produced it.

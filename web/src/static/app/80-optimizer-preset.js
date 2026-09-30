@@ -23,9 +23,9 @@ function bootstrapOptPresets() {
   // a complete live state without one (`OPT_RUN_DEFAULTS` plus one blank start).
   const ps = loadOptPresets();
   const want = activeOptPreset || localStorage.getItem(presetActiveKey(OPT_DOMAIN));
-  activeOptPreset = ps.some((p) => p.name === want) ? want : (ps[0] ? ps[0].name : "");
+  const cur = presetFind(ps, want) || ps[0] || null;
+  activeOptPreset = cur ? presetId(cur) : "";
   localStorage.setItem(presetActiveKey(OPT_DOMAIN), activeOptPreset);
-  const cur = ps.find((p) => p.name === activeOptPreset);
   if (cur) applyOptState(cur.state);
 }
 
@@ -143,15 +143,15 @@ function updateOptEstimate() {
     // STATE: a search that is still `blankOpt()` is a search nobody has made.
     if (!activeOptPreset) {
       if (sameState(snapshotOpt(), blankOpt())) return;
-      const name = newPresetName(ps);
-      ps.push({ name, savedAt: Date.now(), state: snapshotOpt() });
+      const e = presetEntry(newPresetName(ps), snapshotOpt());
+      ps.push(e);
       storeOptPresets(ps);
-      activeOptPreset = name;
-      localStorage.setItem(presetActiveKey(OPT_DOMAIN), name);
+      activeOptPreset = e.id;
+      localStorage.setItem(presetActiveKey(OPT_DOMAIN), e.id);
       renderOptPresetBars();
       return;
     }
-    const at = ps.findIndex((p) => p.name === activeOptPreset);
+    const at = ps.findIndex((p) => presetId(p) === activeOptPreset);
     if (at < 0) return;
     if (deleteIfBlank(optBarCfg(), ps[at].state)) return;
     ps[at] = { ...ps[at], savedAt: Date.now(), state: snapshotOpt() };
@@ -590,12 +590,12 @@ async function addResult(res, btn) {
   const ps = loadPresetList(BUILDS);
   let n = 1;
   while (ps.some((p) => p.name === "opt " + n)) n++;
-  const name = "opt " + n;
-  ps.push({ name, savedAt: Date.now(), state });
+  const e = presetEntry("opt " + n, state);
+  ps.push(e);
   storePresetList(BUILDS, ps);
   renderPresetBar(); // the builder's bar shows the new chip when you switch back
-  if (btn) { btn.textContent = "✓ " + name; btn.disabled = true; }
-  return name;
+  if (btn) { btn.textContent = "✓ " + e.name; btn.disabled = true; }
+  return e.id;
 }
 
 /// RECLAIM WHAT THE OLD RULE LEFT BEHIND, once, on the way in.

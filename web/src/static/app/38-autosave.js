@@ -113,15 +113,15 @@ function markPresetDirty() {
     if (!activePreset) {
       // Reaching here is not evidence of an edit — see `pristineBuild`.
       if (buildIsUntouched()) return;
-      const name = newPresetName(ps);
-      ps.push({ name, savedAt: Date.now(), state: snapshotState() });
+      const e = presetEntry(newPresetName(ps), snapshotState());
+      ps.push(e);
       storePresetList(BUILDS, ps);
-      activePreset = name;
-      localStorage.setItem(presetActiveKey(BUILDS), name);
+      activePreset = e.id;
+      localStorage.setItem(presetActiveKey(BUILDS), e.id);
       renderPresetBar();
       return;
     }
-    const at = ps.findIndex((p) => p.name === activePreset);
+    const at = ps.findIndex((p) => presetId(p) === activePreset);
     if (at < 0) return;
     if (deleteIfBlank(buildBarCfg(), ps[at].state)) return;
     ps[at] = { ...ps[at], savedAt: Date.now(), state: snapshotState() };

@@ -173,7 +173,7 @@ const leak = await evaluate(`(async () => {
   copyActiveScenario(); await s(1000);
   sim.eximus = true; sim.invisible = true; markScenarioDirty(); await s(800);
   const off = official();
-  activeScenario = off.name; applyScenario(off.state); await s(800);
+  activeScenario = presetId(off); applyScenario(off.state); await s(800);
   return { onCopy: true, eximus: sim.eximus, invisible: sim.invisible,
            yamlStatesEximus: yamlSays('eximus'), yamlStatesInvisible: yamlSays('invisible') };
 })()`);
@@ -210,16 +210,17 @@ const md = await evaluate(`(async () => {
   // right after a localStorage.clear(), where the default build is in memory
   // only. Saving it once is the setup, not the thing under test.
   const ps0 = loadPresetList('builder-builds');
-  if (!ps0.some((x) => x.name === activePreset)) {
-    storePresetList('builder-builds',
-      ps0.concat([{ name: activePreset, savedAt: Date.now(), state: snapshotState() }]));
+  if (!ps0.some((x) => presetId(x) === activePreset)) {
+    const e = presetEntry(newPresetName(ps0), snapshotState());
+    storePresetList('builder-builds', ps0.concat([e]));
+    activePreset = e.id;
   }
   document.querySelector('#mode-row [data-dd]').click(); await s(800);
   const base = [...document.querySelectorAll('#dd-menu .opt[data-v]')].find((o) => o.dataset.v === 'base');
   if (base) base.click();
   await s(1600);
   out.after = mode;
-  const p = loadPresetList('builder-builds').find((x) => x.name === activePreset);
+  const p = loadPresetList('builder-builds').find((x) => presetId(x) === activePreset);
   out.stored = p && p.state ? p.state.mode : null;
   history.pushState({}, '', '/weapons/Torid/simulator'); route(); await s(2200);
   // NO REGEX HERE. A backslash in page-side code passes through the quoting

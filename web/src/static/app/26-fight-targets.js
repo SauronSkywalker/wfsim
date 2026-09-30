@@ -31,7 +31,7 @@ function theFight(over) {
 function renderEnemies() {
   if (!META || !$("enemy-block")) return;
   const ps = loadPresetList(ENEMIES);
-  const open = ps.find((p) => p.name === activeEnemyName());
+  const open = ps.find((p) => p.id === activeEnemyName());
   $("enemy-sub").textContent = ps.length
     ? `${ps.length} ${tr("saved")}`
     : tr("none yet — a target you build here appears in every scenario's target list");
@@ -50,7 +50,7 @@ function renderEnemies() {
 
 function saveEnemyDoc() {
   const ps = loadPresetList(ENEMIES);
-  const i = ps.findIndex((p) => p.name === activeEnemyName());
+  const i = ps.findIndex((p) => p.id === activeEnemyName());
   if (i < 0) return;
   ps[i] = { ...ps[i], savedAt: Date.now(), state: snapshotEnemy() };
   storePresetList(ENEMIES, ps);
@@ -73,11 +73,11 @@ function renderEnemyAll() {
     ? ps.map((p) => {
         const s = { ...blankEnemy(), ...(p.state || {}) };
         const parts = s.body_parts.map((b) => `${escHtml(b.name)} ×${b.multiplier}`).join(", ");
-        return `<div class="en-row" data-en="${escHtml(p.name)}">
+        return `<div class="en-row" data-en="${escHtml(p.id)}">
           <span class="nm">${escHtml(p.name)}</span>
           <span class="sm">${escHtml(s.faction || "unknown")} · ${s.stats.health} HP · ${s.stats.armor} ${escHtml(tr("Armor"))} · ${s.stats.shield} ${escHtml(tr("Shield"))}</span>
           <span class="sm">${parts}</span>
-          ${enemyId(p.name) === sim.enemy ? `<span class="sm">✓ ${escHtml(tr("in the current fight"))}</span>` : ""}
+          ${enemyId(p.id) === sim.enemy ? `<span class="sm">✓ ${escHtml(tr("in the current fight"))}</span>` : ""}
         </div>`;
       }).join("")
     : `<div class="placeholder">${escHtml(tr("no targets yet"))}</div>`;
@@ -91,10 +91,10 @@ function renderEnemyAll() {
   );
 }
 
-/// OPEN A CUSTOM TARGET for editing by name, or null for the list.
-function openEnemy(name) {
-  activeEnemy = name;
-  if (name) localStorage.setItem(presetActiveKey(ENEMIES), name);
+/// OPEN A CUSTOM TARGET for editing by id, or null for the list.
+function openEnemy(id) {
+  activeEnemy = id;
+  if (id) localStorage.setItem(presetActiveKey(ENEMIES), id);
   else localStorage.removeItem(presetActiveKey(ENEMIES));
   enemyDoc = null;
   renderEnemies();
@@ -102,22 +102,22 @@ function openEnemy(name) {
 /// "+ new target": a blank one, saved and opened. Returns its name.
 function newEnemy() {
   const ps = loadPresetList(ENEMIES);
-  const name = freeName(ps, (n) => autoPresetName("target", n));
-  ps.push({ name, savedAt: Date.now(), state: blankEnemy() });
+  const e = presetEntry(freeName(ps, (n) => autoPresetName("target", n)), blankEnemy());
+  ps.push(e);
   storePresetList(ENEMIES, ps);
-  openEnemy(name);
-  return name;
+  openEnemy(e.id);
+  return e.name;
 }
 /// ⧉ on the open target: a copy, saved and opened. Returns its name.
 function copyEnemy() {
   const ps = loadPresetList(ENEMIES);
-  const cur = ps.find((x) => x.name === activeEnemyName());
+  const cur = ps.find((x) => x.id === activeEnemyName());
   if (!cur) return null;
-  const name = freeName(ps, (n) => `${cur.name} (${n})`);
-  ps.push({ name, savedAt: Date.now(), state: JSON.parse(JSON.stringify(cur.state)) });
+  const e = presetEntry(freeName(ps, (n) => `${cur.name} (${n})`), JSON.parse(JSON.stringify(cur.state)));
+  ps.push(e);
   storePresetList(ENEMIES, ps);
-  openEnemy(name);
-  return name;
+  openEnemy(e.id);
+  return e.name;
 }
 
 /// A TARGET'S FIELDS, WRITTEN — the one place their rules live. Every number is
@@ -156,7 +156,7 @@ function renderEnemyTools() {
   const box = $("enemy-tools");
   if (!box) return;
   const ps = loadPresetList(ENEMIES);
-  const cur = ps.find((x) => x.name === activeEnemyName());
+  const cur = ps.find((x) => x.id === activeEnemyName());
   if (!cur) {
     box.innerHTML =
       `<button class="cu-btn cu-new">+ ${escHtml(tr("new target"))}</button>` +
@@ -181,12 +181,12 @@ function renderEnemyTools() {
   click(".cu-back", () => openIt(null));
   click(".cu-dup", copyEnemy);
   click(".cu-del", () => {
-    const ps2 = loadPresetList(ENEMIES).filter((x) => x.name !== cur.name);
+    const ps2 = loadPresetList(ENEMIES).filter((x) => x.id !== cur.id);
     storePresetList(ENEMIES, ps2);
     // DELETING A CUSTOM BREAKS REFERENCES, and this is the one it can break:
     // the fight may be pointing at it. It falls back to the roster's first unit
     // rather than to an id nothing answers to.
-    if (sim.enemy === enemyId(cur.name)) {
+    if (sim.enemy === enemyId(cur.id)) {
       sim.enemy = ((META.enemies || [])[0] || {}).id || "thrax_centurion";
       markPresetDirty();
       renderSimTargetIfAny();
@@ -205,14 +205,13 @@ function renderEnemyTools() {
       done = true;
       const name = inp.value.trim();
       const ps2 = loadPresetList(ENEMIES);
-      if (!name || name === cur.name || ps2.some((x) => x.name === name)) return renderEnemyTools();
-      const i = ps2.findIndex((x) => x.name === cur.name);
+      const i = ps2.findIndex((x) => x.id === cur.id);
+      if (!name || i < 0 || name === ps2[i].name) return renderEnemyTools();
+      // A LABEL EDIT AND NOTHING ELSE: a fight names its target by id, so
+      // nothing moves and two targets may share a name.
       ps2[i] = { ...ps2[i], name };
       storePresetList(ENEMIES, ps2);
-      // The id IS the name, so a rename moves whatever names it — otherwise the
-      // fight would point at a target that no longer exists.
-      if (sim.enemy === enemyId(cur.name)) { sim.enemy = enemyId(name); markPresetDirty(); }
-      openIt(name);
+      openIt(cur.id);
       renderSimTargetIfAny();
     };
     inp.onkeydown = (e) => { if (e.key === "Enter") commit(); if (e.key === "Escape") { done = true; renderEnemyTools(); } };

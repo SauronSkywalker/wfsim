@@ -52,7 +52,7 @@ const snapshotEnemy = () => JSON.parse(JSON.stringify(enemyDoc));
 function customEnemySpecs() {
   return loadPresetList(ENEMIES).map((p) => ({
     ...blankEnemy(), ...(p.state || {}),
-    id: enemyId(p.name),
+    id: enemyId(p.id),
     name: p.name,
   }));
 }

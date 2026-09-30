@@ -44,7 +44,7 @@ const r = await evaluate(`(async () => {
   await sleep(1500);
   const box = document.getElementById('forma-plan');
   const under = (id) => (document.getElementById(id).previousElementSibling || {}).id;
-  const out = { active: activePreset, live0: slots.slice(0, 8).map((s) => s.mod),
+  const out = { active: (loadPresetList('builder-builds').find((p) => p.id === activePreset) || {}).name || activePreset, live0: slots.slice(0, 8).map((s) => s.mod),
     under: under('forma-block'), inMods: !!document.querySelector('#mod-block .forma-plan') };
   box.querySelector('.fp-run').click();
   await sleep(3000);

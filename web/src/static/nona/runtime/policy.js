@@ -21,7 +21,7 @@ export function madeBy(id, args, r) {
 }
 
 /// Branch before action `id` if it writes a document of the reader's. Returns
-/// null when nothing was branched, else `{ copy, owned, pair? }` — `pair` for a
+/// null when nothing was branched, else `{ copy, label, owned, pair? }` — `pair` for a
 /// build, naming the reader's build the copy came from, so the change card can
 /// compare the two and hand the result back.
 export async function branch(door, id, owned) {
@@ -41,5 +41,6 @@ export async function branch(door, id, owned) {
   // of her own rather than copying one that does not exist.
   const r = await door.do(open ? "shell.preset.copy" : "shell.preset.new", { bar: writes });
   if (!r || !r.ok || !r.preset) return null;
-  return { copy: r.preset, owned: `${writes}:${r.preset}`, ...(writes === "build" && open ? { pair: { copy: r.preset, from: open } } : {}) };
+  return { copy: r.preset, label: r.name || r.preset, owned: `${writes}:${r.preset}`,
+    ...(writes === "build" && open ? { pair: { copy: r.preset, from: open } } : {}) };
 }

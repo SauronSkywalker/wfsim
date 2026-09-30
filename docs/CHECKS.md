@@ -678,7 +678,11 @@ is deleted, and the next effective edit writes `preset 1` again.
 Every stored entry has an `id` of its own and keeps it: a list stored without
 ids is minted at boot and keeps them on the next load, a duplicated id is split,
 "+ new" and ⧉ mint fresh ones, and an edit and its undo keep the entry's. A
-riven is minted by the fold, which repoints the build that names it.
+riven is minted by the fold, which repoints the build that names it. And
+everything points by id: a pointer, a Forma group and a fight's custom target
+an older page stored by name are read as the ids they named, two builds may
+share a name and each opens as itself, and renaming a custom target moves
+nothing a fight names.
 
 ## `check_webmcp`
 

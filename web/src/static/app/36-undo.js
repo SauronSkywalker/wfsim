@@ -54,36 +54,43 @@ function recordUndo(d, w, next) {
 // three operations; this is the same trio the preset bar is built from.
 function presetDoc(d) {
   if (d === BUILDS) return {
+    active: () => activePreset,
     setActive: (n) => { activePreset = n; },
     apply: (st) => restoreState(st, presetWeapon()),
     rerender: renderPresetBar,
   };
   if (d === SCENARIOS) return {
+    active: () => activeScenario,
     setActive: (n) => { activeScenario = n; },
     apply: applyScenario,
     rerender: renderScenarioBar,
   };
   if (d === OPT_DOMAIN) return {
+    active: () => activeOptPreset,
     setActive: (n) => { activeOptPreset = n; },
     apply: applyOptPreset,
     rerender: renderOptPresetBars,
   };
   if (d === WF_BUILDS) return {
+    active: () => wfActive,
     setActive: (n) => { wfActive = n; },
     apply: wfApply,
     rerender: renderWfPresetBar,
   };
   if (d === COMP_BUILDS) return {
+    active: () => compActive,
     setActive: (n) => { compActive = n; },
     apply: compApply,
     rerender: renderCompPresetBar,
   };
   if (d === OPS) return {
+    active: () => opActive,
     setActive: (n) => { opActive = n; },
     apply: opApply,
     rerender: renderOpPresetBar,
   };
   if (d === RIVENS) return {
+    active: () => activeRiven,
     setActive: (n) => { activeRiven = n; },
     // An undo can land on a collection that is now empty (the last riven
     // deleted) — renderRivens is the one that decides between the list and
@@ -108,12 +115,9 @@ function restorePresetSnapshot(s) {
     if (s.weapon !== undoOwner(s.domain)) return;
     const doc = presetDoc(s.domain);
     const list = JSON.parse(s.list || "[]");
-    // WHAT NAMES AN ENTRY is its name in every collection but one: a riven's
-    // identity is its own id, because its name is a label a player edits.
-    const key = (p) => (s.domain === RIVENS ? p && p.id : p && p.name) || "";
-    const active = list.find((p) => key(p) === s.active) || list[0];
+    const active = presetFind(list, s.active) || list[0];
     if (!doc || !active) return;
-    doc.setActive(key(active));
+    doc.setActive(presetId(active));
     whileApplying(() => doc.apply(active.state));   // a restore is not an edit
     doc.rerender();
   } finally {

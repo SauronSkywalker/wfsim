@@ -199,7 +199,7 @@ export function createAgent(door) {
     const r = await door.do(id, args || {});
     const made = madeBy(id, args || {}, r);
     if (made) s.owned.add(made);
-    return b ? { ...r, branched_to_copy: b.copy } : r;
+    return b ? { ...r, branched_to_copy: b.label || b.copy } : r;
   }
 
   /// One call, run: what it returned, and what the tool message records beside it.

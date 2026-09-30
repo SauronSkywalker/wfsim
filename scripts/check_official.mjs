@@ -115,7 +115,7 @@ const PROBE = (lang) => `(async () => {
   bar.querySelector('.pop.dup').click();
   await sleep(700);
   out.copyIsOwn = !officialScenarioActive();
-  out.copyStored = loadPresetList('simulator-scenarios').some((p) => p.name === activeScenario);
+  out.copyStored = loadPresetList('simulator-scenarios').some((p) => presetId(p) === activeScenario);
   // ...and it lands in YOUR bar, which is the point of copying it.
   out.copyInOwnBar = [...$('preset-bar-simulator-scenarios').querySelectorAll('.pchip')]
     .some((c) => c.dataset.name === activeScenario);
@@ -223,7 +223,7 @@ const BUILDS_PROBE = `(async () => {
   sel.querySelector('.pop.dup').click();
   await sleep(800);
   out.copyIsOwn = !officialBuildActive();
-  out.copyStored = loadPresetList('builder-builds').some((p) => p.name === activePreset);
+  out.copyStored = loadPresetList('builder-builds').some((p) => presetId(p) === activePreset);
   out.copyEditable = ['mod-block','arcane-block','evo-block']
     .every((id) => $(id) && !$(id).classList.contains('locked-hard'));
   return out;

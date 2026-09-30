@@ -360,7 +360,7 @@ const remembered = await evaluate(`(async () => {
   const saved = snapshotState().assembly;
   // Move away and back, the way switching presets does.
   assembly = { grip: 'gibber', loader: 'zip' };
-  const st = loadPresetList(BUILDS).find(x => x.name === activePreset).state;
+  const st = loadPresetList(BUILDS).find(x => presetId(x) === activePreset).state;
   restoreState(st, 'tombfinger_secondary');
   return { saved, after: { ...assembly }, sent: buildPayload().assembly || null };
 })()`);

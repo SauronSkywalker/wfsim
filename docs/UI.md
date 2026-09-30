@@ -156,13 +156,26 @@ its own module: `builder-builds` (a build), `simulator-scenarios` (a fight,
 buff settings included), `optimizer` (a search: the SCOPE and `finalists`, and
 nothing else — never buffs, never a run count, never a thread count).
 
-**EVERY STORED ENTRY CARRIES AN `id`**, opaque and never changed by a rename,
-because it is what a sync matches on: every device has a "preset 1". It is
-minted in one place, `mintPresetIds` — at boot over every stored list, and on
-the way into `storePresetList` — so no "+ new", copy or import mints its own. A
-riven's id is minted by `foldRivensIntoOneList` instead, together with
-repointing the slots that name it. The name stays what the bar and the active
-pointer use.
+**EVERY SAVED COLLECTION IS ONE ROW OF `COLLECTIONS`** (`34-presets.js`): its
+`kind` — preset or custom — and its `scope`, what one entry is about (a weapon,
+a riven family, a frame, a companion, or `global`). Anything new a reader can
+save is one more row, and whether it is weapon-scoped, which bar kind it gets
+and what the sync shows are read from it rather than from a list of their own.
+
+**AN ENTRY IS ITS `id`; ITS NAME IS A LABEL.** The id is opaque, never changed
+by a rename, and everything that points at an entry points at it: the open one
+(`presetId`, and every stored pointer), a link's `?build=`, a build's riven slot
+(`riven:<id>`), a fight's custom target (`custom:<id>`), a roster seat, a
+Warframe build's Operator link, a Forma group. So TWO ENTRIES MAY SHARE A NAME,
+and a rename moves nothing. A name is still generated unique ("preset N",
+"… copy"), because a reader tells chips apart by it; nothing depends on it.
+`presetFind` resolves a pointer by id first and by name only for what an older
+page stored or a caller typed, and one-time migrations at boot rewrite the
+pointers, custom-target references and Forma groups an older page wrote by name.
+Ids are minted in one place, `mintPresetIds`, at boot and on the way into
+`storePresetList`; a new entry is born with one (`presetEntry`). A riven's is
+minted by `foldRivensIntoOneList`, together with repointing the slots that name
+it.
 
 **THE DEFAULT IS THE BLANK, AND NOTHING IS OWNED UNTIL IT IS MADE.** Every
 collection has a DEFAULT: the blank (`cfg.blank()`), always there, read-only,
@@ -268,14 +281,10 @@ stays the working copy: signed out, or without the feature, nothing runs.
 | the first round on a browser is a union: everything here is pushed, everything there pulled | `syncRound` |
 | the measured result never travels, and a pulled entry keeps this browser's | `syncBody`, `syncApply` |
 | an entry edited while the round ran keeps the edit; the next round pushes it | `syncApply` |
-| two entries sharing a name: the lowest id keeps it, the rest take "(2)", "(3)", and the rename is pushed | `syncApply` |
-| the active pointer follows a rename; the page re-applies an entry on screen that changed | `syncApply`, `syncShow` |
+| two entries may share a name, so nothing is renamed on the way in | `syncApply` |
+| the page re-applies an entry on screen that changed, for every collection `COLLECTIONS` names | `syncShow` |
 | a browser that synced with another account merges nothing until the reader asks on `/account` | `other`, `syncAdopt` |
 | undo steps over a list that changed underneath them are dropped | `syncShow` |
-
-A custom enemy is still named in a fight as `custom:<name>`, not by its `id`:
-when two browsers each made an enemy of one name, both survive, and a fight
-made on the browser whose enemy was renamed reads the one that kept the name.
 
 ## The build finder
 

@@ -31,10 +31,12 @@ const counts = `({
 
 const r = await evaluate(`(async () => {
   const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+  // WHAT THE OPEN ENTRY IS CALLED: the pointer holds its id.
+  const nameOf = (d, id) => (id ? ((loadPresetList(d).find((p) => p.id === id) || {}).name || id) : id);
   localStorage.clear();
   history.pushState({}, '', '/weapons/Torid'); route(); await sleep(3000);
   const fresh = Object.assign(${counts}, {
-    active: activePreset,
+    active: nameOf('builder-builds', activePreset),
     bareWeapon: slots.every(s => !s.mod) && (arcanes || []).every(a => !a || a === 'none'),
     // The bar must SURVIVE an empty collection: it is the only deliberate way
     // to make one, and a collection you can only fill by accident is worse
@@ -61,14 +63,14 @@ const r = await evaluate(`(async () => {
   // …CHANGING THE SEARCH IS: a second start added.
   opt.starts.push(blankStart());
   updateOptEstimate(); await sleep(1200);
-  const scoped = Object.assign(${counts}, { active: activeOptPreset });
+  const scoped = Object.assign(${counts}, { active: nameOf('optimizer', activeOptPreset) });
 
   // AND THE FIRST BUILD EDIT MAKES A BUILD.
   history.pushState({}, '', '/weapons/Torid'); route(); await sleep(2600);
   slots[0].mod = 'serration'; slots[0].rank = 10;
   markPresetDirty(); renderMods(); await sleep(1400);
   const edited = Object.assign(${counts}, {
-    active: activePreset,
+    active: nameOf('builder-builds', activePreset),
     chips: [...document.querySelectorAll('#preset-bar-builder-builds .pchip:not(.add):not(.share)')].map(c => c.textContent.replace(/[⧉✎✕]/g, '').trim()),
     kept: ((((loadPresetList('builder-builds')[0] || {}).state || {}).slots || [])[0] || {}).mod,
   });
@@ -78,7 +80,7 @@ const r = await evaluate(`(async () => {
   slots[0].mod = null; slots[0].rank = null;
   markPresetDirty(); renderMods(); await sleep(1600);
   const emptied = Object.assign(${counts}, {
-    active: activePreset, bareWeapon: slots.every(s => !s.mod),
+    active: nameOf('builder-builds', activePreset), bareWeapon: slots.every(s => !s.mod),
     chips: document.querySelectorAll('#preset-bar-builder-builds .pchip:not(.add):not(.share)').length,
   });
 
@@ -86,12 +88,12 @@ const r = await evaluate(`(async () => {
   // hand: what is left is a bare weapon rather than a broken page.
   slots[0].mod = 'serration'; slots[0].rank = 10;
   markPresetDirty(); renderMods(); await sleep(1400);
-  const reborn = Object.assign(${counts}, { active: activePreset });
+  const reborn = Object.assign(${counts}, { active: nameOf('builder-builds', activePreset) });
   const del = document.querySelector('#preset-bar-builder-builds .pchip.sel .pop.del');
   if (del) del.click();
   await sleep(1600);
   const deleted = Object.assign(${counts}, {
-    active: activePreset,
+    active: nameOf('builder-builds', activePreset),
     bareWeapon: slots.every(s => !s.mod),
     stillDrawn: document.querySelectorAll('#mod-slots .slot').length,
   });

@@ -9,7 +9,7 @@ const AGENT_ACTIONS = [
     run() {
       return { open: activeEnemyName() || null, targets: loadPresetList(ENEMIES).map((p) => {
         const d = { ...blankEnemy(), ...(p.state || {}) };
-        return { name: p.name, id: enemyId(p.name), faction: d.faction, health: d.stats.health, shield: d.stats.shield, armor: d.stats.armor };
+        return { name: p.name, id: enemyId(p.id), faction: d.faction, health: d.stats.health, shield: d.stats.shield, armor: d.stats.armor };
       }) };
     },
   },
@@ -32,13 +32,14 @@ const AGENT_ACTIONS = [
   {
     id: "enemies.target.open",
     writes: "none",
-    what: "Open a custom target for editing by name.",
+    what: "Open a custom target for editing, by the id enemies.targets.list gives it or by its name.",
     anchor: "#enemy-tools, #enemy-all",
-    args: { name: { kind: "string", required: true, what: "the target's name" } },
+    args: { name: { kind: "string", required: true, what: "the target's id, or its name" } },
     run({ name }) {
       const ps = loadPresetList(ENEMIES);
-      if (!ps.some((p) => p.name === name)) return agentNo("unknown_target", { alternatives: ps.map((p) => p.name).slice(0, 12) });
-      openEnemy(name);
+      const hit = ps.find((p) => enemyId(p.id) === name || p.id === name) || ps.find((p) => p.name === name);
+      if (!hit) return agentNo("unknown_target", { alternatives: ps.map((p) => enemyId(p.id)).slice(0, 12) });
+      openEnemy(hit.id);
       return agentEnemyDoc();
     },
   },
@@ -850,7 +851,7 @@ const AGENT_ACTIONS = [
     anchor: "#preset-bar-builder-builds, #preset-bar-simulator-scenarios, #bench-bar-simulator-scenarios, #sim-official-copy, #preset-bar-optimizer",
     needs_weapon: true,
     args: { bar: agentBarArg },
-    run({ bar }) { return { preset: newPreset(AGENT_BARS[bar]()) }; },
+    run({ bar }) { const cfg = AGENT_BARS[bar](); const id = newPreset(cfg); return { preset: id, name: presetLabel(presetFind(cfg.load(), id)) }; },
   },
   {
     id: "shell.preset.read",
@@ -920,7 +921,7 @@ const AGENT_ACTIONS = [
     anchor: "#preset-bar-builder-builds, #preset-bar-simulator-scenarios, #bench-bar-simulator-scenarios, #sim-official-copy, #preset-bar-optimizer",
     needs_weapon: true,
     args: { bar: agentBarArg },
-    run({ bar }) { return { preset: copyActivePreset(AGENT_BARS[bar]()) }; },
+    run({ bar }) { const cfg = AGENT_BARS[bar](); const id = copyActivePreset(cfg); return { preset: id, name: presetLabel(presetFind(cfg.load(), id)) }; },
   },
   {
     id: "simulator.result.read",

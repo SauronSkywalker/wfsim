@@ -55,7 +55,7 @@ function opBarCfg() {
       localStorage.setItem(presetActiveKey(OPS), n);
       // FRAMED BY A WARFRAME PAGE, the open build is that frame's link.
       if (EMBED && window.parent !== window) {
-        const p = opList().find((x) => x.name === n);
+        const p = opList().find((x) => presetId(x) === n);
         if (p) window.parent.postMessage({ wfsim: "operator-build", id: p.id }, location.origin);
       }
     },
@@ -79,13 +79,13 @@ function opMarkDirty() {
     if (presetApplying || !op) return;
     const cfg = opBarCfg();
     const ps = cfg.load();
-    const at = ps.findIndex((p) => p.name === opActive);
+    const at = ps.findIndex((p) => presetId(p) === opActive);
     if (at < 0) {
       if (sameState(op, opBlank())) return;
-      const name = newPresetName(ps);
-      ps.push({ name, savedAt: Date.now(), state: cfg.snapshot() });
+      const e = presetEntry(newPresetName(ps), cfg.snapshot());
+      ps.push(e);
       cfg.store(ps);
-      cfg.setActive(name);
+      cfg.setActive(e.id);
       renderOpPresetBar();
       return;
     }
@@ -263,7 +263,7 @@ async function showOperator() {
     const last = localStorage.getItem(presetActiveKey(OPS));
     const want = new URLSearchParams(location.search).get("build");
     const p = presetToOpen(list, want, last);
-    opActive = p ? p.name : "";
+    opActive = p ? presetId(p) : "";
     op = opNormalize(p ? p.state : null);
   }
   renderOperator();
@@ -377,7 +377,7 @@ async function showWarframe(id) {
     const last = localStorage.getItem(presetActiveKey(WF_BUILDS, id));
     // `?build=` NAMES THE BUILD TO OPEN — a weapon's wielder link.
     const p = presetToOpen(list, new URLSearchParams(location.search).get("build"), last);
-    wfActive = p ? p.name : "";
+    wfActive = p ? presetId(p) : "";
     wf = wfNormalize(p ? p.state : null, id);
   }
   renderWarframe();

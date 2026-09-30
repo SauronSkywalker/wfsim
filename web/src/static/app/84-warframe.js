@@ -175,7 +175,7 @@ function wfFormaLoadout(st) {
   return { main: st.slots.slice(0, 8).map(card), exilus: card(st.slots[WF_EXILUS]), grant: card(st.slots[WF_AURA]) };
 }
 const wfItem = () => `warframe-${wf.frame}`;
-const wfActiveBuild = () => wfBarCfg().load().find((p) => p.name === wfActive) || null;
+const wfActiveBuild = () => wfBarCfg().load().find((p) => presetId(p) === wfActive) || null;
 function wfFormaPartners() {
   const want = new Set(formaGroup(wfItem()));
   const open = wfActiveBuild();
@@ -624,7 +624,7 @@ function renderWfGate(g) {
 /// parent whenever it changes, born or picked, so the wielder follows the page.
 function wfAnnounceBuild() {
   if (!EMBED || window.parent === window) return;
-  const p = presetListWithIds(WF_BUILDS, wf.frame).find((x) => x.name === wfActive);
+  const p = presetListWithIds(WF_BUILDS, wf.frame).find((x) => presetId(x) === wfActive);
   if (p) window.parent.postMessage({ wfsim: "wielder-build", frame: wf.frame, id: p.id }, location.origin);
 }
 
@@ -669,13 +669,13 @@ function wfMarkDirty() {
     if (presetApplying || !wf) return;
     const cfg = wfBarCfg();
     const ps = cfg.load();
-    const at = ps.findIndex((p) => p.name === wfActive);
+    const at = ps.findIndex((p) => presetId(p) === wfActive);
     if (at < 0) {
       if (sameState(wf, wfBlank(wf.frame))) return;
-      const name = newPresetName(ps);
-      ps.push({ name, savedAt: Date.now(), state: cfg.snapshot() });
+      const e = presetEntry(newPresetName(ps), cfg.snapshot());
+      ps.push(e);
       cfg.store(ps);
-      cfg.setActive(name);
+      cfg.setActive(e.id);
       renderWfPresetBar();
       return;
     }

@@ -195,7 +195,7 @@ function syncApply(st, entries, sigs) {
     }
     return lists.get(k);
   };
-  const changedLists = new Set(), ids = new Set(), renamed = new Map(), removed = new Set();
+  const changedLists = new Set(), ids = new Set(), removed = new Set();
   const current = syncLocal();
   for (const e of entries) {
     const here = current.get(e.id);
@@ -204,7 +204,7 @@ function syncApply(st, entries, sigs) {
       if (here) {
         const ps = listOf(here.list);
         const at = ps.findIndex((p) => p && p.id === e.id);
-        if (at >= 0) { removed.add(ps[at].name); ps.splice(at, 1); changedLists.add(here.list); ids.add(e.id); }
+        if (at >= 0) { removed.add(e.id); ps.splice(at, 1); changedLists.add(here.list); ids.add(e.id); }
       }
       delete st.known[e.id];
       continue;
@@ -225,60 +225,31 @@ function syncApply(st, entries, sigs) {
     changedLists.add(e.list);
     ids.add(e.id);
   }
+  // TWO ENTRIES MAY SHARE A NAME: everything points at an id, so nothing is
+  // renamed on the way in.
   for (const k of changedLists) {
-    // TWO ENTRIES, ONE NAME: every browser has a "preset 1", and a name is what
-    // a bar and its active pointer go by. Settled once the whole pull is in, by
-    // a rule every browser computes alike — the lowest id keeps the name, the
-    // rest take "(2)", "(3)" — so no two browsers rename back and forth. A
-    // rename is a change here, and the next round pushes it.
-    const ps = lists.get(k);
-    const byName = new Map();
-    for (const p of ps) if (p && p.id) byName.set(p.name, [...(byName.get(p.name) || []), p]);
-    for (const [base, same] of byName) {
-      if (same.length < 2) continue;
-      same.sort((a, b) => (a.id < b.id ? -1 : 1));
-      for (const p of same.slice(1)) p.name = freeName(ps, (n) => (n === 1 ? base : `${base} (${n})`));
-    }
-    for (const p of ps) {
-      const was = p && current.get(p.id);
-      if (was && was.list === k && was.p.name !== p.name) renamed.set(was.p.name, p.name);
-    }
-  }
-  for (const k of changedLists) {
-    // …AND THE ACTIVE POINTER FOLLOWS A RENAME, or the reader is moved onto
-    // whichever entry now carries the old name.
-    const ptr = k.replace(/^wfsim-presets-/, "wfsim-preset-active-").replace(/^wfsim-customs-/, "wfsim-custom-open-");
-    const was = localStorage.getItem(ptr);
-    if (was !== null && renamed.has(was)) localStorage.setItem(ptr, renamed.get(was));
     try { localStorage.setItem(k, JSON.stringify(lists.get(k))); }
     catch (_) { noteInline(tr("this browser's storage is full - the change is on screen but was not saved")); }
   }
-  return changedLists.size ? { lists: changedLists, ids, renamed, removed } : null;
+  return changedLists.size ? { lists: changedLists, ids, removed } : null;
 }
 
 /// MAKE THE PAGE SHOW IT, through the same trio undo restores through
 /// (`presetDoc`). An undo step taken before a list changed underneath it would
 /// write the old list back and push it, so those steps go.
-function syncShow({ lists, ids, renamed, removed }) {
+function syncShow({ lists, ids, removed }) {
   undoStack = undoStack.filter((s) => !lists.has(presetListKey(s.domain, s.weapon)));
   redoStack = redoStack.filter((s) => !lists.has(presetListKey(s.domain, s.weapon)));
-  const actives = {
-    [BUILDS]: () => activePreset, [SCENARIOS]: () => activeScenario, [OPT_DOMAIN]: () => activeOptPreset,
-    [WF_BUILDS]: () => wfActive, [COMP_BUILDS]: () => compActive, [OPS]: () => opActive, [RIVENS]: () => activeRiven,
-  };
-  for (const d of Object.keys(actives)) {
+  for (const { domain: d } of COLLECTIONS) {
     const w = undoOwner(d);
-    if (!lists.has(presetListKey(d, w))) continue;
     const doc = presetDoc(d);
-    if (!doc) continue;
+    if (!doc || !lists.has(presetListKey(d, w))) continue;
     const list = loadPresetList(d, w);
-    const keyOf = (p) => (d === RIVENS ? p.id : presetId(p));
-    let act = actives[d]() || "";
-    if (renamed.has(act)) { act = renamed.get(act); doc.setActive(act); }
-    const cur = list.find((p) => keyOf(p) === act);
+    const act = doc.active() || "";
+    const cur = list.find((p) => presetId(p) === act);
     whileApplying(() => {
       if (cur && ids.has(cur.id)) doc.apply(cur.state);
-      else if (!cur && removed.has(act) && list[0]) { doc.setActive(keyOf(list[0])); doc.apply(list[0].state); }
+      else if (!cur && removed.has(act) && list[0]) { doc.setActive(presetId(list[0])); doc.apply(list[0].state); }
     });
     doc.rerender();
   }

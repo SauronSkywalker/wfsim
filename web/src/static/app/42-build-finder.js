@@ -45,7 +45,7 @@ function resolveBoardActive(last) {
   if (!BOARD_HAVE.has(w)) return last;
   let ref = null;
   try { ref = JSON.parse(localStorage.getItem(boardActiveKey(w)) || "null"); } catch (_) { ref = null; }
-  if (!ref || loadPresetList(BUILDS).some((p) => p.name === last)) return last;
+  if (!ref || presetFind(loadPresetList(BUILDS), last)) return last;
   const p = builtinBuilds().find((x) => sameBoardRef(boardRef(x), ref));
   return p ? presetId(p) : "";
 }
@@ -75,7 +75,7 @@ function unpinBoardBuild(id) {
   }
   if (id === activePreset) {
     const own = cfg.load().filter((x) => !x.builtin);
-    cfg.setActive(own.length ? own[0].name : "");
+    cfg.setActive(own.length ? presetId(own[0]) : "");
     whileApplying(() => cfg.apply(own.length ? own[0].state : cfg.blank()));
     if (!own.length && cfg.pristine) cfg.pristine();
   }

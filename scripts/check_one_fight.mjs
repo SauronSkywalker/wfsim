@@ -115,7 +115,7 @@ const r = await evaluate(`(async () => {
   // THIS fight, which Run Sim above just made true — so the cache is dropped
   // to force the measurement this check is about.
   const bp = loadPresetList(BUILDS);
-  const bi = bp.findIndex((x) => x.name === activePreset);
+  const bi = bp.findIndex((x) => presetId(x) === activePreset);
   if (bi >= 0) { delete bp[bi].lastResult; storePresetList(BUILDS, bp); }
   await sleep(400);
   mark = take();

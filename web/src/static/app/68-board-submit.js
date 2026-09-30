@@ -595,7 +595,7 @@ function boardProjection() {
   if ((body.mods || []).includes(BOARD_RIVEN_SLOT) || body.valence) return null;
   const w = weaponInfo(body.weapon) || {};
   if (!BOARD_HAVE.has(w.id)) return null;
-  const p = loadPresetList(BUILDS).find((z) => z.name === activePreset);
+  const p = loadPresetList(BUILDS).find((z) => presetId(z) === activePreset);
   const r = p && p.lastResult && p.lastResult.r;
   if (!r || !w.id) return null;
   const met = metricOf((scenarioNamed(activeScenario) || {}).metric);

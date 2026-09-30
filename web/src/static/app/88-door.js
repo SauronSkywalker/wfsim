@@ -62,7 +62,7 @@ const agentScenario = () => {
 /// cannot tell, so `fresh` is stated rather than left to be inferred from a
 /// timestamp the caller would have to interpret.
 function agentResult() {
-  const p = loadPresetList(BUILDS).find((x) => x.name === activePreset);
+  const p = loadPresetList(BUILDS).find((x) => presetId(x) === activePreset);
   const lr = p && p.lastResult;
   if (!lr || !lr.r) return null;
   const m = metricOf(sim.metric);
@@ -242,7 +242,7 @@ const HEADLESS_DOOR_ACTIONS = HEADLESS_QUERIES.map((q) => ({
 /// THE LAST RUN, without the arrays that exist to draw a chart or a replay —
 /// the reader reads those as pictures, and the numbers they summarise are here.
 function agentRunSummary() {
-  const p = loadPresetList(BUILDS).find((x) => x.name === activePreset);
+  const p = loadPresetList(BUILDS).find((x) => presetId(x) === activePreset);
   const r = p && p.lastResult && p.lastResult.r;
   if (!r) return null;
   const n = (v) => (typeof v === "number" ? Number(sig2(v)) || v : v);

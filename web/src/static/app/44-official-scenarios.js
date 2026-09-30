@@ -22,7 +22,7 @@ const scenarioList = () => builtinScenarios().concat(loadPresetList(SCENARIOS));
 // By NAME or by official ID. A benchmark's display name is translated, so the
 // name alone cannot be its identity: switching language would orphan the
 // pointer that says which scenario is open. The id is what gets stored.
-const scenarioNamed = (n) => scenarioList().find((p) => p.name === n || p.builtin === n);
+const scenarioNamed = (n) => presetFind(scenarioList(), n);
 const scenarioKey = (n) => (scenarioNamed(n) || {}).builtin || n;
 /// Is the fight on screen the official one? Then nothing may write to it.
 const officialScenarioActive = () => !!(scenarioNamed(activeScenario) || {}).builtin;

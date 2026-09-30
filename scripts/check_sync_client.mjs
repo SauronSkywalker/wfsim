@@ -4,9 +4,8 @@
 /// The server is faked inside the page with the rules the real one keeps — the
 /// newer write wins, a deletion is an entry with no body, pages by cursor — and
 /// a second browser is this one with its storage swapped. What it holds: the
-/// first sync is a union, two entries sharing a name both survive under two
-/// names every browser agrees on (the lowest id keeps it), an edit and a deletion reach the other
-/// browser, the measured result never travels, another account's entries are
+/// first sync is a union, two entries sharing a name both survive under it, an
+/// edit and a deletion reach the other browser, the measured result never travels, another account's entries are
 /// not merged without a word, an account without the feature pushes nothing,
 /// and a remote edit to the build on screen reaches the screen.
 import { openApp } from "./cdp.mjs";
@@ -160,16 +159,16 @@ const ok = (x) => JSON.stringify(x);
 check("the first browser's build reaches the server", ok(r.aPushed) === ok(["a1=preset 1"]), ok(r.aPushed));
 check("...without its measured result", r.noResult === true);
 check("...and sync reads as on", r.statusOn === "on", r.statusOn);
-check("a second browser's first sync is a union, the lowest id keeping the clashing name",
-  ok(r.bAfterFirst) === ok(["a1=preset 1", "b1=preset 1 (2)"]), ok(r.bAfterFirst));
+check("a second browser's first sync is a union, and two builds keep the one name they share",
+  ok(r.bAfterFirst) === ok(["a1=preset 1", "b1=preset 1"]), ok(r.bAfterFirst));
 check("...and the rename is pushed, so the server agrees", ok(r.serverAfterB) === ok(r.bAfterFirst), ok(r.serverAfterB));
 check("the first browser ends on the same two names", ok(r.aAfterB) === ok(r.bAfterFirst), ok(r.aAfterB));
 check("...keeping its own measured result", r.aKeptResult === true);
-check("a deletion on one browser reaches the other", ok(r.bAfterDelete) === ok(["b1=preset 1 (2)"]), ok(r.bAfterDelete));
+check("a deletion on one browser reaches the other", ok(r.bAfterDelete) === ok(["b1=preset 1"]), ok(r.bAfterDelete));
 check("an edit on one browser reaches the other, even in the millisecond of the last agreed write", r.aSeesEdit === "hornet_strike", ok([r.aSeesEdit, r.editWhy]));
 check("a remote edit to the build on screen reaches the screen", r.screen === "vital_sense", r.screen);
 check("a link to a saved build not here yet opens it once the sync brings it",
-  r.linkBefore !== "from an agent" && r.linkAfter === "from an agent" && r.linkScreen === "point_strike",
+  r.linkBefore !== "zz1" && r.linkAfter === "zz1" && r.linkScreen === "point_strike",
   ok([r.linkBefore, r.linkAfter, r.linkScreen]));
 check("another account's entries are not merged without a word",
   r.otherStatus === "other" && r.acc2Before === 0, ok([r.otherStatus, r.acc2Before]));

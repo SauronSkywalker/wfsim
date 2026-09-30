@@ -140,7 +140,7 @@ const got = await evaluate(`(async () => {
     mods: slots.map(s => s.mod),
     rivens: loadPresetList('rivens').map(p => p.name),
     scenarioLevel: sim.level, headshot: sim.headshot_pct,
-    activeBuild: activePreset,
+    activeBuild: (loadPresetList('builder-builds').find((p) => p.id === activePreset) || {}).name || activePreset,
     panel,
   };
 })()`);
@@ -210,10 +210,10 @@ await evaluate(`(() => { location.href = ${JSON.stringify(sent.legacyUrl)}; })()
 await sleep(12000);
 const bo = await evaluate(`(async () => {
   await new Promise(r => setTimeout(r, 2500));
-  const b = loadPresetList('builder-builds').find(p => p.name === activePreset);
+  const b = loadPresetList('builder-builds').find(p => presetId(p) === activePreset);
   return {
     weapon: document.getElementById('weapon').value,
-    activeBuild: activePreset,
+    activeBuild: (loadPresetList('builder-builds').find((p) => p.id === activePreset) || {}).name || activePreset,
     mods: slots.map(s => s.mod),
     rivens: loadPresetList('rivens').map(p => p.name),
     level: sim.level, headshot: sim.headshot_pct,

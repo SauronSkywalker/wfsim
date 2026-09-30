@@ -108,7 +108,7 @@ const SHARE_EXCLUDED_AXES = ["wielder"];
 
 function sharePayload() {
   const st = snapshotState();
-  const p = loadPresetList(BUILDS).find((x) => x.name === activePreset);
+  const p = loadPresetList(BUILDS).find((x) => presetId(x) === activePreset);
   const pre = evoPrefix();
 
   // The RIVENS the build equips travel whole (field 6), so a slot names one
@@ -398,9 +398,9 @@ async function importShare(code) {
   // Named for where it came from. Without it a link lands as "build 1 2",
   // which says nothing about being someone else's work.
   const base = `${data.n || "build"} (shared)`;
-  const name = freeName(builds, (n) => base + (n > 1 ? " " + n : ""));
-  activePreset = name;
-  localStorage.setItem(presetActiveKey(BUILDS), name);
+  const entry = presetEntry(freeName(builds, (n) => base + (n > 1 ? " " + n : "")), null);
+  activePreset = entry.id;
+  localStorage.setItem(presetActiveKey(BUILDS), entry.id);
   // THE BUILD, AND NOTHING ELSE TOUCHES THE FIGHT. `applyScenario` is the only
   // door a scenario is set through, so not opening it IS the guarantee — the
   // same rule `check_preset_independence.mjs` asserts for a build being LOADED.
@@ -410,7 +410,8 @@ async function importShare(code) {
   // plus the number, and the fight did not travel. A number without one is not
   // a claim a reader could check, so the build lands unmeasured and the first
   // run here is the first number it has ever had.
-  builds.push({ name, savedAt: Date.now(), state: snapshotState() });
+  entry.state = snapshotState();
+  builds.push(entry);
   storePresetList(BUILDS, builds);
 
   renderPresetBar(); renderScenarioBar(); renderMods(); renderSim(); refreshPanel();

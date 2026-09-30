@@ -27,17 +27,15 @@ const presetFilters = {}; // per-bar filter text — survives re-renders, not pe
 /// leader opened the AIMED board's leader instead.
 ///
 /// `builtin` is already unique per ruler, mode and rank; a preset of your own
-/// has none and is its own name. So this is the id, and `presetLabel` is what a
-/// reader sees — the two were the same string until the board grew a second
-/// ruler.
-const presetId = (p) => (p || {}).builtin || (p || {}).name || "";
+/// has its `id`. So this is the identity, and `presetLabel` is what a reader
+/// sees — a label two entries may share.
+const presetId = (p) => (p || {}).builtin || (p || {}).id || "";
 const presetLabel = (p) => (p || {}).name || "";
 
 const pickPreset = (cfg, key) => {
   flushPresetSaves();
   const ps = cfg.load();
-  // By ID first: a name may now be shared by two rulers' rows.
-  const p = ps.find((x) => presetId(x) === key) || ps.find((x) => x.name === key);
+  const p = presetFind(ps, key);
   if (!p || presetId(p) === cfg.active()) return;
   cfg.setActive(presetId(p));
   whileApplying(() => cfg.apply(p.state)); // a load is not an edit
@@ -52,15 +50,16 @@ const pickPreset = (cfg, key) => {
 const newPreset = (cfg) => {
   flushPresetSaves();
   const ps = cfg.load();
-  const name = newPresetName(ps);
-  cfg.setActive(name);
+  const e = presetEntry(newPresetName(ps), null);
+  cfg.setActive(e.id);
   whileApplying(() => cfg.apply(cfg.blank()));
   // THE BLANK, SEEN: what "edited back to the blank" is compared against.
   if (cfg.pristine) cfg.pristine();
-  ps.push({ name, savedAt: Date.now(), state: cfg.snapshot() });
+  e.state = cfg.snapshot();
+  ps.push(e);
   cfg.store(ps);
   cfg.rerender();
-  return name;
+  return e.id;
 };
 
 /// A PRESET EDITED BACK TO THE BLANK IS DELETED: by CONTENT it is the default
@@ -72,7 +71,7 @@ const newPreset = (cfg) => {
 function deleteIfBlank(cfg, stored) {
   if (!cfg.isBlank || !cfg.isBlank(cfg.snapshot()) || cfg.isBlank(stored)) return false;
   const ps = cfg.load();
-  const at = ps.findIndex((p) => p.name === cfg.active());
+  const at = ps.findIndex((p) => presetId(p) === cfg.active());
   if (at < 0) return false;
   ps.splice(at, 1);
   cfg.store(ps);
@@ -87,13 +86,13 @@ function deleteIfBlank(cfg, stored) {
 const copyActivePreset = (cfg) => {
   flushPresetSaves();
   const ps = cfg.load();
-  const base = cfg.active();
-  const name = freeName(ps, (n) => base + " copy" + (n > 1 ? " " + n : ""));
-  ps.push({ name, savedAt: Date.now(), state: cfg.snapshot() });
+  const base = presetLabel(presetFind(ps, cfg.active()));
+  const e = presetEntry(freeName(ps, (n) => base + " copy" + (n > 1 ? " " + n : "")), cfg.snapshot());
+  ps.push(e);
   cfg.store(ps);
-  cfg.setActive(name);
+  cfg.setActive(e.id);
   cfg.rerender();
-  return name;
+  return e.id;
 };
 
 // THE BENCHMARK BAR — the official SCENARIOS, one per ruler, in a bar of their
@@ -148,7 +147,7 @@ function renderPresetBarIn(bar, cfg) {
   const active = cfg.active();
   const ftext = presetFilters[bar.id] || "";
   const f = ftext.trim().toLowerCase();
-  const shown = f ? ps.filter((p) => p.name === active || p.name.toLowerCase().includes(f)) : ps;
+  const shown = f ? ps.filter((p) => presetId(p) === active || p.name.toLowerCase().includes(f)) : ps;
   const hint = cfg.hint ? ` (${cfg.hint})` : "";
   // OWNING NONE SAYS WHERE THE EDITOR STANDS: on the default, the blank. A
   // scenario owning none is on a pinned official ruler (`pinned`) and a
@@ -158,7 +157,7 @@ function renderPresetBarIn(bar, cfg) {
     ? `<span class="pnote" title="${escHtml(tr("the default is read-only"))}">${escHtml(tr("Default"))} · ${escHtml(tr("your first change is saved as"))} ${escHtml(autoPresetName(PRESET_NAME, 1))}</span>`
     : "";
   const chip = (p) => {
-    const sel = p.name === active;
+    const sel = presetId(p) === active;
     const ops = !sel
       ? ""
       : `<button class="pop dup" title="${escHtml(tr("duplicate"))}">⧉</button>` +
@@ -175,7 +174,7 @@ function renderPresetBarIn(bar, cfg) {
     const by = cfg.usedBy ? cfg.usedBy(p) : [];
     const used = by.length
       ? `<span class="pby" title="${escHtml(tr("linked by") + ": " + by.join(" · "))}">↩${by.length}</span>` : "";
-    return `<span class="pchip ${sel ? "sel" : ""}" data-name="${escHtml(p.name)}" title="switch to ${escHtml(p.name)}${escHtml(hint)}">${escHtml(p.name)}${used}${ops}</span>`;
+    return `<span class="pchip ${sel ? "sel" : ""}" data-name="${escHtml(presetId(p))}" title="switch to ${escHtml(p.name)}${escHtml(hint)}">${escHtml(p.name)}${used}${ops}</span>`;
   };
   // A READ-ONLY ENTRY: select, ⧉ on the one you are on, and × to take it out of
   // the bar — which removes nothing from where it came from.
@@ -250,16 +249,15 @@ function renderPresetBarIn(bar, cfg) {
   on(".pop.ren", () => {
     const chipEl = bar.querySelector(".pchip.sel");
     if (!chipEl) return;
-    nameInput(chipEl, cfg.active(), (name) => {
+    const cur = presetFind(cfg.load(), cfg.active());
+    nameInput(chipEl, presetLabel(cur), (name) => {
       const ps2 = cfg.load();
-      // Empty, unchanged, or colliding names just cancel the rename.
-      if (name && name !== cfg.active() && !ps2.some((p) => p.name === name)) {
-        const at = ps2.findIndex((p) => p.name === cfg.active());
-        if (at >= 0) {
-          ps2[at].name = name;
-          cfg.store(ps2);
-          cfg.setActive(name);
-        }
+      // A LABEL EDIT AND NOTHING ELSE: everything points at the id, so two
+      // entries may share a name. Empty or unchanged just cancels.
+      const at = ps2.findIndex((p) => presetId(p) === cfg.active());
+      if (name && at >= 0 && name !== ps2[at].name) {
+        ps2[at].name = name;
+        cfg.store(ps2);
       }
       cfg.rerender();
     });
@@ -269,7 +267,7 @@ function renderPresetBarIn(bar, cfg) {
     // A PRESET OTHERS LINK IS DELETED ON THE SECOND CLICK, and the first says
     // who is affected: their links land on the default, so their numbers move.
     // Inline, because a native dialog is blocked.
-    const open = cfg.usedBy && cfg.load().find((p) => p.name === cfg.active());
+    const open = cfg.usedBy && cfg.load().find((p) => presetId(p) === cfg.active());
     const users = open ? cfg.usedBy(open) : [];
     if (users.length && deleteArmed !== `${bar.id}:${cfg.active()}`) {
       deleteArmed = `${bar.id}:${cfg.active()}`;
@@ -283,7 +281,7 @@ function renderPresetBarIn(bar, cfg) {
     // through to a BENCHMARK build — so the page answered "you deleted your
     // build" by loading somebody else's, and the bar's count and this handler's
     // disagreed about what a collection contains.
-    const ps2 = cfg.load().filter((p) => !p.builtin && p.name !== cfg.active());
+    const ps2 = cfg.load().filter((p) => !p.builtin && presetId(p) !== cfg.active());
     // EVERY COLLECTION MAY GO TO ZERO, not only the OPTIONAL ones. A module
     // always has a state and "no build" is not a thing the builder can show —
     // both true, and neither needs a stored row: nothing is
@@ -296,7 +294,7 @@ function renderPresetBarIn(bar, cfg) {
     // from — one answer, not two. A CUSTOM keeps `null`, which is how its
     // editor knows to stand down.
     cfg.store(ps2);
-    cfg.setActive(ps2.length ? ps2[0].name : "");
+    cfg.setActive(ps2.length ? presetId(ps2[0]) : "");
     whileApplying(() => cfg.apply(
       ps2.length ? ps2[0].state : (cfg.optional || !cfg.blank ? null : cfg.blank())));
     // A DELETE IS NOT AN EDIT, and the state it leaves behind is the pristine

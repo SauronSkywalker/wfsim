@@ -54,7 +54,7 @@ async function showCompanion(id) {
     const list = compList(id);
     const last = localStorage.getItem(presetActiveKey(COMP_BUILDS, id));
     const p = presetToOpen(list, new URLSearchParams(location.search).get("build"), last);
-    compActive = p ? p.name : "";
+    compActive = p ? presetId(p) : "";
     comp = compNormalize(p ? p.state : null, id);
   }
   renderCompanion();
@@ -224,7 +224,7 @@ function renderCompMenu(idx, query) {
 /// parent whenever a real one is open.
 function compAnnounceBuild() {
   if (!EMBED || window.parent === window || !comp) return;
-  const p = compList(comp.companion).find((x) => x.name === compActive);
+  const p = compList(comp.companion).find((x) => presetId(x) === compActive);
   if (p) window.parent.postMessage({ wfsim: "wielder-build", frame: comp.companion, id: p.id }, location.origin);
 }
 
@@ -266,13 +266,13 @@ function compMarkDirty() {
     if (presetApplying || !comp) return;
     const cfg = compBarCfg();
     const ps = cfg.load();
-    const at = ps.findIndex((p) => p.name === compActive);
+    const at = ps.findIndex((p) => presetId(p) === compActive);
     if (at < 0) {
       if (sameState(comp, compBlank(comp.companion))) return;
-      const name = newPresetName(ps);
-      ps.push({ name, savedAt: Date.now(), state: cfg.snapshot() });
+      const e = presetEntry(newPresetName(ps), cfg.snapshot());
+      ps.push(e);
       cfg.store(ps);
-      cfg.setActive(name);
+      cfg.setActive(e.id);
       renderCompPresetBar();
       return;
     }
