@@ -590,7 +590,7 @@ weapons:
   okina_prime_slide: 翁 Prime
   okina_prime_heavy_slam: 翁 Prime
 
-  # THE MELEE PLACEHOLDER INTAKE — DE's own strings (DE's Public Export in
+  # THE MELEE ROSTER — DE's own strings (DE's Public Export in
   # Chinese, joined on internal name); every form carries its weapon's.
   ack_and_brunt: 认知 & 冲击
   ack_and_brunt_block: 认知 & 冲击
@@ -640,13 +640,11 @@ weapons:
   argo_and_vel_block: 星舟 & 帆
   argo_and_vel_block_forward: 星舟 & 帆
   argo_and_vel_forward: 星舟 & 帆
-  argo_and_vel_heavy: 星舟 & 帆
   argo_and_vel_heavy_slam: 星舟 & 帆
   arum_spinosa: 疆南星刺
   arum_spinosa_block: 疆南星刺
   arum_spinosa_block_forward: 疆南星刺
   arum_spinosa_forward: 疆南星刺
-  arum_spinosa_heavy: 疆南星刺
   arum_spinosa_heavy_slam: 疆南星刺
   atterax: 阿特拉克斯
   atterax_block: 阿特拉克斯
@@ -714,7 +712,6 @@ weapons:
   caustacyst_block: 灼蚀变体镰
   caustacyst_block_forward: 灼蚀变体镰
   caustacyst_forward: 灼蚀变体镰
-  caustacyst_heavy: 灼蚀变体镰
   caustacyst_heavy_slam: 灼蚀变体镰
   ceramic_dagger: 陶瓷匕首
   ceramic_dagger_block: 陶瓷匕首
@@ -751,7 +748,6 @@ weapons:
   coda_caustacyst_block: 终幕·灼蚀变体镰
   coda_caustacyst_block_forward: 终幕·灼蚀变体镰
   coda_caustacyst_forward: 终幕·灼蚀变体镰
-  coda_caustacyst_heavy: 终幕·灼蚀变体镰
   coda_caustacyst_heavy_slam: 终幕·灼蚀变体镰
   coda_hirudo: 终幕·蚂蟥
   coda_hirudo_block: 终幕·蚂蟥
@@ -1634,7 +1630,6 @@ weapons:
   quassus_prime_block: 威震武扇 Prime
   quassus_prime_block_forward: 威震武扇 Prime
   quassus_prime_forward: 威震武扇 Prime
-  quassus_prime_heavy: 威震武扇 Prime
   quassus_prime_heavy_slam: 威震武扇 Prime
   rakta_dark_dagger: 绯红·暗黑匕首
   rakta_dark_dagger_block: 绯红·暗黑匕首

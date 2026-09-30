@@ -1,12 +1,11 @@
 id: coda_hirudo_slide
 name: Coda Hirudo
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: coda_hirudo
 form: slide
 transform_group: coda_hirudo
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_valence_unmodelled
     family: Coda
 attack:

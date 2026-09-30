@@ -7,8 +7,8 @@
 #
 # Never edit by hand: run the generator, which only ever appends.
 #
-digest: a0b58f304bbe5b9d
-count: 3402
+digest: e4b3f7aabb2a969a
+count: 3397
 ids:
   - acceltra
   - acceltra_prime
@@ -1932,13 +1932,11 @@ ids:
   - argo_and_vel_block
   - argo_and_vel_block_forward
   - argo_and_vel_forward
-  - argo_and_vel_heavy
   - argo_and_vel_heavy_slam
   - arum_spinosa
   - arum_spinosa_block
   - arum_spinosa_block_forward
   - arum_spinosa_forward
-  - arum_spinosa_heavy
   - arum_spinosa_heavy_slam
   - atterax
   - atterax_block
@@ -2006,7 +2004,6 @@ ids:
   - caustacyst_block
   - caustacyst_block_forward
   - caustacyst_forward
-  - caustacyst_heavy
   - caustacyst_heavy_slam
   - ceramic_dagger
   - ceramic_dagger_block
@@ -2043,7 +2040,6 @@ ids:
   - coda_caustacyst_block
   - coda_caustacyst_block_forward
   - coda_caustacyst_forward
-  - coda_caustacyst_heavy
   - coda_caustacyst_heavy_slam
   - coda_hirudo
   - coda_hirudo_block
@@ -2926,7 +2922,6 @@ ids:
   - quassus_prime_block
   - quassus_prime_block_forward
   - quassus_prime_forward
-  - quassus_prime_heavy
   - quassus_prime_heavy_slam
   - rakta_dark_dagger
   - rakta_dark_dagger_block

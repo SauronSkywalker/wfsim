@@ -1,12 +1,11 @@
 id: ceti_lacera_heavy
 name: Ceti Lacera
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: ceti_lacera
 form: heavy
 transform_group: ceti_lacera
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_slide_unpublished
   - reason: heavy_charge_share_assumed
     published: 0.4

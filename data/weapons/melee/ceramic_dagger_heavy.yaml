@@ -1,12 +1,11 @@
 id: ceramic_dagger_heavy
 name: Ceramic Dagger
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: ceramic_dagger
 form: heavy
 transform_group: ceramic_dagger
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_attack_unmodelled
     attacks: "Spectral Dagger and Spectral Dagger Explosion"
   - reason: melee_incarnon_unmodelled

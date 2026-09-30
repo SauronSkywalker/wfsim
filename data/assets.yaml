@@ -656,7 +656,7 @@ weapons:
   tysis: Tysis.png
   zylok_prime_incarnon: ZylokPrime.png
   zymos: InfUziWeapon.png
-  # THE MELEE PLACEHOLDERS — DE's texture per weapon; a form carries its weapon's.
+  # THE MELEE ROSTER — DE's texture per weapon; a form carries its weapon's.
   ack_and_brunt: AckAndBrunt.png
   ack_and_brunt_block: AckAndBrunt.png
   ack_and_brunt_block_forward: AckAndBrunt.png
@@ -705,13 +705,11 @@ weapons:
   argo_and_vel_block: DaxDuviriMaceShieldWeapon.png
   argo_and_vel_block_forward: DaxDuviriMaceShieldWeapon.png
   argo_and_vel_forward: DaxDuviriMaceShieldWeapon.png
-  argo_and_vel_heavy: DaxDuviriMaceShieldWeapon.png
   argo_and_vel_heavy_slam: DaxDuviriMaceShieldWeapon.png
   arum_spinosa: InfWarfanWeapon.png
   arum_spinosa_block: InfWarfanWeapon.png
   arum_spinosa_block_forward: InfWarfanWeapon.png
   arum_spinosa_forward: InfWarfanWeapon.png
-  arum_spinosa_heavy: InfWarfanWeapon.png
   arum_spinosa_heavy_slam: InfWarfanWeapon.png
   atterax: Atterax.png
   atterax_block: Atterax.png
@@ -779,7 +777,6 @@ weapons:
   caustacyst_block: Caustacyst.png
   caustacyst_block_forward: Caustacyst.png
   caustacyst_forward: Caustacyst.png
-  caustacyst_heavy: Caustacyst.png
   caustacyst_heavy_slam: Caustacyst.png
   ceramic_dagger: CeramicDagger.png
   ceramic_dagger_block: CeramicDagger.png
@@ -816,7 +813,6 @@ weapons:
   coda_caustacyst_block: CodaCaustacyst.png
   coda_caustacyst_block_forward: CodaCaustacyst.png
   coda_caustacyst_forward: CodaCaustacyst.png
-  coda_caustacyst_heavy: CodaCaustacyst.png
   coda_caustacyst_heavy_slam: CodaCaustacyst.png
   coda_hirudo: CodaHirudo.png
   coda_hirudo_block: CodaHirudo.png
@@ -1699,7 +1695,6 @@ weapons:
   quassus_prime_block: QuassusPrime.png
   quassus_prime_block_forward: QuassusPrime.png
   quassus_prime_forward: QuassusPrime.png
-  quassus_prime_heavy: QuassusPrime.png
   quassus_prime_heavy_slam: QuassusPrime.png
   rakta_dark_dagger: RaktaDarkDagger.png
   rakta_dark_dagger_block: RaktaDarkDagger.png
@@ -2623,7 +2618,7 @@ mods:
   xata_invocation: ImmortalRuneTruth.png
   zazvat_kar: AkstilettoPrimeAmmoEfficiencyMod.jpg
   zodiac_shred: ArchwingDualStatSlashStatusRifleMod.jpg
-  # THE STANCES the melee placeholders brought in.
+  # THE STANCES the melee roster brought in.
   astral_twilight: AstralTwilight.jpg
   atlantis_vulcan: NunchakuComboOne.jpg
   bleeding_willow: PolearmCombo2a.jpg

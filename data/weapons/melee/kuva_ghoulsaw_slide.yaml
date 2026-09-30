@@ -1,12 +1,11 @@
 id: kuva_ghoulsaw_slide
 name: Kuva Ghoulsaw
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: kuva_ghoulsaw
 form: slide
 transform_group: kuva_ghoulsaw
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_valence_unmodelled
     family: Kuva
 attack:

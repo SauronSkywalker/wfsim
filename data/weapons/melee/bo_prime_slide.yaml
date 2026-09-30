@@ -1,12 +1,11 @@
 id: bo_prime_slide
 name: Bo Prime
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: bo_prime
 form: slide
 transform_group: bo_prime
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_incarnon_unmodelled
 attack:
   # see notes: swing_trigger_pull_engine

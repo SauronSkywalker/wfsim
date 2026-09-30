@@ -333,11 +333,6 @@ notes:
     the combo table is identical at every rank — so the ladder would say nothing
     the grant does not, and a `max_rank` here would make the card ask for drain
     it does not cost (`ModDef.base_drain` is `base + max_rank`).
-  melee_placeholder_intake: |
-    A PLACEHOLDER ENTRY, generated from two wiki modules and nothing else —
-    its own page is not read yet, and `reason: melee_placeholder` says so on
-    every form. docs/MELEE.md §9 is the rule; its numbers are built as
-    `notes: melee_from_the_modules` says.
   melee_from_the_modules: |
     A MELEE ENTRY'S NUMBERS FROM THE TWO WIKI MODULES, where its own page states
     nothing else (docs/MELEE.md §9):

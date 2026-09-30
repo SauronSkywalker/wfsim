@@ -1,12 +1,11 @@
 id: coda_mire_slide
 name: Coda Mire
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: coda_mire
 form: slide
 transform_group: coda_mire
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_valence_unmodelled
     family: Coda
 attack:

@@ -1,12 +1,11 @@
 id: broken_war_heavy
 name: Broken War
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: broken_war
 form: heavy
 transform_group: broken_war
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: heavy_charge_share_assumed
     published: 0.6
     charge: 0.2

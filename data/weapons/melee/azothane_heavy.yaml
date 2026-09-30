@@ -1,12 +1,11 @@
 id: azothane_heavy
 name: Azothane
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: azothane
 form: heavy
 transform_group: azothane
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_own_combo_unmodelled
     combos: "block combo"
   - reason: melee_slide_unpublished
