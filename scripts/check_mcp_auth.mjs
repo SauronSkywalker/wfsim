@@ -104,8 +104,8 @@ check("the build tools are listed, the save one not read-only",
 check("without a key they say how to get one", (await tool("account_builds_list", {})).reason === "needs_key");
 let saved = await tool("account_builds_save", { build: { weapon: "torid", mods: ["serration@7", "split_chamber"] }, name: "from the agent" }, "wfa_good");
 const row = synced.at(-1);
-check("a build saves as a preset of its weapon's build list",
-  saved.ok && row.list === "wfsim-presets-torid-builder-builds" && row.body.name === "from the agent" && row.body.id === saved.id,
+check("a build saves as a preset of the build list, filed under its weapon",
+  saved.ok && row.list === "wfsim-presets-builder-builds" && row.body.scope === "torid" && row.body.name === "from the agent" && row.body.id === saved.id,
   JSON.stringify([saved, row && row.list]));
 check("...its state in the page's own shape, ranks apart from cards",
   row.body.state.weapon === "torid" && row.body.state.slots[0].mod === "serration" && row.body.state.slots[0].rank === 7

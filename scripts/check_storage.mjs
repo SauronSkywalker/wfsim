@@ -54,8 +54,7 @@ const r = await evaluate(`(async () => {
   renderSim(); await sleep(400);
   await runSim(); await sleep(2500);
 
-  const key = Object.keys(localStorage)
-    .find(k => /presets-phantasma_prime-builder-builds/.test(k));
+  const key = 'wfsim-presets-builder-builds';
   const raw = key ? localStorage.getItem(key) : '';
   out.ran = (document.getElementById('sim-results') || {}).textContent.length > 200;
   out.storedReplay = /"replay":\s*\{/.test(raw);

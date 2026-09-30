@@ -120,10 +120,8 @@ const r = await evaluate(`(async () => {
     bonuses: [{ id: 'damage', roll: which === 'a' ? 0.9 : 0.4 }], malus: null } });
   localStorage.setItem('wfsim-customs-burston-rivens', JSON.stringify([card('a')]));
   localStorage.setItem('wfsim-customs-burston_prime-rivens', JSON.stringify([card('b')]));
-  localStorage.setItem('wfsim-presets-burston-builder-builds', JSON.stringify(
-    [{ name: 'b1', state: { slots: [{ mod: 'riven:riven 1', pol: null }] } }]));
-  localStorage.setItem('wfsim-presets-burston_prime-builder-builds', JSON.stringify(
-    [{ name: 'b1', state: { slots: [{ mod: 'riven:riven 1', pol: null }] } }]));
+  localStorage.setItem('wfsim-presets-builder-builds', JSON.stringify(['burston', 'burston_prime'].map((w) =>
+    ({ id: w, scope: w, name: 'b1', state: { slots: [{ mod: 'riven:riven 1', pol: null }] } }))));
   foldRivensIntoOneList();
   const read = (k) => {
     try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; }
@@ -131,10 +129,11 @@ const r = await evaluate(`(async () => {
   out.merged = (read('wfsim-customs-rivens') || [])
     .filter((p) => (p.scope || '') === out.scopes.burston)
     .map((p) => ({ id: p.id, name: p.name, roll: ((p.state.bonuses || [])[0] || {}).roll }));
-  out.burstonPoints = read('wfsim-presets-burston-builder-builds')[0].state.slots[0].mod;
+  const builds = (w) => (read('wfsim-presets-builder-builds') || []).filter((p) => p.scope === w);
+  out.burstonPoints = builds('burston')[0].state.slots[0].mod;
   out.oldKeysGone = ['wfsim-customs-burston-rivens', 'wfsim-customs-burston_prime-rivens']
     .filter((k) => localStorage.getItem(k) !== null);
-  out.buildPoints = read('wfsim-presets-burston_prime-builder-builds')[0].state.slots[0].mod;
+  out.buildPoints = builds('burston_prime')[0].state.slots[0].mod;
 
   // ---- 6. RENAME AND DELETE REACH EVERY BUILD IN THE FAMILY -------------
   // A riven's id IS its name, so both are the same operation seen from a build.
@@ -146,12 +145,12 @@ const r = await evaluate(`(async () => {
   await go('/weapons/Burston/rivens');
   await mk();
   out.rn = activeRivenId();
-  const equipped = () => JSON.stringify([{ name: 'b1', state: { slots: [
-    { mod: 'riven:' + out.rn, rank: 3, pol: null }] } }]);
-  localStorage.setItem('wfsim-presets-burston_prime-builder-builds', equipped());
+  const equipped = (w) => ({ id: w, scope: w, name: 'b1', state: { slots: [
+    { mod: 'riven:' + out.rn, rank: 3, pol: null }] } });
   // THE NEGATIVE CONTROL: another FAMILY whose own card happens to carry the
   // same name. A sweep over every weapon would rewrite this one too.
-  localStorage.setItem('wfsim-presets-braton-builder-builds', equipped());
+  localStorage.setItem('wfsim-presets-builder-builds', JSON.stringify([equipped('burston_prime'), equipped('braton')]));
+  const slice = (w) => JSON.stringify(builds(w));
 
   const renameTo = async (want) => {
     const b = document.querySelector('.cu-ren');
@@ -167,12 +166,12 @@ const r = await evaluate(`(async () => {
   out.renamed = await renameTo('a new label');
   out.idAfter = activeRivenId();
   out.labelAfter = (loadPresetList('rivens').find((p) => p.id === out.rn) || {}).name;
-  out.primeAfterRename = localStorage.getItem('wfsim-presets-burston_prime-builder-builds');
-  out.bratonAfterRename = localStorage.getItem('wfsim-presets-braton-builder-builds');
+  out.primeAfterRename = slice('burston_prime');
+  out.bratonAfterRename = slice('braton');
 
   const del = document.querySelector('.cu-del');
   if (del) { del.click(); await sleep(1000); }
-  out.primeAfterDelete = localStorage.getItem('wfsim-presets-burston_prime-builder-builds');
+  out.primeAfterDelete = slice('burston_prime');
 
   // ---- 7. AN EDIT CHANGES THE CARD; IT DOES NOT DROP IT ----------------
   // The opposite of a delete, and the distinction is the whole point of a

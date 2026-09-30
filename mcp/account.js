@@ -12,8 +12,9 @@ const SITE = "https://wfsim.app";
 // (worker/agents.js). They read and write the person's synced builds through
 // the site's `/api/cloud/sync`, as the page does, and translate with the same
 // `headlessSeat`/`headlessStateAxes` the page does.
-const BUILD_LIST = /^wfsim-presets-(.+)-builder-builds$/;
-const buildList = (weapon) => `wfsim-presets-${weapon}-builder-builds`;
+/// The page's one build list — and, from a page before it, one per weapon.
+const BUILD_LIST = /^wfsim-presets-(.+-)?builder-builds$/;
+const BUILDS_LIST = "wfsim-presets-builder-builds";
 /// A preset name's length on the page's own rename field.
 const BUILD_NAME_MAX = 24;
 const buildLink = (meta, weapon, id) => `${SITE}${headlessWeaponPath(meta.weapons || [], weapon)}?build=${encodeURIComponent(id)}`;
@@ -90,10 +91,10 @@ export const ACCOUNT_TOOLS = [
       }
       const entry = id || crypto.randomUUID();
       const { lastResult, ...kept } = (prior && prior.body) || {};
-      const body = { ...kept, id: entry, savedAt: Date.now(),
+      const body = { ...kept, id: entry, scope: w.id, savedAt: Date.now(),
         name: String(name || kept.name || "agent build").slice(0, BUILD_NAME_MAX),
         state: { weapon: w.id, ...headlessStateAxes(h.meta(), build, w.id, exilus) } };
-      const r = await cloudSync(ctx, { changes: [{ id: entry, list: buildList(w.id), body, updated_at: Date.now() }], pull: false });
+      const r = await cloudSync(ctx, { changes: [{ id: entry, list: BUILDS_LIST, body, updated_at: Date.now() }], pull: false });
       if (r.ok === false) return r;
       return { id: entry, name: body.name, weapon: w.id, replaced: !!prior, link: buildLink(h.meta(), w.id, entry) };
     },

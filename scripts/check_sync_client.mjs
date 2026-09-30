@@ -15,7 +15,7 @@ const { evaluate, check } = app;
 
 const r = await evaluate(`(async () => {
   const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-  const L = 'wfsim-presets-torid-builder-builds';
+  const L = 'wfsim-presets-builder-builds';
   const st = (mod) => buildState('torid', { evoSel: {}, arcane: ['none'], arcaneRank: [null],
     slots: [{ mod, rank: mod ? 0 : null }], mode: null, valence: null, assembly: null, wielder: null });
   // THE FAKE SERVER: per account, id -> { list, body, updated_at, synced_at }.
@@ -68,7 +68,7 @@ const r = await evaluate(`(async () => {
 
   // BROWSER A: one build, with a measured result.
   localStorage.clear();
-  localStorage.setItem(L, JSON.stringify([{ id: 'a1', name: 'preset 1', savedAt: 5, state: st('serration'),
+  localStorage.setItem(L, JSON.stringify([{ id: 'a1', scope: 'torid', name: 'preset 1', savedAt: 5, state: st('serration'),
     lastResult: { at: 1, r: { dps: 1 } } }]));
   await signIn('acc1');
   out.aPushed = serverNames();
@@ -78,7 +78,7 @@ const r = await evaluate(`(async () => {
 
   // BROWSER B: its own "preset 1".
   localStorage.clear();
-  localStorage.setItem(L, JSON.stringify([{ id: 'b1', name: 'preset 1', savedAt: 6, state: st('split_chamber') }]));
+  localStorage.setItem(L, JSON.stringify([{ id: 'b1', scope: 'torid', name: 'preset 1', savedAt: 6, state: st('split_chamber') }]));
   await signIn('acc1');
   out.bAfterFirst = names();
   await syncNow();
@@ -127,8 +127,9 @@ const r = await evaluate(`(async () => {
   await syncNow(); await sleep(600);
   out.screen = (slots[0] || {}).mod || null;
 
-  // A LINK TO A BUILD THIS BROWSER DOES NOT HOLD YET opens it once the sync brings it.
-  srv.acc1.set('zz1', { list: L, body: { id: 'zz1', name: 'from an agent', savedAt: Date.now(), state: st('point_strike') },
+  // A LINK TO A BUILD THIS BROWSER DOES NOT HOLD YET opens it once the sync brings it —
+  // pushed by a page from before one store per collection, under its weapon's own list.
+  srv.acc1.set('zz1', { list: 'wfsim-presets-torid-builder-builds', body: { id: 'zz1', name: 'from an agent', savedAt: Date.now(), state: st('point_strike') },
     updated_at: Date.now(), synced_at: clock++ });
   // Arriving from elsewhere, as a link does: a weapon is opened, not re-shown.
   history.pushState({}, '', '/weapons/Braton'); route(); await sleep(2500);

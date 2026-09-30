@@ -234,9 +234,9 @@ than a label you invented, and deleting one breaks references elsewhere (a
 riven delete clears the slot that equipped it — a preset delete can never do
 that). The mental model is a FILE: a list you pick from, one open at a time,
 none open being a real state — so the UI is a list + editor, NOT the preset
-chip bar, and the key is `wfsim-customs-<weapon>-<domain>` /
+chip bar, and the key is `wfsim-customs-<domain>` /
 `wfsim-custom-open-…`. Everything below the key is shared: storage, undo,
-per-weapon scoping.
+scoping.
 
 **DAMAGE IMMUNITY AND STATUS IMMUNITY ARE TWO MECHANICS**, and the wiki puts
 both halves in one paragraph (`Status_Effect` §Status Immunity Interactions):
@@ -896,9 +896,16 @@ what the three do with its output, or it belongs inside one of them.
 Preset collections are domain-named `<owner>-<collection>`, where the owner is
 a module — or an editor, and an editor whose ENTIRE content is one collection
 is its own domain (`rivens`). Every durable name (localStorage key, DOM id,
-label) derives from the domain. A preset belongs to ONE WEAPON, so the storage
-key also carries it (`wfsim-presets-<weapon>-<domain>`) — DOM ids and labels
-stay weapon-free. THERE IS NO CROSS-WEAPON COPY: what survived a rescope was
+label) derives from the domain. ONE STORE PER COLLECTION
+(`wfsim-presets-<domain>`), and each entry carries its `scope` — the weapon,
+frame, companion or riven family it is about (`entryScope`); a read filters by
+it and a write replaces that owner's slice, so an entry still belongs to ONE
+weapon. An owner in the key made a store per weapon, which is a list per weapon
+to count, sync, undo and migrate. An entry's own `scope` beats any key it is
+found under: `foldOwnerLists` files a per-owner list an older page left back
+into the one list, and the sync reads a per-owner `list` the same way
+(`syncHome`). Undo remembers ONE OWNER'S SLICE, so undoing a step on one weapon
+puts back nothing of another's. THERE IS NO CROSS-WEAPON COPY: what survived a rescope was
 the mods every gun shares, since the axes that make a build its own (evolutions,
 valence, the assembly, a riven) are exactly the ones the target cannot hold.
 A build worth having comes from the board or from a share link. URLs mirror

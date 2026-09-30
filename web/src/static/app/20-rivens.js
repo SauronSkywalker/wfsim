@@ -630,16 +630,16 @@ function repointRivenInBuilds(weapons, from, to) {
     }
     return v === before ? (moved++, after) : v;
   };
-  for (const id of weapons) {
-    const key = `wfsim-presets-${id}-builder-builds`;
-    const raw = localStorage.getItem(key);
-    // The cheap gate: most weapons have never heard of this name, and parsing
-    // every build list on every rename would be the expensive way to find out.
-    if (!raw || raw.indexOf(before) < 0) continue;
-    let list;
-    try { list = JSON.parse(raw); } catch (_) { continue; }
-    localStorage.setItem(key, JSON.stringify(walk(list)));
-  }
+  const key = presetListKey("builder-builds");
+  const raw = localStorage.getItem(key);
+  // The cheap gate: most builds have never heard of this name, and parsing the
+  // build list on every rename would be the expensive way to find out.
+  if (!raw || raw.indexOf(before) < 0) return moved;
+  let list;
+  try { list = JSON.parse(raw); } catch (_) { return moved; }
+  if (!Array.isArray(list)) return moved;
+  const own = new Set(weapons);
+  localStorage.setItem(key, JSON.stringify(list.map((p) => (p && own.has(p.scope) ? walk(p) : p))));
   return moved;
 }
 

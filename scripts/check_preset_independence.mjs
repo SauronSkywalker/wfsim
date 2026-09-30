@@ -322,7 +322,7 @@ const cross = await evaluate(`(async () => {
   switchWeapon('sybaris'); await s(2000);
   out.next = { arcanes: arcanes.slice(), mods: slots.filter(x => x.mod).length,
                evos: Object.values(evoSel).filter(Boolean).length };
-  const stored = JSON.parse(localStorage.getItem('wfsim-presets-sybaris-builder-builds') || '[]')[0];
+  const stored = loadPresetList('builder-builds', 'sybaris')[0];
   out.stored = (stored || {}).state || null;
   return out;
 })()`);

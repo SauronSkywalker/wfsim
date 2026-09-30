@@ -51,7 +51,7 @@ const r = await evaluate(`(async () => {
   const note = formaNotes.builder;
   out.plan = note && note.r;
   out.live = slots.slice(0, 9).map((s) => [s.mod, s.pol]);
-  out.stored = JSON.parse(localStorage.getItem('wfsim-presets-torid-builder-builds'))
+  out.stored = loadPresetList('builder-builds', 'torid')
     .map((p) => ({ name: p.name, slots: p.state.slots.slice(0, 9).map((s) => [s.mod, s.pol]) }));
   out.table = box.querySelectorAll('.fp-table tr').length;
 
@@ -73,7 +73,7 @@ const r = await evaluate(`(async () => {
   // MODS STAY IN PLACE: neither build's mods move.
   set('fixed_order', true);
   const mods0 = slots.slice(0, 8).map((s) => s.mod).join();
-  const bOf = () => JSON.parse(localStorage.getItem('wfsim-presets-torid-builder-builds'))
+  const bOf = () => loadPresetList('builder-builds', 'torid')
     .find((p) => p.name === 'B').state.slots.slice(0, 8).map((s) => s.mod).join();
   const b0 = bOf();
   document.getElementById('forma-plan').querySelector('.fp-run').click();
@@ -97,7 +97,7 @@ const r = await evaluate(`(async () => {
   if (pt && save) {
     const gi = Number(save.dataset.save);
     save.click(); await sleep(300);
-    const ps = JSON.parse(localStorage.getItem('wfsim-presets-torid-builder-builds'));
+    const ps = loadPresetList('builder-builds', 'torid');
     const made = ps[ps.length - 1];
     const row = x.groups[gi].builds[pt.picks[gi].build].row;
     out.saved = { pols: made.state.slots.slice(0, 8).map((s) => s.pol).join(),

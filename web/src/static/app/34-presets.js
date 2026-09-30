@@ -5,16 +5,17 @@
 // is no second one to tell it apart from. Every durable name derives from the
 // domain mechanically, and full words only:
 //
-//   localStorage  wfsim-presets-<weapon>-<domain>        the list
+//   localStorage  wfsim-presets-<domain>                 the list (customs: wfsim-customs-)
 //                 wfsim-preset-active-<weapon>-<domain>  the active pointer
 //   DOM id        preset-bar-<domain>
 //
-// A preset BELONGS TO ONE WEAPON, so the STORAGE key carries the weapon while
-// the domain still names the collection — a weapon-less key is one global list
-// where edits on the Laetum show up on the Dual Toxocyst. There is no copy
-// ACROSS weapons: what survives a rescope is the mods every gun shares, and a
-// build worth having comes from the board or from a share link. No count cap:
-// presets live in the reader's localStorage rather than with us.
+// ONE LIST PER COLLECTION, and each entry carries its `scope` — the weapon,
+// frame, companion or riven family it is about (`entryScope`). A preset still
+// BELONGS TO ONE WEAPON: the READ filters by scope, so edits on the Laetum never
+// show up on the Dual Toxocyst. There is no copy ACROSS weapons: what survives a
+// rescope is the mods every gun shares, and a build worth having comes from the
+// board or from a share link. No count cap: presets live in the reader's
+// localStorage rather than with us.
 const presetWeapon = () => ($("weapon") && $("weapon").value) || "";
 /// EVERY SAVED COLLECTION, declared once — docs/UI.md §"Presets and customs".
 /// `kind` is which of the two it is: a PRESET is a saved state of a module that
@@ -105,8 +106,29 @@ const domainScope = (d, w) => {
   if (isSharedDomain(d)) return "";
   return (w ?? presetWeapon()) + "-";
 };
-const presetListKey = (d, w) =>
-  (isCustomDomain(d) ? "wfsim-customs-" : "wfsim-presets-") + domainScope(d, w) + d;
+/// WHAT AN ENTRY OF THIS COLLECTION SAYS IT IS ABOUT, for the owner `w` (the
+/// open weapon by default) — `null` for a collection about nothing, whose list
+/// is read whole.
+const entryScope = (d, w) => {
+  const c = COLLECTIONS.find((x) => x.domain === d);
+  if (c && c.scope === "global") return null;
+  if (d === RIVENS) return rivenScope(w ?? presetWeapon());
+  return w ?? presetWeapon();
+};
+/// THE STORE IS THE COLLECTION'S, never an owner's: an owner in the key made a
+/// store per weapon, which is a list per weapon to count, sync and migrate.
+const presetListKey = (d) => (isCustomDomain(d) ? "wfsim-customs-" : "wfsim-presets-") + d;
+/// The collections whose list was filed per owner, as `wfsim-presets-<owner>-<domain>`.
+const OWNER_KEYED = COLLECTIONS.filter((c) => c.scope === "weapon" || c.scope === "frame"
+  || c.scope === "companion").map((c) => c.domain);
+/// A per-owner list's key, read into `{ domain, owner }` — or null.
+const ownerKeyed = (k) => {
+  for (const d of OWNER_KEYED) {
+    const m = new RegExp(`^wfsim-presets-(.+)-${d}$`).exec(k);
+    if (m) return { domain: d, owner: m[1] };
+  }
+  return null;
+};
 /// …AND WHICH ONE IS OPEN IS THE FOLDER'S, even where the store is not.
 ///
 /// A riven's cards live in one list, but "the card I am looking at" is a
@@ -263,6 +285,42 @@ const presetFind = (list, key) => (key
     if (out !== raw) { try { localStorage.setItem(k, out); } catch (_) { /* again next load */ } }
   }
 })();
+/// ONE-TIME FOLD of every per-owner list into its collection's one list, each
+/// entry tagged with the owner it was filed under. AN ENTRY'S OWN `scope` BEATS
+/// ITS KEY: a page from before the fold files the one list under whichever
+/// weapon it has open, and the scope is what files it back. Two copies of one id
+/// keep the later save.
+(function foldOwnerLists() {
+  const into = new Map();
+  for (const k of Object.keys(localStorage)) {
+    const o = ownerKeyed(k);
+    if (!o) continue;
+    let list;
+    try { list = JSON.parse(localStorage.getItem(k)); } catch (_) { list = null; }
+    if (!into.has(o.domain)) {
+      let one;
+      try { one = JSON.parse(localStorage.getItem(presetListKey(o.domain))); } catch (_) { one = null; }
+      into.set(o.domain, Array.isArray(one) ? one : []);
+    }
+    const all = into.get(o.domain);
+    for (const p of Array.isArray(list) ? list : []) {
+      if (!p || typeof p !== "object") continue;
+      const scope = p.scope || o.owner;
+      const e = { ...p, scope };
+      if (o.domain === "builder-builds" && e.state && e.state.weapon && e.state.weapon !== scope) {
+        e.state = { ...e.state, weapon: scope };
+      }
+      const at = all.findIndex((q) => q && p.id && q.id === p.id);
+      if (at < 0) all.push(e);
+      else if ((e.savedAt || 0) >= (all[at].savedAt || 0)) all[at] = e;
+    }
+    try { localStorage.removeItem(k); } catch (_) { /* folded again next load */ }
+  }
+  for (const [d, all] of into) {
+    try { localStorage.setItem(presetListKey(d), JSON.stringify(all)); } catch (_) { /* again next load */ }
+  }
+})();
+
 /// ONE-TIME FOLD of every riven list this app has ever written into the ONE
 /// list, tagging each card with the scope it was filed under. It RUNS AFTER
 /// `META`, because a scope is something only the roster knows.
@@ -381,8 +439,8 @@ function savedCounts() {
 // Worth having because `gainKey()` resolves a whole scenario and is called
 // from a sort comparator, i.e. O(n log n) times per picker render.
 const presetParseCache = new Map();
-const loadPresetWhole = (d, w) => {
-  const k = presetListKey(d, w);
+const loadPresetWhole = (d) => {
+  const k = presetListKey(d);
   let raw;
   try { raw = localStorage.getItem(k); } catch (_) { return []; }
   const hit = presetParseCache.get(k);
@@ -392,15 +450,13 @@ const loadPresetWhole = (d, w) => {
   presetParseCache.set(k, { raw, list });
   return list;
 };
-/// WHAT THIS WEAPON CAN SEE. Every other collection is a whole key; a riven's
-/// store holds the roster's and the QUERY is what makes it this weapon's, which
-/// is the whole point of filing it by what it IS. Callers are unchanged: they
-/// asked for "this weapon's list" before and they still get one.
+/// WHAT THIS OWNER CAN SEE. The store holds the roster's and the QUERY is what
+/// makes it this weapon's (or frame's, or riven family's), which is the whole
+/// point of filing an entry by what it IS.
 const loadPresetList = (d, w) => {
-  const list = loadPresetWhole(d, w);
-  if (d !== RIVENS) return list;
-  const scope = rivenScope(w ?? presetWeapon());
-  return list.filter((p) => (p.scope || "") === scope);
+  const list = loadPresetWhole(d);
+  const scope = entryScope(d, w);
+  return scope === null ? list : list.filter((p) => (p.scope || "") === scope);
 };
 // The first "<thing> N" this collection does not already hold. Shared by both
 // kinds — naming a new item is the same problem whatever it is called.
@@ -528,22 +584,20 @@ function noteInline(msg) {
 
 const storePresetList = (d, ps, w) => {
   const weapon = w ?? presetWeapon();
-  const key = presetListKey(d, weapon);
-  // A RIVEN WRITE IS A REPLACEMENT OF THIS SCOPE'S SLICE, not of the file: the
-  // caller was handed this weapon's cards and hands them back, and every other
-  // family's sit in the same list untouched. The tag is re-applied on the way
-  // in so a card copied from another weapon lands under the one it is being
-  // saved for.
-  if (d === RIVENS) {
-    const scope = rivenScope(weapon);
-    ps = loadPresetWhole(d, weapon).filter((p) => (p.scope || "") !== scope)
-      .concat(ps.map((p) => ({ ...p, scope })));
-  } else {
-    // A NEW ENTRY GETS ITS ID ON THE WAY IN, so no "+ new", copy or import
-    // has to remember to mint one — and before `recordUndo`, so the step it
-    // records is of the list as stored.
-    mintPresetIds(ps);
-  }
+  const key = presetListKey(d);
+  // A WRITE REPLACES THIS OWNER'S SLICE, not the file: the caller was handed
+  // this weapon's entries and hands them back, and every other owner's sit in
+  // the same list untouched. The tag is re-applied on the way in, IN PLACE —
+  // the caller goes on holding these objects — so an entry copied from another
+  // weapon lands under the one it is being saved for.
+  const scope = entryScope(d, weapon);
+  if (scope !== null) ps.forEach((p) => { if (p && typeof p === "object") p.scope = scope; });
+  const others = scope === null ? [] : loadPresetWhole(d).filter((p) => (p.scope || "") !== scope);
+  // A NEW ENTRY GETS ITS ID ON THE WAY IN, so no "+ new", copy or import has
+  // to remember to mint one — and before `recordUndo`, so the step it records
+  // is of the list as stored. Over the WHOLE list, so a copy of another
+  // owner's entry is a new entry. A riven's id is minted with its slots.
+  if (d !== RIVENS) mintPresetIds(others.concat(ps));
   const isQuota = (e) => !!e && (e.name === "QuotaExceededError"
     || e.name === "NS_ERROR_DOM_QUOTA_REACHED" || e.code === 22 || e.code === 1014);
   // The REPLAY never travels. `ps` itself keeps it, because the caller and
@@ -556,7 +610,7 @@ const storePresetList = (d, ps, w) => {
   recordUndo(d, weapon, flat);
   const put = () => {
     try {
-      localStorage.setItem(key, JSON.stringify(flat));
+      localStorage.setItem(key, JSON.stringify(others.concat(flat)));
       syncSoon();
       return true;
     } catch (e) {
@@ -572,6 +626,7 @@ const storePresetList = (d, ps, w) => {
     if (put()) return;
   }
   for (const shed of PRESET_SHED) {
+    shed(others, activePreset);
     shed(flat, activePreset);
     if (put()) return;
   }

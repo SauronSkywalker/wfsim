@@ -30,7 +30,7 @@ await app.load("/");
 
 const ids = `(() => {
   const all = (k) => JSON.parse(localStorage.getItem(k) || '[]');
-  const b = all('wfsim-presets-${weapon}-builder-builds');
+  const b = all('wfsim-presets-builder-builds').filter((p) => p.scope === '${weapon}');
   return {
     builds: b.map((p) => p.id || null),
     scenarios: all('wfsim-presets-simulator-scenarios').map((p) => p.id || null),
@@ -136,5 +136,48 @@ check("two builds may share a name, and each opens as itself",
   JSON.stringify([m.twinB1, m.twinB2, m.chips]));
 check("renaming a custom target moves nothing a fight names", JSON.stringify(m.afterRename) === JSON.stringify(["custom:e1"]),
   JSON.stringify(m.afterRename));
+
+// ONE STORE PER COLLECTION. A per-weapon list an older page left folds into
+// it, each entry under the weapon it was filed under — unless the entry names
+// its own, which is how the one list gets back from an older page that filed
+// it under whatever weapon it had open.
+await evaluate(`(() => {
+  localStorage.clear();
+  const put = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+  put('wfsim-presets-braton-builder-builds', [
+    { id: 'own', name: 'braton own', savedAt: 1, state: { weapon: 'braton' } },
+    { id: 'moved', scope: 'laetum', name: 'laetum, filed under braton', savedAt: 2, state: { weapon: 'braton' } },
+  ]);
+  put('wfsim-presets-builder-builds', [{ id: 'moved', scope: 'laetum', name: 'older copy', savedAt: 1, state: { weapon: 'laetum' } }]);
+  put('wfsim-presets-excalibur-warframes', [{ id: 'wf', name: 'preset 1', savedAt: 1, state: {} }]);
+})()`);
+await app.load("/");
+const f = await evaluate(`(async () => {
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const all = JSON.parse(localStorage.getItem('wfsim-presets-builder-builds') || '[]');
+  const at = (id) => all.find((p) => p.id === id) || {};
+  const out = {
+    left: Object.keys(localStorage).filter((k) => /^wfsim-presets-.+-(builder-builds|warframes)$/.test(k)),
+    own: at('own').scope, moved: [all.filter((p) => p.id === 'moved').length, at('moved').scope, at('moved').name, at('moved').state.weapon],
+    frame: loadPresetList('warframes', 'excalibur').map((p) => p.id),
+  };
+  // AN UNDO PUTS BACK ONE WEAPON'S SLICE: a step taken on the Braton must not
+  // take back what was saved on the Laetum since.
+  storePresetList('builder-builds', loadPresetList('builder-builds', 'braton').concat([presetEntry('braton new', {})]), 'braton');
+  storePresetList('builder-builds', loadPresetList('builder-builds', 'laetum').concat([presetEntry('laetum new', {})]), 'laetum');
+  restorePresetSnapshot(undoStack.splice(lastIn(undoStack, 'builder-builds', 'braton'), 1)[0]);
+  await sleep(200);
+  out.bratonAfterUndo = loadPresetList('builder-builds', 'braton').map((p) => p.name);
+  out.laetumAfterUndo = loadPresetList('builder-builds', 'laetum').map((p) => p.name);
+  return out;
+})()`);
+check("a per-weapon list folds into the collection's one list, and its key goes",
+  f.left.length === 0 && f.own === "braton" && JSON.stringify(f.frame) === JSON.stringify(["wf"]), JSON.stringify(f));
+check("...an entry that names its own weapon goes back under it, the later save kept",
+  JSON.stringify(f.moved) === JSON.stringify([1, "laetum", "laetum, filed under braton", "laetum"]), JSON.stringify(f.moved));
+check("an undo on one weapon puts back that weapon's slice and nothing of another's",
+  JSON.stringify(f.bratonAfterUndo) === JSON.stringify(["braton own"])
+    && JSON.stringify(f.laetumAfterUndo) === JSON.stringify(["laetum, filed under braton", "laetum new"]),
+  JSON.stringify([f.bratonAfterUndo, f.laetumAfterUndo]));
 
 await app.finish("every stored entry has an id of its own, keeps it, and is pointed at by it");

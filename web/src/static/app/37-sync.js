@@ -17,6 +17,14 @@ const SYNC_IDLE_MS = 30000;
 /// The server's `PUSH_MAX`.
 const SYNC_CHUNK = 200;
 const isSyncList = (k) => /^wfsim-(presets|customs)-/.test(k);
+/// WHERE A PULLED ENTRY LIVES: a page from before one store per collection
+/// pushed `wfsim-presets-<owner>-<domain>`, and its entry is the collection's,
+/// filed under that owner unless it names its own.
+function syncHome(e) {
+  const o = e.body && ownerKeyed(e.list);
+  if (!o) return e;
+  return { ...e, list: presetListKey(o.domain), body: { ...e.body, scope: e.body.scope || o.owner } };
+}
 
 /// WHERE SYNC STANDS, for the account page: `idle` before it has run, `on`,
 /// `not_included` (the account lacks the feature), `other` (this browser
@@ -197,7 +205,8 @@ function syncApply(st, entries, sigs) {
   };
   const changedLists = new Set(), ids = new Set(), removed = new Set();
   const current = syncLocal();
-  for (const e of entries) {
+  for (const pulled of entries) {
+    const e = syncHome(pulled);
     const here = current.get(e.id);
     if (sigs.has(e.id) && (!here || syncSig(here.p) !== sigs.get(e.id))) continue;
     if (e.body === null) {

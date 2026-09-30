@@ -217,15 +217,10 @@ function linkersOfCompanionPreset(companion, id) {
 /// Every stored weapon build whose state passes `test`, as "<weapon> · <build>".
 function weaponLinks(test) {
   const out = [];
-  for (const key of Object.keys(localStorage)) {
-    const m = key.match(/^wfsim-presets-(.+)-builder-builds$/);
-    if (!m) continue;
-    let list = [];
-    try { list = JSON.parse(localStorage.getItem(key)) || []; } catch (_) { continue; }
-    const w = (META.weapons || []).find((x) => x.id === m[1]);
-    for (const p of list) {
-      if (test(p.state || {}, w)) out.push(`${w ? w.name : m[1]} · ${p.name}`);
-    }
+  for (const p of loadPresetWhole(BUILDS)) {
+    if (!p || typeof p !== "object") continue;
+    const w = (META.weapons || []).find((x) => x.id === p.scope);
+    if (test(p.state || {}, w)) out.push(`${w ? w.name : p.scope} · ${p.name}`);
   }
   return out;
 }

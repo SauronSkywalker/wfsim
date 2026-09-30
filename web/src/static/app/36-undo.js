@@ -20,9 +20,12 @@ const UNDO_LIMIT = 60;
 const UNDO_COALESCE_MS = 900;
 let undoStack = [], redoStack = [], undoSuspended = false;
 
+/// ONE OWNER'S SLICE of a collection: the store holds every weapon's, and a
+/// step that remembered the whole of it would put back another weapon's edits
+/// made since.
 const presetSnapshotOf = (d, w) => ({
   domain: d, weapon: w,
-  list: localStorage.getItem(presetListKey(d, w)),
+  list: localStorage.getItem(presetListKey(d)) === null ? null : JSON.stringify(loadPresetList(d, w)),
   active: localStorage.getItem(presetActiveKey(d, w)),
   at: Date.now(),
 });
@@ -105,8 +108,13 @@ function presetDoc(d) {
 function restorePresetSnapshot(s) {
   undoSuspended = true;
   try {
-    if (s.list === null) localStorage.removeItem(presetListKey(s.domain, s.weapon));
-    else localStorage.setItem(presetListKey(s.domain, s.weapon), s.list);
+    const scope = entryScope(s.domain, s.weapon);
+    const others = scope === null ? []
+      : loadPresetWhole(s.domain).filter((p) => (p.scope || "") !== scope);
+    const back = others.concat(JSON.parse(s.list || "[]"));
+    if (s.list === null && !others.length) localStorage.removeItem(presetListKey(s.domain));
+    else localStorage.setItem(presetListKey(s.domain), JSON.stringify(back));
+    syncSoon();
     if (s.active === null) localStorage.removeItem(presetActiveKey(s.domain, s.weapon));
     else localStorage.setItem(presetActiveKey(s.domain, s.weapon), s.active);
     // A step taken on ANOTHER weapon is restored in storage but not applied:
@@ -417,7 +425,7 @@ function materialiseBoardRivens(st) {
 // payload's own `st.weapon` is IGNORED.
 //
 // That parameter is the whole anti-crossing design. A preset's owner is already
-// decided by its storage key (`wfsim-presets-<weapon>-<domain>`), so carrying a
+// decided by its `scope` (`entryScope`), so carrying a
 // weapon inside the payload too gave the same fact two homes — and every
 // crossing bug was those two disagreeing: a payload saying `laetum` under Dual
 // Toxocyst's key dragged the editor (and the URL, below) to Laetum. Repairing
@@ -601,25 +609,20 @@ function migratePresetsToWeaponScope() {
     // under whichever weapon happened to be open and take it away from every
     // other one, on every load.
     if (isSharedDomain(d)) return;
-    [["wfsim-presets-" + d, presetListKey(d, w)],
-     ["wfsim-preset-active-" + d, presetActiveKey(d, w)]].forEach(([from, to]) => {
-      const v = localStorage.getItem(from);
-      if (v === null) return;
-      // RESCOPE while moving. The legacy list was global, so its entries carry
-      // whatever weapon was current when each was saved — filing them verbatim
-      // under `w` leaves a preset that yanks the editor to another weapon the
-      // moment it loads. Only the preset LIST needs this; the active-name key
-      // is a bare string.
-      let out = v;
-      if (from.startsWith("wfsim-presets-")) {
-        try {
-          out = JSON.stringify(JSON.parse(v).map((p) =>
-            p && p.state ? { ...p, state: { ...p.state, weapon: w } } : p));
-        } catch (_) { /* unparseable: move it as-is, initPresets repairs it */ }
-      }
-      if (localStorage.getItem(to) === null) localStorage.setItem(to, out);
-      localStorage.removeItem(from);
-    });
+    // AN ENTRY WITH NO OWNER came from the weapon-less list this app had first,
+    // and is filed under the weapon open now. RESCOPE while filing: its payload
+    // carries whatever weapon was current when it was saved, and a preset that
+    // names another weapon yanks the editor there the moment it loads.
+    const all = loadPresetWhole(d);
+    if (all.some((p) => p && typeof p === "object" && !p.scope)) {
+      localStorage.setItem(presetListKey(d), JSON.stringify(all.map((p) => (p && typeof p === "object" && !p.scope
+        ? { ...p, scope: w, ...(p.state ? { state: { ...p.state, weapon: w } } : {}) } : p))));
+    }
+    const from = "wfsim-preset-active-" + d, to = presetActiveKey(d, w);
+    const v = localStorage.getItem(from);
+    if (v === null) return;
+    if (localStorage.getItem(to) === null) localStorage.setItem(to, v);
+    localStorage.removeItem(from);
   });
 }
 
@@ -648,7 +651,7 @@ let buildWanted = null;
   try {
     if (localStorage.getItem(FLAG)) return;
     Object.keys(localStorage)
-      .filter((k) => /^wfsim-presets-.*-(simulator-scenarios|builder-builds)$/.test(k))
+      .filter((k) => /^wfsim-presets-(.*-)?(simulator-scenarios|builder-builds)$/.test(k))
       .forEach((k) => {
         const list = JSON.parse(localStorage.getItem(k));
         if (!Array.isArray(list)) return;

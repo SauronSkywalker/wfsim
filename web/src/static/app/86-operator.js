@@ -14,7 +14,7 @@ let opSaveTimer = null;
 function presetListWithIds(d, scope) {
   const ps = loadPresetList(d, scope);
   if (!mintPresetIds(ps)) return ps;
-  try { localStorage.setItem(presetListKey(d, scope), JSON.stringify(loadPresetWhole(d, scope))); } catch (_) { /* unsaved: minted again next read */ }
+  try { localStorage.setItem(presetListKey(d), JSON.stringify(loadPresetWhole(d))); } catch (_) { /* unsaved: minted again next read */ }
   return ps;
 }
 const opList = () => presetListWithIds(OPS);
