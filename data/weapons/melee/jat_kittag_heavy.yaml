@@ -1,12 +1,11 @@
 id: jat_kittag_heavy
 name: Jat Kittag
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: jat_kittag
 form: heavy
 transform_group: jat_kittag
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: heavy_charge_share_assumed
     published: 1.2
     charge: 0.4

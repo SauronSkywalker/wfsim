@@ -1,12 +1,13 @@
 id: gazal_machete_slide
 name: Gazal Machete
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: gazal_machete
 form: slide
 transform_group: gazal_machete
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
+  - reason: melee_passive_unmodelled
+    passive: "with a Djinn, each Fatal Attraction grants it +25% damage as Corrosive for 30 s"
 attack:
   # see notes: swing_trigger_pull_engine
   trigger: melee

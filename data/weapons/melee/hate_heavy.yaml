@@ -1,12 +1,11 @@
 id: hate_heavy
 name: Hate
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: hate
 form: heavy
 transform_group: hate
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_attack_unmodelled
     attacks: "Spectral Blade and Spectral Blade Explosion"
   - reason: melee_incarnon_unmodelled

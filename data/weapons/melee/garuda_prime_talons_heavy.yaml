@@ -1,12 +1,11 @@
 id: garuda_prime_talons_heavy
 name: Garuda Prime Talons
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: garuda_prime_talons
 form: heavy
 transform_group: garuda_prime_talons
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: heavy_charge_share_assumed
     published: 0.6
     charge: 0.2

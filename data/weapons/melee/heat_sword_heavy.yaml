@@ -1,12 +1,11 @@
 id: heat_sword_heavy
 name: Heat Sword
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: heat_sword
 form: heavy
 transform_group: heat_sword
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: heavy_charge_share_assumed
     published: 0.6
     charge: 0.2

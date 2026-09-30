@@ -1,12 +1,11 @@
 id: innodem_heavy
 name: Innodem
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: innodem
 form: heavy
 transform_group: innodem
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_attack_unmodelled
     attacks: "Dagger Projectile"
   - reason: melee_incarnon_unmodelled
