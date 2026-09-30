@@ -221,8 +221,8 @@
 - [Galatine Prime](https://wfsim.app/weapons/Galatine_Prime.md): Heavy Blade · Melee · Mastery Rank 13
 - [Galvacord](https://wfsim.app/weapons/Galvacord.md): Whip · Melee · Mastery Rank 6
 - [Gammacor](https://wfsim.app/weapons/Gammacor.md): Pistol · Secondary · Mastery Rank 2
-- [Garuda Prime Talons](https://wfsim.app/weapons/Garuda_Prime_Talons.md): Claws · Melee · Mastery Rank 1
-- [Garuda Talons](https://wfsim.app/weapons/Garuda_Talons.md): Claws · Melee · Mastery Rank 1
+- [Garuda Prime Talons](https://wfsim.app/weapons/Garuda_Prime_Talons.md): Claws · Exalted · Mastery Rank 1
+- [Garuda Talons](https://wfsim.app/weapons/Garuda_Talons.md): Claws · Exalted · Mastery Rank 1
 - [Gazal Machete](https://wfsim.app/weapons/Gazal_Machete.md): Machete · Melee · Mastery Rank 5
 - [Gaze](https://wfsim.app/weapons/Gaze.md): Rifle · Primary · Mastery Rank 0
 - [Gaze](https://wfsim.app/weapons/gaze_secondary.md): Pistol · Secondary · Mastery Rank 0
@@ -587,7 +587,7 @@
 - [Twin Vipers Wraith](https://wfsim.app/weapons/Twin_Vipers_Wraith.md): Dual Pistols · Secondary · Mastery Rank 7
 - [Tysis](https://wfsim.app/weapons/Tysis.md): Pistol · Secondary · Mastery Rank 9
 - [Vadarya Prime](https://wfsim.app/weapons/Vadarya_Prime.md): Sniper · Primary · Mastery Rank 15
-- [Valkyr Talons](https://wfsim.app/weapons/Valkyr_Talons.md): Claws · Melee · Mastery Rank 0
+- [Valkyr Talons](https://wfsim.app/weapons/Valkyr_Talons.md): Claws · Exalted · Mastery Rank 0
 - [Vastilok](https://wfsim.app/weapons/Vastilok.md): Gunblade · Melee · Mastery Rank 9
 - [Vasto](https://wfsim.app/weapons/Vasto.md): Pistol · Secondary · Mastery Rank 4
 - [Vasto Prime](https://wfsim.app/weapons/Vasto_Prime.md): Pistol · Secondary · Mastery Rank 10

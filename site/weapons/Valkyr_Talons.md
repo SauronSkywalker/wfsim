@@ -2,7 +2,7 @@
 
 Chinese name: Valkyr 的利爪
 
-Claws · Melee · Mastery Rank 0. 250 base damage (puncture 62.5, slash 187.5), 50% crit chance, 2x crit multiplier, 10% status chance.
+Claws · Exalted · Mastery Rank 0. 250 base damage (puncture 62.5, slash 187.5), 50% crit chance, 2x crit multiplier, 10% status chance.
 
 ## Not modelled here
 

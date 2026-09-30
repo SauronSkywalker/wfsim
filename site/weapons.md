@@ -25,7 +25,13 @@ Each links to its page as markdown; drop `.md` for the calculator.
 - [Prisma Dual Decurions](https://wfsim.app/weapons/Prisma_Dual_Decurions.md): Archgun · Archgun · Mastery Rank 1
 - [Velocitus](https://wfsim.app/weapons/Velocitus.md): Archgun · Archgun · Mastery Rank 0
 
-## Melee (228)
+## Exalted (3)
+
+- [Garuda Prime Talons](https://wfsim.app/weapons/Garuda_Prime_Talons.md): Claws · Exalted · Mastery Rank 1
+- [Garuda Talons](https://wfsim.app/weapons/Garuda_Talons.md): Claws · Exalted · Mastery Rank 1
+- [Valkyr Talons](https://wfsim.app/weapons/Valkyr_Talons.md): Claws · Exalted · Mastery Rank 0
+
+## Melee (225)
 
 - [Ack & Brunt](https://wfsim.app/weapons/Ack_&_Brunt.md): Sword And Shield · Melee · Mastery Rank 3
 - [Amanata](https://wfsim.app/weapons/Amanata.md): Polearm · Melee · Mastery Rank 2
@@ -99,8 +105,6 @@ Each links to its page as markdown; drop `.md` for the calculator.
 - [Galatine](https://wfsim.app/weapons/Galatine.md): Heavy Blade · Melee · Mastery Rank 3
 - [Galatine Prime](https://wfsim.app/weapons/Galatine_Prime.md): Heavy Blade · Melee · Mastery Rank 13
 - [Galvacord](https://wfsim.app/weapons/Galvacord.md): Whip · Melee · Mastery Rank 6
-- [Garuda Prime Talons](https://wfsim.app/weapons/Garuda_Prime_Talons.md): Claws · Melee · Mastery Rank 1
-- [Garuda Talons](https://wfsim.app/weapons/Garuda_Talons.md): Claws · Melee · Mastery Rank 1
 - [Gazal Machete](https://wfsim.app/weapons/Gazal_Machete.md): Machete · Melee · Mastery Rank 5
 - [Ghoulsaw](https://wfsim.app/weapons/Ghoulsaw.md): Assault Saw · Melee · Mastery Rank 7
 - [Glaive](https://wfsim.app/weapons/Glaive.md): Glaive · Melee · Mastery Rank 1
@@ -237,7 +241,6 @@ Each links to its page as markdown; drop `.md` for the calculator.
 - [Tonkkatt](https://wfsim.app/weapons/Tonkkatt.md): Tonfa · Melee · Mastery Rank 9
 - [Twin Basolk](https://wfsim.app/weapons/Twin_Basolk.md): Dual Swords · Melee · Mastery Rank 7
 - [Twin Krohkur](https://wfsim.app/weapons/Twin_Krohkur.md): Dual Swords · Melee · Mastery Rank 10
-- [Valkyr Talons](https://wfsim.app/weapons/Valkyr_Talons.md): Claws · Melee · Mastery Rank 0
 - [Vastilok](https://wfsim.app/weapons/Vastilok.md): Gunblade · Melee · Mastery Rank 9
 - [Vaykor Sydon](https://wfsim.app/weapons/Vaykor_Sydon.md): Polearm · Melee · Mastery Rank 11
 - [Venato](https://wfsim.app/weapons/Venato.md): Scythe · Melee · Mastery Rank 9

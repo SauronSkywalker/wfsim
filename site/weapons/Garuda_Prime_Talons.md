@@ -2,7 +2,7 @@
 
 Chinese name: Garuda Prime 之爪
 
-Claws · Melee · Mastery Rank 1. 280 base damage (impact 14, puncture 28, slash 238), 35% crit chance, 2x crit multiplier, 36% status chance.
+Claws · Exalted · Mastery Rank 1. 280 base damage (impact 14, puncture 28, slash 238), 35% crit chance, 2x crit multiplier, 36% status chance.
 
 ## Not modelled here
 

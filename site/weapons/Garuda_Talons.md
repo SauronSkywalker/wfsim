@@ -2,7 +2,7 @@
 
 Chinese name: Garuda 之爪
 
-Claws · Melee · Mastery Rank 1. 248 base damage (impact 19.84, puncture 54.56, slash 173.6), 20% crit chance, 2x crit multiplier, 36% status chance.
+Claws · Exalted · Mastery Rank 1. 248 base damage (impact 19.84, puncture 54.56, slash 173.6), 20% crit chance, 2x crit multiplier, 36% status chance.
 
 ## Not modelled here
 
