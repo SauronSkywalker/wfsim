@@ -5,6 +5,10 @@ inherits: fragor_prime
 form: slide
 transform_group: fragor_prime
 co_behavior: additive_with_base_damage
+unmodeled:
+  - reason: melee_passive_unmodelled
+    passive: "its combo counter starts at 30"
+
 attack:
   # see notes: swing_trigger_pull_engine
   trigger: melee

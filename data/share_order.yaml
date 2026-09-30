@@ -7,8 +7,8 @@
 #
 # Never edit by hand: run the generator, which only ever appends.
 #
-digest: e4b3f7aabb2a969a
-count: 3397
+digest: 2ee44510ba71032b
+count: 3396
 ids:
   - acceltra
   - acceltra_prime
@@ -3141,7 +3141,6 @@ ids:
   - tak_and_lug_block
   - tak_and_lug_block_forward
   - tak_and_lug_forward
-  - tak_and_lug_heavy
   - tak_and_lug_heavy_slam
   - tatsu
   - tatsu_block
