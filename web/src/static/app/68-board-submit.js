@@ -596,7 +596,7 @@ function boardProjection() {
   const w = weaponInfo(body.weapon) || {};
   if (!BOARD_HAVE.has(w.id)) return null;
   const p = loadPresetList(BUILDS).find((z) => presetId(z) === activePreset);
-  const r = p && p.lastResult && p.lastResult.r;
+  const r = p && (resultLatest(presetWeapon(), presetId(p)) || {}).r;
   if (!r || !w.id) return null;
   const met = metricOf((scenarioNamed(activeScenario) || {}).metric);
   const mine = metricValue(met, r);

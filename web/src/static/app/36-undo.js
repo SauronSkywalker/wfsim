@@ -380,8 +380,8 @@ function snapshotState() {
     // outside `simulator-scenarios` writes it.
     //
     // Nothing is lost. "What this build was last measured under" was never
-    // this field's job — `lastResult.key` is that record, it lives outside
-    // `state`, and it is what makes a stale result show as stale.
+    // this field's job — a result's record is (`resultLatest`), and its `key`
+    // is what makes a stale result show as stale.
   });
 }
 

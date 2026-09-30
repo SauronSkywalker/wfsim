@@ -44,8 +44,8 @@ function syncState() {
 }
 const saveSyncState = (s) => { try { localStorage.setItem(SYNC_KEY, JSON.stringify(s)); } catch (_) { /* resent next time */ } };
 
-/// WHAT TRAVELS is the entry less its measured result — the one part a click
-/// regenerates, and the bulk of a stored entry.
+/// WHAT TRAVELS is the entry less a measured result an older page left in it —
+/// results are records of their own (`results`) and do not travel.
 const syncBody = (p) => { const { lastResult, ...rest } = p; return rest; };
 /// WHAT COUNTS AS A CHANGE: everything that travels except when it was saved,
 /// which an auto-save moves without changing anything.
@@ -229,8 +229,7 @@ function syncApply(st, entries, sigs) {
     const ps = listOf(e.list);
     const at = ps.findIndex((p) => p && p.id === e.id);
     const mine = at >= 0 ? ps[at] : null;
-    const next = { ...e.body, ...(mine && mine.lastResult ? { lastResult: mine.lastResult } : {}) };
-    if (at >= 0) ps[at] = next; else ps.push(next);
+    if (at >= 0) ps[at] = e.body; else ps.push(e.body);
     changedLists.add(e.list);
     ids.add(e.id);
   }

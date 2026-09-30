@@ -2237,7 +2237,12 @@ def main() -> None:
                                f'const RELEASE_ID = "{release}";', 1)
     if released == counted:
         sys.exit("app.js: RELEASE_ID placeholder not found")
-    (APP / "app.js").write_text(released, encoding="utf-8", newline=chr(10))
+    # …AND WHICH ENGINE, which a result records so two can be compared run by run.
+    engined = released.replace('const ENGINE_ID = "dev";',
+                               f'const ENGINE_ID = "{pkg["digest"]}";', 1)
+    if engined == released:
+        sys.exit("app.js: ENGINE_ID placeholder not found")
+    (APP / "app.js").write_text(engined, encoding="utf-8", newline=chr(10))
     # …AND ONLY NOW ARE THE THREE FINAL. Every substitution above rewrites the
     # bytes, so a digest taken before any of them would name a file that is no
     # longer what was hashed.

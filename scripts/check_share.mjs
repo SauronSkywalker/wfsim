@@ -219,7 +219,7 @@ const bo = await evaluate(`(async () => {
     level: sim.level, headshot: sim.headshot_pct,
     active: activeScenario,
     scenarios: loadPresetList('simulator-scenarios').map(p => p.name),
-    landedResult: !!(b && b.lastResult),
+    landedResult: !!(b && resultLatest(document.getElementById('weapon').value, b.id)),
     said: (document.querySelector('.preset-toast, .ptoast') || {}).textContent || '',
   };
 })()`);

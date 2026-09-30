@@ -63,7 +63,7 @@ const agentScenario = () => {
 /// timestamp the caller would have to interpret.
 function agentResult() {
   const p = loadPresetList(BUILDS).find((x) => presetId(x) === activePreset);
-  const lr = p && p.lastResult;
+  const lr = p && resultLatest(presetWeapon(), presetId(p));
   if (!lr || !lr.r) return null;
   const m = metricOf(sim.metric);
   return {
@@ -243,7 +243,7 @@ const HEADLESS_DOOR_ACTIONS = HEADLESS_QUERIES.map((q) => ({
 /// the reader reads those as pictures, and the numbers they summarise are here.
 function agentRunSummary() {
   const p = loadPresetList(BUILDS).find((x) => presetId(x) === activePreset);
-  const r = p && p.lastResult && p.lastResult.r;
+  const r = p && (resultLatest(presetWeapon(), presetId(p)) || {}).r;
   if (!r) return null;
   const n = (v) => (typeof v === "number" ? Number(sig2(v)) || v : v);
   const total = (r.damage_sources || []).reduce((a, x) => a + (x.dmg || 0), 0) || 1;

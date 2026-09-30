@@ -58,6 +58,9 @@ const BUILD_SHA = "dev";
 /// differ. When a reader says "the desktop gives me something else", this is
 /// the string that answers it, so every shell prints it — docs/DISTRIBUTION.md.
 const RELEASE_ID = "dev";
+/// …AND WHICH ENGINE: the digest of the wasm module, the one thing two results
+/// must share to be compared run by run (`results`). The dev server's is `dev`.
+const ENGINE_ID = "dev";
 
 /// WHAT THIS REPOSITORY HOLDS, COUNTED BY THE BUILD.
 ///

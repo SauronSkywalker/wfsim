@@ -270,7 +270,7 @@ rulers handle it: the SERVER forces 0 on a weapon that cannot headshot.
 **NOTHING OUTSIDE A COLLECTION WRITES ITS STATE.** A build carries no `sim`
 snapshot: a build is a build, and the live scenario is seeded from the active
 `simulator-scenarios` entry and from nowhere else. "What this build was last
-measured under" is `lastResult.key`, which lives outside `state` and is what
+measured under" is its newest result record's `key` (§Results), which is what
 makes a stale result show as stale. Every collection writes through
 `storePresetList`, which is what makes one Ctrl+Z stack cover all four.
 Customs are OPTIONAL by nature: nothing is auto-created, the last one can be
@@ -371,7 +371,7 @@ in a fight the reader does not have is not a claim they could check. Links
 posted while both travelled still carry them; `decodeShare` does not read the
 fields, which is why `importShare` has no scenario step to guard rather than a
 guarded one. `check_share` builds such a link by hand and asserts the reader's
-own fight, their scenario list and the build's `lastResult` are all untouched.
+own fight, their scenario list and the build's results are all untouched.
 A v3 link names an id by its place in `data/share_order.yaml`, which is
 APPEND-ONLY and held there by a ratchet — `engine::data::share_order` recomputes the
 generator's digest over the whole list and fails on anything that is not an
@@ -826,23 +826,30 @@ alone and the footer is drawn from both at boot — after `checkBuildMatches`,
 which reads the token the page was SERVED with and would otherwise be reading
 what this line just wrote over it.
 
-## A measurement costs its summary, not its replay
+## Results
 
-**A MEASUREMENT COSTS ITS SUMMARY, NOT ITS REPLAY.** A REPLAY is 600 frames of
-debuff series per followed body plus a hit account per attack part — **65 KB
-against the 1.6 KB summary** of every number a card, a share or the board ever
-reads, 42x — and one would be stored per WEAPON. About seventy-five weapons
-fill a 5 MB origin. Past that `setItem` THROWS in the save path of the run
-that just finished, and the reader is told "sim failed: QuotaExceededError"
-for a simulation that worked.
-So a replay NEVER reaches the disk: `stripReplays` takes it out on the way to
-`localStorage` and `resultMem` (keyed by weapon AND preset) keeps it for the
-session. A SHED SWEEPS THE ORIGIN, not the list — a quota belongs to the
-origin, so `shedOtherResults` walks every `wfsim-presets-*`, oldest result
-first, and the list being written is the LAST thing it may touch. AND WHAT IS
+**A RUN IS A RECORD, WRITTEN ONCE** (`35-results.js`): the build and the fight
+as they were (`build`, `fight`, and `key`, which joins them), the engine that
+measured them (`engine`, the wasm digest), which preset and scenario it came
+from, and the summary `r`. A preset holds no result: "this build's number" is
+its newest record (`resultLatest`), so a second run does not erase the first.
+Every run is recorded; each build keeps its newest `RESULT_KEEP` unpinned
+records per scenario, and a pinned one (`kept`) until it is deleted. The blank
+records nothing, having no build to name.
 
-ALREADY THERE COMES BACK: `reclaimStoredReplays` strips every replay written
-under the old rule on the way in.
+**A RECORD IS NEVER MIGRATED.** A field it lacks was not measured when it was
+written, and a reader says "not recorded" rather than reading 0; a new field
+raises `RESULT_SCHEMA` and applies from then on. A `lastResult` an older page
+left in a saved entry becomes a record with what it held — no engine, the
+fight as its `key` states it — and leaves the entry only once the record is
+stored. Two records compare RUN BY RUN only on one engine and one fight.
+
+**A REPLAY NEVER REACHES THE DISK.** It is 600 frames of debuff series per
+followed body plus a hit account per attack part, about forty times the
+summary, and the one part of a result a button regenerates. `resultMem` (keyed
+by weapon AND preset) keeps it for the session. Records live in IndexedDB
+(`wfsim` / `results`), so a preset list in `localStorage` is small again; with
+no IndexedDB the in-memory mirror is all there is.
 
 ## A slot keeps the card and its rank apart; the wire joins them
 

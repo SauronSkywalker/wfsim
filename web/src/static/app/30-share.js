@@ -192,7 +192,7 @@ function sharePayload() {
   // recipient's own run is what decides. Three numbers, not the whole result
   // object — the card needs the headline and the fight, and the fight is
   // field 7.
-  const r = p && p.lastResult && p.lastResult.r;
+  const r = p && (resultLatest(presetWeapon(), presetId(p)) || {}).r;
   const m = r ? [r3(r.score), r.duration, Math.round(r.dps || 0)] : 0;
 
   // THE TWO AXES THAT ARE THE BUILD AND ARE NOT A SLOT: how the weapon is
@@ -406,7 +406,7 @@ async function importShare(code) {
   // same rule `check_preset_independence.mjs` asserts for a build being LOADED.
   whileApplying(() => restoreState(state, w.id));
   track("share.open", w.id);
-  // NO `lastResult`: a measurement is a build plus the fight it was made in
+  // NO RESULT: a measurement is a build plus the fight it was made in
   // plus the number, and the fight did not travel. A number without one is not
   // a claim a reader could check, so the build lands unmeasured and the first
   // run here is the first number it has ever had.

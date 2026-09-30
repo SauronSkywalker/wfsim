@@ -66,7 +66,7 @@ const r = await evaluate(`(async () => {
   const become = async (snap) => { await quiet(); localStorage.clear(); for (const [k, v] of Object.entries(snap)) localStorage.setItem(k, v); };
   const out = {};
 
-  // BROWSER A: one build, with a measured result.
+  // BROWSER A: one build, with a measured result an older page left in it.
   localStorage.clear();
   localStorage.setItem(L, JSON.stringify([{ id: 'a1', scope: 'torid', name: 'preset 1', savedAt: 5, state: st('serration'),
     lastResult: { at: 1, r: { dps: 1 } } }]));
@@ -89,7 +89,6 @@ const r = await evaluate(`(async () => {
   await become(A);
   await syncNow();
   out.aAfterB = names();
-  out.aKeptResult = !!(builds().find((p) => p.id === 'a1') || {}).lastResult;
 
   // A DELETES ITS BUILD; B EDITS ITS OWN.
   localStorage.setItem(L, JSON.stringify(builds().filter((p) => p.id !== 'a1')));
@@ -164,7 +163,6 @@ check("a second browser's first sync is a union, and two builds keep the one nam
   ok(r.bAfterFirst) === ok(["a1=preset 1", "b1=preset 1"]), ok(r.bAfterFirst));
 check("...and the rename is pushed, so the server agrees", ok(r.serverAfterB) === ok(r.bAfterFirst), ok(r.serverAfterB));
 check("the first browser ends on the same two names", ok(r.aAfterB) === ok(r.bAfterFirst), ok(r.aAfterB));
-check("...keeping its own measured result", r.aKeptResult === true);
 check("a deletion on one browser reaches the other", ok(r.bAfterDelete) === ok(["b1=preset 1"]), ok(r.bAfterDelete));
 check("an edit on one browser reaches the other, even in the millisecond of the last agreed write", r.aSeesEdit === "hornet_strike", ok([r.aSeesEdit, r.editWhy]));
 check("a remote edit to the build on screen reaches the screen", r.screen === "vital_sense", r.screen);

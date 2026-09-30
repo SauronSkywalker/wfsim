@@ -400,7 +400,7 @@ async function drawShareCard(canvas, url) {
   // counts the fraction of a kill too, so a build that drains 0.28% of one
   // enemy reads 0.0028 rather than the 0.00 that `kills` alone produced.
   const p = loadPresetList(BUILDS).find((z) => presetId(z) === activePreset);
-  const r = p && p.lastResult && p.lastResult.r;
+  const r = p && (resultLatest(presetWeapon(), presetId(p)) || {}).r;
   const lineEnd = qs ? W - qs - 50 : W - 36;
   y += 8;
   g.strokeStyle = line;

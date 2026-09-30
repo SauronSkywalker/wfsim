@@ -21,10 +21,9 @@ rather than a speed:
   network was only ever delivering the files.
 - **Presets survive.** Builds, scenarios and rivens live in `localStorage`;
   "clear browsing data" takes them all. The app has its own profile.
-- **The 5 MB origin quota is gone.** `stripReplays` and `shedOtherResults`
-  exist because a replay is 65 KB against a 1.6 KB summary and seventy weapons
-  fill an origin. A desktop build can keep them. *(Not done yet — the shell
-  ships first.)*
+- **The 5 MB origin quota is gone.** A replay stays out of a stored result
+  because it is about forty times the summary (docs/UI.md §Results). A desktop
+  build can keep them. *(Not done yet — the shell ships first.)*
 
 **It is not faster to compute with, and that is deliberate.** The engine could
 be called natively instead of through wasm, worth perhaps 20–50%, but then the

@@ -116,7 +116,7 @@ const r = await evaluate(`(async () => {
 
   // ---- A STORED RESULT FROM BEFORE THIS TABLE ---------------------------
   //
-  // lastResult lives in the scenario preset and is replayed on BOOT, so a
+  // A stored result is drawn again on BOOT, so a
   // payload written by an older build is the first thing this code meets on a
   // returning visitor's machine. It took the whole app down on the day the
   // table shipped — an unguarded .filter on undefined, thrown inside

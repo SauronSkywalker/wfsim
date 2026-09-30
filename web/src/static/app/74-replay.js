@@ -242,7 +242,7 @@ function replayMarkup(r) {
   // it; nothing claims a debuff except the fight.
   const dRows = curveRows(
     // A STORED RESULT PREDATES THIS TABLE and carries no debuff series at all —
-    // `lastResult` is saved in the scenario preset and replayed on boot, so a
+    // a stored result is drawn again on boot, so a
     // payload written by yesterday's build is the FIRST thing this code sees on
     // a returning visitor's machine. It cost the whole app: an unguarded
     // `.filter` on `undefined` threw inside `restoreState`, which is upstream

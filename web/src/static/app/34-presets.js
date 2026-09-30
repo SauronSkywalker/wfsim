@@ -501,72 +501,6 @@ const isGeneratedName = (name) => [PRESET_NAME, "build", "search", "scenario", "
 /// The builds collection's noun, which words its tooltips.
 const BUILD_NOUN = "build";
 
-/// WHAT A COLLECTION SHEDS when it will not fit, in the order of what it costs
-/// the reader to lose. Each stage is applied, the write retried, and the first
-/// one that fits wins.
-///
-/// localStorage is a few megabytes and this app stores MEASUREMENTS in it, so
-/// "it does not fit" is a state a long-lived install reaches. Throwing there is
-/// the worst outcome available: the edit is on screen and never persisted.
-/// THE ACTIVE PRESET'S RESULT IS NEVER SHED: it is what the write is usually
-/// FOR, and dropping it throws away the run that just finished — after which
-/// the first thing to re-read the collection hides the whole block.
-///
-/// A REPLAY NEVER REACHES THE DISK.
-///
-/// It is the biggest thing this app produces by a wide margin — 600 frames of
-/// debuff series per followed body — and the ONE part of a result a button
-/// regenerates. Stripped on the way to `localStorage` and kept in `resultMem`
-/// for the session, which makes the stored footprint of a measurement a few
-/// kilobytes of summary and BOUNDED. Not the shed being tidy: shedding responds
-/// to a full disk, this is why it stops being full.
-const stripReplays = (ps) => ps.map((x) => (x && x.lastResult && x.lastResult.r
-  && x.lastResult.r.replay
-  ? { ...x, lastResult: { ...x.lastResult, r: { ...x.lastResult.r, replay: null } } }
-  : x));
-
-/// EVERY WFSIM KEY, because a quota is the ORIGIN's and a shed was the list's.
-///
-/// This is what the first version got wrong. Writing
-/// `wfsim-presets-phantasma_prime-builder-builds` would fail on a disk filled
-/// by `wfsim-presets-boar_prime-builder-builds`, shed its own list down to
-/// nothing, still not fit, and give up — while the space it needed sat in
-/// another weapon's key that nothing was ever going to look at. So a shed
-/// sweeps the ORIGIN, and the list being written is simply the last one it is
-/// allowed to touch.
-const otherPresetKeys = (skip) => Object.keys(localStorage)
-  .filter((k) => k.startsWith("wfsim-presets-") && k !== skip);
-
-/// Drop `lastResult` from every OTHER collection, oldest first, until the write
-/// fits. A card falls back to "not measured yet", which is true and is one
-/// click from false — and it is the right thing to lose, because it is a
-/// measurement of a build the reader is not looking at.
-function shedOtherResults(skip) {
-  const rows = [];
-  for (const k of otherPresetKeys(skip)) {
-    let list = null;
-    try { list = JSON.parse(localStorage.getItem(k)); } catch (_) { continue; }
-    if (!Array.isArray(list)) continue;
-    list.forEach((x, i) => {
-      if (x && x.lastResult) rows.push({ k, i, at: x.lastResult.at || 0, list });
-    });
-  }
-  rows.sort((a, b) => a.at - b.at);
-  return rows.map((row) => () => {
-    row.list[row.i].lastResult = null;
-    try { localStorage.setItem(row.k, JSON.stringify(row.list)); } catch (_) {}
-  });
-}
-
-/// …and the ladder for the list actually being written, outside in. The active
-/// preset's own result is the LAST thing to go: it is usually what the write is
-/// FOR, and dropping it means the run that just finished was thrown away by the
-/// act of saving it.
-const PRESET_SHED = [
-  (ps, active) => ps.forEach((x) => { if (presetId(x) !== active) x.lastResult = null; }),
-  (ps, active) => ps.forEach((x) => { if (presetId(x) === active) x.lastResult = null; }),
-];
-
 /// A ONE-LINE NOTICE, in the page. No native dialog — `alert` is blocked in the
 /// owner's browser, and a message nobody can see is not a message. It replaces
 /// itself, so a repeated failure is one line rather than a stack.
@@ -600,39 +534,16 @@ const storePresetList = (d, ps, w) => {
   if (d !== RIVENS) mintPresetIds(others.concat(ps));
   const isQuota = (e) => !!e && (e.name === "QuotaExceededError"
     || e.name === "NS_ERROR_DOM_QUOTA_REACHED" || e.code === 22 || e.code === 1014);
-  // The REPLAY never travels. `ps` itself keeps it, because the caller and
-  // `resultMem` are still holding that object and the panel reads it.
-  const flat = stripReplays(ps);
-  // UNDO COMPARES LIKE WITH LIKE. Its "is this a no-op write" test is against
-  // what is ON THE DISK, which now never has a replay — so a `ps` that still
-  // carried one would differ from the stored copy every single time and push a
-  // step that undoes nothing.
-  recordUndo(d, weapon, flat);
-  const put = () => {
-    try {
-      localStorage.setItem(key, JSON.stringify(others.concat(flat)));
-      syncSoon();
-      return true;
-    } catch (e) {
-      if (!isQuota(e)) throw e;
-      return false;
-    }
-  };
-  if (put()) return;
-  // OTHER COLLECTIONS FIRST — see `shedOtherResults`. A quota is the origin's,
-  // so the space this write needs is usually not in this write's list.
-  for (const drop of shedOtherResults(key)) {
-    drop();
-    if (put()) return;
+  recordUndo(d, weapon, ps);
+  try {
+    localStorage.setItem(key, JSON.stringify(others.concat(ps)));
+    syncSoon();
+  } catch (e) {
+    if (!isQuota(e)) throw e;
+    // FULL. Say so where the reader is rather than throwing into a console
+    // nobody has open: the edit is on screen and it is not saved, and that is
+    // the one thing they need to know.
+    noteInline(tr("this browser's storage is full - the change is on screen but was not saved"));
   }
-  for (const shed of PRESET_SHED) {
-    shed(others, activePreset);
-    shed(flat, activePreset);
-    if (put()) return;
-  }
-  // NOTHING LEFT TO DROP. Say so where the reader is rather than throwing into a
-  // console nobody has open: the edit is on screen and it is not saved, and that
-  // is the one thing they need to know.
-  noteInline(tr("this browser's storage is full - the change is on screen but was not saved"));
 };
 

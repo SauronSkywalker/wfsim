@@ -111,12 +111,10 @@ const r = await evaluate(`(async () => {
   out.optPath = mark()[0] ? mark()[0].p : null;
 
   // ---- 4. THE SHARE CARD'S OWN MEASUREMENT -------------------------------
-  // It reuses the build's stored result when that result was measured under
-  // THIS fight, which Run Sim above just made true — so the cache is dropped
-  // to force the measurement this check is about.
-  const bp = loadPresetList(BUILDS);
-  const bi = bp.findIndex((x) => presetId(x) === activePreset);
-  if (bi >= 0) { delete bp[bi].lastResult; storePresetList(BUILDS, bp); }
+  // It reuses the build's newest record when that was measured under THIS
+  // fight, which Run Sim above just made true — so the records are dropped to
+  // force the measurement this check is about.
+  resultsFor(presetWeapon(), activePreset).forEach((x) => resultDelete(x.id));
   await sleep(400);
   mark = take();
   try { await resultForShare(); } catch (_) {}

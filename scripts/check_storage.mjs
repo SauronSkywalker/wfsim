@@ -1,24 +1,19 @@
-// STORAGE IS BOUNDED, AND A RESULT IS NOT WHAT FILLS IT.
+// A RESULT IS A RECORD, AND A REPLAY IS NOT WHAT IT COSTS.
 //
 //   node scripts/check_storage.mjs
 //
-// The THIRTY-FOURTH check, and the only one about how much room the app takes
-// on a reader's own machine.
+// The only check about what the app keeps on a reader's own machine. A replay
+// is tens of times the summary it belongs to, and the one part a button
+// regenerates (docs/UI.md §Results). Claims:
 //
-// A REPLAY IS 41x THE RESULT IT BELONGS TO, measured: 66 KB of frames and
-// debuff series against a 1.6 KB summary of every number a card, a share or the
-// board reads. Stored per WEAPON that fills a 5 MB origin at seventy-five of a
-// 136-weapon roster, and past it `localStorage.setItem` throws in the save path
-// of the run that just finished. Four claims:
-//
-//   · THE DISK NEVER TAKES A REPLAY — not "sheds it under pressure", never
-//     takes it, which is what bounds a measurement's footprint by its summary.
-//   · …AND THE PANEL STILL DRAWS ONE from `resultMem`, because a fix that
+//   · A RUN IS RECORDED, with the engine that measured it, and the stored
+//     record holds no replay …
+//   · …while the panel still draws one from `resultMem`, because a fix that
 //     removed the replay would pass the first assertion and break the feature.
-//   · A SHED SWEEPS THE ORIGIN, since a quota belongs to the origin: asserted
-//     by filling the disk from OTHER weapons' keys and then saving.
-//   · WHAT IS ALREADY THERE COMES BACK, because growth stopping is not space
-//     returning — the boot reclaims every replay written under the old rule.
+//   · A SECOND RUN DOES NOT ERASE THE FIRST; a build keeps its newest few
+//     unpinned records per scenario, and a pinned one past them.
+//   · THE RECORDS SURVIVE A RELOAD, and a `lastResult` an older page left in a
+//     saved build becomes a record and leaves the build.
 import { openApp } from "./cdp.mjs";
 
 const app = await openApp({ boot: 12000 });
@@ -54,11 +49,19 @@ const r = await evaluate(`(async () => {
   renderSim(); await sleep(400);
   await runSim(); await sleep(2500);
 
-  const key = 'wfsim-presets-builder-builds';
-  const raw = key ? localStorage.getItem(key) : '';
+  // WHAT IS STORED is read back from IndexedDB itself, not the mirror.
+  const stored = () => new Promise((ok) => {
+    const q = indexedDB.open('wfsim', 1);
+    q.onsuccess = () => { const g = q.result.transaction('results').objectStore('results').getAll();
+      g.onsuccess = () => { q.result.close(); ok(g.result); }; };
+    q.onerror = () => ok(null);
+  });
+  const rows = (await stored()) || [];
   out.ran = (document.getElementById('sim-results') || {}).textContent.length > 200;
-  out.storedReplay = /"replay":\s*\{/.test(raw);
-  out.storedChars = raw.length;
+  out.recorded = rows.length;
+  out.engine = rows[0] && 'engine' in rows[0] && rows[0].schema === RESULT_SCHEMA && rows[0].preset === activePreset;
+  out.storedReplay = rows.some((x) => x.r && x.r.replay);
+  out.storedChars = JSON.stringify(rows).length;
 
   // WHAT IT WOULD HAVE COST, so the assertion carries its own evidence.
   const mem = [...resultMem.values()][0];
@@ -71,71 +74,66 @@ const r = await evaluate(`(async () => {
   out.panelDrewReplay = !!document.querySelector(
     '#sim-results [class^="rp-"], #sim-results [class*=" rp-"]');
 
-  // ---- A SHED SWEEPS THE ORIGIN -----------------------------------------
-  // Fill the disk from OTHER weapons, the way a reader does by opening them,
-  // then ask this weapon to save. The old shed could only drop rows from the
-  // list it was writing, so it had nothing to give and the save was lost.
-  const junk = 'x'.repeat(40000);
-  let planted = 0;
-  for (let i = 0; i < 400; i++) {
-    try {
-      localStorage.setItem('wfsim-presets-filler' + i + '-builder-builds',
-        JSON.stringify([{ name: 'b1', state: {}, lastResult: { at: i, key: 'k', r: { pad: junk } } }]));
-      planted++;
-    } catch (_) { break; }
-  }
-  out.planted = planted;
-  out.filledUp = planted > 0 && (() => {
-    try { localStorage.setItem('wfsim-probe', junk); localStorage.removeItem('wfsim-probe'); return false; }
-    catch (_) { return true; }
-  })();
-  await runSim(); await sleep(2500);
-  const raw2 = localStorage.getItem(key) || '';
-  out.savedOnFullDisk = /"lastResult"/.test(raw2);
-  out.noteShown = !!document.getElementById('page-note');
-
-  // ---- AND THE OLD REPLAYS COME BACK ------------------------------------
-  localStorage.clear();
-  const k2 = 'wfsim-presets-boar_prime-builder-builds';
-  localStorage.setItem(k2, JSON.stringify(
-    // GUARDED, so a missing precondition FAILS the assertion above instead of
-    // throwing an unread TypeError out of the page-side body. A check that
-    // crashes says less than one that fails.
-    [{ name: 'b1', state: {}, lastResult: { at: 1, key: 'x', r: { ...((mem && mem.r) || {}) } } }]));
-  out.beforeReclaim = localStorage.getItem(k2).length;
-  out.freed = reclaimStoredReplays();
-  out.afterReclaim = localStorage.getItem(k2).length;
-  out.reclaimKeptTheResult = /"lastResult"/.test(localStorage.getItem(k2));
+  // ---- A SECOND RUN DOES NOT ERASE THE FIRST -----------------------------
+  const first = resultLatest(presetWeapon(), activePreset);
+  const fake = (n) => ({ ...first.r, score: n });
+  for (let i = 0; i < RESULT_KEEP + 2; i++) resultAdd(fake(i));
+  out.kept = resultsFor(presetWeapon(), activePreset).length;
+  out.latestIsNewest = resultLatest(presetWeapon(), activePreset).r.score === RESULT_KEEP + 1;
+  resultKeep(resultsFor(presetWeapon(), activePreset).at(-1).id, true);
+  out.pinnedId = resultsFor(presetWeapon(), activePreset).at(-1).id;
+  for (let i = 0; i < RESULT_KEEP; i++) resultAdd(fake(100 + i));
+  out.pinnedSurvives = resultsFor(presetWeapon(), activePreset).some((x) => x.id === out.pinnedId);
+  out.weapon = presetWeapon(); out.preset = activePreset;
+  await sleep(500);
   return out;
 })()`);
 
 check("the run produced a result", r.ran === true, JSON.stringify(r.ran));
-// The precondition, stated: without a build there is nothing to save into, and
-// every measurement below would be measuring zero. It threw an unread
-// TypeError instead until 2026-08-20.
-check("...into a build of our own, which is what a result is saved against",
+// The precondition, stated: without a build there is nothing to record against,
+// and every measurement below would be measuring zero.
+check("...into a build of our own, which is what a result is recorded against",
   r.hasBuild === true && r.memEntries === 1,
   `build ${r.hasBuild}, resultMem ${r.memEntries}`);
+check("the run is a stored record, naming its build and the engine that measured it",
+  r.recorded === 1 && r.engine === true, JSON.stringify([r.recorded, r.engine]));
 check(`a replay is ${Math.round(r.replayChars / 1024)} KB against a `
   + `${Math.round(r.summaryChars / 1024 * 10) / 10} KB summary — `
   + `${Math.round(r.replayChars / r.summaryChars)}x`,
   r.replayChars > 8000 && r.replayChars > r.summaryChars * 5,
   `${r.replayChars} / ${r.summaryChars}`);
-check("…and the disk never takes it",
+check("…and the record never takes it",
   r.storedReplay === false && r.storedChars < 40000,
-  `replay in storage ${r.storedReplay}, key ${r.storedChars} chars`);
+  `replay stored ${r.storedReplay}, ${r.storedChars} chars`);
 check("…while the session still has it, and the panel drew it",
   r.memHasReplay === true && r.panelDrewReplay === true,
   `mem ${r.memHasReplay}, drawn ${r.panelDrewReplay}`);
-check("a full disk is really full for this test",
-  r.planted > 0 && r.filledUp === true, `${r.planted} filler keys, full ${r.filledUp}`);
-check("…and a save still lands, because the shed sweeps the ORIGIN",
-  r.savedOnFullDisk === true, JSON.stringify({ saved: r.savedOnFullDisk, note: r.noteShown }));
-check(`the boot reclaims replays written under the old rule (${Math.round(r.freed / 1024)} KB)`,
-  r.freed > 8000 && r.afterReclaim < r.beforeReclaim / 4,
-  `${r.beforeReclaim} -> ${r.afterReclaim}`);
-check("…without throwing the measurement away with them",
-  r.reclaimKeptTheResult === true, JSON.stringify(r.reclaimKeptTheResult));
+check("a second run does not erase the first, and a build keeps its newest few",
+  r.kept === 5 && r.latestIsNewest === true, JSON.stringify([r.kept, r.latestIsNewest]));
+check("…and a pinned record outlives them", r.pinnedSurvives === true);
+
+// THE RECORDS SURVIVE A RELOAD, and a result an older page kept inside a build
+// becomes a record of its own.
+await evaluate(`(() => {
+  localStorage.setItem('wfsim-presets-torid-builder-builds', JSON.stringify([{ id: 'old', name: 'old', savedAt: 1,
+    state: {}, lastResult: { at: 7, key: JSON.stringify([[], [], [], {}, { enemy: 'x' }]), r: { score: 42, replay: { big: 1 } } } }]));
+})()`);
+await app.load("/");
+const back = await evaluate(`(async () => {
+  await new Promise((ok) => setTimeout(ok, 1500));
+  const mine = resultsFor(${JSON.stringify(r.weapon)}, ${JSON.stringify(r.preset)});
+  const old = resultLatest('torid', 'old');
+  return {
+    survived: mine.length, pinned: mine.some((x) => x.id === ${JSON.stringify(r.pinnedId)}),
+    old: old && [old.r.score, old.at, old.fight && old.fight.enemy, 'engine' in old, old.r.replay],
+    leftInBuild: /lastResult/.test(localStorage.getItem('wfsim-presets-builder-builds') || ''),
+  };
+})()`);
+check("the records survive a reload, the pinned one with them",
+  back.survived === 6 && back.pinned === true, JSON.stringify(back));
+check("a result an older page kept in a build becomes a record, with what it held and no more",
+  JSON.stringify(back.old) === JSON.stringify([42, 7, "x", false, null]) && back.leftInBuild === false,
+  JSON.stringify([back.old, back.leftInBuild]));
 
 // ---------------------------------------------------------------------------
 // A RIVEN IS ADDRESSED BY WHAT IT IS AND FILTERED BY WHAT IT IS ABOUT.

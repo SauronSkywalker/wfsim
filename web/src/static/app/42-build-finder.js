@@ -523,8 +523,7 @@ function applyScenario(st) {
   // live fight, from the enemy that scenario itself carries. It changes nothing
   // about what those bodies are — it writes down what they already were — and
   // from that moment they stop following. Growth stopping is not the same as
-  // the existing ones being fixed, which is the same lesson as
-  // `reclaimStoredReplays` and was missed the same way.
+  // the existing ones being fixed.
   (sim.formation || []).forEach((f) => { if (!f.enemy) f.enemy = sim.enemy; });
   renderSim();      // redraws every knob, and the bar with them
   refreshPanel();   // the Tenno half of a scenario changes what the build is worth

@@ -1,9 +1,7 @@
-// ---- per-preset result memory ------------------------------------------
-// The simulator shows the ACTIVE preset's LAST test — switching builds
-// switches the displayed numbers too. A finished run
-// saves into the preset's entry — as `lastResult`, OUTSIDE `state`, so
-// the unsaved-changes dot ignores it — and every preset switch restores
-// it (or clears, when that build was never tested).
+// ---- the result on screen ------------------------------------------------
+// The simulator shows the ACTIVE preset's newest record (`resultLatest`) —
+// switching builds switches the displayed numbers too, or clears them when
+// that build was never tested.
 // WHAT was measured: the build and the fight, together. A number is only
 // this build's number while both are unchanged — the share card states the
 // two side by side, so it has to know when the stored one stopped matching.
@@ -13,22 +11,17 @@ function simKey() {
 }
 
 function saveSimResult(r) {
-  const ps = loadPresetList(BUILDS);
-  const at = ps.findIndex((p) => presetId(p) === activePreset);
-  if (at < 0) return;
-  ps[at].lastResult = { r, at: Date.now(), key: simKey() };
-  // …AND IN MEMORY FIRST, which is where the REPLAY stays for good. See
-  // `stripReplays`: the copy that reaches the disk has none.
-  resultMem.set(resultMemKey(), ps[at].lastResult);
-  storePresetList(BUILDS, ps);
+  const rec = resultAdd(r);
+  // …AND IN MEMORY, which is where the REPLAY stays for good: a record has none.
+  if (rec) resultMem.set(resultMemKey(), { ...rec, r });
 }
 
 // The result to PUT ON A CARD: the stored one if it still describes this
 // build in this fight, else a fresh run. Reusing a stale one would be worse than having none — the card
 // would attach a measurement to a build that never produced it.
 async function resultForShare() {
-  const p = loadPresetList(BUILDS).find((x) => presetId(x) === activePreset);
-  if (p && p.lastResult && p.lastResult.r && p.lastResult.key === simKey()) return p.lastResult;
+  const rec = resultLatest(presetWeapon(), activePreset);
+  if (rec && rec.r && rec.key === simKey()) return rec;
   // The PANEL first, awaited. `refreshPanel` is debounced and returns before
   // it has answered, so a share clicked seconds after an edit was composing
   // its buff map from the PREVIOUS build's `buffList` — a buff the new mod
@@ -52,10 +45,7 @@ async function resultForShare() {
 }
 /// THE RESULT ON SCREEN, held in memory as well as in storage.
 ///
-/// Redrawing from localStorage alone makes every re-render a bet that the save
-/// worked — and on a full disk it has not, so clicking a body in the result
-/// deletes the result. This is a RENDER CACHE and nothing else: storage is
-/// still where a result persists
+/// A RENDER CACHE and nothing else: the record is where a result persists
 /// across a reload, and this is only what the current page is showing.
 /// KEYED BY WEAPON AND PRESET, because switching either one asks for a
 /// different result and both are legal to do without re-running.
@@ -65,23 +55,17 @@ const resultMemKey = () => JSON.stringify([presetWeapon(), activePreset]);
 function renderStoredSimResult() {
   const box = $("sim-results");
   if (!box) return;
-  let p = loadPresetList(BUILDS).find((x) => presetId(x) === activePreset);
-  // WHAT IS ON SCREEN WINS over what reached the disk, and only for the build
-  // it was measured on — a cache that outlived its build would attach a number
-  // to something that never produced it.
+  let shown = resultLatest(presetWeapon(), activePreset);
+  // WHAT IS ON SCREEN WINS over the record, and only for the build it was
+  // measured on — a cache that outlived its build would attach a number to
+  // something that never produced it. A RECORD HAS NO REPLAY, so memory is
+  // where the median engagement, the buff curves and the hit account live for
+  // the whole session: preferred whenever it describes the same run.
   const mem = resultMem.get(resultMemKey());
-  // A STORED RESULT HAS NO REPLAY (see `stripReplays`), so memory is not only
-  // the fallback for a failed write — it is where the median engagement, the
-  // buff curves and the hit account live for the whole session. Prefer it
-  // whenever it describes the same run, and fall back to it entirely when the
-  // disk has nothing.
-  if (mem && (!p || !p.lastResult || !p.lastResult.r
-      || (p.lastResult.key === mem.key && mem.r.replay))) {
-    p = { lastResult: mem };
-  }
-  const has = !!(p && p.lastResult && p.lastResult.r);
+  if (mem && (!shown || !shown.r || (shown.key === mem.key && mem.r.replay))) shown = mem;
+  const has = !!(shown && shown.r);
   show("sim-results-block", has); // an untested build shows no Result block
-  if (has) renderResults(p.lastResult.r, p.lastResult.at);
+  if (has) renderResults(shown.r, shown.at);
   else box.innerHTML = "";
 }
 
