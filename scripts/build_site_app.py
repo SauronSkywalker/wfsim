@@ -580,6 +580,33 @@ def quote_attr(path: str) -> str:
     return '"' + path + '"'
 
 
+# What a number is computed from, for `engine_id`: the code that computes it
+# and the data it reads — less the data no number reads.
+ENGINE_SOURCES = ("engine/src", "webapi/src", "wasm/src", "data")
+ENGINE_SOURCES_NOT = ("data/i18n/", "data/board_state.yaml", "data/market.yaml",
+                      "data/assets.yaml", "data/notes.yaml", "data/README.md")
+
+
+def engine_id() -> str:
+    """WHICH ENGINE — what a result records, so two results say whether they
+    were computed by the same arithmetic on the same data (docs/UI.md
+    §Results). The wasm module's own digest moves with every translation it
+    carries, which would call every result "older engine" after a wording
+    change. Line endings are normalised, so a checkout's conversion moves
+    nothing. A comment edit does move it: it errs towards "not comparable".
+    """
+    h = hashlib.sha256()
+    files = sorted(p for d in ENGINE_SOURCES for p in (ROOT / d).rglob("*") if p.is_file())
+    files.append(ROOT / "Cargo.lock")
+    for p in files:
+        rel = p.relative_to(ROOT).as_posix()
+        if rel.startswith(ENGINE_SOURCES_NOT):
+            continue
+        h.update(rel.encode("utf-8") + bytes(1))
+        h.update(p.read_bytes().replace(bytes([13, 10]), bytes([10])) + bytes(1))
+    return h.hexdigest()[:12]
+
+
 def release_id() -> str:
     """WHICH RELEASE THIS IS — a digest over the release plane and nothing else.
 
@@ -2239,7 +2266,7 @@ def main() -> None:
         sys.exit("app.js: RELEASE_ID placeholder not found")
     # …AND WHICH ENGINE, which a result records so two can be compared run by run.
     engined = released.replace('const ENGINE_ID = "dev";',
-                               f'const ENGINE_ID = "{pkg["digest"]}";', 1)
+                               f'const ENGINE_ID = "{engine_id()}";', 1)
     if engined == released:
         sys.exit("app.js: ENGINE_ID placeholder not found")
     (APP / "app.js").write_text(engined, encoding="utf-8", newline=chr(10))
