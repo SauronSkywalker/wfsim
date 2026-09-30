@@ -161,7 +161,7 @@ check("...and they stay editable — no frame reaches the 700-energy gate",
   // open — and the heading says WHOSE floor it is, since the numbers alone
   // cannot.
   check("...and the line names the wielder rather than a generic one",
-    /Companion|守护/.test(sen.line), JSON.stringify(sen.line).slice(0, 120));
+    /Companion|同伴/.test(sen.line), JSON.stringify(sen.line).slice(0, 120));
 }
 
 check("the wielder floor is stated before the boxes that override it",
