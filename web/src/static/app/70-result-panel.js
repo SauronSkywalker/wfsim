@@ -11,6 +11,7 @@ function simKey() {
 }
 
 function saveSimResult(r) {
+  resultViewing = null;
   const rec = resultAdd(r);
   // …AND IN MEMORY, which is where the REPLAY stays for good: a record has none.
   if (rec) resultMem.set(resultMemKey(), { ...rec, r });
@@ -52,22 +53,110 @@ async function resultForShare() {
 const resultMem = new Map();
 const resultMemKey = () => JSON.stringify([presetWeapon(), activePreset]);
 
+/// WHICH RECORD THE RESULT BLOCK SHOWS when it is not the newest — an id from
+/// the history, or null. It names the open build's record or it is dropped, so
+/// opening another build or running again shows the newest.
+let resultViewing = null;
+
 function renderStoredSimResult() {
   const box = $("sim-results");
   if (!box) return;
+  const viewing = resultViewing
+    && results.find((x) => x.id === resultViewing && x.weapon === presetWeapon() && x.preset === activePreset);
+  if (!viewing) resultViewing = null;
+  renderResultHistory(viewing);
+  if (viewing) {
+    show("sim-results-block", true);
+    renderResults(viewing.r, viewing.at);
+    return;
+  }
   let shown = resultLatest(presetWeapon(), activePreset);
   // WHAT IS ON SCREEN WINS over the record, and only for the build it was
   // measured on — a cache that outlived its build would attach a number to
   // something that never produced it. A RECORD HAS NO REPLAY, so memory is
   // where the median engagement, the buff curves and the hit account live for
-  // the whole session: preferred whenever it describes the same run.
+  // the whole session: preferred when it IS that record, by id — two runs of
+  // one build in one fight share a `key` and not a number.
   const mem = resultMem.get(resultMemKey());
-  if (mem && (!shown || !shown.r || (shown.key === mem.key && mem.r.replay))) shown = mem;
+  if (mem && shown && mem.id === shown.id && mem.r.replay) shown = mem;
   const has = !!(shown && shown.r);
   show("sim-results-block", has); // an untested build shows no Result block
   if (has) renderResults(shown.r, shown.at);
   else box.innerHTML = "";
 }
+
+/// "3 Oct 15:26" in the page's language; a record that never said when is "—".
+const resultTime = (at) => (at ? new Date(at).toLocaleString(LANG === "zh" ? "zh-CN" : "en-GB",
+  { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "—");
+
+/// THE OPEN BUILD'S HISTORY: every run kept, newest first, each opening in the
+/// result block above as the page draws a result today. A row says what no
+/// longer holds — the build or the fight changed since, another engine
+/// measured it — and nothing a record did not record.
+function renderResultHistory(viewing) {
+  const box = $("sim-history"), note = $("sim-viewing");
+  if (!box || !note) return;
+  const recs = resultsFor(presetWeapon(), activePreset);
+  note.hidden = !viewing;
+  note.innerHTML = viewing
+    ? `<span>${escHtml(tr("showing the run of {t}").replace("{t}", resultTime(viewing.at)))}</span>`
+      + `<button type="button" class="pchip" data-rlatest>${escHtml(tr("back to the newest"))}</button>`
+    : "";
+  if (!recs.length) { box.innerHTML = ""; return; }
+  const on = viewing ? viewing.id : recs[0].id;
+  const key = simKey();
+  const rows = recs.map((x) => {
+    const m = metricOf((x.fight || {}).metric);
+    const tags = [];
+    if (x.key !== key) tags.push(tr("build or fight changed since"));
+    if (!x.engine) tags.push(tr("engine not recorded"));
+    else if (x.engine !== ENGINE_ID) tags.push(tr("older engine"));
+    const sc = presetLabel(scenarioNamed(x.scenario));
+    return `<tr class="${x.id === on ? "on" : ""}" data-rview="${escHtml(x.id)}" tabindex="0">`
+      + `<td>${escHtml(resultTime(x.at))}</td>`
+      + `<td>${sc ? escHtml(sc) : `<span class="rh-tag">${escHtml(tr("not recorded"))}</span>`}</td>`
+      + `<td class="num"><b>${escHtml(sig2(metricValue(m, x.r)))}</b> ${escHtml(metricLabel(m))}</td>`
+      + `<td>${tags.map((t) => `<span class="rh-tag">${escHtml(t)}</span>`).join(" ")}</td>`
+      + `<td class="rh-act"><button type="button" class="rh-pin" data-rkeep="${escHtml(x.id)}" aria-pressed="${x.kept ? "true" : "false"}"`
+      + ` title="${escHtml(tr(x.kept ? "unpin: trimmed with the rest" : "pin: never trimmed"))}">${x.kept ? "★" : "☆"}</button>`
+      + `<button type="button" class="rh-del" data-rdel="${escHtml(x.id)}" title="${escHtml(tr("delete this run"))}">×</button></td></tr>`;
+  }).join("");
+  box.innerHTML = foldBlock("sim-history", tr("History"),
+    tr("every run of this build, newest first; the newest {n} per scenario are kept, and every pinned one")
+      .replace("{n}", RESULT_KEEP),
+    `<div class="rh-wrap"><table class="rh"><tbody>${rows}</tbody></table></div>`);
+  wireFolds(box);
+}
+
+// One listener each, on containers that outlive every render.
+document.addEventListener("click", (e) => {
+  const t = e.target;
+  if (!t || !t.closest) return;
+  if (t.closest("#sim-viewing [data-rlatest]")) {
+    resultViewing = null;
+    renderStoredSimResult();
+    return;
+  }
+  if (!t.closest("#sim-history")) return;
+  const keep = t.closest("[data-rkeep]"), del = t.closest("[data-rdel]"), row = t.closest("[data-rview]");
+  if (keep) {
+    const rec = results.find((x) => x.id === keep.dataset.rkeep);
+    if (rec) resultKeep(rec.id, !rec.kept);
+    renderResultHistory(resultViewing && results.find((x) => x.id === resultViewing));
+  } else if (del) {
+    resultDelete(del.dataset.rdel);
+    if (resultViewing === del.dataset.rdel) resultViewing = null;
+    renderStoredSimResult();
+  } else if (row) {
+    const newest = resultLatest(presetWeapon(), activePreset);
+    resultViewing = newest && newest.id === row.dataset.rview ? null : row.dataset.rview;
+    renderStoredSimResult();
+  }
+});
+document.addEventListener("keydown", (e) => {
+  const row = e.target && e.target.closest && e.target.closest("#sim-history [data-rview]");
+  if (row && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); row.click(); }
+});
 
 // ---- REPLAY -------------------------------------------------------------
 //

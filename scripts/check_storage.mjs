@@ -85,6 +85,20 @@ const r = await evaluate(`(async () => {
   for (let i = 0; i < RESULT_KEEP; i++) resultAdd(fake(100 + i));
   out.pinnedSurvives = resultsFor(presetWeapon(), activePreset).some((x) => x.id === out.pinnedId);
   out.weapon = presetWeapon(); out.preset = activePreset;
+
+  // ---- THE HISTORY OPENS AN OLDER RUN IN THE BLOCK ABOVE -----------------
+  renderStoredSimResult(); await sleep(300);
+  const hrows = [...document.querySelectorAll('#sim-history [data-rview]')];
+  out.historyRows = hrows.length;
+  const older = hrows[2];
+  if (older) { older.click(); await sleep(400); }
+  const want = results.find((x) => x.id === resultViewing);
+  out.viewing = !document.getElementById('sim-viewing').hidden && !!want && !!older
+    && want.id === older.dataset.rview && shownResult.r.score === want.r.score;
+  const latest = document.querySelector('#sim-viewing [data-rlatest]');
+  if (latest) { latest.click(); await sleep(300); }
+  out.backToNewest = document.getElementById('sim-viewing').hidden && resultViewing === null
+    && shownResult.r.score === resultLatest(presetWeapon(), activePreset).r.score;
   await sleep(500);
   return out;
 })()`);
@@ -111,6 +125,9 @@ check("…while the session still has it, and the panel drew it",
 check("a second run does not erase the first, and a build keeps its newest few",
   r.kept === 5 && r.latestIsNewest === true, JSON.stringify([r.kept, r.latestIsNewest]));
 check("…and a pinned record outlives them", r.pinnedSurvives === true);
+check("the history lists every run kept", r.historyRows === 6, JSON.stringify(r.historyRows));
+check("…a row opens that run in the result block, and says so", r.viewing === true);
+check("…and one click goes back to the newest", r.backToNewest === true);
 
 // THE RECORDS SURVIVE A RELOAD, and a result an older page kept inside a build
 // becomes a record of its own.

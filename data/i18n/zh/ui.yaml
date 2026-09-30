@@ -1649,6 +1649,18 @@ ui:
   typical: 通常
   "undo (Ctrl+Z)": 撤销（Ctrl+Z）
   "undone": 已撤销
+  # A result's history (70-result-panel.js).
+  "History": 历史
+  "every run of this build, newest first; the newest {n} per scenario are kept, and every pinned one": "这个配装的每次运行，最新的在前；每个场景保留最近 {n} 次，钉住的一直保留"
+  "showing the run of {t}": "正在看 {t} 那次运行的结果"
+  "back to the newest": 回到最新
+  "build or fight changed since": 之后改过配装或场景
+  "engine not recorded": 未记录引擎
+  "older engine": 旧引擎
+  "not recorded": 未记录
+  "pin: never trimmed": 钉住：不会被自动清理
+  "unpin: trimmed with the rest": 取消钉住：和其他记录一起按数量清理
+  "delete this run": 删除这次运行
   "unequipped": 已卸下
   "unintended, modelled as it plays": 非本意，按实际表现建模
   uptime: 在场
