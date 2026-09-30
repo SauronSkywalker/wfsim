@@ -173,7 +173,6 @@ says who the key is and what it may do. A claimed key's \`builds\` scope reads
 and writes the person's saved builds — on the MCP server as the tools
 \`account_builds_list\` and \`account_builds_save\`, which hand back the link
 that opens each build, or directly through \`POST ${origin}/api/cloud/sync\`.
-WFSim Membership carries it; without it the tools answer \`not_a_member\`.
 
 ## Revoke
 

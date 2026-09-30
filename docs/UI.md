@@ -254,8 +254,8 @@ build" is not something the builder can show.
 
 ## Build sync
 
-**A MEMBER'S SAVED ENTRIES ARE THE SAME ON EVERY BROWSER SIGNED IN TO THE
-ACCOUNT** — every list under `wfsim-presets-*` and `wfsim-customs-*`, entry by
+**A SIGNED-IN READER'S SAVED ENTRIES ARE THE SAME ON EVERY BROWSER SIGNED IN
+TO THE ACCOUNT**, free to every account — every list under `wfsim-presets-*` and `wfsim-customs-*`, entry by
 entry, matched by `id`. `web/src/static/app/37-sync.js` is the page's half;
 the server's half is the paid worker's `/api/cloud/sync` (docs/ACCOUNTS.md
 §"Paid features"), which keeps the newest write of each entry. localStorage

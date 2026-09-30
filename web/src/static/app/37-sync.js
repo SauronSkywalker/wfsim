@@ -22,7 +22,7 @@ const isSyncList = (k) => /^wfsim-(presets|customs)-/.test(k);
 /// `not_included` (the account lacks the feature), `other` (this browser
 /// synced with another account), `error`.
 let syncStatus = { state: "idle", at: 0, full: false };
-let syncTimer = null, syncRunning = null, syncAgain = false;
+let syncTimer = null, syncRunning = null, syncQueued = null;
 
 /// `{ account, cursor, known: { id: { list, sig, at } } }` — what this browser
 /// last agreed with the server about each entry. An entry whose signature has
@@ -89,12 +89,16 @@ function syncSoon(ms = SYNC_DELAY_MS) {
 /// One round: push what changed here, then pull what changed elsewhere. A
 /// round asked for while one runs runs once more after it.
 function syncNow() {
-  if (syncRunning) { syncAgain = true; return syncRunning; }
+  // A ROUND ASKED FOR WHILE ONE RUNS IS THE NEXT ONE, and what it returns is
+  // that round: the one running collected its changes before this call, so
+  // resolving with it would tell the caller an edit had gone when it had not.
+  if (syncRunning) {
+    if (!syncQueued) syncQueued = syncRunning.then(() => { syncQueued = null; return syncNow(); });
+    return syncQueued;
+  }
   // SYNC NEVER TAKES THE PAGE DOWN: whatever a round throws is its status.
-  syncRunning = syncRound().catch((e) => setSyncStatus({ state: "error", reason: String(e && e.message || e) })).finally(() => {
-    syncRunning = null;
-    if (syncAgain) { syncAgain = false; syncNow(); }
-  });
+  syncRunning = syncRound().catch((e) => setSyncStatus({ state: "error", reason: String(e && e.message || e) }))
+    .finally(() => { syncRunning = null; });
   return syncRunning;
 }
 
@@ -122,7 +126,10 @@ async function syncRound() {
     if (k && k.sig === sig && k.list === list) continue;
     // WHEN IT CHANGED: its own save time when that moved past what the server
     // has, and otherwise now — a rename moves no save time and must still win.
-    const at = p.savedAt && (!k || p.savedAt > k.at) ? Math.min(p.savedAt, now) : now;
+    // AND ALWAYS AFTER THE VERSION IT CHANGED: the server keeps a tie, so an
+    // edit stamped in the same millisecond as the last agreed write was lost.
+    const seen = p.savedAt && (!k || p.savedAt > k.at) ? Math.min(p.savedAt, now) : now;
+    const at = k ? Math.max(seen, k.at + 1) : seen;
     changes.push({ id, list, body: syncBody(p), updated_at: at, sig });
   }
   for (const [id, k] of Object.entries(st.known)) {

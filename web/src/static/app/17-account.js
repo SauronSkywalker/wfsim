@@ -261,7 +261,7 @@ function authSignupCard() {
   const back = authReturn();
   if (authFlow.step === 2) return authCodeStep("Check your email", "Create account");
   return `<h2>${aT("Create a WFSim account")}</h2>
-    <p class="lede">${aT("An account is optional. WFSim works the same without one.")}</p>
+    <p class="lede">${aT("Your builds follow you across devices.")}</p>
     ${authError()}${authProviders("Sign up with {p}", back)}
     ${accountState.providers.includes("email") ? `${authField("auth-email", "Email", "email", "email")}
     ${authField("auth-password", "Password", "password", "new-password")}<span class="hint">${aT("At least 8 characters")}</span>
@@ -505,11 +505,7 @@ function syncRowHtml() {
   if (s.state === "error") {
     return row(aT("Could not sync just now."), `<button class="ghost-btn btn-sm" data-auth="sync-now">${aT("Try again")}</button>`);
   }
-  if (s.state === "not_included" && billingState.configured) {
-    return row(aT("Keeping builds, fights, searches and rivens the same on every device is part of WFSim Membership."),
-      `<a class="ghost-btn btn-sm" href="/account/billing">${aT("See membership")}</a>`);
-  }
-  if (s.state === "not_included") return row(`<span class="tag muted">${aT("Coming soon")}</span>`);
+  if (s.state === "not_included") return row(`<span class="tag muted">${aT("Not available for this account")}</span>`);
   return row(`<span class="tag muted">${aT("Checking…")}</span>`);
 }
 function renderSyncStatus() {

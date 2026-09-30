@@ -703,8 +703,8 @@ itself as a protected resource, a tool call without a key spends the address's
 allowance and with one the key's, the handshake and the list spend nothing, a
 key that is not one is a 401, and a key is looked up once. The two build
 tools save a build as its weapon's preset in the page's own shape and read it
-back as the build it was, replace one by id, and say what is missing — a key, a
-claim, the membership. The A2A card carries every field A2A requires and lists
+back as the build it was, replace one by id, and say what is missing — a key or
+a claim. The A2A card carries every field A2A requires and lists
 exactly the queries the endpoint runs; a data part runs its skill, text finds a
 weapon, a 0.3 caller is answered in 0.3's shape, and tasks, streaming and an
 unknown version are refused with A2A's codes.

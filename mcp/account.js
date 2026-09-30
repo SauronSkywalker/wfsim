@@ -9,7 +9,7 @@ const SITE = "https://wfsim.app";
 //
 // NOT IN THE HEADLESS TABLE: a page holds its builds in its own storage, so only
 // a caller with no page needs these, and only with a key its person claimed
-// (worker/agents.js). They read and write the member's synced builds through
+// (worker/agents.js). They read and write the person's synced builds through
 // the site's `/api/cloud/sync`, as the page does, and translate with the same
 // `headlessSeat`/`headlessStateAxes` the page does.
 const BUILD_LIST = /^wfsim-presets-(.+)-builder-builds$/;
@@ -40,7 +40,7 @@ async function savedBuilds(ctx) {
   return [...out.values()].filter((e) => e.body && e.body.state && BUILD_LIST.test(e.list));
 }
 
-const NEEDS = "Needs a key the person claimed, and WFSim Membership: https://wfsim.app/auth.md";
+const NEEDS = "Needs a key the person claimed: https://wfsim.app/auth.md";
 export const ACCOUNT_TOOLS = [
   {
     name: "account_builds_list",

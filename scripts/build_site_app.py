@@ -1625,7 +1625,7 @@ cancels its subscriptions first and removes all of this; Stripe keeps its own
 payment records as the law requires.</p>
 
 <h2>Build sync</h2>
-<p>With a membership, what you save — builds, fights, searches, rivens, enemies,
+<p>With an account, what you save — builds, fights, searches, rivens, enemies,
 and Warframe, companion and Operator builds — is kept with your account, so every
 browser signed in to it holds the same. Each item is kept as your browser stores
 it, without its measured results, with when it last changed. An item you delete
