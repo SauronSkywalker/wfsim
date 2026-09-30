@@ -12,7 +12,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 | --- | --- | --- | ---: | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate cycle | 24.9695 | Primed Cryo Rounds, Infected Clip, Amalgam Serration, Split Flights, Galvanized Aptitude, Galvanized Scope, Vile Acceleration, Vital Sense, Vigilante Supplies, Primary Deadhead |
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 140.7195 | Primed Cryo Rounds, Infected Clip, Amalgam Serration, Split Flights, Galvanized Aptitude, Galvanized Scope, Vile Acceleration, Vital Sense, Vigilante Supplies, Primary Deadhead |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 1.4957 | Primed Cryo Rounds, Malignant Force, Amalgam Serration, Split Flights, Galvanized Aptitude, Critical Delay, Vile Acceleration, Vital Sense, Vigilante Supplies, Primary Deadhead |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | alternate cycle | 1.6306 | Malignant Force, Rime Rounds, Amalgam Serration, Split Flights, Galvanized Aptitude, Critical Delay, Vile Acceleration, Vital Sense, Vigilante Supplies, Primary Deadhead |
 
 ## In WFSim
 
