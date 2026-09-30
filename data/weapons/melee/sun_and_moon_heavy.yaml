@@ -1,12 +1,11 @@
 id: sun_and_moon_heavy
 name: "Sun & Moon"
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: sun_and_moon
 form: heavy
 transform_group: sun_and_moon
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: heavy_charge_share_assumed
     published: 1.0
     charge: 0.3333

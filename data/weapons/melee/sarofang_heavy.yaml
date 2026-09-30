@@ -1,12 +1,11 @@
 id: sarofang_heavy
 name: Sarofang
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: sarofang
 form: heavy
 transform_group: sarofang
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: heavy_charge_share_assumed
     published: 1.1
     charge: 0.3667

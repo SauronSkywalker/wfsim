@@ -1,14 +1,15 @@
 id: sampotes_slide
 name: Sampotes
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: sampotes
 form: slide
 transform_group: sampotes
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_own_combo_unmodelled
     combos: "heavy attack, heavy slam and slam attack"
+  - reason: melee_passive_unmodelled
+    passive: "a slam's line of 8 explosions 5 m apart, and a heavy slam's three lines of 4"
 attack:
   # see notes: swing_trigger_pull_engine
   trigger: melee

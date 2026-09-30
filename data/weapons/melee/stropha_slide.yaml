@@ -1,12 +1,11 @@
 id: stropha_slide
 name: Stropha
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: stropha
 form: slide
 transform_group: stropha
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: melee_attack_unmodelled
     attacks: "Ranged Attack"
   - reason: gunblade_heavy_is_a_shot

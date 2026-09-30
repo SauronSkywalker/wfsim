@@ -1,12 +1,11 @@
 id: shaku_heavy
 name: Shaku
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: shaku
 form: heavy
 transform_group: shaku
 co_behavior: additive_with_base_damage
 unmodeled:
-  - reason: melee_placeholder
   - reason: heavy_charge_share_assumed
     published: 0.5
     charge: 0.1667

@@ -7,8 +7,8 @@
 #
 # Never edit by hand: run the generator, which only ever appends.
 #
-digest: b4fa19defafe8334
-count: 3407
+digest: 2f24f4c1dacc9732
+count: 3406
 ids:
   - acceltra
   - acceltra_prime
@@ -3130,7 +3130,6 @@ ids:
   - syam_block
   - syam_block_forward
   - syam_forward
-  - syam_heavy
   - syam_heavy_slam
   - syam_slide
   - sydon

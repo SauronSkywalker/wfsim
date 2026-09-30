@@ -1,12 +1,10 @@
 id: sun_and_moon_slide
 name: "Sun & Moon"
-# see notes: melee_placeholder_intake
+# see notes: melee_from_the_modules
 inherits: sun_and_moon
 form: slide
 transform_group: sun_and_moon
 co_behavior: additive_with_base_damage
-unmodeled:
-  - reason: melee_placeholder
 attack:
   # see notes: swing_trigger_pull_engine
   trigger: melee
