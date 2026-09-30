@@ -4,15 +4,15 @@ Chinese name: 诸葛连弩 Prime
 
 Crossbow · Primary · Mastery Rank 14. 50 base damage (impact 10, puncture 22.5, slash 17.5), 26% crit chance, 2x crit multiplier, 30% status chance.
 
-## Best riven-free build on the WFSim board, as of 2026-09-29
+## Best riven-free build on the WFSim board, as of 2026-09-30
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.8889 | Hellfire, Primary Acuity, Primed Firestorm, Galvanized Aptitude, Galvanized Scope, Bladed Rounds, Rifle Elementalist, Vital Sense, Primary Compression |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.8889 | Hellfire, Primary Acuity, Primed Firestorm, Galvanized Aptitude, Galvanized Scope, Bladed Rounds, Rifle Elementalist, Vital Sense, Primary Compression |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.1107 | Hellfire, Primary Acuity, Primed Firestorm, Galvanized Aptitude, Galvanized Scope, Bladed Rounds, Rifle Elementalist, Vital Sense, Primary Compression |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.5601 | Hellfire, Primary Acuity, Serration, Galvanized Aptitude, Galvanized Scope, Bladed Rounds, Rifle Elementalist, Vital Sense, Primary Compression |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.5601 | Hellfire, Primary Acuity, Serration, Galvanized Aptitude, Galvanized Scope, Bladed Rounds, Rifle Elementalist, Vital Sense, Primary Compression |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.2764 | Hellfire, Primary Acuity, Serration, Galvanized Aptitude, Galvanized Scope, Bladed Rounds, Rifle Elementalist, Vital Sense, Primary Compression |
 
 ## Not modelled here
 

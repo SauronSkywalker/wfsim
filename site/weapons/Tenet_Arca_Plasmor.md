@@ -4,13 +4,13 @@ Chinese name: 信条·弧电离子枪
 
 Shotgun · Primary · Mastery Rank 16. 760 base damage (radiation 760), 22% crit chance, 2x crit multiplier, 34% status chance.
 
-## Best riven-free build on the WFSim board, as of 2026-09-29
+## Best riven-free build on the WFSim board, as of 2026-09-30
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 2.4911 | Frigid Blast, Toxic Barrage, Incendiary Coat, Blaze, Galvanized Hell, Primed Point Blank, Galvanized Savvy, Shotgun Barrage, Galvanized Acceleration, Primary Crux |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 3.6033 | Primed Chilling Grasp, Toxic Barrage, Galvanized Hell, Magnetic Welt, Primed Point Blank, Galvanized Savvy, Shotgun Barrage, Shotgun Elementalist, Galvanized Acceleration, Shotgun Vendetta |
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 16.6358 | Frigid Blast, Toxic Barrage, Incendiary Coat, Blaze, Galvanized Hell, Primed Point Blank, Galvanized Savvy, Shotgun Barrage, Galvanized Acceleration, Primary Crux |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.4173 | Frigid Blast, Toxic Barrage, Incendiary Coat, Blaze, Galvanized Hell, Primed Point Blank, Galvanized Savvy, Shotgun Barrage, Galvanized Acceleration, Primary Crux |
 

@@ -4,13 +4,13 @@ Chinese name: 碎裂者 Prime
 
 Shotgun · Primary · Mastery Rank 14. 100 base damage (impact 100), 21% crit chance, 1.9x crit multiplier, 37% status chance.
 
-## Best riven-free build on the WFSim board, as of 2026-09-29
+## Best riven-free build on the WFSim board, as of 2026-09-30
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 7.4762 | Primed Chilling Grasp, Contagious Spread, Blaze, Galvanized Hell, Primed Ravage, Galvanized Savvy, Shotgun Barrage, Magnetic Strafe, Galvanized Acceleration, Primary Compression |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.6927 | Primed Chilling Grasp, Contagious Spread, Blaze, Galvanized Hell, Galvanized Savvy, Shotgun Barrage, Shotgun Elementalist, Magnetic Strafe, Galvanized Acceleration, Primary Compression |
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.6927 | Primed Chilling Grasp, Contagious Spread, Blaze, Galvanized Hell, Galvanized Savvy, Shotgun Barrage, Shotgun Elementalist, Magnetic Strafe, Galvanized Acceleration, Primary Compression |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.4886 | Incendiary Coat, Blaze, Scattering Inferno, Galvanized Hell, Primed Point Blank, Primed Ravage, Repeater Clip, Magnetic Strafe, Primed Counterbalance, Primary Crux |
 

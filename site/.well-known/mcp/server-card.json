@@ -2,7 +2,7 @@
   "serverInfo": {
     "name": "wfsim",
     "title": "WFSim",
-    "version": "146a26215a65"
+    "version": "4c65a7d67d91"
   },
   "description": "WFSim is a Warframe weapon calculator. It builds a loadout, simulates the fight against a named enemy, and searches for the best mods. Every formula cites its source, and every golden test is calibrated against a real in-game run. A board score belongs to its ruler, the named benchmark fight: compare scores only under one ruler, quote the ruler with the number, and give the reader the row's link, which opens the build in the calculator.",
   "transport": {
@@ -89,7 +89,7 @@
     {
       "name": "account_builds_list",
       "title": "account.builds.list",
-      "description": "List the builds saved in the person's WFSim account, each with its `build` (what builder_stats_read takes) and the link that opens it. Needs a key the person claimed, and WFSim Membership: https://wfsim.app/auth.md",
+      "description": "List the builds saved in the person's WFSim account, each with its `build` (what builder_stats_read takes) and the link that opens it. Needs a key the person claimed: https://wfsim.app/auth.md",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -104,7 +104,7 @@
     {
       "name": "account_builds_save",
       "title": "account.builds.save",
-      "description": "Save a build to the person's WFSim account, where every browser they sign in on shows it. A new build unless `id` names one to replace. Needs a key the person claimed, and WFSim Membership: https://wfsim.app/auth.md",
+      "description": "Save a build to the person's WFSim account, where every browser they sign in on shows it. A new build unless `id` names one to replace. Needs a key the person claimed: https://wfsim.app/auth.md",
       "inputSchema": {
         "type": "object",
         "properties": {
