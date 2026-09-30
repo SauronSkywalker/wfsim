@@ -12,7 +12,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 | --- | --- | --- | ---: | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.9911 | Frostbite, Pistol Pestilence, Primed Heated Charge, Pistol Acuity, Hornet Strike, Primed Target Cracker, Primed Pistol Gambit, Pressurized Magazine, Secondary Deadhead |
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.9911 | Frostbite, Pistol Pestilence, Primed Heated Charge, Pistol Acuity, Hornet Strike, Primed Target Cracker, Primed Pistol Gambit, Pressurized Magazine, Secondary Deadhead |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.9689 | Frostbite, Pistol Pestilence, Primed Heated Charge, Pistol Acuity, Hornet Strike, Primed Target Cracker, Primed Pistol Gambit, Pressurized Magazine, Secondary Deadhead |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 2.2073 | Frostbite, Pistol Pestilence, Primed Heated Charge, Pistol Acuity, Hornet Strike, Primed Target Cracker, Primed Pistol Gambit, Pressurized Magazine, Cascadia Flare |
 
 ## In WFSim
 
