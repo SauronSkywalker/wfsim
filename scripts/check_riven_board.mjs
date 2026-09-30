@@ -58,8 +58,8 @@ const views = await evaluate(`(async () => {
   const seen = {};
   for (const v of ['all', 'plain', 'riven']) {
     benchRivenView = v;
-    const e = benchEntries('standard_single_target').find(x => x.w.id === id && x.mode === 'cycle')
-           || benchEntries('standard_single_target').find(x => x.w.id === id);
+    const e = benchEntries('standard_single_target', META.weapons || []).find(x => x.w.id === id && x.mode === 'cycle')
+           || benchEntries('standard_single_target', META.weapons || []).find(x => x.w.id === id);
     seen[v] = e && e.row ? { score: e.row.score, riven: !!e.row.riven } : null;
   }
   benchRivenView = 'all';

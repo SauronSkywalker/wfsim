@@ -296,6 +296,46 @@ const weaponModPath = (id) => weaponPath(id) + (modSuffix() ? "/" + modSuffix() 
 const ARC_POOL_LABEL = { primary: "Primary", secondary: "Secondary", melee: "Melee",
   kitgun: "Kitgun", archgun: "Arch-Gun" };
 
+/// THE FILTERS INSIDE ONE SLOT — the weapon type where the slot is not one, the
+/// class, the tags — one state shape and one drawing, read by the home page's
+/// sections and by the board, so a chip means the same thing on both pages.
+const slotFilterNew = () => ({ type: "", cls: "", tags: [] });
+const weaponClassKey = (w) => w.subtype || w.mod_class || "";
+const weaponTagLabel = (id) => tr(((META && META.weapon_tags) || []).find((t) => t.id === id)?.name || id);
+const slotFilterMatch = (st, w) => (!st.type || w.weapon_type === st.type)
+  && (!st.cls || weaponClassKey(w) === st.cls)
+  && st.tags.every((t) => (w.tags || []).includes(t));
+const filterChip = (label, sel, attrs, n) => `<button type="button" class="bchip${sel ? " sel" : ""}" ${attrs}>${
+  escHtml(label)}${n != null ? ` <span class="bcnt">${n}</span>` : ""}</button>`;
+/// A ROW ONLY WHERE IT HAS A CHOICE TO OFFER: one type, one class or no tag in
+/// the list is nothing to filter by, and a row of one chip reads as broken.
+function slotFilterRows(ws, st) {
+  const count = (f) => ws.filter(f).length;
+  const chip = (label, sel, k, v, n) => filterChip(label, sel, `data-sf="${k}" data-v="${escHtml(v)}"`, n);
+  const types = [...new Set(ws.map((w) => w.weapon_type).filter(Boolean))];
+  const classes = [...new Set(ws.map(weaponClassKey).filter(Boolean))]
+    .sort((a, b) => count((w) => weaponClassKey(w) === b) - count((w) => weaponClassKey(w) === a));
+  const tags = ((META && META.weapon_tags) || []).map((t) => t.id)
+    .filter((id) => ws.some((w) => (w.tags || []).includes(id)));
+  const row = (label, body) => `<div class="slotf-row"><span class="slotf-lab">${escHtml(tr(label))}</span>${body}</div>`;
+  return (types.length > 1 ? row("Type", chip(tr("All"), !st.type, "type", "")
+      + types.map((t) => chip(tr(ARC_POOL_LABEL[t] || t), st.type === t, "type", t, count((w) => w.weapon_type === t))).join("")) : "")
+    + (classes.length > 1 ? row("Class", chip(tr("All"), !st.cls, "cls", "")
+      + classes.map((c) => chip(tr(c), st.cls === c, "cls", c, count((w) => weaponClassKey(w) === c))).join("")) : "")
+    + (tags.length ? row("Tags", tags.map((t) => chip(weaponTagLabel(t), st.tags.includes(t), "tag", t,
+      count((w) => (w.tags || []).includes(t)))).join("")) : "");
+}
+/// A CLICK ON ONE OF THOSE CHIPS: type and class are single choices a second
+/// click clears; tags stack.
+function slotFilterClick(st, el) {
+  const k = el.dataset.sf, v = el.dataset.v;
+  if (k === "tag") st.tags = st.tags.includes(v) ? st.tags.filter((t) => t !== v) : [...st.tags, v];
+  else st[k] = st[k] === v ? "" : v;
+}
+/// A SEARCH MATCHES EITHER NAME: a reader on the Chinese page types "Braton" as
+/// often as 布莱顿.
+const nameMatches = (q, ...names) => !q || names.some((n) => n && String(n).toLowerCase().includes(q.trim().toLowerCase()));
+
 
 /// ONE ROW PER MODULAR WEAPON, in a list that picks a WEAPON (search, the fight
 /// roster). The chamber IS the weapon — one mastery track, one riven, one wiki
@@ -319,6 +359,15 @@ const oneCardPerChamber = (ws) => {
   return [...best.values()];
 };
 
+/// WHAT THE HOME PAGE IS FILTERED BY, kept for the visit: one search across
+/// every slot, and each weapon slot's own chips.
+const homeFilters = {};
+let homeQuery = "";
+/// A SLOT'S FILTERS START OPEN ON A WIDE SCREEN AND SHUT ON A PHONE, where
+/// open chips would push the cards below the fold; a reader's own toggle wins.
+const homeOpen = {};
+const homeFiltersOpen = (id) => homeOpen[id] ?? !matchMedia("(max-width: 700px)").matches;
+
 function renderHome() {
   renderHomeFacts();
   const box = $("home-sections");
@@ -338,15 +387,15 @@ function renderHome() {
       ${imgTag(IMG(META && META.operator_image), "wc-img")}
       <div class="wc-info"><div class="wc-name">${escHtml(tr("Operator"))}</div>
       <div class="wc-tags">${tag("Focus school")}</div></div></a>`;
-  // A WEAPON CARD'S TAGS say what differs INSIDE its slot: its class, a Kitgun,
-  // an Incarnon, and its weapon type wherever the slot is not one (a companion
-  // weapon, an Exalted weapon). A Kitgun sits in each slot its grips reach —
-  // one card per slot, each opening that slot's entry.
+  // A WEAPON CARD'S TAGS say what differs INSIDE its slot: its class, its tags
+  // (`WeaponSpec::tags`), and its weapon type wherever the slot is not one. A
+  // Kitgun sits in each slot its grips reach — one card per slot, each opening
+  // that slot's entry. "Prime" is in the name already, so it is not repeated.
   const weaponCard = (w) => {
     const tags = [
-      tag(w.subtype || w.mod_class),
-      w.assembly && (w.subtype || w.mod_class) !== "Kitgun" ? tag("Kitgun") : "",
-      w.uses_evo2 ? `<span class="tag">Incarnon</span>` : "",
+      tag(weaponClassKey(w)),
+      ...(w.tags || []).filter((t) => t !== "prime" && !(t === "kitgun" && weaponClassKey(w) === "Kitgun"))
+        .map((t) => `<span class="tag">${escHtml(weaponTagLabel(t))}</span>`),
       w.weapon_type && w.weapon_type !== w.slot ? tag(ARC_POOL_LABEL[w.weapon_type] || w.weapon_type) : "",
     ].join("");
     return `<a class="wcard" href="/weapons/${urlSlug(w)}">
@@ -357,21 +406,68 @@ function renderHome() {
       </div>
     </a>`;
   };
-  const cards = (slot) => {
-    if (slot.holds === "warframe") return wfFrames().map(frameCard);
-    if (slot.holds === "companion") return compHosts().map(companionCard);
-    if (slot.holds === "operator") return [operatorCard()];
-    return (META.weapons || []).filter((w) => w.slot === slot.id).map(weaponCard);
-  };
+  // A SLOT'S FILTERS appear once it holds enough to need them.
+  const FILTER_FROM = 7;
+  const sections = ((META && META.equipment_slots) || []).map((slot) => {
+    if (slot.holds === "warframe") {
+      const all = wfFrames();
+      return { slot, total: all.length, cards: all.filter((f) => nameMatches(homeQuery, f.name)).map(frameCard) };
+    }
+    if (slot.holds === "companion") {
+      const all = compHosts();
+      return { slot, total: all.length, cards: all.filter((c) => nameMatches(homeQuery, c.name)).map(companionCard) };
+    }
+    if (slot.holds === "operator") {
+      return { slot, total: 1, cards: nameMatches(homeQuery, tr("Operator"), "Operator") ? [operatorCard()] : [] };
+    }
+    const all = (META.weapons || []).filter((w) => w.slot === slot.id);
+    const st = homeFilters[slot.id] || (homeFilters[slot.id] = slotFilterNew());
+    const kept = all.filter((w) => slotFilterMatch(st, w) && nameMatches(homeQuery, w.name, w.name_en));
+    const rows = all.length >= FILTER_FROM ? slotFilterRows(all, st) : "";
+    return { slot, total: all.length, cards: kept.map(weaponCard), filters: rows,
+      active: !!st.type + !!st.cls + st.tags.length };
+  }).filter((x) => x.total);
+  // THE NAV NAMES EVERY SLOT ON THE PAGE with how many it holds, and jumps to
+  // it; the search beside it narrows every slot at once.
+  const nav = $("home-nav");
+  if (nav) {
+    const q = $("home-q");
+    const typing = q && document.activeElement === q;
+    nav.innerHTML = `<div class="slotf-row"><input id="home-q" class="slotf-search" type="search"
+      placeholder="${escHtml(tr("Search by name"))}" value="${escHtml(homeQuery)}"></div>
+      <div class="slotf-row">${sections.map((x) => filterChip(tr(x.slot.name), false,
+      `data-jump="${escHtml(x.slot.id)}"`, x.total)).join("")}</div>`;
+    nav.querySelectorAll("[data-jump]").forEach((el) => {
+      el.onclick = () => { const t = $("home-" + el.dataset.jump); if (t) t.scrollIntoView(); };
+    });
+    const input = $("home-q");
+    // ON A PHONE THE HERO FILLS THE SCREEN, so typing brings the search and
+    // its results to the top rather than leaving them below the fold.
+    input.oninput = () => {
+      homeQuery = input.value;
+      renderHome();
+      if (matchMedia("(max-width: 700px)").matches) $("home-nav").scrollIntoView({ block: "start" });
+    };
+    if (typing) { input.focus(); input.setSelectionRange(input.value.length, input.value.length); }
+  }
   // A SLOT WITH NOTHING IN IT IS NOT LISTED: a heading over an empty grid
-  // promises a roster that is not there.
-  box.innerHTML = ((META && META.equipment_slots) || []).map((slot) => {
-    const list = cards(slot);
-    return list.length ? `
-    <section class="wgroup" id="home-${slot.id}">
-      <h2 class="home-h">${escHtml(tr(slot.name))} <span class="muted">${list.length}</span></h2>
-      <div class="wgrid">${list.join("")}</div>
-    </section>` : "";
-  }).join("");
+  // promises a roster that is not there. A search that empties a slot hides it
+  // too; its own chips that empty it say so instead.
+  box.innerHTML = sections.filter((x) => x.cards.length || (x.filters && !homeQuery)).map((x) => `
+    <section class="wgroup" id="home-${x.slot.id}">
+      <h2 class="home-h">${escHtml(tr(x.slot.name))} <span class="muted">${
+        x.cards.length === x.total ? x.total : `${x.cards.length} / ${x.total}`}</span></h2>
+      ${x.filters ? `<details class="slotf-box" data-slot="${escHtml(x.slot.id)}"${
+        homeFiltersOpen(x.slot.id) ? " open" : ""}><summary>${escHtml(tr("Filters"))}${
+        x.active ? ` <span class="bcnt">${x.active}</span>` : ""}</summary>${x.filters}</details>` : ""}
+      ${x.cards.length ? `<div class="wgrid">${x.cards.join("")}</div>`
+        : `<div class="sim-empty">${escHtml(tr("No weapon matches these filters."))}</div>`}
+    </section>`).join("");
+  box.querySelectorAll("details[data-slot]").forEach((d) => {
+    d.ontoggle = () => { homeOpen[d.dataset.slot] = d.open; };
+  });
+  box.querySelectorAll("[data-sf]").forEach((el) => {
+    el.onclick = () => { slotFilterClick(homeFilters[el.closest("[data-slot]").dataset.slot], el); renderHome(); };
+  });
 }
 

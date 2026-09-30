@@ -1813,6 +1813,66 @@ ui:
   # can be read is never derived.
   "Kitguns": "组合枪"
   "Kitgun": "组合枪"
+  "Type": "类型"
+  "Class": "类别"
+  "Tags": "标签"
+  "Search by name": "按名字搜索"
+  "Filters": "筛选"
+  "Equipment slot": "装备位"
+  "Hide unmeasured": "隐藏未测"
+  "No weapon matches these filters.": "没有符合这些筛选的武器。"
+  "Scales with ability strength — ranked on its own": "随技能强度变化 —— 单独排名"
+  "Does not scale with ability strength": "不随技能强度变化"
+  "Exalted weapons that scale with ability strength are ranked on their own, under Exalted Weapon.": "随技能强度变化的显赫武器不进总榜，在「显赫武器」里单独排名。"
+  "{n} of {t} shown · scroll for more": "已显示 {n} / {t} · 继续下滑加载更多"
+  # WEAPON TAGS — the prefixes DE's own Chinese names carry (布莱顿·破坏者,
+  # 赤毒·希尔德, 终幕·脓痘, 棱晶·空刃, 斯特朗·亡魂), "集团" as DE's syndicate
+  # medallions say it, and 灵化 from its Incarnon Genesis names.
+  "Wraith": 亡魂
+  "Vandal": 破坏者
+  "Prisma": 棱晶
+  "Kuva": 赤毒
+  "Tenet": 信条
+  "Coda": 终幕
+  "Syndicate": 集团
+  "Incarnon": 灵化
+  # WEAPON CLASSES — transcribed from DE's Public Export, the `compatName` a mod
+  # card prints for the class ("Swords" -> 剑). Crossbow, Dual Pistols, Dual
+  # Shotguns, Launcher, Shotgun Sidearm and Sentinel Weapon have no compatName
+  # of their own and stay English until a source names them.
+  "Rifle": 步枪
+  "Shotgun": 霰弹枪
+  "Sniper": 狙击枪
+  "Bow": 弓箭
+  "Pistol": 手枪
+  "Assault Saw": 突击锯
+  "Blade And Whip": 剑鞭
+  "Claws": 利爪
+  "Dagger": 匕首
+  "Dual Daggers": 双匕首
+  "Dual Nikanas": 双侍刃
+  "Dual Swords": 双剑
+  "Fist": 拳套
+  "Glaive": 战刃
+  "Gunblade": 枪刃
+  "Hammer": 锤
+  "Heavy Blade": 巨刃
+  "Heavy Scythe": 重型镰刀
+  "Machete": 砍刀
+  "Nikana": 侍刃
+  "Nunchaku": 双截棍
+  "Polearm": 长柄武器
+  "Rapier": 细剑
+  "Scythe": 镰刀
+  "Sparring": 搏击
+  "Staff": 长棍
+  "Sword": 剑
+  "Sword And Shield": 剑盾
+  "Tonfa": 拐刃
+  "Two Handed Nikana": 双手侍刃
+  "Warfan": 武扇
+  "Whip": 鞭
+  "Archgun": 曲翼枪械
   # The three components, from the same article's own headings: 组合枪由三种不同的
   # 组件构成，分别为'''枪膛'''、'''握把'''和'''填弹器'''.
   "Chamber": 枪膛

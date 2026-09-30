@@ -2059,7 +2059,26 @@ table.bills td.links a{color:var(--accent);text-decoration:none;margin-left:12px
    first because it is: a ruler is the standard, this only narrows who is shown
    under it. */
 #bench-view{display:flex;flex-wrap:wrap;gap:6px;margin:-6px 0 12px}
-#bench-view .bchip{font-size:.86em;padding:3px 9px}
+/* THE SLOT FILTERS (home sections, the board): every row is ONE line that
+   scrolls sideways and the chips sit behind a Filters toggle, so on a phone the
+   list stays in view under them. */
+.slotf-row{display:flex;gap:6px;align-items:center;overflow-x:auto;white-space:nowrap;scrollbar-width:thin;padding:2px 0;min-width:0}
+.slotf-row .bchip{font-size:.86em;padding:3px 9px;flex:0 0 auto}
+.slotf-lab{flex:0 0 auto;font-size:11px;color:var(--muted);letter-spacing:.04em;min-width:3.5em}
+.bcnt{color:var(--muted);font-weight:400;font-variant-numeric:tabular-nums}
+.slotf-box{margin:0 0 12px}
+.slotf-box>summary{cursor:pointer;color:var(--text-2);font-size:12px;padding:4px 0}
+.slotf-box[open]>summary{margin-bottom:4px}
+.slotf-search{flex:1 1 220px;min-width:0;max-width:360px;height:30px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--text);padding:0 10px;font:inherit}
+.snav{margin:6px 0 14px;padding:8px 0;border-bottom:1px solid var(--line);background:var(--plane)}
+/* A JUMP LANDS BELOW WHAT STAYS PINNED: the topbar everywhere, and the nav
+   itself on a wide screen. */
+.snav{scroll-margin-top:64px}
+#home-sections .wgroup{scroll-margin-top:64px}
+@media (min-width:701px){.snav{position:sticky;top:57px;z-index:15}#home-sections .wgroup{scroll-margin-top:170px}}
+#bench-filters{margin:12px 0}
+.bench-arena-fold>summary{cursor:pointer;color:var(--text-2);font-size:12px;padding:6px 0}
+.bmore{color:var(--muted);font-size:12px;padding:14px 0;text-align:center}
 .bchip{padding:5px 11px;border:1px solid var(--line);border-radius:8px;background:transparent;
   color:var(--text-2);font-size:12px;cursor:pointer;font-family:inherit}
 .bchip:hover{color:var(--text)}

@@ -88,19 +88,49 @@ const BENCH_VIEWS = [
 ];
 const rowHasRiven = (r) => !!(r && r.riven);
 
-/// WHICH ENTRANTS ARE BEING RANKED — the weapons, or the Exalted ones.
+/// WHICH ENTRANTS ARE BEING RANKED: a slot (or all of them), that slot's own
+/// chips (`slotFilterRows`, the home page's), a name, and whether rows nobody
+/// has measured are listed. All of it rides the address, so a filtered board
+/// is a link a reader can send.
 ///
-/// NEVER ONE LIST. The fight is the same fight, but an Exalted weapon's numbers
-/// are its Warframe's ability's: it seats no capacity of its own and it scales
-/// with ability strength, so its KPM and a gun's are not like terms and a
-/// ranking holding both would be a comparison nothing measured. Two lists under
-/// one ruler is the honest shape, and the weapons are the one a reader lands on.
-let benchClassView = "weapons";
-const BENCH_CLASSES = [
-  ["weapons", "Weapons"],
-  ["exalted", "Exalted"],
-];
-const inBenchClass = (w) => !!w.exalted === (benchClassView === "exalted");
+/// AN ABILITY-SCALED EXALTED WEAPON IS NEVER IN ANOTHER'S LIST. Its numbers
+/// are its Warframe's ability's: it seats no capacity of its own and scales
+/// with ability strength, so its KPM and a gun's are not like terms. "All"
+/// leaves it out, and the Exalted slot ranks it in a list of its own.
+let benchSlot = "all";
+let benchSlotFilter = slotFilterNew();
+let benchMeasuredOnly = false;
+let benchQuery = "";
+const benchPool = () => (META.weapons || []).filter((w) => (benchSlot === "all" ? !w.exalted : w.slot === benchSlot));
+
+/// THE ADDRESS IS THE STATE: read once when the page opens, written on every
+/// change without a history entry per click.
+function benchReadUrl() {
+  const p = new URLSearchParams(location.search);
+  benchPick = p.get("ruler") || benchPick;
+  benchSlot = p.get("slot") || "all";
+  benchSlotFilter = { type: p.get("type") || "", cls: p.get("class") || "",
+    tags: (p.get("tags") || "").split(",").filter(Boolean) };
+  benchRivenView = ["plain", "riven"].includes(p.get("riven")) ? p.get("riven") : "all";
+  benchMeasuredOnly = p.get("measured") === "1";
+  benchQuery = p.get("q") || "";
+}
+function benchWriteUrl() {
+  const p = new URLSearchParams();
+  const cur = benchCurrent();
+  if (cur && cur !== benchList()[0]) p.set("ruler", cur.id);
+  if (benchSlot !== "all") p.set("slot", benchSlot);
+  if (benchSlotFilter.type) p.set("type", benchSlotFilter.type);
+  if (benchSlotFilter.cls) p.set("class", benchSlotFilter.cls);
+  if (benchSlotFilter.tags.length) p.set("tags", benchSlotFilter.tags.join(","));
+  if (benchRivenView !== "all") p.set("riven", benchRivenView);
+  if (benchMeasuredOnly) p.set("measured", "1");
+  if (benchQuery) p.set("q", benchQuery);
+  const q = p.toString();
+  if (/^\/benchmark\/?$/.test(location.pathname) && location.search !== (q ? "?" + q : "")) {
+    history.replaceState(history.state, "", location.pathname + (q ? "?" + q : ""));
+  }
+}
 
 /// A BOARD ROW'S RIVEN, AS A LOCAL ITEM — the name it takes on the reader's
 /// machine, DERIVED from the shape so opening the same row twice reuses the
@@ -149,15 +179,15 @@ const inBenchView = (r) =>
 /// refuses to speak about — and is why the index does not join `BOARD_HAVE`.
 const benchRows = (id) => BOARD[id] || (BOARD_INDEX && BOARD_INDEX[id]) || [];
 
-const benchEntries = (id) => {
+const benchEntries = (id, weapons) => {
   const out = [];
-  for (const w of (META.weapons || []).filter(inBenchClass)) {
+  for (const w of weapons) {
     for (const m of w.modes || ["base"]) {
       const rows = benchRows(w.id)
         .filter((r) => r.benchmark === id && (r.mode || "base") === m)
         .filter(inBenchView);
-      out.push({ w, mode: m,
-        row: rows.length ? rows.reduce((a, r) => (r.score > a.score ? r : a), rows[0]) : null });
+      const row = rows.length ? rows.reduce((a, r) => (r.score > a.score ? r : a), rows[0]) : null;
+      if (row || !benchMeasuredOnly) out.push({ w, mode: m, row });
     }
   }
   return out;
@@ -258,6 +288,32 @@ function benchPendingNote(cur) {
   return out;
 }
 
+/// THE RULER'S FIGHT AS A PICTURE, drawn only while its fold is open: shut on
+/// a phone by default, where it would fill the screen above the ranking, and
+/// drawn the moment a reader opens it.
+function benchArena(cur) {
+  const fold = $("bench-arena-fold");
+  const bar = $("bench-arena");
+  if (fold && !fold.dataset.set) {
+    fold.dataset.set = "1";
+    fold.open = !matchMedia("(max-width: 700px)").matches;
+    fold.ontoggle = () => { if (fold.open) benchArena(benchCurrent()); };
+  }
+  if (bar && cur && (!fold || fold.open)) {
+    const sc = { ...defaultScenario(), ...(cur.scenario || {}) };
+    sc.player_at = [...(sc.player_at || [0, 0])];
+    sc.target_at = [...(sc.target_at || [0, CONTACT_M])];
+    // THE RULER'S OWN CROWD, never `= []` and `= null`: a benchmark CAN have
+    // a formation, and hardcoding its absence draws a single body for a
+    // 361-body fight while the rules beside it say otherwise. A picture that
+    // contradicts the standard beside it
+    // is worse than no picture.
+    sc.formation = (sc.formation || []).map((f) => ({ ...f, at: [...f.at] }));
+    sc.aim_at = sc.aim_at ? [...sc.aim_at] : null;
+    mountArena(bar, sc, (allEnemies().find((e) => e.id === sc.enemy) || allEnemies()[0]), { readonly: true });
+  }
+}
+
 function renderBenchBoard() {
   const box = $("bench-board");
   if (!box || !META) return;
@@ -272,28 +328,51 @@ function renderBenchBoard() {
     picker.innerHTML = bs.map((b) => `<button type="button" class="bchip${
       cur && b.id === cur.id ? " sel" : ""}" data-bench="${escHtml(b.id)}">${escHtml(tr(b.name))}</button>`).join("");
     picker.querySelectorAll("[data-bench]").forEach((el) => {
-      el.onclick = () => { benchPick = el.dataset.bench; renderBenchBoard(); };
+      el.onclick = () => { benchPick = el.dataset.bench; benchWriteUrl(); renderBenchBoard(); };
     });
   }
   if (!cur) { box.innerHTML = ""; return; }
-  // …AND WHICH BUILDS. A separate row of chips from the ruler's, because they
-  // are separate questions: the ruler is the FIGHT, this is which entrants are
-  // being listed. Drawn on every ruler, since every ruler takes both kinds.
-  const view = $("bench-view");
-  if (view) {
-    view.innerHTML = BENCH_VIEWS.map(([v, label]) => `<button type="button" class="bchip${
-      benchRivenView === v ? " sel" : ""}" data-bview="${v}">${escHtml(tr(label))}</button>`).join("")
-      // …AND WHICH KIND OF ENTRANT, its own row because it is its own question
-      // and its two answers are never added together.
-      + `<div class="bclass">` + BENCH_CLASSES.map(([v, label]) => `<button type="button" class="bchip${
-        benchClassView === v ? " sel" : ""}" data-bclass="${v}">${escHtml(tr(label))}</button>`).join("")
-      + `</div>`;
-    view.querySelectorAll("[data-bview]").forEach((el) => {
-      el.onclick = () => { benchRivenView = el.dataset.bview; renderBenchBoard(); };
+  // …AND WHICH ENTRANTS AND WHICH BUILDS, one panel above the list: the slot,
+  // that slot's own chips, the riven view, measured-only and a name. Every row
+  // of it is one scrolling line, so on a phone the list is not pushed below
+  // the fold by filters.
+  const filters = $("bench-filters");
+  if (filters) {
+    const slots = ((META && META.equipment_slots) || []).filter((sl) => sl.holds === "weapon");
+    const inSlot = (id) => (META.weapons || []).filter((w) => w.slot === id).length;
+    const sfChips = benchSlot === "all" ? "" : slotFilterRows(benchPool(), benchSlotFilter);
+    const active = (benchSlot !== "all") + !!benchSlotFilter.type + !!benchSlotFilter.cls
+      + benchSlotFilter.tags.length + (benchRivenView !== "all") + benchMeasuredOnly;
+    const q = $("bench-q");
+    const typing = q && document.activeElement === q;
+    const open = filters.querySelector("details") ? filters.querySelector("details").open
+      : !matchMedia("(max-width: 700px)").matches;
+    filters.innerHTML = `<div class="slotf-row"><input id="bench-q" class="slotf-search" type="search"
+        placeholder="${escHtml(tr("Search by name"))}" value="${escHtml(benchQuery)}"></div>
+      <details class="slotf-box"${open ? " open" : ""}><summary>${escHtml(tr("Filters"))}${
+        active ? ` <span class="bcnt">${active}</span>` : ""}</summary>
+      <div class="slotf-row"><span class="slotf-lab">${escHtml(tr("Equipment slot"))}</span>${
+        filterChip(tr("All"), benchSlot === "all", `data-bslot="all"`)}${
+        slots.map((sl) => filterChip(tr(sl.name), benchSlot === sl.id, `data-bslot="${escHtml(sl.id)}"`, inSlot(sl.id))).join("")}</div>
+      ${sfChips}
+      <div class="slotf-row"><span class="slotf-lab">${escHtml(tr("Builds"))}</span>${
+        BENCH_VIEWS.map(([v, label]) => filterChip(tr(label), benchRivenView === v, `data-bview="${v}"`)).join("")}${
+        filterChip(tr("Hide unmeasured"), benchMeasuredOnly, `data-bmeasured="1"`)}</div>
+      </details>`;
+    const redraw = () => { benchWriteUrl(); renderBenchBoard(); };
+    filters.querySelectorAll("[data-bslot]").forEach((el) => {
+      el.onclick = () => { benchSlot = el.dataset.bslot; benchSlotFilter = slotFilterNew(); redraw(); };
     });
-    view.querySelectorAll("[data-bclass]").forEach((el) => {
-      el.onclick = () => { benchClassView = el.dataset.bclass; renderBenchBoard(); };
+    filters.querySelectorAll("[data-sf]").forEach((el) => {
+      el.onclick = () => { slotFilterClick(benchSlotFilter, el); redraw(); };
     });
+    filters.querySelectorAll("[data-bview]").forEach((el) => {
+      el.onclick = () => { benchRivenView = el.dataset.bview; redraw(); };
+    });
+    filters.querySelector("[data-bmeasured]").onclick = () => { benchMeasuredOnly = !benchMeasuredOnly; redraw(); };
+    const input = $("bench-q");
+    input.oninput = () => { benchQuery = input.value; redraw(); };
+    if (typing) { input.focus(); input.setSelectionRange(input.value.length, input.value.length); }
   }
   // THE RULES, under the ruler that makes them. Collapsed by default: a reader
   // who wants the ranking should not have to scroll a standard to reach it, and
@@ -317,20 +396,7 @@ function renderBenchBoard() {
   //
   // READ-ONLY, and doubly so: `mountArena` is told, and the scene also asks
   // `officialScenarioActive` at the gesture — a board's positions are pinned.
-  const bar = $("bench-arena");
-  if (bar) {
-    const sc = { ...defaultScenario(), ...(cur.scenario || {}) };
-    sc.player_at = [...(sc.player_at || [0, 0])];
-    sc.target_at = [...(sc.target_at || [0, CONTACT_M])];
-    // THE RULER'S OWN CROWD, never `= []` and `= null`: a benchmark CAN have
-    // a formation, and hardcoding its absence draws a single body for a
-    // 361-body fight while the rules beside it say otherwise. A picture that
-    // contradicts the standard beside it
-    // is worse than no picture.
-    sc.formation = (sc.formation || []).map((f) => ({ ...f, at: [...f.at] }));
-    sc.aim_at = sc.aim_at ? [...sc.aim_at] : null;
-    mountArena(bar, sc, (allEnemies().find((e) => e.id === sc.enemy) || allEnemies()[0]), { readonly: true });
-  }
+  benchArena(cur);
   if (!BOARD_INDEX && (boardIndexAsk || boardIndexUnreachable)) {
     box.innerHTML = boardIndexAsk
       ? `<div class="sim-empty">${escHtml(tr("Loading the board…"))}</div>`
@@ -339,22 +405,65 @@ function renderBenchBoard() {
     if (again) again.onclick = showBenchBoard;
     return;
   }
-  const entries = benchEntries(cur.id);
   // SORTED BY THE BENCHMARK'S OWN METRIC — it says which one it is measured in
   // (`scenario.metric`), and a second ruler may answer differently. Unmeasured
   // weapons sort last whatever the metric: a zero is not a low score, it is no
-  // score, and putting it among the low ones would read as one.
+  // score, and putting it among the low ones would read as one. A RANK IS
+  // COUNTED INSIDE THE LIST SHOWN, so a filtered board reads from #1.
   const metric = metricLabel(metricOf((cur.scenario || {}).metric));
-  const rows = entries
-    .slice()
+  const ranked = (weapons) => benchEntries(cur.id, weapons.filter((w) =>
+    slotFilterMatch(benchSlotFilter, w) && nameMatches(benchQuery, w.name, w.name_en)))
     .sort((a, b) => (b.row ? b.row.score : -1) - (a.row ? a.row.score : -1));
-  const measured = rows.filter((r) => r.row).length;
-  box.innerHTML = `
-    <div class="bench-meta">${escHtml(
+  const head = (rows) => `<div class="bench-meta">${escHtml(
       tr("{n} of {t} entries measured · ranked by {m}")
-        .replace("{n}", measured).replace("{t}", rows.length).replace("{m}", metric))}${
-      benchPendingNote(cur)}</div>
-    <div class="bench-rows">${rows.map(({ w, mode, row }, i) => `
+        .replace("{n}", rows.filter((r) => r.row).length).replace("{t}", rows.length).replace("{m}", metric))}${
+      benchPendingNote(cur)}</div>`;
+  const lists = [];
+  const list = (rows) => {
+    lists.push(rows);
+    return rows.length ? `<div class="bench-rows" data-blist="${lists.length - 1}"></div><div class="bmore" data-bmore="${lists.length - 1}"></div>`
+      : `<div class="sim-empty">${escHtml(tr("No weapon matches these filters."))}</div>`;
+  };
+  const pool = benchPool();
+  if (benchSlot === "exalted") {
+    // TWO LISTS, NEVER ONE — see `benchSlot`.
+    const ability = ranked(pool.filter((w) => w.exalted)), weapon = ranked(pool.filter((w) => !w.exalted));
+    box.innerHTML = [[ability, "Scales with ability strength — ranked on its own"], [weapon, "Does not scale with ability strength"]]
+      .filter(([rows]) => rows.length).map(([rows, label]) =>
+        `<h3 class="wgroup-h">${escHtml(tr(label))}</h3>${head(rows)}${list(rows)}`).join("")
+      || `<div class="sim-empty">${escHtml(tr("No weapon matches these filters."))}</div>`;
+  } else {
+    const rows = ranked(pool);
+    box.innerHTML = head(rows) + (benchSlot === "all" && (META.weapons || []).some((w) => w.exalted)
+      ? `<p class="bench-note">${escHtml(tr("Exalted weapons that scale with ability strength are ranked on their own, under Exalted Weapon."))}</p>` : "")
+      + list(rows);
+  }
+  // ROWS ARRIVE AS THE READER SCROLLS: a batch now, the next when the end of
+  // a list comes into view, until every row is on the page.
+  if (benchScroll) benchScroll.disconnect();
+  const more = (mark) => {
+    const k = Number(mark.dataset.bmore), rows = lists[k];
+    const into = box.querySelector(`[data-blist="${k}"]`);
+    const at = into.children.length;
+    into.insertAdjacentHTML("beforeend", rows.slice(at, at + BENCH_BATCH).map((e, j) => benchRowHtml(cur, e, at + j)).join(""));
+    if (into.children.length >= rows.length) { if (benchScroll) benchScroll.unobserve(mark); mark.remove(); }
+    else mark.textContent = trF("{n} of {t} shown · scroll for more", { n: into.children.length, t: rows.length });
+  };
+  benchScroll = typeof IntersectionObserver === "function"
+    ? new IntersectionObserver((seen) => seen.forEach((e) => e.isIntersecting && more(e.target)), { rootMargin: "800px" })
+    : null;
+  box.querySelectorAll("[data-bmore]").forEach((mark) => {
+    more(mark);
+    // NO OBSERVER, NO PAGING: draw the rest at once rather than strand it.
+    if (mark.isConnected) { if (benchScroll) benchScroll.observe(mark); else while (mark.isConnected) more(mark); }
+  });
+}
+const BENCH_BATCH = 60;
+let benchScroll = null;
+
+/// ONE BOARD ROW: its rank inside the list shown, the weapon and how it was
+/// played, and its best score under the ruler — or the invitation to measure it.
+const benchRowHtml = (cur, { w, mode, row }, i) => `
       <a class="brow${row ? "" : " none"}" href="/weapons/${urlSlug(w)}${
         // WHICH RULER YOU CAME FROM, not just how the weapon is played:
         // without it the link lands on whatever official build is first, and
@@ -396,6 +505,5 @@ function renderBenchBoard() {
         <span class="bscore">${row
           ? escHtml(row.shown != null ? String(row.shown) : row.score.toFixed(4))
           : `<span class="bnone">${escHtml(tr("not measured"))}</span>`}</span>
-      </a>`).join("")}</div>`;
-}
+      </a>`;
 

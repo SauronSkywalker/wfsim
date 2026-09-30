@@ -328,6 +328,7 @@
     <p class="hero-note"><span data-i18n>Every formula cites its source, and every golden test is calibrated against a real in-game run.</span> <a href="/support" data-i18n>Why you can check it</a></p>
     <!-- ONE SECTION PER EQUIPMENT SLOT, in `META.equipment_slots` order
          (data/equipment_slots.yaml) — the page names no slot of its own. -->
+    <div id="home-nav" class="snav"></div>
     <div id="home-sections"></div>
   </main>
 
@@ -350,7 +351,6 @@
          which entrants the ranking draws each weapon's row from. Under "All
          builds" a weapon whose riven build wins hides its plain one, and those
          are the builds most readers can actually make. -->
-    <div id="bench-view"></div>
     <p class="bench-note" data-i18n>A score is a build measured by this engine under the benchmark's own pinned terms — nobody submits a number. An empty row is a weapon nobody has measured yet.</p>
     <div id="bench-rules"></div>
     <!-- THE RULER'S OWN FIGHT, as the picture the simulator draws. Read-only:
@@ -358,7 +358,10 @@
          itself. It is here because the rules above describe the fight in
          sentences and this IS the fight — the same component, the same
          geometry, and the same body radius the numbers were computed at. -->
+    <details id="bench-arena-fold" class="bench-arena-fold"><summary data-i18n>The fight</summary>
     <div id="bench-arena" class="arena ar-ro"></div>
+    </details>
+    <div id="bench-filters"></div>
     <div id="bench-board"></div>
   </main>
 

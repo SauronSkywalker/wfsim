@@ -394,6 +394,7 @@ function loadFullBoard() {
 /// The benchmark page: ask first, so the first draw already knows a request is
 /// in flight, then draw again when it settles.
 function showBenchBoard() {
+  benchReadUrl();
   const ask = loadFullBoard();
   renderBenchBoard();
   ask.then(() => {

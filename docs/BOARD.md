@@ -902,11 +902,16 @@ on the submission, hashed into the identity, and two strengths are two builds.
 door and by `wfsim-intake` so the two cannot answer it differently.
 
 **AND IT IS RANKED APART.** The fight is the same fight, but an Exalted
-weapon's KPM and a gun's are not like terms, so the ranking page lists one
-class at a time and opens on the weapons; a weapon's own page shows its rows
-either way, and the rank it states is counted among its own kind. Two lists
-under one ruler is what keeps a number from being compared to a number nothing
-measured against it.
+weapon's KPM and a gun's are not like terms. The ranking page's "All" leaves
+the ability-scaled ones out, and its Exalted Weapon slot ranks them in a list
+of their own above the Exalted weapons that do not scale (Garuda Talons); a
+weapon's own page shows its rows either way, and the rank it states is counted
+among its own kind. Two lists under one ruler is what keeps a number from being
+compared to a number nothing measured against it.
+
+**THE RANKING PAGE IS FILTERED BY ADDRESS.** Slot, the slot's own type, class
+and tag chips (the home page's, `slotFilterRows`), the riven view, measured-only
+and a name all ride `/benchmark?…`, and a rank is counted inside the list shown.
 
 ## What a row has to be
 

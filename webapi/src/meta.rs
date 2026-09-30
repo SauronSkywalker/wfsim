@@ -486,6 +486,9 @@ pub fn meta_json() -> Value {
                 // one; the rules a weapon reads follow the type there.
                 "slot": w.slot,
                 "weapon_type": wfsim_engine::data::weapons::spec(&w.id).map(|s| s.weapon_type.as_str()),
+                // WHAT DIFFERS INSIDE THE SLOT (`WeaponSpec::tags`), which the
+                // home cards and the board's filters both read.
+                "tags": wfsim_engine::data::weapons::spec(&w.id).map(|s| s.tags()).unwrap_or_default(),
                 "uses_arcane": w.uses_arcane,
                 // The POOLS, in slot order — the page draws one picker per
                 // entry and sends one arcane per entry.
@@ -857,6 +860,10 @@ pub fn meta_json() -> Value {
         // fills it — the page groups by this list and adds no slot of its own.
         "equipment_slots": wfsim_engine::data::equipment_slots::all().iter()
             .map(|e| json!({"id": e.id, "name": e.name, "holds": e.holds}))
+            .collect::<Vec<_>>(),
+        // …AND THE TAGS a weapon can carry inside a slot, in display order.
+        "weapon_tags": wfsim_engine::data::weapons::WEAPON_TAGS.iter()
+            .map(|(id, name, _)| json!({"id": id, "name": name}))
             .collect::<Vec<_>>(),
         // One pool per mod CLASS present in data/mods/ — a weapon's
         // `mod_class` (derived from its mod_eligibility) indexes into this.
