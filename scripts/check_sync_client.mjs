@@ -21,7 +21,7 @@ const r = await evaluate(`(async () => {
   // THE FAKE SERVER: per account, id -> { list, body, updated_at, synced_at }.
   const srv = { acc1: new Map(), acc2: new Map() };
   window.__b1Pushes = [];
-  let clock = 1, who = 'acc1', calls = 0;
+  let clock = 1, who = 'acc1', calls = 0, allowance = null;
   const realFetch = window.fetch;
   window.fetch = async (url, o = {}) => {
     const path = String(url);
@@ -34,17 +34,18 @@ const r = await evaluate(`(async () => {
     const b = JSON.parse(o.body || '{}');
     const db = srv[who];
     for (const c of b.changes || []) {
-      if (c.id === 'b1') window.__b1Pushes.push({ at: c.updated_at, mod: c.body && c.body.state.slots[0].mod, name: c.body && c.body.name });
+      if (c.id === 'b1') window.__b1Pushes.push({ at: c.updated_at, mod: c.body && c.body.state && c.body.state.slots[0].mod, name: c.body && c.body.name });
       const had = db.get(c.id);
       if (had && !(c.updated_at > had.updated_at)) continue;
       db.set(c.id, { list: c.list, body: c.deleted ? null : JSON.parse(JSON.stringify(c.body)), updated_at: c.updated_at, synced_at: clock++ });
     }
-    if (b.pull === false) return reply({ ok: true, full: false });
+    const allow = allowance ? { allowance } : {};
+    if (b.pull === false) return reply({ ok: true, full: false, ...allow });
     const since = b.after ? b.after.t : (b.since || 0);
     const rows = [...db.entries()].filter(([, e]) => e.synced_at > since).sort((a, b) => a[1].synced_at - b[1].synced_at);
     const page = rows.slice(0, 2);
     const last = page[page.length - 1];
-    return reply({ ok: true, full: false,
+    return reply({ ok: true, full: false, ...allow,
       entries: page.map(([id, e]) => ({ id, ...e })),
       next: rows.length > 2 ? { t: last[1].synced_at, i: last[0] } : null,
       cursor: last ? last[1].synced_at : (b.since || 0) });
@@ -138,6 +139,46 @@ const r = await evaluate(`(async () => {
   out.linkAfter = activePreset;
   out.linkScreen = (slots[0] || {}).mod || null;
 
+  // THE CLOUD ON A CHIP. Off keeps this copy and tells the other browsers to
+  // keep theirs, with a body that carries nothing of the build.
+  await quiet();
+  renderPresetBar();
+  const cloudOf = (id) => document.querySelector('#preset-bar-builder-builds .pcloud[data-cloud="' + id + '"]');
+  out.markShown = !!cloudOf('b1') && cloudOf('b1').classList.contains('on');
+  if (cloudOf('b1')) cloudOf('b1').click();
+  await quiet(); await syncNow();
+  const sOff = (srv.acc1.get('b1') || {}).body || {};
+  out.offHere = (builds().find((p) => p.id === 'b1') || {}).cloud_sync === false && !!cloudOf('b1') && !cloudOf('b1').classList.contains('on');
+  out.offServer = sOff.cloud_sync === false && !('state' in sOff) && !('name' in sOff);
+  const X = await keep();
+  await become(B);
+  await syncNow();
+  const bb1 = builds().find((p) => p.id === 'b1') || {};
+  out.otherKept = bb1.cloud_sync === false && !!bb1.state && !!bb1.name;
+  // ON AGAIN, the whole entry travels.
+  await become(X);
+  renderPresetBar();
+  if (cloudOf('b1')) cloudOf('b1').click();
+  await quiet(); await syncNow();
+  out.onAgain = !!(((srv.acc1.get('b1') || {}).body || {}).state);
+  // "UPLOAD NEW ITEMS" OFF: a new entry stays here.
+  setSyncAuto(false);
+  const add = (id) => localStorage.setItem(L, JSON.stringify(builds().concat([{ id, scope: 'torid', name: id, savedAt: Date.now(), state: st('serration') }])));
+  add('n1');
+  await syncNow();
+  out.autoOff = (builds().find((p) => p.id === 'n1') || {}).cloud_sync === false && !srv.acc1.has('n1');
+  setSyncAuto(true);
+  // THE ALLOWANCE THE SERVER STATES: the entry that fills it is taken, the one
+  // past it stays here, and turning one on past it is refused out loud.
+  allowance = { presets: syncedCounts().presets + 1 };
+  await syncNow();
+  add('n2'); add('n3');
+  await syncNow();
+  out.allowance = [srv.acc1.has('n2'), (builds().find((p) => p.id === 'n3') || {}).cloud_sync === false, srv.acc1.has('n3')];
+  const note = document.getElementById('page-note'); if (note) note.remove();
+  out.refused = setCloudSync(L, 'n1', true) === false && !!document.getElementById('page-note');
+  allowance = null;
+
   // ANOTHER ACCOUNT: nothing merged until asked.
   await signIn('acc2');
   out.otherStatus = syncStatus.state;
@@ -169,6 +210,15 @@ check("a remote edit to the build on screen reaches the screen", r.screen === "v
 check("a link to a saved build not here yet opens it once the sync brings it",
   r.linkBefore !== "zz1" && r.linkAfter === "zz1" && r.linkScreen === "point_strike",
   ok([r.linkBefore, r.linkAfter, r.linkScreen]));
+check("a signed-in chip carries its cloud, filled", r.markShown === true);
+check("...a click keeps the entry on this browser only", r.offHere === true);
+check("...and the account is told with a body that carries nothing of the build", r.offServer === true);
+check("another browser keeps its copy, and stops syncing it", r.otherKept === true);
+check("on again, the whole entry travels", r.onAgain === true);
+check("with \"upload new items\" off, a new entry stays on this browser", r.autoOff === true);
+check("the entry that fills the allowance is taken, the one past it stays here",
+  ok(r.allowance) === ok([true, true, false]), ok(r.allowance));
+check("...and turning one on past it is refused, out loud", r.refused === true);
 check("another account's entries are not merged without a word",
   r.otherStatus === "other" && r.acc2Before === 0, ok([r.otherStatus, r.acc2Before]));
 check("...until the reader adds them", r.acc2After > 0, r.acc2After);

@@ -281,8 +281,10 @@ build" is not something the builder can show.
 ## Build sync
 
 **A SIGNED-IN READER'S SAVED ENTRIES ARE THE SAME ON EVERY BROWSER SIGNED IN
-TO THE ACCOUNT**, free to every account — every list under `wfsim-presets-*` and `wfsim-customs-*`, entry by
-entry, matched by `id`. `web/src/static/app/37-sync.js` is the page's half;
+TO THE ACCOUNT**, free to every account — every entry under `wfsim-presets-*`
+and `wfsim-customs-*` the reader leaves synced, entry by entry, matched by `id`.
+Saving on a browser is never limited; what an account holds may be, and the
+server states it. `web/src/static/app/37-sync.js` is the page's half;
 the server's half is the paid worker's `/api/cloud/sync` (docs/ACCOUNTS.md
 §"Paid features"), which keeps the newest write of each entry. localStorage
 stays the working copy: signed out, or without the feature, nothing runs.
@@ -292,12 +294,16 @@ stays the working copy: signed out, or without the feature, nothing runs.
 | a change is an entry whose signature moved since the last round; a deletion is an entry gone | `syncRound`, `wfsim-sync` |
 | a round runs after an edit settles, on sign-in, on coming back to the tab, and once on leaving it | `syncSoon`, `pagehide` |
 | the first round on a browser is a union: everything here is pushed, everything there pulled | `syncRound` |
-| the measured result never travels, and a pulled entry keeps this browser's | `syncBody`, `syncApply` |
+| a result never travels: it is a record of its own (§Results) | `syncBody` |
 | an entry edited while the round ran keeps the edit; the next round pushes it | `syncApply` |
 | two entries may share a name, so nothing is renamed on the way in | `syncApply` |
 | the page re-applies an entry on screen that changed, for every collection `COLLECTIONS` names | `syncShow` |
 | a browser that synced with another account merges nothing until the reader asks on `/account` | `other`, `syncAdopt` |
 | undo steps over a list that changed underneath them are dropped | `syncShow` |
+| an entry with `cloud_sync: false` stays on this browser; the cloud on its chip switches it | `isCloudSynced`, `cloudMark` |
+| taking one off the account sends `{ id, cloud_sync: false }` and nothing else; another browser keeps its copy and stops syncing it | `syncRound`, `syncApply` |
+| a new entry is synced unless "upload new items" (this browser's `wfsim-sync-auto`) is off | `syncRound` |
+| the server states what the account may hold per pool (`allowance`); past it a new entry stays here and turning one on is refused | `syncAllowance`, `setCloudSync` |
 
 ## The build finder
 

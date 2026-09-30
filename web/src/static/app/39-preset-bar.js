@@ -31,6 +31,17 @@ const presetFilters = {}; // per-bar filter text — survives re-renders, not pe
 /// sees — a label two entries may share.
 const presetId = (p) => (p || {}).builtin || (p || {}).id || "";
 const presetLabel = (p) => (p || {}).name || "";
+/// THE CLOUD ON A CHIP, while the account syncs: filled, the entry is on every
+/// browser signed in to it; hollow, on this one only. A click switches it.
+const CLOUD_SVG = `<svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M7 18h10a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.1 9.2 4.5 4.5 0 0 0 7 18z"/></svg>`;
+function cloudMark(domain, p) {
+  if (typeof accountState === "undefined" || !accountState.account || !p.id) return "";
+  if (syncStatus.state === "not_included" || syncStatus.state === "other") return "";
+  const on = isCloudSynced(p);
+  return `<button class="pop pcloud ${on ? "on" : ""}" data-cloud="${escHtml(p.id)}" aria-pressed="${on}" title="${escHtml(tr(on
+    ? "synced to your account - click to keep it on this browser only"
+    : "on this browser only - click to sync it to your account"))}">${CLOUD_SVG}</button>`;
+}
 
 /// EVERY ENTRY A BAR CAN OPEN: the reader's own, and what its collection
 /// publishes (an official ruler, a board build), which are read-only.
@@ -187,7 +198,7 @@ function renderPresetBarIn(bar, cfg) {
     const by = cfg.usedBy ? cfg.usedBy(p) : [];
     const used = by.length
       ? `<span class="pby" title="${escHtml(tr("linked by") + ": " + by.join(" · "))}">↩${by.length}</span>` : "";
-    return `<span class="pchip ${sel ? "sel" : ""}" data-name="${escHtml(presetId(p))}" title="switch to ${escHtml(p.name)}${escHtml(hint)}">${escHtml(p.name)}${used}${ops}</span>`;
+    return `<span class="pchip ${sel ? "sel" : ""}" data-name="${escHtml(presetId(p))}" title="switch to ${escHtml(p.name)}${escHtml(hint)}">${cloudMark(cfg.domain, p)}${escHtml(p.name)}${used}${ops}</span>`;
   };
   // A READ-ONLY ENTRY: select, ⧉ on the one you are on, and × to take it out of
   // the bar — which removes nothing from where it came from.
@@ -240,6 +251,10 @@ function renderPresetBarIn(bar, cfg) {
   });
   bar.querySelectorAll(".pchip:not(.add)").forEach((c) =>
     c.addEventListener("click", () => pickPreset(cfg, c.dataset.name)));
+  bar.querySelectorAll(".pcloud").forEach((b) => b.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (setCloudSync(presetListKey(cfg.domain), b.dataset.cloud, !b.classList.contains("on"))) cfg.rerender();
+  }));
   // No prompt()/alert()/confirm() anywhere — the browser can block those
   // dialogs, which made saving silently fail. Naming
   // happens in an INLINE input: Enter commits, Esc cancels.

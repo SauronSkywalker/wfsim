@@ -508,9 +508,21 @@ function syncRowHtml() {
   if (s.state === "not_included") return row(`<span class="tag muted">${aT("Not available for this account")}</span>`);
   return row(`<span class="tag muted">${aT("Checking…")}</span>`);
 }
+/// WHAT SYNCS: the default for a new item, and how much each pool holds —
+/// against the allowance where the account has one.
+function syncChoiceHtml() {
+  const n = syncedCounts();
+  const of = (pool) => (syncAllowance && syncAllowance[pool] != null ? ` / ${syncAllowance[pool]}` : "");
+  return `<dt>${aT("What syncs")}</dt><dd>${escHtml(tr("presets {a} · customs {b}")
+    .replace("{a}", n.presets + of("presets")).replace("{b}", n.customs + of("customs")))}<br>
+    <span class="set-note">${aT("The cloud on each item switches it; saving on this browser is never limited.")}</span></dd>
+    <label class="set-note"><input type="checkbox" id="sync-auto" ${syncAuto() ? "checked" : ""}> ${aT("Upload new items")}</label>`;
+}
 function renderSyncStatus() {
   const el = $("sync-row");
   if (el) el.innerHTML = syncRowHtml();
+  const c = $("sync-choice");
+  if (c) c.innerHTML = syncChoiceHtml();
 }
 
 /// THE AGENTS THAT ACT FOR THIS ACCOUNT — each one claimed with a code mailed
@@ -530,6 +542,7 @@ function accountAgentsBlock() {
 function accountDataBlock() {
   return `<div class="block" id="data-privacy"><div class="bh"><h2>${aT("Data and privacy")}</h2></div><div class="bb"><dl class="kvs">
     <div class="kv" id="sync-row">${syncRowHtml()}</div>
+    <div class="kv" id="sync-choice">${syncChoiceHtml()}</div>
     <div class="kv"><dt>${aT("Your data")}</dt><dd>${aT("The account, its ways to sign in, and what it syncs")}</dd>
       <button class="ghost-btn btn-sm" data-auth="export">${aT("Download my data")}</button></div>
     <div class="kv"><dt>${aT("Privacy policy")}</dt><dd>${aT("What WFSim keeps, and why")}</dd>
@@ -745,6 +758,9 @@ async function authAct(el) {
     if (email) { e.preventDefault(); $("email-password").scrollIntoView({ behavior: "smooth", block: "start" }); return; }
     const el = e.target.closest("[data-auth]");
     if (el) { e.preventDefault(); authAct(el); }
+  });
+  main.addEventListener("change", (e) => {
+    if (e.target.id === "sync-auto") setSyncAuto(e.target.checked);
   });
   // ENTER SUBMITS what it is typed into, as the button under it would.
   main.addEventListener("keydown", (e) => {

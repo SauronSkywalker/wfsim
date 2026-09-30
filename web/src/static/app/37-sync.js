@@ -17,6 +17,45 @@ const SYNC_IDLE_MS = 30000;
 /// The server's `PUSH_MAX`.
 const SYNC_CHUNK = 200;
 const isSyncList = (k) => /^wfsim-(presets|customs)-/.test(k);
+
+/// AN ENTRY STAYS ON THIS BROWSER when its `cloud_sync` is false: the reader's
+/// choice (the cloud on its chip), or a new entry's default while "upload new
+/// items" is off or the pool's allowance is used. Absent is synced. Saving is
+/// never limited — only what the account holds.
+const isCloudSynced = (p) => !!p && p.cloud_sync !== false;
+const SYNC_AUTO_KEY = "wfsim-sync-auto";
+const syncAuto = () => { try { return localStorage.getItem(SYNC_AUTO_KEY) !== "0"; } catch (_) { return true; } };
+const setSyncAuto = (on) => { try { localStorage.setItem(SYNC_AUTO_KEY, on ? "1" : "0"); } catch (_) { /* this page only */ } };
+/// WHAT THE ACCOUNT MAY HOLD, per pool, as the server last said: `{ presets,
+/// customs }`, a missing pool unlimited. The server decides it; the page shows
+/// it and stops asking past it.
+let syncAllowance = null;
+const syncPool = (list) => (list.startsWith("wfsim-customs-") ? "customs" : "presets");
+/// How many of this browser's entries each pool syncs.
+function syncedCounts() {
+  const out = { presets: 0, customs: 0 };
+  for (const { list, p } of syncLocal().values()) if (isCloudSynced(p)) out[syncPool(list)]++;
+  return out;
+}
+const syncRoom = (pool, counts) => !syncAllowance || syncAllowance[pool] == null
+  || (counts || syncedCounts())[pool] < syncAllowance[pool];
+/// Set one entry's choice, in place in its list. The next round tells the
+/// account; turning one on past the allowance is refused and says so.
+function setCloudSync(list, id, on) {
+  let ps;
+  try { ps = JSON.parse(localStorage.getItem(list)); } catch (_) { return false; }
+  const p = Array.isArray(ps) && ps.find((x) => x && x.id === id);
+  if (!p || isCloudSynced(p) === on) return false;
+  if (on && !syncRoom(syncPool(list))) {
+    noteInline(tr("the account syncs {n} of these already, its allowance - turn another off, or become a member")
+      .replace("{n}", syncAllowance[syncPool(list)]));
+    return false;
+  }
+  if (on) delete p.cloud_sync; else p.cloud_sync = false;
+  try { localStorage.setItem(list, JSON.stringify(ps)); } catch (_) { return false; }
+  syncSoon(0);
+  return true;
+}
 /// WHERE A PULLED ENTRY LIVES: a page from before one store per collection
 /// pushed `wfsim-presets-<owner>-<domain>`, and its entry is the collection's,
 /// filed under that owner unless it names its own.
@@ -127,7 +166,28 @@ async function syncRound() {
   const sigs = new Map();
   const changes = [];
   const now = Date.now();
+  // WHAT THE ACCOUNT ALREADY HOLDS, per pool; each new entry is counted in as
+  // it is taken, so the one that fills the allowance is still taken.
+  const counts = { presets: 0, customs: 0 };
   for (const [id, { list, p }] of local) {
+    if (st.known[id] && !st.known[id].off && isCloudSynced(p)) counts[syncPool(list)]++;
+  }
+  for (const [id, { list, p }] of local) {
+    // A NEW ENTRY TAKES THE DEFAULT: synced, unless "upload new items" is off
+    // or its pool's allowance is used — then it stays here, and says so.
+    if (!st.known[id] && p.cloud_sync === undefined) {
+      if (!syncAuto() || !syncRoom(syncPool(list), counts)) {
+        setCloudSync(list, id, false);
+        p.cloud_sync = false;
+      } else counts[syncPool(list)]++;
+    }
+    if (!isCloudSynced(p)) {
+      // TAKEN OFF THE ACCOUNT: the others keep their copy and stop syncing it,
+      // told by a body that says only that. Nothing of it travels.
+      const k = st.known[id];
+      if (k && !k.off) changes.push({ id, list, body: { id, cloud_sync: false }, updated_at: Math.max(now, k.at + 1), off: true });
+      continue;
+    }
     const sig = syncSig(p);
     sigs.set(id, sig);
     const k = st.known[id];
@@ -147,11 +207,13 @@ async function syncRound() {
   // 2. PUSH, in chunks the server takes.
   for (let i = 0; i < changes.length; i += SYNC_CHUNK) {
     const chunk = changes.slice(i, i + SYNC_CHUNK);
-    const r = await syncCall({ changes: chunk.map(({ sig, ...c }) => c), pull: false });
+    const r = await syncCall({ changes: chunk.map(({ sig, off, ...c }) => c), pull: false });
     if (!r.ok) return syncRefused(r);
+    syncAllowance = r.allowance || null;
     if (r.full) syncStatus.full = true;
     for (const c of chunk) {
       if (c.deleted) delete st.known[c.id];
+      else if (c.off) st.known[c.id] = { list: c.list, off: true, at: c.updated_at };
       else st.known[c.id] = { list: c.list, sig: c.sig, at: c.updated_at };
     }
     saveSyncState(st);
@@ -161,6 +223,7 @@ async function syncRound() {
   const pulled = [];
   let r = await syncCall({ since: st.cursor });
   if (!pulledPage(r)) return syncRefused(r);
+  syncAllowance = r.allowance || null;
   pulled.push(...r.entries);
   let cursor = r.cursor;
   while (r.next) {
@@ -216,6 +279,16 @@ function syncApply(st, entries, sigs) {
         if (at >= 0) { removed.add(e.id); ps.splice(at, 1); changedLists.add(here.list); ids.add(e.id); }
       }
       delete st.known[e.id];
+      continue;
+    }
+    // ANOTHER BROWSER TOOK IT OFF THE ACCOUNT: this copy stays, and stops syncing.
+    if (e.body.cloud_sync === false) {
+      st.known[e.id] = { list: e.list, off: true, at: e.updated_at };
+      if (here && isCloudSynced(here.p)) {
+        const ps = listOf(here.list);
+        const at = ps.findIndex((p) => p && p.id === e.id);
+        if (at >= 0) { ps[at] = { ...ps[at], cloud_sync: false }; changedLists.add(here.list); ids.add(e.id); }
+      }
       continue;
     }
     const sig = syncSig(e.body);
@@ -298,6 +371,7 @@ window.addEventListener("pagehide", () => {
   const changes = [];
   for (const [id, { list, p }] of syncLocal()) {
     const k = st.known[id];
+    if (!isCloudSynced(p)) continue;
     if (!k || k.sig !== syncSig(p) || k.list !== list) changes.push({ id, list, body: syncBody(p), updated_at: Date.now() });
   }
   // A PAGE ON ITS WAY OUT GETS ONE SMALL CALL: `keepalive` carries 64 KB, and
