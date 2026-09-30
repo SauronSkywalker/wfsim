@@ -304,4 +304,19 @@ check("nothing inside a shut optimizer section is still drawn", opt.leaks.length
 check("...and every control the menu was asked for here was drawn too",
   !opt.missing, JSON.stringify(opt.missing));
 
+// A BOX THAT DOES NOT FOLD IS NOT IN THE MENU, and cannot break it: a visible
+// block with no header and no fold id — one drawn after boot looks the same.
+const stray = await evaluate(`(() => {
+  const b = document.createElement('section');
+  b.className = 'block';
+  b.textContent = 'a block with no header';
+  document.querySelector('.config-page').appendChild(b);
+  let err = null, rows = '';
+  try { rows = jumpRows(); } catch (e) { err = String(e); }
+  b.remove();
+  return { err, listed: rows.includes('a block with no header') };
+})()`);
+check("a box with no fold id cannot break the jump menu, and is not listed",
+  stray.err === null && stray.listed === false, JSON.stringify(stray));
+
 await finish("every block and section folds, and the jump menu is read off them");

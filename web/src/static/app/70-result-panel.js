@@ -332,7 +332,10 @@ const saveJump = () => localStorage.setItem(JUMP_KEY, JSON.stringify(jump));
 function pageFolds() {
   const out = [];
   document.querySelectorAll(".config-page section.block, .config-page > section.fold").forEach((b) => {
-    if (b.offsetParent === null) return;
+    // THE MENU LISTS WHAT FOLDS, and a box with no fold id does not: a block
+    // with no header, or one drawn after `wireStaticFolds` ran at boot. Listing
+    // it wrote `undefined` into the menu and took the whole page down with it.
+    if (b.offsetParent === null || !b.dataset.fold) return;
     if (!b.classList.contains("block")) return out.push({ box: b, depth: 0, name: foldTitle(b) });
     const n = b.querySelector(".bh .n"), h2 = b.querySelector(".bh h2");
     out.push({ box: b, depth: 0,
