@@ -19,7 +19,7 @@ disposition: 1.45            # riven disposition — HIGHER than the Prime's 1.3
 polarities: [madurai]
 exilus_polarity: naramon
 riven_family: Burston        # module `Family` — SHARED with the Burston Prime
-traits: [tenno]
+traits: [tenno, incarnon]
 introduced: "Vanilla"        # in the game at launch
 internal_name: /Lotus/Weapons/Tenno/Rifle/BurstRifle
 noise: alarming

@@ -18,6 +18,7 @@ max_rank: 30
 # BOTH SLOT ENTRIES CARRY IT: a Catchmoon is one chamber, and which slot a
 # grip puts it in is ours to model, not a second item to trade.
 internal_name: /Lotus/Weapons/SolarisUnited/Secondary/SUModularSecondarySet1/Barrel/SUModularSecondaryBarrelBPart
+traits: []
 kitgun: tombfinger_secondary
 
 transform_group: tombfinger_secondary

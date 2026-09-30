@@ -35,6 +35,7 @@ polarities: [madurai, naramon]
 stance_polarity: madurai
 introduced: "Update 31.5"
 internal_name: /Lotus/Weapons/Tenno/Zariman/Melee/Tonfas/ZarimanTonfaWeapon
+traits: [zariman, incarnon]
 
 # NO AMMO AT ALL. A melee weapon has no magazine, no reserve and no reload, so
 # the loop tops it up silently and `Capability::HasReserve` is false for it the

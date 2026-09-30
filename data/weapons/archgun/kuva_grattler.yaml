@@ -33,7 +33,7 @@ accuracy: 25.0               # "Medium"
 disposition: 0.70
 polarities: [madurai, madurai, madurai]
 riven_family: Grattler
-traits: [kuva, adversary]
+traits: [kuva_lich, adversary, grineer]
 internal_name: /Lotus/Weapons/Grineer/KuvaLich/HeavyWeapons/Grattler/KuvaGrattler
 noise: alarming
 magazine: 60

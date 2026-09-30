@@ -21,7 +21,7 @@ disposition: 0.55            # riven disposition — wiki Coda_Bassocyst, curren
 polarities: [madurai]
 exilus_polarity: madurai
 riven_family: Coda Bassocyst
-traits: [infested, coda]
+traits: [infested, technocyte_coda]
 introduced: "38.5"
 internal_name: /Lotus/Weapons/Infested/InfestedLich/LongGuns/1999InfShotgun/1999InfShotgunWeapon
 noise: alarming

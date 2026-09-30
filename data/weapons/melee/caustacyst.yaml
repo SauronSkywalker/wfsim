@@ -18,6 +18,7 @@ polarities: [madurai]
 stance_polarity: zenurik
 introduced: "The Index Preview"
 internal_name: /Lotus/Weapons/Infested/Melee/InfEmbolistScythe/InfestedScythe
+traits: [infested]
 
 ammo_max: ~
 

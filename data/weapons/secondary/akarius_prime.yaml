@@ -26,7 +26,7 @@ disposition: 0.65
 polarities: [naramon, naramon, madurai]
 exilus_polarity: madurai
 riven_family: Akarius
-traits: [prime]
+traits: [prime, tenno]
 introduced: "Hotfix 35.0.9"
 internal_name: /Lotus/Weapons/Tenno/Pistols/PrimeAkarius/PrimeAkariusWeapon
 noise: alarming

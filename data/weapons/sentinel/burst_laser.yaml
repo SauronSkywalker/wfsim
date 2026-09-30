@@ -20,6 +20,7 @@ disposition: 1.45
 polarities: []
 riven_family: Burst Laser
 internal_name: /Lotus/Types/Sentinels/SentinelWeapons/BurstLaserPistol
+traits: [tenno]
 noise: alarming
 magazine: 15
 reload_seconds: 0.01

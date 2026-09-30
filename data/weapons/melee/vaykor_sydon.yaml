@@ -18,6 +18,7 @@ polarities: [madurai]
 stance_polarity: zenurik
 introduced: "The Silver Grove 2.0"
 internal_name: /Lotus/Weapons/Syndicates/SteelMeridian/Melee/SMSydon
+traits: [syndicate, steel_meridian]
 
 ammo_max: ~
 

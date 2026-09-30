@@ -14,7 +14,7 @@ disposition: 1.25
 polarities: [madurai]
 exilus_polarity: madurai
 riven_family: Snipetron
-traits: [vandal]
+traits: [vandal, corpus, invasion_reward]
 internal_name: /Lotus/Weapons/Tenno/Rifle/VandalSniperRifle
 noise: alarming
 magazine: 6

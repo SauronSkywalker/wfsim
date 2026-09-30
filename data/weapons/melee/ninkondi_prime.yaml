@@ -18,6 +18,7 @@ polarities: [madurai, madurai]
 stance_polarity: vazarin
 introduced: "Update 25.3"
 internal_name: /Lotus/Weapons/Tenno/Melee/PrimeNinkondi/PrimeNikondi
+traits: [tenno, prime]
 
 ammo_max: ~
 

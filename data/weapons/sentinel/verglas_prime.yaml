@@ -25,7 +25,7 @@ accuracy: 100                  # hit-scan; the wiki page prints N/A for that
 disposition: 1.3               # riven disposition (●●●●○)
 polarities: [naramon]          # one innate Naramon
 riven_family: Verglas
-traits: [prime]
+traits: [prime, tenno]
 internal_name: /Lotus/Types/Sentinels/SentinelWeapons/SentinelFreezeRayPrimeRifle
 noise: alarming
 # see notes: sentinel_weapons_draw_from

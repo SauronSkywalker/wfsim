@@ -20,7 +20,7 @@ disposition: 1.4
 polarities: [madurai]
 # NO EXILUS POLARITY — the page shows an empty slot rather than a symbol.
 riven_family: Latron
-traits: [incarnon]
+traits: [incarnon, tenno]
 introduced: "Vanilla"
 internal_name: /Lotus/Weapons/Tenno/Rifle/SemiAutoRifle
 noise: alarming

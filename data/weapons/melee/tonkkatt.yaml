@@ -17,6 +17,7 @@ polarities: [madurai]
 stance_polarity: naramon
 introduced: "Update 38.5.11"
 internal_name: /Lotus/Weapons/Grineer/Melee/Tonfa/GrnChainSawTonfa/GrnChainSawTonfaWeapon
+traits: [grineer]
 
 ammo_max: ~
 

@@ -17,6 +17,7 @@ polarities: [madurai, vazarin]
 stance_polarity: naramon
 introduced: "Update 17.9"
 internal_name: /Lotus/Weapons/Infested/Melee/Glaives/PunctureGlaive/PunctureGlaiveWeapon
+traits: [infested]
 
 ammo_max: ~
 

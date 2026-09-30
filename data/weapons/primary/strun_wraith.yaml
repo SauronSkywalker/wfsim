@@ -21,7 +21,7 @@ disposition: 1.35
 polarities: [naramon]
 exilus_polarity: madurai
 riven_family: Strun
-traits: [incarnon, wraith]
+traits: [incarnon, wraith, tenno, invasion_reward]
 introduced: "Hotfix 9.7.2"
 internal_name: /Lotus/Weapons/Tenno/Shotgun/ShotgunVandal
 noise: alarming

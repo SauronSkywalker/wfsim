@@ -19,7 +19,7 @@ disposition: 1.25
 polarities: [madurai]
 exilus_polarity: naramon
 riven_family: Lex
-traits: [incarnon]
+traits: [incarnon, tenno]
 introduced: "Vanilla"
 internal_name: /Lotus/Weapons/Tenno/Pistol/HeavyPistol
 noise: alarming

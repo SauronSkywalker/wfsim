@@ -18,6 +18,7 @@ polarities: [madurai]
 stance_polarity: naramon
 introduced: "The Silver Grove 2.0"
 internal_name: /Lotus/Weapons/Syndicates/RedVeil/Melee/RVDarkDagger
+traits: [syndicate, red_veil]
 
 ammo_max: ~
 

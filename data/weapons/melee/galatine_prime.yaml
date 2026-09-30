@@ -18,6 +18,7 @@ polarities: [madurai, madurai]
 stance_polarity: vazarin
 introduced: "Hotfix: The Silver Grove 3"
 internal_name: /Lotus/Weapons/Tenno/Melee/Swords/PrimeGalatine/PrimeGalatine
+traits: [prime, vaulted]
 
 ammo_max: ~
 

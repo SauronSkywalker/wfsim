@@ -19,7 +19,7 @@ disposition: 1.45
 polarities: [naramon]
 exilus_polarity: naramon
 riven_family: Paris
-traits: [incarnon]
+traits: [incarnon, tenno]
 introduced: "Update 14.0"
 internal_name: /Lotus/Weapons/MK1Series/MK1Paris
 noise: silent

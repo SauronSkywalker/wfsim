@@ -26,7 +26,7 @@ disposition: 0.5
 polarities: []
 exilus_polarity: madurai
 riven_family: Nukor
-traits: [kuva, adversary]
+traits: [kuva_lich, adversary, grineer]
 introduced: "Update 27.1"
 internal_name: /Lotus/Weapons/Grineer/KuvaLich/Secondaries/Nukor/KuvaNukor
 noise: alarming

@@ -17,6 +17,7 @@ polarities: [madurai, madurai, madurai]
 stance_polarity: zenurik
 introduced: "Update 33"
 internal_name: /Lotus/Weapons/Tenno/Melee/Polearms/DaxDuviriPolearm/DaxDuviriPolearmWeapon
+traits: [duviri]
 
 ammo_max: ~
 

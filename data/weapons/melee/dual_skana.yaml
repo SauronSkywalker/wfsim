@@ -17,6 +17,7 @@ polarities: []
 stance_polarity: naramon
 introduced: "Vanilla"
 internal_name: /Lotus/Weapons/Tenno/Melee/DualShortSword/DualShortSword
+traits: [tenno]
 
 ammo_max: ~
 

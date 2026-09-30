@@ -21,7 +21,7 @@ disposition: 1.35
 polarities: []
 exilus_polarity: naramon
 riven_family: Braton
-traits: [incarnon]
+traits: [incarnon, tenno]
 introduced: "Vanilla"
 internal_name: /Lotus/Weapons/Tenno/Rifle/StartingRifle
 noise: alarming

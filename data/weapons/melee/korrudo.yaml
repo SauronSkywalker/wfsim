@@ -17,6 +17,7 @@ polarities: [madurai]
 stance_polarity: naramon
 introduced: "Update 24.6"
 internal_name: /Lotus/Weapons/Grineer/Melee/GrnSparring/GrnSpiderSparring/GrnSpiderSparring
+traits: []
 
 ammo_max: ~
 

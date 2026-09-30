@@ -18,6 +18,7 @@ polarities: [naramon]
 stance_polarity: vazarin
 introduced: "Update 10.2"
 internal_name: /Lotus/Weapons/Tenno/Melee/Swords/GreatSword/TennoGreatSword
+traits: [tenno]
 
 ammo_max: ~
 

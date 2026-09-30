@@ -22,7 +22,7 @@ disposition: 0.55            # riven disposition
 polarities: [naramon]
 exilus_polarity: madurai
 riven_family: Dual Coda Torxica
-traits: [infested, coda]
+traits: [infested, technocyte_coda]
 introduced: "38.5"
 internal_name: /Lotus/Weapons/Infested/InfestedLich/Pistols/1999InfSporePistol/1999InfSporePistolWeapon
 noise: alarming

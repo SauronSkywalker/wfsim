@@ -18,6 +18,7 @@ polarities: [madurai, madurai]
 stance_polarity: zenurik
 introduced: "Update 10.5"
 internal_name: /Lotus/Weapons/Grineer/Melee/GrineerMachetteAndCleaver/WraithMacheteWeapon
+traits: [wraith, grineer]
 
 ammo_max: ~
 

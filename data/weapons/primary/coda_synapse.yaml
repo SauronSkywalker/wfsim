@@ -25,7 +25,7 @@ disposition: 0.9             # riven disposition
 polarities: [madurai]
 exilus_polarity: naramon
 riven_family: Synapse
-traits: [infested, coda]
+traits: [infested, technocyte_coda]
 introduced: "38.5"
 internal_name: /Lotus/Weapons/Infested/InfestedLich/LongGuns/CodaSynapse
 noise: alarming

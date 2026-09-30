@@ -16,7 +16,7 @@ accuracy: 100.0
 disposition: 1.21
 polarities: []
 riven_family: Laser Rifle
-traits: [prime]
+traits: [prime, vaulted]
 internal_name: /Lotus/Types/Sentinels/SentinelWeapons/PrimeLaserRifle
 noise: alarming
 magazine: 20

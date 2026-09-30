@@ -14,7 +14,7 @@ disposition: 0.95
 polarities: [vazarin]
 exilus_polarity: madurai
 riven_family: Sporothrix
-traits: [coda, adversary]
+traits: [technocyte_coda, adversary, infested]
 internal_name: /Lotus/Weapons/Infested/InfestedLich/LongGuns/CodaSporothrix
 noise: alarming
 magazine: 11

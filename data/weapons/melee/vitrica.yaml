@@ -17,6 +17,7 @@ polarities: [madurai, madurai]
 stance_polarity: vazarin
 introduced: "Update 29.3"
 internal_name: /Lotus/Weapons/Tenno/Melee/Swords/NWIIIOrokinSword/NWOrokinSword
+traits: [orokin]
 
 ammo_max: ~
 

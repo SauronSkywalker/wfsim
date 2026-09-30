@@ -14,7 +14,7 @@ disposition: 1.4
 polarities: [madurai]
 exilus_polarity: madurai
 riven_family: Vulkar
-traits: [wraith]
+traits: [wraith, baro, grineer]
 internal_name: /Lotus/Weapons/Grineer/LongGuns/GrineerSniperRifle/VulkarWraith
 noise: alarming
 magazine: 8

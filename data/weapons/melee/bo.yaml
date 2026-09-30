@@ -18,6 +18,7 @@ polarities: [vazarin]
 stance_polarity: unairu
 introduced: "Vanilla"
 internal_name: /Lotus/Weapons/Tenno/Melee/Staff/Staff
+traits: [tenno, incarnon]
 
 ammo_max: ~
 

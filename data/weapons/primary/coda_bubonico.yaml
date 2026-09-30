@@ -30,7 +30,7 @@ disposition: 0.60            # riven disposition (●○○○○) — wiki Coda
 polarities: [naramon, madurai, naramon]
 exilus_polarity: madurai
 riven_family: Bubonico
-traits: [infested, coda]
+traits: [infested, technocyte_coda]
 introduced: "42"
 internal_name: /Lotus/Weapons/Infested/InfestedLich/LongGuns/CodaBubonico/CodaBubonicoCannon
 noise: alarming

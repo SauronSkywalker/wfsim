@@ -17,6 +17,7 @@ polarities: [madurai, madurai]
 stance_polarity: naramon
 introduced: "Update 31.6.4"
 internal_name: /Lotus/Weapons/Tenno/Melee/Warfan/TnMoonWarfan/MoonWarfanWeapon
+traits: [tenno]
 
 ammo_max: ~
 

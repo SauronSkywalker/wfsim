@@ -15,6 +15,7 @@ polarities: [madurai, madurai]
 exilus_polarity: madurai
 riven_family: Perigale
 internal_name: /Lotus/Weapons/Tenno/LongGuns/TnQuadSniper/TnQuadSniper
+traits: [tenno]
 noise: alarming
 magazine: 12
 reload_seconds: 3.0

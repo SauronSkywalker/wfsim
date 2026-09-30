@@ -33,6 +33,7 @@ disposition: 0.70
 polarities: [madurai, naramon]
 riven_family: Arbucep
 internal_name: /Lotus/Weapons/Tenno/Archwing/Primary/NokkoArchGun/NokkoArchGun
+traits: [tenno]
 noise: alarming
 magazine: 36
 reload_seconds: 2.0

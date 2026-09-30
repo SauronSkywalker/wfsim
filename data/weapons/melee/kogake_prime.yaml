@@ -18,6 +18,7 @@ polarities: [madurai, madurai, madurai]
 stance_polarity: naramon
 introduced: "Update 22.7"
 internal_name: /Lotus/Weapons/Tenno/Melee/PrimeKogake/KogakePrimeKnuckles
+traits: [prime, vaulted]
 
 ammo_max: ~
 

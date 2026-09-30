@@ -18,6 +18,7 @@ polarities: [vazarin]
 stance_polarity: unairu
 introduced: "Update 15.9"
 internal_name: /Lotus/Weapons/Tenno/Melee/Staff/MonkSpade/TnoMonkStaff
+traits: [tenno]
 
 ammo_max: ~
 

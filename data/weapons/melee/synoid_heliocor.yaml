@@ -18,6 +18,7 @@ polarities: []
 stance_polarity: madurai
 introduced: "The Silver Grove 2.0"
 internal_name: /Lotus/Weapons/Syndicates/CephalonSuda/Melee/CSHeliocor
+traits: [syndicate, cephalon_suda]
 
 ammo_max: ~
 

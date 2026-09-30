@@ -18,6 +18,7 @@ polarities: [madurai, naramon]
 stance_polarity: madurai
 introduced: "Update 28.2"
 internal_name: /Lotus/Weapons/Tenno/Melee/Swords/PrimeKaryst/PrimeKrisDagger
+traits: [prime]
 
 ammo_max: ~
 

@@ -19,7 +19,7 @@ disposition: 1.4
 polarities: []
 exilus_polarity: madurai
 riven_family: Lato
-traits: [incarnon]
+traits: [incarnon, tenno]
 introduced: "Vanilla"
 internal_name: /Lotus/Weapons/Tenno/Pistol/Pistol
 noise: alarming

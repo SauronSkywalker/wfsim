@@ -26,7 +26,7 @@ polarities: []               # NO innate main polarities: the module's block
                              # in the same file do)
 exilus_polarity: madurai
 riven_family: Boar           # module `Family` — shared with the Boar
-traits: [prime, vaulted]
+traits: [prime, vaulted, incarnon]
 introduced: "10.0"
 internal_name: /Lotus/Weapons/Tenno/Shotgun/PrimeBoar
 noise: alarming              # IsSilent false

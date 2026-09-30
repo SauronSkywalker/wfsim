@@ -19,7 +19,7 @@ disposition: 1.2
 polarities: [madurai]
 exilus_polarity: naramon
 riven_family: Sicarus
-traits: [incarnon]
+traits: [incarnon, tenno]
 introduced: "Vanilla"
 internal_name: /Lotus/Weapons/Tenno/Pistol/BurstPistol
 noise: alarming

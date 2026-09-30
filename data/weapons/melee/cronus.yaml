@@ -17,6 +17,7 @@ polarities: [madurai]
 stance_polarity: madurai
 introduced: "Vanilla"
 internal_name: /Lotus/Weapons/Tenno/Melee/CronusSword/CronusLongSword
+traits: [tenno, grineer]
 
 ammo_max: ~
 

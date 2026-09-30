@@ -17,6 +17,7 @@ polarities: [naramon]
 stance_polarity: unairu
 introduced: "Update 19.0"
 internal_name: /Lotus/Weapons/Grineer/Melee/GrnQueenSceptre/GrnQueenSceptreWeapon
+traits: []
 
 ammo_max: ~
 

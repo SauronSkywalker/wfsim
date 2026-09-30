@@ -27,7 +27,7 @@ disposition: 1.2
 polarities: [naramon, madurai, madurai]
 exilus_polarity: naramon
 riven_family: Ballistica
-traits: [incarnon, prime]
+traits: [incarnon, prime, vaulted]
 introduced: "Update 21.6"
 internal_name: /Lotus/Weapons/Tenno/Pistols/PrimeBallistica/PrimeBallistica
 noise: silent

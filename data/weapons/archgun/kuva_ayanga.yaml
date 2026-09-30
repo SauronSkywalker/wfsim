@@ -34,7 +34,7 @@ accuracy: 25.0               # "Medium"
 disposition: 0.95
 polarities: [naramon]
 riven_family: Kuva Ayanga
-traits: [kuva, adversary]
+traits: [kuva_lich, adversary, grineer]
 internal_name: /Lotus/Weapons/Grineer/HeavyWeapons/GrnHeavyGrenadeLauncher
 noise: alarming
 magazine: 33

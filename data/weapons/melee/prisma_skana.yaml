@@ -18,6 +18,7 @@ polarities: []
 stance_polarity: madurai
 introduced: "Update 16.6.2"
 internal_name: /Lotus/Weapons/VoidTrader/PrismaSkana
+traits: [prisma, baro, incarnon]
 
 ammo_max: ~
 

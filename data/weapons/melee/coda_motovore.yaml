@@ -17,6 +17,7 @@ polarities: [naramon]
 stance_polarity: madurai
 introduced: "Update 38.5"
 internal_name: /Lotus/Weapons/Infested/InfestedLich/Melee/InfestedHammer/InfLichHammerWeapon
+traits: [infested, technocyte_coda]
 
 ammo_max: ~
 

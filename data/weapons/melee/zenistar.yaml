@@ -19,6 +19,7 @@ polarities: [madurai]
 stance_polarity: madurai
 introduced: "Specters of the Rail 1"
 internal_name: /Lotus/Weapons/Tenno/Melee/SunDialAxe/SundialAxeWeapon
+traits: [tenno]
 
 ammo_max: ~
 

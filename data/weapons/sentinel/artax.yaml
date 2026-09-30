@@ -17,6 +17,7 @@ disposition: 1.0
 polarities: []
 riven_family: Artax
 internal_name: /Lotus/Types/Sentinels/SentinelWeapons/Gremlin
+traits: [tenno]
 noise: alarming
 magazine: 100
 reload_seconds: 1.5

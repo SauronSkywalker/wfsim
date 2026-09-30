@@ -21,7 +21,7 @@ disposition: 1.4
 polarities: [naramon]
 exilus_polarity: madurai
 riven_family: Strun
-traits: [incarnon]
+traits: [incarnon, tenno]
 introduced: "Vanilla"
 internal_name: /Lotus/Weapons/Tenno/Shotgun/Shotgun
 noise: alarming

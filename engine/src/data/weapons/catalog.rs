@@ -196,7 +196,33 @@ pub(super) fn render_admissions(v: &mut serde_norway::Value, path: &str) {
     m.insert(Value::String("unmodeled_parts".into()), Value::Sequence(parts));
 }
 
+/// THE TAGS a weapon card and the board's filters show — what differs INSIDE a
+/// slot — in display order, each with the English DE's own names carry (a
+/// "Kuva" prefix, a "Prime" suffix) and the trait it is read from.
+pub const WEAPON_TAGS: &[(&str, &str, &str)] = &[
+    ("prime", "Prime", "prime"),
+    ("wraith", "Wraith", "wraith"),
+    ("vandal", "Vandal", "vandal"),
+    ("prisma", "Prisma", "prisma"),
+    ("kuva", "Kuva", "kuva_lich"),
+    ("tenet", "Tenet", "tenet"),
+    ("coda", "Coda", "technocyte_coda"),
+    ("syndicate", "Syndicate", "syndicate"),
+    ("incarnon", "Incarnon", "incarnon"),
+    ("kitgun", "Kitgun", ""),
+];
+
 impl WeaponSpec {
+    /// This weapon's [`WEAPON_TAGS`] ids: each tag whose trait it carries, and
+    /// `kitgun` when it is assembled from parts.
+    pub fn tags(&self) -> Vec<&'static str> {
+        WEAPON_TAGS
+            .iter()
+            .filter(|(id, _, t)| if *id == "kitgun" { self.kitgun.is_some() } else { self.traits.iter().any(|x| x == t) })
+            .map(|(id, _, _)| *id)
+            .collect()
+    }
+
     /// WHICH SLOT'S RULES THIS WEAPON READS — its own slot, except that an
     /// EXALTED weapon reads its type's: Valkyr Talons swing, take a stance and
     /// draw melee arcane buffs as a melee weapon does. `slot` itself is where

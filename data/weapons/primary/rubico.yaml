@@ -15,6 +15,7 @@ polarities: []
 exilus_polarity: madurai
 riven_family: Rubico
 internal_name: /Lotus/Weapons/Tenno/LongGuns/FiveShotSniper/FiveShotSniper
+traits: [tenno]
 noise: alarming
 magazine: 5
 reload_seconds: 2.4

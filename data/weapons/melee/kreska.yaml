@@ -17,6 +17,7 @@ polarities: [madurai]
 stance_polarity: zenurik
 introduced: "Update 24"
 internal_name: /Lotus/Weapons/Corpus/Melee/CrpVenusHatchet/CrpVenusHatchet
+traits: [corpus]
 
 ammo_max: ~
 

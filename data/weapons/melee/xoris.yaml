@@ -17,6 +17,7 @@ polarities: []
 stance_polarity: naramon
 introduced: "Update 28"
 internal_name: /Lotus/Weapons/Corpus/Melee/Glaive/CrpGhostCatcherGlaive/CrpGhostCatcherGlaive
+traits: [corpus]
 
 ammo_max: ~
 

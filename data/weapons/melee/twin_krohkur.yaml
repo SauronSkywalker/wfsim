@@ -17,6 +17,7 @@ polarities: []
 stance_polarity: naramon
 introduced: "Update 22"
 internal_name: /Lotus/Weapons/Grineer/Melee/GrnEgyptSwd/DualGrnEgyptSwdWeapon
+traits: [grineer]
 
 ammo_max: ~
 

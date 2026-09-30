@@ -19,7 +19,7 @@ disposition: 1.52
 polarities: []
 exilus_polarity: madurai
 riven_family: Cestra
-traits: [incarnon]
+traits: [incarnon, corpus]
 introduced: "Update 11.0"
 internal_name: /Lotus/Weapons/Corpus/Pistols/CorpusMinigun/CorpusMinigun
 noise: alarming

@@ -17,6 +17,7 @@ disposition: 1.0
 polarities: []
 riven_family: Tazicor
 internal_name: /Lotus/Types/Friendly/Pets/MoaPets/MoaPetComponents/TazronWeapon
+traits: [corpus]
 noise: alarming
 magazine: 40
 reload_seconds: 2.0

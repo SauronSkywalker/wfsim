@@ -17,6 +17,7 @@ polarities: []
 stance_polarity: vazarin
 introduced: "Update 24.2"
 internal_name: /Lotus/Weapons/Corpus/Melee/Whips/CrpShockGrip/CrpShockGripWhipWeapon
+traits: []
 
 ammo_max: ~
 

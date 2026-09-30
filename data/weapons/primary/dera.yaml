@@ -19,7 +19,7 @@ disposition: 1.4
 polarities: []
 exilus_polarity: naramon
 riven_family: Dera
-traits: [incarnon]
+traits: [incarnon, corpus]
 introduced: "Update 8.0"
 internal_name: /Lotus/Weapons/ClanTech/Energy/EnergyRifle
 noise: alarming

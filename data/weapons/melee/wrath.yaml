@@ -17,6 +17,7 @@ polarities: [madurai]
 stance_polarity: madurai
 introduced: "Update 43"
 internal_name: /Lotus/Weapons/Tenno/Melee/HeavyScythe/TnOrionSiriusScythe/TnOrionScytheWeapon
+traits: [tenno]
 
 ammo_max: ~
 

@@ -18,6 +18,7 @@ polarities: []
 stance_polarity: madurai
 introduced: "Specters of the Rail 1"
 internal_name: /Lotus/Weapons/Cephalon/Melee/Hammer/CephHammerWeapon
+traits: [cephalon_simaris]
 
 ammo_max: ~
 

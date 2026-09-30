@@ -17,6 +17,7 @@ polarities: [madurai]
 stance_polarity: zenurik
 introduced: "Update 15.15"
 internal_name: /Lotus/Weapons/Tenno/Melee/Polearms/FlowerPowerPolearm/FlowerPowerPolearmWep
+traits: [tenno]
 
 ammo_max: ~
 

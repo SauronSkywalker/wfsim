@@ -17,6 +17,7 @@ polarities: [madurai]
 stance_polarity: zenurik
 introduced: "Update 30.5"
 internal_name: /Lotus/Weapons/Corpus/Melee/CrpBriefcaseScythe/CrpBriefcaseScythe
+traits: [corpus, tenet]
 
 ammo_max: ~
 

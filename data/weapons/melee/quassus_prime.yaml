@@ -19,6 +19,7 @@ stance_polarity: naramon
 introduced: "Update 37.0.9"
 # DE's export keys this item as below; the wiki module writes /Lotus/Weapons/Tenno/Melee/Warfan/TnBrokenFrameWarfan/TnBrokenFramePrimeWarfanWeapon
 internal_name: /Lotus/Weapons/Tenno/Melee/Warfan/PrimeQuassus/PrimeQuassusWeapon
+traits: [prime]
 
 ammo_max: ~
 

@@ -18,6 +18,7 @@ polarities: [madurai, madurai]
 stance_polarity: naramon
 introduced: "Update 33.6"
 internal_name: /Lotus/Weapons/Tenno/Melee/Warfan/PrimeGunsen/PrimeGunsenWeapon
+traits: [tenno, prime]
 
 ammo_max: ~
 

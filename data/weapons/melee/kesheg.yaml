@@ -17,6 +17,7 @@ polarities: [madurai]
 stance_polarity: zenurik
 introduced: "Update 19.0"
 internal_name: /Lotus/Weapons/Grineer/Melee/GrineerHalberd/GrnHalberd
+traits: [grineer]
 
 ammo_max: ~
 

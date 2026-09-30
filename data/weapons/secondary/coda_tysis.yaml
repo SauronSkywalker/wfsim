@@ -20,7 +20,7 @@ disposition: 1.0             # riven disposition
 polarities: [vazarin]
 exilus_polarity: madurai
 riven_family: Tysis
-traits: [infested, coda]
+traits: [infested, technocyte_coda]
 introduced: "38.5"
 internal_name: /Lotus/Weapons/Infested/InfestedLich/Pistols/CodaTysis
 noise: alarming

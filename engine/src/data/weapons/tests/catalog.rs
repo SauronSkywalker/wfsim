@@ -1734,3 +1734,28 @@ fn every_multiplying_compression_row_on_an_adding_weapon_is_a_projectile() {
         }
     }
 }
+
+/// A WEAPON WITH AN INCARNON SAYS SO IN ITS TRAITS — the `incarnon` tag reads
+/// the trait, so a gun whose group has an Incarnon form and a melee weapon that
+/// admits its Genesis is unmodelled must both carry it, or the page leaves the
+/// tag off a weapon that plainly has one.
+#[test]
+fn a_weapon_with_an_incarnon_carries_the_incarnon_trait() {
+    let form_of = |id: &str| all().iter().find(|w| w.id == id).map(|w| w.form.clone());
+    for w in all().iter().filter(|w| w.inherits.is_none() && w.default_form) {
+        let gun = w.transforms_to.as_deref().and_then(form_of).is_some_and(|f| f == "incarnon");
+        let melee = w.unmodeled_parts.iter().any(|p| p.reason.as_deref() == Some("melee_incarnon_unmodelled"));
+        if gun || melee {
+            assert!(w.traits.iter().any(|t| t == "incarnon"), "{}: has an Incarnon but no `incarnon` trait", w.id);
+        }
+    }
+}
+
+/// EVERY TAG'S TRAIT IS ONE SOME WEAPON CARRIES — a table row nothing can
+/// match is a filter chip that is never offered, and usually a misspelling.
+#[test]
+fn every_weapon_tag_is_carried_by_some_weapon() {
+    for (id, _, _) in WEAPON_TAGS {
+        assert!(all().iter().any(|w| w.tags().contains(id)), "tag {id} matches no weapon");
+    }
+}

@@ -36,6 +36,7 @@ polarities: []
 stance_polarity: vazarin
 introduced: "Update 11.5"
 internal_name: /Lotus/Weapons/Tenno/Melee/Maces/PaladinMace/PaladinMaceWeapon
+traits: [tenno]
 
 # NO AMMO AT ALL. A melee weapon has no magazine, no reserve and no reload, so
 # the loop tops it up silently and `Capability::HasReserve` is false for it the

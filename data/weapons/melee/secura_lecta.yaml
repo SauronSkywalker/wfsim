@@ -18,6 +18,7 @@ polarities: [vazarin]
 stance_polarity: vazarin
 introduced: "The Silver Grove 2.0"
 internal_name: /Lotus/Weapons/Syndicates/PerrinSequence/Melee/PSLecta
+traits: [syndicate, perrin_sequence]
 
 ammo_max: ~
 

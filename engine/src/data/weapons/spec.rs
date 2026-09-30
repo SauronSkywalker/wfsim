@@ -184,6 +184,12 @@ pub struct WeaponSpec {
     /// weapon, and its mod pools follow the TYPE (a primary one draws the
     /// Primary pool, Vigilante set included).
     pub weapon_type: WeaponType,
+    /// The wiki module's `Traits`, snake_cased (`prime`, `kuva_lich`,
+    /// `technocyte_coda`, `syndicate`, …) plus `incarnon` wherever the weapon
+    /// has an Incarnon. What the page's tags are read from
+    /// ([`WeaponSpec::tags`]); no rule of the fight reads them.
+    #[serde(default)]
+    pub traits: Vec<String>,
     /// Which DEPLOYMENT the fields on this entry describe (Arch-Guns:
     /// "atmosphere"). `None` = the weapon has only one.
     #[serde(default)]

@@ -21,7 +21,7 @@ disposition: 1.35
 polarities: [vazarin]
 # no exilus polarity slot
 riven_family: Angstrum
-traits: [incarnon]
+traits: [incarnon, corpus]
 introduced: "Update 13.3"
 internal_name: /Lotus/Weapons/Corpus/Pistols/CrpHandRL/CorpusHandRocketLauncher
 noise: alarming

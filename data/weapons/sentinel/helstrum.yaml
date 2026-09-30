@@ -17,6 +17,7 @@ disposition: 1.0
 polarities: [madurai]
 riven_family: Helstrum
 internal_name: /Lotus/Types/Friendly/Pets/MoaPets/MoaPetComponents/SwarmerWeapon
+traits: [corpus]
 noise: alarming
 magazine: 80
 reload_seconds: 2.0

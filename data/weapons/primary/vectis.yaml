@@ -33,7 +33,7 @@ disposition: 1.15
 polarities: [madurai]
 exilus_polarity: madurai
 riven_family: Vectis
-traits: [incarnon]
+traits: [incarnon, tenno]
 introduced: "Update 10.6"
 internal_name: /Lotus/Weapons/Tenno/Rifle/TennoSniperRifle
 noise: alarming

@@ -18,6 +18,7 @@ polarities: [madurai]
 stance_polarity: naramon
 introduced: "Update 17.6"
 internal_name: /Lotus/Weapons/Tenno/Melee/PrimeDualKamas/PrimeDualKamas
+traits: [prime, vaulted]
 
 ammo_max: ~
 

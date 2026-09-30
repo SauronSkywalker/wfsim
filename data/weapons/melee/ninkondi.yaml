@@ -18,6 +18,7 @@ polarities: []
 stance_polarity: vazarin
 introduced: "Update 17.4"
 internal_name: /Lotus/Weapons/Tenno/Melee/Nunchaku/Nunchaku/Nunchaku
+traits: [tenno]
 
 ammo_max: ~
 

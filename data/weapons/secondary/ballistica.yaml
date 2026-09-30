@@ -21,7 +21,7 @@ disposition: 1.25
 polarities: [vazarin]
 exilus_polarity: madurai
 riven_family: Ballistica
-traits: [incarnon]
+traits: [incarnon, tenno]
 introduced: "Update 10.4"
 internal_name: /Lotus/Weapons/Tenno/Pistols/AutomaticHandCrossbow/AutoCrossBow
 noise: silent

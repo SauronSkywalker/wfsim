@@ -19,7 +19,7 @@ accuracy: 100.0
 disposition: 1.45
 polarities: []
 riven_family: Burst Laser
-traits: [prime]
+traits: [prime, tenno]
 internal_name: /Lotus/Types/Sentinels/SentinelWeapons/PrimeBurstLaserPistol
 noise: alarming
 magazine: 15

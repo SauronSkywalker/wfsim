@@ -19,7 +19,7 @@ disposition: 0.95
 polarities: [vazarin]
 exilus_polarity: madurai
 riven_family: Atomos
-traits: [incarnon]
+traits: [incarnon, grineer]
 introduced: "Update 16.5"
 internal_name: /Lotus/Weapons/Grineer/Pistols/HeatGun/GrnHeatGun
 noise: alarming

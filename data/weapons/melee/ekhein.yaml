@@ -17,6 +17,7 @@ polarities: [madurai]
 stance_polarity: madurai
 introduced: "Update 35"
 internal_name: /Lotus/Weapons/Thanotech/EntSphereHammer/EntSphereHammer
+traits: [entrati]
 
 ammo_max: ~
 
