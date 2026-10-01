@@ -66,12 +66,13 @@ async function route() {
   // …AND A SHORT ONE, whose id boot already took off the address. The page is
   // drawn first on the same terms; the build lands when the store answers.
   if (SHARE_ENABLED && SHORT_SHARE_ID) {
-    const id = SHORT_SHARE_ID;
-    SHORT_SHARE_ID = null;
+    const id = SHORT_SHARE_ID, sig = SHORT_SHARE_SIG;
+    SHORT_SHARE_ID = SHORT_SHARE_SIG = null;
     route();
-    shortShareCode(id).then((code) => (code
-      ? importShare(code)
-      : presetToast(tr("that share link could not be found"))));
+    shortShareCode(id).then(async (code) => {
+      if (!code) { presetToast(tr("that share link could not be found")); return; }
+      if (await importShare(code) && sig) showShareBy(id, sig);
+    });
     return;
   }
   // `/support` is a page of the SHELL, not a fourth module and not a weapon's

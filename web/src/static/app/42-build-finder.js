@@ -436,6 +436,7 @@ function renderBuildFinder() {
 function renderPresetBar() {
   renderBuildFinder();
   renderPresetBarIn($("preset-bar-builder-builds"), buildBarCfg());
+  renderShareBy();
 }
 
 // A scenario is the `sim` object, BUFF CONFIG INCLUDED.

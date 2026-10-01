@@ -732,7 +732,7 @@ export default {
     // A SHORT LINK OPENS THE WEAPON'S OWN PAGE — its prerendered title and
     // preview, which is what a chat shows when the link is pasted. The page
     // itself reads the id and asks `/api/s/<id>` for the build.
-    const short = path.match(/^\/weapons\/([^/]+)\/s\/([0-9A-Za-z]{10})\/?$/);
+    const short = path.match(/^\/weapons\/([^/]+)\/s\/([0-9A-Za-z]{10})(?:\/[0-9A-Za-z]{8})?\/?$/);
     if (short) {
       const page = new URL(request.url);
       page.pathname = `/weapons/${short[1]}`;

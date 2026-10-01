@@ -744,6 +744,18 @@ browser and tells the others to keep theirs; with "upload new items" off a new
 entry stays here; the allowance the server states is kept to, and an item the
 server refuses stays here.
 
+## `check_share_signed`
+
+A signed short link, booted on its real address with the short-link store and
+the paid half answered by CDP request interception: the address is cleaned and
+the build lands; over the build bar the line names the sharer, their tier and
+the month it began (a Patron's in the Patron's colour, a lapsed membership's
+name alone); another build opened, the line goes; a signature lifted onto
+another build, one nobody minted, and a link with none name nobody while the
+build still lands. Signing returns the live origin and the path the paid half
+answered, a refusal falls back to the plain link, and off the live site
+nobody is offered a signature.
+
 ## `check_sync_customs`
 
 A custom travels with what names it, against the sync server faked as

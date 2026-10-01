@@ -490,6 +490,22 @@ under that address, so `SHARE_CARD_V` is bumped whenever the drawing changes.
 TEXT ONLY, like the weapon cards the build draws: the resvg build does not read
 the site's WebP art, and a card that states things needs no DE art to do it.
 
+**A SIGNED SHARE NAMES WHO SHARED IT, AND THE NAME IS THE SERVER'S WORD.** A
+Member sharing from wfsim.app may sign the link ("sign it with my name", on
+until turned off; browser storage): the short link is then
+`/weapons/<Wiki_Name>/s/<id>/<sig>`, the signature minted by the paid half
+over `/api/cloud/share/sign`. Boot takes both segments off the address; once
+the build lands, the page asks `/api/cloud/share/<sig>` who signed it and
+draws the answer over the build bar — the name, the tier and the month it
+began, or the name alone for a lapsed membership — while that build is open.
+A NAME THIS PAGE DREW BY ITSELF WOULD BE DRAWABLE BY ANY COPY OF IT, so the page
+draws only what the server answers, and only when the signature's `share` is
+the link it arrived on: a signature lifted onto another build names nobody.
+The line says who, never that a number is truer. Signing needs the session, so
+the desktop shell and a dev server make plain links; any failure to sign is
+the plain short link. `check_share_signed` holds the page's half; the paid
+half is the private repo's.
+
 **THE SHARER'S RESULT MAY TRAVEL BESIDE THE LINK, NEVER IN IT.** A scenario is
 always selected, so the panel offers "include my result in this scenario" (off
 until chosen; the choice is browser storage). The result is a CLAIM stored in

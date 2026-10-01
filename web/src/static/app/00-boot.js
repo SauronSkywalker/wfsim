@@ -7,11 +7,14 @@ const $ = (id) => document.getElementById(id);
 /// A SHORT SHARE LINK'S ID, taken off the address BEFORE anything reads it:
 /// `/weapons/<name>/s/<id>` becomes the weapon's own path, so boot, the router
 /// and the board all see an ordinary weapon page, and `route` lands the build
-/// the id names (`30-share.js`).
+/// the id names (`30-share.js`). A signed link carries one more segment, the
+/// signature, which names who shared it.
+let SHORT_SHARE_SIG = null;
 let SHORT_SHARE_ID = (() => {
-  const m = location.pathname.match(/^(\/weapons\/[^/]+)\/s\/([0-9A-Za-z]{10})\/?$/);
+  const m = location.pathname.match(/^(\/weapons\/[^/]+)\/s\/([0-9A-Za-z]{10})(?:\/([0-9A-Za-z]{8}))?\/?$/);
   if (!m) return null;
   history.replaceState(null, "", m[1]);
+  SHORT_SHARE_SIG = m[3] || null;
   return m[2];
 })();
 /// A PAGE INSIDE A PAGE: the weapon's wielder block frames the Warframe and

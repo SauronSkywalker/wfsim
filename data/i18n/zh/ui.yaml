@@ -12,6 +12,13 @@ ui:
   "New chat": 新对话
   "Settings": 设置
   "Close": 关闭
+  "Shared by": 分享者
+  "WFSim Member": WFSim 会员
+  "WFSim Patron": WFSim 赞助者
+  "since {month}": "自 {month}"
+  "checked with wfsim.app": 已由 wfsim.app 验证
+  "sign it with my name": 署上我的名字
+  "Whoever opens it sees your name, checked with wfsim.app.": 打开链接的人会看到你的名字，由 wfsim.app 验证。
   "The people who have backed it": "支持过的人"
   "Nobody has backed it yet. The list starts with whoever is first.": "还没有人支持过。这份名单从第一个人开始。"
   "How to back WFSim →": "怎么支持 WF模拟 →"

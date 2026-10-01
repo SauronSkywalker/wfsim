@@ -262,7 +262,7 @@ const SHARE_SHORT_HOSTS = LIVE_HOSTS;
 /// offline, on a shell with no network, or a store that is down. The long form
 /// opens exactly as it always has, so a failure here costs length and nothing
 /// else.
-async function shareUrl(claim) {
+async function shareUrl(claim, sign = false) {
   const w = weaponInfo($("weapon").value);
   const code = await shareCode();
   if (SHARE_SHORT_HOSTS.includes(location.hostname)) try {
@@ -274,9 +274,66 @@ async function shareUrl(claim) {
     });
     clearTimeout(timer);
     const j = r.ok ? await r.json() : null;
-    if (j && j.ok && /^[0-9A-Za-z]{10}$/.test(j.id)) return `${SHARE_ORIGIN}${weaponPath(w.id)}/s/${j.id}`;
+    if (j && j.ok && /^[0-9A-Za-z]{10}$/.test(j.id)) {
+      const signed = sign && await signShare(j.id, weaponPath(w.id).slice("/weapons/".length));
+      return signed || `${SHARE_ORIGIN}${weaponPath(w.id)}/s/${j.id}`;
+    }
   } catch (_) { /* the long form below */ }
   return `${location.origin}${weaponPath(w.id)}?${SHARE_PARAM}=${code}`;
+}
+
+/// A MEMBER'S LINK CARRIES THEIR NAME, signed by the paid half: it mints the
+/// link's last segment and answers anyone who asks who signed it, because a
+/// name this page drew by itself is one any copy of the page could draw.
+/// Signing needs the account's session, so it happens on the site itself; a
+/// link that cannot be signed is the plain short link.
+const SHARE_SIGN = "wfsim-share-sign";
+const shareSignOn = () => { try { return localStorage.getItem(SHARE_SIGN) !== "0"; } catch (_) { return true; } };
+let shareSignable = null;
+async function shareCanSign() {
+  if (location.origin !== SHARE_ORIGIN || typeof accountState === "undefined" || !accountState.account) return false;
+  if (shareSignable === null || shareSignable.account !== accountState.account.id) {
+    try { await loadBilling(); } catch (_) { /* answered below */ }
+    shareSignable = { account: accountState.account.id, can: (billingState.features || []).includes("share_signed") };
+  }
+  return shareSignable.can;
+}
+async function signShare(id, weapon) {
+  try {
+    const r = await fetch("/api/cloud/share/sign", { method: "POST", credentials: "same-origin",
+      headers: { "content-type": "application/json" }, body: JSON.stringify({ share: id, weapon }) });
+    const j = r.ok ? await r.json() : null;
+    return j && j.ok && typeof j.path === "string" ? `${SHARE_ORIGIN}${j.path}` : null;
+  } catch (_) { return null; }
+}
+
+/// WHO SHARED THE BUILD ON SCREEN, as the paid half answers it: shown over the
+/// build bar while that build is open, and only on the link it signed, so a
+/// signature lifted onto another build names nobody. It says who, never that a
+/// number is truer: every build here is computed by the same engine.
+let shareBy = null;
+async function showShareBy(id, sig) {
+  let j = null;
+  try {
+    const r = await fetch(`${shareApi()}/api/cloud/share/${sig}`);
+    j = r.ok ? await r.json() : null;
+  } catch (_) { j = null; }
+  if (!j || !j.ok || j.share !== id || typeof j.name !== "string") return;
+  shareBy = { preset: activePreset, name: j.name, tier: j.tier, since: j.since };
+  renderShareBy();
+}
+function renderShareBy() {
+  const el = $("share-by");
+  if (!el) return;
+  const on = !!shareBy && activePreset === shareBy.preset;
+  el.hidden = !on;
+  if (!on) return;
+  const tier = { patron: "WFSim Patron", member: "WFSim Member" }[shareBy.tier];
+  el.className = "share-by" + (tier ? ` ${shareBy.tier}` : "");
+  el.innerHTML = `${escHtml(tr("Shared by"))} <b>${escHtml(shareBy.name)}</b>`
+    + (tier ? ` · <span class="sb-tier">${escHtml(tr(tier))}${shareBy.since
+      ? ` ${escHtml(tr("since {month}").replace("{month}", shareBy.since))}` : ""}</span>` : "")
+    + ` <span class="sb-proof">${escHtml(tr("checked with wfsim.app"))}</span>`;
 }
 
 /// THE BUILD A SHORT LINK NAMES, or null. Its id is a hash of what it stores,
@@ -491,10 +548,12 @@ async function openSharePanel(bar) {
   panel.hidden = false;
   let withResult = false;
   try { withResult = localStorage.getItem(SHARE_RESULT) === "1"; } catch (_) { /* off */ }
+  const canSign = await shareCanSign();
   const draw = async () => {
     if (withResult) panel.innerHTML = `<div class="sh-note">${escHtml(tr("simulating this build in the current scenario…"))}</div>`;
     const measured = withResult ? await shareMeasurement() : null;
-    const bUrl = await shareUrl(measured && measured.claim);
+    const signing = canSign && shareSignOn();
+    const bUrl = await shareUrl(measured && measured.claim, signing);
     const lines = await shareText();
     const text = measured ? [lines[0], measured.line, ...lines.slice(1)] : lines;
     const native = typeof navigator.share === "function";
@@ -507,9 +566,12 @@ async function openSharePanel(bar) {
       `<label class="sh-opt"><input type="checkbox" class="sh-result"${withResult ? " checked" : ""}> ` +
       `${escHtml(tr("include my result in this scenario"))}` +
       (measured ? ` <b>${escHtml(measured.line)}</b>` : "") + `</label>` +
+      (canSign ? `<label class="sh-opt"><input type="checkbox" class="sh-sign"${signing ? " checked" : ""}> `
+        + `${escHtml(tr("sign it with my name"))} <b>${escHtml(accountName(accountState.account))}</b></label>` : "") +
       `<div class="sh-note">${escHtml(tr(measured
         ? "the link still opens the build alone; your result travels beside it, shown as yours"
-        : "the build and its rivens, and nothing else: no fight, no measurement, so opening it leaves the reader's own scenario untouched"))}</div>` +
+        : "the build and its rivens, and nothing else: no fight, no measurement, so opening it leaves the reader's own scenario untouched"))}`
+        + (signing ? ` ${escHtml(tr("Whoever opens it sees your name, checked with wfsim.app."))}` : "") + `</div>` +
       (SHARE_CARD_ENABLED
         ? `<div class="sh-more"><button class="cu-btn sh-full">${escHtml(tr("…as a card →"))}</button></div>`
         : "");
@@ -531,6 +593,11 @@ async function openSharePanel(bar) {
       track("share.create", $("weapon").value, 3);
       // A CANCELLED SHEET REJECTS, and a reader closing it is not an error.
       try { await navigator.share({ title: text[0], text: text.slice(1).join("\n"), url: bUrl }); } catch (_) { /* closed */ }
+    };
+    const signBox = panel.querySelector(".sh-sign");
+    if (signBox) signBox.onchange = (e) => {
+      try { localStorage.setItem(SHARE_SIGN, e.target.checked ? "1" : "0"); } catch (_) { /* this page only */ }
+      draw();
     };
     panel.querySelector(".sh-result").onchange = (e) => {
       withResult = e.target.checked;
