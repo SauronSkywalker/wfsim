@@ -3,10 +3,9 @@
 // work yet is worse than one that is not offered, so an entry with an empty
 // `url` renders nothing — and filling that url in is the whole of adding one.
 //
-// A CHANNEL A READER CANNOT PAY THROUGH IS NOT AN OPTION.
-// Ko-fi wants a card or PayPal, which is not how anyone in mainland China pays
-// for anything — so a Chinese reader was being shown one channel and offered
-// none. The ones that match the display language come first.
+// SUPPORT LIVES WHERE THE VIDEOS ARE: Bilibili for the Chinese side, YouTube
+// for the rest. The site itself sells only the service, so a donation never
+// meets an account. The ones that match the display language come first.
 //
 // ORDERED, NEVER FILTERED, which is the rule the topbar's community links
 // follow and for the same reason: a reader who can use the other one still has
@@ -18,8 +17,7 @@ const SUPPORT_CHANNELS = [
     id: "bilibili",
     name: "Bilibili",
     // THE ONE CHANNEL A MAINLAND READER CAN ACTUALLY PAY THROUGH, which is the
-    // whole reason `locale` exists: the other two want a card or PayPal, so a
-    // Chinese reader was shown a page of options and offered none of them.
+    // whole reason `locale` exists.
     //
     // THE AUTHOR'S SPACE PAGE, not a payment url. Bilibili's charge button
     // lives there and the flow never leaves an app the reader is already signed
@@ -29,44 +27,14 @@ const SUPPORT_CHANNELS = [
     what: "One-off or monthly, in CNY, from inside Bilibili — no card, and no new account.",
   },
   {
-    id: "kofi",
-    // THE ACCOUNT IS THE PROJECT, AND THE PAGE BEHIND IT IS A PERSON. `ko-fi.com/wfsim` reads as the same thing as `wfsim.app` at
-    // the one moment a reader is deciding whether they are in the right place;
-    // an account named after the author does not, and that half-second sits
-    // exactly where the money is. The FIRST-PERSON half is not lost — it moves
-    // to the Ko-fi page's own bio, which is where poe.ninja puts it too.
-    name: "Ko-fi",
-    url: "https://ko-fi.com/wfsim",
-    locale: "en",
-    // ONE-OFF ONLY. Ko-fi's memberships are a subscription with perks, which
-    // is the one shape DE's non-commercial rule does not allow — they stay
-    // switched off in the account, and so do its shop and commissions.
-    //
-    // NO AMOUNT, HERE OR ON ANY CARD. Every channel shows its own minimum and
-    // its own ladder at the moment of paying, which is one screen away and
-    // always current; a number repeated here is a staler copy of that, and a
-    // page that names a sum has set an expectation it did not mean to.
-    what: "One-off, in USD. Card or PayPal, no account needed.",
-  },
-  {
-    id: "patreon",
-    name: "Patreon",
-    // EMPTY UNTIL THE ACCOUNT EXISTS, which is the rule above: an option that
-    // does not work yet is worse than one that is not offered, and filling this
-    // url in is the whole of adding the channel.
-    //
-    // TWO CHANNELS, TWO JOBS. Ko-fi is the one-off and
-    // Patreon is the month, and the split is what keeps either from being a
-    // worse version of the other. There is no third: the donation-page
-    // evidence is about REMOVING choices at the moment of decision, and a
-    // developer-facing channel belongs in the README, where developers are.
-    //
-    // WHAT THE MONTH BUYS is stated on the page and bounded there: order and
-    // company, never product — never the weapon queue, since a roster fills
-    // and a perk that quietly expires is worse than none.
+    id: "youtube",
+    name: "YouTube",
+    // EMPTY UNTIL FAN FUNDING OPENS on the channel (memberships and Super
+    // Thanks need YouTube's Partner Program), which is the rule above: filling
+    // this url in is the whole of adding the channel.
     url: "",
-    locale: null,
-    what: "Monthly, in USD. The channel where the work is discussed, and your reports read first.",
+    locale: "en",
+    what: "A channel membership or Super Thanks, from inside YouTube.",
   },
 ];
 

@@ -695,7 +695,6 @@ ui:
   "One Thrax Centurion at level 9999 on Steel Path, for 180 seconds. A single target, so nothing here rewards clearing a room.": 一只凶魂百夫长，9999 级，钢铁之路，打 180 秒。单体目标，所以清场能力在这里换不到任何分数。
   "One ruler, every weapon.": 一把尺子，量全部武器。
   "A score is a build measured by this engine under the benchmark's own pinned terms — nobody submits a number. An empty row is a weapon nobody has measured yet.": 榜上的分数是由本引擎在该基准自己钉死的条件下跑出来的——没有人提交数字。空着的一行，就是还没有人测过的武器。
-  "One-off, in USD, from $5. Card or PayPal, no account needed.": 一次性，按美元结算，5 美元起。信用卡或 PayPal，无需注册账号。
   "Only builds scoring at least half their weapon's leading row are listed — the board holds the answers, not every attempt.": 只有分数达到这把武器榜首一半以上的配装才会被列出——榜单收录的是答案，不是每一次尝试。
   "Only this weapon": 仅装备这把武器
   "Open": 前往
@@ -2223,10 +2222,8 @@ ui:
     "能改这个引擎的只有实测，谁报的都算数——想让这里的数字变，就去测一个回来。"
   "Building, simulating and optimizing are the same for everyone, and what guarantees that is not me: this is AGPL-3.0, so the engine, the game data and the wasm are public and you can run your own copy.":
     "构建、模拟、优化对谁都一样，而且保证这件事的不是我：项目是 AGPL-3.0，引擎、游戏数据、wasm 全部公开，你随时可以自己开一份跑。"
-  "One-off, in USD. Card or PayPal, no account needed.":
-    "一次性，美元。信用卡或 PayPal，不用注册。"
-  "Monthly, in USD. The channel where the work is discussed, and your reports read first.":
-    "按月，美元。能进聊开发的频道，你的反馈会被先看到。"
+  "A channel membership or Super Thanks, from inside YouTube.":
+    "在 YouTube 里加入频道会员或送超级感谢。"
   "A Warframe calculator built to match in-game measurements, item by item. Building, simulating and optimizing are the whole of it, and they are the same for everyone.":
     "一个奔着对上游戏内实测数字去做的 Warframe 计算器，一项一项地对。构建、模拟、优化——这三件事就是它的全部，而且对所有人完全一致。"
   "A fix to the builder, the simulator or the optimizer ships to everybody at once. There is no earlier copy.":

@@ -23,7 +23,7 @@ static SELFTEST: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::
 /// A LINK OUT OF THE APP GOES TO THE SYSTEM BROWSER, never to this webview.
 ///
 /// Every external link in `app.js` is `target="_blank"` — the wiki page for a
-/// weapon, a mod, an arcane, an enemy, plus ko-fi and the QQ group. In a
+/// weapon, a mod, an arcane, an enemy, plus the support channels and the QQ group. In a
 /// browser that opens a tab and the app is still there; in a webview it either
 /// navigates in place or is swallowed, and the first one is worse: the reader
 /// is now on wiki.warframe.com inside a window with no back button, and the

@@ -542,26 +542,21 @@ any traffic this site sees, and the one metered path is the desktop update
 channel. Naming that zero is not a figure and it answers what a reader actually
 wonders about a free tool asking for money.
 
-A CHANNEL IS A JOB, AND EACH AUDIENCE GETS EXACTLY ONE. Ko-fi is the one-off
-and Patreon the month, both in USD; Bilibili is the whole of the Chinese side,
-because that is where those readers already are and its charge button is one
-click from a video they are already watching. A platform with a better fee
-table but no audience here is a road nobody walks: the first payment this
-project ever took came through Bilibili. THE ACCOUNT IS THE PROJECT
-(`ko-fi.com/wfsim`) and the first-person half lives in the platform's own bio.
+A CHANNEL IS A JOB, AND EACH AUDIENCE GETS EXACTLY ONE. Support lives where
+the videos are: Bilibili is the whole of the Chinese side, because that is where
+those readers already are and its charge button is one click from a video they
+are already watching; YouTube's memberships and Super Thanks are the rest, drawn
+once the channel's fan funding opens. The site sells only the service, so a
+donation never meets an account. A platform with a better fee table but no
+audience here is a road nobody walks: the first payment this project ever took
+came through Bilibili.
 
 THE PAGE STATES WHAT IS TRUE, IT DOES NOT DENY WHAT ISN'T. "Everyone gets the
 same thing" carries the four facts that were once a row of refusals — it never
 buys a number, it never buys a feature. A page that braces against its own
 visitors reads as one with something to brace about, and the same facts said
-forwards are the strongest thing on it. Nothing describes the subscription
-while its channel has no url: what a month buys is a rule for the day Patreon
-opens, not a paragraph about an option nobody can take.
-
-A SUBSCRIPTION BUYS ORDER AND COMPANY, NEVER PRODUCT — a channel where the
-work is discussed, and reports read first. NO RESPONSE TIME IS PROMISED IN ANY
-LANGUAGE: "read first" is an order, "within N hours" is an obligation that
-grows with every subscriber.
+forwards are the strongest thing on it. Nothing describes a channel that has
+no url: a paragraph about an option nobody can take is not an option.
 
 THE PAGE MAKES NO CLAIM ABOUT PRICING, IN EITHER DIRECTION. It states what is
 checkable today — the three modules, the measurements, the licence — and says
