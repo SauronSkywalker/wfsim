@@ -10,8 +10,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 10.6957 | Frostbite, Pistol Pestilence, Galvanized Diffusion, Primed Target Cracker, Galvanized Shot, Primed Pistol Gambit, Lethal Torrent, Magnetic Might, Cascadia Flare |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 12.7362 | Frostbite, Pistol Pestilence, Galvanized Diffusion, Primed Target Cracker, Galvanized Shot, Primed Pistol Gambit, Lethal Torrent, Magnetic Might, Cascadia Flare |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 12.1843 | Frostbite, Pistol Pestilence, Pistol Acuity, Hornet Strike, Primed Target Cracker, Galvanized Shot, Anemic Agility, Magnetic Might, Primed Steady Hands, Secondary Deadhead |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 13.1566 | Frostbite, Pistol Pestilence, Pistol Acuity, Hornet Strike, Primed Target Cracker, Galvanized Shot, Anemic Agility, Magnetic Might, Primed Steady Hands, Secondary Deadhead |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | alternate | 0.9559 | Frostbite, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Primed Target Cracker, Galvanized Shot, Primed Pistol Gambit, Lethal Torrent, Cascadia Flare |
 
 ## Not modelled here
