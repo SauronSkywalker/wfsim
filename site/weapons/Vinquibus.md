@@ -4,14 +4,14 @@ Chinese name: 制胜者
 
 Rifle · Primary · Mastery Rank 14. 400 base damage (puncture 280, slash 120), 40% crit chance, 3.2x crit multiplier, 20% status chance.
 
-## Best riven-free build on the WFSim board, as of 2026-09-30
+## Best riven-free build on the WFSim board, as of 2026-10-01
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.2525 | Primed Cryo Rounds, Malignant Force, Thermite Rounds, Primary Acuity, Galvanized Scope, Critical Delay, Semi-Rifle Cannonade, Vital Sense, Vigilante Supplies, Primary Deadhead |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 23.2352 | Primed Cryo Rounds, Malignant Force, Thermite Rounds, Primary Acuity, Galvanized Scope, Critical Delay, Semi-Rifle Cannonade, Vital Sense, Vigilante Supplies, Primary Deadhead |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 23.6337 | Stormbringer, High Voltage, Primary Acuity, Primed Shred, Galvanized Scope, Bladed Rounds, Rifle Elementalist, Vital Sense, Primary Deadhead |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.3375 | Primed Cryo Rounds, Malignant Force, Thermite Rounds, Primary Acuity, Galvanized Scope, Critical Delay, Semi-Rifle Cannonade, Vital Sense, Vigilante Supplies, Primary Deadhead |
 
 ## Not modelled here
