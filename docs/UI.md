@@ -551,9 +551,11 @@ donation never meets an account. A platform with a better fee table but no
 audience here is a road nobody walks: the first payment this project ever took
 came through Bilibili.
 
-THE PAGE STATES WHAT IS TRUE, IT DOES NOT DENY WHAT ISN'T. "Everyone gets the
-same thing" carries the four facts that were once a row of refusals — it never
-buys a number, it never buys a feature. A page that braces against its own
+THE PAGE STATES WHAT IS TRUE, IT DOES NOT DENY WHAT ISN'T. "The calculator is
+the same for everyone" carries the four facts that were once a row of refusals —
+a donation never buys a number, never buys a feature. The heading names the
+calculator because that is what is equal; a membership's gifts are not, and a
+page that said "everything" would be caught the day they ship. A page that braces against its own
 visitors reads as one with something to brace about, and the same facts said
 forwards are the strongest thing on it. Nothing describes a channel that has
 no url: a paragraph about an option nobody can take is not an option.

@@ -2221,8 +2221,8 @@ ui:
     "到现在为止，你从这儿拿走了 {n} 个答案，一分钱没收过。"
   "What it costs to run →":
     "它的运营成本 →"
-  "Everyone gets the same thing":
-    "所有人拿到的都一样"
+  "The calculator is the same for everyone":
+    "计算器对所有人都一样"
   "An in-game measurement is the only thing that changes what the engine does, and it wins whoever reports it — so the way to move a number here is to go and measure one.":
     "能改这个引擎的只有实测，谁报的都算数——想让这里的数字变，就去测一个回来。"
   "Building, simulating and optimizing are the same for everyone, and what guarantees that is not me: this is AGPL-3.0, so the engine, the game data and the wasm are public and you can run your own copy.":
@@ -2235,8 +2235,8 @@ ui:
     "构建器、模拟器、优化器上的任何一处修复，都是同时发给所有人的。没有抢先版。"
   "What you have run here stays in your own browser and is sent nowhere. The only place a visit is counted at all is Cloudflare's own request log, which is what serves the page.":
     "你在这里跑过什么，只留在你自己的浏览器里，不会发往任何地方。一次访问唯一被记下的地方，是 Cloudflare 自己的请求日志——页面本来就是它发的。"
-  "Supporting this buys no priority: not over what gets built next, not in the queue, not on a reply. I will read your message knowing you backed this, and it would be dishonest to claim that changes nothing — but that is a courtesy, not an obligation, and it is the whole of what it is.":
-    "投喂买不到优先权：接下来做什么、排队的先后、回不回复，都不会因此改变。我读你的消息时会知道你支持过这个项目，说这毫无影响是不诚实的——但那是我这边的一份心意，不是你手上的一项权利，而且仅止于此。"
+  "A donation buys no priority: not over what gets built next, not in the queue, not on a reply. I will read your message knowing you backed this, and it would be dishonest to claim that changes nothing — but that is a courtesy, not an obligation, and it is the whole of what it is.":
+    "捐助买不到优先权：接下来做什么、排队的先后、回不回复，都不会因此改变。我读你的消息时会知道你支持过这个项目，说这毫无影响是不诚实的——但那是我这边的一份心意，不是你手上的一项权利，而且仅止于此。"
   "Chipping in is a gift rather than a purchase — it covers what this site costs to run, and it buys nobody an advantage.":
     "投喂是一份心意，不是一笔购买——它用来支付本站的运营开销，不为谁换来优待。"
   "Chip in":
