@@ -10,8 +10,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 10.3598 | Ice Storm, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Hornet Strike, Galvanized Shot, Pistol Elementalist, Magnetic Might, Secondary Enervate |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 75.8690 | Ice Storm, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Hornet Strike, Galvanized Shot, Pistol Elementalist, Magnetic Might, Secondary Fortifier |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 13.2577 | Ice Storm, Pistol Pestilence, Scorch, Galvanized Diffusion, Hornet Strike, Galvanized Shot, Pistol Elementalist, Magnetic Might, Secondary Fortifier |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 76.1920 | Ice Storm, Pistol Pestilence, Scorch, Galvanized Diffusion, Hornet Strike, Galvanized Shot, Pistol Elementalist, Magnetic Might, Secondary Fortifier |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.3451 | Frostbite, Pistol Pestilence, Primed Heated Charge, Scorch, Galvanized Diffusion, Hornet Strike, Primed Expel Grineer, Pistol Elementalist, Primed Pistol Ammo Mutation, Cascadia Flare |
 
 ## Not modelled here
