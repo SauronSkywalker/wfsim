@@ -891,7 +891,11 @@ the wielder's own aura come with the Warframe build the weapon's wielder links
 scored in the Prototype's hands.
 
 THEY ARE OFFERED, NEVER TYPED. The Extra stats grid accepts any number into
-any bucket; what it cannot do is say WHERE the number came from. A named shard
+any bucket; what it cannot do is say WHERE the number came from. Three of its
+entries are not buckets and say so in their unit: Final Critical Damage (a
+multiplier added after every relative bonus, Arcane Crepuscular's layer) and
+Flat Base Damage twice — once into the base Condition Overload counts and once
+outside it (`WeaponBase::add_flat_base_damage`'s `into_co`). A named shard
 has a source that can be checked against the wiki; a typed +45% has nothing
 behind it.
 

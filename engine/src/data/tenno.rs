@@ -407,6 +407,16 @@ pub struct StatBonuses {
     /// NOT a bucket: percentage points added AFTER mods, the layer Elemental
     /// Excess and an ability's flat grant use. 0.25 is +25 points on any base.
     pub flat_crit_chance: f64,
+    /// NOT a bucket either: an absolute critical multiplier added after every
+    /// relative bonus — *"absolute (also called flat) amounts of critical
+    /// damage which are applied after relative bonuses"* (wiki, Critical_Hit),
+    /// Arcane Crepuscular's layer. 1.6 turns a modded 3.0x into 4.6x.
+    pub final_crit_damage: f64,
+    /// FLAT BASE DAMAGE added to the weapon's own, split by whether Condition
+    /// Overload's base reads it (`WeaponBase::add_flat_base_damage`'s
+    /// `into_co`): `_co` joins the CO base, the other does not.
+    pub flat_base_damage: f64,
+    pub flat_base_damage_co: f64,
 }
 
 impl StatBonuses {

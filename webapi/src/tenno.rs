@@ -150,6 +150,9 @@ pub(crate) fn tenno_from(v: &Value, info: &WeaponInfo) -> wfsim_engine::data::te
             ammo_efficiency: g("ammo_efficiency"),
             status_duration: g("status_duration"),
             flat_crit_chance: g("flat_crit_chance"),
+            final_crit_damage: g("final_crit_damage"),
+            flat_base_damage: g("flat_base_damage"),
+            flat_base_damage_co: g("flat_base_damage_co"),
         };
     }
     // THE SQUAD'S AURAS, beside the wielder's own. On the fight rather than the

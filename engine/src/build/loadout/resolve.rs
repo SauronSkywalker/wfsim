@@ -110,7 +110,12 @@ pub fn resolve_for(
     // the base first, and the gated add below lands on the scaled one, which is
     // the order the game states (the page's numbers ARE the ability at 100%).
     let strength = if base.exalted { tenno.summon_strength.unwrap_or(tenno.ability_strength) } else { 1.0 };
-    let base = if gated_flat > 0.0 || gated_mag > 0.0 || strength != 1.0 {
+    // THE FIGHT'S FLAT BASE DAMAGE (the Extra stats grid), in the same order
+    // a gated add takes: on the base after strength, each half saying whether
+    // the CO base reads it.
+    let fight_flat = tenno.bonuses.flat_base_damage.max(0.0);
+    let fight_flat_co = tenno.bonuses.flat_base_damage_co.max(0.0);
+    let base = if gated_flat > 0.0 || gated_mag > 0.0 || strength != 1.0 || fight_flat > 0.0 || fight_flat_co > 0.0 {
         let mut b = base.clone();
         b.scale_base_damage(strength);
         if gated_flat > 0.0 {
@@ -121,6 +126,8 @@ pub fn resolve_for(
             // (MEASUREMENTS M83).
             b.add_flat_base_damage(gated_flat, gated_into_co);
         }
+        b.add_flat_base_damage(fight_flat_co, fight_flat_co);
+        b.add_flat_base_damage(fight_flat, 0.0);
         b.magazine_size += gated_mag;
         owned = b;
         &owned
@@ -1103,7 +1110,7 @@ pub fn resolve_for(
             // The post-mod flat layer (Elemental Excess) is a WEAPON stat
             // change, so the explosion takes it too.
             crit_chance: (r.base_crit_chance * (1.0 + cc) + (base.post_mod_crit_chance + post_mod_cc_extra)).max(0.0),
-            crit_damage: r.base_crit_damage * (1.0 + cd),
+            crit_damage: r.base_crit_damage * (1.0 + cd) + fb.final_crit_damage,
             base_crit_chance: r.base_crit_chance,
             base_crit_damage: r.base_crit_damage,
             status_chance: (r.base_status_chance * (1.0 + sc) + base.post_mod_status_chance
@@ -1249,7 +1256,7 @@ pub fn resolve_for(
             } else {
                 0.0
             },
-            crit_damage: if f.can_crit { f.base_crit_damage * (1.0 + cd) } else { 1.0 },
+            crit_damage: if f.can_crit { f.base_crit_damage * (1.0 + cd) + fb.final_crit_damage } else { 1.0 },
             status_chance: if f.status_mods_apply {
                 (f.base_status_chance * (1.0 + sc) + base.post_mod_status_chance
                     + post_mod_status_chance).max(0.0)
@@ -1610,8 +1617,10 @@ pub fn resolve_for(
         crit_chance: resolved_cc,
         // A GATED "+Nx Base Critical Damage Multiplier" joins the BASE, so the
         // crit-damage mods multiply it — which is what "Base" earns on the card.
+        // …AND THE FIGHT'S FINAL CRIT DAMAGE after every relative bonus.
         crit_damage: (base.base_crit_damage + prelude_cd + gate(GatedGrant::BaseCritDamage))
-            * (1.0 + cd),
+            * (1.0 + cd)
+            + fb.final_crit_damage,
         // What the line above added, in the same post-mod units, so the sim
         // subtracts exactly what was granted — including through a crit-damage
         // LOCK, which zeroes `cd` for both expressions at once.

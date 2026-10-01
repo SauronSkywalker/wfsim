@@ -1074,6 +1074,32 @@ fn a_fight_bonus_resolves_exactly_like_the_mod_of_that_stat() {
         assert!((cc(mods, 0.25) - cc(mods, 0.0) - 0.25).abs() < 1e-9);
         assert!((cc(mods, -0.25) - (cc(mods, 0.0) - 0.25).max(0.0)).abs() < 1e-9);
     }
+
+    // FINAL CRIT DAMAGE IS ADDED AFTER THE MODS, not multiplied by them: +1.6x
+    // lands as +1.6 on the bare panel and on Vital Sense's alike.
+    let cd = |mods: &[&ModDef], fin: f64| {
+        let mut t = neutral.clone();
+        t.bonuses.final_crit_damage = fin;
+        resolve_for(&base, mods, StackPolicy::Emergent, &t).crit_damage
+    };
+    let vs = [by("vital_sense")];
+    for mods in [&[][..], &vs[..]] {
+        assert!((cd(mods, 1.6) - cd(mods, 0.0) - 1.6).abs() < 1e-9, "{} vs {}", cd(mods, 1.6), cd(mods, 0.0));
+    }
+
+    // FLAT BASE DAMAGE GROWS THE BASE EITHER WAY, and only the `_co` half grows
+    // what Condition Overload counts: the same +30, two different CO bases.
+    let flat = |co: bool| {
+        let mut t = neutral.clone();
+        if co { t.bonuses.flat_base_damage_co = 30.0 } else { t.bonuses.flat_base_damage = 30.0 }
+        resolve_for(&base, &[], StackPolicy::Emergent, &t)
+    };
+    let bare = resolve_for(&base, &[], StackPolicy::Emergent, neutral);
+    let (into, outside) = (flat(true), flat(false));
+    assert!((into.modified_base - bare.modified_base - 30.0).abs() < 1e-6, "{} vs {}", into.modified_base, bare.modified_base);
+    assert!((outside.modified_base - into.modified_base).abs() < 1e-9);
+    assert!(into.co_base_fraction() > outside.co_base_fraction(),
+        "CO reads the _co add and not the other: {} vs {}", into.co_base_fraction(), outside.co_base_fraction());
 }
 
 /// WITH A CHANNELED ABILITY ACTIVE — the second player-declared state, and
