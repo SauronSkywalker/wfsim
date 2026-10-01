@@ -99,6 +99,7 @@ untouched and read-only rather than guessed at.
 | `wfsim-nona-key` | sessionStorage | the key, when not remembered |
 | `wfsim-nona-memory` | localStorage | `{ v, paused, items: MemoryItem[], archive?: {at, items}[] }` — `archive`, the versions before the last tidies |
 | `wfsim-nona-calib` | localStorage | `{ [model]: ratio }` — token estimate calibration |
+| `wfsim-nona-launcher` | localStorage | `{ v, side, y }` — where the launcher was dragged: the edge it settled on, and its bottom's height as a share of the screen's; absent, it sits where the stylesheet puts it |
 | `wfsim-nona` / `conversations` | IndexedDB | `Conversation` |
 
 ```

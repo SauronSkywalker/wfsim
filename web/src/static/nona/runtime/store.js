@@ -12,6 +12,7 @@ const SETTINGS = "wfsim-nona";
 const SESSION_KEY = "wfsim-nona-key";
 const MEMORY = "wfsim-nona-memory";
 const CALIB = "wfsim-nona-calib";
+const LAUNCHER = "wfsim-nona-launcher";
 /// How many conversations are kept besides the pinned ones.
 const KEEP_CONVERSATIONS = 100;
 
@@ -50,6 +51,14 @@ export const memory = {
   pause: (on) => memory.change((m) => ({ ...m, paused: !!on })),
   clear: () => memory.change((m) => ({ ...memoryOps.emptyMemory(), paused: m.paused })),
   restore: () => memory.change(memoryOps.restore),
+};
+
+// ---- where the launcher was left ------------------------------------------------
+
+export const launcher = {
+  /// `{ side, y }`, or null where it was never moved and sits where the page puts it.
+  get: () => migrate("launcher", read(LAUNCHER)),
+  put(p) { if (!newer(read(LAUNCHER))) write(LAUNCHER, { ...p, v: V }); },
 };
 
 // ---- the token estimate's correction, per model -------------------------------

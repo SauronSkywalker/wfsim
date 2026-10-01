@@ -53,6 +53,7 @@ const NONA_FILES: &[(&str, &str)] = &[
     ("ui/cards.js", include_str!("static/nona/ui/cards.js")),
     ("ui/chips.js", include_str!("static/nona/ui/chips.js")),
     ("ui/kit.js", include_str!("static/nona/ui/kit.js")),
+    ("ui/launcher.js", include_str!("static/nona/ui/launcher.js")),
     ("ui/panel.js", include_str!("static/nona/ui/panel.js")),
     ("ui/settings.js", include_str!("static/nona/ui/settings.js")),
 ];

@@ -14,6 +14,7 @@ export const FROZEN = {
   memory: ["v", "paused", "items", "archive"],
   memoryItem: ["id", "kind", "key", "value", "status", "source", "created_at", "updated_at", "history"],
   settings: ["v", "base", "proto", "model", "context", "price", "remember", "concise", "key"],
+  launcher: ["v", "side", "y"],
 };
 
 /// The roles a model is sent. The others are drawn in the panel only. A
@@ -48,5 +49,9 @@ export function migrate(kind, value) {
     return { paused: false, items: [], ...rest, v: V };
   }
   if (kind === "settings") return { ...value, v: V };
+  if (kind === "launcher") {
+    const y = Number(value.y);
+    return { side: value.side === "left" ? "left" : "right", y: Number.isFinite(y) ? Math.min(1, Math.max(0, y)) : 0, v: V };
+  }
   return null;
 }

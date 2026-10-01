@@ -10,6 +10,7 @@ import { tr, esc, dd, $, k, usd, markup, usageLine, line } from "./kit.js";
 import { drawCard } from "./cards.js";
 import { drawChip, drawMerged } from "./chips.js";
 import { fillSettings } from "./settings.js";
+import { makeDraggable } from "./launcher.js";
 
 export function mountPanel(door, agent) {
   if ($("nona-fab")) return;
@@ -45,6 +46,7 @@ export function mountPanel(door, agent) {
     </div>
     <div id="nona-settings" class="nona-settings" hidden></div>`;
   document.body.append(fab, panel);
+  makeDraggable(fab);
 
   let live = null; // the reply bubble while it streams
   let calling = null; // the trail line of the call being run

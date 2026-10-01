@@ -105,6 +105,16 @@ proposes the rest, and a model's tidy of it is refused for an unknown source,
 a slot dropped or invented, a value too long or a result over the cap. Verified to bite on four planted changes: keep five, pass
 three-digit whole numbers, stop merging same-role turns, never activate.
 
+## `check_nona_launcher`
+
+Nona's launcher, driven by real mouse and touch input over CDP: a drag settles
+it on the nearer side edge at the height it was left, without opening her; a
+press that barely moves still opens her; the next click after a drag is not
+eaten; where it was left survives a reload; a smaller window keeps it on
+screen below the topbar; a finger drags it on a phone. Verified to bite: a
+quick first drag that left the button before its first move was lost while
+the press was followed on the button rather than the window.
+
 ## `check_nona_boundary`
 
 Not a page check: the files under `web/src/static/nona/`, read as text with
