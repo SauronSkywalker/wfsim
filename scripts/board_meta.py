@@ -38,7 +38,7 @@ OUT = ROOT / "site" / "board.meta.json"
 # What a board's row in `board_state.yaml` publishes. Named rather than copied
 # wholesale: the yaml is also where fields the page has no business reading
 # would land, and a stamp that mirrors a file grows whatever that file grows.
-STATE_FIELDS = ("scored_at_epoch_seconds", "submissions", "listed", "held")
+STATE_FIELDS = ("scored_at_epoch_seconds", "submissions", "listed")
 
 # THE PUBLISHER'S OWN DERIVED FILE, under the same directory as the weapons and
 # therefore not one of them. It has a digest here like any other file a client

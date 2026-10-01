@@ -54,7 +54,7 @@ const facts = await evaluate(`(() => {
     roster: n("weapons") + n("frames") + mods.size + evo
       + n("arcanes") + n("abilities") + n("auras") + n("shards") + n("enemies"),
     uploads: boards.length ? Math.max(...boards.map((b) => b.submissions | 0)) : 0,
-    scored: boards.reduce((t, b) => t + (b.held | 0), 0),
+    scored: boards.reduce((t, b) => t + (b.listed | 0), 0),
     injected: PROJECT_FACTS,
     built: {
       hidden: $("support-built").hidden,

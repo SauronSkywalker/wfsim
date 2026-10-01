@@ -469,8 +469,8 @@ everything else comes from `META` and `BOARD_META`.
 THREE FIGURES, AND THEY ARE THE THREE MODULES: what is modelled
 (`rosterSize()`, a SUM over META's categories so a new one counts itself and
 the function is never edited again), what players built with it
-(`submissions`), and what came back out (`held`). Submissions are ONE pool
-every ruler reads, so they are MAXed; held scores are each ruler's own and are
+(`submissions`), and what came back out (`listed`). Submissions are ONE pool
+every ruler reads, so they are MAXed; listed scores are each ruler's own and are
 ADDED. Test and check counts are gone — a reader deciding whether this is
 worth anything is not moved by how many unit tests it has, and three figures
 an order of magnitude apart read as three facts where two of the same size

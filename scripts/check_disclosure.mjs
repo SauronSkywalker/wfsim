@@ -94,16 +94,20 @@ for (const lang of ["en", "zh"]) {
     out.bugHead = lb ? (lb.querySelector('.unmod-h') || {}).textContent || '' : '';
     out.bugLines = lb ? [...lb.querySelectorAll('.unmod-l')].map(e => e.textContent.trim()) : [];
     out.bugData = (weaponInfo('laetum').live_bugs || []).length;
-    history.pushState({}, '', '/weapons/Stug'); route(); await sleep(3200);
-
-    // 2. EVOLUTION TILES.
-    out.evoChips = evoRows('.exchip.unmod').map(e => e.textContent.trim());
-    // …AND THE OTHER ADMISSION. An evolution has two: a clause nobody has
-    // modelled YET, and a clause that cannot pay out in a one-target fight at
-    // all. They were one chip until 2026-08-12, which said "not modelled yet"
-    // over perks nobody is working on and nobody should.
+    // 2. EVOLUTION TILES — the EDGE chip, on a weapon that has one. An
+    // evolution has two admissions: a clause nobody has modelled YET, and a
+    // clause that can never pay out here. FOUND, not named: the Stug carried
+    // the edge until its clauses were re-filed as work (notes:
+    // one_target_is_not_an_edge), and a named carrier fails the day its last
+    // edge moves. The day none is left, this finds nothing and says so.
+    const edgeCarrier = (META.weapons || []).find((w) => (w.evolutions || [])
+      .some((t) => (t.options || []).some((o) => (o.out_of_scope || []).length)));
+    out.edgeCarrier = edgeCarrier ? edgeCarrier.id : null;
+    if (edgeCarrier) { history.pushState({}, '', '/weapons/' + urlSlug(edgeCarrier)); route(); await sleep(3200); }
     out.evoScope = evoRows('.exchip.scope')
         .map(e => ({ text: e.textContent.trim(), why: e.getAttribute('title') || '' }));
+    // …AND BACK TO THE STUG, which every step below reads as the open weapon.
+    history.pushState({}, '', '/weapons/Stug'); route(); await sleep(3200);
     // …AND THE THIRD, which is not a shortfall of ours at all: a clause the
     // GAME does not pay out. The mod and arcane cards have carried live bugs
     // since 2026-08-08 and the evolutions had no arm for one until an owner
@@ -366,11 +370,10 @@ for (const lang of ["en", "zh"]) {
     r.misprintNotLiveBug === 0, String(r.misprintNotLiveBug));
   check(`[${lang}] ...while its tier-mate, whose card is right, carries none`,
     r.misprintControl === 0, String(r.misprintControl));
-  // BOTH KINDS ON SCREEN, and told apart. The Stug carries each: clauses the
-  // model has no rule for yet, and Hoplite Virtue, whose trigger is the
-  // PLAYER's shields breaking — which nothing in this arena can do.
+  // THE EDGE CHIP RENDERS where the data has one, told apart from the todo.
   check(`[${lang}] ...and an edge says it is an edge, not a todo`,
-    r.evoScope.length >= 1, `${r.evoScope.length} scope chips`);
+    r.edgeCarrier && r.evoScope.length >= 1,
+    r.edgeCarrier ? `${r.evoScope.length} scope chips on ${r.edgeCarrier}` : "no weapon in META carries an edge any more");
   check(`[${lang}] ...naming the reason it can never pay out`,
     r.evoScope.every((c) => c.why.length > 20 && cjk.test(c.why) === (lang === "zh")),
     JSON.stringify(r.evoScope[0] || null).slice(0, 140));
