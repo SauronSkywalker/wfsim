@@ -91,6 +91,7 @@ body{background:var(--plane);color:var(--text);font-family:system-ui,"Segoe UI",
 .wsearch-panel .combo-menu{max-height:320px;overflow-y:auto}
 .wsearch-panel .opt{cursor:pointer}
 .wsearch-panel .opt:hover{background:var(--panel2)}
+.wsearch-head{display:none}
 /* ON A PHONE THE RESULTS TAKE THE SCREEN'S WIDTH, under the bar, the way a
    phone's own search does: the box's own width left half the screen showing
    the page behind a list of names. The sticky topbar is what it hangs from. */
@@ -100,6 +101,10 @@ body{background:var(--plane);color:var(--text);font-family:system-ui,"Segoe UI",
   .wsearch-panel .combo-menu{max-height:calc(100dvh - 120px)}
   .wsearch-panel .opt{min-height:48px}
   .wsearch-open .nona-fab{display:none}
+  /* …AND A WAY OUT, since the list covers what a tap outside would land on. */
+  .wsearch-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 8px 6px 12px;
+    border-bottom:1px solid var(--line);font-size:12px;color:var(--muted)}
+  .wsearch-panel .combo-menu{max-height:calc(100dvh - 160px)}
 }
 .brand{font-weight:800;font-size:20px;letter-spacing:-.01em}.brand span{color:var(--gold)}
 /* Module tabs under the weapon strip: Builder | Optimizer. The sim is

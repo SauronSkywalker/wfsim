@@ -45,10 +45,16 @@ function renderComputePicker() {
   if (el) el.textContent = face;
 }
 
+/// How long typing must pause before the list is drawn again: a list of every
+/// weapon redrawn per keystroke is what made typing stutter on a phone.
+const WSEARCH_DEBOUNCE_MS = 120;
+
 function initWeaponSearch() {
   const input = $("wsearch-input"), panel = $("wsearch-panel"), listEl = $("wsearch-list");
   if (!input) return;
   input.placeholder = tr("Search…");
+  const countEl = $("wsearch-count"), closeEl = $("wsearch-close");
+  if (closeEl) closeEl.textContent = tr("Close");
   // ONE BOX, NO FILTER ROW: a kind is a word in the box like a name is — the
   // search text carries every weapon's type — and on a phone a row of chips
   // above the list was the list's own room.
@@ -60,6 +66,7 @@ function initWeaponSearch() {
     const list = oneCardPerChamber(META.weapons || [])
       .filter((w) => searchHit(w, q))
       .sort((a, b) => a.name.localeCompare(b.name));
+    if (countEl) countEl.textContent = tr("{n} results").replace("{n}", list.length);
     listEl.innerHTML = list.map((w) => `
       <div class="opt" data-id="${w.id}">
         ${imgTag(IMG(w.image), "mod")}
@@ -68,10 +75,23 @@ function initWeaponSearch() {
   };
   // WHILE THE RESULTS ARE OPEN the page says so (`wsearch-open`), so what
   // floats over a phone's screen can step aside for them.
-  const shut = () => { panel.hidden = true; document.body.classList.remove("wsearch-open"); };
-  const open = () => { panel.hidden = false; document.body.classList.add("wsearch-open"); renderList(); };
+  let timer = null;
+  const shut = () => { clearTimeout(timer); panel.hidden = true; document.body.classList.remove("wsearch-open"); };
+  // AN EMPTY BOX OPENS NOTHING: every weapon at once answers no question, and
+  // on a phone it covered the page the moment the box was touched.
+  const open = () => {
+    if (!input.value.trim()) return shut();
+    panel.hidden = false; document.body.classList.add("wsearch-open"); renderList();
+  };
   input.addEventListener("focus", open);
-  input.addEventListener("input", open);
+  input.addEventListener("input", () => {
+    clearTimeout(timer);
+    if (!input.value.trim()) return shut();
+    timer = setTimeout(open, WSEARCH_DEBOUNCE_MS);
+  });
+  // THE WAY OUT where the list covers the screen: closed, emptied, and the
+  // keyboard put away.
+  if (closeEl) closeEl.addEventListener("click", (e) => { e.stopPropagation(); shut(); input.value = ""; input.blur(); });
   listEl.addEventListener("click", (e) => {
     const row = e.target.closest(".opt");
     if (!row) return;
@@ -83,7 +103,11 @@ function initWeaponSearch() {
   document.addEventListener("click", (e) => {
     if (!e.target.closest(".wsearch")) shut();
   });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") shut(); });
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape" || panel.hidden) return;
+    shut();
+    input.blur();
+  });
 }
 
 // language dropdown (top right, beside the theme toggle): switching

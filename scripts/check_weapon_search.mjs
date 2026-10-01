@@ -1,6 +1,7 @@
 // THE TOPBAR SEARCH IS ONE BOX (10-weapon-search.js `initWeaponSearch`): no
 // filter row above the list, and a weapon's kind is a word in the box like its
-// name — in the page's language and in English.
+// name — in the page's language and in English. An empty box opens nothing,
+// typing draws the list once it pauses, and on a phone the list has a way out.
 import { openApp } from "./cdp.mjs";
 
 const app = await openApp({ boot: 12000, lang: "zh" });
@@ -14,7 +15,18 @@ const r = await evaluate(`(async () => {
     return [...document.querySelectorAll('#wsearch-list .opt')].map((o) => o.dataset.id);
   };
   const out = {};
-  const all = await type('');
+  const panel = document.getElementById('wsearch-panel');
+  out.emptyShut = (await type('')).length === 0 && panel.hidden;
+  // A BURST OF KEYSTROKES IS ONE DRAW.
+  let draws = 0;
+  const mo = new MutationObserver(() => draws++);
+  mo.observe(document.getElementById('wsearch-list'), { childList: true });
+  input.focus();
+  for (const q of ['b', 'br', 'bra', 'brat']) { input.value = q; input.dispatchEvent(new Event('input', { bubbles: true })); await sleep(15); }
+  await sleep(400);
+  mo.disconnect();
+  out.draws = draws;
+  const all = await type('a');
   out.rows = all.length;
   out.noTools = !document.querySelector('#wsearch-panel .pchip, #wsearch-panel .dd');
   const shotguns = oneCardPerChamber(META.weapons).filter((w) => w.mod_class === 'shotgun').map((w) => w.id);
@@ -27,6 +39,8 @@ const r = await evaluate(`(async () => {
   out.byName = (await type('托里德')).includes('torid');
   return out;
 })()`);
+check("an empty box opens nothing", r.emptyShut === true, JSON.stringify(r));
+check("...a burst of typing draws the list once, when it pauses", r.draws === 1, JSON.stringify(r));
 check("the panel is one list, with no filter row or sort above it", r.noTools === true && r.rows > 50, JSON.stringify(r));
 check(`a weapon's kind is found by its word in the page's language (${r.shotgunWord})`, r.byKindZh === true, JSON.stringify(r));
 check("...and by its English one", r.byKindEn === true, JSON.stringify(r));
@@ -50,12 +64,20 @@ const m = await evaluate(`(async () => {
   const rows = [...document.querySelectorAll('#wsearch-list .opt')];
   const kinds = rows.map((o) => [o.querySelector('.me').textContent.trim(), tr((META.weapons.find((w) => w.id === o.dataset.id) || {}).subtype || '')]);
   const untranslated = [...new Set(META.weapons.map((w) => w.subtype).filter((k) => k && tr(k) === k))];
-  return { width: p.width, vw: innerWidth, top: p.top, fabShown: !!fab && getComputedStyle(fab).display !== 'none',
+  const fabWhileOpen = !!fab && getComputedStyle(fab).display !== 'none';
+  // THE WAY OUT: shown over the list, and it closes, empties and lets go of the box.
+  const close = document.getElementById('wsearch-close');
+  const closeShown = !!close && close.getBoundingClientRect().height > 0;
+  if (close) close.click();
+  await new Promise((ok) => setTimeout(ok, 100));
+  const closed = document.getElementById('wsearch-panel').hidden && i.value === '' && document.activeElement !== i;
+  return { closeShown, closed, width: p.width, vw: innerWidth, top: p.top, fabShown: fabWhileOpen,
     kinds: kinds.length > 3 && kinds.every(([shown, want]) => shown === want), untranslated };
 })()`);
 check("on a phone the results take the screen's width", m.width >= m.vw * 0.9, JSON.stringify(m));
 check("...and nothing floats over them", m.fabShown === false, JSON.stringify(m));
 check("...and a row's kind is shown in the page's language wherever it has one", m.kinds === true, JSON.stringify(m));
+check("...and a close button over them shuts the list, empties the box and lets go of it", m.closeShown && m.closed, JSON.stringify(m));
 console.log(`  (kinds with no Chinese yet: ${m.untranslated.join(", ")})`);
 
 await app.finish("the topbar search is one box, and a weapon's kind is a word in it");

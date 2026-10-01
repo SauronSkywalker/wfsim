@@ -758,8 +758,10 @@ overflow.
 The topbar search is one box: no filter row or sort above the list, a weapon's
 kind found by its word in the page's language and in English (a Kitgun chamber
 by its class too), a name as before; on a phone the results take the screen's
-width, the floating button steps aside while they are open, and every row's
-kind is shown translated wherever a translation exists.
+width, the floating button steps aside while they are open, every row's kind
+is shown translated wherever a translation exists, and a close button over them
+shuts the list, empties the box and puts the keyboard away. An empty box opens
+nothing, and a burst of typing draws the list once, when it pauses.
 
 ## `check_cloud_page`
 
