@@ -76,7 +76,9 @@ function normalizeLimits(l) {
   const out = blankLimits();
   const w = weaponInfo($("weapon").value) || {};
   const ex = (l && l.exclude) || {};
-  out.exclude.mods = (ex.mods || []).filter((id) => excludedCard(id));
+  // A RIVEN THIS BROWSER DOES NOT HOLD stays excluded (`holdAbsent`): the
+  // search reads the list as a filter, so an id it does not know costs nothing.
+  out.exclude.mods = (ex.mods || []).filter((id) => excludedCard(id) || (isRivenId(id) && !customHeld(id)));
   out.exclude.arcanes = (ex.arcanes || []).filter((id) => arcaneFitsWeapon(w.id, id));
   const evoIds = new Set(weaponEvos(w.id).flatMap((t) => t.options.map((o) => o.id)));
   out.exclude.evolutions = (ex.evolutions || []).filter((id) => evoIds.has(id));

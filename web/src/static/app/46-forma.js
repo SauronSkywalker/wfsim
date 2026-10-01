@@ -174,7 +174,10 @@ const storedSlots = (st) => Array.from({ length: 10 }, (_, i) => {
 function weaponFormaPartners() {
   if (officialBuildActive()) return [];
   const want = new Set(formaGroup(presetWeapon()));
-  return loadPresetList(BUILDS).filter((p) => presetId(p) !== activePreset && want.has(presetId(p)));
+  // A BUILD NAMING A RIVEN THIS BROWSER DOES NOT HOLD is planned where it is
+  // whole: placed without it, its riven's slot could be handed to another card.
+  return loadPresetList(BUILDS).filter((p) => presetId(p) !== activePreset && want.has(presetId(p))
+    && !customRefs(p.state).some((x) => !customHeld(x.ref)));
 }
 
 /// Plan the open build — with its partners unless `alone` — and write the
@@ -183,6 +186,10 @@ function weaponFormaPartners() {
 /// `onto`: a layout already chosen (the optimizer's point) — the builds are
 /// placed on it for no further Forma, and its own bill is what is shown.
 async function autoForma({ alone = false, onto = null } = {}) {
+  if (!alone && absentOf(BUILDS, activePreset).length) {
+    noteInline(tr("This build's riven is not on this browser. Plan its Forma once it syncs."));
+    return null;
+  }
   const w = $("weapon").value;
   const live = slots;
   const sig = () => JSON.stringify(live.map((s) => [s.mod, s.rank]));

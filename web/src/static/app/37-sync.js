@@ -51,11 +51,27 @@ function setCloudSync(list, id, on) {
       .replace("{n}", syncAllowance[syncPool(list)]));
     return false;
   }
-  if (on) delete p.cloud_sync; else p.cloud_sync = false;
-  try { localStorage.setItem(list, JSON.stringify(ps)); } catch (_) { return false; }
+  if (!syncSwitch(list, id, on)) return false;
+  if (!on && syncPool(list) === "customs") {
+    const users = syncNamers(id).length;
+    if (users) noteInline(tr("{n} synced items use this one. On other browsers it will be missing from them.").replace("{n}", users));
+  }
   syncSoon(0);
   return true;
 }
+/// Write one entry's choice, and nothing else.
+function syncSwitch(list, id, on) {
+  let ps;
+  try { ps = JSON.parse(localStorage.getItem(list)); } catch (_) { return false; }
+  const p = Array.isArray(ps) && ps.find((x) => x && x.id === id);
+  if (!p) return false;
+  if (on) delete p.cloud_sync; else p.cloud_sync = false;
+  try { localStorage.setItem(list, JSON.stringify(ps)); } catch (_) { return false; }
+  return true;
+}
+/// The synced entries here that name the custom `id`.
+const syncNamers = (id) => [...syncLocal().values()]
+  .filter(({ list, p }) => syncPool(list) === "presets" && isCloudSynced(p) && customRefs(p).some((x) => x.id === id));
 /// WHERE A PULLED ENTRY LIVES: a page from before one store per collection
 /// pushed `wfsim-presets-<owner>-<domain>`, and its entry is the collection's,
 /// filed under that owner unless it names its own.
@@ -195,14 +211,37 @@ async function syncRound() {
   for (const [id, { list, p }] of local) {
     if (st.known[id] && !st.known[id].off && isCloudSynced(p)) counts[syncPool(list)]++;
   }
-  for (const [id, { list, p }] of local) {
+  // A CUSTOM TRAVELS WITH WHAT NAMES IT: an entry this round pushes brings
+  // every custom it names (`customRefs`), counted against the allowance like
+  // any other, so a build never reaches a browser without its riven. One past
+  // the allowance stays here and says so. Presets are decided first for it.
+  const brought = new Set();
+  const short = new Set();
+  const order = [...local].sort(([, a], [, b]) => (syncPool(a.list) === "customs") - (syncPool(b.list) === "customs"));
+  for (const [id, { list, p }] of order) {
     // A NEW ENTRY TAKES THE DEFAULT: synced, unless "upload new items" is off
     // or its pool's allowance is used — then it stays here, and says so.
-    if (!st.known[id] && p.cloud_sync === undefined) {
+    if (!st.known[id] && p.cloud_sync === undefined && !brought.has(id)) {
       if (!syncAuto() || !syncRoom(syncPool(list), counts)) {
-        setCloudSync(list, id, false);
+        syncSwitch(list, id, false);
         p.cloud_sync = false;
       } else counts[syncPool(list)]++;
+    }
+    if (syncPool(list) === "presets" && isCloudSynced(p)) {
+      const k = st.known[id];
+      if (!k || k.off || k.sig !== syncSig(p) || k.list !== list) {
+        for (const r of customRefs(p)) {
+          const c = local.get(r.id);
+          // ABSENT HERE, ALREADY BROUGHT, OR ALREADY THE ACCOUNT'S: nothing to bring.
+          if (!c || c.list !== presetListKey(r.domain) || brought.has(r.id)) continue;
+          if (isCloudSynced(c.p) && st.known[r.id]) continue;
+          if (!syncRoom("customs", counts)) { short.add(c.p.name || r.id); continue; }
+          if (c.p.cloud_sync === false) syncSwitch(c.list, r.id, true);
+          delete c.p.cloud_sync;
+          brought.add(r.id);
+          counts.customs++;
+        }
+      }
     }
     if (!isCloudSynced(p)) {
       // TAKEN OFF THE ACCOUNT: the others keep their copy and stop syncing it,
@@ -226,6 +265,8 @@ async function syncRound() {
   for (const [id, k] of Object.entries(st.known)) {
     if (!local.has(id)) changes.push({ id, list: k.list, deleted: true, updated_at: now, base: syncBase(k) });
   }
+  // CUSTOMS FIRST, so no browser pulls a build before the riven it names.
+  changes.sort((a, b) => (syncPool(b.list) === "customs") - (syncPool(a.list) === "customs"));
 
   // 2. PUSH, in chunks the server takes. An entry the server rejects stays
   // unsynced and is named on the account page; it is sent again next round.
@@ -240,7 +281,11 @@ async function syncRound() {
     // PAST THE ALLOWANCE the server refuses a new item by id: it stays here.
     const refused = new Set(r.refused || []);
     if (refused.size) {
-      for (const c of chunk) if (refused.has(c.id)) setCloudSync(c.list, c.id, false);
+      for (const c of chunk) {
+        if (!refused.has(c.id)) continue;
+        syncSwitch(c.list, c.id, false);
+        if (brought.has(c.id)) short.add((local.get(c.id) || {}).p?.name || c.id);
+      }
       presetToast(tr("{n} new items stay on this browser: the account's sync allowance is used").replace("{n}", refused.size));
     }
     const rejected = new Map((r.rejected || []).map((x) => [x.id, x.reason]));
@@ -256,6 +301,11 @@ async function syncRound() {
       else st.known[c.id] = { list: c.list, sig: c.sig, at: c.updated_at, v };
     }
     saveSyncState(st);
+  }
+
+  if (short.size) {
+    noteInline(tr("Not synced, the account's allowance for customs is used: {names}. Items here that use them will miss them on other browsers.")
+      .replace("{names}", [...short].slice(0, 3).join(", ") + (short.size > 3 ? ` +${short.size - 3}` : "")));
   }
 
   // 3. PULL, every page.
@@ -453,6 +503,18 @@ function syncShow({ lists, ids, removed }) {
       else if (!cur && removed.has(act) && list[0]) { doc.setActive(presetId(list[0])); doc.apply(list[0].state); }
     });
     doc.rerender();
+  }
+  // A CUSTOM THAT ARRIVED is seated where the entry on screen held it.
+  if ([...lists].some((k) => k.startsWith("wfsim-customs-"))) {
+    for (const [d, h] of [...absentHolds]) {
+      const doc = presetDoc(d);
+      if (!doc || doc.active() !== h.entry || !h.list.some((x) => customHeld(x.ref))) continue;
+      const cur = loadPresetList(d, undoOwner(d)).find((p) => presetId(p) === h.entry);
+      if (!cur) continue;
+      whileApplying(() => doc.apply(cur.state));
+      doc.rerender();
+      if (!absentOf(d, h.entry).length) noteInline(tr("What was missing here has synced, and is back in place."));
+    }
   }
   // THE BUILD A LINK WAS WAITING FOR, now that it is here.
   const want = buildWanted && buildWanted.weapon === presetWeapon()

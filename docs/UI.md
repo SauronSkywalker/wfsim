@@ -307,6 +307,31 @@ stays the working copy: signed out, or without the feature, nothing runs.
 | a new entry is synced unless "upload new items" (this browser's `wfsim-sync-auto`) is off | `syncRound` |
 | the server states what the account may hold per pool (`allowance`); past it a new entry stays here and turning one on is refused | `syncAllowance`, `setCloudSync` |
 | `/account/sync` lists every item this browser holds, newest first or by weapon, and switches sync one at a time or several at once; it deletes nothing | `cloudPage` (19-cloud-page.js) |
+| a custom travels with what names it: an entry a round pushes brings every custom it names, counted against the allowance; one past it stays here and is named | `syncRound`, `customRefs` |
+| customs are pushed before presets, so no browser pulls a build before its riven | `syncRound` |
+| taking a custom off the account says how many synced items use it | `setCloudSync`, `syncNamers` |
+| a reference this browser cannot resolve is HELD, never dropped: the page stands something in (an empty slot, the roster's first unit), says so, and the save puts the reference back where the stand-in still is; it is seated when the custom arrives | `holdAbsent`, `keepAbsent`, `syncShow` |
+
+A custom declares how entries name it (`ref` in `COLLECTIONS`), and that is
+all sync and the hold need. A page that resolves a custom reference must call
+`holdAbsent` where it would otherwise substitute or clear one: a substitute
+that is saved is a loss sync carries to every browser. Builds and scenarios
+hold; a page that does not yet hold must not save what it substituted.
+
+## Saved items as a file
+
+**WHAT A READER SAVED IS THEIRS TO TAKE ANYWHERE, signed in or not.** "Saved
+items" in the topbar's overflow, and on `/account/sync`, exports every
+collection `COLLECTIONS` names as one file and imports one back
+(`33-saves.js`). Sync is the convenience of not having to.
+
+| rule | where it is held |
+| --- | --- |
+| the file is `{ format: "wfsim-saves", version, exported_at, lists: { <domain>: [entry] } }`; a board row, a sync choice and a stored result do not travel | `savesExport`, `savesBody` |
+| import never overwrites: an item missing here is added as it was, one held unchanged is skipped, one held changed is added beside it as `(imported)` | `savesImport` |
+| a custom added as a copy has every reference to it in the file repointed at the copy, so customs are read first | `savesImport` |
+| a file from a newer version is refused, not half-read | `SAVES_VERSION` |
+| imported items are ordinary new items: signed in, they sync under the account's rules | `syncSoon` |
 
 ## The build finder
 

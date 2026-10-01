@@ -124,7 +124,7 @@ function markPresetDirty() {
     const at = ps.findIndex((p) => presetId(p) === activePreset);
     if (at < 0) return;
     if (deleteIfBlank(buildBarCfg(), ps[at].state)) return;
-    ps[at] = { ...ps[at], savedAt: Date.now(), state: snapshotState() };
+    ps[at] = { ...ps[at], savedAt: Date.now(), state: keepAbsent(BUILDS, activePreset, snapshotState()) };
     storePresetList(BUILDS, ps);
   }, 400);
 }
@@ -182,7 +182,7 @@ function markScenarioDirty() {
     const ps = loadPresetList(SCENARIOS);
     const at = ps.findIndex((p) => presetId(p) === activeScenario);
     if (at < 0) return;
-    ps[at] = { ...ps[at], savedAt: Date.now(), state: snapshotScenario() };
+    ps[at] = { ...ps[at], savedAt: Date.now(), state: keepAbsent(SCENARIOS, activeScenario, snapshotScenario()) };
     storePresetList(SCENARIOS, ps);
   }, 400);
   // ...and the QUICK CALC, which measures under a scenario and therefore goes

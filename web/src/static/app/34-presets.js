@@ -31,11 +31,74 @@ const COLLECTIONS = [
   { domain: "warframes", kind: "preset", scope: "frame" },
   { domain: "companions", kind: "preset", scope: "companion" },
   { domain: "operators", kind: "preset", scope: "global" },
-  { domain: "rivens", kind: "custom", scope: "riven_family" },
-  { domain: "enemies", kind: "custom", scope: "global" },
+  { domain: "rivens", kind: "custom", scope: "riven_family", ref: "riven:" },
+  { domain: "enemies", kind: "custom", scope: "global", ref: "custom:" },
 ];
 const CUSTOM_DOMAINS = new Set(COLLECTIONS.filter((c) => c.kind === "custom").map((c) => c.domain));
 const isCustomDomain = (d) => CUSTOM_DOMAINS.has(d);
+
+/// HOW AN ENTRY NAMES A CUSTOM: `ref` + the custom's id, wherever it sits in
+/// the entry. A custom declares its `ref` above and sync carries it with what
+/// names it, and a page that cannot resolve it holds it (`holdAbsent`).
+const CUSTOM_REFS = COLLECTIONS.filter((c) => c.ref);
+const CUSTOM_REF_RE = new RegExp(`"((?:${CUSTOM_REFS.map((c) => c.ref).join("|")})[^"\]+)"`, "g");
+/// Every custom reference in `v`, each once: `[{ domain, id, ref }]`.
+function customRefs(v) {
+  const out = new Map();
+  let s;
+  try { s = JSON.stringify(v); } catch (_) { return []; }
+  for (const m of s.matchAll(CUSTOM_REF_RE)) {
+    const c = CUSTOM_REFS.find((x) => m[1].startsWith(x.ref));
+    if (c && !out.has(m[1])) out.set(m[1], { domain: c.domain, id: m[1].slice(c.ref.length), ref: m[1] });
+  }
+  return [...out.values()];
+}
+/// Whether this browser holds the custom `ref` names.
+function customHeld(ref) {
+  const c = CUSTOM_REFS.find((x) => ref.startsWith(x.ref));
+  if (!c) return false;
+  let ps;
+  try { ps = JSON.parse(localStorage.getItem(presetListKey(c.domain))); } catch (_) { return false; }
+  const id = ref.slice(c.ref.length);
+  return Array.isArray(ps) && ps.some((p) => p && p.id === id);
+}
+
+/// A REFERENCE THIS BROWSER CANNOT RESOLVE IS HELD, NEVER DROPPED. The page
+/// stands something in for it (`stand`) and the save puts the reference back
+/// wherever the stand-in is still standing: a synced entry opened before its
+/// custom arrived would otherwise be saved without it, and sync would carry
+/// that loss to every browser. docs/UI.md §"Build sync".
+const absentHolds = new Map();
+/// Hold `ref` at `path` in `entry` of `domain`, with `stand` standing in for it.
+function holdAbsent(domain, entry, path, ref, stand) {
+  let h = absentHolds.get(domain);
+  if (!h || h.entry !== entry) absentHolds.set(domain, h = { entry, list: [] });
+  h.list.push({ path, ref, stand });
+}
+const releaseAbsent = (domain) => absentHolds.delete(domain);
+/// What `entry` of `domain` holds — nothing for any other entry, so a hold
+/// never follows the reader onto the next one.
+const absentOf = (domain, entry) => {
+  const h = absentHolds.get(domain);
+  return h && h.entry === entry ? h.list : [];
+};
+const absentAt = (domain, entry, path) => absentOf(domain, entry).find((h) => h.path.join("/") === path.join("/"));
+/// `state` with each held reference back where its stand-in still is. One the
+/// reader has replaced is theirs to replace, and the hold ends.
+function keepAbsent(domain, entry, state) {
+  const hs = absentOf(domain, entry);
+  if (!hs.length) return state;
+  const out = JSON.parse(JSON.stringify(state));
+  absentHolds.get(domain).list = hs.filter((h) => {
+    let o = out;
+    for (const k of h.path.slice(0, -1)) o = o && o[k];
+    const last = h.path[h.path.length - 1];
+    if (!o || typeof o !== "object" || (o[last] ?? null) !== h.stand) return false;
+    o[last] = h.ref;
+    return true;
+  });
+  return out;
+}
 
 // …AND ONE COLLECTION THAT IS NOT A WEAPON'S: the FIGHT.
 //

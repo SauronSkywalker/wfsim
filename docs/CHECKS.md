@@ -734,6 +734,25 @@ browser and tells the others to keep theirs; with "upload new items" off a new
 entry stays here; the allowance the server states is kept to, and an item the
 server refuses stays here.
 
+## `check_sync_customs`
+
+A custom travels with what names it, against the sync server faked as
+`check_sync_client` fakes it: a synced build brings the riven it names, even one
+kept on this browser, and the riven reaches the account first; past the customs
+allowance the build goes and the riven stays, named. A browser without the
+riven shows its slot as absent, saves the build WITH it, plans no Forma
+without it, and seats it when it arrives; a fight whose custom target is absent
+stands a unit in and saves the target. Taking a riven off says who uses it.
+
+## `check_saves`
+
+Saved items as one file: the export carries every collection and no board
+row, sync choice or measured result; an empty browser takes it back as it was;
+a second read changes nothing; an item changed here is kept and the file's is
+added beside it, with a copied riven's builds repointed at the copy; a file
+that is not an export is refused out loud; both controls are in the topbar's
+overflow.
+
 ## `check_weapon_search`
 
 The topbar search is one box: no filter row or sort above the list, a weapon's

@@ -458,8 +458,11 @@ function restoreState(st, weapon) {
   // IDEMPOTENT: the name is derived from the shape, so taking the same row
   // twice finds the riven it made the first time.
   materialiseBoardRivens(st);
+  releaseAbsent(BUILDS);
   (st.slots || []).forEach((s, i) => {
     if (i >= slots.length) return;
+    // A RIVEN THIS BROWSER DOES NOT HOLD is held, not dropped (`holdAbsent`).
+    if (isRivenId(s.mod) && !modById(s.mod) && !customHeld(s.mod)) holdAbsent(BUILDS, activePreset, ["slots", i, "mod"], s.mod, null);
     slots[i].mod = s.mod && modById(s.mod) ? s.mod : null; // drop ids gone from the pool
     slots[i].pol = s.pol ?? null;
     slots[i].rank = s.rank ?? null;
@@ -514,6 +517,9 @@ function restoreState(st, weapon) {
   renderWielder(); renderWeaponName();
   renderMods(); renderArcanes(); renderEvo(); renderMode(); renderValence(); renderSim(); refreshPanel();
   renderStoredSimResult(); // the simulator shows THIS preset's last test
+  if (absentOf(BUILDS, activePreset).length) {
+    noteInline(tr("This build's riven is not on this browser. It is kept, and the numbers here leave it out until it syncs."));
+  }
 }
 
 // Kill score PER MINUTE. The score is whole kills plus the fraction of the

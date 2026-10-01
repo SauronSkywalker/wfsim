@@ -525,6 +525,19 @@ function applyScenario(st) {
   // from that moment they stop following. Growth stopping is not the same as
   // the existing ones being fixed.
   (sim.formation || []).forEach((f) => { if (!f.enemy) f.enemy = sim.enemy; });
+  // A CUSTOM TARGET THIS BROWSER DOES NOT HOLD is held, not dropped
+  // (`holdAbsent`): the roster's first unit stands in until it syncs.
+  releaseAbsent(SCENARIOS);
+  const stand = ((META.enemies || [])[0] || {}).id || "thrax_centurion";
+  const absent = (id) => typeof id === "string" && id.startsWith(enemyId("")) && !enemyCard(id);
+  if (absent(sim.enemy)) { holdAbsent(SCENARIOS, activeScenario, ["enemy"], sim.enemy, stand); sim.enemy = stand; }
+  (sim.formation || []).forEach((f, i) => {
+    if (absent(f.enemy)) { holdAbsent(SCENARIOS, activeScenario, ["formation", i, "enemy"], f.enemy, stand); f.enemy = stand; }
+  });
+  if (absentOf(SCENARIOS, activeScenario).length) {
+    noteInline(tr("This fight's custom target is not on this browser. It is kept, and the fight here is against {name} until it syncs.")
+      .replace("{name}", (enemyCard(stand) || {}).name || stand));
+  }
   renderSim();      // redraws every knob, and the bar with them
   refreshPanel();   // the Tenno half of a scenario changes what the build is worth
 }

@@ -582,8 +582,12 @@ function buildSlot(i) {
       equipMod(i, slots[i].mod, nr); renderMods();
     }));
   } else {
-    el.className = "slot empty";
-    el.innerHTML = polBtn(s.pol, i) + `<span class="plus">${i === EXILUS ? "+ add exilus mod" : "+ add mod"}</span>`;
+    // A RIVEN THIS BROWSER DOES NOT HOLD is said where it sits (`holdAbsent`).
+    const away = absentAt(BUILDS, activePreset, ["slots", i, "mod"]);
+    el.className = "slot empty" + (away ? " absent" : "");
+    el.innerHTML = polBtn(s.pol, i) + (away
+      ? `<span class="plus" title="${escHtml(tr("It is kept in the build, and seated when it syncs to this browser."))}">${escHtml(tr("riven not on this browser"))}</span>`
+      : `<span class="plus">${i === EXILUS ? "+ add exilus mod" : "+ add mod"}</span>`);
     // the WHOLE empty slot opens the picker (the pol-btn stops propagation)
     el.addEventListener("click", (e) => { e.stopPropagation(); openPicker(i, el); });
   }
