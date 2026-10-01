@@ -191,7 +191,7 @@
                BENEATH a finished result is not an interruption — see
                `renderResults`, where it is drawn after the answer and states
                the work before it states the ask. -->
-          <a class="sup-link ghost-btn" href="/support" title="Support WFSim — what it costs to run" data-i18n-title aria-label="Support"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 20.35l-1.32-1.2C6.03 14.92 3 12.17 3 8.79 3 6.03 5.16 3.87 7.92 3.87c1.56 0 3.06.72 4.04 1.86l.04.05.04-.05c.98-1.14 2.48-1.86 4.04-1.86C18.84 3.87 21 6.03 21 8.79c0 3.38-3.03 6.13-7.68 10.37l-1.32 1.19z"/></svg><span class="tbl" data-i18n>Support</span></a>
+          <a class="sup-link ghost-btn" href="/support" title="Support WFSim" data-i18n-title aria-label="Support"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 20.35l-1.32-1.2C6.03 14.92 3 12.17 3 8.79 3 6.03 5.16 3.87 7.92 3.87c1.56 0 3.06.72 4.04 1.86l.04.05.04-.05c.98-1.14 2.48-1.86 4.04-1.86C18.84 3.87 21 6.03 21 8.79c0 3.38-3.03 6.13-7.68 10.37l-1.32 1.19z"/></svg><span class="tbl" data-i18n>Support</span></a>
           <!-- The overflow. On a desktop it is a real popover; at 768px and below it
                is `display:contents` and its children flatten into the phone
                menu exactly as they did before it existed — one copy of every
@@ -371,7 +371,7 @@
     <div id="bench-board"></div>
   </main>
 
-  <!-- Support: what WFSim costs to run, and where to chip in. NOT a module and
+  <!-- Support: how to back WFSim, and where. NOT a module and
        not an editor — a page of the SHELL, like the home grid, reached from the
        footer and from nowhere else. It never interrupts a calculation: no
        modal, no banner, no thank-you box after a run. A calculator that
@@ -448,7 +448,7 @@
   <main id="auth-page" hidden></main>
   <main id="thanks-page" class="support-page" hidden>
     <h1 id="h-thanks" class="hero-h" data-i18n>Thank you</h1>
-    <p class="hero-sub" data-i18n>WFSim is free for everyone. These are the people who chipped in anyway, earliest and largest first — no ranks, and no numbers beside a name.</p>
+    <p class="hero-sub" data-i18n>The people who backed WFSim on Bilibili and YouTube, earliest and most first. No ranks, and no numbers beside a name.</p>
     <section class="block">
       <div class="bb">
         <div id="thanks-block" class="thx-block" hidden>
@@ -458,8 +458,8 @@
              a list of nobody is social proof pointing the wrong way — but a
              page somebody navigated TO owes them a sentence rather than a
              blank. -->
-        <p id="thanks-none" class="sup-note" hidden data-i18n>Nobody has chipped in yet. The list starts with whoever is first.</p>
-        <p class="sup-note"><a href="/support" data-i18n>How to chip in →</a></p>
+        <p id="thanks-none" class="sup-note" hidden data-i18n>Nobody has backed it yet. The list starts with whoever is first.</p>
+        <p class="sup-note"><a href="/support" data-i18n>How to back WFSim →</a></p>
       </div>
     </section>
   </main>
@@ -470,7 +470,7 @@
          that does not exist yet. What it names is the THREE MODULES and the
          MEASUREMENTS — both true today, and both checkable by the reader
          today. -->
-    <p class="hero-sub" data-i18n>A Warframe calculator built to match in-game measurements, item by item. Building, simulating and optimizing are the whole of it, and they are the same for everyone.</p>
+    <p class="hero-sub" data-i18n>The Warframe calculator that matches the game, measured item by item. The calculator is free for everyone, and the same for everyone.</p>
     <!-- THE ONE SENTENCE ABOUT METHOD, and it is on this page because it is
          what a reader deciding whether any of this is worth anything is
          actually asking. It names a MECHANISM rather than a virtue — whether a
@@ -534,14 +534,19 @@
     <p id="support-usage" class="sup-usage" hidden></p>
 
     <section class="block">
-      <div class="bh"><h2 data-i18n>Chip in</h2></div>
+      <div class="bh"><h2 data-i18n>Two ways to back it</h2></div>
       <div class="bb">
+        <!-- A MEMBERSHIP, drawn only while one is on sale to this reader
+             (`renderSupportMember`): a way to back WFSim that nobody can take
+             is not offered. Patron is drawn only once the catalog sells it. -->
+        <div id="support-member" class="sup-member" hidden>
+          <p><b data-i18n>WFSim Member.</b> <span data-i18n>If you think WFSim does this right, become a Member. It keeps the work going, and it comes with a few things in return: unlimited sync, your name on every build you share, and a look of your own.</span></p>
+          <p id="support-patron" hidden><b data-i18n>WFSim Patron.</b> <span data-i18n>For those who want to do the most for it. Everything a Member has, the Patron look, your name on the thanks page if you want it, and a seat where the work is discussed.</span></p>
+          <p><a href="/pricing" data-i18n>See the prices and become a Member →</a></p>
+        </div>
+        <!-- THE VIDEO PLATFORMS, where support is support and nothing else. -->
+        <p class="sup-note"><b data-i18n>On Bilibili and YouTube.</b> <span data-i18n>Back the videos where WFSim is built in the open. Nothing is sold there and nothing comes back but thanks — your name on the thanks page, if you want it.</span></p>
         <div id="support-channels" class="sup-channels"></div>
-        <!-- LEGITIMISING THE SMALL GIFT, which is the one sentence on this page
-             with a replicated experiment behind it. It states a floor and
-             refuses to state a target: a target turns a thank-you into a
-             fundraiser, and there is nothing here that a sum unlocks. -->
-        <p class="sup-note" data-i18n>One coffee is enough, and it is not a smaller version of anything — there is no target here and no total to fill. Give once, or monthly if you would rather.</p>
         <!-- THE NAMES, UNDER THE DOOR AND NOT OVER IT. Social proof is the one
              lever here with a replicated experiment behind it, and a name
              carries it where a count could not: a reader recognises the kind
@@ -549,7 +554,7 @@
              there to say that people do this, not to be read instead of the
              thing above it. Drawn only when there is somebody to draw. -->
         <div id="support-thanks" class="thx-block" hidden>
-          <h3 class="thx-head" data-i18n>The people who have chipped in</h3>
+          <h3 class="thx-head" data-i18n>The people who have backed it</h3>
           <ul id="support-thanks-list" class="thx-list"></ul>
           <p class="thx-more" hidden><a href="/thanks" data-i18n>Everyone who has →</a></p>
         </div>
@@ -587,18 +592,14 @@
     </section>
 
     <section class="block">
-      <div class="bh"><h2 data-i18n>Where it goes</h2></div>
+      <div class="bh"><h2 data-i18n>What your backing makes possible</h2></div>
       <div class="bb">
-        <!-- NAMED, AND THE ZERO NAMED WITH THEM. A page whose whole claim is
-             that its figures can be checked cannot hand-wave the one figure
-             that is about itself, and "serving the site" is NOT where the money
-             goes: Cloudflare does not meter static assets and this site's bill
-             there is nothing. The metered path is the desktop update channel —
+        <!-- WHAT BACKING BUYS IN TIME, never a cost: a bill is not why anyone
+             backs this, and naming one invites "then why charge?" —
              `docs/UI.md` §"The page that asks for something" holds the rule. -->
         <ul class="sup-costs">
-          <li data-i18n>The wfsim.app domain, and its renewal — the one bill that arrives whether anybody visits or not.</li>
-          <li data-i18n>Serving this site costs nothing, and that is worth saying plainly: Cloudflare does not meter what it hands out, so the pages, the art and the board are free however many of you turn up. What is metered is the update channel behind the Windows client, billed by the byte every time a copy updates itself.</li>
-          <li data-i18n>Time, which is most of it: new weapons, new mechanics, and the hours in the game that every calibrated number is measured against.</li>
+          <li data-i18n>Time, most of all: every new weapon and mechanic, the day it lands.</li>
+          <li data-i18n>The hours in game that every calibrated number is measured against.</li>
         </ul>
       </div>
     </section>
@@ -613,10 +614,10 @@
       </div>
     </section>
 
-    <!-- Only the DONATION-specific clause: the shell's footer sits directly
-         below with the unofficial-fan-project disclaimer, and printing it
-         twice on one screen reads as boilerplate rather than as a statement. -->
-    <p class="sup-fine" data-i18n>Chipping in is a gift rather than a purchase — it covers what this site costs to run, and it buys nobody an advantage.</p>
+    <!-- THE TWO TERMS A READER IS OWED BEFORE PAYING: a donation buys nothing,
+         and a membership renews until cancelled and is refunded within 14 days
+         — said where the ask is, as the renewal rules require. -->
+    <p class="sup-fine" data-i18n>A donation is a gift and buys nobody an advantage. A membership renews until you cancel it, which takes one click from your account; within 14 days of any charge, ask and it is refunded in full.</p>
     <!-- WHAT IS COUNTED, said where a reader looking for it will look, with the
          way out beside it. docs/ANALYTICS.md is the whole of it. -->
     <section class="sup-usage" id="usage">
@@ -1222,7 +1223,7 @@
     <!-- The ONLY entry to /support. It stays a footer link at footer weight:
          the ask belongs where someone who already wants to give will look for
          it, not in the path of someone doing a calculation. -->
-    <a href="/support" title="what WFSim costs to run" data-i18n-title data-i18n>Support</a> ·
+    <a href="/support" title="how to back WFSim" data-i18n-title data-i18n>Support</a> ·
     <a href="/support#usage" data-i18n>Usage statistics</a>
     <!-- WHICH BUILD YOU ARE LOOKING AT. `build_site_app.py` stamps the commit
          and the time it generated `site/`; the dev server leaves the

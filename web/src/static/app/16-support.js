@@ -93,8 +93,8 @@ function offerSupportOnce(host) {
   } catch (_) { return; }
   const p = document.createElement("p");
   p.className = "sup-nudge";
-  p.innerHTML = `${escHtml(trF("{n} answers out of this so far, and not one of them cost you anything.",
-    { n: u.sims.toLocaleString() }))} <a href="/support">${escHtml(tr("What it costs to run →"))}</a>`;
+  p.innerHTML = `${escHtml(trF("{n} answers out of this so far.",
+    { n: u.sims.toLocaleString() }))} <a href="/support">${escHtml(tr("How to back WFSim →"))}</a>`;
   host.appendChild(p);
 }
 
@@ -305,8 +305,23 @@ function identityLines() {
   draw();
 }
 
+/// THE MEMBERSHIP, while one is on sale to this reader — and Patron only once
+/// the catalog sells it. Before that the page offers the video platforms alone.
+function renderSupportMember() {
+  const box = $("support-member");
+  if (!box) return;
+  const draw = () => {
+    box.hidden = !billingState.configured;
+    const patron = $("support-patron");
+    if (patron) patron.hidden = !(((billingState.names || {}).offers || {}).patron);
+  };
+  draw();
+  if (typeof loadBilling === "function") loadBilling().then(draw, () => {});
+}
+
 function renderSupport() {
   renderUsageNote();
+  renderSupportMember();
   const facts = $("support-facts");
   if (facts) {
     facts.innerHTML = projectFacts().map((f) => `

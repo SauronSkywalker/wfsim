@@ -12,6 +12,31 @@ ui:
   "New chat": 新对话
   "Settings": 设置
   "Close": 关闭
+  "The people who have backed it": "支持过的人"
+  "Nobody has backed it yet. The list starts with whoever is first.": "还没有人支持过。这份名单从第一个人开始。"
+  "How to back WFSim →": "怎么支持 WF模拟 →"
+  "Back it ↗": "支持一下 ↗"
+  "how to back WFSim": 怎么支持 WF模拟
+  "The people who backed WFSim on Bilibili and YouTube, earliest and most first. No ranks, and no numbers beside a name.":
+    "在 B 站和 YouTube 支持过 WF模拟 的人，按时间和心意排列。没有名次，名字旁边也不会有数字。"
+  "The Warframe calculator that matches the game, measured item by item. The calculator is free for everyone, and the same for everyone.":
+    "一个对着游戏实测、逐项校准的 Warframe 计算器。计算器对所有人免费，对所有人都一样。"
+  "Two ways to back it": 两种支持方式
+  "WFSim Member.": WFSim 会员。
+  "If you think WFSim does this right, become a Member. It keeps the work going, and it comes with a few things in return: unlimited sync, your name on every build you share, and a look of your own.":
+    "认可这件事的做法，就成为会员。它让这个项目能一直做下去，作为回馈：云同步不限量，分享出去的每套配装都署上你的名字，还有一套专属外观。"
+  "WFSim Patron.": WFSim 赞助者。
+  "For those who want to do the most for it. Everything a Member has, the Patron look, your name on the thanks page if you want it, and a seat where the work is discussed.":
+    "给想多出一份力的人。会员的全部内容，加上赞助者专属外观、致谢页署名（自愿），以及开发讨论区的一席之地。"
+  "See the prices and become a Member →": 查看价格，成为会员 →
+  "On Bilibili and YouTube.": 在 B 站或 YouTube 支持。
+  "Back the videos where WFSim is built in the open. Nothing is sold there and nothing comes back but thanks — your name on the thanks page, if you want it.":
+    "为记录开发过程的视频充电。这里不卖任何东西，也没有回馈，只有感谢：你愿意的话，名字会出现在致谢页上。"
+  "What your backing makes possible": 你的支持，让这些成为可能
+  "Time, most of all: every new weapon and mechanic, the day it lands.": 最主要的是时间：每一把新武器、每一个新机制，上线当天跟进。
+  "The hours in game that every calibrated number is measured against.": 每一个校准过的数字背后，都是在游戏里一小时一小时测出来的。
+  "A donation is a gift and buys nobody an advantage. A membership renews until you cancel it, which takes one click from your account; within 14 days of any charge, ask and it is refunded in full.":
+    "充电是心意，不换取任何优待。会员为自动续费订阅，可随时在账号页一键取消；每次扣款后 14 天内申请，全额退款。"
   "On Bilibili": "来自 B 站"
   "On YouTube": "来自 YouTube"
   "On Ko-fi": "来自 Ko-fi"
@@ -396,7 +421,6 @@ ui:
   "CPU threads": CPU 线程
   "Charge Time": 蓄力时间     # the client's own word for a Charge trigger: 蓄力
   "Charged Shot": 蓄力射击
-  "Chip in ↗": 投喂一下 ↗
   "Cloudflare — the bandwidth and build minutes that serve the app and its art from one origin.":
     Cloudflare：让应用和它的全部素材从同一个源站发出所需的带宽与构建时长。
   "Cold never converts on this unit, so the stacks climb to their cap and STAY — the bonus is up all fight instead of being spent on a 3-second Frozen window": 冷冻在这个单位上永远不会转化,所以层数会一路叠到上限并保持 —— 加成全程有效,而不是被 3 秒的冰冻窗口消耗掉
@@ -598,8 +622,6 @@ ui:
   "Incarnon cycle": 灵化循环
   "Infested": 感染者
   "Infinite ammo": 无限弹药
-  "It does take money and time to run. If it has ever saved you a Forma, you can chip in.":
-    它确实要花钱和时间来维持。如果它替你省下过一根 Forma，可以来投喂一下。
   "take it out of the bar — the board keeps it": "从栏里拿掉 —— 榜单上它还在"
   "the record is open in its own window": 战斗记录已在它自己的窗口里打开。
   "Show me": 切到那个窗口
@@ -820,7 +842,6 @@ ui:
   "Status immunity": 异常免疫
   "Steel Path": "钢铁之路"
   "Submit": 提交
-  "Support WFSim — what it costs to run": 支持 WF模拟 —— 它的运营成本
   "Support WFSim": 支持 WFSim
   "Support": 支持
   "Sustained DPS": 持续 DPS
@@ -888,7 +909,6 @@ ui:
   "What is sent is the BUILD: the weapon and its mods, evolutions and arcanes. Not the fight you ran it under — the board scores every build under its OWN rulers, so any scenario can contribute. And nothing about you: no account, no identifier, no address, no time finer than the day, and no score. The board takes a weapon built as far as it goes: every main slot filled, and the exilus slot counted if you use one.": 发送的是这套配装：武器及其 mod、进化、赋能。不包含你跑它的那场仗——榜单会用它自己的标尺去跑每一套配装，所以任何场景都可以做贡献。也不包含关于你的任何东西：没有账号、没有标识符、没有地址、没有精确到天以下的时间，也没有分数。榜单收的是这把武器的最努力配置：8 个主槽位全部装满，用了 exilus 的话也一并计入。
   "What this benchmark measures": 这个基准到底在量什么
   "What would be sent: the weapon and its mods, evolutions and arcanes. Nothing else — no account, no identifier, no names you chose, and no score (the board measures builds itself).": 会发送的内容：武器，以及它的 MOD、进化和赋能。仅此而已 —— 没有账号，没有任何标识，没有你起的任何名字，也不含分数（榜单自己测量配装）。
-  "Where it goes": 钱花在哪
   "Where the damage went": 伤害落在哪里
   "Which means no Incarnon, for all but one weapon: eight of the nine Incarnon forms charge their gauge on weak-point hits, so at this rate they never fill it. The Torid charges on direct hits and still cycles.": 这也意味着除一把之外都进不了灵化：九个灵化形态里有八个靠弱点命中充能，在这个爆头率下永远填不满。托里德靠直接命中充能，照常循环。
   "Why you can check it": 为什么它经得起查
@@ -1685,7 +1705,6 @@ ui:
   "unintended, modelled as it plays": 非本意，按实际表现建模
   uptime: 在场
   "weakpoint hits": 弱点命中
-  "what WFSim costs to run": WF模拟的运营成本
   "what a room-clear is paced by, as opposed to a long fight": 清房间的节奏，而不是一场长仗的节奏
   "what the Bullet Attractor field is WORTH as an aiming aid — the throw plants it and the 4.7 s it puts on the target IS counted (one Condition Overload status), but the easier headshots are not: the wiki says the field does not guarantee a headshot, so the rate has to be MEASURED before this arena's headshot % can be moved by it. docs/UNMODELLED.md §Open decisions": 子弹吸引力场作为瞄准辅助的价值——投掷会种下力场，它挂在目标身上的 4.7 秒是算数的（计一层异况超载），但"更容易爆头"这一半没有：wiki 自己说这个力场并不保证爆头，所以在它能改变本场的爆头率之前，这个比例必须先实测。见 docs/UNMODELLED.md §Open decisions
   "what the run is judged by — the headline number and the picker's gain scan both follow it": 这次模拟以什么为准 —— 主数字和选择器的提升排序都跟着它
@@ -2217,10 +2236,8 @@ ui:
     "它不是拿一个初始状态去套公式。它把这一场从头打到尾——起转、换弹、那些得先挂上去才吃得到加成的异常——然后告诉你这一场到底打出了什么。"
   "You have run {n} simulations on this machine — {e} engagements. That number is in this browser and has never been sent anywhere.":
     "你在这台机器上跑了 {n} 次模拟，一共 {e} 场战斗。这个数只存在你自己的浏览器里，没往任何地方发过。"
-  "{n} answers out of this so far, and not one of them cost you anything.":
-    "到现在为止，你从这儿拿走了 {n} 个答案，一分钱没收过。"
-  "What it costs to run →":
-    "它的运营成本 →"
+  "{n} answers out of this so far.":
+    "到现在为止，你在这里得到了 {n} 个答案。"
   "The calculator is the same for everyone":
     "计算器对所有人都一样"
   "An in-game measurement is the only thing that changes what the engine does, and it wins whoever reports it — so the way to move a number here is to go and measure one.":
@@ -2229,40 +2246,18 @@ ui:
     "构建、模拟、优化对谁都一样，而且保证这件事的不是我：项目是 AGPL-3.0，引擎、游戏数据、wasm 全部公开，你随时可以自己开一份跑。"
   "A channel membership or Super Thanks, from inside YouTube.":
     "在 YouTube 里加入频道会员或送超级感谢。"
-  "A Warframe calculator built to match in-game measurements, item by item. Building, simulating and optimizing are the whole of it, and they are the same for everyone.":
-    "一个奔着对上游戏内实测数字去做的 Warframe 计算器，一项一项地对。构建、模拟、优化——这三件事就是它的全部，而且对所有人完全一致。"
   "A fix to the builder, the simulator or the optimizer ships to everybody at once. There is no earlier copy.":
     "构建器、模拟器、优化器上的任何一处修复，都是同时发给所有人的。没有抢先版。"
   "What you have run here stays in your own browser and is sent nowhere. The only place a visit is counted at all is Cloudflare's own request log, which is what serves the page.":
     "你在这里跑过什么，只留在你自己的浏览器里，不会发往任何地方。一次访问唯一被记下的地方，是 Cloudflare 自己的请求日志——页面本来就是它发的。"
   "A donation buys no priority: not over what gets built next, not in the queue, not on a reply. I will read your message knowing you backed this, and it would be dishonest to claim that changes nothing — but that is a courtesy, not an obligation, and it is the whole of what it is.":
     "捐助买不到优先权：接下来做什么、排队的先后、回不回复，都不会因此改变。我读你的消息时会知道你支持过这个项目，说这毫无影响是不诚实的——但那是我这边的一份心意，不是你手上的一项权利，而且仅止于此。"
-  "Chipping in is a gift rather than a purchase — it covers what this site costs to run, and it buys nobody an advantage.":
-    "投喂是一份心意，不是一笔购买——它用来支付本站的运营开销，不为谁换来优待。"
-  "Chip in":
-    "投喂一下"
-  "One coffee is enough, and it is not a smaller version of anything — there is no target here and no total to fill. Give once, or monthly if you would rather.":
-    "一杯咖啡的钱就够，不用觉得少。这儿没有目标金额，也没有要填满的进度条。给一次就行，想按月也行。"
   "One-off or monthly, in CNY, from inside Bilibili — no card, and no new account.":
     "单次或包月，人民币，在 B 站里直接充——不用信用卡，也不用注册新号。"
   "Thank you":
     "感谢"
-  "WFSim is free for everyone. These are the people who chipped in anyway, earliest and largest first — no ranks, and no numbers beside a name.":
-    "WFSim 对所有人免费。这些是还是投喂了的人，最早和最多的排前面——没有名次，名字边上不会有数字。"
-  "The people who have chipped in":
-    "投喂过的人"
   "Everyone who has →":
     "全部名单 →"
-  "Nobody has chipped in yet. The list starts with whoever is first.":
-    "还没有人投喂过。这份名单从第一个人开始。"
-  "How to chip in →":
-    "怎么投喂 →"
-  "The wfsim.app domain, and its renewal — the one bill that arrives whether anybody visits or not.":
-    "wfsim.app 这个域名，还有每年的续费——不管有没有人来，这笔都得付。"
-  "Serving this site costs nothing, and that is worth saying plainly: Cloudflare does not meter what it hands out, so the pages, the art and the board are free however many of you turn up. What is metered is the update channel behind the Windows client, billed by the byte every time a copy updates itself.":
-    "把站开着其实不花钱，这点得说清楚：Cloudflare 的静态流量不计费，所以页面、图片、榜单，来多少人都一样免费。真正按量收钱的是 Windows 客户端的更新通道，每更新一次就按流量付一次。"
-  "Time, which is most of it: new weapons, new mechanics, and the hours in the game that every calibrated number is measured against.":
-    "时间，这才是大头：新武器、新机制，还有每个校准过的数字背后泡在游戏里的那些小时。"
   "WFSim for Windows": "WFSim Windows 桌面版"
   "The same calculator on your own machine — it opens instantly, works with no connection, and keeps itself up to date. It is not a cut-down version: the engine is the same wasm module this site serves.": "同一个计算器，跑在你自己的电脑上 —— 秒开、可离线、自动更新。它不是缩水版：引擎就是本站在用的同一个 wasm 模块。"
   "The first time you open it": "第一次打开"

@@ -639,7 +639,7 @@ function renderResults(r, testedAt) {
         <div class="exits">
           <button type="button" id="exit-optimize" class="ghost-btn">${escHtml(tr("Send this build to the optimizer"))}</button>
           <button type="button" id="exit-share" class="ghost-btn">${escHtml(tr("Share this result"))}</button>
-          <span class="exit-free">${escHtml(tr("Builder, simulator and optimizer are free for everyone."))} <a href="/support">${escHtml(tr("Chip in ↗"))}</a></span>
+          <span class="exit-free">${escHtml(tr("Builder, simulator and optimizer are free for everyone."))} <a href="/support">${escHtml(tr("Back it ↗"))}</a></span>
         </div>`)}
     </div>`;
   // WHAT BECAME OF THIS RUN, drawn on EVERY result — a stored one re-rendered

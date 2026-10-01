@@ -333,6 +333,32 @@ collection `COLLECTIONS` names as one file and imports one back
 | a file from a newer version is refused, not half-read | `SAVES_VERSION` |
 | imported items are ordinary new items: signed in, they sync under the account's rules | `syncSoon` |
 
+## How the page speaks
+
+The voice is a player who measures: sure of the work, short, exact, now and
+then a joke only a player gets. It is the home hero's "Run the fight. Don't
+estimate it." and nothing louder.
+
+- **A FACT, NEVER AN ADJECTIVE.** What was measured and what can be checked;
+  no "powerful", "ultimate" or "best". The one bold claim is the home hero's,
+  and it is checkable.
+- **SHORT, AND QUIET.** No exclamation marks, no emoji, no urgency, no
+  countdown, nothing scarce.
+- **A PEER, NOT A VENDOR.** "You", never a service desk's "we appreciate your
+  support". Where the maker speaks — the ask, the thanks — it is "I".
+- **NEVER PRESSURE, NEVER PITY.** No guilt, no "we need you", no costs offered
+  as a reason to pay. Paying is what someone who likes the tool chooses.
+- **THE TERMS IN THE OPEN.** What it cannot model, how to cancel, how to get a
+  refund — said where the reader is, before they ask.
+
+**CHINESE IS WRITTEN FOR THE MAINLAND, NOT TRANSLATED INTO IT.** Short
+sentences in the order a Chinese reader says them, not the English clause
+order and its dashes. 你, never 您. Bilibili's own words where it has them
+(充电, 实测, 配装), and no slang that belittles the reader or the giver (投喂,
+家人们). No 最 / 第一 / 顶级 / 终极 in anything that reads as promotion — the
+Advertising Law forbids superlatives — and an auto-renewing membership says
+自动续费 where the price is.
+
 ## The build finder
 
 **EVERY BUILD IS IN THE BUILD BAR; THE FINDER ONLY FINDS.** The builder's top
@@ -533,14 +559,18 @@ always current, so a number written here is a staler copy of one, and a page
 that names a sum reads as a price list. `check_support` asserts the whole page
 against a currency pattern, because a digit comes back on a card unnoticed.
 
-"WHERE IT GOES" NAMES THE COSTS AND NEVER PRICES THEM. No amount is published
-for the domain, the update channel or the hours — a bill is the author's
-own finances, publishing one invites a total, and a total is the target this
-page refuses to have. What it may say is which item costs NOTHING: Cloudflare
-does not meter static assets, so the pages, the art and the board are free at
-any traffic this site sees, and the one metered path is the desktop update
-channel. Naming that zero is not a figure and it answers what a reader actually
-wonders about a free tool asking for money.
+WHAT BACKING MAKES POSSIBLE IS NAMED IN TIME, NEVER IN COSTS. The page says
+what a reader's backing buys — the hours a new weapon takes, the hours in game
+a calibrated number is measured against — and names no bill: a cost is not why
+anyone backs a tool they like, and a page that lists its costs is asked "then
+why charge?" the day a membership is sold.
+
+TWO WAYS, KEPT APART. A membership is drawn only while one is on sale to the
+reader (`renderSupportMember`), names no price (`/pricing` does), and is said
+as backing that comes with things in return; the video platforms are support
+and nothing comes back but thanks. The line under the page says both terms a
+reader is owed before paying: a donation buys nothing, and a membership renews
+until cancelled, in one click, and is refunded within 14 days of a charge.
 
 A CHANNEL IS A JOB, AND EACH AUDIENCE GETS EXACTLY ONE. Support lives where
 the videos are: Bilibili is the whole of the Chinese side, because that is where
