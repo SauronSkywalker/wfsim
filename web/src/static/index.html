@@ -240,7 +240,6 @@
     </div>
   </header>
 
-
   <!-- THE DESKTOP CLIENT'S OWN PAGE. A page of the SHELL like /support and
        /benchmark: it belongs to no weapon, so it sits beside the home grid
        rather than under /weapons/<name>, and it is not a fourth MODULE — it
@@ -720,6 +719,11 @@
          builder control on two pages that do not own a build. Same shape as
          the Mode block's own bug (check_opt_modes), and the reason
          a list was the wrong mechanism both times. -->
+    <section class="block" data-module="builder" id="mode-block">
+      <div class="bh"><span class="n">1</span><h2 data-i18n>Mode</h2><span class="sub" id="mode-sub"></span></div>
+      <div class="bb"><div id="mode-row" class="field-grid"></div></div>
+    </section>
+
     <!-- THE PARTS, and only for a weapon that has any. A Kitgun has no
          published stat line — it has a Chamber, a Grip and a Loader, and every
          number on the panel below is composed from the three — so this block
@@ -733,19 +737,6 @@
     <section class="block" data-module="builder" id="assembly-block" hidden>
       <div class="bh"><span class="n">0</span><h2 data-i18n>Parts</h2><span class="sub" id="assembly-sub"></span></div>
       <div class="bb"><div id="assembly-row" class="field-grid"></div></div>
-    </section>
-
-    <!-- THE WIELDER: whoever holds the weapon — a link to a saved Warframe build,
-         a modelled frame unbuilt, or the Prototype every ruler scores in. Part of
-         the BUILD, and never of a board row. See renderWielder. -->
-    <section class="block shut" data-module="builder" id="wielder-block">
-      <div class="bh"><span class="n">0</span><h2 data-i18n>Wielder</h2><span class="sub" id="wielder-sub"></span></div>
-      <div class="bb"><div id="wielder-row" class="field-grid"></div><div id="wielder-detail" class="wielder-detail"></div></div>
-    </section>
-
-    <section class="block" data-module="builder" id="mode-block">
-      <div class="bh"><span class="n">1</span><h2 data-i18n>Mode</h2><span class="sub" id="mode-sub"></span></div>
-      <div class="bb"><div id="mode-row" class="field-grid"></div></div>
     </section>
 
     <section class="block" data-module="builder" id="mod-block">
@@ -788,12 +779,6 @@
       <div class="bb"><div id="arcane-slots" class="slots one"></div></div>
     </section>
 
-    <!-- Block: Evolution (Incarnon weapons) -->
-    <section class="block" data-module="builder" id="evo-block">
-      <div class="bh"><span class="n">4</span><h2 data-i18n>Evolution</h2><span class="sub" data-i18n>Incarnon Genesis</span></div>
-      <div class="bb"><div id="evo-rows"></div></div>
-    </section>
-
     <!-- Block: VALENCE — an ADVERSARY weapon's bonus element and how big it
          is. A Kuva Lich's, a Sister's or a Coda's, and a property of the COPY
          a player owns rather than of the model, which is why it is a build
@@ -802,6 +787,20 @@
     <section class="block" data-module="builder" id="element-block" hidden>
       <div class="bh"><span class="n">5</span><h2 data-i18n>Valence</h2><span class="sub" id="valence-sub"></span></div>
       <div class="bb"><div id="element-cfg" class="field-grid"></div></div>
+    </section>
+
+    <!-- Block: Evolution (Incarnon weapons) -->
+    <section class="block" data-module="builder" id="evo-block">
+      <div class="bh"><span class="n">4</span><h2 data-i18n>Evolution</h2><span class="sub" data-i18n>Incarnon Genesis</span></div>
+      <div class="bb"><div id="evo-rows"></div></div>
+    </section>
+
+    <!-- THE WIELDER: whoever holds the weapon — a link to a saved Warframe build,
+         a modelled frame unbuilt, or the Prototype every ruler scores in. Part of
+         the BUILD, and never of a board row. See renderWielder. -->
+    <section class="block shut" data-module="builder" id="wielder-block">
+      <div class="bh"><span class="n">0</span><h2 data-i18n>Wielder</h2><span class="sub" id="wielder-sub"></span></div>
+      <div class="bb"><div id="wielder-row" class="field-grid"></div><div id="wielder-detail" class="wielder-detail"></div></div>
     </section>
 
     <!-- Block: Stats — the FINAL panel: merged buckets, explained by source -->

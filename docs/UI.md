@@ -1012,6 +1012,17 @@ opened, and never a tab of its own. `docs/SHAPLEY.md`.
 
 ---
 
+## The builder's steps run in the order a build is made
+
+**MODE, PARTS, MODS, ARCANE, VALENCE, EVOLUTION, WIELDER** — how the weapon is
+used first; then the parts that make a modular weapon a weapon at all; then
+what every weapon has (mods, arcane); then what only some have (an adversary's
+valence before evolutions, so an adversary Incarnon reads in order); and who
+holds it last. The order is the markup's, and `builderSteps()` reads it, so the
+numbering — and anything else that lists a build's parts, a share card among
+them — follows the page rather than a second list. A block a weapon does not
+have is hidden and skips no number.
+
 ## The wielder is the build's; external bonuses are the fight's
 
 **A WEAPON BUILD NAMES WHO HOLDS IT** — the Wielder block, first in the builder:

@@ -177,9 +177,10 @@ check("...with the gain on the pick, not in a tooltip",
 // one menu item — an evolution tier has Remove and this does not.
 check("...and the card offers no Remove, because there is no empty state",
   gain.removable === false, String(gain.removable));
-// THE STEP NUMBERS ARE DERIVED, not written into the markup. Every weapon
-// build has a wielder, so that block is step 1; this weapon has no evolutions,
-// so its Valence block is step 5 — there is no 6 with nothing at 5.
+// THE STEP NUMBERS ARE DERIVED, not written into the markup. Mode is step 1
+// and the wielder, held by every weapon build, comes last; this weapon has no
+// parts and no evolutions, so Valence is step 4 and the wielder 5 — no number
+// is skipped for a block it does not have.
 //
 // …AND A READ-OUT IS NOT A STEP. The Stats panel is a builder block and keeps
 // its `Σ`: the numbering walks `builderSteps()`, whose rule is that a step's
@@ -187,7 +188,7 @@ check("...and the card offers no Remove, because there is no empty state",
 // hand LIST that simply left the read-outs out, so the first version of the
 // derived query renumbered `Σ` to "5" — caught here.
 check("...and the builder numbers its steps from the blocks it actually has",
-  gain.steps.join(" ") === "wielder-block:1 mode-block:2 mod-block:3 arcane-block:4 element-block:5 stats-block:Σ",
+  gain.steps.join(" ") === "mode-block:1 mod-block:2 arcane-block:3 element-block:4 wielder-block:5 stats-block:Σ",
   gain.steps.join(" "));
 
 // …AND THE RANKING DOES NOT FLIP WHEN YOU MOVE.
