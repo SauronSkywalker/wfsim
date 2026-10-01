@@ -17,6 +17,7 @@ const SIGS = {
   Sig12345: { ok: true, share: "AAAAAAAAAA", weapon: "Torid", at: "2026-10-01", name: "Ada", username: "ada", tier: "member" },
   Patron01: { ok: true, share: "AAAAAAAAAA", weapon: "Torid", at: "2026-10-01", name: "Bea", username: "bea", tier: "patron" },
   Lapsed12: { ok: true, share: "AAAAAAAAAA", weapon: "Torid", at: "2026-10-01", name: "Cyd", username: "cyd", tier: null },
+  Creator1: { ok: true, share: "AAAAAAAAAA", weapon: "Torid", at: "2026-10-01", name: "magenie33", username: "magenie33", tier: "member", titles: ["creator"] },
   Lifted99: { ok: true, share: "BBBBBBBBBB", weapon: "Torid", at: "2026-10-01", name: "Mallory", username: "mal", tier: "member" },
 };
 await send("Fetch.enable", { patterns: [{ urlPattern: "*/api/s/*" }, { urlPattern: "*/api/cloud/share/*" }] });
@@ -57,6 +58,10 @@ check("another build opened, the line goes: it is about the build it came with",
 
 const p = await land("/weapons/Torid/s/AAAAAAAAAA/Patron01");
 check("a Patron's link says so, in the Patron's colour", p.shown && /WFSim Patron/.test(p.text) && /patron/.test(p.cls), JSON.stringify(p));
+
+const cr = await land("/weapons/Torid/s/AAAAAAAAAA/Creator1");
+check("the creator's link carries the logo's mark, WFSim Creator, not the Member grant the account holds",
+  cr.shown && /WFSim\s*Creator/.test(cr.text) && !/WFSim Member/.test(cr.text) && /creator/.test(cr.cls), JSON.stringify(cr));
 
 const l = await land("/weapons/Torid/s/AAAAAAAAAA/Lapsed12");
 check("a lapsed membership's link keeps the name and shows no mark", l.shown && /Shared by Cyd/.test(l.text) && !/WFSim (Member|Patron)/.test(l.text), JSON.stringify(l));

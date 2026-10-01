@@ -312,6 +312,9 @@ async function signShare(id, weapon) {
 /// signature lifted onto another build names nobody. It says who, never that a
 /// number is truer: every build here is computed by the same engine.
 let shareBy = null;
+/// The titles a signature may carry, as the page names them; one it does not
+/// name is not drawn.
+const SHARE_TITLES = { creator: "WFSim Creator" };
 async function showShareBy(id, sig) {
   let j = null;
   try {
@@ -319,7 +322,7 @@ async function showShareBy(id, sig) {
     j = r.ok ? await r.json() : null;
   } catch (_) { j = null; }
   if (!j || !j.ok || j.share !== id || typeof j.name !== "string") return;
-  shareBy = { preset: activePreset, name: j.name, tier: j.tier };
+  shareBy = { preset: activePreset, name: j.name, tier: j.tier, titles: Array.isArray(j.titles) ? j.titles : [] };
   renderShareBy();
 }
 function renderShareBy() {
@@ -328,10 +331,16 @@ function renderShareBy() {
   const on = !!shareBy && activePreset === shareBy.preset;
   el.hidden = !on;
   if (!on) return;
-  const tier = { patron: "WFSim Patron", member: "WFSim Member" }[shareBy.tier];
-  el.className = "share-by" + (tier ? ` ${shareBy.tier}` : "");
+  // ONE MARK, AND A TITLE OUTRANKS A TIER: who someone is before what they pay.
+  const title = shareBy.titles.find((t) => SHARE_TITLES[t]);
+  const mark = title ? SHARE_TITLES[title] : { patron: "WFSim Patron", member: "WFSim Member" }[shareBy.tier];
+  el.className = "share-by" + (mark ? ` ${title || shareBy.tier}` : "");
   el.innerHTML = `${escHtml(tr("Shared by"))} <b>${escHtml(shareBy.name)}</b>`
-    + (tier ? ` · <span class="sb-tier">${escHtml(tr(tier))}</span>` : "")
+    + (title === "creator"
+      // THE CREATOR'S MARK IS THE LOGO'S: white, a thin gold ring, black WF and
+      // gold Sim — the same on either theme, as the logo is.
+      ? ` <span class="sb-creator"><b>WF</b><i>Sim</i> ${escHtml(tr("Creator"))}</span>`
+      : mark ? ` · <span class="sb-tier">${escHtml(tr(mark))}</span>` : "")
     + ` <span class="sb-proof">${escHtml(tr("checked with wfsim.app"))}</span>`;
 }
 

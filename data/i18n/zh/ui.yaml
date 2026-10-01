@@ -12,6 +12,8 @@ ui:
   "New chat": 新对话
   "Settings": 设置
   "Close": 关闭
+  "Creator": 作者
+  "WFSim Creator": WFSim 作者
   "You have been a member for {n} days in all. Only you see this.": "你已累计成为会员 {n} 天。只有你自己能看到。"
   "Shared by": 分享者
   "WFSim Member": WFSim 会员

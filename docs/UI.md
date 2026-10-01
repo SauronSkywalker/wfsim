@@ -496,8 +496,9 @@ until turned off; browser storage): the short link is then
 `/weapons/<Wiki_Name>/s/<id>/<sig>`, the signature minted by the paid half
 over `/api/cloud/share/sign`. Boot takes both segments off the address; once
 the build lands, the page asks `/api/cloud/share/<sig>` who signed it and
-draws the answer over the build bar — the name and the tier, or the name
-alone for a lapsed membership — while that build is open. How long anyone has
+draws the answer over the build bar — the name and one mark, a title before
+a tier ("WFSim Creator" over the Member grant the creator's account holds), or
+the name alone for a lapsed membership — while that build is open. How long anyone has
 been a member is never on it: that is theirs, shown on their own billing page.
 A NAME THIS PAGE DREW BY ITSELF WOULD BE DRAWABLE BY ANY COPY OF IT, so the page
 draws only what the server answers, and only when the signature's `share` is
