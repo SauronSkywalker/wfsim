@@ -11,7 +11,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | block forward | 4.9731 | Shocking Touch, Blood Rush, Primed Fury, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Galvanized Steel, Weeping Wounds, Shimmering Blight, Discipline's Merit, Melee Influence |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 71.4467 | Shocking Touch, Blood Rush, Primed Fury, Primed Pressure Point, Primed Reach, Melee Elementalist, Organ Shatter, Weeping Wounds, Shimmering Blight, Melee Influence |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 274.1448 | Shocking Touch, Blood Rush, Primed Fury, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Galvanized Steel, Weeping Wounds, Shimmering Blight, Discipline's Merit, Melee Influence |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | block forward | 0.2957 | Shocking Touch, Blood Rush, Primed Fury, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Galvanized Steel, Weeping Wounds, Shimmering Blight, Discipline's Merit, Melee Influence |
 
 ## Not modelled here
