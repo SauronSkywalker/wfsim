@@ -7,11 +7,10 @@
 // weapon than a fight is, so this collection is SHARED across the roster
 // (`SHARED_DOMAINS`).
 //
-// THE ID IS THE NAME, and renaming repoints whatever names it — a custom exists
-// only on the machine that made it, so its id comes from something the player
-// typed rather than a table nobody can see.
+// A FIGHT NAMES ITS TARGET BY THE ENTRY'S ID, never its name, so a rename
+// moves nothing and two targets may share a name.
 const ENEMIES = "enemies";
-const enemyId = (name) => "custom:" + name;
+const enemyId = (id) => "custom:" + id;
 let activeEnemy = null;
 let enemyDoc = null;
 

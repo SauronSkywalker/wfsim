@@ -62,7 +62,9 @@ const r = await evaluate(`(async () => {
                 head: doc.body_parts[1].multiplier };
 
   // ---- it is a TARGET, in every list that asks --------------------------
-  const id = enemyId('target 1');
+  // NAMED BY ITS ID, which is the entry's and never its name.
+  const id = enemyId(loadPresetList('enemies')[0].id);
+  out.id = id;
   out.inList = allEnemies().some(e => e.id === id);
   out.card = (enemyCard(id) || {}).type_modifiers;
 
@@ -172,7 +174,7 @@ check("...carrying its own vulnerability column", JSON.stringify(r.card) === JSO
   { type: "corrosive", mult: 1.5 }, { type: "void", mult: 2 },
 ]), JSON.stringify(r.card));
 
-check("the fight carries it to the server", String(r.sentCustom) === "custom:target 1", String(r.sentCustom));
+check("the fight carries it to the server", String(r.sentCustom) === r.id, `${r.sentCustom} vs ${r.id}`);
 check("...which accepts it", r.ok === true, String(r.err));
 check("...and fights the target that was typed", r.targetName === "target 1", String(r.targetName));
 
