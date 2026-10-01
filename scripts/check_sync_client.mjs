@@ -32,6 +32,7 @@ const r = await evaluate(`(async () => {
     calls++;
     if (who === 'acc3') return reply({ ok: false, reason: 'not_included' }, 403);
     const b = JSON.parse(o.body || '{}');
+    if (b.report) (window.__reports = window.__reports || []).push({ device: b.device, report: b.report });
     const db = srv[who];
     const refused = [], rejected = [];
     for (const c of b.changes || []) {
@@ -79,6 +80,8 @@ const r = await evaluate(`(async () => {
   out.aPushed = serverNames();
   out.noResult = !('lastResult' in (srv.acc1.get('a1') || {}).body);
   out.statusOn = syncStatus.state;
+  const rep = (window.__reports || []).at(-1) || {};
+  out.report = [!!(rep.device && rep.device.id), ((rep.device || {}).label || '').includes(' · '), (rep.report || {}).ok, (rep.report || {}).held];
   const A = await keep();
 
   // BROWSER B: its own "preset 1".
@@ -220,6 +223,7 @@ const ok = (x) => JSON.stringify(x);
 check("the first browser's build reaches the server", ok(r.aPushed) === ok(["a1=preset 1"]), ok(r.aPushed));
 check("...without its measured result", r.noResult === true);
 check("...and sync reads as on", r.statusOn === "on", r.statusOn);
+check("...and the round is reported, from a named device", ok(r.report) === ok([true, true, true, 1]), ok(r.report));
 check("a second browser's first sync is a union, and two builds keep the one name they share",
   ok(r.bAfterFirst) === ok(["a1=preset 1", "b1=preset 1"]), ok(r.bAfterFirst));
 check("...and the rename is pushed, so the server agrees", ok(r.serverAfterB) === ok(r.bAfterFirst), ok(r.serverAfterB));

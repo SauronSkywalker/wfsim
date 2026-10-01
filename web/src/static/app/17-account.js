@@ -160,7 +160,7 @@ function renderAccountEntry() {
         <div class="who"><span class="avatar">${escHtml(accountInitial(account))}</span><div><b>${escHtml(accountName(account))}</b>
           <span>@${escHtml(account.username || "")}</span></div></div>
         <a href="/account" role="menuitem">${aT("Account settings")}</a>
-        <a class="off" role="menuitem" aria-disabled="true">${aT("My builds")} <small>${aT("Coming soon")}</small></a>
+        <a href="/account/sync" role="menuitem">${aT("Cloud sync")}</a>
         <hr><a href="#" role="menuitem" data-acct="logout">${aT("Sign out")}</a>
       </div>`
     : `<a class="signin-btn" href="/login?return=${encodeURIComponent(authKindOf(location.pathname) ? "/" : here)}">${aT("Sign in")}</a>`;

@@ -110,11 +110,33 @@ function syncLocal() {
   return out;
 }
 
+/// THIS BROWSER, as the account's device list names it: an id minted once,
+/// and what it is in a reader's words.
+const SYNC_DEVICE_KEY = "wfsim-device";
+function syncDevice() {
+  let id = null;
+  try { id = localStorage.getItem(SYNC_DEVICE_KEY); } catch (_) { /* a private window */ }
+  if (!id) {
+    id = presetNewId();
+    try { localStorage.setItem(SYNC_DEVICE_KEY, id); } catch (_) { /* named again next time */ }
+  }
+  const ua = navigator.userAgent || "";
+  const os = /iPhone/.test(ua) ? "iPhone" : /iPad/.test(ua) ? "iPad" : /Android/.test(ua) ? "Android"
+    : /Windows/.test(ua) ? "Windows" : /Macintosh|Mac OS X/.test(ua) ? "Mac" : /Linux/.test(ua) ? "Linux" : "?";
+  const app = window.__WFSIM_DESKTOP__ ? "WFSim for Windows" : /Edg\//.test(ua) ? "Edge" : /OPR\//.test(ua) ? "Opera"
+    : /Firefox\/|FxiOS/.test(ua) ? "Firefox" : /CriOS|Chrome\//.test(ua) ? "Chrome" : /Safari\//.test(ua) ? "Safari" : "Browser";
+  return { id, label: `${os} · ${app}` };
+}
+
 async function syncCall(body, keepalive) {
+  // WHAT CANNOT BE SENT IS SAID AS SUCH: inside the fetch's `try` it read as
+  // "offline", on every round, for a browser that was online.
+  let payload;
+  try { payload = JSON.stringify({ ...body, device: syncDevice() }); } catch (e) { return { ok: false, reason: `unsendable: ${e && e.message}` }; }
   try {
     const r = await fetch(SYNC_PATH, {
       method: "POST", credentials: "same-origin", keepalive: !!keepalive,
-      headers: { "content-type": "application/json" }, body: JSON.stringify(body),
+      headers: { "content-type": "application/json" }, body: payload,
     });
     const j = await r.json().catch(() => null);
     return j || { ok: false, reason: `http_${r.status}` };
@@ -145,6 +167,7 @@ function syncNow() {
   }
   // SYNC NEVER TAKES THE PAGE DOWN: whatever a round throws is its status.
   syncRunning = syncRound().catch((e) => setSyncStatus({ state: "error", reason: String(e && e.message || e) }))
+    .then(syncReport)
     .finally(() => { syncRunning = null; });
   return syncRunning;
 }
@@ -250,6 +273,15 @@ async function syncRound() {
   setSyncStatus({ state: "on", at: Date.now(), unsynced });
   if (added) presetToast(tr("{n} saved items from this browser were added to your account").replace("{n}", added));
   if (applied) syncShow(applied);
+}
+
+/// HOW THE ROUND WENT, told to the account's device list — a failure most of
+/// all, since this browser is the one place it could otherwise be seen.
+async function syncReport() {
+  const s = syncStatus;
+  if (!accountState.account || s.state === "idle" || s.state === "other" || s.state === "not_included") return;
+  await syncCall({ pull: false, report: { ok: s.state === "on", reason: s.state === "on" ? null : (s.reason || s.state),
+    unsynced: (s.unsynced || []).length, held: syncLocal().size } });
 }
 
 /// A page the server sent, in the shape a pull reads — or a refusal.
