@@ -12,7 +12,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 | --- | --- | --- | ---: | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.9559 | Ice Storm, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Hornet Strike, Primed Target Cracker, Pistol Elementalist, Magnetic Might, Trick Mag, Secondary Enervate |
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 32.6169 | Ice Storm, Pistol Pestilence, Primed Heated Charge, Primed Fulmination, Galvanized Diffusion, Hornet Strike, Galvanized Shot, Magnetic Might, Secondary Enervate |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.6613 | Ice Storm, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Hornet Strike, Primed Target Cracker, Pistol Elementalist, Magnetic Might, Trick Mag, Secondary Enervate |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.6828 | Ice Storm, Pistol Pestilence, Primed Heated Charge, Scorch, Primed Fulmination, Galvanized Diffusion, Lethal Torrent, Pistol Elementalist, Cascadia Flare |
 
 ## Not modelled here
 
