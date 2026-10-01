@@ -100,4 +100,32 @@ check("several switch at once", r.bulkOff === true);
 check("the meter states the allowance", / \/ 3/.test(r.meter), r.meter);
 check("switching several on stops at the allowance, and says so", r.capped.synced === 3 && r.capped.note === true, ok(r.capped));
 
+// DRAWN BEFORE THE ROSTER HAS LOADED — a link straight to /account/sync on a
+// slow line, where the account answers first: the page waits for the roster
+// rather than taking the app down, and lists everything once it is here.
+const early = await evaluate(`(async () => {
+  const realFetch = window.fetch;
+  window.fetch = async (url, o = {}) => {
+    const path = String(url);
+    const reply = (j) => new Response(JSON.stringify(j), { headers: { 'content-type': 'application/json' } });
+    if (path === '/api/account') return reply({ ok: true, providers: ['email'], account: { id: 'acc1', created_at: '2026-09-01', identities: [{ provider: 'email', label: 'a@x' }] } });
+    if (path === '/api/billing') return reply({ ok: true, configured: false });
+    if (path === '/api/cloud/sync') return reply({ ok: true, full: false, entries: [], next: null, cursor: 0, devices: [] });
+    return realFetch(url, o);
+  };
+  localStorage.setItem('wfsim-presets-warframes', JSON.stringify([{ id: 'wf1', scope: 'excalibur', name: 'a frame build', savedAt: Date.now(), state: {} }]));
+  const roster = META;
+  META = null;
+  let threw = null;
+  try { history.pushState({}, '', '/account/sync'); renderAuthPage('sync'); } catch (e) { threw = String(e); }
+  const waiting = /Loading/.test((document.getElementById('cloud-items') || {}).textContent || '');
+  META = roster;
+  renderAuthPage('sync');
+  const listed = !!document.querySelector('#cloud-items [data-ctoggle]');
+  window.fetch = realFetch;
+  return { threw, waiting, listed };
+})()`);
+check("drawn before the roster has loaded, the page waits for it instead of failing, and lists once it is here",
+  early.threw === null && early.waiting && early.listed, JSON.stringify(early));
+
 await app.finish("every item this browser holds is in one list, and its sync switches there");

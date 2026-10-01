@@ -2454,6 +2454,7 @@ ui:
   "last synced {time}": "上次同步于 {time}"
   "Full: new items stay on this browser": "已满：新内容只保存在这台浏览器上"
   "Sync now": "立即同步"
+  "Loading…": 加载中…
   "Devices": 设备
   "This device": 这台设备
   "Could not sync": 同步失败

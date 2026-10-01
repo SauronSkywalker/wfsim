@@ -40,7 +40,7 @@ function cloudOwner(domain, scope) {
   if (!scope) return "";
   const ws = (META && META.weapons) || [];
   if (domain === RIVENS) return (ws.find((w) => rivenScope(w.id) === scope) || {}).name || scope;
-  if (domain === WF_BUILDS) return ((META.warframes || []).find((f) => f.id === scope) || {}).name || scope;
+  if (domain === WF_BUILDS) return (((META && META.warframes) || []).find((f) => f.id === scope) || {}).name || scope;
   if (domain === COMP_BUILDS) return (compHost(scope) || {}).name || scope;
   return (ws.find((w) => w.id === scope) || {}).name || scope;
 }
@@ -49,7 +49,9 @@ function cloudLink(domain, p) {
   const w = p.scope && ((META && META.weapons) || []).find((x) => x.id === p.scope);
   if (domain === BUILDS && w) return `${weaponPath(w.id)}?build=${encodeURIComponent(p.id)}`;
   if (domain === OPT_DOMAIN && w) return `${weaponPath(w.id)}/optimizer`;
-  if ((domain === WF_BUILDS || domain === COMP_BUILDS) && p.scope) return holderPath(p.scope);
+  // A FRAME OR COMPANION THE ROSTER NO LONGER NAMES has no page to open.
+  if (domain === WF_BUILDS && ((META && META.warframes) || []).some((f) => f.id === p.scope)) return holderPath(p.scope);
+  if (domain === COMP_BUILDS && p.scope && compHost(p.scope)) return holderPath(p.scope);
   if (domain === OPS) return "/operator";
   return "";
 }
@@ -98,6 +100,10 @@ function cloudPage(a) {
 }
 
 function cloudListHtml() {
+  // THE PAGE CAN BE OPENED BEFORE THE ROSTER HAS LOADED — a link straight to
+  // /account/sync — and the roster names every item's weapon. The route draws
+  // the page again once it is here.
+  if (!META) return `<div class="bh"><h2>${aT("All items")}</h2></div><div class="bb"><p class="set-note">${aT("Loading…")}</p></div>`;
   const all = cloudItems();
   const v = cloudView;
   const count = (st) => all.filter((x) => st === "all" || x.state === st).length;
