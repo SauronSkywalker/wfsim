@@ -16,6 +16,9 @@
 //      — a bigger first name is a price list drawn instead of written.
 //   4. THE ORDER IS THE PUBLISHED ORDER, unedited by the page.
 //   5. AN EMPTY LIST IS SILENT on `/support` and SAYS SO on `/thanks`.
+//   6. WHERE THEY GAVE IS A HEADING, never a word beside a name: each channel
+//      heads the names that gave there, the page's own channels first, and a
+//      person who gave in two places is thanked under both.
 //
 // IT PUBLISHES ITS OWN FIXTURE into `site/thanks.json` and puts the file back
 // on the way out, because the real one is empty until somebody chips in — and a
@@ -32,10 +35,10 @@ const KEPT = readFileSync(FILE);
 const FIXTURE = {
   as_of: "2026-09-10",
   supporters: [
-    { name: "Lucas", since: "2025-09" },
-    { name: "2024", since: "2026-01" },
-    { name: "一个路人", since: "2026-08" },
-    { name: "someone", since: "2026-09" },
+    { name: "Lucas", since: "2025-09", via: ["bilibili"] },
+    { name: "2024", since: "2026-01", via: ["youtube"] },
+    { name: "一个路人", since: "2026-08", via: ["bilibili", "youtube"] },
+    { name: "someone", since: "2026-09", via: [] },
   ],
 };
 
@@ -58,6 +61,10 @@ try {
       return [s.fontSize, s.fontWeight, s.color].join("|");
     };
     return {
+      groups: [...document.querySelectorAll("#thanks-list .thx-from")].map((g) => ({
+        src: (g.querySelector(".thx-src") || { textContent: "" }).textContent.trim(),
+        names: [...g.querySelectorAll(".thx-name")].map((el) => el.textContent.trim()),
+      })),
       names: items.map((li) => li.querySelector(".thx-name").textContent.trim()),
       // What the page DREW around each name, so a rank prefix or a suffix shows
       // up as text the fixture never contained.
@@ -69,18 +76,22 @@ try {
   })()`);
 
   check(`${tag} every published name is drawn`,
-    page.names.length === FIXTURE.supporters.length, JSON.stringify(page.names));
-  check(`${tag} ...in the order the file published, not one the page chose`,
-    page.names.join("|") === FIXTURE.supporters.map((s) => s.name).join("|"),
-    page.names.join("|"));
+    FIXTURE.supporters.every((s) => page.names.includes(s.name)), JSON.stringify(page.names));
+  // ONE GROUP PER CHANNEL, the page's channels first; a person with no
+  // recorded channel is drawn under no heading rather than left out.
+  const want = [["On Bilibili", ["Lucas", "一个路人"]], ["On YouTube", ["2024", "一个路人"]], ["", ["someone"]]];
+  check(`${tag} ...under where they gave, Bilibili then YouTube, someone who gave in both under each`,
+    JSON.stringify(page.groups.map((g) => [g.src, g.names])) === JSON.stringify(want), JSON.stringify(page.groups));
+  check(`${tag} ...and in the order the file published within each, not one the page chose`,
+    page.groups.every((g) => g.names.join("|") === FIXTURE.supporters.map((s) => s.name).filter((n) => g.names.includes(n)).join("|")),
+    JSON.stringify(page.groups));
 
   // A ROW IS THE NAME AND NOTHING ELSE. Not a rank, not a position, and not
   // the month either — `since` stays in the published file because the order
   // is derived from it, and the page's promise is that no number stands beside
   // a name. Anything left after removing the name is something this page
   // invented, and the date coming back is the way that happens.
-  const leftover = page.whole.map((whole, i) =>
-    whole.replace(FIXTURE.supporters[i].name, "").trim());
+  const leftover = page.whole.map((whole, i) => whole.replace(page.names[i], "").trim());
   check(`${tag} ...and nothing stands beside it — no rank, no figure, no date`,
     leftover.every((rest) => rest === ""), JSON.stringify(leftover));
 
@@ -111,7 +122,7 @@ try {
   })()`);
 
   check(`${tag} /support draws the names too`,
-    sup.hidden === false && sup.names.length === FIXTURE.supporters.length,
+    sup.hidden === false && FIXTURE.supporters.every((s) => sup.names.includes(s.name)),
     JSON.stringify(sup.names));
   check(`${tag} ...below the channels, not above them`, sup.afterChannels === true);
   check(`${tag} ...and Bilibili is one of the channels offered`,
@@ -123,7 +134,7 @@ try {
   // shipped.
   const keys = new Set(FIXTURE.supporters.flatMap((s) => Object.keys(s)));
   const published = JSON.parse(readFileSync(FILE, "utf8"));
-  check(`${tag} the published entry is a name and a month, and nothing else`,
+  check(`${tag} the published entry is a name, a month and its channels, and nothing else`,
     published.supporters.every((s) => JSON.stringify(Object.keys(s).sort())
       === JSON.stringify([...keys].sort())), JSON.stringify(published.supporters[0]));
 

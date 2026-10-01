@@ -12,6 +12,11 @@ ui:
   "New chat": 新对话
   "Settings": 设置
   "Close": 关闭
+  "On Bilibili": "来自 B 站"
+  "On YouTube": "来自 YouTube"
+  "On Ko-fi": "来自 Ko-fi"
+  "On Patreon": "来自 Patreon"
+  "On Afdian": "来自爱发电"
   "{n} results": "{n} 个结果"
   "Send": 发送
   "Stop": 停止

@@ -48,7 +48,7 @@ BEIJING = dt.timezone(dt.timedelta(hours=8))
 # what LANDED and `cny_per_unit` is today's rate: the books are in CNY and the
 # ledger stores no historical rate, so a total is what the money is worth now.
 QUERY = """
-SELECT d.paid_at, d.donor_id, p.display_name,
+SELECT d.paid_at, d.donor_id, d.channel, p.display_name,
        d.net_amount * r.cny_per_unit AS net_cny
   FROM donations d
   JOIN rates r ON r.currency = d.currency
@@ -82,8 +82,10 @@ def entities(rows: list[dict], as_of: dt.date) -> list[dict]:
     by_key: dict = {}
     for r in rows:
         day = dt.date.fromisoformat(r["paid_at"][:10])
-        e = by_key.setdefault(r["donor_id"], {"name": r["display_name"], "cny": 0.0, "first": day})
+        e = by_key.setdefault(r["donor_id"], {"name": r["display_name"], "cny": 0.0, "first": day, "via": set()})
         e["cny"] += float(r["net_cny"])
+        if r.get("channel"):
+            e["via"].add(r["channel"])
         e["first"] = min(e["first"], day)
 
     out = []
@@ -102,6 +104,7 @@ def entities(rows: list[dict], as_of: dt.date) -> list[dict]:
         out.append({
             "name": e["name"],
             "since": e["first"].strftime("%Y-%m"),
+            "via": sorted(e["via"]),
             "score": e["cny"] * (1 + max(days, 0)) ** BETA,
         })
     # Score decides; the name breaks a tie so two publishes of one ledger agree.
@@ -113,10 +116,11 @@ def publish(rows: list[dict], as_of: dt.date) -> dict:
     ranked = entities(rows, as_of)
     return {
         "as_of": as_of.isoformat(),
-        # NAME AND MONTH, and the score is dropped on the way out. It ordered
-        # the list and it is a statement about somebody's money; the page needs
-        # the order, not the number that produced it.
-        "supporters": [{"name": e["name"], "since": e["since"]} for e in ranked],
+        # NAME, MONTH AND WHERE THEY GAVE, and the score is dropped on the way
+        # out. It ordered the list and it is a statement about somebody's
+        # money; the page needs the order, not the number that produced it.
+        # `via` is the channels and never what came through each.
+        "supporters": [{"name": e["name"], "since": e["since"], "via": e["via"]} for e in ranked],
     }
 
 
@@ -132,8 +136,8 @@ def self_test() -> int:
 
     # One person per name unless a `donor_id` says otherwise; `name=None` is
     # somebody who never asked to be thanked.
-    def row(who, cny, day, donor_id=None, name=""):
-        return {"paid_at": f"{day}T12:00:00+08:00", "donor_id": donor_id or who,
+    def row(who, cny, day, donor_id=None, name="", channel="bilibili"):
+        return {"paid_at": f"{day}T12:00:00+08:00", "donor_id": donor_id or who, "channel": channel,
                 "display_name": who if name == "" else name, "net_cny": cny}
 
     names = lambda rows: [e["name"] for e in entities(rows, today)]
@@ -161,10 +165,12 @@ def self_test() -> int:
     # TWO ACCOUNTS, ONE PERSON: one entry, one total, one seniority — the
     # earliest of the two, because that is when this person first chipped in.
     merged = entities([row("bili", 50, "2025-09-10", donor_id=1, name="Lucas"),
-                       row("kofi", 50, "2026-09-01", donor_id=1, name="Lucas")], today)
+                       row("yt", 50, "2026-09-01", donor_id=1, name="Lucas", channel="youtube")], today)
     say(len(merged) == 1 and merged[0]["since"] == "2025-09",
         "two accounts of one donor are one entry, dated from the first",
         json.dumps(merged, default=str))
+    say(merged[0]["via"] == ["bilibili", "youtube"],
+        "...thanked under every channel they gave through", json.dumps(merged, default=str))
 
     say(names([row("refunded", 30, "2026-01-01"), row("refunded", -30, "2026-01-02")]) == [],
         "a payment that was refunded in full thanks nobody")
@@ -177,8 +183,8 @@ def self_test() -> int:
     # AND NO AMOUNT LEAVES. The published shape is asserted, not described:
     # every key of every entry, so a field added later has to be decided on.
     pub = publish([row("a", 10, "2026-01-01"), row("b", 20, "2026-02-01")], today)
-    say(all(set(e) == {"name", "since"} for e in pub["supporters"]),
-        "the published entry is a name and a month, and carries no figure",
+    say(all(set(e) == {"name", "since", "via"} for e in pub["supporters"]),
+        "the published entry is a name, a month and its channels, and carries no figure",
         json.dumps(pub))
 
     print(f"\n{ok} ok, {bad} failed")

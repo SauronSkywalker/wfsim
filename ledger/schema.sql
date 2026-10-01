@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS donations (
   -- offset moves silently between two months, and the check stops one.
   paid_at       TEXT NOT NULL
                   CHECK (paid_at LIKE '____-__-__T__:__:__+08:00'),
-  -- `bilibili`, `kofi`, `patreon`, `afdian` — the same spelling the page's
+  -- `bilibili`, `youtube`, `kofi`, `patreon`, `afdian` — the same spelling the page's
   -- `SUPPORT_CHANNELS` uses where the channel is on it.
   channel       TEXT NOT NULL,
   -- THE CHANNEL'S OWN ID FOR THE ACCOUNT — a Bilibili UID (`18571868`), never

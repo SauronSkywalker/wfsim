@@ -580,7 +580,10 @@ with how long ago they first gave it — the rule is stated beside the constant
 that sets it — and the page prints no position, no band and no figure, because
 `/support` says in so many words that a donation buys no feature and no perk.
 An ordered list is a list; the same list numbered is a leaderboard.
-`check_thanks` holds both lines.
+WHERE THEY GAVE IS A HEADING, NEVER A WORD BESIDE A NAME: each channel heads
+the names that gave there, so the list says plainly that these people backed
+WFSim on the video platforms, which is what keeps a donation apart from a
+membership. `check_thanks` holds all three.
 
 THE BLOCK SITS BELOW THE CHANNELS on `/support`, and `/thanks` is the whole
 list at an address meant to be PASTED — a video description, the group. Empty,

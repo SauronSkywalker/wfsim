@@ -136,6 +136,24 @@ function thanksNames() {
 /// sits under the channels rather than over them: it is there to say that
 /// people do this, not to be read instead of the thing above it.
 const THANKS_PEEK = 24;
+/// WHERE THEY GAVE, as a heading over the names that gave there — the channels
+/// the page offers first, then any the ledger still remembers. A reader sees
+/// that these people backed WFSim on the video platforms, which is what keeps
+/// a donation apart from a membership; someone who gave in two places is
+/// thanked in both.
+const THANKS_FROM = { bilibili: "On Bilibili", youtube: "On YouTube", kofi: "On Ko-fi", patreon: "On Patreon", afdian: "On Afdian" };
+function thanksGroups(shown) {
+  const order = [...SUPPORT_CHANNELS.map((c) => c.id), ...Object.keys(THANKS_FROM)];
+  const groups = new Map();
+  for (const s of shown) {
+    for (const via of (Array.isArray(s.via) && s.via.length ? s.via : [""])) {
+      if (!groups.has(via)) groups.set(via, []);
+      groups.get(via).push(s);
+    }
+  }
+  const rank = (k) => (order.includes(k) ? order.indexOf(k) : order.length);
+  return [...groups].sort(([a], [b]) => rank(a) - rank(b) || a.localeCompare(b));
+}
 function drawThanks(block, list, limit) {
   const all = thanksNames();
   block.hidden = all.length === 0;
@@ -144,9 +162,12 @@ function drawThanks(block, list, limit) {
   // THE NAME AND NOTHING ELSE. `since` stays in the published file — it is
   // what the ordering is derived from and worth keeping as a record — but a
   // month printed beside a name IS a number beside a name, which is the one
-  // thing /thanks tells the reader it does not do.
-  list.innerHTML = shown.map((s) => `<li class="thx-one">`
-    + `<span class="thx-name">${escHtml(s.name)}</span></li>`).join("");
+  // thing /thanks tells the reader it does not do. Where they gave is the
+  // group's heading, never a word beside a name.
+  list.innerHTML = thanksGroups(shown).map(([via, people]) => `<li class="thx-from">`
+    + (via ? `<div class="thx-src">${escHtml(tr(THANKS_FROM[via] || via))}</div>` : "")
+    + `<ul class="thx-group">${people.map((s) => `<li class="thx-one">`
+      + `<span class="thx-name">${escHtml(s.name)}</span></li>`).join("")}</ul></li>`).join("");
   const more = block.querySelector(".thx-more");
   if (more) more.hidden = all.length <= shown.length;
 }
