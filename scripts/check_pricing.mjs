@@ -31,7 +31,7 @@ const r = await evaluate(`(async () => {
   const out = {};
   out.off = await open();
   billing = { ok: true, configured: true, signed_in: false, free: { sync_allowance: { presets: 50, customs: 50 } },
-    names: { offers: { member: { en: 'WFSim Membership', zh: 'WFSim 会员', includes: [{ en: 'Any number of items synced to your account' }] } }, meters: {} },
+    names: { offers: { member: { en: 'WFSim Member', zh: 'WFSim 会员', includes: [{ en: 'Any number of items synced to your account' }] } }, meters: {} },
     prices: [{ key: 'member_month', offer: 'member', interval: 'month', amount: 500, currency: 'usd' },
              { key: 'member_year', offer: 'member', interval: 'year', amount: 5000, currency: 'usd' }] };
   out.onOut = await open();
