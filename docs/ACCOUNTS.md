@@ -95,6 +95,7 @@ The shape a mature product has, because that is where the trust comes from:
 | `/signup` | the same ways in; an email and a password, then a page for the mailed code — six boxes, a paste fills them, the last digit submits, a resend after a minute |
 | `/reset` | an email, then the code and a new password |
 | `/account` | settings in `.block` sections — ways to sign in, email and password, data and privacy, and a danger zone that asks for `DELETE` typed before it deletes |
+| `/account/sync` | the usage per pool against the allowance, the upload default, and every item this browser holds — filtered, searched, newest first or by weapon — with its sync switch, one or several at once; nothing on it deletes |
 | `/pricing` | what is free beside what the membership adds, signed in or not; every number (the offer, its prices, the free sync allowance) is `/api/billing`'s, and none applies before it is on sale |
 | `/account/billing` | where billing is on: the plan card (state, price, next charge or end, card, the one action the state calls for), the billing history as a table, and who takes the money; every change is Stripe's portal |
 

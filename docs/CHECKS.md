@@ -734,6 +734,14 @@ browser and tells the others to keep theirs; with "upload new items" off a new
 entry stays here; the allowance the server states is kept to, and an item the
 server refuses stays here.
 
+## `check_cloud_page`
+
+`/account/sync` against an account and a sync server faked in the page: every
+item from every collection and weapon in one list, newest first; a build opens
+on its weapon by id; an item switches off and on; the status filter, the search
+and the by-weapon grouping; several switch at once, and switching several on
+stops at the allowance the server states, out loud; nothing on the page deletes.
+
 ## `check_pricing`
 
 `/pricing` against a billing API faked in the page: not on sale it says so and

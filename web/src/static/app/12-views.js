@@ -172,7 +172,7 @@ async function route() {
   // that has to be found rather than enjoyed. The joke
   // stays on the page, which is where a player meets it.
   document.title = authKind ? `${tr({ login: "Sign in", signup: "Create an account", reset: "Reset your password",
-    account: "Account settings", billing: "Membership and billing", pricing: "Pricing" }[authKind])} — WFSim`
+    account: "Account settings", billing: "Membership and billing", sync: "Cloud sync", pricing: "Pricing" }[authKind])} — WFSim`
     : support ? `${tr("Support")} — WFSim`
     : thx ? `${tr("Thank you")} — WFSim`
     : dl ? `${tr("WFSim for Windows")} — WFSim`

@@ -4,7 +4,7 @@
 // allowance, a way to sign in when signed out, and a member's own plan.
 import { openApp } from "./cdp.mjs";
 
-const app = await openApp({ boot: 12000 });
+const app = await openApp({ boot: 12000, lang: "en" });
 const { evaluate, check } = app;
 
 const r = await evaluate(`(async () => {

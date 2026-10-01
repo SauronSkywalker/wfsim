@@ -17,10 +17,10 @@ const ACCOUNT_SLOTS = [
   { id: "email", name: "Email" },
 ];
 const AUTH_PATHS = { "/login": "login", "/signup": "signup", "/reset": "reset", "/account": "account",
-  "/account/billing": "billing", "/pricing": "pricing" };
+  "/account/billing": "billing", "/account/sync": "sync", "/pricing": "pricing" };
 const authKindOf = (path) => AUTH_PATHS[path.replace(/\/$/, "")] || null;
 /// The pages of a signed-in account; every other kind is a way in.
-const isSettings = (kind) => kind === "account" || kind === "billing";
+const isSettings = (kind) => kind === "account" || kind === "billing" || kind === "sync";
 
 /// WHAT THE SERVER SAID, in the reader's words — an outcome or a refusal.
 const ACCOUNT_SAYS = {
@@ -514,6 +514,7 @@ function settingsNav(a, here) {
     <div class="me"><span class="avatar avatar-lg">${escHtml(accountInitial(a))}</span>
       <div><b>${escHtml(accountName(a))}</b><span>${escHtml(tr("Joined {date}").replace("{date}", since))}</span></div></div>
     ${link("/account", "account", "Account")}
+    ${link("/account/sync", "sync", "Cloud sync")}
     ${billingState.configured ? link("/account/billing", "billing", "Membership and billing") : ""}</nav>`;
 }
 
@@ -545,9 +546,8 @@ function syncChoiceHtml() {
   const n = syncedCounts();
   const of = (pool) => (syncAllowance && syncAllowance[pool] != null ? ` / ${syncAllowance[pool]}` : "");
   return `<dt>${aT("What syncs")}</dt><dd>${escHtml(tr("presets {a} · customs {b}")
-    .replace("{a}", n.presets + of("presets")).replace("{b}", n.customs + of("customs")))}<br>
-    <span class="set-note">${aT("The cloud on each item switches it; saving on this browser is never limited.")}</span></dd>
-    <label class="set-note"><input type="checkbox" id="sync-auto" ${syncAuto() ? "checked" : ""}> ${aT("Upload new items")}</label>`;
+    .replace("{a}", n.presets + of("presets")).replace("{b}", n.customs + of("customs")))}</dd>
+    <a class="ghost-btn btn-sm" href="/account/sync">${aT("Manage")}</a>`;
 }
 /// WHAT THE SERVER WOULD NOT TAKE, by name and why. Each stays on this browser.
 const SYNC_REJECTED = { bad_body: "too large to sync", bad_change: "cannot be synced" };
@@ -564,6 +564,7 @@ function renderSyncStatus() {
   if (el) el.innerHTML = syncRowHtml();
   const c = $("sync-choice");
   if (c) c.innerHTML = syncChoiceHtml();
+  if (authKindOf(location.pathname) === "sync" && $("cloud-items")) renderAuthPage("sync");
 }
 
 /// THE AGENTS THAT ACT FOR THIS ACCOUNT — each one claimed with a code mailed
@@ -632,6 +633,7 @@ function renderAuthPage(kind) {
     return;
   }
   main.innerHTML = kind === "account" ? accountPage(account) : kind === "billing" ? billingPage(account)
+    : kind === "sync" ? cloudPage(account)
     : `<div class="auth-page"><div class="auth-card" data-auth-kind="${kind}">${
       kind === "signup" ? authSignupCard() : kind === "reset" ? authResetCard() : authLoginCard()}</div></div>`;
   // BACK FROM STRIPE'S CHECKOUT: said once, then the page reads again what the

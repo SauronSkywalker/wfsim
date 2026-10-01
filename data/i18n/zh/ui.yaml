@@ -2454,6 +2454,38 @@ ui:
   "last synced {time}": "上次同步于 {time}"
   "Full: new items stay on this browser": "已满：新内容只保存在这台浏览器上"
   "Sync now": "立即同步"
+  "Cloud sync": 云同步
+  "Usage": 用量
+  "Saving on this browser is never limited.": 在这个浏览器里保存不受限制。
+  "Customs": 自定义项
+  "builds, fights, searches, Warframe, companion and Operator builds": "配装、场景、搜索方案、战甲 / 同伴 / 指挥官配装"
+  "rivens, custom enemies": "裂罅、自定义敌人"
+  "synced": 已同步
+  "allowance used": 已满
+  "Membership: sync any number": "会员：同步不限数量"
+  "All items": 全部条目
+  "{n} items · {m} synced": "{n} 项 · {m} 项已同步"
+  "Search names, weapons, Warframes…": "搜索名称、武器、战甲…"
+  "Synced": 已同步
+  "This browser only": 仅本地
+  "Did not sync": 未能同步
+  "Every kind": 全部类别
+  "Newest first": 最近保存在前
+  "By weapon": 按武器
+  "{n} selected": "已选 {n} 项"
+  "Sync to the account": 同步到账户
+  "Keep on this browser only": 只留在本地
+  "Clear selection": 取消选择
+  "Select all": 全选
+  "Kind": 类别
+  "About": 所属
+  "Saved": 保存于
+  "Sync": 同步
+  "Nothing here.": 这里没有内容。
+  "Not about a weapon": 不属于武器
+  "Order": 排序
+  "Warframe builds": 战甲配装
+  "Custom enemies": 自定义敌人
   "{n} items did not sync": "{n} 项没有同步"
   "too large to sync": 太大，无法同步
   "cannot be synced": 无法同步

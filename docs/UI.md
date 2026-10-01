@@ -304,6 +304,7 @@ stays the working copy: signed out, or without the feature, nothing runs.
 | taking one off the account sends `{ id, cloud_sync: false }` and nothing else; another browser keeps its copy and stops syncing it | `syncRound`, `syncApply` |
 | a new entry is synced unless "upload new items" (this browser's `wfsim-sync-auto`) is off | `syncRound` |
 | the server states what the account may hold per pool (`allowance`); past it a new entry stays here and turning one on is refused | `syncAllowance`, `setCloudSync` |
+| `/account/sync` lists every item this browser holds, newest first or by weapon, and switches sync one at a time or several at once; it deletes nothing | `cloudPage` (19-cloud-page.js) |
 
 ## The build finder
 

@@ -3248,3 +3248,33 @@ iframe.wld-frame{width:100%;height:480px;border:1px solid var(--line);border-rad
 .pricing{max-width:880px;margin:0 auto;padding:24px 16px 48px;display:grid;gap:16px}
 .pricing .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;align-items:start}
 .pricing .plans .block{margin:0}
+
+/* /account/sync (19-cloud-page.js): the usage per pool, and every item with
+   the switch for its sync. */
+.meters{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px 24px}
+.meter b{font-size:22px;font-variant-numeric:tabular-nums}
+.meter .of{color:var(--text-2);font-size:13px;margin-left:4px}
+.meter .lbl{font-size:12.5px;color:var(--text-2);margin-bottom:6px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.meter .bar{height:6px;border-radius:3px;background:var(--panel2);overflow:hidden;margin-top:8px}
+.meter .bar i{display:block;height:100%;background:var(--accent);border-radius:3px}
+.meter .bar.warn i{background:var(--gold)}
+.sync-acts{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding-top:14px;margin-top:14px;border-top:1px solid var(--line);font-size:12.5px;color:var(--text-2)}
+.sync-acts .sp{flex:1}
+#cloud-items .toolbar{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}
+#cloud-items input[type=search]{height:30px;border-radius:8px;border:1px solid var(--line);background:var(--panel3);color:var(--text);padding:0 10px;min-width:0;flex:1 1 180px;font-size:12.5px}
+#cloud-items select{height:30px;border-radius:8px;border:1px solid var(--line);background:var(--panel3);color:var(--text);padding:0 8px;font-size:12.5px}
+#cloud-items .bulk{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 14px;background:color-mix(in srgb,var(--accent) 8%,transparent);border-bottom:1px solid var(--line);font-size:12.5px}
+#cloud-items .tbl-wrap{overflow-x:auto}
+#cloud-items .items{border-collapse:collapse;width:100%;font-size:12.5px;min-width:680px;font-variant-numeric:tabular-nums}
+#cloud-items .items th{text-align:left;font-weight:500;color:var(--muted);font-size:11.5px;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+#cloud-items .items td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+#cloud-items .items tr.grp td{background:var(--panel2);color:var(--text-2);font-size:11.5px;padding:6px 10px}
+#cloud-items .nm{font-weight:600}
+#cloud-items .muted{color:var(--muted)}
+#cloud-items a.open{color:var(--accent);text-decoration:none;white-space:nowrap}
+#cloud-items .cloud{display:inline-flex;align-items:center;gap:6px;background:none;border:1px solid var(--line);border-radius:8px;height:26px;padding:0 9px;color:var(--muted);cursor:pointer;font-size:12px;white-space:nowrap}
+#cloud-items .cloud svg{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
+#cloud-items .cloud.on{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
+#cloud-items .cloud.on svg{fill:currentColor}
+#cloud-items .cloud.bad{color:var(--gold);border-color:color-mix(in srgb,var(--gold) 45%,transparent);cursor:default}
+#cloud-items .cloud:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
