@@ -285,13 +285,34 @@ async function syncRound() {
   if (shown) syncShow(shown);
 }
 
+/// THE SHAPE OF WHAT DID NOT SYNC: per item its collection, its size and its
+/// largest fields' sizes, two levels down — names and sizes, never content —
+/// so an item too large to sync says from where what makes it so.
+function syncShapes(unsynced, here) {
+  const size = (v) => { try { return JSON.stringify(v ?? null).length; } catch (_) { return -1; } };
+  return (unsynced || []).slice(0, 5).map((u) => {
+    const p = (here.get(u.id) || {}).p;
+    if (!p) return { kind: u.list, reason: u.reason };
+    const body = syncBody(p);
+    const fields = {};
+    for (const [k, v] of Object.entries(body)) {
+      fields[k] = size(v);
+      if (v && typeof v === "object" && !Array.isArray(v)) for (const [k2, v2] of Object.entries(v)) fields[`${k}.${k2}`] = size(v2);
+    }
+    const top = Object.fromEntries(Object.entries(fields).sort((a, b) => b[1] - a[1]).slice(0, 8));
+    return { kind: u.list.replace(/^wfsim-(presets|customs)-/, ""), reason: u.reason, size: size(body), fields: top };
+  });
+}
+
 /// HOW THE ROUND WENT, told to the account's device list — a failure most of
 /// all, since this browser is the one place it could otherwise be seen.
 async function syncReport() {
   const s = syncStatus;
   if (!accountState.account || s.state === "idle" || s.state === "other" || s.state === "not_included") return;
+  const here = syncLocal();
   await syncCall({ pull: false, report: { ok: s.state === "on", reason: s.state === "on" ? null : (s.reason || s.state),
-    unsynced: (s.unsynced || []).length, held: syncLocal().size } });
+    unsynced: (s.unsynced || []).length, held: here.size, detail: syncShapes(s.unsynced, here) } });
+  if (typeof cloudDevices !== "undefined" && cloudDevices !== null) loadCloudDevices();
 }
 
 /// THE VERSION A CHANGE WAS MADE FROM: 0 for an entry the account has never

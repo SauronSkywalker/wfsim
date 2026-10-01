@@ -20,6 +20,12 @@ const r = await evaluate(`(async () => {
       identities: [{ provider: 'email', label: 'a@x' }] } });
     if (path === '/api/billing') return reply({ ok: true, configured: false });
     if (path === '/api/account/agents') return reply({ ok: true, agents: [] });
+    if (path === '/api/cloud/sync' && JSON.parse(o.body || '{}').devices) {
+      const me = JSON.parse(o.body).device.id;
+      return reply({ ok: true, devices: [
+        { id: me, label: 'Windows · Chrome', seen_at: Date.now(), round_at: Date.now(), ok: true, reason: null, unsynced: 2, held: 100 },
+        { id: 'phone', label: 'iPhone · Safari', seen_at: Date.now() - 864e5, round_at: Date.now() - 864e5, ok: false, reason: 'offline', unsynced: 0, held: 3 }] });
+    }
     if (path === '/api/cloud/sync') return reply({ ok: true, full: false, entries: [], next: null, cursor: 0, ...(allowance ? { allowance, refused: [] } : {}) });
     return realFetch(url, o);
   };
@@ -37,6 +43,10 @@ const r = await evaluate(`(async () => {
   history.pushState({}, '', '/account/sync'); route(); await loadAccount(); await sleep(800);
   const out = {};
   out.nav = !!page().querySelector('.set-side a[href="/account/sync"].on');
+  await sleep(400);
+  const devs = [...page().querySelectorAll('.set-main .block')].find((b) => /Devices/.test(b.querySelector('h2').textContent));
+  out.devices = devs ? [devs.querySelectorAll('.kv').length, /This device/.test(devs.textContent), /2 items did not sync/.test(devs.textContent),
+    /Could not sync/.test(devs.textContent) && /offline/.test(devs.textContent)] : null;
   out.order = names();
   out.link = (rows()[0].querySelector('a.open') || {}).getAttribute ? rows()[0].querySelector('a.open').getAttribute('href') : null;
   out.deletes = !!page().querySelector('#cloud-items [data-del], #cloud-items .del, #cloud-items [data-cdelete]');
@@ -75,6 +85,8 @@ const r = await evaluate(`(async () => {
 
 const ok = (x) => JSON.stringify(x);
 check("the page is in the settings nav, open", r.nav === true);
+check("every browser of the account is listed: this one marked, what did not sync, and why one failed",
+  JSON.stringify(r.devices) === JSON.stringify([2, true, true, true]), JSON.stringify(r.devices));
 check("every item, from every collection and weapon, newest first",
   ok(r.order) === ok(["crit torid", "furis one", "a crowd", "my riven", "old torid"]), ok(r.order));
 check("a build opens on its weapon, by id", /^\/weapons\/Torid\?build=t1$/.test(r.link || ""), r.link);

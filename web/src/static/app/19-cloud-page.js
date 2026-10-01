@@ -5,6 +5,33 @@
 // It switches an item's sync and nothing else — an item is made, renamed and
 // deleted in its own bar, so a list of hundreds is never a place to lose one.
 let cloudView = { q: "", status: "all", kind: "all", by: "time" };
+/// THE ACCOUNT'S BROWSERS as the server last listed them, or null before it has.
+let cloudDevices = null;
+async function loadCloudDevices() {
+  const r = await syncCall({ devices: true });
+  cloudDevices = r && r.ok && Array.isArray(r.devices) ? r.devices : [];
+  if (authKindOf(location.pathname) === "sync" && $("cloud-items")) renderAuthPage("sync");
+}
+
+/// EVERY BROWSER THAT SYNCS THE ACCOUNT: when it last synced, and whether that
+/// went through — a failure and what it left behind, said where every other
+/// browser can see it.
+function cloudDevicesHtml() {
+  if (cloudDevices === null) { loadCloudDevices(); return ""; }
+  if (!cloudDevices.length) return "";
+  const me = syncDevice().id;
+  const when = (t) => (t ? new Date(t).toLocaleString(billingLocale(), { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "—");
+  const rows = cloudDevices.map((d) => {
+    const state = d.ok === null ? "" : d.ok
+      ? `<span class="tag ok">${aT("Synced")}</span>${d.unsynced ? ` <span class="tag warn">${escHtml(tr("{n} items did not sync").replace("{n}", d.unsynced))}</span>` : ""}`
+      : `<span class="tag bad">${aT("Could not sync")}</span> <span class="set-note">${escHtml(d.reason || "")}</span>`;
+    return `<div class="kv"><dt>${escHtml(d.label)}${d.id === me ? ` <span class="tag">${aT("This device")}</span>` : ""}</dt>
+      <dd>${escHtml(tr("last synced {time}").replace("{time}", when(d.round_at || d.seen_at)))} ${state}${
+        d.held != null ? ` <span class="set-note">${escHtml(tr("{n} items here").replace("{n}", d.held))}</span>` : ""}</dd><span></span></div>`;
+  }).join("");
+  return `<div class="block"><div class="bh"><h2>${aT("Devices")}</h2><span class="sub">${cloudDevices.length}</span></div>
+    <div class="bb"><dl class="kvs">${rows}</dl></div></div>`;
+}
 const cloudPicked = new Set();
 
 /// WHERE AN ITEM IS ABOUT: its weapon, frame, companion or riven family, by
@@ -66,7 +93,7 @@ function cloudPage(a) {
         ${billingState.configured && syncAllowance ? `<a class="ghost-btn btn-sm" href="/pricing">${aT("Membership: sync any number")}</a>` : ""}
         <button class="ghost-btn btn-sm" data-auth="sync-now">${aT("Sync now")}</button></div></div></div>`;
   return `<div class="settings">${settingsNav(a, "sync")}
-    <div class="set-main"><h1 class="page">${aT("Cloud sync")}</h1>${usage}
+    <div class="set-main"><h1 class="page">${aT("Cloud sync")}</h1>${usage}${cloudDevicesHtml()}
       <div class="block" id="cloud-items">${cloudListHtml()}</div></div></div>`;
 }
 

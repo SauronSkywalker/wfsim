@@ -205,6 +205,9 @@ const r = await evaluate(`(async () => {
   await syncNow();
   const kn = JSON.parse(localStorage.getItem('wfsim-sync') || '{}').known || {};
   out.rejected = [srv.acc1.has('n5'), !!kn.n5, !kn.big, (syncStatus.unsynced || []).map((u) => u.id + ':' + u.reason).join()];
+  const shape = (((window.__reports || []).at(-1) || {}).report || {}).detail || [];
+  out.shape = shape.length === 1 && shape[0].kind === 'builder-builds' && Object.keys(shape[0].fields)[0] === 'state' && shape[0].fields['state.pad'] > 60000
+    && !JSON.stringify(shape).includes('xxxx');
   localStorage.setItem(L, JSON.stringify(builds().filter((p) => p.id !== 'big')));
 
   // TWO BROWSERS CHANGE ONE ENTRY: the one that pushes second keeps both — the
@@ -267,6 +270,7 @@ check("the entry that fills the allowance is taken, the one past it stays here",
   ok(r.allowance) === ok([true, true, false]), ok(r.allowance));
 check("...and turning one on past it is refused, out loud", r.refused === true);
 check("an item the server refuses stays on this browser, and is not taken as synced", r.serverRefused === true);
+check("...and the round's report says what made it large, by field and size, without its content", r.shape === true);
 check("an item the server rejects does not hold back the one beside it, and is named",
   ok(r.rejected) === ok([true, true, true, "big:bad_body"]), ok(r.rejected));
 check("two browsers that change one entry keep both: the account's version as the entry, the second one's as a copy beside it",
