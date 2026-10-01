@@ -452,15 +452,19 @@ const AGENT_ACTIONS = [
   {
     id: "simulator.extra.set",
     writes: "scenario",
-    what: "Set one of the fight's own stat bonuses — what the weapon is handed by something outside its build (a squad buff, another weapon's arcane) — as a percentage into the same bucket a mod of that stat feeds. 0 or null clears it.",
+    what: "Set one of the fight's own stat bonuses — what the weapon is handed by something outside its build (a squad buff, another weapon's arcane). A percentage stat takes `percent` (into the same bucket a mod of that stat feeds); final_crit_damage (a multiplier, e.g. 1.6) and the two flat base damages (a number) take `value`. 0 or null clears it.",
     anchor: "[data-xk]",
     needs_weapon: true,
     args: {
       stat: { kind: "string", required: true, what: "which stat", enum: () => EXTRA_STAT_KEYS.map(([k]) => k) },
-      percent: { kind: "number", required: true, nullable: true, min: -1000, max: 10000, what: "e.g. 30 for +30%" },
+      percent: { kind: "number", nullable: true, min: -1000, max: 10000, what: "for a percentage stat: e.g. 30 for +30%" },
+      value: { kind: "number", nullable: true, min: -10000, max: 100000, what: "for final_crit_damage (a multiplier, e.g. 1.6) or a flat base damage (a number)" },
     },
-    run({ stat, percent }) {
-      setExtraStat(stat, percent === null ? 0 : percent / 100);
+    run({ stat, percent, value }) {
+      if (extraStatUnit(stat) !== "pct") {
+        if (value === undefined) return agentNo("bad_argument", { argument: "value", alternatives: ["value"] });
+        setExtraStat(stat, value === null ? 0 : value);
+      } else setExtraStat(stat, percent == null ? 0 : percent / 100);
       renderSim();
       return { extra_stats: sim.extra_stats };
     },

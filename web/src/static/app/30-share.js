@@ -319,7 +319,7 @@ async function showShareBy(id, sig) {
     j = r.ok ? await r.json() : null;
   } catch (_) { j = null; }
   if (!j || !j.ok || j.share !== id || typeof j.name !== "string") return;
-  shareBy = { preset: activePreset, name: j.name, tier: j.tier, since: j.since };
+  shareBy = { preset: activePreset, name: j.name, tier: j.tier };
   renderShareBy();
 }
 function renderShareBy() {
@@ -331,8 +331,7 @@ function renderShareBy() {
   const tier = { patron: "WFSim Patron", member: "WFSim Member" }[shareBy.tier];
   el.className = "share-by" + (tier ? ` ${shareBy.tier}` : "");
   el.innerHTML = `${escHtml(tr("Shared by"))} <b>${escHtml(shareBy.name)}</b>`
-    + (tier ? ` · <span class="sb-tier">${escHtml(tr(tier))}${shareBy.since
-      ? ` ${escHtml(tr("since {month}").replace("{month}", shareBy.since))}` : ""}</span>` : "")
+    + (tier ? ` · <span class="sb-tier">${escHtml(tr(tier))}</span>` : "")
     + ` <span class="sb-proof">${escHtml(tr("checked with wfsim.app"))}</span>`;
 }
 

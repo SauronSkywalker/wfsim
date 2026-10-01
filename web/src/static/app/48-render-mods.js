@@ -124,7 +124,17 @@ const EXTRA_STAT_KEYS = [
   // NOT A BUCKET, and its hint says so: points added after mods, the layer an
   // ability's flat grant uses, so 25 is +25% on a 5% base and on a 30% one.
   ["flat_crit_chance", "Flat Critical Chance", "percentage points added after mods, never scaled by the base — permanent, no trigger and no clock"],
+  // THREE THAT ARE NOT PERCENTAGES, so each states its unit (the fourth
+  // column): a multiplier added after every relative bonus, Arcane
+  // Crepuscular's layer, and flat base damage on the weapon's own — once into
+  // the base Condition Overload reads and once outside it.
+  ["final_crit_damage", "Final Critical Damage", "a critical multiplier added after every relative bonus, as Arcane Crepuscular's is — 1.6 turns a modded 3.0x into 4.6x", "x"],
+  ["flat_base_damage_co", "Flat Base Damage (Condition Overload reads it)", "damage added to the weapon's own base, which Condition Overload's bonus then counts — permanent, no trigger and no clock", "flat"],
+  ["flat_base_damage", "Flat Base Damage (Condition Overload ignores it)", "damage added to the weapon's own base and left out of what Condition Overload counts — permanent, no trigger and no clock", "flat"],
 ];
+/// WHAT UNIT AN EXTRA STAT IS TYPED IN: `pct` (the default, stored as a
+/// fraction), `x` (a multiplier) or `flat` (a plain number), both stored as typed.
+const extraStatUnit = (k) => (EXTRA_STAT_KEYS.find(([key]) => key === k) || [])[3] || "pct";
 
 /// THE WARFRAME ROSTER, and what picking one means: it fills armor, max energy
 /// and sprint speed at once. Sprint is the one that could not be set at all

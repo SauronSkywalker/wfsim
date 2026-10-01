@@ -748,9 +748,9 @@ server refuses stays here.
 
 A signed short link, booted on its real address with the short-link store and
 the paid half answered by CDP request interception: the address is cleaned and
-the build lands; over the build bar the line names the sharer, their tier and
-the month it began (a Patron's in the Patron's colour, a lapsed membership's
-name alone); another build opened, the line goes; a signature lifted onto
+the build lands; over the build bar the line names the sharer and their tier,
+and no time (a Patron's in the Patron's colour, a lapsed membership's name
+alone); another build opened, the line goes; a signature lifted onto
 another build, one nobody minted, and a link with none name nobody while the
 build still lands. Signing returns the live origin and the path the paid half
 answered, a refusal falls back to the plain link, and off the live site

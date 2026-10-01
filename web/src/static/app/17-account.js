@@ -126,7 +126,7 @@ async function loadBilling() {
   if (!(b && b.ok && b.configured)) { billingState = { ...billingState, configured: false, free: (b && b.free) || null }; return; }
   const inv = accountState.account ? await accountCall("GET", "/api/billing/invoices") : null;
   billingState = { configured: true, names: b.names || { offers: {}, meters: {} }, prices: b.prices || [], features: b.features || [],
-    free: b.free || {},
+    free: b.free || {}, member_days: Number.isFinite(b.member_days) ? b.member_days : null,
     meters: b.meters || {}, held: b.held || [], subscription: b.subscription || null,
     invoices: (inv && inv.ok && inv.invoices) || [] };
 }
@@ -475,6 +475,8 @@ function billingPage(a) {
   return `<div class="settings">${settingsNav(a, "billing")}
     <div class="set-main"><h1 class="page">${aT("Membership and billing")}</h1>
       <section class="block">${s ? billingHeld(s) : billingOffer()}</section>
+      ${billingState.member_days ? `<p class="set-note">${escHtml(tr("You have been a member for {n} days in all. Only you see this.")
+        .replace("{n}", billingState.member_days.toLocaleString()))}</p>` : ""}
       <section class="block"><div class="bh"><h2>${aT("Billing history")}</h2>${n ? `<span class="sub">${n}</span>` : ""}</div>${billingHistory()}</section>
       <p class="set-note">${aT("Payments are handled by Stripe and appear on your statement as LINK.COM* WFSIM.APP. Stripe emails a receipt and an invoice for every payment.")}
         <a data-native href="/terms">${aT("Terms")}</a> · <a data-native href="/refunds">${aT("Refunds")}</a> · <a data-native href="/privacy">${aT("Privacy")}</a></p></div></div>`;

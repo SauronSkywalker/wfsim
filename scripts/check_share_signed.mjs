@@ -3,7 +3,7 @@
 /// answered by CDP request interception, so the page boots on a real signed
 /// address exactly as a reader's would: the address is cleaned, the build
 /// lands, and the line over the build bar says who shared it, as the paid half
-/// answers — a member's tier and month, a lapsed one's name alone, and nothing
+/// answers — a member's tier, a lapsed one's name alone, and nothing
 /// for a signature lifted onto another build or for a link with none.
 import { openApp } from "./cdp.mjs";
 
@@ -14,10 +14,10 @@ await app.load("/weapons/Torid", 12000);
 const code = await evaluate(`(async () => { slots[0].mod = "serration"; slots[0].rank = 10; return await shareCode(); })()`);
 
 const SIGS = {
-  Sig12345: { ok: true, share: "AAAAAAAAAA", weapon: "Torid", at: "2026-10-01", name: "Ada", username: "ada", tier: "member", since: "2026-09" },
-  Patron01: { ok: true, share: "AAAAAAAAAA", weapon: "Torid", at: "2026-10-01", name: "Bea", username: "bea", tier: "patron", since: "2025-12" },
-  Lapsed12: { ok: true, share: "AAAAAAAAAA", weapon: "Torid", at: "2026-10-01", name: "Cyd", username: "cyd", tier: null, since: null },
-  Lifted99: { ok: true, share: "BBBBBBBBBB", weapon: "Torid", at: "2026-10-01", name: "Mallory", username: "mal", tier: "member", since: "2026-01" },
+  Sig12345: { ok: true, share: "AAAAAAAAAA", weapon: "Torid", at: "2026-10-01", name: "Ada", username: "ada", tier: "member" },
+  Patron01: { ok: true, share: "AAAAAAAAAA", weapon: "Torid", at: "2026-10-01", name: "Bea", username: "bea", tier: "patron" },
+  Lapsed12: { ok: true, share: "AAAAAAAAAA", weapon: "Torid", at: "2026-10-01", name: "Cyd", username: "cyd", tier: null },
+  Lifted99: { ok: true, share: "BBBBBBBBBB", weapon: "Torid", at: "2026-10-01", name: "Mallory", username: "mal", tier: "member" },
 };
 await send("Fetch.enable", { patterns: [{ urlPattern: "*/api/s/*" }, { urlPattern: "*/api/cloud/share/*" }] });
 on("Fetch.requestPaused", async (p) => {
@@ -46,8 +46,9 @@ const land = async (path) => {
 
 const m = await land("/weapons/Torid/s/AAAAAAAAAA/Sig12345");
 check("a signed link opens on the weapon's own address, the build landed", m.path === "/weapons/Torid" && m.mod === "serration", JSON.stringify(m));
-check("...and over the build bar it says who shared it, their tier and the month it began, checked",
-  m.shown && /Shared by Ada/.test(m.text) && /WFSim Member since 2026-09/.test(m.text) && /checked with wfsim\.app/.test(m.text), JSON.stringify(m));
+check("...and over the build bar it says who shared it and their tier, checked, and no time",
+  m.shown && /Shared by Ada/.test(m.text) && /WFSim Member/.test(m.text) && /checked with wfsim\.app/.test(m.text)
+    && !/since|\d{4}/.test(m.text), JSON.stringify(m));
 
 const t = await evaluate(`(() => { const other = loadPresetList(BUILDS).find((p) => presetId(p) !== activePreset);
   if (other) pickPreset(buildBarCfg(), presetId(other)); else newPreset(buildBarCfg());
@@ -55,7 +56,7 @@ const t = await evaluate(`(() => { const other = loadPresetList(BUILDS).find((p)
 check("another build opened, the line goes: it is about the build it came with", t === false);
 
 const p = await land("/weapons/Torid/s/AAAAAAAAAA/Patron01");
-check("a Patron's link says so, in the Patron's colour", p.shown && /WFSim Patron since 2025-12/.test(p.text) && /patron/.test(p.cls), JSON.stringify(p));
+check("a Patron's link says so, in the Patron's colour", p.shown && /WFSim Patron/.test(p.text) && /patron/.test(p.cls), JSON.stringify(p));
 
 const l = await land("/weapons/Torid/s/AAAAAAAAAA/Lapsed12");
 check("a lapsed membership's link keeps the name and shows no mark", l.shown && /Shared by Cyd/.test(l.text) && !/WFSim (Member|Patron)/.test(l.text), JSON.stringify(l));

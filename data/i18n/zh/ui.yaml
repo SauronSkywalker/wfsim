@@ -12,10 +12,10 @@ ui:
   "New chat": 新对话
   "Settings": 设置
   "Close": 关闭
+  "You have been a member for {n} days in all. Only you see this.": "你已累计成为会员 {n} 天。只有你自己能看到。"
   "Shared by": 分享者
   "WFSim Member": WFSim 会员
   "WFSim Patron": WFSim 赞助者
-  "since {month}": "自 {month}"
   "checked with wfsim.app": 已由 wfsim.app 验证
   "sign it with my name": 署上我的名字
   "Whoever opens it sees your name, checked with wfsim.app.": 打开链接的人会看到你的名字，由 wfsim.app 验证。
@@ -935,6 +935,12 @@ ui:
   "a percentage, into the same bucket a mod of this stat feeds — permanent, no trigger and no clock": 一个百分比，进入这条属性的 mod 所在的同一个乘区——永久生效，没有触发条件也没有时间
   "percentage points added after mods, never scaled by the base — permanent, no trigger and no clock": 百分点，在 mod 之后直接加上，不按基础值缩放——永久生效，没有触发条件也没有时间
   "Flat Critical Chance": 固定暴击几率
+  "Final Critical Damage": "最终暴击伤害"
+  "Flat Base Damage (Condition Overload reads it)": "固定基础伤害（计入异况超量）"
+  "Flat Base Damage (Condition Overload ignores it)": "固定基础伤害（不计入异况超量）"
+  "a critical multiplier added after every relative bonus, as Arcane Crepuscular's is — 1.6 turns a modded 3.0x into 4.6x": "在所有相对加成之后再加上的暴击倍率，和赋能·影袭同一层——1.6 会把改装后的 3.0x 变成 4.6x"
+  "damage added to the weapon's own base, which Condition Overload's bonus then counts — permanent, no trigger and no clock": "加到武器自身基础伤害上，异况超量的加成会把它算进去——常驻，无触发、无计时"
+  "damage added to the weapon's own base and left out of what Condition Overload counts — permanent, no trigger and no clock": "加到武器自身基础伤害上，但不计入异况超量的加成——常驻，无触发、无计时"
   "a place of its own": "一个独立的地点"
   "a rocket that hits nothing detonates on its own after 6 seconds, which needs a miss this arena resolves at the wall of its own geometry-free floor": "打空的火箭会在 6 秒后自行引爆，这需要一次「打偏」，而本场的打偏是在一块没有几何的地面上结算的"
   "a scenario can set a buff for a mod this build does not carry — the gain scan reads it": 场景可以为当前配装没装的 mod 预设增益状态 —— 快速计算会读它

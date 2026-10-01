@@ -205,7 +205,9 @@ function fightCardHtml() {
     wf.push(chip(`${Math.round(sim.ability_strength * 100)}% ${tr("Ability Strength")}`));
   }
   const extra = EXTRA_STAT_KEYS.filter(([k]) => Number((sim.extra_stats || {})[k]))
-    .map(([k, label]) => chip(`${tr(label)} +${Math.round(sim.extra_stats[k] * 1000) / 10}%`));
+    .map(([k, label, , unit = "pct"]) => chip(`${tr(label)} +${unit === "pct"
+      ? Math.round(sim.extra_stats[k] * 1000) / 10 + "%"
+      : Math.round(sim.extra_stats[k] * 100) / 100 + (unit === "x" ? "x" : "")}`));
   const buffs = Object.entries(sim.buffs || {}).filter(([, c]) => c && c.stacks > 0).map(([id, c]) => {
     const b = buffList.find((x) => x.id === id) || {};
     return chip(`${b.name || prettify(id)} ${c.stacks}${b.max_stacks > 1 ? `/${b.max_stacks}` : ""}`);
@@ -582,8 +584,10 @@ function renderScenarioFields(ids, opts = {}) {
   // says otherwise, which is what every ruler and every stored scenario means.
   if (ids.extra) {
     const ex = sim.extra_stats || {};
-    $(ids.extra).innerHTML = EXTRA_STAT_KEYS.map(([k, label, hint]) =>
-      `<label title="${escHtml(tr(hint || "a percentage, into the same bucket a mod of this stat feeds — permanent, no trigger and no clock"))}">${escHtml(tr(label))} <span class="unit">%</span> <input type="number" data-xk="${k}" step="1" value="${ex[k] ? r3(ex[k] * 100) : ""}" placeholder="0"></label>`
+    $(ids.extra).innerHTML = EXTRA_STAT_KEYS.map(([k, label, hint, unit = "pct"]) =>
+      `<label title="${escHtml(tr(hint || "a percentage, into the same bucket a mod of this stat feeds — permanent, no trigger and no clock"))}">${escHtml(tr(label))} <span class="unit">${
+        unit === "pct" ? "%" : unit === "x" ? "x" : ""}</span> <input type="number" data-xk="${k}" step="${unit === "x" ? "0.1" : "1"}" value="${
+        ex[k] ? r3(unit === "pct" ? ex[k] * 100 : ex[k]) : ""}" placeholder="0"></label>`
     ).join("");
   }
 
@@ -693,7 +697,8 @@ function renderScenarioFields(ids, opts = {}) {
       el.addEventListener("change", () => {
         // TYPED IN PERCENT, stored as the fraction every bucket in the engine
         // holds — the same units a mod's `rankMax` is in.
-        setExtraStat(el.dataset.xk, Number(el.value) / 100);
+        const v = Number(el.value);
+        setExtraStat(el.dataset.xk, extraStatUnit(el.dataset.xk) === "pct" ? v / 100 : v);
         if (opts.after) opts.after();
       });
     }));
