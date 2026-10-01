@@ -47,7 +47,10 @@ function setCloudSync(list, id, on) {
   const p = Array.isArray(ps) && ps.find((x) => x && x.id === id);
   if (!p || isCloudSynced(p) === on) return false;
   if (on && !syncRoom(syncPool(list))) {
-    noteInline(tr("the account syncs {n} of these already, its allowance - turn another off, or become a member")
+    // MEMBERSHIP IS OFFERED ONLY WHERE IT IS SOLD; until then, what is open to the reader.
+    noteInline(tr(billingState.configured
+      ? "the account syncs {n} of these already, its allowance - turn another off, or become a member"
+      : "the account syncs {n} of these already, its allowance - turn another off. This browser keeps saving it, and Export takes your saved items anywhere.")
       .replace("{n}", syncAllowance[syncPool(list)]));
     return false;
   }

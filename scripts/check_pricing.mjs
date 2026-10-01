@@ -1,7 +1,8 @@
 // THE PRICING PAGE (`/pricing`, 17-account.js `pricingPage`): what is free
 // beside what the membership adds, every number the server's. Not on sale, it
-// says so and states no allowance; on sale it shows the offer and the free
-// allowance, a way to sign in when signed out, and a member's own plan.
+// says so and still states the free allowance, which holds before anything is
+// sold; on sale it shows the offer and the free allowance, a way to sign in
+// when signed out, and a member's own plan.
 import { openApp } from "./cdp.mjs";
 
 const app = await openApp({ boot: 12000, lang: "en" });
@@ -10,7 +11,7 @@ const { evaluate, check } = app;
 const r = await evaluate(`(async () => {
   const sleep = (ms) => new Promise((ok) => setTimeout(ok, ms));
   const realFetch = window.fetch;
-  let billing = { ok: true, configured: false }, account = null;
+  let billing = { ok: true, configured: false, free: { sync_allowance: { presets: 100, customs: 100 } } }, account = null;
   window.fetch = async (url, o = {}) => {
     const path = String(url);
     const reply = (j, status = 200) => new Response(JSON.stringify(j), { status, headers: { 'content-type': 'application/json' } });
@@ -45,7 +46,7 @@ const r = await evaluate(`(async () => {
 
 const has = (t, s) => (t || "").includes(s);
 check("not on sale, the page says so", has(r.off.text, "not on sale"), r.off.text.slice(0, 300));
-check("...and states no allowance", !/\d+ presets/.test(r.off.text), r.off.text.slice(0, 300));
+check("...and still states the free allowance", has(r.off.text, "100 presets and 100 customs"), r.off.text.slice(0, 300));
 check("on sale, it shows the price and what the membership adds",
   has(r.onOut.text, "$5.00") && has(r.onOut.text, "Any number of items synced"), r.onOut.text.slice(0, 400));
 check("...the free allowance the server states", has(r.onOut.text, "50 presets and 50 customs"), r.onOut.text.slice(0, 400));

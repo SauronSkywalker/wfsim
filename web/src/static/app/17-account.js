@@ -123,7 +123,7 @@ async function loadAgents() {
 
 async function loadBilling() {
   const b = await accountCall("GET", "/api/billing");
-  if (!(b && b.ok && b.configured)) { billingState = { ...billingState, configured: false }; return; }
+  if (!(b && b.ok && b.configured)) { billingState = { ...billingState, configured: false, free: (b && b.free) || null }; return; }
   const inv = accountState.account ? await accountCall("GET", "/api/billing/invoices") : null;
   billingState = { configured: true, names: b.names || { offers: {}, meters: {} }, prices: b.prices || [], features: b.features || [],
     free: b.free || {},
@@ -482,9 +482,9 @@ function billingPage(a) {
 
 /// THE PRICE PAGE, signed in or not: what is free and what the membership adds,
 /// side by side. Every number is the server's (`/api/billing`): the offer, its
-/// prices, and the free allowance — none of which applies until it is on sale.
+/// prices, and the free allowance, which holds before anything is on sale.
 function pricingPage() {
-  const sync = billingState.configured && (billingState.free || {}).sync_allowance;
+  const sync = (billingState.free || {}).sync_allowance;
   const held = billingState.subscription;
   const free = `<section class="block"><div class="plan">
     <div class="plan-head"><h2>${aT("Free")}</h2></div>

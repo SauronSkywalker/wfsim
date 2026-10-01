@@ -2534,6 +2534,7 @@ ui:
   "on this browser only - click to sync it to your account": "只存在这个浏览器 —— 点一下同步到账户"
   "the account syncs {n} of these already, its allowance - turn another off, or become a member": "账户已同步 {n} 个，达到额度 —— 关掉其他某一项的同步，或成为会员"
   "This browser holds items synced with another account.": "这台浏览器上的内容曾与另一个账号同步。"
+  "the account syncs {n} of these already, its allowance - turn another off. This browser keeps saving it, and Export takes your saved items anywhere.": "账户已同步 {n} 个，达到额度 —— 关掉其他某一项的同步。这个浏览器照常保存，用「导出」可以把保存的内容带到任何地方。"
   "Add them to this account": "加入这个账号"
   "Could not sync just now.": "暂时无法同步。"
   "Try again": "重试"
