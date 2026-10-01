@@ -204,7 +204,9 @@ async function syncRound() {
     if (!local.has(id)) changes.push({ id, list: k.list, deleted: true, updated_at: now });
   }
 
-  // 2. PUSH, in chunks the server takes.
+  // 2. PUSH, in chunks the server takes. An entry the server rejects stays
+  // unsynced and is named on the account page; it is sent again next round.
+  const unsynced = [];
   for (let i = 0; i < changes.length; i += SYNC_CHUNK) {
     const chunk = changes.slice(i, i + SYNC_CHUNK);
     const r = await syncCall({ changes: chunk.map(({ sig, off, ...c }) => c), pull: false });
@@ -217,8 +219,10 @@ async function syncRound() {
       for (const c of chunk) if (refused.has(c.id)) setCloudSync(c.list, c.id, false);
       presetToast(tr("{n} new items stay on this browser: the account's sync allowance is used").replace("{n}", refused.size));
     }
+    const rejected = new Map((r.rejected || []).map((x) => [x.id, x.reason]));
+    for (const c of chunk) if (rejected.has(c.id)) unsynced.push({ id: c.id, list: c.list, reason: rejected.get(c.id) });
     for (const c of chunk) {
-      if (refused.has(c.id)) continue;
+      if (refused.has(c.id) || rejected.has(c.id)) continue;
       if (c.deleted) delete st.known[c.id];
       else if (c.off) st.known[c.id] = { list: c.list, off: true, at: c.updated_at };
       else st.known[c.id] = { list: c.list, sig: c.sig, at: c.updated_at };
@@ -243,7 +247,7 @@ async function syncRound() {
   st.cursor = Math.max(st.cursor || 0, cursor || 0);
   saveSyncState(st);
   const added = first ? changes.filter((c) => !c.deleted).length : 0;
-  setSyncStatus({ state: "on", at: Date.now() });
+  setSyncStatus({ state: "on", at: Date.now(), unsynced });
   if (added) presetToast(tr("{n} saved items from this browser were added to your account").replace("{n}", added));
   if (applied) syncShow(applied);
 }

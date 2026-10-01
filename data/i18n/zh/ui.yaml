@@ -2454,6 +2454,9 @@ ui:
   "last synced {time}": "上次同步于 {time}"
   "Full: new items stay on this browser": "已满：新内容只保存在这台浏览器上"
   "Sync now": "立即同步"
+  "{n} items did not sync": "{n} 项没有同步"
+  "too large to sync": 太大，无法同步
+  "cannot be synced": 无法同步
   "{n} new items stay on this browser: the account's sync allowance is used": "{n} 个新建项留在这个浏览器：账户的同步额度已用完"
   "Pricing": 价格
   "Free": 免费

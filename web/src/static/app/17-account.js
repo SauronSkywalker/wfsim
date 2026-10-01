@@ -525,7 +525,7 @@ function syncRowHtml() {
   if (s.state === "on") {
     const when = new Date(s.at).toLocaleTimeString(billingLocale(), { hour: "2-digit", minute: "2-digit" });
     return row(`<span class="tag ok">${aT("On")}</span> ${escHtml(tr("last synced {time}").replace("{time}", when))}${
-      s.full ? ` <span class="tag warn">${aT("Full: new items stay on this browser")}</span>` : ""}`,
+      s.full ? ` <span class="tag warn">${aT("Full: new items stay on this browser")}</span>` : ""}${syncUnsyncedHtml(s.unsynced)}`,
     `<button class="ghost-btn btn-sm" data-auth="sync-now">${aT("Sync now")}</button>`);
   }
   if (s.state === "other") {
@@ -533,7 +533,8 @@ function syncRowHtml() {
       `<button class="ghost-btn btn-sm" data-auth="sync-adopt">${aT("Add them to this account")}</button>`);
   }
   if (s.state === "error") {
-    return row(aT("Could not sync just now."), `<button class="ghost-btn btn-sm" data-auth="sync-now">${aT("Try again")}</button>`);
+    return row(`${aT("Could not sync just now.")}${s.reason ? ` <span class="set-note">(${escHtml(s.reason)})</span>` : ""}`,
+      `<button class="ghost-btn btn-sm" data-auth="sync-now">${aT("Try again")}</button>`);
   }
   if (s.state === "not_included") return row(`<span class="tag muted">${aT("Not available for this account")}</span>`);
   return row(`<span class="tag muted">${aT("Checking…")}</span>`);
@@ -547,6 +548,16 @@ function syncChoiceHtml() {
     .replace("{a}", n.presets + of("presets")).replace("{b}", n.customs + of("customs")))}<br>
     <span class="set-note">${aT("The cloud on each item switches it; saving on this browser is never limited.")}</span></dd>
     <label class="set-note"><input type="checkbox" id="sync-auto" ${syncAuto() ? "checked" : ""}> ${aT("Upload new items")}</label>`;
+}
+/// WHAT THE SERVER WOULD NOT TAKE, by name and why. Each stays on this browser.
+const SYNC_REJECTED = { bad_body: "too large to sync", bad_change: "cannot be synced" };
+function syncUnsyncedHtml(list) {
+  if (!list || !list.length) return "";
+  const here = syncLocal();
+  const name = (u) => ((here.get(u.id) || {}).p || {}).name || u.id;
+  return `<br><span class="tag warn">${escHtml(tr("{n} items did not sync").replace("{n}", list.length))}</span>
+    <span class="set-note">${list.slice(0, 8).map((u) => `${escHtml(name(u))} — ${aT(SYNC_REJECTED[u.reason] || u.reason)}`).join("; ")}${
+      list.length > 8 ? " …" : ""}</span>`;
 }
 function renderSyncStatus() {
   const el = $("sync-row");
