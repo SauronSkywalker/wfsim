@@ -159,7 +159,12 @@ const searchBlob = (x) => {
   const byId = (tbl) => Object.values(tbl || {})
     .map((m) => m && m[x.id]).filter((s) => typeof s === "string");
   const alt = (ALT_NAMES || []).flatMap(byId).concat(I18N ? byId(I18N) : []);
-  x._search = [x.name, x.name_en, x.subtype, eff.join(" "), tf(eff.join(" ")),
+  // …and its KIND, as shown and as the class it takes mods of, in both
+  // languages: a Kitgun chamber is a "Kitgun" on screen and a shotgun by class,
+  // and the topbar search has no filter row — a kind is a word in the box.
+  const cls = x.mod_class ? x.mod_class.replace(/^./, (c) => c.toUpperCase()) : "";
+  x._search = [x.name, x.name_en, x.subtype, x.subtype && tr(x.subtype), cls, cls && tr(cls),
+    eff.join(" "), tf(eff.join(" ")),
     official.join(" "), alt.join(" ")]
     .filter(Boolean).join(" ").toLowerCase();
   x._searchTight = squash(x._search);

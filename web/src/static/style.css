@@ -91,6 +91,16 @@ body{background:var(--plane);color:var(--text);font-family:system-ui,"Segoe UI",
 .wsearch-panel .combo-menu{max-height:320px;overflow-y:auto}
 .wsearch-panel .opt{cursor:pointer}
 .wsearch-panel .opt:hover{background:var(--panel2)}
+/* ON A PHONE THE RESULTS TAKE THE SCREEN'S WIDTH, under the bar, the way a
+   phone's own search does: the box's own width left half the screen showing
+   the page behind a list of names. The sticky topbar is what it hangs from. */
+@media (max-width:768px){
+  .topbar-inner .wsearch{position:static}
+  .wsearch-panel{top:calc(100% + 4px);left:8px;right:8px}
+  .wsearch-panel .combo-menu{max-height:calc(100dvh - 120px)}
+  .wsearch-panel .opt{min-height:48px}
+  .wsearch-open .nona-fab{display:none}
+}
 .brand{font-weight:800;font-size:20px;letter-spacing:-.01em}.brand span{color:var(--gold)}
 /* Module tabs under the weapon strip: Builder | Optimizer. The sim is
    NOT a tab — it sits at the bottom of the builder as the build's test

@@ -1,4 +1,4 @@
-// ---- topbar weapon search: filter chips + sort, rows navigate ----------
+// ---- topbar weapon search: one box, rows navigate ----------------------
 /// THE COMPUTE PICKER, in the topbar beside the language.
 ///
 /// In the TOPBAR because it is the page's setting rather than any module's —
@@ -46,60 +46,44 @@ function renderComputePicker() {
 }
 
 function initWeaponSearch() {
-  const input = $("wsearch-input"), panel = $("wsearch-panel"),
-        tools = $("wsearch-tools"), listEl = $("wsearch-list");
+  const input = $("wsearch-input"), panel = $("wsearch-panel"), listEl = $("wsearch-list");
   if (!input) return;
   input.placeholder = tr("Search…");
-  let flt = "all", srt = "az";
-  const cats = [...new Set((META.weapons || []).map((w) => w.subtype || w.mod_class))];
-  tools.innerHTML =
-    `<span class="pchip sel" data-f="all">${tr("All")}</span>` +
-    cats.map((c) => `<span class="pchip" data-f="${c}">${c}</span>`).join("") +
-    ddButton("wsearch-sort", {
-      value: srt,
-      items: [{ value: "az", label: tr("Name A→Z") }, { value: "za", label: tr("Name Z→A") }],
-      onPick: (v) => { srt = v; renderList(); },
-    });
+  // ONE BOX, NO FILTER ROW: a kind is a word in the box like a name is — the
+  // search text carries every weapon's type — and on a phone a row of chips
+  // above the list was the list's own room.
   const renderList = () => {
     const q = input.value.trim().toLowerCase();
     // ONE ROW PER MODULAR WEAPON, for the reason the home grid shows one card:
     // two entries with one name, one picture and one destination is a list that
     // looks like it has a bug in it.
     const list = oneCardPerChamber(META.weapons || [])
-      .filter((w) => flt === "all" || (w.subtype || w.mod_class) === flt)
       .filter((w) => searchHit(w, q))
-      .sort((a, b) => (srt === "za" ? -1 : 1) * a.name.localeCompare(b.name));
+      .sort((a, b) => a.name.localeCompare(b.name));
     listEl.innerHTML = list.map((w) => `
       <div class="opt" data-id="${w.id}">
         ${imgTag(IMG(w.image), "mod")}
-        <div class="info"><div class="mn">${w.name}</div><div class="me"><div>${w.subtype || ""}</div></div></div>
+        <div class="info"><div class="mn">${w.name}</div><div class="me"><div>${escHtml(tr(w.subtype || ""))}</div></div></div>
       </div>`).join("") || `<div class="sim-empty">${tr("No matches")}</div>`;
   };
-  const open = () => { panel.hidden = false; renderList(); };
+  // WHILE THE RESULTS ARE OPEN the page says so (`wsearch-open`), so what
+  // floats over a phone's screen can step aside for them.
+  const shut = () => { panel.hidden = true; document.body.classList.remove("wsearch-open"); };
+  const open = () => { panel.hidden = false; document.body.classList.add("wsearch-open"); renderList(); };
   input.addEventListener("focus", open);
   input.addEventListener("input", open);
-  tools.addEventListener("click", (e) => {
-    const chip = e.target.closest(".pchip");
-    if (!chip) return;
-    flt = chip.dataset.f;
-    tools.querySelectorAll(".pchip").forEach((c) => c.classList.toggle("sel", c === chip));
-    renderList();
-  });
-  tools.addEventListener("change", (e) => {
-
-  });
   listEl.addEventListener("click", (e) => {
     const row = e.target.closest(".opt");
     if (!row) return;
-    panel.hidden = true;
+    shut();
     input.value = "";
     switchWeapon(row.dataset.id);
     nav(weaponModPath(row.dataset.id));
   });
   document.addEventListener("click", (e) => {
-    if (!e.target.closest(".wsearch")) panel.hidden = true;
+    if (!e.target.closest(".wsearch")) shut();
   });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") panel.hidden = true; });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") shut(); });
 }
 
 // language dropdown (top right, beside the theme toggle): switching

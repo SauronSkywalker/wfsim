@@ -734,6 +734,14 @@ browser and tells the others to keep theirs; with "upload new items" off a new
 entry stays here; the allowance the server states is kept to, and an item the
 server refuses stays here.
 
+## `check_weapon_search`
+
+The topbar search is one box: no filter row or sort above the list, a weapon's
+kind found by its word in the page's language and in English (a Kitgun chamber
+by its class too), a name as before; on a phone the results take the screen's
+width, the floating button steps aside while they are open, and every row's
+kind is shown translated wherever a translation exists.
+
 ## `check_cloud_page`
 
 `/account/sync` against an account and a sync server faked in the page: every
