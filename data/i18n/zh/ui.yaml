@@ -2454,6 +2454,10 @@ ui:
   "last synced {time}": "上次同步于 {time}"
   "Full: new items stay on this browser": "已满：新内容只保存在这台浏览器上"
   "Sync now": "立即同步"
+  "{name} (conflict)": "{name}（冲突副本）"
+  "{name} was deleted on another device; your changes here are kept": "{name} 已在另一台设备上删除；你在这里的修改已保留"
+  "{name} was changed on another device too; both are kept": "{name} 在另一台设备上也被修改过；两份都已保留"
+  "{name} was changed on another device, so it is kept": "{name} 在另一台设备上被修改过，因此保留下来"
   "Cloud sync": 云同步
   "Usage": 用量
   "Saving on this browser is never limited.": 在这个浏览器里保存不受限制。

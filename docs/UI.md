@@ -292,6 +292,8 @@ stays the working copy: signed out, or without the feature, nothing runs.
 | rule | where it is held |
 | --- | --- |
 | a change is an entry whose signature moved since the last round; a deletion is an entry gone | `syncRound`, `wfsim-sync` |
+| a change carries the version it was made from (`base`); one made from a version no longer current is a conflict, and both are kept — the account's version as the entry, this browser's as a copy beside it, the editor staying on its own | `syncBase`, `syncConflict` |
+| each browser names itself and reports how its round went, so one that cannot sync is visible from the others | `syncDevice`, `syncReport` |
 | a round runs after an edit settles, on sign-in, on coming back to the tab, and once on leaving it | `syncSoon`, `pagehide` |
 | the first round on a browser is a union: everything here is pushed, everything there pulled | `syncRound` |
 | a result never travels: it is a record of its own (§Results) | `syncBody` |

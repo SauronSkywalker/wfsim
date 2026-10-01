@@ -208,7 +208,7 @@ async function syncRound() {
       // TAKEN OFF THE ACCOUNT: the others keep their copy and stop syncing it,
       // told by a body that says only that. Nothing of it travels.
       const k = st.known[id];
-      if (k && !k.off) changes.push({ id, list, body: { id, cloud_sync: false }, updated_at: Math.max(now, k.at + 1), off: true });
+      if (k && !k.off) changes.push({ id, list, body: { id, cloud_sync: false }, updated_at: Math.max(now, k.at + 1), off: true, base: syncBase(k) });
       continue;
     }
     const sig = syncSig(p);
@@ -221,15 +221,16 @@ async function syncRound() {
     // edit stamped in the same millisecond as the last agreed write was lost.
     const seen = p.savedAt && (!k || p.savedAt > k.at) ? Math.min(p.savedAt, now) : now;
     const at = k ? Math.max(seen, k.at + 1) : seen;
-    changes.push({ id, list, body: syncBody(p), updated_at: at, sig });
+    changes.push({ id, list, body: syncBody(p), updated_at: at, sig, base: syncBase(k) });
   }
   for (const [id, k] of Object.entries(st.known)) {
-    if (!local.has(id)) changes.push({ id, list: k.list, deleted: true, updated_at: now });
+    if (!local.has(id)) changes.push({ id, list: k.list, deleted: true, updated_at: now, base: syncBase(k) });
   }
 
   // 2. PUSH, in chunks the server takes. An entry the server rejects stays
   // unsynced and is named on the account page; it is sent again next round.
   const unsynced = [];
+  const settled = { lists: new Set(), ids: new Set(), removed: new Set() };
   for (let i = 0; i < changes.length; i += SYNC_CHUNK) {
     const chunk = changes.slice(i, i + SYNC_CHUNK);
     const r = await syncCall({ changes: chunk.map(({ sig, off, ...c }) => c), pull: false });
@@ -244,11 +245,15 @@ async function syncRound() {
     }
     const rejected = new Map((r.rejected || []).map((x) => [x.id, x.reason]));
     for (const c of chunk) if (rejected.has(c.id)) unsynced.push({ id: c.id, list: c.list, reason: rejected.get(c.id) });
+    const versions = r.versions || {};
+    const conflicts = new Map((r.conflicts || []).map((x) => [x.id, x]));
     for (const c of chunk) {
       if (refused.has(c.id) || rejected.has(c.id)) continue;
+      if (conflicts.has(c.id)) { syncConflict(st, c, conflicts.get(c.id), settled); continue; }
+      const v = versions[c.id] ?? (st.known[c.id] || {}).v;
       if (c.deleted) delete st.known[c.id];
-      else if (c.off) st.known[c.id] = { list: c.list, off: true, at: c.updated_at };
-      else st.known[c.id] = { list: c.list, sig: c.sig, at: c.updated_at };
+      else if (c.off) st.known[c.id] = { list: c.list, off: true, at: c.updated_at, v };
+      else st.known[c.id] = { list: c.list, sig: c.sig, at: c.updated_at, v };
     }
     saveSyncState(st);
   }
@@ -267,12 +272,17 @@ async function syncRound() {
     cursor = Math.max(cursor, r.cursor);
   }
   const applied = syncApply(st, pulled, sigs);
+  if (settled.lists.size) {
+    // WHAT A CONFLICT CHANGED here is shown with what the pull changed.
+    for (const k of ["lists", "ids", "removed"]) for (const x of settled[k]) (applied ? applied[k] : settled[k]).add(x);
+  }
+  const shown = applied || (settled.lists.size ? settled : null);
   st.cursor = Math.max(st.cursor || 0, cursor || 0);
   saveSyncState(st);
   const added = first ? changes.filter((c) => !c.deleted).length : 0;
   setSyncStatus({ state: "on", at: Date.now(), unsynced });
   if (added) presetToast(tr("{n} saved items from this browser were added to your account").replace("{n}", added));
-  if (applied) syncShow(applied);
+  if (shown) syncShow(shown);
 }
 
 /// HOW THE ROUND WENT, told to the account's device list — a failure most of
@@ -282,6 +292,52 @@ async function syncReport() {
   if (!accountState.account || s.state === "idle" || s.state === "other" || s.state === "not_included") return;
   await syncCall({ pull: false, report: { ok: s.state === "on", reason: s.state === "on" ? null : (s.reason || s.state),
     unsynced: (s.unsynced || []).length, held: syncLocal().size } });
+}
+
+/// THE VERSION A CHANGE WAS MADE FROM: 0 for an entry the account has never
+/// had, and none for one this browser agreed before versions — which keeps the
+/// old rule once, and learns its version from the answer.
+const syncBase = (k) => (!k ? 0 : k.v ?? undefined);
+
+/// TWO BROWSERS CHANGED ONE ENTRY: both are kept. The account's version stays
+/// the entry; this browser's becomes an entry of its own beside it, named so,
+/// and the editor that had it open stays on it. A deletion that lost keeps the
+/// account's version; an edit to an entry deleted elsewhere is kept as new.
+function syncConflict(st, c, cf, settled) {
+  let ps;
+  try { ps = JSON.parse(localStorage.getItem(c.list)); } catch (_) { ps = null; }
+  if (!Array.isArray(ps)) ps = [];
+  const at = ps.findIndex((p) => p && p.id === c.id);
+  const mine = at >= 0 ? ps[at] : null;
+  const domain = c.list.replace(/^wfsim-(presets|customs)-/, "");
+  if (cf.body === null) {
+    delete st.known[c.id];
+    if (mine && !c.deleted) {
+      const old = mine.id;
+      mine.id = presetNewId();
+      const doc = presetDoc(domain);
+      if (doc && doc.active() === old) doc.setActive(mine.id);
+      settled.ids.add(mine.id);
+      presetToast(tr("{name} was deleted on another device; your changes here are kept").replace("{name}", mine.name || ""));
+    }
+  } else {
+    st.known[c.id] = { list: cf.list, sig: syncSig(cf.body), at: Date.now(), v: cf.version };
+    if (mine && !c.deleted) {
+      const copy = { ...mine, id: presetNewId(), name: tr("{name} (conflict)").replace("{name}", mine.name || "") };
+      ps[at] = cf.body;
+      ps.splice(at + 1, 0, copy);
+      const doc = presetDoc(domain);
+      if (doc && doc.active() === c.id) doc.setActive(copy.id);
+      settled.ids.add(c.id).add(copy.id);
+      presetToast(tr("{name} was changed on another device too; both are kept").replace("{name}", mine.name || ""));
+    } else if (at < 0) {
+      ps.push(cf.body);
+      settled.ids.add(c.id);
+      presetToast(tr("{name} was changed on another device, so it is kept").replace("{name}", cf.body.name || ""));
+    }
+  }
+  try { localStorage.setItem(c.list, JSON.stringify(ps)); } catch (_) { noteInline(tr("this browser's storage is full - the change is on screen but was not saved")); }
+  settled.lists.add(c.list);
 }
 
 /// A page the server sent, in the shape a pull reads — or a refusal.
@@ -326,7 +382,7 @@ function syncApply(st, entries, sigs) {
     }
     // ANOTHER BROWSER TOOK IT OFF THE ACCOUNT: this copy stays, and stops syncing.
     if (e.body.cloud_sync === false) {
-      st.known[e.id] = { list: e.list, off: true, at: e.updated_at };
+      st.known[e.id] = { list: e.list, off: true, at: e.updated_at, v: e.version };
       if (here && isCloudSynced(here.p)) {
         const ps = listOf(here.list);
         const at = ps.findIndex((p) => p && p.id === e.id);
@@ -335,7 +391,7 @@ function syncApply(st, entries, sigs) {
       continue;
     }
     const sig = syncSig(e.body);
-    st.known[e.id] = { list: e.list, sig, at: e.updated_at };
+    st.known[e.id] = { list: e.list, sig, at: e.updated_at, v: e.version };
     if (here && here.list === e.list && syncSig(here.p) === sig) continue;
     if (here && here.list !== e.list) {
       const old = listOf(here.list);
@@ -415,7 +471,7 @@ window.addEventListener("pagehide", () => {
   for (const [id, { list, p }] of syncLocal()) {
     const k = st.known[id];
     if (!isCloudSynced(p)) continue;
-    if (!k || k.sig !== syncSig(p) || k.list !== list) changes.push({ id, list, body: syncBody(p), updated_at: Date.now() });
+    if (!k || k.sig !== syncSig(p) || k.list !== list) changes.push({ id, list, body: syncBody(p), updated_at: Date.now(), base: syncBase(k) });
   }
   // A PAGE ON ITS WAY OUT GETS ONE SMALL CALL: `keepalive` carries 64 KB, and
   // what does not fit is pushed the next time this browser opens the site.

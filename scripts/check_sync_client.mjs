@@ -34,17 +34,22 @@ const r = await evaluate(`(async () => {
     const b = JSON.parse(o.body || '{}');
     if (b.report) (window.__reports = window.__reports || []).push({ device: b.device, report: b.report });
     const db = srv[who];
-    const refused = [], rejected = [];
+    const refused = [], rejected = [], conflicts = [], versions = {};
     for (const c of b.changes || []) {
       if (refuse.has(c.id)) { refused.push(c.id); continue; }
       // THE REAL SERVER'S BODY_MAX, rejected alone.
       if (!c.deleted && JSON.stringify(c.body ?? null).length > 64 * 1024) { rejected.push({ id: c.id, reason: 'bad_body' }); continue; }
       if (c.id === 'b1') window.__b1Pushes.push({ at: c.updated_at, mod: c.body && c.body.state && c.body.state.slots[0].mod, name: c.body && c.body.name });
       const had = db.get(c.id);
-      if (had && !(c.updated_at > had.updated_at)) continue;
-      db.set(c.id, { list: c.list, body: c.deleted ? null : JSON.parse(JSON.stringify(c.body)), updated_at: c.updated_at, synced_at: clock++ });
+      // THE REAL SERVER'S VERSIONS: a base no longer current is a conflict.
+      const v = (had && had.version) || 0;
+      if (c.base !== undefined && had && v !== c.base) { conflicts.push({ id: c.id, list: had.list, version: v, body: had.body }); continue; }
+      if (c.base === undefined && had && !(c.updated_at > had.updated_at)) continue;
+      db.set(c.id, { list: c.list, body: c.deleted ? null : JSON.parse(JSON.stringify(c.body)), updated_at: c.updated_at, synced_at: clock++, version: v + 1 });
+      versions[c.id] = v + 1;
     }
-    const allow = { ...(allowance ? { allowance, refused } : {}), ...(rejected.length ? { rejected } : {}) };
+    const allow = { ...(allowance ? { allowance, refused } : {}), ...(rejected.length ? { rejected } : {}),
+      ...(conflicts.length ? { conflicts } : {}), versions };
     if (b.pull === false) return reply({ ok: true, full: false, ...allow });
     const since = b.after ? b.after.t : (b.since || 0);
     const rows = [...db.entries()].filter(([, e]) => e.synced_at > since).sort((a, b) => a[1].synced_at - b[1].synced_at);
@@ -130,14 +135,14 @@ const r = await evaluate(`(async () => {
   if (onScreen) pickPreset(buildBarCfg(), onScreen.name);
   await sleep(600);
   const cur = srv.acc1.get('b1');
-  srv.acc1.set('b1', { ...cur, body: { ...cur.body, state: st('vital_sense'), savedAt: Date.now() }, updated_at: Date.now(), synced_at: clock++ });
+  srv.acc1.set('b1', { ...cur, body: { ...cur.body, state: st('vital_sense'), savedAt: Date.now() }, updated_at: Date.now(), synced_at: clock++, version: (cur.version || 0) + 1 });
   await syncNow(); await sleep(600);
   out.screen = (slots[0] || {}).mod || null;
 
   // A LINK TO A BUILD THIS BROWSER DOES NOT HOLD YET opens it once the sync brings it —
   // pushed by a page from before one store per collection, under its weapon's own list.
   srv.acc1.set('zz1', { list: 'wfsim-presets-torid-builder-builds', body: { id: 'zz1', name: 'from an agent', savedAt: Date.now(), state: st('point_strike') },
-    updated_at: Date.now(), synced_at: clock++ });
+    updated_at: Date.now(), synced_at: clock++, version: 1 });
   // Arriving from elsewhere, as a link does: a weapon is opened, not re-shown.
   history.pushState({}, '', '/weapons/Braton'); route(); await sleep(2500);
   history.pushState({}, '', '/weapons/Torid?build=zz1'); route(); await sleep(3000);
@@ -202,6 +207,24 @@ const r = await evaluate(`(async () => {
   out.rejected = [srv.acc1.has('n5'), !!kn.n5, !kn.big, (syncStatus.unsynced || []).map((u) => u.id + ':' + u.reason).join()];
   localStorage.setItem(L, JSON.stringify(builds().filter((p) => p.id !== 'big')));
 
+  // TWO BROWSERS CHANGE ONE ENTRY: the one that pushes second keeps both — the
+  // account's version as the entry, its own beside it as a conflict copy.
+  await quiet();
+  const here2 = await keep();
+  const edit = (id, mod) => { const bl = builds(); const e = bl.find((p) => p.id === id); e.state = st(mod); e.savedAt = Date.now(); localStorage.setItem(L, JSON.stringify(bl)); };
+  edit('b1', 'shred');
+  await syncNow();
+  const pushedFirst = ((srv.acc1.get('b1') || {}).body || {}).state;
+  await become(here2);
+  edit('b1', 'heavy_caliber');
+  await syncNow();
+  const after = builds();
+  const b1now = after.find((p) => p.id === 'b1') || {};
+  const copy = after.find((p) => p.id !== 'b1' && /b1|preset 1/.test(p.name || '') && (p.state || {}).slots && p.state.slots[0].mod === 'heavy_caliber') || null;
+  out.conflict = [((pushedFirst || {}).slots || [])[0]?.mod, b1now.state && b1now.state.slots[0].mod, !!copy, !!copy && srv.acc1.has(copy.id) === false];
+  await syncNow();
+  out.copySynced = !!copy && srv.acc1.has(copy.id);
+
   // ANOTHER ACCOUNT: nothing merged until asked.
   await signIn('acc2');
   out.otherStatus = syncStatus.state;
@@ -246,6 +269,9 @@ check("...and turning one on past it is refused, out loud", r.refused === true);
 check("an item the server refuses stays on this browser, and is not taken as synced", r.serverRefused === true);
 check("an item the server rejects does not hold back the one beside it, and is named",
   ok(r.rejected) === ok([true, true, true, "big:bad_body"]), ok(r.rejected));
+check("two browsers that change one entry keep both: the account's version as the entry, the second one's as a copy beside it",
+  ok(r.conflict) === ok(["shred", "shred", true, true]), ok(r.conflict));
+check("...and the copy syncs as an entry of its own", r.copySynced === true);
 check("another account's entries are not merged without a word",
   r.otherStatus === "other" && r.acc2Before === 0, ok([r.otherStatus, r.acc2Before]));
 check("...until the reader adds them", r.acc2After > 0, r.acc2After);
