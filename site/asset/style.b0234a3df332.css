@@ -91,6 +91,16 @@ body{background:var(--plane);color:var(--text);font-family:system-ui,"Segoe UI",
 .wsearch-panel .combo-menu{max-height:320px;overflow-y:auto}
 .wsearch-panel .opt{cursor:pointer}
 .wsearch-panel .opt:hover{background:var(--panel2)}
+/* ON A PHONE THE RESULTS TAKE THE SCREEN'S WIDTH, under the bar, the way a
+   phone's own search does: the box's own width left half the screen showing
+   the page behind a list of names. The sticky topbar is what it hangs from. */
+@media (max-width:768px){
+  .topbar-inner .wsearch{position:static}
+  .wsearch-panel{top:calc(100% + 4px);left:8px;right:8px}
+  .wsearch-panel .combo-menu{max-height:calc(100dvh - 120px)}
+  .wsearch-panel .opt{min-height:48px}
+  .wsearch-open .nona-fab{display:none}
+}
 .brand{font-weight:800;font-size:20px;letter-spacing:-.01em}.brand span{color:var(--gold)}
 /* Module tabs under the weapon strip: Builder | Optimizer. The sim is
    NOT a tab — it sits at the bottom of the builder as the build's test
@@ -610,6 +620,7 @@ body.on-wbench [data-module="builder"]{display:none}
 .slot.empty:hover{border-color:var(--accent)}
 .slot.empty .pol.ghost{width:26px;text-align:center;opacity:.6}
 .slot.empty .plus{font-size:13px}
+.slot.empty.absent{border-color:var(--bad,#e06c75);color:var(--bad,#e06c75)}
 .slot.exl{cursor:default;justify-content:center}.slot.exl:hover{border-color:var(--line)}
 .exlabel{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:10px 0 6px}
 .exhint{font-size:11px;line-height:1.45;color:var(--dim);margin-top:6px;max-width:46ch}
@@ -1980,6 +1991,7 @@ table.bills td.links a{color:var(--accent);text-decoration:none;margin-left:12px
    group over on the bar; inside the panel there is nothing to push. */
 .tbmore-row{display:flex;align-items:center;gap:9px;height:30px;padding:0 8px}
 .tbmore-row .tbl{flex:1 1 auto}
+.saves-acts{display:flex;gap:4px}
 .topbar .tbmore-panel .dd{margin-left:0}
 /* THE COMMUNITY SLOT IS A HOLE, NOT A BOX: `applyCommunityOrder()` moves a
    mark into it, and it must sit where the mark itself would have. Which means
