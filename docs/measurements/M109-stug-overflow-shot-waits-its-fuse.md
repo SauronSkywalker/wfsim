@@ -1,0 +1,58 @@
+# M109 — a Stug shot carrying more stacks than the cap waits out its fuse (owner, 2026-10-03) ⚠ OPEN
+
+*Protocol and setup: [MEASUREMENTS.md](../MEASUREMENTS.md). Cross-references `M<n>` are files in this folder.*
+
+**THE REPORT**, the owner's, translated from Chinese:
+
+> When multishot is high — above 10 on the base form, above 5 on the Incarnon
+> form — one stack does not detonate; it has to wait 1.5 s. Damage is
+> swallowed: the explosion's damage is missing. And the stack count should
+> follow the same rule as the Grimoire's multishot-buys-more-enemies count.
+
+**WHAT THE WIKI STATES** (Stug page, verbatim):
+
+- "Fires blobs that stick to surfaces or embed into enemies, with a lifespan
+  of 1.5 seconds."
+- "After reaching 10 stacks or the lifespan running out, the blob will
+  detonate and deal 75 - 750 damage in a 0.3 - 2.8 meter radius, scaling with
+  the number of stacks."
+- "Blobs can be stacked by consecutively shooting one spot, refreshing the
+  blob duration with each new stack added." · "Blobs which reach 10 stacks now
+  immediately explode."
+- "Multishot will not shoot additional blobs, but will instead shoot blobs
+  with an equivalent amount of extra stacks. For example, +100% multishot will
+  cause each blob shot to have 2 stacks, reaching max stacks after only 5
+  consecutive shots."
+- Incarnon form: "embedding Corrosive shots that explode after 1.5 seconds or
+  reaching max stacks", "can stack up to 5 times before exploding".
+
+**HOW THE REPORT READS AGAINST THEM.** The early detonation fires when a pile
+REACHES the cap by stacking. A single shot whose own stacks already exceed the
+cap (multishot over 10, or over 5 in Incarnon form) never steps through the
+cap, so it does not detonate early; it waits the 1.5 s lifespan, and what is
+over the cap is lost. The Grimoire's rule is `floor(3 x multishot)` bodies,
+measured (M63) — so the proposal is that a shot's stacks are
+`floor(multishot)`, not a roll on the fraction.
+
+**WHAT THE ENGINE DOES TODAY: NONE OF IT.** The blob economy is unmodelled
+(`stug.yaml`'s `unmodeled`): the embed is fired as an ordinary hit and no
+explosion is dealt at any multishot. So the swallowed explosion is not a bug in
+a model — there is no model yet, and the board's Stug numbers carry no
+explosion at all.
+
+**WHAT HAS TO BE READ BEFORE IT IS BUILT**, one session on a Simulacrum target,
+damage numbers on, unmodded but for multishot:
+
+1. **The count.** Base form, multishot 1.0 / 1.6 / 2.0 / 2.4: how many stacks
+   one shot lays (the explosion's size and radius say it). `floor` means 1.6
+   always lays one; a roll means it sometimes lays two.
+2. **The overflow.** Multishot 12 on the base form (and 6 in Incarnon form):
+   does ONE shot detonate at once or after 1.5 s, and is the number the
+   10-stack one (750) or more?
+3. **The crossing.** Multishot 4: the third shot takes a pile from 8 to 12 —
+   does it detonate at once, and at 10 stacks or at 12?
+4. **The explosion.** Its number per stack (75 base / 200 Incarnon per the
+   module), its radius per stack, and the falloff the wiki calls a UI bug
+   (listed 100%-70%, said to be 100%-30%).
+5. **Incarnon bounces.** How many secondary projectiles a pile of n stacks
+   releases (the page says 2 to 5) and what each bounce explosion deals.
