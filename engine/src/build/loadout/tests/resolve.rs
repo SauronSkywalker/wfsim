@@ -1701,6 +1701,17 @@ fn magazine_and_status_duration_buckets_resolve() {
     assert!((p.status_duration_multiplier - 1.40).abs() < 1e-9);
 }
 
+/// A negative magazine never empties the weapon: a one-round bow under a
+/// -magazine riven still holds its arrow in game.
+#[test]
+fn a_negative_magazine_leaves_at_least_one_round() {
+    let base = WeaponBase::from_data("paris_prime", true, &[]);
+    assert_eq!(base.magazine_size, 1.0);
+    let mods = [m("riven", vec![ModEffect::MagazineCapacity(-0.60)])];
+    let refs: Vec<&ModDef> = mods.iter().collect();
+    assert_eq!(resolve(&base, &refs, StackPolicy::AssumedMax).magazine_size, 1.0);
+}
+
 #[test]
 fn exclusive_augments_use_their_static_final_buckets() {
     let find = |weapon: &str, id: &str| {

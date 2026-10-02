@@ -948,7 +948,9 @@ pub fn resolve_for(
     let mag_size = if base.gauge_form.is_some() {
         base.magazine_size
     } else {
-        ((base.magazine_size + flat_base_magazine) * (1.0 + mag)).floor()
+        // Never below ONE round: a negative-magazine riven on a bow (base 1)
+        // still leaves the arrow nocked in game, so flooring to 0 would stop it firing.
+        ((base.magazine_size + flat_base_magazine) * (1.0 + mag)).floor().max(1.0)
     };
     // …AND WHAT A FULL CHARGE IS WORTH. The Phantasma's alt fire spends the
     // magazine to buy damage — "directly proportional to the amount of ammo
