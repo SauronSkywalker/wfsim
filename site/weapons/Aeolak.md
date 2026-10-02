@@ -10,7 +10,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 7.3229 | Hellfire, Heavy Caliber, Primary Acuity, Serration, Galvanized Aptitude, Speed Trigger, Vital Sense, Magnetic Capacity, Primary Deadhead |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 9.1930 | Hellfire, Heavy Caliber, Primary Acuity, Galvanized Aptitude, Hammer Shot, Vile Acceleration, Vital Sense, Magnetic Capacity, Vigilante Supplies, Primary Deadhead |
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 27.5015 | Hellfire, Primary Acuity, Primed Shred, Serration, Galvanized Aptitude, Galvanized Scope, Rifle Elementalist, Vital Sense, Vigilante Supplies, Primary Deadhead |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.8835 | Hellfire, Thermite Rounds, Heavy Caliber, Primary Acuity, Serration, Galvanized Aptitude, Hammer Shot, Vital Sense, Vigilante Supplies, Primary Crux |
 
