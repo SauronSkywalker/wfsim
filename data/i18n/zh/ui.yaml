@@ -19,6 +19,10 @@ ui:
   "WFSim Member": WFSim 会员
   "WFSim Patron": WFSim 赞助者
   "checked with wfsim.app": 已由 wfsim.app 验证
+  "drawing the card…": 正在生成卡片…
+  "the card shows the build; the link beside it opens the same build, and never touches the reader's own scenario": "卡片展示的是这套配装；旁边的链接打开的是同一套配装，不会动对方自己的场景"
+  "Every number here is the WFSim engine's — open the link to run it yourself.": "这里的每个数字都来自 WF模拟 引擎——打开链接，自己跑一遍。"
+  "Stance": 架式
   "sign it with my name": 署上我的名字
   "Whoever opens it sees your name, checked with wfsim.app.": 打开链接的人会看到你的名字，由 wfsim.app 验证。
   "The people who have backed it": "支持过的人"

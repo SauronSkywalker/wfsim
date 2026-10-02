@@ -302,7 +302,7 @@ stays the working copy: signed out, or without the feature, nothing runs.
 | the page re-applies an entry on screen that changed, for every collection `COLLECTIONS` names | `syncShow` |
 | a browser that synced with another account merges nothing until the reader asks on `/account` | `other`, `syncAdopt` |
 | undo steps over a list that changed underneath them are dropped | `syncShow` |
-| an entry with `cloud_sync: false` stays on this browser; the cloud on its chip switches it | `isCloudSynced`, `cloudMark` |
+| an entry with `cloud_sync: false` stays on this browser; the cloud on its chip — and on a riven's row in its list — switches it | `isCloudSynced`, `cloudMark` |
 | taking one off the account sends `{ id, cloud_sync: false }` and nothing else; another browser keeps its copy and stops syncing it | `syncRound`, `syncApply` |
 | a new entry is synced unless "upload new items" (this browser's `wfsim-sync-auto`) is off | `syncRound` |
 | the server states what the account may hold per pool (`allowance`); past it a new entry stays here and turning one on is refused | `syncAllowance`, `setCloudSync` |
@@ -525,11 +525,37 @@ build decoded from the link's own code, named in the sharer's language, for a
 chat that shows a link as a bare string; and the system share sheet where the
 browser has one (`navigator.share`). `share.create`'s `n` records the first way used per page load.
 
-THE CARD IS OFF. `SHARE_CARD_ENABLED` is false, so the share panel draws no
-entry to it and `drawShareCard`/`qrMatrix` stand unreached: a card states a
-MEASUREMENT, and what may be shared today is a build. The question the card
-answers — how a number travels without landing in the reader's app — is open,
-not settled, and the code is kept against the answer.
+## The share card
+
+**THE CARD IS THE BUILDER'S STEPS, IN THE BUILDER'S ORDER.** "…as a card" in
+the share panel draws a long picture of the build (`31-share-card.js`): one
+block per builder step, keyed by the step's id in `CARD_BLOCKS` and ordered by
+`builderSteps()`, so a step moved on the page moves on the card and a step
+with no block fails `check_share_card`. A block with nothing to say for this
+build draws nothing; small blocks (arcane, valence, parts, wielder) pair on a
+row. The link beside it is the same build link.
+
+**THE HEAD IS A POSTER.** The backdrop is one word of the weapon's ENGLISH name
+in outlined capitals, in every locale: the word the fewest roster names share
+(`cardKeyword`, so "Prime", "Kuva" or "Tenet" never win and no list is kept),
+the other words small on its shoulders. The art stands on it with no frame,
+lifted by its shadow; the name, kind and mode sit bottom left in the reader's
+language. The MODE IS ITS NAME: a mode is an action list, and the link carries
+it whole.
+
+**THE MODS ARE THE ARSENAL'S**: stance above, the eight in two rows of four,
+exilus below, each with its art, name, rank and the drain the slot's colour
+makes it (green matched, red mismatched); an empty slot still draws its
+polarity, since the Forma is part of whether the build is legal. Capacity and
+Forma head the block, and a riven's own rolls stand beside the grid.
+
+**WHAT ELSE IT SAYS IS WHAT THE PANEL SENDS**: the sharer's result only when
+"include my result" is on, and the signer only when the link is signed, as
+`/api/cloud/share/<sig>` answers for that link. The foot carries the QR,
+because a phone cannot click a picture.
+
+**A THEME IS TOKENS, NEVER LAYOUT** (`CARD_THEMES`): colours and fonts. The
+blocks and their order are the build's. This repo ships the default only.
 
 ## The page that asks for something
 

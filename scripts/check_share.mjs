@@ -11,7 +11,7 @@
 //
 // Exits non-zero on the first failure.
 import { openApp } from "./cdp.mjs";
-const app = await openApp({ boot: 12000 });
+const app = await openApp({ boot: 12000, base: process.env.WFSIM_BASE });
 const { evaluate, check, sleep, send, BASE } = app;
 
 // A RIVEN'S ID IS MINTED ON ARRIVAL, and that is the feature: the copy the
@@ -114,9 +114,9 @@ check("the share panel hands out a BUILD", sent.shownIsBuildOnly === true,
 check("...and it is a real build, not an empty one", sent.shownHasMods === true);
 check("a link is produced", !!sent.url, sent.url);
 check("the link is under 600 characters", sent.url.length < 600, `${sent.url.length} chars`);
-// **THE PANEL OFFERS ONE THING**. There is no second link and no card entry
-// beside it: a card states a MEASUREMENT, and what may be shared is a build.
-check("the panel offers no card", sent.card === false);
+// **ONE LINK, AND THE CARD BESIDE IT** — a picture of the same build, never a
+// second link (docs/UI.md §The share card).
+check("the panel offers the card", sent.card === true);
 // AND A LEGACY LINK IS READ AS A BUILD. The decoder is where a fight stops —
 // one place rather than a guard at every use — so the assertion is on what the
 // DECODER returns for a link that really does carry one.

@@ -742,7 +742,15 @@ for, an account without the feature pushes nothing, and a remote edit to the
 build on screen reaches the screen. The cloud on a chip keeps an entry on one
 browser and tells the others to keep theirs; with "upload new items" off a new
 entry stays here; the allowance the server states is kept to, and an item the
-server refuses stays here.
+server refuses stays here. A riven's row in its list carries the cloud too, and
+a click switches it without opening the riven.
+
+## `check_share_card`
+
+Every builder step has a card block, the card's blocks come in the order the
+page shows the steps, and moving a step on the page moves it on the card. The
+backdrop word is the one fewest weapons share (PLASMOR, NIKANA, LATO, BRAMMA);
+the card is drawn 1080 wide at twice the pixels, and the share panel draws it.
 
 ## `check_share_signed`
 

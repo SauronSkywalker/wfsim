@@ -31,11 +31,9 @@ const SHARE_PARAM = "b";
 /// stamp, "still broken" and "still holding the old file" are the same
 /// sentence.
 const SHARE_ENABLED = true;
-/// THE CARD IS OFF. A card states a MEASUREMENT, and what may be shared today
-/// is a build and nothing else — so the entry to it is not drawn. The code
-/// below it stands unreached on purpose: the question it answers (how a number
-/// travels without landing in the reader's app) is still open.
-const SHARE_CARD_ENABLED = false;
+/// THE CARD'S KILL SWITCH. The card is a picture of the build, with the
+/// sharer's result only when they chose to send one (`31-share-card.js`).
+const SHARE_CARD_ENABLED = true;
 /// The frozen order both ends index into, from `/api/meta`'s `si` per entity.
 /// Built once, from what is already travelling — the manifest itself never
 /// crosses the wire.
@@ -315,14 +313,25 @@ let shareBy = null;
 /// The titles a signature may carry, as the page names them; one it does not
 /// name is not drawn.
 const SHARE_TITLES = { creator: "WFSim Creator" };
-async function showShareBy(id, sig) {
+/// Who signed `sig`, as the paid half answers it — only when it signed `id`.
+async function shareSigner(id, sig) {
   let j = null;
   try {
     const r = await fetch(`${shareApi()}/api/cloud/share/${sig}`);
     j = r.ok ? await r.json() : null;
   } catch (_) { j = null; }
-  if (!j || !j.ok || j.share !== id || typeof j.name !== "string") return;
-  shareBy = { preset: activePreset, name: j.name, tier: j.tier, titles: Array.isArray(j.titles) ? j.titles : [] };
+  if (!j || !j.ok || j.share !== id || typeof j.name !== "string") return null;
+  return { name: j.name, tier: j.tier, titles: Array.isArray(j.titles) ? j.titles : [] };
+}
+/// ONE MARK, AND A TITLE OUTRANKS A TIER: who someone is before what they pay.
+const shareMark = (by) => {
+  const title = by.titles.find((t) => SHARE_TITLES[t]);
+  return { title, mark: title ? SHARE_TITLES[title] : { patron: "WFSim Patron", member: "WFSim Member" }[by.tier] };
+};
+async function showShareBy(id, sig) {
+  const by = await shareSigner(id, sig);
+  if (!by) return;
+  shareBy = { preset: activePreset, ...by };
   renderShareBy();
 }
 function renderShareBy() {
@@ -331,9 +340,7 @@ function renderShareBy() {
   const on = !!shareBy && activePreset === shareBy.preset;
   el.hidden = !on;
   if (!on) return;
-  // ONE MARK, AND A TITLE OUTRANKS A TIER: who someone is before what they pay.
-  const title = shareBy.titles.find((t) => SHARE_TITLES[t]);
-  const mark = title ? SHARE_TITLES[title] : { patron: "WFSim Patron", member: "WFSim Member" }[shareBy.tier];
+  const { title, mark } = shareMark(shareBy);
   el.className = "share-by" + (mark ? ` ${title || shareBy.tier}` : "");
   el.innerHTML = `${escHtml(tr("Shared by"))} <b>${escHtml(shareBy.name)}</b>`
     + (title === "creator"
@@ -540,7 +547,8 @@ async function shareMeasurement() {
     ...(sim.steel_path ? { sp: 1 } : {}),
     d: Math.round(Number(sim.duration) || 1),
   };
-  return { claim, line: `${v} ${metricLabel(met)} — ${sc.name || tr("Scenarios")}` };
+  return { claim, line: `${v} ${metricLabel(met)} — ${sc.name || tr("Scenarios")}`,
+    card: { value: v, unit: metricLabel(met), scene: sc.name || tr("Scenarios") } };
 }
 
 /// Whether this browser last chose to send its result. A convenience, so it is
@@ -613,37 +621,34 @@ async function openSharePanel(bar) {
       draw();
     };
     const full = panel.querySelector(".sh-full");
-    if (full) full.onclick = () => openShareClaim(panel, bUrl);
+    if (full) full.onclick = () => openShareClaim(panel, bUrl, measured);
   };
   await draw();
 }
 
-/// THE CARD: a picture of this build's run, to paste into a chat window. Split
-/// out of the panel above so it costs a simulation only when somebody asks.
-///
-/// THE LINK IS THE SAME BUILD LINK, never a second longer one carrying the
-/// fight and the measurement — a CLAIM: a link may plant a build and never a
-/// scenario. The measurement still
-/// travels, as the picture, which is a thing a reader looks at rather than
-/// something that lands in their app.
-async function openShareClaim(panel, url) {
+/// THE CARD: a picture of this build, to paste into a chat window — with the
+/// sharer's result when the panel is sending one, and their name when the link
+/// is signed, drawn from the paid half's answer for that link and nothing else.
+async function openShareClaim(panel, url, measured) {
   const more = panel.querySelector(".sh-more");
   if (!more) return;
-  // Measure BEFORE building the link, so both the card and the payload carry
-  // a number produced by exactly this build in exactly this fight.
-  more.innerHTML = `<div class="sh-note">${escHtml(tr("simulating this build in the current scenario…"))}</div>`;
-  await resultForShare();
+  more.innerHTML = `<div class="sh-note">${escHtml(tr("drawing the card…"))}</div>`;
+  const signed = url.match(/\/s\/([0-9A-Za-z]{10})\/([^/?#]+)$/);
+  const by = signed ? await shareSigner(signed[1], signed[2]) : null;
   more.innerHTML =
     `<div class="sh-row"><input class="sh-url" type="text" readonly value="${escHtml(url)}">` +
     `<button class="cu-btn sh-copy">${escHtml(tr("copy link"))}</button>` +
     `<button class="cu-btn sh-img">${escHtml(tr("copy image"))}</button>` +
     `<button class="cu-btn sh-dl">${escHtml(tr("download image"))}</button></div>` +
-    `<div class="sh-note">${escHtml(tr("the CARD shows the measurement; the link beside it is the same build-only link — opening it never touches the reader's own scenario"))}</div>` +
-    `<canvas class="sh-canvas" width="900" height="640"></canvas>`;
+    `<div class="sh-note">${escHtml(tr("the card shows the build; the link beside it opens the same build, and never touches the reader's own scenario"))}</div>` +
+    `<canvas class="sh-canvas"></canvas>`;
   const urlBox = more.querySelector(".sh-url");
   urlBox.onclick = () => urlBox.select();
   const canvas = more.querySelector(".sh-canvas");
-  await drawShareCard(canvas, url);
+  await drawShareCard(canvas, url, {
+    measured: measured && measured.card,
+    by: by && { name: by.name, mark: shareMark(by).mark ? tr(shareMark(by).mark) : "" },
+  });
 
   // SCOPED TO `more`, NOT TO THE PANEL: the build link above has a `.sh-copy`
   // of its own, and a panel-wide lookup finds THAT one — which would leave the
