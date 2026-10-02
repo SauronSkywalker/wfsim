@@ -62,6 +62,9 @@ pub(super) struct Dot {
     pub(super) unit: f64,
     pub(super) dtype: DamageType,
     pub(super) ignores_armor: bool,
+    /// What `frozen` was made of, as an index into the record's seeds
+    /// ([`crate::record::Record::seed`]); `u32::MAX` when nothing records.
+    pub(super) seed: u32,
 }
 
 /// WHAT THE SOURCE HOLDS FOR ONE TYPE AT ONE INSTANT — the element bracket's
@@ -153,6 +156,51 @@ impl Dot {
         };
         (at(self.depth), at(DEPTH_HIT))
     }
+    /// ONE STACK'S SEED AS THE LEDGER DRAWS IT: the hit's modified base and
+    /// every multiplier over it, from the seed the record kept at the proc —
+    /// or the frozen number alone where it kept none, never a product that
+    /// does not reach `amount`. `over` is what the tick re-read live
+    /// ([`Dot::explain`]); `landing` is drawn when the tick took it.
+    pub(super) fn seed_part(
+        &self,
+        rec: &crate::record::Record,
+        amount: f64,
+        over: Vec<crate::record::Scale>,
+        landing: bool,
+    ) -> crate::record::Part {
+        use crate::record::{Factor, Part, Scale};
+        let mut tail = if self.source_scaled { drop_ones(over) } else { Vec::new() };
+        if landing && (self.landing - 1.0).abs() > 1e-12 {
+            tail.push(Scale { factor: Factor::TickLanding, value: self.landing });
+        }
+        let kept = rec.seed_at(self.seed)
+            .filter(|s| (s.value() - self.frozen).abs() <= 1e-9 * self.frozen.abs().max(1.0));
+        match kept {
+            Some(s) => Part {
+                factor: Factor::StatusSeeds,
+                amount,
+                head: s.base,
+                head_factor: Some(Factor::ModifiedBase),
+                of: s.scales().into_iter().chain(tail).collect(),
+            },
+            None => Part { factor: Factor::StatusSeeds, amount, head: self.frozen, head_factor: None, of: tail },
+        }
+    }
+
+    /// THE ACCUMULATOR'S PART — the tick group's own `1`, worth `unit`.
+    pub(super) fn accumulator_part(
+        &self,
+        amount: f64,
+        over: Vec<crate::record::Scale>,
+        landing: bool,
+    ) -> crate::record::Part {
+        use crate::record::{Factor, Part, Scale};
+        let mut of = drop_ones(over);
+        if landing && (self.landing - 1.0).abs() > 1e-12 {
+            of.push(Scale { factor: Factor::TickLanding, value: self.landing });
+        }
+        Part { factor: Factor::StatusAccumulator, amount, head: self.unit, head_factor: None, of }
+    }
 }
 
 /// The Heat singleton accumulator (data/debuffs/ignite.yaml): ONE entity
@@ -226,6 +274,29 @@ pub(super) struct BlastStack {
     /// the detonation itself never gets. The one thing a Blast stack has to
     /// remember about the gun that made it.
     pub(super) xh_bracket: f64,
+    /// What `value` was made of — see [`Dot::seed`].
+    pub(super) seed: u32,
+}
+
+/// A `x1` changes nothing, and a ledger that prints one is noise.
+pub(super) fn drop_ones(v: Vec<crate::record::Scale>) -> Vec<crate::record::Scale> {
+    v.into_iter().filter(|g| (g.value - 1.0).abs() > 1e-12).collect()
+}
+
+impl BlastStack {
+    /// THE STACK'S ONE PART — the hit's modified base and every multiplier
+    /// over it, faction frozen in; the value alone where no seed was kept.
+    pub(super) fn seed_part(&self, rec: &crate::record::Record) -> crate::record::Part {
+        use crate::record::{Factor, Part};
+        let kept = rec.seed_at(self.seed)
+            .filter(|s| (s.value() - self.value).abs() <= 1e-9 * self.value.abs().max(1.0));
+        match kept {
+            Some(s) => Part { factor: Factor::StatusSeeds, amount: self.value, head: s.base,
+                head_factor: Some(Factor::ModifiedBase), of: s.scales() },
+            None => Part { factor: Factor::StatusSeeds, amount: self.value, head: self.value,
+                head_factor: None, of: Vec::new() },
+        }
+    }
 }
 
 /// AN INSTANT AREA HIT queued on one body and paid out to its neighbours.

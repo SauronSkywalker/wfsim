@@ -241,8 +241,8 @@ pub(super) fn process_ticks(
     // where they set it.
     let mut dot_owner;
     // …AND THE TWO HALVES OF A DoT TICK, for the ledger alone: the seeds it
-    // holds and what the accumulator's own 1 is worth. `None` on every event
-    // that is not a DoT tick. Kept here rather than derived at the ledger
+    // holds and what the accumulator's own 1 is worth. `None` when nothing
+    // records. Kept here rather than derived at the ledger
     // because only this loop can still see them apart — see `Dot::live` and
     // `Dot::accumulator_unit`, which take DIFFERENT faction layers.
     let mut dot_parts: Option<Vec<crate::record::Part>>;
@@ -283,7 +283,6 @@ pub(super) fn process_ticks(
             1 => (k.t, Ev::Heat),
             _ => (k.t, Ev::Blast(k.index as usize)),
         };
-        dot_parts = None;
 
         let mit = debuffs.mitigation(now, status_damage, params.armor_strip_per_puncture, params.squad.enemy_armor_multiplier);
         // A tick is one damage type — which is also the type the
@@ -327,6 +326,10 @@ pub(super) fn process_ticks(
                     // once" (`Dot::accumulator_unit`). Adding it per stack is
                     // the exact mistake the page calls out.
                     let mut unit = 0.0;
+                    // EACH STACK ITS OWN PART, since the stacks of one group
+                    // need not share a seed, a depth or a landing.
+                    let mut parts: Vec<crate::record::Part> = Vec::new();
+                    let mut acc_part = None;
                     let source = crate::fight::dot::Source::at(params, dtype, now, w);
                     for d in debuffs.dots.iter_mut() {
                         if d.dtype == dtype
@@ -341,30 +344,25 @@ pub(super) fn process_ticks(
                             // THE LANDING SCALES THE ACCUMULATOR TOO: 234, not
                             // 233, off a 24 body tick (M100). A group takes the
                             // landing of the seed that brought its `1`.
-                            sum += d.live(&source) * d.landing;
-                            if unit == 0.0 {
+                            let paid = d.live(&source) * d.landing;
+                            sum += paid;
+                            let first = unit == 0.0;
+                            if first {
                                 unit = d.accumulator_unit(&source) * d.landing;
+                            }
+                            if rec.is_on() {
+                                let (over_seed, over_acc) = d.explain(params, now, w);
+                                parts.push(d.seed_part(rec, paid, over_seed, true));
+                                if first && unit != 0.0 {
+                                    acc_part = Some(d.accumulator_part(unit, over_acc, true));
+                                }
                             }
                         }
                     }
-                    // NO EXPANSION HERE. A consolidated group is several
-                    // stacks paying into one tick and they need not share a
-                    // depth, so a single product drawn over all of them would
-                    // be a claim about stacks this arm cannot inspect.
-                    dot_parts = rec.is_on().then(|| vec![
-                        crate::record::Part {
-                            factor: crate::record::Factor::StatusSeeds,
-                            amount: sum,
-                            head: 0.0,
-                            of: Vec::new(),
-                        },
-                        crate::record::Part {
-                            factor: crate::record::Factor::StatusAccumulator,
-                            amount: unit,
-                            head: 0.0,
-                            of: Vec::new(),
-                        },
-                    ]);
+                    dot_parts = rec.is_on().then(|| {
+                        parts.extend(acc_part);
+                        parts
+                    });
                     sum + unit
                 } else {
                     let d = &mut debuffs.dots[*i];
@@ -379,18 +377,8 @@ pub(super) fn process_ticks(
                     dot_parts = rec.is_on().then(|| {
                         let (over_seed, over_acc) = d.explain(params, now, w);
                         vec![
-                            crate::record::Part {
-                                factor: crate::record::Factor::StatusSeeds,
-                                amount: seeds,
-                                head: d.frozen,
-                                of: over_seed,
-                            },
-                            crate::record::Part {
-                                factor: crate::record::Factor::StatusAccumulator,
-                                amount: acc,
-                                head: d.unit,
-                                of: over_acc,
-                            },
+                            d.seed_part(rec, seeds, over_seed, false),
+                            d.accumulator_part(acc, over_acc, false),
                         ]
                     });
                     seeds + acc
@@ -422,8 +410,26 @@ pub(super) fn process_ticks(
                 // ONE ACCUMULATOR for the whole consolidated tick, whatever
                 // `stacks` says — `Dot::accumulator_unit`, and Heat is the case
                 // the page spells out.
-                let paid = h.value * bracket * faction_at(f, h.depth) + h.unit * bracket * f;
-                (paid, false, true, DamageType::Heat, DamageType::Heat, None)
+                let seeds = h.value * bracket * faction_at(f, h.depth);
+                let acc = h.unit * bracket * f;
+                // THE BURN AND ITS `1`, each over the shooter's bracket and the
+                // target's multiplier at its own depth — `Dot::explain`'s split.
+                dot_parts = rec.is_on().then(|| {
+                    use crate::record::{Factor, Part, Scale};
+                    let (fb, m) = (params.faction_bracket_at(now), params.foe.faction_bracket_multiplier);
+                    let over = |depth: u32| crate::fight::dot::drop_ones(vec![
+                        Scale { factor: Factor::ElementBracket, value: bracket },
+                        Scale { factor: Factor::Faction, value: faction_at(fb, depth) },
+                        Scale { factor: Factor::TargetMultiplier, value: faction_at(m, depth) },
+                    ]);
+                    vec![
+                        Part { factor: Factor::StatusSeeds, amount: seeds, head: h.value,
+                            head_factor: Some(Factor::HeatBurn), of: over(h.depth) },
+                        Part { factor: Factor::StatusAccumulator, amount: acc, head: h.unit,
+                            head_factor: None, of: over(DEPTH_HIT) },
+                    ]
+                });
+                (seeds + acc, false, true, DamageType::Heat, DamageType::Heat, None)
             }
             Ev::Blast(i) => {
                 seeded_by = u32::MAX;
@@ -439,6 +445,7 @@ pub(super) fn process_ticks(
                     r.blast_pops += 1;
                 }
                 let b = debuffs.blast.remove(*i);
+                dot_parts = rec.is_on().then(|| vec![b.seed_part(rec)]);
                 (
                     b.value,
                     false,
@@ -500,21 +507,15 @@ pub(super) fn process_ticks(
             ledger::Clock::Dot,
             || Instance {
                 origin: crate::record::Origin::Status,
-                // THE SEED, AND ONE LIVE FACTOR. A tick's own half —
-                // coefficient, ModifiedBase, status damage, and the crit and
-                // body part of the hit that applied it — is frozen into one
-                // number at the moment the status landed (`Dot::frozen`), so
-                // decomposing it FURTHER here would mean reporting facts about
-                // a hit this function can no longer see. It is the ROW THE TICK
-                // POINTS AT that carries them: `Event::cause` names the shot
-                // that seeded this, and that row has the full ledger.
+                // EVERY SEED DOWN TO THE HIT'S MODIFIED BASE. The hit's own
+                // half — coefficient, status damage, crit, body part — was kept
+                // by the record when the proc landed (`record::Seed`), so the
+                // tick draws it beside what it re-reads live; `Event::cause`
+                // still names the shot that seeded it.
                 //
-                // WHAT IS SPLIT OUT IS THE ACCUMULATOR, because it is the one
-                // part of a tick that belongs to no hit at all: the tick group's
-                // own 1 (MEASUREMENTS M58). It is small and it is the thing a
-                // reader checking our arithmetic against a closed form will be
-                // off by, so a row that swallowed it would read as a rounding
-                // error in our favour.
+                // THE ACCUMULATOR IS ITS OWN PART: the tick group's own 1
+                // (MEASUREMENTS M58), small, and the thing a reader checking a
+                // closed form will be off by.
                 base: unfortified,
                 layers: dot_parts
                     .take()

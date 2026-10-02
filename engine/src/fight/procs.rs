@@ -618,7 +618,19 @@ pub(super) fn settle_procs(
     let seeded_by = rec.shot().unwrap_or(u32::MAX);
     // RETURNS THE DOT IT PUSHED, so an AREA proc can post a copy to
     // `DebuffState::area_out` for everybody standing near this body.
+    // WHAT A SEED IS MADE OF, kept by the record for the row its ticks write.
+    let seed_of = |coefficient: f64, body_part: f64| crate::record::Seed {
+        base: mb_live,
+        coefficient,
+        status_damage: sdm,
+        critical: crit_multiplier,
+        body_part,
+        attrition,
+        ability_final: ecl,
+        faction: 1.0,
+    };
     let push_dot = |debuffs: &mut DebuffState,
+                    rec: &mut crate::record::Record,
                     dtype: DamageType,
                     coeff: f64,
                     bracket: f64,
@@ -660,6 +672,7 @@ pub(super) fn settle_procs(
                 source_scaled: true,
                 dtype,
                 ignores_armor,
+                seed: rec.seed(seed_of(coeff, part)),
         };
         debuffs.push_dot_capped(dot, dot_cap_of(dtype));
         dot
@@ -712,6 +725,7 @@ pub(super) fn settle_procs(
             }
             DamageType::Slash => { push_dot(
                 debuffs,
+                rec,
                 DamageType::Slash,
                 BLEED_COEFFICIENT,
                 1.0, // Bleed: elemental mods never scale the ticks
@@ -727,6 +741,7 @@ pub(super) fn settle_procs(
                 arc.bump_trigger(&params.arcane.buffs, ArcTrigger::ToxinStatus, at);
                 let _ = push_dot(
                     debuffs,
+                    rec,
                     DamageType::Toxin,
                     DOT_COEFFICIENT,
                     active.elem_bracket(DamageType::Toxin),
@@ -742,6 +757,7 @@ pub(super) fn settle_procs(
                 arc.bump_trigger(&params.arcane.buffs, ArcTrigger::ElectricityStatus, at);
                 let dot = push_dot(
                     debuffs,
+                    rec,
                     DamageType::Electricity,
                     DOT_COEFFICIENT,
                     active.elem_bracket(DamageType::Electricity),
@@ -766,6 +782,7 @@ pub(super) fn settle_procs(
             DamageType::Gas => {
                 let dot = push_dot(
                     debuffs,
+                    rec,
                     DamageType::Gas,
                     DOT_COEFFICIENT,
                     // LITERAL GAS SOURCES ONLY — a Heat or Toxin mod adds
@@ -786,8 +803,13 @@ pub(super) fn settle_procs(
                     .min(GAS_RADIUS_MAX_M);
                 // BODY-ONLY on a neighbour, seed and landing both: the cloud's
                 // neighbours are unmeasured, and M100's arc is not a cloud.
+                // ITS OWN SEED, the part taken out as the frozen number is.
+                let seed = match rec.seed_at(dot.seed) {
+                    Some(sd) => rec.seed(crate::record::Seed { body_part: sd.body_part / part_factor.max(1e-9), ..sd }),
+                    None => u32::MAX,
+                };
                 debuffs.post_area(
-                    Dot { frozen: dot.frozen / part_factor.max(1e-9), landing: 1.0, ..dot },
+                    Dot { frozen: dot.frozen / part_factor.max(1e-9), landing: 1.0, seed, ..dot },
                     radius_m,
                     dot_cap_of(DamageType::Gas),
                 );
@@ -908,6 +930,14 @@ pub(super) fn settle_procs(
                         * part_factor
                         * fm2,
                     xh_bracket,
+                    // A BLAST STACK FREEZES ITS FACTION and takes neither
+                    // attrition nor the ability's final multiplier.
+                    seed: rec.seed(crate::record::Seed {
+                        attrition: 1.0,
+                        ability_final: 1.0,
+                        faction: fm2,
+                        ..seed_of(BLAST_COEFFICIENT, part_factor)
+                    }),
                 });
                 if debuffs.blast.len() >= TEN_STACK_CAP {
                     // Early detonation: every stack's single-target
@@ -969,6 +999,7 @@ pub(super) fn settle_procs(
                         let (eff, k, broke) = (settled.effective, settled.killed, settled.broken);
                         r.sources.add_status(DamageType::Blast, eff);
                         let stack = b.value;
+                        let part = rec.is_on().then(|| b.seed_part(rec));
                         ledger::settle(
                             r, rec, at, owner, 0, DamageType::Blast, PopKind::Blast,
                             &breakdown, settled, Some(debuffs),
@@ -979,7 +1010,11 @@ pub(super) fn settle_procs(
                                 // these at one instant, which is what the game
                                 // draws and what an attenuated target feels.
                                 base: stack,
-                                layers: Vec::new(),
+                                layers: part.map_or_else(Vec::new, |x| vec![crate::record::Layer::Sum {
+                                    factor: crate::record::Factor::StatusSeeds,
+                                    out: x.amount,
+                                    parts: vec![x],
+                                }]),
                                 ..Instance::default()
                             },
                         );

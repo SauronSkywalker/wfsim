@@ -179,5 +179,6 @@ pub(super) fn push_break_proc(
         unit: 0.0,
         dtype: DamageType::Electricity,
         ignores_armor: false,
+        seed: u32::MAX,
     });
 }

@@ -211,6 +211,7 @@ fn a_burning_cloud_reads_the_window_at_every_tick() {
         unit: 0.0,
         dtype: DamageType::Gas,
         ignores_armor: false,
+        seed: u32::MAX,
     };
     let at = |until: f64| {
         let mut w = windows_for(&p);

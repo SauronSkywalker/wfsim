@@ -284,6 +284,7 @@ fn a_blast_aoe_carries_the_weak_point_and_a_toxin_dot_does_not() {
                 fuse: 99.0,
                 value: BLAST_COEFFICIENT * 1000.0 * part_factor,
                 xh_bracket: 1.0,
+                seed: u32::MAX,
             });
         }
         // `on_death` is the OTHER trigger the wiki names -- "10 stacks OR

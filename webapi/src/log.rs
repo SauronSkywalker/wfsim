@@ -349,11 +349,13 @@ fn layer_json(l: &wfsim_engine::record::Layer) -> Value {
                 .map(|x| {
                     let mut o = json!({ "f": x.factor.index(), "a": r3(x.amount) });
                     // …AND WHAT THAT AMOUNT IS A PRODUCT OF, where the engine
-                    // can still say. Absent on a consolidated tick, which is
-                    // several stacks the arm cannot inspect one by one.
-                    if !x.of.is_empty() {
+                    // can say; `hf` names the head when it is a quantity.
+                    if !x.of.is_empty() || x.head_factor.is_some() {
                         let m = o.as_object_mut().expect("object");
                         m.insert("head".into(), json!(r3(x.head)));
+                        if let Some(f) = x.head_factor {
+                            m.insert("hf".into(), json!(f.index()));
+                        }
                         m.insert("of".into(), json!(x.of.iter()
                             .map(|g| json!({ "f": g.factor.index(), "v": r3(g.value) }))
                             .collect::<Vec<_>>()));

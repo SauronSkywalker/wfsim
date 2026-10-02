@@ -350,6 +350,7 @@ fn independent_dots_cap_per_type_fifo() {
         unit: 0.0,
         dtype: ty,
         ignores_armor: false,
+        seed: u32::MAX,
     };
     let mut d = DebuffState::default();
     // Cap 2 per type: four Toxin procs keep only the two newest (3,4).

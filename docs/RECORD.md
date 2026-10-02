@@ -92,6 +92,23 @@ of `recordRow` while the factor lookups sit above it is a temporal dead zone,
 and it throws from inside an async paint — which surfaces as the panel sitting
 on "reading…" for ever with nothing in the console.
 
+## A status tick is drawn down to the hit that seeded it
+
+**EVERY STATUS ROW IS ITS SEEDS AND ITS ACCUMULATOR, AND EVERY SEED STARTS AT
+THE HIT'S MODIFIED BASE.** A tick is `(Σ seeds + 1) × C × M` (MEASUREMENTS
+M58). What a seed was made of — modified base, status coefficient, status
+damage, critical, body part, attrition, the ability's final multiplier, and a
+Blast stack's frozen faction — is gone by the time it pays, so the proc hands
+it to the record (`record::Seed`) and the status carries its index. The tick
+draws each seed as that product, then what it re-read live (element bracket,
+faction, the target's own multiplier) and where the tick landed. A
+consolidated family (Electricity, Gas) is one part PER STACK, since its stacks
+need not share a seed, a depth or a landing; a Heat burn is one entity and
+starts at its own sum; a Blast stack is one part. A part prints a product only
+when the product reaches the number it pays — otherwise the bare number —
+which `every_status_tick_is_drawn_down_to_the_hit` holds for every family. A
+fight nobody records keeps no seeds.
+
 ## A row’s state columns are the instance’s, and its labels are not its identity
 
 **A ROW'S STATE COLUMNS ARE THE INSTANCE'S, AND ITS LABELS ARE NOT ITS

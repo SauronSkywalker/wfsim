@@ -1240,6 +1240,11 @@ ui:
   "on contact": 接触即中
   "on status": 异常伤害
   "stored damage seeds": 已存入的伤害种子
+  "modified base": 修正后基础伤害
+  "status coefficient": 异常系数
+  "status damage": 异常伤害加成
+  "where the tick lands": 跳伤落点
+  "burn (sum of Heat procs)": 燃烧值（各次火焰异常之和）
   "target's own multiplier": 目标自身的伤害倍率
   "sum": 求和
   "on the shot line": "在射线上"
@@ -2077,6 +2082,7 @@ ui:
   "Combat record": "战斗记录"
   "base damage": "基础伤害"
   "base damage bracket": "基伤桶"
+  "element bracket": 元素桶
   "base damage mods": "改装伤害"
   "below half health": "半血以下加成"
   "headshot damage": "爆头伤害"

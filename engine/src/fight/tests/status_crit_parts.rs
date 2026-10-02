@@ -233,7 +233,11 @@ fn a_status_tick_is_drawn_as_its_two_halves() {
     let of = |i: usize, f: crate::record::Factor| -> f64 {
         parts[i].of.iter().find(|g| g.factor == f).map_or(f64::NAN, |g| g.value)
     };
-    assert!((parts[0].head - 26.25).abs() < 1e-9, "seed head {}", parts[0].head);
+    // THE SEED STARTS AT THE HIT'S MODIFIED BASE, and its coefficient is a
+    // factor of its own rather than folded into the head.
+    assert!((parts[0].head - 75.0).abs() < 1e-9, "seed head {}", parts[0].head);
+    assert_eq!(parts[0].head_factor, Some(crate::record::Factor::ModifiedBase));
+    assert!((of(0, crate::record::Factor::StatusCoefficient) - 0.35).abs() < 1e-9);
     assert!((parts[1].head - 0.35).abs() < 1e-9, "accumulator head {}", parts[1].head);
     assert!((of(0, crate::record::Factor::TargetMultiplier) - 0.64).abs() < 1e-9);
     assert!((of(1, crate::record::Factor::TargetMultiplier) - 0.8).abs() < 1e-9);
@@ -1064,4 +1068,52 @@ fn hata_satya_builds_on_hits_and_a_reload_takes_it_back() {
         shallow < deep / 2.0,
         "a reload must clear the pile: deep magazine {deep}, one-round {shallow}"
     );
+}
+
+/// EVERY STATUS ROW IS DRAWN DOWN TO THE HIT THAT SEEDED IT, AND ADDS UP.
+///
+/// Every seed part starts at the hit's modified base (a Heat burn at its own
+/// sum), each part is exactly the product it prints, and the parts are the
+/// row — for every DoT family, the consolidated ones and Blast included, on a
+/// target whose own multiplier makes a wrong faction depth visible.
+#[test]
+fn every_status_tick_is_drawn_down_to_the_hit() {
+    use crate::record::{Factor, Kind, Layer, Origin};
+    let mut p = FightParams {
+        crit_multiplier: 1.0,
+        forced_procs: vec![
+            DamageType::Slash, DamageType::Toxin, DamageType::Electricity,
+            DamageType::Gas, DamageType::Heat, DamageType::Blast,
+        ],
+        body_parts: mono_body(1.0),
+        ..no_status()
+    };
+    p.foe.faction_bracket_multiplier = 0.8;
+    p.foe.base_health = 1e15;
+    let rec = record(&p, 0, 0.0, f64::INFINITY, 100_000, 0);
+    let mut seen = std::collections::BTreeSet::new();
+    let close = |a: f64, b: f64| (a - b).abs() <= 1e-9 * a.abs().max(b.abs()).max(1.0);
+    for e in rec.events() {
+        let Kind::Damage(d) = &e.kind else { continue };
+        if d.origin != Origin::Status {
+            continue;
+        }
+        let (parts, out) = d.layers.iter().find_map(|l| match l {
+            Layer::Sum { parts, out, .. } => Some((parts.clone(), *out)),
+            _ => None,
+        }).unwrap_or_else(|| panic!("a {:?} row states its sum", d.dtype));
+        let total: f64 = parts.iter().map(|x| x.amount).sum();
+        assert!(close(total, out), "{:?}: parts {total} vs sum {out}", d.dtype);
+        for x in &parts {
+            if x.factor == Factor::StatusSeeds {
+                assert!(x.head_factor.is_some(), "{:?}: a seed drawn as a bare number", d.dtype);
+            }
+            let product = x.of.iter().fold(x.head, |acc, g| acc * g.value);
+            assert!(close(product, x.amount), "{:?} {:?}: prints {product}, pays {}", d.dtype, x.factor, x.amount);
+        }
+        seen.insert(format!("{:?}", d.dtype));
+    }
+    for t in ["Slash", "Toxin", "Electricity", "Gas", "Heat", "Blast"] {
+        assert!(seen.contains(t), "no {t} row in the record: {seen:?}");
+    }
 }

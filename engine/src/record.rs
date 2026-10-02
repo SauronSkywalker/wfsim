@@ -255,6 +255,16 @@ pub enum Factor {
     TargetMultiplier,
     /// `the 1-damage floor`
     DamageFloor,
+    /// `modified base`
+    ModifiedBase,
+    /// `status coefficient`
+    StatusCoefficient,
+    /// `status damage`
+    StatusDamage,
+    /// `where the tick lands`
+    TickLanding,
+    /// `burn (sum of Heat procs)`
+    HeatBurn,
 }
 
 impl Factor {
@@ -262,7 +272,7 @@ impl Factor {
     /// for as long as a client older than the server can exist — which for a
     /// page served from the same deploy is never, so this is a convention
     /// rather than a ratchet.
-    pub const ALL: [Factor; 43] = [
+    pub const ALL: [Factor; 48] = [
         Factor::BaseDamageBracket,
         Factor::BaseDamageMods,
         Factor::HalfHealth,
@@ -306,6 +316,11 @@ impl Factor {
         Factor::StatusAccumulator,
         Factor::TargetMultiplier,
         Factor::DamageFloor,
+        Factor::ModifiedBase,
+        Factor::StatusCoefficient,
+        Factor::StatusDamage,
+        Factor::TickLanding,
+        Factor::HeatBurn,
     ];
 
     /// What a reader is shown, and the key the i18n overlay is written against.
@@ -354,6 +369,11 @@ impl Factor {
             Factor::StatusAccumulator => "accumulator (starts at 1)",
             Factor::TargetMultiplier => "target's own multiplier",
             Factor::DamageFloor => "the 1-damage floor",
+            Factor::ModifiedBase => "modified base",
+            Factor::StatusCoefficient => "status coefficient",
+            Factor::StatusDamage => "status damage",
+            Factor::TickLanding => "where the tick lands",
+            Factor::HeatBurn => "burn (sum of Heat procs)",
         }
     }
 
@@ -425,7 +445,53 @@ pub struct Part {
     /// multipliers over it, the way [`Layer::Mul`] expands a body part. Empty
     /// `of` is a part the engine holds only as a number.
     pub head: f64,
+    /// WHAT `head` IS, where it is a named quantity — the hit's modified base
+    /// under a seed. `None` is a head the engine holds only as a number.
+    pub head_factor: Option<Factor>,
     pub of: Vec<Scale>,
+}
+
+/// WHAT ONE STATUS SEED WAS MADE OF, taken the instant the proc landed — the
+/// facts about a hit that is over by the time its seed pays. Held by the
+/// [`Record`] and named by index from the status that carries it, so a fight
+/// nobody records stores nothing.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct Seed {
+    pub base: f64,
+    pub coefficient: f64,
+    pub status_damage: f64,
+    pub critical: f64,
+    pub body_part: f64,
+    pub attrition: f64,
+    pub ability_final: f64,
+    /// A Blast stack's faction, frozen at the proc; 1.0 for a tick, which
+    /// re-reads faction live.
+    pub faction: f64,
+}
+
+impl Seed {
+    /// The seed itself: the product of every field.
+    pub fn value(&self) -> f64 {
+        self.base * self.coefficient * self.status_damage * self.critical
+            * self.body_part * self.attrition * self.ability_final * self.faction
+    }
+
+    /// Its multipliers over `base`, the ones that did nothing left out.
+    pub fn scales(&self) -> Vec<Scale> {
+        [
+            (Factor::StatusCoefficient, self.coefficient),
+            (Factor::StatusDamage, self.status_damage),
+            (Factor::Critical, self.critical),
+            (Factor::BodyPart, self.body_part),
+            (Factor::Attrition, self.attrition),
+            (Factor::WarframeAbility, self.ability_final),
+            (Factor::Faction, self.faction),
+        ]
+        .into_iter()
+        .filter(|(_, v)| (v - 1.0).abs() > 1e-12)
+        .map(|(factor, value)| Scale { factor, value })
+        .collect()
+    }
 }
 
 /// ONE MULTIPLIER INSIDE A [`Part`]'s expansion — `x2.4025 faction`.
@@ -744,6 +810,8 @@ pub struct Record {
     /// clock; `NAN` is one whose end this loop does not track, drawn as no time
     /// rather than as a guess.
     stacks: Vec<(u16, f64)>,
+    /// Every status seed laid while recording — see [`Seed`].
+    seeds: Vec<Seed>,
 }
 
 impl Record {
@@ -777,6 +845,20 @@ impl Record {
 
     pub fn is_on(&self) -> bool {
         self.on
+    }
+
+    /// Keep what a seed was made of, and answer its index — or `u32::MAX`
+    /// when nothing is being recorded.
+    pub fn seed(&mut self, s: Seed) -> u32 {
+        if !self.on {
+            return u32::MAX;
+        }
+        self.seeds.push(s);
+        (self.seeds.len() - 1) as u32
+    }
+
+    pub fn seed_at(&self, id: u32) -> Option<Seed> {
+        self.seeds.get(id as usize).copied()
     }
 
     /// Name the buff roster each seat's rows index into, in seat order.

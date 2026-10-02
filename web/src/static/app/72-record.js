@@ -644,7 +644,9 @@ function ledgerRows(e) {
             // one place — the seeds carry the payload's faction depth, the
             // accumulator carries one layer — and printing the products side by
             // side is the only way that is checkable rather than asserted.
-            x.of ? `<em>${n2(x.head)}${(x.of || []).map((g) =>
+            // `hf` NAMES THE HEAD — a seed starts at the hit's modified base.
+            (x.of || x.hf != null) ? `<em>${n2(x.head)}${x.hf != null
+              ? ` <span data-factor="${escHtml(F(x.hf))}">${escHtml(tr(F(x.hf)))}</span>` : ""}${(x.of || []).map((g) =>
               ` × ${n2(g.v)} ${escHtml(tr(F(g.f)))}`).join("")}</em>` : ""}</span>`).join("")}<span class="lg-out">${
           n(l.o)}</span></span></div>`;
     }

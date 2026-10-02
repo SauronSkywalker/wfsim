@@ -885,13 +885,13 @@ fn a_gas_cloud_survives_the_death_and_nothing_else_does() {
         owner: Seat::WIELDER,
         cause: u32::MAX,
         next_tick: 5.0, ticks_left: 4, frozen: 100.0, landing: 1.0, bracket: 1.0, depth: 0,
-        source_scaled: false, unit: 0.0, dtype, ignores_armor: false,
+        source_scaled: false, unit: 0.0, dtype, ignores_armor: false, seed: u32::MAX,
     };
     let mut d = DebuffState::default();
     d.dots.push(dot(DamageType::Gas));
     d.dots.push(dot(DamageType::Toxin));
     d.dots.push(dot(DamageType::Electricity));
-    d.blast.push(BlastStack { fuse: 9.0, value: 30.0, xh_bracket: 1.0 });
+    d.blast.push(BlastStack { fuse: 9.0, value: 30.0, xh_bracket: 1.0, seed: u32::MAX });
     d.microwave = true;
 
     d.on_death(Seat::WIELDER, None, &frail_target(TargetMode::InstantRespawn, 0.0, 0.0));
