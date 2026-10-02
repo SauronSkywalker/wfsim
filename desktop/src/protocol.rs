@@ -31,6 +31,12 @@ fn mime_of(path: &str) -> &'static str {
     }
 }
 
+/// HOW MANY BOARD FILES ARE FETCHED AT ONCE. A file is a few KB and costs a
+/// round trip — ~1.25 s each from Shanghai to `wfsim.app` — so six hundred one
+/// at a time is a quarter of an hour; eight lanes land the whole board in
+/// about a minute.
+const BOARD_LANES: usize = 8;
+
 /// Where the board lives. The client is served from `wfsim.localhost`, so the
 /// page's own same-origin `/api/board/…` cannot reach it without this.
 const BOARD_ORIGIN: &str = "https://wfsim.app";
@@ -178,30 +184,56 @@ fn manifest_of(meta: &[u8]) -> Option<(Manifest, String)> {
 /// with a stamp still naming the board it had — so the next check fetches the
 /// rest. Writing the stamp first would make that gap invisible for ever.
 pub fn refresh_board(live: &Path) -> Result<Option<String>, String> {
+    use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
     let meta = fetch(&format!("{BOARD_ORIGIN}/board.meta.json"))?;
     let (files, want) = manifest_of(&meta).ok_or("board.meta.json names no manifest")?;
 
     let dir = live.join("board");
-    let mut fetched = 0usize;
-    for (name, sha) in &files {
-        let at = dir.join(format!("{name}.json"));
-        let have = std::fs::read(&at).ok().map(|b| format!("{:x}", Sha256::digest(&b)));
-        if have.as_deref() == Some(sha.as_str()) {
-            continue;
+    std::fs::create_dir_all(&dir).map_err(|e| format!("{}: {e}", dir.display()))?;
+    let due: Vec<(&String, &String)> = files
+        .iter()
+        .filter(|(name, sha)| {
+            let have = std::fs::read(dir.join(format!("{name}.json")))
+                .ok()
+                .map(|b| format!("{:x}", Sha256::digest(&b)));
+            have.as_deref() != Some(sha.as_str())
+        })
+        .collect();
+    // ONE FILE FAILING DOES NOT STOP THE REST. Every file that lands is kept,
+    // and the stamp waits for the next pass to fetch what did not.
+    let (next, fetched, torn) = (AtomicUsize::new(0), AtomicUsize::new(0), AtomicBool::new(false));
+    let failed = std::sync::Mutex::new(Vec::<String>::new());
+    std::thread::scope(|s| {
+        for _ in 0..BOARD_LANES.min(due.len()) {
+            s.spawn(|| loop {
+                let i = next.fetch_add(1, Ordering::Relaxed);
+                let Some((name, sha)) = due.get(i) else { break };
+                let landed = fetch(&format!("{BOARD_ORIGIN}/board/{name}.json")).and_then(|body| {
+                    // A PUBLISH BETWEEN THE STAMP AND THIS FILE IS A TORN READ,
+                    // not a corrupt one: the next pass fetches it against the
+                    // newer stamp.
+                    if format!("{:x}", Sha256::digest(&body)) != **sha {
+                        torn.store(true, Ordering::Relaxed);
+                        return Ok(());
+                    }
+                    write_atomic(&dir.join(format!("{name}.json")), &body)?;
+                    fetched.fetch_add(1, Ordering::Relaxed);
+                    Ok(())
+                });
+                if let Err(e) = landed {
+                    failed.lock().expect("failure list").push(e);
+                }
+            });
         }
-        let body = fetch(&format!("{BOARD_ORIGIN}/board/{name}.json"))?;
-        let got = format!("{:x}", Sha256::digest(&body));
-        // A PUBLISH BETWEEN THE STAMP AND THIS FILE IS A TORN READ, not a
-        // corrupt one, and it is the ordinary case here: the loop runs for as
-        // long as the files take. So it is not an error — the stamp is asked
-        // again on the next pass and this file is fetched against the newer one.
-        if got != *sha {
-            return Ok(None);
-        }
-        std::fs::create_dir_all(&dir).map_err(|e| format!("{}: {e}", dir.display()))?;
-        write_atomic(&at, &body)?;
-        fetched += 1;
+    });
+    if torn.load(Ordering::Relaxed) {
+        return Ok(None);
     }
+    let failed = failed.into_inner().expect("failure list");
+    if let Some(first) = failed.first() {
+        return Err(format!("{} of {} board files did not land, first {first}", failed.len(), due.len()));
+    }
+    let fetched = fetched.into_inner();
     // …AND THE ONES THE BOARD NO LONGER HAS. A weapon dropped from the roster
     // leaves a file this shell would go on serving rows from.
     if let Ok(rd) = std::fs::read_dir(&dir) {

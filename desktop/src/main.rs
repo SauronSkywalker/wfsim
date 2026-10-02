@@ -552,6 +552,9 @@ const HEALTH_PROBE: &str = r#"
 /// anything longer leaves a reader a whole extra publish behind. The check
 /// itself costs a few hundred bytes, not the board.
 const BOARD_REFRESH: std::time::Duration = std::time::Duration::from_secs(60 * 60);
+/// …AND HOW SOON A PASS THAT DID NOT FINISH IS TRIED AGAIN. An hour left a
+/// first launch on a flaky network without most of the board for that hour.
+const BOARD_RETRY: std::time::Duration = std::time::Duration::from_secs(2 * 60);
 
 fn webview_memory_mb() -> f64 {
     std::process::Command::new("powershell")
@@ -623,12 +626,12 @@ fn main() {
     {
         let live = live.clone();
         std::thread::spawn(move || loop {
-            match protocol::refresh_board(&live) {
-                Ok(Some(d)) => println!("board: fetched {}", d.get(..12).unwrap_or(&d)),
-                Ok(None) => {}
-                Err(e) => eprintln!("board: {e}"),
-            }
-            std::thread::sleep(BOARD_REFRESH);
+            let wait = match protocol::refresh_board(&live) {
+                Ok(Some(d)) => { println!("board: fetched {}", d.get(..12).unwrap_or(&d)); BOARD_REFRESH }
+                Ok(None) => BOARD_REFRESH,
+                Err(e) => { eprintln!("board: {e}"); BOARD_RETRY }
+            };
+            std::thread::sleep(wait);
         });
     }
 
