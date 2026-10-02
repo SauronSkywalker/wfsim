@@ -2,7 +2,7 @@
 
 Bow · Primary · Mastery Rank 0. 900 base damage (puncture 648, slash 252), 60% crit chance, 2.4x crit multiplier, 50% status chance.
 
-## Best riven-free build on the WFSim board, as of 2026-10-01
+## Best riven-free build on the WFSim board, as of 2026-10-02
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
@@ -10,7 +10,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 | --- | --- | --- | ---: | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 11.6208 | Hellfire, Heavy Caliber, Primary Acuity, Serration, Galvanized Aptitude, Vile Acceleration, Vital Sense, Magnetic Capacity, Primary Crux |
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 36.8218 | Hellfire, Heavy Caliber, Primary Acuity, Primed Shred, Serration, Galvanized Aptitude, Vital Sense, Radiated Reload, Terminal Velocity, Primary Crux |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.8691 | Hellfire, Thermite Rounds, Heavy Caliber, Primary Acuity, Primed Shred, Serration, Galvanized Aptitude, Vital Sense, Terminal Velocity, Primary Crux |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | alternate | 2.0074 | Hellfire, Thermite Rounds, Heavy Caliber, Split Flights, Hammer Shot, Point Strike, Rifle Elementalist, Vital Sense, Vigilante Supplies, Primary Crux |
 
 ## Not modelled here
 
