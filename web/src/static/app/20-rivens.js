@@ -486,7 +486,7 @@ function renderRivenAll() {
         const nBonus = (st.bonuses || st.positives || []).length;
         return `<div class="rv-all ${p.id === active ? "sel" : ""}" data-open="${escHtml(p.id)}">
           <div class="rv-all-h">
-            ${imgTag(POL(cap(st.polarity || "madurai")), "pol")}
+            ${cloudMark(RIVENS, p)}${imgTag(POL(cap(st.polarity || "madurai")), "pol")}
             <b>${escHtml(p.name)}</b>
             ${meta.name ? `<span class="rv-official">${escHtml(meta.name)}</span>` : ""}${wm}
             <span class="rv-meta">${shape} · ${escHtml(tr("Rank"))} ${st.rank ?? 8} · ${2 + 2 * (st.rank ?? 8)} ${escHtml(tr("capacity"))}</span>
@@ -499,6 +499,11 @@ function renderRivenAll() {
         </div>`;
       }).join("")
     : `<div class="sim-empty">${escHtml(tr("no rivens for this weapon yet"))}</div>`;
+  // THE CLOUD SWITCHES SYNC, the same as on the bar's chip, and opens nothing.
+  box.querySelectorAll(".pcloud").forEach((b) => b.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (setCloudSync(presetListKey(RIVENS), b.dataset.cloud, !b.classList.contains("on"))) renderRivens();
+  }));
   // Clicking one opens it, the same as clicking its chip in the bar.
   // Clicking a card OPENS it — the list is the folder, this is the file.
   box.querySelectorAll("[data-open]").forEach((el) => el.onclick = () => {

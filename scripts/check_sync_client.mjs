@@ -10,7 +10,7 @@
 /// and a remote edit to the build on screen reaches the screen.
 import { openApp } from "./cdp.mjs";
 
-const app = await openApp({ boot: 12000 });
+const app = await openApp({ boot: 12000, base: process.env.WFSIM_BASE });
 const { evaluate, check } = app;
 
 const r = await evaluate(`(async () => {
@@ -173,6 +173,18 @@ const r = await evaluate(`(async () => {
   if (cloudOf('b1')) cloudOf('b1').click();
   await quiet(); await syncNow();
   out.onAgain = !!(((srv.acc1.get('b1') || {}).body || {}).state);
+  // …AND ON A RIVEN IN ITS LIST: the cloud switches sync and opens nothing.
+  history.pushState({}, '', '/weapons/Torid/rivens'); route(); await sleep(1800);
+  document.querySelector('.cu-new').click(); await sleep(700);
+  const rid = activeRivenId();
+  openRiven(''); await sleep(400);
+  const rcloud = () => document.querySelector('#riven-all .pcloud[data-cloud="' + rid + '"]');
+  out.rivenMark = !!rcloud() && rcloud().classList.contains('on');
+  if (rcloud()) rcloud().click();
+  await sleep(300);
+  out.rivenOff = (loadPresetList(RIVENS).find((p) => p.id === rid) || {}).cloud_sync === false
+    && !!rcloud() && !rcloud().classList.contains('on') && !activeRivenId();
+  history.pushState({}, '', '/weapons/Torid'); route(); await sleep(1400);
   // "UPLOAD NEW ITEMS" OFF: a new entry stays here.
   setSyncAuto(false);
   const add = (id) => localStorage.setItem(L, JSON.stringify(builds().concat([{ id, scope: 'torid', name: id, savedAt: Date.now(), state: st('serration') }])));
@@ -265,6 +277,8 @@ check("...a click keeps the entry on this browser only", r.offHere === true);
 check("...and the account is told with a body that carries nothing of the build", r.offServer === true);
 check("another browser keeps its copy, and stops syncing it", r.otherKept === true);
 check("on again, the whole entry travels", r.onAgain === true);
+check("a riven in its list carries its cloud, filled", r.rivenMark === true);
+check("...and a click keeps it on this browser only, opening nothing", r.rivenOff === true);
 check("with \"upload new items\" off, a new entry stays on this browser", r.autoOff === true);
 check("the entry that fills the allowance is taken, the one past it stays here",
   ok(r.allowance) === ok([true, true, false]), ok(r.allowance));
