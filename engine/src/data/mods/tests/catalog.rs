@@ -831,3 +831,17 @@ fn a_status_damage_card_pays_status_damage_and_a_damage_card_pays_damage() {
     }
     assert!(wrong.is_empty(), "{wrong:#?}");
 }
+
+/// GALVANIZED STEEL's on-kill crit damage is FOUR stacks of +30%: as a
+/// single-window buff it paid +30% and never the card's +120%.
+#[test]
+fn galvanized_steel_stacks_its_crit_damage_four_times() {
+    let mods = load_class("melee");
+    let steel = mods.iter().find(|m| m.id == "galvanized_steel").expect("galvanized_steel");
+    assert!(steel.effects.iter().any(|e| matches!(e,
+        ModEffect::GrantsStackingBuff(b)
+            if b.trigger == crate::model::BuffTrigger::Kill
+                && b.grant == crate::model::BuffGrant::CritDamage
+                && b.max_stacks == 4
+                && (b.per_stack - 0.30).abs() < 1e-9)));
+}

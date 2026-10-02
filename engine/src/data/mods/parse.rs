@@ -392,6 +392,12 @@ pub(super) fn effect(id: &str, v: &Value) -> Option<ModEffect> {
             let per = max("rankMax"); // per-stack value at max rank
             let stacks = u(v, "max_stacks");
             let dur = f(v, "duration").unwrap_or(0.0);
+            // The single-window arms below carry no stack count: a card stating
+            // more than one stack there would silently pay one.
+            let single = |e: ModEffect| {
+                assert!(stacks <= 1, "{id}: `kind: buff` {trigger}/{grants} is one window; {stacks} stacks need `stacking_buff`");
+                e
+            };
             let wrap = |e: ModEffect| match tenno_cond {
                 Some(c) => ModEffect::WhileTenno(c, Box::new(e)),
                 None => e,
@@ -410,7 +416,7 @@ pub(super) fn effect(id: &str, v: &Value) -> Option<ModEffect> {
                     }
                 }
                 ("headshot", "crit_chance") => {
-                    ModEffect::OnHeadshotCritChance { bonus: per, duration: dur }
+                    single(ModEffect::OnHeadshotCritChance { bonus: per, duration: dur })
                 }
                 // LEADED GAS, and the grant names both halves because the card
                 // does: one column, one duration, two stats. `element:` says
@@ -439,16 +445,16 @@ pub(super) fn effect(id: &str, v: &Value) -> Option<ModEffect> {
                 }
                 ("kill", "magazine_refill") => ModEffect::MagazineRefillOnKill(per),
                 ("kill", "crit_damage") => {
-                    ModEffect::OnKillCritDamage { bonus: per, duration: dur }
+                    single(ModEffect::OnKillCritDamage { bonus: per, duration: dur })
                 }
                 // "On Reload From Empty: +X% Damage" — its own event, because
                 // the window opens when the RELOAD COMPLETES and a CondBuff
                 // would have to pretend it is always on.
                 ("reload_complete", "base_damage") => {
-                    ModEffect::OnReloadDamage { bonus: per, duration: dur }
+                    single(ModEffect::OnReloadDamage { bonus: per, duration: dur })
                 }
                 ("reload_complete", "fire_rate") => {
-                    ModEffect::OnReloadFireRate { bonus: per, duration: dur }
+                    single(ModEffect::OnReloadFireRate { bonus: per, duration: dur })
                 }
                 // Any other trigger (ability_cast / reload_complete / hit / …):
                 // contribute at the assumed-max total via CondBuff when the grant

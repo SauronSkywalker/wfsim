@@ -19,7 +19,9 @@ effects:
     rank0: 0.1
     rankMax: 1.1
   # On Melee Kill: +30% Critical Damage for 20s, four stacks.
-  - kind: buff
+  # `stacking_buff` AND NOT `buff`: that kind's kill/crit-damage arm is a
+  # single timed window with no stack count, so the card paid +30% and never 120%.
+  - kind: stacking_buff
     trigger: kill
     grants: crit_damage
     rank0: 0.027273
