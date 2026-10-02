@@ -810,6 +810,7 @@ pub fn run_once_traced(
         me.field_ctx = FieldCtx {
             flat_crit,
             crit_chance_relative_mods: crit_chance_relative - me.params.arcane.crit_chance_relative,
+            crit_damage_relative_mods: buff_total(active, crate::model::BuffGrant::CritDamage, &mut me.buff_stacks, t),
             base_damage_add_mods: bd_reload_add
                 + bd_eximus_add
                 + active.compression_base_damage

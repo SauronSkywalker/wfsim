@@ -38,6 +38,8 @@ pub(super) struct FieldCtx {
     pub(super) flat_crit: f64,
     /// Σ RELATIVE crit-chance bonuses from MOD buffs.
     pub(super) crit_chance_relative_mods: f64,
+    /// Σ RELATIVE crit-damage bonuses from stacking buffs (Galvanized Steel).
+    pub(super) crit_damage_relative_mods: f64,
     /// Σ live base-damage bucket additions from MOD/evolution buffs.
     pub(super) base_damage_add_mods: f64,
     /// WHAT A HEAD ON THIS FIGHT'S TARGET IS WORTH — the location multiplier
@@ -394,6 +396,7 @@ pub(super) fn field_tick_seeded(
     let crit_damage_relative = arc.total(&params.arcane.buffs, ArcGrant::CritDamage, at)
         + arc.cd_bonus(active, at)
         + gal.mutation.bonus
+        + ctx.crit_damage_relative_mods
         + params.arcane.crit_damage_relative;
     let cd = f.crit_damage
         + f.base_crit_damage * crit_damage_relative

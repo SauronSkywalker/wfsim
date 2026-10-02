@@ -293,3 +293,26 @@ fn a_dagger_is_born_at_its_kills_own_time_and_six_is_the_most() {
     }
     assert_eq!((mark, r.kill_clock_len), (8, 0), "every kill is spent and the clock is emptied");
 }
+
+/// **A STACKING CRIT-DAMAGE GRANT REACHES THE DAGGER.** Galvanized Steel held at
+/// four stacks against the same card with its kill trigger denied: the dagger
+/// is a timed part, and its crit damage was read without the stacking grants.
+#[test]
+fn galvanized_steel_stacks_reach_the_dagger() {
+    let evo = ["okina_evo1_incarnon_form"];
+    let mut held = okina("okina", &evo, &["galvanized_steel"], true, true);
+    let mut c = BuffConfig::new();
+    c.insert("galvanized_steel".into(), (4, true));
+    held.apply_buff_config(&c);
+    let mut none = okina("okina", &evo, &["galvanized_steel"], true, true);
+    none.deny_buff_triggers(&["kill".to_string()]);
+    let mean = |v: &[(f64, f64)]| v.iter().map(|x| x.1).sum::<f64>() / v.len().max(1) as f64;
+    let (held, none) = (dagger_rows(&held), dagger_rows(&none));
+    assert!(!held.is_empty() && !none.is_empty());
+    assert!(
+        mean(&held) > mean(&none) * 1.1,
+        "+120% crit damage on the dagger: a dagger row averages {:.0} -> {:.0}",
+        mean(&none),
+        mean(&held)
+    );
+}
