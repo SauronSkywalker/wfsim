@@ -1,6 +1,7 @@
 use super::*;
 
 mod card_order;
+mod clip_delegation;
 mod card_values;
 mod catalog;
 mod chamber;
