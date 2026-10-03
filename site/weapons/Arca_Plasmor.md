@@ -18,7 +18,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 - The projectile is a wall 3 m thick (4.4 m on the Tenet variant) that sweeps everything in that band; the sim fires a ray, so only bodies on the line are hit and against a crowd the number reads low.
 - The guaranteed Impact proc reaches only 14 m but is applied at every distance here, so past 14 m the number reads slightly high.
-- Its innate punch through does not pass surfaces when the projectile's centre hits one; the arena has no surfaces, so this changes nothing here.
+- Its innate punch through does not pass surfaces when the projectile's centre hits one; this fight has no surfaces, so this changes nothing here.
 
 ## In WFSim
 

@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- The explosion is the whole weapon, and its radius is not modelled: the mine deals no contact damage, so this entry carries the blast as the shot's own damage. Against one target, as in the arena and on the boards, the number is exact; against a crowd it reads low.
+- The explosion is the whole weapon, and its radius is not modelled: the mine deals no contact damage, so this entry carries the blast as the shot's own damage. Against one target, as in this fight and on the boards, the number is exact; against a crowd it reads low.
 - The mines are detonated by hand with the alt-fire, and several can be laid first (wiki). The sim detonates each on landing: the ceiling for one mine. Laying several and detonating them together is not modelled.
 - Mines stick to surfaces, enemies and allies, and multishot throws them in a very wide horizontal spread (wiki), so on this weapon multishot covers ground rather than adding damage to one target.
 - This weapon is silent; there is nobody to alert here, so stealth is worth nothing.

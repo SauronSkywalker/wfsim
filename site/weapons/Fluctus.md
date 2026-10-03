@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- The wave's wide, flat hitbox is not modelled; the arena has no geometry for it.
+- The wave's wide, flat hitbox is not modelled; this fight has no geometry for it.
 - The Arch-Gun Deployer's five-minute cooldown is not modelled: in a mission the weapon is gone once its reserve runs dry; here it simply stops firing.
 
 ## In WFSim

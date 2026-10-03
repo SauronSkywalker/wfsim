@@ -18,7 +18,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 - A missed shot drops the combo counter. This entry cannot miss, so only its 2 s timer removes a stack, and the number is the ceiling.
 - Lower zoom levels are not modelled: the scope always sits at its top level and its best buff.
-- The barb's 0.9 s eruption delay is not modelled: the explosion arrives with the shot, so a short engagement gets its damage early.
+- The barb's 0.9 s eruption delay is not modelled: the explosion arrives with the shot, so a short fight gets its damage early.
 
 ## In WFSim
 

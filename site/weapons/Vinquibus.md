@@ -17,7 +17,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 ## Not modelled here
 
 - Its second innate polarity is an Aura polarity, which no weapon mod matches, so that slot is left without polarity here. In game it cannot be worse than that, so capacity here is a floor.
-- Equipping it also takes the melee slot, so a Vinquibus loadout has no melee weapon; the arena has no melee to give up.
+- Equipping it also takes the melee slot, so a Vinquibus loadout has no melee weapon; this fight has no melee to give up.
 - Headshots grant 2 stacks (max 16) of Vinquibus Precision, +250% melee damage; it lands on a weapon the sim does not fire, so it adds nothing here.
 
 ## In WFSim

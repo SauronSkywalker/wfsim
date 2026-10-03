@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- The explosion is a reverse cone that damages enemies in front of the target (page); the arena gives a blast no facing, so it is a full 1.9 m sphere. Against a crowd it reaches enemies the game would not, so the number reads high.
+- The explosion is a reverse cone that damages enemies in front of the target (page); this fight gives a blast no facing, so it is a full 1.9 m sphere. Against a crowd it reaches enemies the game would not, so the number reads high.
 - The projectile has travel time and must be led at range (wiki). Every shot here connects instantly, so against a moving target the real hit rate is lower.
 - In game the blast staggers the wielder; the player has no body here, so it costs nothing.
 
