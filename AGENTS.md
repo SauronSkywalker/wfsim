@@ -69,8 +69,8 @@ Read the row for what you are about to touch before the code, not after.
   a change under it as shipped, and never let something the repo needs live only
   there. `private/agents/README.md` is the standing notes for ANY agent: read it
   first. A lesson goes there or to `docs/`, never only into one tool's memory.
-- **WHAT IS SOLD LIVES IN `wfsim-cloud`** (private, `private/cloud`), never
-  here: public code for a paid feature is a free copy.
+- **ANYTHING ABOUT MONEY LIVES IN `wfsim-cloud`** (`private/cloud`): here is
+  the calculator, reaching it via `worker/cloud.js` alone.
 
 ## Tripwires
 
