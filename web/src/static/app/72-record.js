@@ -66,7 +66,7 @@ function recordIdle() {
   // the reader is standing in front of.
   return `<div class="rec-idle">
     <button class="ghost-btn small" id="rec-load">${escHtml(tr("Open the record"))}</button>
-    <span class="sim-hint">${escHtml(tr("one row per number the game popped — it opens in a window of its own, because the table is wider than this column"))}</span>
+    <span class="sim-hint">${escHtml(tr("one row per number the game popped, in a window of its own"))}</span>
   </div>`;
 }
 

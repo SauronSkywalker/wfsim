@@ -169,7 +169,7 @@ def main() -> None:
     # The SHA-256 tells the two apart, and more precisely.
     # THE WORDING IS THE OWNER'S, edited by hand in `dist/` and
     # brought back here so the next build does not overwrite it. Only the
-    # SHA-256 is generated — everything else is his text, kept verbatim.
+    # SHA-256 is generated. The wording matches the download page's.
     # THE NOTES ARE FOR THE NETWORK DRIVE, which is a Windows audience: they
     # explain SmartScreen and `certutil`, neither of which exists elsewhere. The
     # Linux download goes out through a GitHub Release, where the release body
@@ -189,14 +189,14 @@ def main() -> None:
         "怎么用\n"
         "下载 WFSim.exe，双击打开。\n"
         "程序会自动更新，不需要再次下载。\n"
-        "source.zip 是源代码，开源许可证要求随程序一起提供，正常使用不需要下载。\n"
+        "source.zip 是源代码，与 GitHub 上相同。\n"
         "\n"
         "第一次打开\n"
         "Windows 会弹出蓝色提示「Windows 已保护你的电脑」，\n"
-        "因为本程序没有购买代码签名证书（一年好几千，一个免费工具不值得）。\n"
+        "这是因为程序没有代码签名。\n"
         "点「更多信息」→「仍要运行」即可。\n"
-        "如果杀毒软件报警，也是同样的原因（没有签名的新程序）。\n"
-        "介意的话可以校验下面的 SHA-256，或者直接用在线版。\n"
+        "杀毒软件报警也是同一原因。\n"
+        "可以按下面的步骤校验 SHA-256。\n"
         "\n"
         "校验步骤（可选）\n"
         "在文件所在文件夹按住 Shift 右键 →「在此处打开终端」，然后：\n"

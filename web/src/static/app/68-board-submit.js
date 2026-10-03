@@ -509,7 +509,7 @@ async function offerBoardSubmit() {
 /// would need the scorer to publish one, while the RULE is what makes an
 /// absence readable, and it is checkable against the board on screen.
 const boardCutNote = () =>
-  tr("Only builds scoring at least half their weapon's leading row are listed — the board holds the answers, not every attempt.");
+  tr("Only builds scoring at least half of their weapon's leader are listed.");
 
 /// **WHAT HAPPENED TO THIS RUN**, in one sentence — the ONE statement of it.
 ///
@@ -569,7 +569,7 @@ function boardRunOutcome() {
         .replace("{n}", b.n).replace("{of}", b.of)
       : "";
     return { kind: "sent",
-      text: tr("uploaded — a submission is a BUILD, so it is scored in every mode this weapon can be played and on every board that takes it. It is stored the moment it arrives; the board re-scores hourly and picks it up on its next run, and says how long ago that was") + where };
+      text: tr("uploaded — at the next hourly re-score it is scored in every mode of this weapon, on every board that takes it") + where };
   }
   // NOT YET ANSWERED. `offerBoardSubmit` runs after the result is drawn, so
   // this is the state the first paint is in and it has to say so rather than
@@ -655,7 +655,7 @@ function renderBoardOutcome() {
     // has going for it is that the SCORE is not sent: the board re-runs it.
     + `<div class="bo-consent">
         <span>${escHtml(boardConsent() === "yes"
-          ? tr("the build travels — the weapon, its mods, evolutions and arcanes. No account, no names you gave anything, and no score: the board measures it again itself.")
+          ? tr("the build is sent — the weapon, its mods, evolutions and arcanes. No account, no names and no score.")
           : tr("nothing is sent from here."))}</span>
         <button type="button" class="ghost-btn small" id="bo-consent">${escHtml(
           boardConsent() === "yes" ? tr("turn automatic submission off") : tr("turn automatic submission on"))}</button>
@@ -692,11 +692,11 @@ function renderBoardConsent() {
     // it. Asking would be dishonest when the default has already decided.
     box.innerHTML =
       `<b>${escHtml(tr("Builds you run here are added to the official board."))}</b> ` +
-      escHtml(tr("What is sent is the BUILD: the weapon and its mods, evolutions and arcanes. Not the fight you ran it under — the board scores every build under its OWN rulers, so any scenario can contribute. And nothing about you: no account, no identifier, no address, no time finer than the day, and no score. The board takes a weapon built as far as it goes: every main slot filled, and the exilus slot counted if you use one.")) +
+      escHtml(tr("Only the build is sent: the weapon and its mods, evolutions and arcanes. Not the fight, and nothing about you: no account and no score. The board takes builds with every main slot filled.")) +
       // WHEN, on the FIRST visit too — this is the branch a new player reads,
       // and saying it only after the consent had been chosen told the fact to
       // everyone except the person meeting the board for the first time.
-      ` ${escHtml(tr("A run is stored the moment it arrives and appears on the board at its next re-score — the board re-scores hourly, not the instant you send it. It says how long ago it was scored."))}` +
+      ` ${escHtml(tr("A submitted build appears on the board at the next hourly re-score."))}` +
       ` ${escHtml(boardCutNote())}` +
       floorNote +
       ` <button class="ghost-btn small" id="board-no">${escHtml(tr("don't submit"))}</button>`;
@@ -714,7 +714,7 @@ function renderBoardConsent() {
   const state = c !== "yes"
     ? tr("nothing is sent from here")
     : boardState === ""
-      ? tr("builds you run here are submitted — stored the moment they arrive, and picked up at the board's next hourly re-score")
+      ? tr("builds you run here are submitted, and appear at the next hourly re-score")
       : boardRunOutcome().text;
   box.innerHTML =
     `<span class="board-state">${escHtml(state)}</span>` +

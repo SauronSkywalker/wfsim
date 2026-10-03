@@ -357,6 +357,12 @@ estimate it." and nothing louder.
 - **NEVER PRESSURE, NEVER PITY.** No guilt and no "we need you".
 - **THE LIMITS IN THE OPEN.** What it cannot model is said where the reader
   is, before they ask.
+- **DESCRIBE, NEVER PERSUADE.** A heading names what is below it ("Details",
+  not "why believe it"; no rhetorical questions). A clause goes if deleting it
+  would not make the reader do something wrong — no reason a rule exists, no
+  answer to a question nobody asked, no flourish after the fact.
+- **ENGLISH FIRST.** The English is settled before the Chinese is written, and
+  the Chinese says what the English says, in its own word order.
 
 **CHINESE IS WRITTEN FOR THE MAINLAND, NOT TRANSLATED INTO IT.** Short
 sentences in the order a Chinese reader says them, not the English clause

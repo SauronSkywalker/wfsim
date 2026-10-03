@@ -1391,10 +1391,9 @@ def prerender(flagged: str) -> None:
         ),
         (
             "download", "Download WFSim for Windows", "h-download", "Download",
-            "WFSim as a Windows app: the same calculator on your own machine, "
-            "opening instantly, working with no connection and updating itself. "
-            "It is not a cut-down version — it carries the same engine the site "
-            "serves. Free and open source, AGPL-3.0.",
+            "WFSim as a Windows app: the same calculator and the same engine as "
+            "the site, on your own machine. It opens instantly, works offline and "
+            "updates itself. Free and open source, AGPL-3.0.",
         ),
         (
             "operator", "Operator — Focus school for a Warframe build | WFSim", "op-name", "Operator",

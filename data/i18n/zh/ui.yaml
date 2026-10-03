@@ -341,7 +341,7 @@ ui:
   "A gauge bought with kills is worth what the fight lets you earn: against something that will not die, this mode is the base one.": 用击杀换来的充能条，值多少取决于这场战斗让你赚到多少 —— 面对一个打不死的目标，这个模式就等于基础模式。
   "A number. Nothing bought here moves a result by one decimal — an in-game measurement is the only thing that changes what the engine does.":
     一个数字。这里买到的东西不会让任何结果动一位小数——能改变引擎行为的只有游戏内实测，没有第二样。
-  "A run is stored the moment it arrives and appears on the board at its next re-score — the board re-scores hourly, not the instant you send it. It says how long ago it was scored.": 一次跑分一到就被保存，并在榜单下一次重算时出现——榜单每小时重算一次，不是你一提交就立刻更新。它会写明自己上次评分是多久以前。
+  "A submitted build appears on the board at the next hourly re-score.": "提交的配装会在下一次整点重算时上榜。"
   "A sentinel weapon scores the same on both boards. Its companion picks its own targets and never aims for a head, so neither term is the player's to set — and none of that weapon is your aim.": 守护型武器在两个榜上分数完全相同。它的守护自己选目标、从不瞄头，所以这两个条件都不归玩家管——这把武器里没有一分是你的瞄准。
   "Ability Strength %": 技能强度 %
   "Accuracy": 精准度
@@ -357,8 +357,7 @@ ui:
   "Ammo Pickup Conversion": 弹药拾取转换
   "Ammo Reserve": 备弹
   "Ammo pickups are modelled, because a real player is being resupplied over three minutes. A weapon that cannot be resupplied runs on its real reserve.": 弹药拾取是计入的，因为三分钟里真实玩家一直在补给。而无法补给的武器，用的就是它真实的备弹。
-  "And if your own in-game measurement disagrees with it, the measurement wins. That is a bug report about reality, and it is the one thing that changes what this engine does.":
-    要是你自己实测的结果跟它对不上，以你的为准。那是拿现实给它报 bug，也是唯一能让这个引擎改的东西。
+  "Where your in-game measurement disagrees with it, the measurement wins.": "你的实测与它不一致时，以实测为准。"
   "Arcane (on status)": 赋能附加伤害
   "Arcane presets": 赋能预设
   "Arcane": 赋能
@@ -603,7 +602,7 @@ ui:
   "Show me": 切到那个窗口
   "Open in its own window": 在新窗口打开
   "Open the record": 打开战斗记录
-  "one row per number the game popped — it opens in a window of its own, because the table is wider than this column": "每一个游戏里跳出的伤害数字一行 —— 它会在自己的窗口里打开，因为这张表比这一栏宽得多"
+  "one row per number the game popped, in a window of its own": "游戏里每弹出一个伤害数字就是一行，在单独的窗口中打开"
   "the same build — the difference is how the riven rolled": "同一套配装 —— 差别只在裂罅的数值"
   "the two beams CONVERGE on the crosshair and deal full damage there only once they are aligned (wiki). This arena lands both on the aimed body from the first tick, which is the ceiling": "两道光束会向准星汇聚，只有对齐之后才在准星处打出全额伤害（维基）。这个战场从第一跳起就让两道都落在瞄准的目标上，这是上限"
   "this run measured {v} — #{n} of {of} in {group}, against the board as it stands": 这次跑出 {v} —— 以当前榜单为参照，在 {group} 里排第 {n}，同组共 {of} 套
@@ -634,8 +633,7 @@ ui:
   "Slide Attack": 滑行攻击
   "Heavy Slam": 重击震地
   "this build is already on the board ({row}) — nothing was sent": 这套配装已经在榜上了（{row}），所以没有上传。
-  "It tells you what it cannot model, on the card where you are standing: on a weapon, an evolution, a mod, an arcane, an enemy. It lists those itself rather than waiting to be asked.":
-    算不准的地方，它就写在你正看着的那张卡上：武器、进化词条、MOD、赋能、敌人。不用你问，它自己列。
+  "What it cannot model is stated on the card concerned: a weapon, an evolution, a mod, an arcane, an enemy.": "算不准的地方，写在对应的卡上：武器、进化、MOD、赋能、敌人。"
   "Its fire rate FALLS while the trigger is held — to 60% of the listed rate over 51 shots — and rebuilds the moment you stop firing. This is simulated; the sim holds the trigger until the magazine is dry.": 持续按住扳机时射速会下降——51 发之内降到标称射速的 60%，一停火就立刻回满。这条已经建模；模拟里是一直按到弹匣打空为止。
   "Its fire rate SPOOLS UP while the trigger is held — from 20% of the listed rate, full from the 6th shot. This is simulated, and it rebuilds after every reload.": 持续按住扳机时射速会往上爬——从标称射速的 20% 起步，到第 6发拉满。这条已经建模，每次换弹后重新爬。
   "Its fire rate SPOOLS UP while the trigger is held — from 20% of the listed rate, full from the 7th shot. This is simulated, and it rebuilds after every reload.": 持续按住扳机时射速会往上爬——从标称射速的 20% 起步，到第 7发拉满。这条已经建模，每次换弹后重新爬。
@@ -700,8 +698,8 @@ ui:
   "Official test scenario": 官方测试场景
   "One Thrax Centurion at level 9999 on Steel Path, for 180 seconds. A single target, so nothing here rewards clearing a room.": 一只凶魂百夫长，9999 级，钢铁之路，打 180 秒。单体目标，所以清场能力在这里换不到任何分数。
   "One ruler, every weapon.": 一把尺子，量全部武器。
-  "A score is a build measured by this engine under the benchmark's own pinned terms — nobody submits a number. An empty row is a weapon nobody has measured yet.": 榜上的分数是由本引擎在该基准自己钉死的条件下跑出来的——没有人提交数字。空着的一行，就是还没有人测过的武器。
-  "Only builds scoring at least half their weapon's leading row are listed — the board holds the answers, not every attempt.": 只有分数达到这把武器榜首一半以上的配装才会被列出——榜单收录的是答案，不是每一次尝试。
+  "A score is this engine's measurement of a build under the benchmark's fixed terms. Nobody submits a number.": "分数是本引擎在该基准的固定条件下测出的。没有人提交数字。"
+  "Only builds scoring at least half of their weapon's leader are listed.": "只列出分数达到这把武器榜首一半以上的配装。"
   "Only this weapon": 仅装备这把武器
   "Open": 前往
   "Optimize": 优化
@@ -876,12 +874,12 @@ ui:
   "Weapon passive: Frenzy — see its buff card (grants +1 toxin while active).": 武器被动：狂乱 —— 详见它的增益卡（生效期间提供 +1 毒素）。
   "Weapons": 武器
   "What each mode is": 每种输出方式分别是什么
-  "What is sent is the BUILD: the weapon and its mods, evolutions and arcanes. Not the fight you ran it under — the board scores every build under its OWN rulers, so any scenario can contribute. And nothing about you: no account, no identifier, no address, no time finer than the day, and no score. The board takes a weapon built as far as it goes: every main slot filled, and the exilus slot counted if you use one.": 发送的是这套配装：武器及其 mod、进化、赋能。不包含你跑它的那场仗——榜单会用它自己的标尺去跑每一套配装，所以任何场景都可以做贡献。也不包含关于你的任何东西：没有账号、没有标识符、没有地址、没有精确到天以下的时间，也没有分数。榜单收的是这把武器的最努力配置：8 个主槽位全部装满，用了 exilus 的话也一并计入。
+  "Only the build is sent: the weapon and its mods, evolutions and arcanes. Not the fight, and nothing about you: no account and no score. The board takes builds with every main slot filled.": "只发送配装：武器及其 MOD、进化和赋能。不含场景，也不含任何关于你的信息：没有账号，没有分数。榜单只收主槽位全部装满的配装。"
   "What this benchmark measures": 这个基准到底在量什么
   "What would be sent: the weapon and its mods, evolutions and arcanes. Nothing else — no account, no identifier, no names you chose, and no score (the board measures builds itself).": 会发送的内容：武器，以及它的 MOD、进化和赋能。仅此而已 —— 没有账号，没有任何标识，没有你起的任何名字，也不含分数（榜单自己测量配装）。
   "Where the damage went": 伤害落在哪里
   "Which means no Incarnon, for all but one weapon: eight of the nine Incarnon forms charge their gauge on weak-point hits, so at this rate they never fill it. The Torid charges on direct hits and still cycles.": 这也意味着除一把之外都进不了灵化：九个灵化形态里有八个靠弱点命中充能，在这个爆头率下永远填不满。托里德靠直接命中充能，照常循环。
-  "Why you can check it": 为什么它经得起查
+  "How to check it": "如何核对"
   "Zazvat-Kar, the Akstiletto Prime-exclusive mod — a weapon-exclusive card outside the pools this roster loads": "「Zazvat-Kar」，Akstiletto Prime 的专属 MOD——这是一张武器专属卡，不在本武器库载入的卡池里"
   "Zoom": 变焦
   "a MISSED shot drops the combo counter and this entry cannot miss — the only thing that misses here is SPREAD, and this one lands on the reticle, so nothing but its {seconds} s timer ever takes a stack off. A player who pulls the shot loses the combo and this sim never pulls one": 打空一枪会掉连击，而这把在这里打不空 —— 这里唯一会失手的是散布，而它弹着点就在准星上，所以除了 {seconds} 秒计时之外没有任何东西会拿走一层。手抖打偏的玩家会掉连击，而这个模拟不会手抖
@@ -950,7 +948,7 @@ ui:
   "body part": 身体部位
   body: 身体
   "build": 配装
-  "builds you run here are submitted — stored the moment they arrive, and picked up at the board's next hourly re-score": 你在这里跑的配装会上传——一到就被保存，并在榜单下一次整点重算时被算进去
+  "builds you run here are submitted, and appear at the next hourly re-score": "你在这里跑的配装会被提交，下一次整点重算时上榜"
   "builds you run here are submitted": 你在这里跑的配装会被提交
   "burst": 点射
   "card is wrong": "卡面有误"
@@ -1269,7 +1267,7 @@ ui:
   "selected": "个已选中"
   "self-stagger is not modelled — the wiki notes an explosion at your feet can interrupt the 2-round burst so only one rocket leaves, and nothing damages the player in this fight": 自身踉跄尚未建模 —— wiki 提到脚下的爆炸会打断这个 2 发点射、让只有一发火箭射出，而这场战斗里没有任何东西会伤到玩家
   "semi-auto": 半自动
-  "uploaded — a submission is a BUILD, so it is scored in every mode this weapon can be played and on every board that takes it. It is stored the moment it arrives; the board re-scores hourly and picks it up on its next run, and says how long ago that was": 已上传——投稿是一套**配装**，所以它会在这把武器能用的每一个模式下、以及每一块收它的榜上评分。它一到就被永久保存；榜单每小时重算一次，下一次重算时会把它算进去，并写明自己上次评分是多久以前
+  "uploaded — at the next hourly re-score it is scored in every mode of this weapon, on every board that takes it": "已上传——下一次整点重算时，会按这把武器的每个模式、在每块收它的榜上评分"
   "sentinels cannot equip arcanes": 守护武器无法装备赋能
   "share of the damage dealt": 已造成伤害的占比
   "share": 分享
@@ -1295,16 +1293,16 @@ ui:
   "what each thing acting in this fight dealt": 这场仗里每一个会行动的单位各打出多少
   "You": 你
   "who dealt it": 谁打的
-  "the build travels — the weapon, its mods, evolutions and arcanes. No account, no names you gave anything, and no score: the board measures it again itself.": 上传的是这套配装——武器、MOD、进化和赋能。没有账号，没有你给任何东西起的名字，也没有分数：榜单自己再测一遍。
+  "the build is sent — the weapon, its mods, evolutions and arcanes. No account, no names and no score.": "发送的是配装——武器、MOD、进化和赋能。不含账号、名字和分数。"
   "turn automatic submission off": 关闭自动投稿
   "turn automatic submission on": 开启自动投稿
   "{a} of the {b} numbers this engagement popped": "这一场弹出的 {b} 个数字里的 {a} 个"
   "The result": 结果
-  "what does this build do?": 这套配装打出多少？
+  "this build's output in this fight": "这套配装在这场战斗中的输出"
   "averaged over {runs} engagements": "{runs} 次交战的平均"
   "whole fight": 整场
-  "This fight": 这场仗
-  "what conditions was that measured under?": 上面那个数是在什么条件下量出来的？
+  "Fight conditions": "战斗条件"
+  "the conditions the result was measured under": "测出上面结果时的条件"
   "Being fought — simulated": 被打的 —— 模拟出来的
   "Doing the fighting — assumed": 打人的 —— 假设成立的
   "what it came from": "伤害来自"
@@ -1318,7 +1316,7 @@ ui:
   "replaced at once": "立刻补一具"
   "one gun": "就一把枪"
   "the floor — {n} on it, as the fight opened": "场地 —— 开打时站了 {n} 具"
-  "how dark a body is drawn is what it actually took — where the damage went is the one thing a total cannot say": "点的深浅就是它实际吃到的伤害——伤害落在哪里，是一个总数永远说不出来的事"
+  "the darker a body, the more damage it took": "颜色越深，承受的伤害越多"
   "armour, resistances, overguard and every status pile are what this fight arrived at, not numbers typed in": 护甲、抗性、超宏防护和每一摞状态层，都是这场仗自己走到的，不是填进去的
   "these are granted, not found: this engine models no movement, no survival and no missed shot you would have missed": 这些是直接给定的，不是算出来的：本引擎不模拟走位、不模拟生存，也不会替你打空一枪
   "what is not modelled ↗": 哪些东西没有建模 ↗
@@ -1338,18 +1336,18 @@ ui:
   "{n} abilities held up": "{n} 个技能常开"
   "{n} squad auras": "{n} 个小队光环"
   "{runs} engagements · {secs}s each · {rolls} damage instances rolled, on your own machine": "{runs} 次交战 · 每次 {secs} 秒 · 共掷了 {rolls} 次伤害，全在你自己的机器上"
-  "The benchmark engagement": 基准那一场
-  "from here down it is one engagement, and it follows the playhead": 从这里往下是同一场交战，并且跟着播放头走
+  "One engagement": "单场交战"
+  "one engagement, following the playhead": "同一场交战，跟随播放头"
   "this one engagement, at the playhead": 这一场，在播放头所在的时刻
   "this engagement": 这一场
   "What it was made of": 构成
   "four ways to cut one total — each of them comes to it": 一个总数的四种切法 —— 每一种加回去都等于它
   "where it came from": 从哪来的
   "this engagement, one bucket a second": 这一场，每秒一格
-  "The evidence": 证据
-  "why believe it — every line here can be checked against your own footage": 凭什么信 —— 这里每一行都能拿去跟你自己的录像对着数
-  "What now": 接下来
-  "what has already been done for you, and what you can do next": 已经替你做了什么，以及你还能做什么
+  "Details": "详情"
+  "every damage instance, each checkable against in-game footage": "每一次伤害结算，均可与游戏录像逐条核对"
+  "Next": "接下来"
+  "what happened to this run, and what can be done with it": "这次运行的处理结果，以及后续操作"
   "Send this build to the optimizer": 把这套配装交给优化器
   "Share this result": 分享这次结果
   "could not reach the clipboard — the link is in the preset bar's share panel": 没能访问剪贴板 —— 链接在配装栏的分享面板里
@@ -2216,8 +2214,6 @@ ui:
     "击杀叠层的 MOD 从 0 层开始打。层数在这一场里叠起来、到期、往下掉——所以你开着枪的时候，这套配装自己的数值一直在变。"
   "How many Forma a build needs is computed, and so is whether it fits in the weapon at all.":
     "一套配装要几个 Forma 是算出来的，装不装得下也是算出来的。"
-  "There are no recommended builds here and no curated list. Every row on the board is what this engine computed under the benchmark's own pinned terms, so anyone with the repository reproduces the same number.":
-    "这里没有推荐配装，也没有精选榜单。榜上的每一行都是这个引擎在该基准自己钉死的条件下算出来的，谁拿到仓库都能跑出同一个数。"
   "in-game measurements":
     "次游戏内实测"
   "Built in the open since {day} — {n} commits, every one of them public.":
@@ -2228,33 +2224,28 @@ ui:
     "你在这台机器上跑了 {n} 次模拟，一共 {e} 场战斗。这个数只存在你自己的浏览器里。"
   "The calculator is the same for everyone":
     "计算器对所有人都一样"
-  "An in-game measurement is the only thing that changes what the engine does, and it wins whoever reports it — so the way to move a number here is to go and measure one.":
-    "能改这个引擎的只有实测，谁报的都算数——想让这里的数字变，就去测一个回来。"
   "Building, simulating and optimizing are the same for everyone. This is AGPL-3.0: the engine, the game data and the wasm are public, and you can run your own copy.":
     "构建、模拟、优化对谁都一样。项目是 AGPL-3.0，引擎、游戏数据、wasm 全部公开，你可以自己跑一份。"
-  "A fix to the builder, the simulator or the optimizer ships to everybody at once. There is no earlier copy.":
-    "构建器、模拟器、优化器上的任何一处修复，都是同时发给所有人的。没有抢先版。"
   "What you have run here stays in your own browser. What the site counts, and how to turn it off, is at the foot of this page.":
     "你在这里跑过什么，只留在你自己的浏览器里。网站统计了什么、怎么关掉，写在本页最下面。"
   "Thank you":
     "感谢"
   "WFSim for Windows": "WFSim Windows 桌面版"
-  "The same calculator on your own machine — it opens instantly, works with no connection, and keeps itself up to date. It is not a cut-down version: the engine is the same wasm module this site serves.": "同一个计算器，跑在你自己的电脑上 —— 秒开、可离线、自动更新。它不是缩水版：引擎就是本站在用的同一个 wasm 模块。"
+  "The same calculator on your own machine: it opens instantly, works offline and updates itself.": "同一个计算器，运行在你自己的电脑上：秒开、可离线、自动更新。"
   "The first time you open it": "第一次打开"
   'Windows shows a blue notice, "Windows protected your PC". Click "More info", then "Run anyway".': "Windows 会弹出蓝色提示「Windows 已保护你的电脑」。点「更多信息」→「仍要运行」即可。"
-  "It says that because this program is not code-signed. An antivirus warning is the same thing for the same reason: an unsigned program nobody has seen before.": "因为本程序没有代码签名。如果杀毒软件报警，也是同样的原因：没有签名的新程序。"
-  "If you would rather check first, the SHA-256 and the command to verify it ship in the notes beside the download. Or just use the site — it does everything this does.": "介意的话，下载旁边的使用说明里有 SHA-256 和校验命令。或者直接用在线版 —— 它能做的这个都能做。"
-  "Why install it": "为什么装它"
-  "Nothing is downloaded when you open it. The engine is already on your disk, so a fight is computed the moment you ask for it — however slow this site is to reach from where you are.": "打开时不下载任何东西。引擎已经在你硬盘上，所以你一点它就开算 —— 不管本站在你那儿有多慢。"
+  "The program is not code-signed, which is also why an antivirus may warn about it.": "这是因为程序没有代码签名，杀毒软件报警也是同一原因。"
+  "The SHA-256 and the command to verify it are in the notes beside the download.": "下载旁的说明里有 SHA-256 和校验命令。"
+  "What it does": "它做什么"
+  "The engine is on your disk, so a fight is computed the moment you ask for it.": "引擎就在你的硬盘上，打开即算。"
   "It works with no connection at all.": "完全断网也能用。"
-  "It updates itself, and takes only what changed: a release touching one file is under a kilobyte on the wire. You download this once.": "它自己更新，而且只拿变了的部分：一次只改了一个文件的发布，上下行不到一 KB。这个你只需要下一次。"
-  "The site stays exactly where it is. Both run the same engine, and a build link opens in either.": "网页版一点不变。两边跑的是同一个引擎，一个配装链接在哪边都能开。"
-  "What it is not": "它不是什么"
-  "Not an installer. There is nothing to run as administrator, and nothing is written to the registry.": "不是安装程序。不需要管理员权限，也不写注册表。"
-  "Not a second engine. It carries the same wasm the site serves, so a number is the same number in both.": "不是另一个引擎。它带的就是本站发的那份 wasm，所以同一个数字两边一样。"
-  'Uninstalling is deleting the file. Its data sits in %LOCALAPPDATA%\WFSim and can go with it.': '卸载就是删文件。程序数据在 %LOCALAPPDATA%\WFSim，可一并删除。'
+  "It updates itself, downloading only what changed.": "自动更新，只下载有变化的部分。"
+  "Install and uninstall": "安装与卸载"
+  "No installer: it needs no administrator rights and writes nothing to the registry.": "无需安装：不需要管理员权限，不写注册表。"
+  "It runs the same wasm engine as the site, so every number matches.": "它和网页版运行同一个 wasm 引擎，数字完全一致。"
+  "To uninstall, delete the file. Its data is in %LOCALAPPDATA%\\WFSim.": "卸载：删除该文件即可。数据位于 %LOCALAPPDATA%\\WFSim。"
   "The source": "源码"
-  "AGPL-3.0. A source archive sits beside the download because the licence requires the source to be offered wherever the binary is — it is the same source that is on GitHub, and you do not need it to run the program.": "AGPL-3.0。下载旁边放了一份源码包，因为开源许可证要求在提供二进制的地方同时提供源码 —— 它和 GitHub 上的是同一份，正常使用不需要下载。"
+  "AGPL-3.0. The source archive beside the download is the same source as on GitHub.": "AGPL-3.0。下载旁的源码包与 GitHub 上的源码相同。"
   "{os} app — opens instantly, works offline, updates itself": "{os} 桌面版 —— 秒开、可离线、自动更新"
   "Windows app": "Windows 桌面版"
   "Download the Windows app": "下载 Windows 桌面版"
@@ -2581,6 +2572,7 @@ ui:
   "That code has expired. Ask for a new one.": "验证码已过期，请重新获取。"
   "That code is not right.": "验证码不正确。"
   "Too many wrong codes. Ask for a new one.": "错误次数过多，请重新获取验证码。"
+  "the same total, split several ways": "同一个总数的几种拆分"
 
 effect_phrases:
   - ['Ammo Pickup Conversion', '弹药拾取转换']
