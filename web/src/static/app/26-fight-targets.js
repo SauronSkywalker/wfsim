@@ -54,6 +54,7 @@ function saveEnemyDoc() {
   if (i < 0) return;
   ps[i] = { ...ps[i], savedAt: Date.now(), state: snapshotEnemy() };
   storePresetList(ENEMIES, ps);
+  track("builder.enemy");
   // The SCENARIO may be pointing at this target right now, and its card shows
   // the numbers being edited. Redraw it rather than leaving a stale target on
   // a tab the editor cannot see.

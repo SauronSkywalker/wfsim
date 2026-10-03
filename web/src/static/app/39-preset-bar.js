@@ -97,6 +97,8 @@ const pickPreset = (cfg, key) => {
   const p = presetFind(barEntries(cfg), key);
   if (!p || presetId(p) === cfg.active()) return;
   if (p.builtin && cfg.pins) rememberPublished(cfg, p);
+  // A BOARD ROW is the one built-in that carries its ruler; a scenario does not.
+  if (p.builtin && p.benchmark) track("board.open", $("weapon").value);
   cfg.setActive(presetId(p));
   whileApplying(() => cfg.apply(p.state)); // a load is not an edit
   cfg.rerender();

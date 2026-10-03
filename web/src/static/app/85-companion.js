@@ -286,4 +286,6 @@ function compMarkDirty() {
 function compChanged() {
   renderCompanion();
   compMarkDirty();
+  // A CARD SEATED is a build; polarities alone are Forma planning on an empty host.
+  if (comp && comp.slots.some((s) => s.mod)) track("builder.companion", comp.companion);
 }

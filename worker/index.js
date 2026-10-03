@@ -576,8 +576,9 @@ async function shareFetch(id, env) {
 export const USAGE_EVENTS = [
   "app.boot", "app.view", "app.error", "engine.fail",
   "builder.weapon", "builder.warframe", "builder.operator", "builder.riven",
+  "builder.companion", "builder.enemy",
   "simulator.start", "simulator.run", "optimizer.start", "optimizer.run",
-  "share.create", "share.open", "board.submit", "desktop.download",
+  "share.create", "share.open", "board.open", "board.submit", "desktop.download",
   "presets.saved",
 ];
 /// The wire's schema, written into every point so a later change stays readable.

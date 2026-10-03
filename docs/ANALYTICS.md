@@ -78,12 +78,15 @@ with this thing, not how many times: forty edits to one build are one build.
 | `builder.warframe` | the Warframe panel computed a build with anything set — a mod, arcane, shard or Helminth ability | frame id | — |
 | `builder.operator` | the Operator page answered with a Focus school chosen or an Artifact card seated | — | — |
 | `builder.riven` | a custom riven was edited and saved | — | — |
+| `builder.companion` | a card was seated on a companion build | companion id | — |
+| `builder.enemy` | a custom target was edited and saved | — | — |
 | `simulator.start` | a Run Sim began | weapon id | runs |
 | `simulator.run` | a Run Sim finished (not stopped) | weapon id | runs |
 | `optimizer.start` | a search began, or resumed | weapon id | — |
 | `optimizer.run` | a search finished (not cancelled) | weapon id | seconds |
 | `share.create` | a build left the page | weapon id | how, the first way per load: 1 link, 2 text, 3 share sheet |
 | `share.open` | a shared build landed in a reader's app | weapon id | — |
+| `board.open` | a board build was opened into the builder | weapon id | — |
 | `board.submit` | a build reached the board's inbox | weapon id | — |
 | `desktop.download` | a desktop download link was clicked | — | — |
 | `presets.saved` | the engine has answered `/api/meta` | `presets` or `customs` — the pool a sync allowance would count | how many this browser holds, board rows opened into a bar not counted |
