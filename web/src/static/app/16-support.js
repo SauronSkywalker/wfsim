@@ -68,36 +68,6 @@ function noteSimRun(engagements) {
   try { localStorage.setItem(SUPPORT_USE, JSON.stringify(v)); } catch (_) { /* private mode */ }
 }
 
-/// THE ONE TIME THIS APP ASKS, AND IT ASKS WHERE THE ANSWER LANDED. /support
-/// is a footer link, read only by somebody who went looking; the moment worth
-/// asking in is the one straight after an answer the reader waited for.
-///
-/// ONCE PER BROWSER, EVER. A line that comes back is an advertisement, which
-/// DE's Content Policy permits only while it stays out of the way of the
-/// content — so it is one sentence, it carries no button, and the flag that
-/// retires it is set the first time it is drawn.
-///
-/// AN OPTIMIZER RUN IS THE OCCASION, NEVER THE QUALIFICATION: it is one click
-/// and thousands of engagements nobody watched, so qualifying on it would ask
-/// a reader who has run nothing. `SUPPORT_USE`'s own count is the gate.
-const SUPPORT_ASKED = "wfsim-asked";
-const NUDGE_AFTER = 10;
-function offerSupportOnce(host) {
-  const u = supportUse();
-  if (!host || u.sims < NUDGE_AFTER) return;
-  // A BROWSER THAT CANNOT REMEMBER IS NEVER ASKED, which is the safe half of
-  // the choice: the alternative asks it on every run.
-  try {
-    if (localStorage.getItem(SUPPORT_ASKED)) return;
-    localStorage.setItem(SUPPORT_ASKED, "1");
-  } catch (_) { return; }
-  const p = document.createElement("p");
-  p.className = "sup-nudge";
-  p.innerHTML = `${escHtml(trF("{n} answers out of this so far.",
-    { n: u.sims.toLocaleString() }))} <a href="/support">${escHtml(tr("How to back WFSim →"))}</a>`;
-  host.appendChild(p);
-}
-
 /// WHO HAS CHIPPED IN, BY NAME — the only thing that ever leaves the ledger.
 ///
 /// A FILE, NOT AN ENDPOINT. `scripts/publish_thanks.py` reads the ledger, works

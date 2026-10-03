@@ -1205,9 +1205,6 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
 /* THE ASK, WHERE THE ANSWER LANDED — drawn once per browser under a finished
    result. Note weight and no button: it sits inside the panel the reader came
    for, so anything louder is in the way of the thing they asked for. */
-.sup-nudge{font-size:12px;color:var(--muted);margin:14px 0 0;line-height:1.6;
-  border-top:1px solid var(--line);padding-top:12px}
-.sup-nudge a{color:var(--accent);white-space:nowrap}
 
 .block-lock.dis{opacity:.45}
 .opt-meta .warn{color:var(--critical)}

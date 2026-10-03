@@ -257,7 +257,6 @@ async function pollOptimize() {
       // A cancel is not necessarily the end of the search — the run stopped,
       // but its resume point is still on disk. Offer it under the results.
       if (st.phase === "cancelled") appendResumeOffer();
-      offerSupportOnce($("opt-results"));
     } else {
       $("opt-results").innerHTML = `<div class="placeholder">cancelled before anything had been ranked — no results</div>`;
     }

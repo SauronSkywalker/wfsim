@@ -1213,7 +1213,6 @@ async function runSim() {
     // A run under the OFFICIAL scenario is the only thing that can reach the
     // board, and only after you have said so. Never blocks the result.
     offerBoardSubmit();
-    offerSupportOnce($("sim-results"));
   } catch (e) {
     $("sim-results").innerHTML = `<div class="error">sim failed: ${e}</div>`;
   } finally {

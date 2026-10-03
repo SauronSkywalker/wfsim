@@ -383,15 +383,6 @@ const billingMoney = (amount, currency) =>
   new Intl.NumberFormat(billingLocale(), { style: "currency", currency: currency.toUpperCase() }).format(amount / 100);
 const PER_INTERVAL = { month: "/ month", year: "/ year" };
 
-/// A YEAR BOUGHT AT ONCE against twelve months, for the same offer — the
-/// saving the page may state, since it is arithmetic on Stripe's own prices.
-function billingSaving(offer) {
-  const m = billingState.prices.find((p) => p.offer === offer && p.interval === "month");
-  const y = billingState.prices.find((p) => p.offer === offer && p.interval === "year");
-  return m && y && m.currency === y.currency && 12 * m.amount > y.amount
-    ? { monthly: m, yearly: y, amount: 12 * m.amount - y.amount } : null;
-}
-
 function billingPayment(pm) {
   if (!pm) return tr("On file with Stripe");
   return pm.last4 ? `${pm.brand ? pm.brand[0].toUpperCase() + pm.brand.slice(1) : tr("Card")} •••• ${pm.last4}`
@@ -411,12 +402,10 @@ function billingHeld(s) {
       : "";
   const next = s.cancel_at_period_end ? [tr("Ends"), billingDate(s.period_end)]
     : [tr("Next charge"), `${billingDate(s.period_end)} · ${billingMoney(s.amount, s.currency)}`];
-  const saving = s.interval === "month" && billingSaving(s.offer);
   const manage = `<button class="ghost-btn btn-sm" data-auth="portal">${aT("Manage subscription")}</button>`;
   const acts = s.status === "past_due" ? `<button class="run-btn" data-auth="portal">${aT("Update payment method")}</button>${manage}`
     : s.cancel_at_period_end ? `<button class="run-btn" data-auth="portal">${aT("Resume renewal")}</button>${manage}`
-      : manage + (saving ? `<button class="ghost-btn btn-sm" data-auth="portal">${escHtml(
-        tr("Switch to yearly, save {amount}").replace("{amount}", billingMoney(saving.amount, saving.yearly.currency)))}</button>` : "");
+      : manage;
   return `<div class="plan">
     <div class="plan-head"><h2>${escHtml(billingName("offers", s.offer))}</h2>${tag}</div>
     <div class="price"><b>${escHtml(billingMoney(s.amount, s.currency))}</b><span>${aT(PER_INTERVAL[s.interval] || "")}</span></div>
@@ -437,16 +426,12 @@ function billingOffer() {
   const offer = subs[0].offer;
   const periods = subs.filter((p) => p.offer === offer);
   const pick = periods.find((p) => p.interval === billingPeriod) || periods[0];
-  const saving = billingSaving(offer);
   const toggle = periods.length > 1 ? `<div class="fd-seg" role="group" aria-label="${aT("Billing period")}">${periods.map((p) =>
-    `<button data-auth="period" data-period="${p.interval}" class="${p === pick ? "on" : ""}">${aT(p.interval === "year" ? "Yearly" : "Monthly")}${
-      p.interval === "year" && saving ? ` <em>${escHtml(tr("save {amount}").replace("{amount}", billingMoney(saving.amount, p.currency)))}</em>` : ""}</button>`).join("")}</div>` : "";
-  const perMonth = pick.interval === "year"
-    ? ` · ${escHtml(tr("about {amount} a month").replace("{amount}", billingMoney(Math.round(pick.amount / 12), pick.currency)))}` : "";
+    `<button data-auth="period" data-period="${p.interval}" class="${p === pick ? "on" : ""}">${aT(p.interval === "year" ? "Yearly" : "Monthly")}</button>`).join("")}</div>` : "";
   const includes = billingIncludes(offer);
   return `<div class="plan">
     <div class="plan-head"><h2>${escHtml(billingName("offers", offer))}</h2>${toggle}</div>
-    <div class="price"><b>${escHtml(billingMoney(pick.amount, pick.currency))}</b><span>${aT(PER_INTERVAL[pick.interval] || "")}${perMonth}</span></div>
+    <div class="price"><b>${escHtml(billingMoney(pick.amount, pick.currency))}</b><span>${aT(PER_INTERVAL[pick.interval] || "")}</span></div>
     ${includes.length ? `<ul class="includes">${includes.map((x) => `<li>${escHtml(x)}</li>`).join("")}</ul>` : ""}
     <div class="acts">${accountState.account
       ? `<button class="run-btn" data-auth="checkout" data-price="${escHtml(pick.key)}">${aT(pick.interval === "year" ? "Subscribe yearly" : "Subscribe monthly")}</button>`

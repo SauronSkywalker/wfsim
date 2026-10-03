@@ -92,7 +92,6 @@ function cloudPage(a) {
         : aT(CLOUD_STATE[s.state] || "Checking…")}</span>
         <label><input type="checkbox" id="sync-auto" ${syncAuto() ? "checked" : ""}> ${aT("Upload new items")}</label>
         <span class="sp"></span>
-        ${billingState.configured && syncAllowance ? `<a class="ghost-btn btn-sm" href="/pricing">${aT("Membership: sync any number")}</a>` : ""}
         <button class="ghost-btn btn-sm" data-saves="export">${aT("Export")}</button>
         <button class="ghost-btn btn-sm" data-saves="import">${aT("Import")}</button>
         <button class="ghost-btn btn-sm" data-auth="sync-now">${aT("Sync now")}</button></div></div></div>`;

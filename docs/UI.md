@@ -598,12 +598,7 @@ THE ORDER IS THE ARGUMENT: what this is and how it works, what it holds, why
 it can be checked, what the reader has already got out of it, the door, and
 then — directly under the door — what giving never buys, which is the answer
 to the question the door has just raised rather than small print two sections
-below it. Only after that does the money go anywhere. The evidence behind that
-shape is NextAfter's donation-page experiments (a stated value proposition;
-naming what the money does; video loses), Wikimedia's banner testing (a facts
-appeal over a personal one) and Cialdini & Schroeder 1976 (legitimising a small
-gift raises participation without lowering the mean gift), which is what "one
-coffee is enough" carries now that no figure does.
+below it. Only after that does the money go anywhere.
 
 NO SUM APPEARS ON THE PAGE — no ladder, no floor, no bill. Every channel shows
 its own minimum and its own ladder at the moment of paying, one screen away and
@@ -612,15 +607,13 @@ that names a sum reads as a price list. `check_support` asserts the whole page
 against a currency pattern, because a digit comes back on a card unnoticed.
 
 WHAT BACKING MAKES POSSIBLE IS NAMED IN TIME, NEVER IN COSTS. The page says
-what a reader's backing buys — the hours a new weapon takes, the hours in game
-a calibrated number is measured against — and names no bill: a cost is not why
-anyone backs a tool they like, and a page that lists its costs is asked "then
-why charge?" the day a membership is sold.
+what a reader's backing makes possible — the hours a new weapon takes, the
+hours in game a calibrated number is measured against — and names no bill.
 
 TWO WAYS, KEPT APART. A membership is drawn only while one is on sale to the
 reader (`renderSupportMember`), names no price (`/pricing` does), and is said
-as backing that comes with things in return; the video platforms are support
-and nothing comes back but thanks. The line under the page says both terms a
+as backing, with what a Member receives; the video platforms are support and
+nothing comes back but thanks. The line under the page says both terms a
 reader is owed before paying: a donation buys nothing, and a membership renews
 until cancelled, in one click, and is refunded within 14 days of a charge.
 
@@ -636,8 +629,8 @@ came through Bilibili.
 THE PAGE STATES WHAT IS TRUE, IT DOES NOT DENY WHAT ISN'T. "The calculator is
 the same for everyone" carries the four facts that were once a row of refusals —
 a donation never buys a number, never buys a feature. The heading names the
-calculator because that is what is equal; a membership's gifts are not, and a
-page that said "everything" would be caught the day they ship. A page that braces against its own
+calculator because that is what is equal; what a membership receives is not,
+and a page that said "everything" would be caught the day it ships. A page that braces against its own
 visitors reads as one with something to brace about, and the same facts said
 forwards are the strongest thing on it. Nothing describes a channel that has
 no url: a paragraph about an option nobody can take is not an option.
@@ -675,14 +668,9 @@ the block is absent and the page says so in a sentence: a list of nobody is
 social proof pointing the wrong way, but a page somebody navigated to owes them
 more than a blank.
 
-THE APP ASKS ONCE, WHERE THE ANSWER LANDED. `/support` is otherwise reached
-only by somebody who went looking for it, so `offerSupportOnce` appends one
-note-weight sentence under a finished simulator or optimizer result — after
-`NUDGE_AFTER` runs of the reader's own, once per browser ever, with no button.
-An optimizer run is the OCCASION but never the QUALIFICATION: it is one click
-and thousands of engagements nobody watched. Anything louder or repeating is an
-advertisement, which DE's Content Policy permits only while it stays out of the
-way of the content.
+THE APP NEVER ASKS. `/support` and `/pricing` are reached by a reader who went
+looking; no result, limit, banner or mail points anyone at a membership or a
+donation. A reader at the sync allowance is told the limit and offered Export.
 
 WHAT THE READER HAS RUN NEVER LEAVES THE BROWSER. `wfsim-use` is two integers
 written by `runSim` and read by `/support` alone; the page says so where it

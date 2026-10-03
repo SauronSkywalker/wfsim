@@ -143,9 +143,8 @@ copy of it. `worker/cloud.js` is the whole of it here, and it forwards:
 | an account is deleted only once the private worker has ended its subscriptions | `cloudEnd`, `billing_open` |
 | with no binding, billing reads as off and nothing is ended | `cloudRoute`, `cloudEnd` |
 
-**BUILD SYNC IS FREE TO EVERY ACCOUNT**, and not sold: keeping a person's own
-builds costs a few kilobytes each, and charging to reach them is charging for
-access to them. The page's half is public (docs/UI.md §"Build sync"); the
+**EVERY ACCOUNT SYNCS**, up to the free allowance; a Member syncs without one.
+The page's half is public (docs/UI.md §"Build sync"); the
 server's is `/api/cloud/sync` in the private worker, beside what is sold. The
 `/account` page's data block says where sync stands and offers the one action
 the state calls for; the export carries what it holds.

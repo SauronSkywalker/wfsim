@@ -36,8 +36,8 @@ ui:
     "一个对着游戏实测、逐项校准的 Warframe 计算器。计算器对所有人免费，对所有人都一样。"
   "Two ways to back it": 两种支持方式
   "WFSim Member.": WFSim 会员。
-  "If you think WFSim does this right, become a Member. It keeps the work going, and it comes with a few things in return: unlimited sync, your name on every build you share, and a look of your own.":
-    "认可这件事的做法，就成为会员。它让这个项目能一直做下去，作为回馈：云同步不限量，分享出去的每套配装都署上你的名字，还有一套专属外观。"
+  "If you think WFSim does this right, become a Member. It keeps the work going, and it comes with your name on every build you share, a look of your own, and unlimited sync.":
+    "认可这件事的做法，就成为会员。它让这个项目能一直做下去，作为回馈：分享出去的每套配装都署上你的名字，一套专属外观，以及云同步不限量。"
   "WFSim Patron.": WFSim 赞助者。
   "For those who want to do the most for it. Everything a Member has, the Patron look, your name on the thanks page if you want it, and a seat where the work is discussed.":
     "给想多出一份力的人。会员的全部内容，加上赞助者专属外观、致谢页署名（自愿），以及开发讨论区的一席之地。"
@@ -2275,8 +2275,6 @@ ui:
     "它不是拿一个初始状态去套公式。它把这一场从头打到尾——起转、换弹、那些得先挂上去才吃得到加成的异常——然后告诉你这一场到底打出了什么。"
   "You have run {n} simulations on this machine — {e} engagements. That number is in this browser and has never been sent anywhere.":
     "你在这台机器上跑了 {n} 次模拟，一共 {e} 场战斗。这个数只存在你自己的浏览器里，没往任何地方发过。"
-  "{n} answers out of this so far.":
-    "到现在为止，你在这里得到了 {n} 个答案。"
   "The calculator is the same for everyone":
     "计算器对所有人都一样"
   "An in-game measurement is the only thing that changes what the engine does, and it wins whoever reports it — so the way to move a number here is to go and measure one.":
@@ -2526,7 +2524,6 @@ ui:
   "rivens, custom enemies": "裂罅、自定义敌人"
   "synced": 已同步
   "allowance used": 已满
-  "Membership: sync any number": "会员：同步不限数量"
   "All items": 全部条目
   "{n} items · {m} synced": "{n} 项 · {m} 项已同步"
   "Search names, weapons, Warframes…": "搜索名称、武器、战甲…"
@@ -2569,7 +2566,6 @@ ui:
   "Upload new items": "新建的自动上传"
   "synced to your account - click to keep it on this browser only": "已同步到账户 —— 点一下改为只存在这个浏览器"
   "on this browser only - click to sync it to your account": "只存在这个浏览器 —— 点一下同步到账户"
-  "the account syncs {n} of these already, its allowance - turn another off, or become a member": "账户已同步 {n} 个，达到额度 —— 关掉其他某一项的同步，或成为会员"
   "the account syncs {n} of these already, its allowance - turn another off. This browser keeps saving it, and Export takes your saved items anywhere.": "账户已同步 {n} 个，达到额度 —— 关掉其他某一项的同步。这个浏览器照常保存，用「导出」可以把保存的内容带到任何地方。"
   "This browser holds items synced with another account.": "这台浏览器上的内容曾与另一个账号同步。"
   "Add them to this account": "加入这个账号"
@@ -2639,7 +2635,6 @@ ui:
   "Manage subscription": "管理订阅"
   "Update payment method": "更新付款方式"
   "Resume renewal": "恢复续费"
-  "Switch to yearly, save {amount}": "改为年付，省 {amount}"
   "/ month": "/ 月"
   "/ year": "/ 年"
   "Payment method": "付款方式"
@@ -2649,8 +2644,6 @@ ui:
   "Billing period": "付款周期"
   "Yearly": "年付"
   "Monthly": "月付"
-  "save {amount}": "省 {amount}"
-  "about {amount} a month": "约合每月 {amount}"
   "Subscribe yearly": "订阅年付"
   "Subscribe monthly": "订阅月付"
   "Cancel any time. The builder, simulator, optimizer and leaderboard need no membership.": "随时可以取消。配装器、模拟器、优化器和排行榜不需要会员。"
