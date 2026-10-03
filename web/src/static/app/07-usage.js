@@ -56,6 +56,18 @@ function usageArrival() {
   return ("from_" + host.replace(/^www\./, "").replace(/[^a-z0-9]+/g, "_")).slice(0, 64);
 }
 
+/// AN UNCAUGHT FAILURE IN THIS PAGE'S OWN CODE, as `app.error`: `boot` before the
+/// app is ready (the reader sees "could not start"), `script` or `promise`
+/// after. A KIND, NEVER THE MESSAGE — that can carry what the reader typed.
+/// Only this origin's files count, so a browser extension's errors are not ours.
+const usageOwn = (text) => typeof text === "string" && text.includes(location.origin + "/");
+function usageError(kind, own) {
+  if (own) track("app.error", window.__wfsimReady ? kind : "boot", Math.round(performance.now()));
+}
+window.addEventListener("error", (e) => usageError("script", usageOwn(e && e.filename)));
+window.addEventListener("unhandledrejection", (e) =>
+  usageError("promise", usageOwn(e && e.reason && e.reason.stack)));
+
 /// ONCE PER (event, subject) PER PAGE LOAD. A point says a reader got this far
 /// with this thing, not how many times: forty edits to one build are one build.
 const usageSent = new Set();

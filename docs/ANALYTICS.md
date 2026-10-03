@@ -72,12 +72,15 @@ with this thing, not how many times: forty edits to one build are one build.
 | --- | --- | --- | --- |
 | `app.boot` | the engine has answered `/api/meta` | how the page was reached: `reload`, `back_forward`, `from_site`, `direct` or `from_<referrer host>` | ms since navigation |
 | `app.view` | a page was drawn | page kind (`home`, `weapon_builder`, `weapon_simulator`, `warframe`, …); each account page is its own kind — `login`, `signup`, `reset`, `pricing`, `account`, `account_sync`, `account_billing` (`AUTH_VIEWS`) | — |
+| `app.error` | this page's own code failed uncaught — another origin's script (an extension) is not counted | `boot` (the app did not start), `script`, `promise`: a kind, never the message | ms since navigation |
 | `engine.fail` | an engine worker failed to load, or stopped answering | `worker_load` / `worker_silent` | ms since navigation (load only) |
 | `builder.weapon` | the weapon panel computed a build with ≥1 mod | weapon id | — |
 | `builder.warframe` | the Warframe panel computed a build with anything set — a mod, arcane, shard or Helminth ability | frame id | — |
 | `builder.operator` | the Operator page answered with a Focus school chosen or an Artifact card seated | — | — |
 | `builder.riven` | a custom riven was edited and saved | — | — |
+| `simulator.start` | a Run Sim began | weapon id | runs |
 | `simulator.run` | a Run Sim finished (not stopped) | weapon id | runs |
+| `optimizer.start` | a search began, or resumed | weapon id | — |
 | `optimizer.run` | a search finished (not cancelled) | weapon id | seconds |
 | `share.create` | a build left the page | weapon id | how, the first way per load: 1 link, 2 text, 3 share sheet |
 | `share.open` | a shared build landed in a reader's app | weapon id | — |

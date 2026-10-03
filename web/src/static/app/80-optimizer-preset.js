@@ -204,6 +204,8 @@ async function runOptimize() {
       // What the player ruled out; the rest of the builder's lists is the scope.
       limits: opt.limits,
     };
+    // STARTED, beside `optimizer.run` for finished: the gap is what was cancelled or failed.
+    track("optimizer.start", $("weapon").value);
     const r = await postJson("/api/optimize", body);
     if (!r || r.ok === false) {
       optFinish(`<div class="error">optimize failed: ${r ? r.error : "no data"}</div>`);
@@ -383,6 +385,8 @@ async function resumeOptimize(saved) {
     // The STORED body, not the current form: the checkpoint describes a field
     // narrowed under that exact scope, and re-deriving the body from the UI
     // would let an edited setting resume into a run it never belonged to.
+    // A RESUME IS A START: its finish is an `optimizer.run` like any other.
+    track("optimizer.start", $("weapon").value);
     const r = await postJson("/api/optimize", { ...saved.body, __resume: saved.cp });
     if (!r || r.ok === false) {
       clearCheckpoint();

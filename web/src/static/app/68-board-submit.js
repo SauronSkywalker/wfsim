@@ -1157,6 +1157,8 @@ async function runSim() {
     // `replay: true` only HERE. The gain scan hits the same endpoint once per
     // candidate and shows no replay, so it must not pay for one.
     const body = { ...buildPayload(), ...theFight({ replay: true }) };
+    // STARTED, beside `simulator.run` for finished: the gap is what was stopped or failed.
+    track("simulator.start", body.weapon, simRuns());
     // THROTTLED BY THE FRAME, not by the message: the worker already sends one
     // per percent, and a DOM write per percent is still 100 of them for a fight
     // that takes a second.
