@@ -3,7 +3,7 @@
 // faked in the page. It switches an item's sync and nothing else: one at a
 // time or several at once, up to the allowance the server states; it filters,
 // searches and groups by weapon; an item opens where it lives; nothing on it
-// deletes.
+// deletes, and what the account deleted in its window can be restored.
 import { openApp } from "./cdp.mjs";
 
 const app = await openApp({ boot: 12000, lang: "en" });
@@ -127,5 +127,56 @@ const early = await evaluate(`(async () => {
 })()`);
 check("drawn before the roster has loaded, the page waits for it instead of failing, and lists once it is here",
   early.threw === null && early.waiting && early.listed, JSON.stringify(early));
+
+// RECENTLY DELETED: what the server can still restore is listed under the
+// items, and a restore brings the item back through an ordinary round.
+const trash = await evaluate(`(async () => {
+  const sleep = (ms) => new Promise((ok) => setTimeout(ok, ms));
+  const realFetch = window.fetch;
+  const at = Date.now();
+  const LIST = 'wfsim-presets-builder-builds';
+  let restored = false, refuse = false;
+  const gone = { id: 'gone1', list: LIST, name: 'deleted torid', scope: 'torid', deleted_at: at - 2 * 864e5, ends_at: at + 28 * 864e5 - 1000 };
+  window.fetch = async (url, o = {}) => {
+    const path = String(url);
+    const reply = (j) => new Response(JSON.stringify(j), { headers: { 'content-type': 'application/json' } });
+    if (path === '/api/account') return reply({ ok: true, providers: ['email'], account: { id: 'acc1', created_at: '2026-09-01', identities: [{ provider: 'email', label: 'a@x' }] } });
+    if (path === '/api/billing') return reply({ ok: true, configured: false });
+    if (path === '/api/account/agents') return reply({ ok: true, agents: [] });
+    const b = JSON.parse(o.body || '{}');
+    if (path === '/api/cloud/sync' && b.devices) return reply({ ok: true, devices: [] });
+    if (path === '/api/cloud/sync' && b.trash) return reply({ ok: true, trash: restored ? [] : [gone] });
+    if (path === '/api/cloud/sync' && b.restore) {
+      if (refuse) return reply({ ok: true, restored: [], refused: b.restore });
+      restored = true;
+      return reply({ ok: true, restored: b.restore, refused: [] });
+    }
+    if (path === '/api/cloud/sync') return reply({ ok: true, full: false, next: null, cursor: at + 10,
+      entries: restored ? [{ id: 'gone1', list: LIST, updated_at: at, synced_at: at + 10, version: 3,
+        body: { id: 'gone1', scope: 'torid', name: 'deleted torid', savedAt: at - 5000, state: {} } }] : [] });
+    return realFetch(url, o);
+  };
+  localStorage.setItem(LIST, JSON.stringify([]));
+  cloudTrash = null;
+  history.pushState({}, '', '/account/sync'); route(); await loadAccount(); await sleep(800);
+  const box = () => document.getElementById('cloud-trash');
+  const out = {};
+  out.listed = /deleted torid/.test(box().textContent) && /28 days left/.test(box().textContent);
+  refuse = true;
+  const note0 = document.getElementById('page-note'); if (note0) note0.remove();
+  box().querySelector('[data-crestore="gone1"]').click(); await sleep(600);
+  out.refused = !!document.getElementById('page-note')
+    && !JSON.parse(localStorage.getItem(LIST) || '[]').some((p) => p.id === 'gone1');
+  refuse = false;
+  box().querySelector('[data-crestore="gone1"]').click(); await sleep(1200);
+  out.back = JSON.parse(localStorage.getItem(LIST) || '[]').some((p) => p.id === 'gone1');
+  out.empty = /Nothing deleted/.test(box().textContent);
+  window.fetch = realFetch;
+  return out;
+})()`);
+check("what can be restored is listed, with the days left", trash.listed === true, JSON.stringify(trash));
+check("a restore the allowance refuses says so, and adds nothing", trash.refused === true, JSON.stringify(trash));
+check("a restore brings the item back to this browser", trash.back === true, JSON.stringify(trash));
+check("...and it leaves the list", trash.empty === true, JSON.stringify(trash));
 
 await app.finish("every item this browser holds is in one list, and its sync switches there");

@@ -20,7 +20,7 @@ function cloudDevicesHtml() {
   if (cloudDevices === null) { loadCloudDevices(); return ""; }
   if (!cloudDevices.length) return "";
   const me = syncDevice().id;
-  const when = (t) => (t ? new Date(t).toLocaleString(billingLocale(), { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "—");
+  const when = (t) => (t ? new Date(t).toLocaleString(accountLocale(), { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "—");
   const rows = cloudDevices.map((d) => {
     const state = d.ok === null ? "" : d.ok
       ? `<span class="tag ok">${aT("Synced")}</span>${d.unsynced ? ` <span class="tag warn">${escHtml(tr("{n} items did not sync").replace("{n}", d.unsynced))}</span>` : ""}`
@@ -83,7 +83,7 @@ function cloudPage(a) {
       ${cap ? `<div class="bar${n[pool] >= cap ? " warn" : ""}"><i style="width:${pct}%"></i></div>` : ""}</div>`;
   };
   const s = syncStatus;
-  const when = s.at ? new Date(s.at).toLocaleTimeString(billingLocale(), { hour: "2-digit", minute: "2-digit" }) : "";
+  const when = s.at ? new Date(s.at).toLocaleTimeString(accountLocale(), { hour: "2-digit", minute: "2-digit" }) : "";
   const usage = `<div class="block"><div class="bh"><h2>${aT("Usage")}</h2><span class="sub">${aT("Saving on this browser is never limited.")}</span></div>
     <div class="bb"><div class="meters">${meter("presets", "Presets", "builds, fights, searches, Warframe, companion and Operator builds")}${
       meter("customs", "Customs", "rivens, custom enemies")}</div>
@@ -97,8 +97,51 @@ function cloudPage(a) {
         <button class="ghost-btn btn-sm" data-auth="sync-now">${aT("Sync now")}</button></div></div></div>`;
   return `<div class="settings">${settingsNav(a, "sync")}
     <div class="set-main"><h1 class="page">${aT("Cloud sync")}</h1>${usage}${cloudDevicesHtml()}
-      <div class="block" id="cloud-items">${cloudListHtml()}</div></div></div>`;
+      <div class="block" id="cloud-items">${cloudListHtml()}</div>
+      <div class="block" id="cloud-trash">${cloudTrashHtml()}</div></div></div>`;
 }
+
+/// WHAT THE ACCOUNT CAN STILL RESTORE, as the server last listed it, or null
+/// before it has. A deletion is kept for 30 days (docs/SYNC.md).
+let cloudTrash = null;
+async function loadCloudTrash() {
+  const r = await syncCall({ trash: true });
+  cloudTrash = r && r.ok && Array.isArray(r.trash) ? r.trash : [];
+  const box = $("cloud-trash");
+  if (box) box.innerHTML = cloudTrashHtml();
+}
+function cloudTrashHtml() {
+  if (cloudTrash === null) { loadCloudTrash(); return ""; }
+  const day = (t) => new Date(t).toLocaleString(accountLocale(), { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+  const rows = cloudTrash.map((x) => {
+    const domain = x.list.replace(/^wfsim-(presets|customs)-/, "");
+    const owner = META ? cloudOwner(domain, x.scope) : "";
+    const left = Math.max(1, Math.ceil((x.ends_at - Date.now()) / 86400000));
+    return `<tr><td class="nm">${escHtml(x.name || "")}</td><td class="muted">${aT(CLOUD_KIND[domain] || domain)}</td>
+      <td>${owner ? escHtml(owner) : `<span class="muted">—</span>`}</td><td class="muted">${escHtml(day(x.deleted_at))}</td>
+      <td class="muted">${escHtml(tr("{n} days left").replace("{n}", left))}</td>
+      <td><button type="button" class="ghost-btn btn-sm" data-crestore="${escHtml(x.id)}">${aT("Restore")}</button></td></tr>`;
+  }).join("");
+  return `<div class="bh"><h2>${aT("Recently deleted")}</h2><span class="sub">${aT("Kept for 30 days, then erased.")}</span></div>
+    ${rows ? `<div class="tbl-wrap"><table class="items"><thead><tr><th>${aT("Name")}</th><th>${aT("Kind")}</th><th>${aT("About")}</th>
+      <th>${aT("Deleted")}</th><th></th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`
+      : `<div class="bb"><p class="set-note">${aT("Nothing deleted in the last 30 days.")}</p></div>`}`;
+}
+
+// RESTORE: the server puts the item back as a new write, and the round that
+// follows brings it into this browser like any change made elsewhere.
+document.addEventListener("click", async (e) => {
+  const t = e.target && e.target.closest && e.target.closest("#cloud-trash [data-crestore]");
+  if (!t) return;
+  t.disabled = true;
+  const r = await syncCall({ restore: [t.dataset.crestore] });
+  if (r && r.ok && (r.restored || []).length) await syncNow();
+  else noteInline(tr(r && r.ok && (r.refused || []).length
+    ? "Not restored: the account's sync allowance is used"
+    : "Could not restore just now."));
+  cloudTrash = null;
+  renderAuthPage("sync");
+});
 
 function cloudListHtml() {
   // THE PAGE CAN BE OPENED BEFORE THE ROSTER HAS LOADED — a link straight to
@@ -114,7 +157,7 @@ function cloudListHtml() {
   rows.sort((x, y) => (y.p.savedAt || 0) - (x.p.savedAt || 0));
   const seg = (st, label) => `<button type="button" data-cstatus="${st}" class="${v.status === st ? "on" : ""}">${aT(label)}<em>${count(st)}</em></button>`;
   const kinds = [...new Set(all.map((x) => x.domain))];
-  const day = (t) => (t ? new Date(t).toLocaleString(billingLocale(), { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "—");
+  const day = (t) => (t ? new Date(t).toLocaleString(accountLocale(), { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "—");
   const STATE = { synced: ["on", "Synced"], local: ["", "This browser only"], rejected: ["bad", ""] };
   const row = (x) => {
     const [cls, label] = STATE[x.state];

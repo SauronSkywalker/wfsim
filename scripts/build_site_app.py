@@ -1649,8 +1649,9 @@ the account deletes them.</p>
 and Warframe, companion and Operator builds — is kept with your account, so every
 browser signed in to it holds the same. Each item is kept as your browser stores
 it, without its measured results, with when it last changed. An item you delete
-is kept only as a note that it was deleted, so every browser drops it. It is in
-your data download, and deleting the account deletes it; your browser keeps its
+is kept for 30 days, so you can restore it from Cloud sync; after that only a
+note that it was deleted remains, so every browser drops it. It is in your data
+download, and deleting the account deletes it at once; your browser keeps its
 own copy either way.</p>
 
 <h2>Who else handles it</h2>
@@ -1690,6 +1691,7 @@ remains.</li>
 <li><b>不登录时：</b>配装、场景、裂罅只保存在你自己的浏览器里。使用统计记在浏览器保存的一个随机编号下，不记录 IP，不设置 cookie，可在
 <a href="/support#usage">支持页面</a>关闭。提交到排行榜的只有配装本身。</li>
 <li><b>登录后：</b>账号是一个随机编号，最多可绑定 Google、Discord、GitHub、邮箱四种登录方式。每种方式保存：是哪个服务、该服务给你的用户编号、账号页上显示给你看的名字（Google 邮箱、Discord 或 GitHub 用户名、你的邮箱），以及绑定时间。使用邮箱时你会设置一个密码，WFSim 只保存它加盐的慢哈希，无法还原成密码。邮件只在需要验证邮箱时发送（注册、绑定、找回密码），其中的验证码以哈希保存 10 分钟。登录状态以随机令牌的哈希保存（cookie <code>wfsim_session</code>，90 天）。不保存 IP 地址，也不保存第三方返回的访问令牌。WFSim 从不合并两个账号。</li>
+<li><b>配装同步：</b>登录后，你保存的配装、场景、搜索方案、裂罅、自定义敌人，以及战甲、同伴和指挥官配装会随账号保存，每个登录的浏览器看到的都一样。每一项按浏览器保存的样子存放，不含测量结果，并记录最后修改时间。你删除的条目保留 30 天，可在「云同步」页面恢复；之后只留一个删除标记，让每个浏览器都移除它。这些都在你的数据下载里，删除账号会立即删除它们；你的浏览器始终保留自己的那份。</li>
 <li data-ext="privacy-buying-zh"></li>
 <li><b>第三方：</b>Cloudflare 提供托管、数据库和验证邮件投递，其投递日志会保留收件地址最多 30 天；Google、Discord、GitHub 仅在你选择用它们登录时参与。不出售任何数据，不用于广告。</li>
 <li><b>安全措施：</b>全站 HTTPS；密码、登录令牌和邮件验证码只以哈希保存，密码哈希还用一个不在数据库里的密钥加固，单拿到数据库也无法验证任何猜测；<span data-ext="privacy-card-zh"></span>账号数据放在独立的数据库，与排行榜公开备份的那个分开，只有 WFSim 的运营方能访问；登录接口有频率限制，修改数据的请求只接受来自本站的。</li>

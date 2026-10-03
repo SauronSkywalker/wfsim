@@ -2590,6 +2590,14 @@ ui:
   "The card says +10; the effect is +14, measured on the Boar Prime, which shares this card.": "卡面写 +10，实测为 +14（在共用这张卡的野猪 Prime 上测得）。"
   "The Valkyr Talons as a weapon, with their damage, mods and arcanes, belong to a weapon build, not to this panel.": "Valkyr 利爪作为武器的部分（伤害、MOD、赋能）属于武器配装，不在这个面板里。"
   "The combo is not modelled: a recast inside the window multiplies damage by 200% and cuts the cost by 50%, and each recast after that by 400% and 75%.": "连击未建模：在窗口内再次施放，伤害 ×200%、消耗 −50%；之后每次再施放为 ×400%、−75%。"
+  "Restore": "恢复"
+  "Deleted": "删除时间"
+  "Recently deleted": "最近删除"
+  "Kept for 30 days, then erased.": "保留 30 天，之后清除。"
+  "{n} days left": "还剩 {n} 天"
+  "Nothing deleted in the last 30 days.": "最近 30 天没有删除过内容。"
+  "Not restored: the account's sync allowance is used": "未恢复：账户的同步额度已用完"
+  "Could not restore just now.": "暂时无法恢复。"
 
 effect_phrases:
   - ['Ammo Pickup Conversion', '弹药拾取转换']
