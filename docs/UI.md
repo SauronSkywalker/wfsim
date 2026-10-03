@@ -344,8 +344,8 @@ collection `COLLECTIONS` names as one file and imports one back
 ## How the page speaks
 
 The voice is a player who measures: sure of the work, short, exact, now and
-then a joke only a player gets. It is the home hero's "Run the fight. Don't
-estimate it." and nothing louder.
+then a joke only a player gets. It is the home hero's "Every hit counts."
+and nothing louder.
 
 - **A FACT, NEVER AN ADJECTIVE.** What was measured and what can be checked;
   no "powerful", "ultimate" or "best". The one bold claim is the home hero's,

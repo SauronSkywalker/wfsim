@@ -2182,7 +2182,7 @@ ui:
   "Viral": 病毒
   "What this mode is": 这个模式是什么
 
-  "Run the fight. Don't estimate it.": 把这场战斗打一遍，而不是估出来。
+  "Every hit counts.": "每一击都算数。"
   "Builder, simulator, optimizer.": 配装器、模拟器、优化器。
   "items modelled":
     "个条目已建模"
