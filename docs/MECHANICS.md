@@ -1542,6 +1542,35 @@ takes one step back, per throw rather than per grenade because the card speaks o
 "the grenade explosion" as one event. Against a lone target, kills faster than
 reloads keep the pile up.
 
+### Blobs — the Stug's pile (§7.3)
+
+Every Stug shot embeds in the body it hits and adds its stacks to the pile
+there. Declared as `blob:` in the attack (`data::weapons::BlobSpec`: `cap`,
+`lifespan_seconds`, one stack's `explosion:`, `radius_at_cap_m`), resolved
+through the beam's buckets (`ResolvedBlob`), and set off by `fight::blobs`.
+
+| entry | cap | one stack | a full pile |
+| --- | --- | --- | --- |
+| Stug | 10 | 75 Corrosive, 0.3 m | 750 Corrosive, 2.8 m |
+| Stug (Incarnon Form) | 5 | 200 Corrosive, 0.3 m | 1,000 Corrosive, 0.3 m (growth unpublished) |
+
+1. **MULTISHOT IS STACKS, NOT BLOBS.** A shot lays `floor` of the live
+   multishot in stacks and fires one blob — the floor the Grimoire's multishot
+   buys was measured (M63); the Stug's is M109's proposal.
+2. **A STACK REFRESHES THE LIFESPAN; THE CAP SETS IT OFF.** A pile goes off when
+   a shot takes it to the cap, or 1.5 s after its last stack. A shot that
+   crosses the cap pays the cap: what is over it is lost.
+3. **A SHOT ALREADY OVER THE CAP DOES NOT SET IT OFF** (M109, the owner's
+   report): the pile holds the cap and waits. Every later shot refreshes it,
+   so at multishot over 10 (over 5 in Incarnon form) a pile fed faster than
+   1.5 s goes off only when the firing stops — a reload, a pause.
+4. **A PILE IS ONE INSTANCE OF ALL ITS STACKS' DAMAGE** — "75 - 750 damage" —
+   so the statuses it rolls are seeded from all of it, on every body inside
+   its radius, falling off from the body it was in: 70%, the page's bug note
+   over its 30% table.
+5. **NOT MODELLED**: the charged alternate fire and the Incarnon form's bounce
+   explosions (`unmodeled` on both entries).
+
 ### Continuous (beam) weapons
 
 Trigger "Held". Two rules differ from a gun, both from wiki Continuous_Weapon

@@ -1153,6 +1153,8 @@ pub struct WeaponBase {
     pub cluster: Option<ClusterBase>,
     /// The grenades a reload from empty throws — see [`ReloadGrenadeBase`].
     pub reload_grenade: Option<ReloadGrenadeBase>,
+    /// The blob each shot embeds — see [`BlobBase`].
+    pub blob: Option<BlobBase>,
     /// The weapon's own reload-speed term on a reload from empty, in the mods'
     /// bucket (`WeaponSpec::reload_from_empty_speed`).
     pub reload_from_empty_speed: f64,

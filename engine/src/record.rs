@@ -124,6 +124,9 @@ pub enum Origin {
     /// A SPECTRAL DAGGER's strike or its explosion — the Okina's Incarnon
     /// Form, acting on its own clock from a kill the swings made.
     SpectralDagger,
+    /// A PILE OF BLOBS going off — the Stug's, when its stacks reach the cap or
+    /// its lifespan runs out (`fight::blobs`).
+    Blob,
 }
 
 impl Origin {
@@ -145,6 +148,7 @@ impl Origin {
             Origin::Arcane => "arcane",
             Origin::ReloadGrenade => "reload_grenade",
             Origin::SpectralDagger => "spectral_dagger",
+            Origin::Blob => "blob",
         }
     }
 }

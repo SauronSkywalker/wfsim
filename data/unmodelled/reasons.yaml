@@ -23,6 +23,10 @@
 # repeat. A reason earns its place by being used more than twice OR by having
 # more than one numeric spelling.
 reasons:
+  blob_over_cap:
+    text: "unmeasured: a shot already over the cap (multishot over {cap}) is read as holding the pile at {cap} and waiting 1.5 s, refreshed by every later shot, so steady fire never sets it off"
+  blob_crossing_cap:
+    text: "unmeasured: a shot that crosses the cap is read as setting the pile off at once for {cap} stacks, the rest lost"
   arch_gun_deployer_cooldown:
     text: "the Arch-Gun Deployer's five-minute cooldown is not modelled — when the reserve runs dry the weapon is gone for the rest of a real mission, and this arena simply stops firing"
   companion_fires_it:

@@ -28,6 +28,9 @@ pub(super) struct Resolved {
     pub(super) ms_damage: f64,
     pub(super) n_pellets: u32,
     pub(super) beam_merge: f64,
+    /// THE STACKS A BLOB WEAPON'S SHOT LAYS — `floor` of the live multishot,
+    /// the count the Grimoire's multishot buys (M63), applied as M109 proposes.
+    pub(super) blob_stacks: u32,
 }
 
 /// Read the live bar, roll the multishot, and spend the round.
@@ -448,7 +451,8 @@ pub(super) fn resolve_the_shot(
         };
         let (n_pellets, beam_merge) = if active.continuous {
             (1, merge_bonus)
-        } else if active.multishot_adds_damage {
+        } else if active.multishot_adds_damage || active.blob.is_some() {
+            // A BLOB WEAPON'S MULTISHOT IS STACKS, not blobs — `blob_stacks`.
             (own_pellets.round() as u32, 1.0)
         } else {
             (rolled, 1.0)
@@ -529,5 +533,6 @@ pub(super) fn resolve_the_shot(
         ms_damage,
         n_pellets,
         beam_merge,
+        blob_stacks: ms_eff.floor().max(1.0) as u32,
     }
 }

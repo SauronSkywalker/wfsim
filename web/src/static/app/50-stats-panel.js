@@ -97,7 +97,9 @@ function renderPanel(r) {
         // Through `trGap`, which knows a REASON from a sentence: a repeating
         // gap carries its template and parameters, so the overlay translates
         // the template once instead of once per set of numbers.
-        + gaps.map((g) => `<div class="unmod-l">${escHtml(trGap(g))}</div>`).join("")
+        // ONCE EACH: a weapon's forms are listed together, and a gap both
+        // forms admit is one fact.
+        + [...new Set(gaps.map(trGap))].map((g) => `<div class="unmod-l">${escHtml(g)}</div>`).join("")
       : "";
     // …AND THE OPPOSITE ADMISSION, in its own block. A LIVE BUG says the number
     // IS right — measured, reproduced — and that nobody can explain it, so a

@@ -432,6 +432,9 @@ pub struct AttackSpec {
     /// THE GRENADES A RELOAD THROWS — see [`ReloadGrenadeSpec`].
     #[serde(default)]
     pub reload_grenade: Option<ReloadGrenadeSpec>,
+    /// A BLOB THAT EMBEDS AND DETONATES LATER — see [`BlobSpec`].
+    #[serde(default)]
+    pub blob: Option<BlobSpec>,
     /// PRIMARY COMPRESSION's row for this attack — see [`CompressionSpec`].
     /// `None` means the weapon is absent from the table, which is not the same
     /// as 0%: absent is untested or inapplicable (every secondary, since the
@@ -779,6 +782,27 @@ pub struct ReloadGrenadeSpec {
     /// none. The explosion never does — the mods say direct hits.
     #[serde(default)]
     pub contact_co_behavior: Option<String>,
+}
+
+/// THE STUG'S BLOB ECONOMY — docs/MECHANICS.md §7.3. Every shot embeds in
+/// what it hits and adds to the pile there; the pile detonates when it reaches
+/// `cap` or when `lifespan_seconds` passes without a new stack, and the explosion
+/// grows with the stacks in it. Multishot adds STACKS, never blobs: *"Multishot
+/// will not shoot additional blobs, but will instead shoot blobs with an
+/// equivalent amount of extra stacks"* (wiki Stug).
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct BlobSpec {
+    /// Stacks at which a pile detonates at once.
+    pub cap: u32,
+    /// How long a pile waits for its next stack before it detonates.
+    pub lifespan_seconds: f64,
+    /// THE EXPLOSION OF ONE STACK, its radius the one-stack radius. A pile of
+    /// `n` deals `n` of these.
+    pub explosion: RadialSpec,
+    /// The radius of a full pile; between one stack and `cap` it grows
+    /// linearly — *"0.3 - 2.8 meter radius, scaling with the number of stacks"*.
+    pub radius_at_cap_m: f64,
 }
 
 /// ONE THROW'S GRENADE: a contact hit and an explosion, laid out like a bomblet.

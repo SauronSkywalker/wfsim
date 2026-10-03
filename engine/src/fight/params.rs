@@ -216,6 +216,9 @@ pub struct FightParams {
     /// THE GRENADES A RELOAD FROM EMPTY THROWS — see
     /// [`crate::build::loadout::ResolvedReloadGrenade`] and `fight::grenades`.
     pub reload_grenade: Option<crate::build::loadout::ResolvedReloadGrenade>,
+    /// THE BLOB EACH SHOT EMBEDS — see
+    /// [`crate::build::loadout::ResolvedBlob`] and `fight::blobs`.
+    pub blob: Option<crate::build::loadout::ResolvedBlob>,
     /// DIRECT-hit damage falloff, when this attack lists one. Read against the
     /// distance the shot travelled; `None` = full damage wherever it lands.
     ///

@@ -267,6 +267,14 @@ pub fn base_panel_assembled(
     };
     let radial = s.attack.radial.as_ref().map(&a_radial);
     let slam = s.attack.slam.as_ref().map(&a_radial);
+    // THE BLOB'S EXPLOSION is one stack's, and a pile is a count of them —
+    // multishot buys stacks, never a second explosion.
+    let blob = s.attack.blob.as_ref().map(|b| crate::model::BlobBase {
+        cap: b.cap,
+        lifespan_seconds: b.lifespan_seconds,
+        explosion: a_radial(&RadialSpec { takes_multishot: false, ..b.explosion.clone() }),
+        radius_at_cap_m: b.radius_at_cap_m,
+    });
 
     // THE BOMBLETS, both halves through the same builder — see `ClusterSpec`.
     // The CONTACT hit is a radial of one BODY RADIUS: the smallest sphere that
@@ -572,6 +580,7 @@ pub fn base_panel_assembled(
         radial,
         cluster,
         reload_grenade,
+        blob,
         reload_from_empty_speed: s.reload_from_empty_speed.unwrap_or(0.0),
         slam,
         spread: s.attack.spread,

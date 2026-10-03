@@ -34,13 +34,14 @@ over the cap is lost. The Grimoire's rule is `floor(3 x multishot)` bodies,
 measured (M63) — so the proposal is that a shot's stacks are
 `floor(multishot)`, not a roll on the fraction.
 
-**WHAT THE ENGINE DOES TODAY: NONE OF IT.** The blob economy is unmodelled
-(`stug.yaml`'s `unmodeled`): the embed is fired as an ordinary hit and no
-explosion is dealt at any multishot. So the swallowed explosion is not a bug in
-a model — there is no model yet, and the board's Stug numbers carry no
-explosion at all.
+**WHAT THE ENGINE DOES WITH IT.** The reading above is built as stated, ahead of
+the session below (docs/MECHANICS.md §7.3): `floor` stacks a shot, a pile that
+reaches the cap goes off at once and pays the cap, a shot already over the cap
+holds the pile at the cap and waits, and every stack refreshes the 1.5 s
+lifespan. The Incarnon form's bounces and the charged alternate fire are still
+unmodelled.
 
-**WHAT HAS TO BE READ BEFORE IT IS BUILT**, one session on a Simulacrum target,
+**WHAT THE SESSION SETTLES**, and each answer that differs moves a rule above, one session on a Simulacrum target,
 damage numbers on, unmodded but for multishot:
 
 1. **The count.** Base form, multishot 1.0 / 1.6 / 2.0 / 2.4: how many stacks

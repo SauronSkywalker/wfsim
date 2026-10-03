@@ -303,7 +303,7 @@ named and nothing else, so they can be scheduled independently.
 | **Duplex trigger** | Zylok ×2 | Two rounds per press+release. Its own trigger family (the Burston precedent: Burst is not Semi-Auto). The Incarnon form is Charge instead, so Precision's Payoff ("burst headshots") is base-form only — the wiki says so outright. |
 | **Per-round reload** | Strun ×4 (and Felarx) | `ReloadStyle = ByRound`: the magazine refills a shell at a time and can be interrupted. |
 | **Sniper combo + zoom tiers** | Vectis ×2 | Already scoped in WEAPON_INTAKE §Batch C, with the formula and the zoom-buff rule. |
-| **Stug's blob economy** | Stug | Five attacks, all AoE: charged blobs that embed, explode, and a bounce explosion on top. Nothing in the roster resembles it; leave it last. |
+| **Stug's bounce explosions** | Stug | The blob economy is built (MECHANICS §7.3); the Incarnon form's bounce explosions and the charged alternate fire are what is left. |
 
 Also new but small: Gorgon's Incarnon form uses an **`Auto Charge`** trigger
 (hold to charge, repeats), which is not one of the five triggers the engine

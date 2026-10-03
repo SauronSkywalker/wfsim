@@ -45,6 +45,8 @@ pub(super) struct Fight {
     pub(super) orbs: Vec<OrbState>,
     /// …AND SPECTRAL DAGGERS on their way to a body (`fight::daggers`).
     pub(super) daggers: Vec<DaggerState>,
+    /// …AND BLOBS embedded in a body, waiting to go off (`fight::blobs`).
+    pub(super) blobs: Vec<BlobPile>,
     /// What the fight LEFT STANDING — the fight's, not any one shooter's.
     pub(super) ghost_pile: Ghosts,
     /// WHERE EVERYTHING STANDS, constant for the engagement. In the world
@@ -491,6 +493,7 @@ pub(super) fn open<'a>(
     // detonate where they have got to.
     let orbs: Vec<OrbState> = Vec::new();
     let daggers: Vec<DaggerState> = Vec::new();
+    let blobs: Vec<BlobPile> = Vec::new();
     let field_ctx = FieldCtx::default();
 
     // The form whose panel SPAWNED the fields. Only one form of a transform
@@ -673,6 +676,7 @@ pub(super) fn open<'a>(
             fields,
             orbs,
             daggers,
+            blobs,
             ghost_pile,
             body_at,
             area_near,

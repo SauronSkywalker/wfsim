@@ -15,9 +15,15 @@ transforms_to: stug_incarnon
 
 # see notes: bulk_intake_stats_are_2
 unmodeled:
-  - "the blob economy is not modelled — a shot EMBEDS and only explodes after a delay or at max stacks, and the sim fires the embed as an ordinary hit"
   - "the Incarnon form's bouncing secondary projectiles are not modelled — a stacked shot releases 2 to 5 of them, each exploding on up to 3 bounces"
-  - "the Blob Explosion is not modelled — this entry carries only the Blob Embed"
+  - "the charged alternate fire is not modelled — a full 10-stack blob over 2 seconds, for 10 ammo"
+  - "unmeasured: how many stacks a shot lays — read as floor(multishot), the count the Grimoire's multishot buys; a roll on the fraction would lay more"
+  - reason: blob_over_cap
+    cap: 10
+  - reason: blob_crossing_cap
+    cap: 10
+  - "unmeasured: the explosion's falloff is read as 70%, the page's bug note, over the 30% its table lists"
+  - "unmeasured: a pile is read as staying where its body stood when that body dies, going off on whoever stands there"
 accuracy: 100
 disposition: 1.48
 polarities: [vazarin]
@@ -55,6 +61,22 @@ attack:
   status_chance: 0.1
   punch_through_m: 0.0
   damage: { corrosive: 4 }   # total 4
+  # THE BLOB ECONOMY — docs/MECHANICS.md §7.3, M109. Verbatim (wiki Stug):
+  # "After reaching 10 stacks or the lifespan running out, the blob will
+  # detonate and deal 75 - 750 damage in a 0.3 - 2.8 meter radius, scaling
+  # with the number of stacks." — so one stack is the module's Blob Explosion.
+  blob:
+    cap: 10
+    lifespan_seconds: 1.5            # "with a lifespan of 1.5 seconds"
+    radius_at_cap_m: 2.8
+    explosion:
+      damage: { corrosive: 75 }
+      radius_m: 0.3
+      falloff_start_m: 0
+      # THE PAGE'S BUG NOTE, not its table: "Despite the UI listing the weapon's
+      # radial damage falloff as only 30% (dealing 100% - 70% damage over its
+      # range), it is actually 70% (dealing 100% - 30% damage over its range)".
+      falloff_reduction: 0.7
 
 # incarnon_evolutions: definitions live in data/evolutions/stug_*.yaml.
 

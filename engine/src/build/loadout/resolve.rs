@@ -1193,6 +1193,14 @@ pub fn resolve_for(
         last_round_factor: 1.0 + last_round_damage,
         crit_per_kill: grenade_crit_per_kill.map(|(v, cap)| (v, cap, grenade_crit_loss)),
     });
+    // THE BLOB, the same buckets. Its stacks are the fight's: a multishot buff
+    // that arrives mid-fight lays more of them (`fight::resolve`).
+    let blob = base.blob.as_ref().map(|b| crate::build::loadout::ResolvedBlob {
+        cap: b.cap,
+        lifespan_seconds: b.lifespan_seconds,
+        explosion: a_resolved(&b.explosion),
+        radius_at_cap_m: b.radius_at_cap_m * if b.explosion.takes_blast_radius_mods { 1.0 + br } else { 1.0 },
+    });
 
     // The lingering FIELD (Torid's Toxin cloud): its own base vector, crit and
     // status stats, through the SAME mod buckets — three patch notes settle
@@ -1435,6 +1443,7 @@ pub fn resolve_for(
         radial,
         cluster,
         reload_grenade,
+        blob,
         spread,
         falloff,
         lingering,

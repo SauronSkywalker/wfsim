@@ -21,7 +21,7 @@
 // important paragraph in English on a Chinese page.
 import { openApp } from "./cdp.mjs";
 
-const app = await openApp({ boot: 12000 });
+const app = await openApp({ boot: 12000, base: process.env.WFSIM_BASE });
 const { evaluate, check, send, sleep, BASE } = app;
 
 for (const lang of ["en", "zh"]) {
@@ -69,10 +69,11 @@ for (const lang of ["en", "zh"]) {
     const out = { lang: ${JSON.stringify(lang)} };
 
     // 1. THE WEAPON BANNER. The Stug is the roster's most-disclaimed weapon:
-    //    a blob economy, an unmodelled explosion, bouncing secondaries.
+    //    bouncing secondaries and a charged shot nothing fires.
     out.banner = (document.querySelector('.unmod-h') || {}).textContent || '';
     out.bannerLines = [...document.querySelectorAll('.unmod-l')].map(e => e.textContent.trim());
-    out.weaponGaps = (weaponInfo($('weapon').value).unmodeled || []).length;
+    // DISTINCT GAPS — a gap both forms admit is one line on the banner.
+    out.weaponGaps = new Set(gapsOf(weaponInfo($('weapon').value)).map(trGap)).size;
     // …AND THE STUG HAS NO LIVE BUG, which is the negative control for the
     // block below: a banner that appeared on every weapon would tell nobody
     // anything.

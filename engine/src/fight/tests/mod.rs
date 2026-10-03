@@ -3,6 +3,7 @@
 
 use super::*;
 
+mod blobs;
 mod combatant_attribution;
 mod two_seats;
 mod attrition_times_co;
@@ -72,6 +73,7 @@ impl Default for FightParams {
             radial: None,
             cluster: None,
             reload_grenade: None,
+            blob: None,
             // POINT BLANK, and no falloff to notice it with — every golden
             // value in this file was measured with the two of them standing on
             // the same spot, so the fixture keeps them there.

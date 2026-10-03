@@ -121,6 +121,7 @@ fn dual_toxocyst_baseline() -> FightParams {
         radial: None,
         cluster: None,
         reload_grenade: None,
+        blob: None,
         lingering: None,
         continuous: false,
         field_duration_on_empty_reload: 1.0,

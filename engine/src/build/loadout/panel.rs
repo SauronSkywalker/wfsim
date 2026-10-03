@@ -229,6 +229,28 @@ pub struct ResolvedReloadGrenade {
     pub crit_per_kill: Option<(f64, f64, f64)>,
 }
 
+/// THE BLOB ECONOMY through the mod buckets — see [`crate::model::BlobBase`].
+#[derive(Debug, Clone, Copy)]
+pub struct ResolvedBlob {
+    pub cap: u32,
+    pub lifespan_seconds: f64,
+    /// One stack's explosion, modded, at the one-stack radius.
+    pub explosion: ResolvedRadial,
+    /// A full pile's radius, after the blast-radius bucket.
+    pub radius_at_cap_m: f64,
+}
+
+impl ResolvedBlob {
+    /// HOW FAR A PILE OF `stacks` REACHES — linear from one stack to `cap`.
+    pub fn radius_at(&self, stacks: u32) -> f64 {
+        if self.cap <= 1 {
+            return self.radius_at_cap_m;
+        }
+        let k = (stacks.clamp(1, self.cap) - 1) as f64 / (self.cap - 1) as f64;
+        self.explosion.radius_m + (self.radius_at_cap_m - self.explosion.radius_m) * k
+    }
+}
+
 impl ResolvedRadial {
     /// The share the CO term reads, for a reader — the damage path takes the
     /// pair in [`Self::co_base`] instead.
@@ -310,6 +332,8 @@ pub struct ResolvedPanel {
     pub cluster: Option<ResolvedCluster>,
     /// The resolved reload grenades, when a reload from empty throws any.
     pub reload_grenade: Option<ResolvedReloadGrenade>,
+    /// The resolved blob, when every shot embeds one.
+    pub blob: Option<ResolvedBlob>,
     /// THE CONE, accuracy mods applied. A zero-width one lands on the reticle;
     /// `None` = this entry's spread is not transcribed, so no shot of it is
     /// allowed to miss and the entry admits that.

@@ -157,6 +157,16 @@ pub struct ReloadGrenadeBase {
     pub contact_co: Option<crate::model::CoBehavior>,
 }
 
+/// THE BLOB ECONOMY — see [`crate::data::weapons::BlobSpec`].
+#[derive(Debug, Clone)]
+pub struct BlobBase {
+    pub cap: u32,
+    pub lifespan_seconds: f64,
+    /// One stack's explosion, at the one-stack radius.
+    pub explosion: RadialBase,
+    pub radius_at_cap_m: f64,
+}
+
 /// One throw's grenade, the bomblet's shape.
 #[derive(Debug, Clone)]
 pub struct GrenadeThrowBase {

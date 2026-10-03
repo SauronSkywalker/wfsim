@@ -419,6 +419,7 @@ pub fn run_once_traced(
         mut fields,
         mut orbs,
         mut daggers,
+        mut blobs,
         mut ghost_pile,
         body_at,
         area_near,
@@ -679,6 +680,7 @@ pub fn run_once_traced(
             ms_damage,
             n_pellets,
             mut beam_merge,
+            blob_stacks,
         } = resolve_the_shot(
             me.params,
             active,
@@ -858,6 +860,15 @@ pub fn run_once_traced(
             me.params, me.params, &me.field_ctx, &mut r, rec, d, &mut bodies,
             &mut me.dagger_kill_mark, &mut me.influence_until,
         );
+        // …AND THIS SEAT'S BLOBS whose lifespan ran out before this shot.
+        {
+            let mut mine = owned_by(&mut blobs, me.seat, |p| p.owner);
+            process_blobs(
+                &me.windows, &mut mine, &mut me.gal, &mut me.arc, t,
+                me.params, active, &me.field_ctx, &mut r, rec, d, &mut bodies,
+            );
+            blobs.append(&mut mine);
+        }
         // Secondary Encumber: at most ONE extra proc per instant — pellets
         // of one pull land simultaneously, so one roll per pull.
         let mut encumber_done = false;
@@ -975,6 +986,17 @@ pub fn run_once_traced(
             };
             for pellet_idx in 0..n_pellets {
                 settle_pellet(pellet_idx, &shot, &mut live);
+            }
+        }
+
+        // THE BLOB EMBEDS in the body the shot struck, and a pile this shot
+        // takes to its cap goes off now (`fight::blobs`).
+        if let Some(part) = active.blob.filter(|_| landed_this_shot) {
+            if let Some(pile) = embed_blob(&mut blobs, part, me.seat, 0, blob_stacks, t) {
+                detonate_blob(
+                    &me.windows, pile, t, &mut me.gal, &mut me.arc,
+                    me.params, active, &me.field_ctx, &mut r, rec, d, &mut bodies,
+                );
             }
         }
 
@@ -1124,6 +1146,20 @@ pub fn run_once_traced(
                 me.params, active, &mut r, rec, &mut me.d, &mut bodies,
             );
         }
+    }
+    // A PILE WHOSE LIFESPAN RUNS OUT INSIDE THE ENGAGEMENT goes off; one that
+    // would go off after it never does.
+    for (si, me) in seats.iter_mut().enumerate() {
+        let active = match &me.params.cycle {
+            Some(cy) if me.incarnon.in_base_form => &cy.base_form,
+            _ => me.params,
+        };
+        let mut mine = owned_by(&mut blobs, Seat(si), |p| p.owner);
+        process_blobs(
+            &me.windows, &mut mine, &mut me.gal, &mut me.arc, end,
+            params, active, &me.field_ctx, &mut r, rec, &mut me.d, &mut bodies,
+        );
+        blobs.append(&mut mine);
     }
     for (si, me) in seats.iter_mut().enumerate() {
         let mut mine = owned_by(&mut orbs, Seat(si), |o| o.owner);
