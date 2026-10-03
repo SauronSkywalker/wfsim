@@ -12,7 +12,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 | --- | --- | --- | ---: | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 22.0283 | Contamination Casing, Hypothermic Shell, Primed Combustion Rounds, Primed Dual Rounds, Primed Rubedo-Lined Barrel, Primed Ammo Chain, Hollowed Bullets, Magnetized Cycle, Primary Deadhead, Secondary Enervate |
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 183.2883 | Contamination Casing, Hypothermic Shell, Primed Combustion Rounds, Primed Dual Rounds, Primed Rubedo-Lined Barrel, Sabot Rounds, Hollowed Bullets, Magnetized Cycle, Primary Crux, Secondary Enervate |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 4.6754 | Contamination Casing, Hypothermic Shell, Primed Combustion Rounds, Magma Chamber, Primed Dual Rounds, Primed Rubedo-Lined Barrel, Hollowed Bullets, Magnetized Cycle, Primary Crux, Secondary Enervate |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 5.3042 | Contamination Casing, Hypothermic Shell, Primed Combustion Rounds, Magma Chamber, Primed Dual Rounds, Primed Rubedo-Lined Barrel, Containment Breach, Hollowed Bullets, Primary Crux, Secondary Enervate |
 
 ## Not modelled here
 
