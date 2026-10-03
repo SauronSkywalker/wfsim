@@ -75,6 +75,6 @@ unmodeled:
   - reason: sniper_combo_miss
     seconds: 2
   - reason: zoom_steps
-  - "The barb's 0.9 s eruption delay is not modelled: the explosion arrives with the shot, so a short engagement gets its damage early."
+  - "The barb's 0.9 s eruption delay is not modelled: the explosion arrives with the shot, so a short fight gets its damage early."
 source:
   url: https://wiki.warframe.com/w/Coda_Sporothrix

@@ -183,12 +183,12 @@ function modeExplain(w, id) {
     } else {
       // "IT NEVER TRANSFORMS" IS ONLY WORTH SAYING WHERE IT COULD BE.
       out.push(forms.some((x) => x.gauge_switched)
-        ? trF("Fired in its {form} for the whole engagement — it never transforms.",
+        ? trF("Fired in its {form} for the whole fight — it never transforms.",
           { form: firedForm(def) })
-        : trF("Fired in its {form} for the whole engagement.", { form: firedForm(def) }));
+        : trF("Fired in its {form} for the whole fight.", { form: firedForm(def) }));
     }
   } else if (id === "alternate") {
-    out.push(trF("Fired in its {form} for the whole engagement.", { form: firedForm(alt) }));
+    out.push(trF("Fired in its {form} for the whole fight.", { form: firedForm(alt) }));
   } else if (id === "transformed") {
     // THE ONE CONSTRAINT THAT IS NOT TRUE OF ITS NEIGHBOURS stays, because it
     // is the only mode here you cannot actually play: it exists so a form's own
@@ -204,7 +204,7 @@ function modeExplain(w, id) {
     // A GUN WHOSE MODE IS A FORM has no combo to state, so its trigger is what
     // there is to say — this arm may not REQUIRE a combo.
     out.push(...(lines.length ? lines
-      : [trF("Fired in its {form} for the whole engagement.", { form: firedForm(f) })]));
+      : [trF("Fired in its {form} for the whole fight.", { form: firedForm(f) })]));
   } else if (isCycleMode(id) && earned) {
     const g = earned.gauge || {};
     // WHICH FORM FILLS THE GAUGE is all one cycle has that the other does not.

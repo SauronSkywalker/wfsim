@@ -378,7 +378,7 @@ function replayMarkup(r) {
     : "";
   const curves =
     (rows
-      ? foldBlock("buffs", tr("Buff coverage"), tr("live stacks through the engagement"),
+      ? foldBlock("buffs", tr("Buff coverage"), tr("live stacks through the fight"),
           seatChips(rp, aSeat) + rows)
       : "")
     + (dRows

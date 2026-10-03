@@ -43,7 +43,7 @@ effect:
   kind: ammo_efficiency
 
 unmodelled:
-  - "Its Energy cost is not modelled: 50 Energy for 5 s at 100% Ability Duration, and this arena has no energy economy. Set the duration to what your build keeps up."
+  - "Its Energy cost is not modelled: 50 Energy for 5 s at 100% Ability Duration, and this fight has no energy economy. Set the duration to what your build keeps up."
   - "Its reserve refill adds nothing here: reserves are infinite by default. Its effect on how often you reload is modelled."
 
 source:

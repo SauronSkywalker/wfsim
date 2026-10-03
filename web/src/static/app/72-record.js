@@ -59,7 +59,7 @@ function recordIdle() {
   if (recWinOpen()) {
     return `<div class="rec-idle">
       <button class="ghost-btn small" id="rec-load">${escHtml(tr("Read the record"))}</button>
-      <span class="sim-hint">${escHtml(tr("re-runs this engagement to list every damage instance"))}</span>
+      <span class="sim-hint">${escHtml(tr("re-runs this fight to list every damage instance"))}</span>
     </div>`;
   }
   // THE SAME id, because it is the same act — the label says which half of it
@@ -457,7 +457,7 @@ function recordBody(st, peek) {
       </tr></thead>
       <tbody>${few.map((e) => recordRow(e, st.rosters || {})).join("")}</tbody>
     </table></div>
-    <div class="rec-peek-n">${escHtml(tr("{a} of the {b} numbers this engagement popped")
+    <div class="rec-peek-n">${escHtml(tr("{a} of the {b} numbers this fight popped")
       .replace("{a}", String(few.length)).replace("{b}", n(dmg)))}</div>`;
   }
   // THE SLICE THIS STREAM ACTUALLY COVERS: where it was asked to start, and
@@ -747,7 +747,7 @@ function actorSheet(who) {
       <td class="num">${c.n ? pc(c.crits / c.n) : "—"}</td>
     </tr>`).join("") || `<tr><td colspan="6" class="ac-none">${escHtml(tr("nothing in this window"))}</td></tr>`}</tbody></table>
     <p class="ac-n">${escHtml(trF(
-      "{n} rows of this engagement's own ledger — every figure above is their sum, and each one opens",
+      "{n} rows of this fight's own ledger — every figure above is their sum, and each one opens",
       { n: n0(mine.length) }))}${
       // THE SLICE, AND ONLY WHERE THERE IS ONE. `st.to` is the window that was
       // ASKED for and is unset on a full read, so printing it unconditionally

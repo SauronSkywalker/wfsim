@@ -13,7 +13,7 @@ effects:
   - id: melee_crit_damage
     text: "Melee Critical Damage"
     kind: out_of_scope
-    applies_to: no melee in this arena
+    applies_to: "no melee in this fight"
     value: 0.25
     unit: pct
     tauforged: 0.375

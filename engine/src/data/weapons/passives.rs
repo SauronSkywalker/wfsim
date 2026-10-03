@@ -130,7 +130,7 @@ pub fn passive_lines(weapon: &str) -> Vec<String> {
         // magnification has nothing to be about.
         out.push(match z.magnification {
             Some(magnification) => format!(
-                "Its scope's top zoom ({magnification:.1}x) grants +{:.0}% {granted} while aiming. This arena has no field of view to trade for magnification, so the scope is always at that level.",
+                "Its scope's top zoom ({magnification:.1}x) grants +{:.0}% {granted} while aiming. This fight has no field of view to trade for magnification, so the scope is always at that level.",
                 fraction * 100.0
             ),
             None => format!(

@@ -202,7 +202,7 @@ ui:
   "no stance in the slot: stanceless combos are not modelled yet — equip a stance, or play heavy attacks, slide attacks or heavy slams": 架势槽是空的：无架势连段尚未建模——请装上一张架势，或改用重击、滑行攻击或重击震地
   "this stance publishes no timing for this combo, so it is not modelled — pick another combo or another stance": 这张架势的这个连段没有公布时长，所以未建模——请换一个连段或换一张架势
   "THE DAMAGE IS HYSTERIA'S AT 100% ABILITY STRENGTH. Every swing, slide and slam number on the page carries the Strength icon, so a Valkyr build with more strength deals proportionally more than this reports": "**伤害来自 Hysteria，按 100% 技能强度计**。技能页上每个挥砍、滑行和捶地数值都带强度图标，所以强度更高的 Valkyr 配装实际伤害会按比例高于此处"
-  "Hysteria drains 5 Energy a second while the claws are out; Energy is not modelled, so they stay out for the whole engagement.": "Hysteria 开着利爪时每秒消耗 5 点能量；能量未建模，所以利爪全程保持。"
+  "Hysteria drains 5 Energy a second while the claws are out; Energy is not modelled, so they stay out for the whole fight.": "Hysteria 开着利爪时每秒消耗 5 点能量；能量未建模，所以利爪全程保持。"
   "RAGE, Valkyr's passive — +3% melee damage per hit and +12% per kill, up to +300%, additive with Pressure Point — is a Warframe passive and is not modelled, so a Valkyr build reads LOW here": "Rage（Valkyr 被动：每次命中 +3% 近战伤害、每次击杀 +12%，最高 +300%，与 Pressure Point 相加）是战甲被动，未建模，所以 Valkyr 配装在这里读数偏低"
   "Every hit restores 100 health; nothing damages the Tenno here, so it adds nothing.": "每次命中回复 100 生命；这里没有东西会伤害 Tenno，所以不产生收益。"
   "The 5% Movement Speed bonus while held: nobody moves here.": "持握时 5% 移动速度加成：这里没有人移动。"
@@ -319,7 +319,7 @@ ui:
   "could not follow that one — try the run again": 跟踪失败，重跑一次试试
   ", ": "、"
   "1 · Enemy": 1 · 敌人
-  "1 · The fight": 1 · 这场仗
+  "1 · The fight": 1 · 这场战斗
   "2 · External bonuses": 2 · 外部加成
   "3 · Buffs": 3 · 增益
   "3 · Limits": 3 · 限制
@@ -330,7 +330,7 @@ ui:
   "7 · Measure": 7 · 指标
   "7 · Simulation": 7 · 模拟
   "3 kills within 2 s of each other summon the second gun": 2 秒内连续 3 次击杀，召唤出第二把枪
-  "3 kills, each within 2 s of the last, summon a second copy of this weapon for 6 s: magazine ×2 and fire rate ×1.4. This is simulated, and a kill while it is up does not refresh it — a fight whose bodies take longer than 2 s each never sees it at all.": 连续 3 次击杀、每次都在上一次击杀后 2 秒内，会召唤出第二把同样的武器，持续 6 秒：弹匣 ×2、射速 ×1.4。这一条有建模；第二把枪在场期间的击杀不会刷新它——一场每个目标都要打满 2 秒以上才死的仗，永远也不会看到它。
+  "3 kills, each within 2 s of the last, summon a second copy of this weapon for 6 s: magazine ×2 and fire rate ×1.4. This is simulated, and a kill while it is up does not refresh it — a fight whose bodies take longer than 2 s each never sees it at all.": 连续 3 次击杀、每次都在上一次击杀后 2 秒内，会召唤出第二把同样的武器，持续 6 秒：弹匣 ×2、射速 ×1.4。这一条有建模；第二把枪在场期间的击杀不会刷新它——一场每个目标都要打满 2 秒以上才死的战斗，永远也不会看到它。
   "A headshot spawns six homing spores that explode in 3.3 m each, plus a further explosion (module). The engine has no hit that spawns projectiles, so none is counted, and in a headshot-heavy fight the number reads several times low.": "爆头会生成六颗追踪孢子，各自在 3.3 米内爆炸，爆头本身还有一次额外爆炸（模块）。引擎没有「命中生成弹体」，所以都未计入；以爆头为主的战斗中数字会偏低好几倍。"
   "A Status Effect has a 15% chance to SET the next hit's crit chance to 300% — ignoring every other crit bonus. Rolled per pellet.": 异常状态有 15% 几率把下一次命中的暴击率设定为 300%——无视其他一切暴击加成。逐弹丸判定。
   "A body that dies respawns where it stood, so the arrangement is the same at the end as at the start and the score is a rate rather than a race to the last body.": 死掉的目标在原地重生，所以阵型从头到尾一样，分数是一个速率而不是清空最后一个的竞速。
@@ -446,7 +446,7 @@ ui:
   "Drain": 消耗
   "Duration (s)": 时长（秒）
   "Each pellet adds 2 to the melee combo count, up to 28 a shot, and on Kullervo it adds 7 s of combo duration (wiki). There is no melee weapon here, so none of this applies.": "每颗弹丸给近战连击数 +2，单发上限 28；装在 Kullervo 身上还会给近战 +7 秒连击持续时间（wiki）。这里没有近战武器，所以都不适用。"
-  "Equipping it also takes the melee slot, so a Vinquibus loadout has no melee weapon; the arena has no melee to give up.": "装备它会同时占用近战槽位，所以带 Vinquibus 的配置没有近战武器；本场本来就没有近战。"
+  "Equipping it also takes the melee slot, so a Vinquibus loadout has no melee weapon; this fight has no melee to give up.": "装备它会同时占用近战槽位，所以带 Vinquibus 的配置没有近战武器；本场本来就没有近战。"
   "Each way costs an animation — {in}s in, {out}s out, both scaled by reload speed.": 两个方向各有一段动作 —— 进入 {in} 秒、退出 {out} 秒，都会被装填速度缩放。
   "Effective Fire Rate": 实际射速
   "Efficient Beams, the Convectrix-exclusive mod — a weapon-exclusive card outside the pools this roster loads": "「Efficient Beams」，Convectrix 的专属 MOD——这是一张武器专属卡，不在本武器库载入的卡池里"
@@ -566,7 +566,7 @@ ui:
   "descended from {n} starts, but the time budget ran out before every one settled — a strong build, short of the best those starts reach": 从 {n} 个起点出发下降，但时间预算在全部收敛前用完了 —— 这是一套强配置，但还不是这些起点能到达的最优
   "Fire Rate": 射速
   "Fire {base} until the gauge fills, spend it in {other}, come back — and again.": 用{base}打到充能条满，切到{other}把它花掉，再切回来 —— 如此往复。
-  "Fired in its {form} for the whole engagement.": 整场交战都用{form}射击。
+  "Fired in its {form} for the whole fight.": "整场战斗都用{form}射击。"
   "First magazine": 第一个弹匣
   "Flux Overdrive, the Flux Rifle family's exclusive mod — a weapon-exclusive card outside the pools this roster loads": "「Flux Overdrive」，Flux Rifle 家族的专属 MOD——这是一张武器专属卡，不在本武器库载入的卡池里"
   "Focused Acceleration and Kinetic Ricochet, the Tetra family's exclusive mods — weapon-exclusive cards outside the pools this roster loads": "「Focused Acceleration」与「动能跳弹」，Tetra 家族的专属 MOD——这是武器专属卡，不在本武器库载入的卡池里"
@@ -621,7 +621,7 @@ ui:
   "One attack input's animation length is unpublished: the wiki gives each combo's total at 1.0x attack speed, so totals are exact and inputs are split evenly. This shifts a status tick by fractions of a second and changes no total.": "单次攻击输入的动作长度没有公开：wiki 给出每套连段在 1.0x 攻速下的总时长，所以总时长精确，各次输入平均分配。这只会让异况跳伤的时间偏移零点几秒，不影响总量。"
   "Power Spike's partial combo decay is a Warframe passive and is not modelled: the counter drops to zero when its timer runs out, so with that passive the number reads low.": "Power Spike 的连击部分衰减是战甲被动，未建模：计时结束时计数直接归零，所以带这个被动时数字偏低。"
   "attack speed shortens this mode's whole cadence, and in game it should not: the 1.2s heavy wind-up is fixed and only the interval BETWEEN heavy attacks is shortened. The swing delay here is one number covering both, so an attack-speed build reads HIGH in this mode": 攻速在这里缩短了整个循环，而游戏里不该如此：1.2 秒的重击蓄力是固定的，被缩短的只是两次重击**之间**的间隔。此处的出手间隔是一个数字同时代表了这两者，所以攻速流派在这个模式下读数偏高
-  "The climb is not timed: this loop takes the 150% radius of a slam dropped from 15 m and spends no time getting up there. A player who hops instead gets less radius, down to the 2.5 m / listed floor; the arena has no vertical axis to tell the two apart.": "爬升不计时间：这个循环吃的是从 15 米落下的 150% 半径，而爬上去不花时间。改成小跳的玩家半径更小，最低到 2.5 米或面板半径；本场没有垂直轴，分不出这两者。"
+  "The climb is not timed: this loop takes the 150% radius of a slam dropped from 15 m and spends no time getting up there. A player who hops instead gets less radius, down to the 2.5 m / listed floor; this fight has no vertical axis to tell the two apart.": "爬升不计时间：这个循环吃的是从 15 米落下的 150% 半径，而爬上去不花时间。改成小跳的玩家半径更小，最低到 2.5 米或面板半径；本场没有垂直轴，分不出这两者。"
   "Condition Overload does not apply to slams, heavy slams or radial attacks (the mod's own words), and this entry does not yet exempt it — a build carrying Condition Overload therefore reads HIGH in this mode": 异况超量不作用于捶地、重击捶地和径向攻击（MOD 卡面原话），而本条目尚未做这个豁免——所以带异况超量的配装在这个模式下读数偏高
   "{n} of {m} builds": "{n} / {m} 个配装"
   "{n} swings coming to {total}% of base, over {secs}s at 1.0x attack speed.": 共 {n} 击，合计基伤的 {total}%，在 1.0x 攻速下耗时 {secs} 秒。
@@ -641,8 +641,8 @@ ui:
   "Its fire rate SPOOLS UP while the trigger is held — from 25% of the listed rate, full from the 4th shot. This is simulated, and it rebuilds after every reload.": 持续按住扳机时射速会往上爬——从标称射速的 25% 起步，到第 4发拉满。这条已经建模，每次换弹后重新爬。
   "Its fire rate SPOOLS UP while the trigger is held — from 25% of the listed rate, full from the 6th shot. This is simulated, and it rebuilds after every reload.": 持续按住扳机时射速会往上爬——从标称射速的 25% 起步，到第 6发拉满。这条已经建模，每次换弹后重新爬。
   "Its innate headshot bonus MULTIPLIES the headshot bracket instead of joining it, so it compounds with Deadhead and Target Acquired rather than adding to them.": 它自带的爆头加成是乘在爆头加算区上，而不是并入其中——所以它与首领终结、锁定目标是相乘而非相加。
-  "Its scope's top zoom (4.5x) grants +50% headshot damage while aiming, additive with headshot mods. This arena has no field of view to trade for magnification, so the scope is always at that level.": 它瞄准镜的最高倍率（4.5x）在瞄准时提供 +50% 爆头伤害，与爆头 MOD 加算。这个战场没有视野概念，倍率不需要用视野去换，所以瞄准镜始终停在这一档。
-  "Its scope's top zoom (6.0x) grants +60% headshot damage while aiming, additive with headshot mods. This arena has no field of view to trade for magnification, so the scope is always at that level.": 它瞄准镜的最高倍率（6.0x）在瞄准时提供 +60% 爆头伤害，与爆头 MOD 加算。这个战场没有视野概念，倍率不需要用视野去换，所以瞄准镜始终停在这一档。
+  "Its scope's top zoom (4.5x) grants +50% headshot damage while aiming, additive with headshot mods. This fight has no field of view to trade for magnification, so the scope is always at that level.": "它瞄准镜的最高倍率（4.5x）在瞄准时提供 +50% 爆头伤害，与爆头 MOD 加算。这场战斗没有视野概念，倍率不需要用视野去换，所以瞄准镜始终停在这一档。"
+  "Its scope's top zoom (6.0x) grants +60% headshot damage while aiming, additive with headshot mods. This fight has no field of view to trade for magnification, so the scope is always at that level.": "它瞄准镜的最高倍率（6.0x）在瞄准时提供 +60% 爆头伤害，与爆头 MOD 加算。这场战斗没有视野概念，倍率不需要用视野去换，所以瞄准镜始终停在这一档。"
   "Join the Discord": 加入官方 Discord
   "Join the QQ group — 995078378": 加入 QQ 群 —— 995078378
   "KPM": KPM
@@ -820,11 +820,11 @@ ui:
   "Sustained DPS": 持续 DPS
   "Tau's status effect is not modelled. Tau's neutral damage is applied correctly, but its proc raises the status chance the target takes from every other source by 10% a stack, up to ten (wiki). With other statuses stacked, the number reads low.": "Tau 的异况效果未建模。Tau 对各类生命都是中性伤害，这一点处理正确；但它的触发效果会让目标受到的其他所有来源的触发几率每层 +10%，最多十层（wiki）。堆其他异况时数字偏低。"
   "Pressing reload again 22-38% into a reload cuts it to 1 s and loads Heat rounds with +25% damage and guaranteed status (wiki). It is a timed input the sim does not press, so every reload is the full 5 s with ordinary rounds, and the number reads well low.": "在换弹进行到 22%–38% 时再按一次换弹，换弹缩短到 1 秒，并装入 +25% 伤害、必定触发的火焰弹（wiki）。这是一个有时机的按键，模拟不会按，所以每次都是完整的 5 秒换弹和普通子弹，数字明显偏低。"
-  "The alt-fire is a finisher tool: it latches a mite onto up to 6 enemies, marking their heads for 5 s and dealing Impact and Magnetic damage each second for 10 s, and against an enemy open to a Mercy it teleports the player in. It is out of reach here: it needs a target within 25 m, its damage over time has no form in the engine, and the arena has no execution threshold. The catalog's row for it reads 'Does not apply'.": "副射击是处决工具：它会把寄生虫附在最多 6 个敌人身上，标记头部 5 秒，并在 10 秒内每秒造成冲击和磁力伤害；对可被慈悲处决的敌人，则把玩家传送过去。这里用不上：它需要 25 米内的目标，它的持续伤害在引擎里没有对应形式，本场也没有处决血线。目录给它的那一行写的是「Does not apply」。"
+  "The alt-fire is a finisher tool: it latches a mite onto up to 6 enemies, marking their heads for 5 s and dealing Impact and Magnetic damage each second for 10 s, and against an enemy open to a Mercy it teleports the player in. It is out of reach here: it needs a target within 25 m, its damage over time has no form in the engine, and this fight has no execution threshold. The catalog's row for it reads 'Does not apply'.": "副射击是处决工具：它会把寄生虫附在最多 6 个敌人身上，标记头部 5 秒，并在 10 秒内每秒造成冲击和磁力伤害；对可被慈悲处决的敌人，则把玩家传送过去。这里用不上：它需要 25 米内的目标，它的持续伤害在引擎里没有对应形式，本场也没有处决血线。目录给它的那一行写的是「Does not apply」。"
   "A cube that is shot explodes for 600 Blast in 6 m, four times this blast (wiki). The sim never shoots a cube, so the number reads low.": "被打中的方块会在 6 米内爆炸，造成 600 爆炸伤害，是这次爆炸的四倍（wiki）。模拟从不打方块，所以数字偏低。"
   "The grenade's damage scales with how full the magazine is (page), and this entry always fires the full-magazine grenade. Every later shot in a magazine reads high unless the rifle is reloaded first, which is how it is played.": "榴弹伤害与弹匣剩余比例成正比（页面），本条目每次都打满弹匣的那一发。一个弹匣里第一发之后的每一发都偏高，除非先换弹，而这正是它的实际用法。"
   "The explosion comes on the reload: rounds lodge in surfaces and explode in 1.5 m when reloading, up to 32 at a time (wiki). The engine's explosions go off on impact, so the 48 Blast a round is not counted, and against anything that survives a magazine the number reads low by about four fifths.": "爆炸发生在换弹时：子弹嵌在表面，换弹时在 1.5 米内爆炸，一次最多 32 发（wiki）。引擎的爆炸在命中时发生，所以每发 48 点爆炸伤害未计入；面对能扛过一个弹匣的目标，数字大约偏低五分之四。"
-  "The explosion is the whole weapon, and its radius is not modelled: the mine deals no contact damage, so this entry carries the blast as the shot's own damage. Against one target, as in the arena and on the boards, the number is exact; against a crowd it reads low.": "爆炸就是这把武器的全部，而它的半径未建模：地雷没有接触伤害，所以本条目把爆炸当作这一发自己的伤害。对单个目标（本场和榜单都是如此）数字是准确的；面对人群时偏低。"
+  "The explosion is the whole weapon, and its radius is not modelled: the mine deals no contact damage, so this entry carries the blast as the shot's own damage. Against one target, as in this fight and on the boards, the number is exact; against a crowd it reads low.": "爆炸就是这把武器的全部，而它的半径未建模：地雷没有接触伤害，所以本条目把爆炸当作这一发自己的伤害。对单个目标（本场和榜单都是如此）数字是准确的；面对人群时偏低。"
   "The innate Corrosive damage over time, 177 of each dart's 253, is dealt in 3 ticks of 59 over 2 s, per multishot pellet. The engine has no damage-over-time attack, so it is not counted, and against one target the number is about a third of the real one.": "自带的腐蚀持续伤害占每根飞镖 253 点中的 177 点，在 2 秒内分 3 跳、每跳 59 点，多重射击的每一发各自生成一份。引擎没有持续伤害类攻击，所以未计入；对单个目标，数字大约只有真实值的三分之一。"
   "The innate Corrosive damage over time, 81 of each dart's 130, ticks at 27, per multishot pellet. The engine has no damage-over-time attack, so it is not counted, and against one target the number is about a third of the real one.": "自带的腐蚀持续伤害占每根飞镖 130 点中的 81 点，每跳 27 点，多重射击的每一发各自生成一份。引擎没有持续伤害类攻击，所以未计入；对单个目标，数字大约只有真实值的三分之一。"
   "The pellet count spools up too, one more per consecutive shot (page); this entry fires the full count from the first shot. No fire-rate ramp is published either, so the rate is the settled one.": "弹丸数也会累积，每连续一发多一颗（页面）；本条目从第一发起就打满弹丸数。页面同样没有公布射速的爬升数据，所以射速也是稳定后的数值。"
@@ -840,14 +840,14 @@ ui:
   "Not offered here: Tether Grenades, Napalm Grenades and the launcher-exclusive Adhesive Blast. Tether Grenades turns each grenade into a vortex.": "这里不提供：Tether Grenades、Napalm Grenades 和发射器专属的 Adhesive Blast。Tether Grenades 会把每颗榴弹变成引力涡旋。"
   "The Vast Untime's +50% Void vulnerability, and its pause on this buff's timer, belong to another Xaku ability, which is not modelled.": "超维炼狱的 +50% 虚空易伤，以及它对本增益计时的暂停，属于 Xaku 的另一个技能，未建模。"
   "The account of one hit": 一发的账
-  "The fight": 这场仗
+  "The fight": 这场战斗
   "The grid is stated as three numbers rather than as 25 positions, so its terms can be read and argued with.": 方阵用三个数字描述而不是 25 个坐标，这样它的条款才读得懂、争得动。
   "The real Simulacrum Prime.": 真正的幻影装置 Prime。
   "The Tenno": 使用者
   "The score is kills per minute across the whole formation, counting the fraction of each target already gone.": 分数是整个阵型的每分钟击杀数，并计入每个目标已被削掉的比例。
   "The shooter stands at contact with the middle body of the front rank, and fires along the line that rank faces.": 射手贴身站在前排正中那个目标前，沿着该排面对的方向射击。
   "The target is a formation of 25 Thrax Centurions at level 9999 on Steel Path, a 5 by 5 grid spaced 3 metres centre to centre: the smallest odd square that holds every elemental area effect around the aimed body whole, a fully grown 6 m Gas cloud included. The fight lasts 180 seconds.": 目标是 25 个 9999 级钢铁之路凶魂百夫长组成的阵型，5×5 的方阵，圆心间隔 3 米：这是能把以被瞄准敌人为中心的所有元素范围效果完整装下的最小奇数方阵，叠满到 6 米的毒气云也在内。战斗持续 180 秒。
-  "A weapon's own explosion wider than about 6 m, and punch-through past five bodies, are clipped by the grid on purpose: a deeper column would rank the arena rather than the weapon.": 武器自身半径超过约 6 米的爆炸，以及超过 5 个的穿透，会被方阵有意截掉：更深的纵列排出来的是场地，而不是武器。
+  "A weapon's own explosion wider than about 6 m, and punch-through past five bodies, are clipped by the grid on purpose: a deeper column would rank the formation rather than the weapon.": "武器自身半径超过约 6 米的爆炸，以及超过 5 个的穿透，会被方阵有意截掉：更深的纵列排出来的是场地，而不是武器。"
   "There is no transition animation either way.": 两个方向都没有切换动作。
   "Thermagnetic Shells, the Detron family's exclusive mod — a weapon-exclusive card outside the pools this roster loads": "「热磁弹壳」，Detron 家族的专属 MOD——这是一张武器专属卡，不在本武器库载入的卡池里"
   "Time to first kill": 首杀耗时
@@ -1001,7 +1001,7 @@ ui:
   "download image": 下载图片
   "dropped": 丢弃
   "duplicate": 复制
-  "early access — every buff runs the whole engagement for now, and this block moves onto the Warframe itself once frames land": 抢先开放——目前每个增益都是全程生效，等战甲本体做进来以后这一块会搬到战甲上
+  "early access — every buff runs the whole fight for now, and this block moves onto the Warframe itself once frames land": "抢先开放——目前每个增益都是全程生效，等战甲本体做进来以后这一块会搬到战甲上"
   "edit a copy of this fight": 复制一份来编辑
   "edit in Builder": 去配装页编辑
   "edit in the Simulator": 去模拟器修改
@@ -1038,7 +1038,7 @@ ui:
   "how big the roll was, as a share of base damage — a Lich rolls it randomly and Valence Fusion raises it, capping at the number on the right": 这次roll出来多大，按基础伤害的比例算——Lich 随机给，效价融合可以往上提，上限就是右边那个数
   "how it is played — pool = searched, req = pin one": 怎么打 —— pool = 纳入搜索，req = 钉死一个
   "how many builds survive to the last round — each is then run at the final-round run count beside this": 有多少套配装能进最终轮 —— 每套都按旁边的最终轮次数跑
-  "how many simulations each finalist gets in the last round — blank uses the fight's own count, which is what the replay will use. A smaller number searches faster and is worth re-measuring in the simulator": 最终轮里每个优胜者跑多少次模拟 —— 留空就用这场仗自己的次数，也就是重放会用的那个。填小一点搜得更快，代价是优胜者值得再到模拟器里重测一遍
+  "how many simulations each finalist gets in the last round — blank uses the fight's own count, which is what the replay will use. A smaller number searches faster and is worth re-measuring in the simulator": 最终轮里每个优胜者跑多少次模拟 —— 留空就用这场战斗自己的次数，也就是重放会用的那个。填小一点搜得更快，代价是优胜者值得再到模拟器里重测一遍
   "how many simulations each option is averaged over — 10 is the floor, and more costs proportionally more time": 每个选项的数字是多少次模拟的平均 —— 最低 10 次，次数越多越慢，成正比
   "how many times to replay it, and what to read off — the optimizer's final round uses this count unless its own says otherwise": 重放多少次、读哪个数 —— 优化器的最终轮默认也用这个次数，除非它自己另外指定
   "how many times to replay this fight HERE. Not part of the scenario: it follows you across fights and weapons, and an official ruler does not pin it. The boards themselves are scored at 1,000 by the server whatever this says": 在这里把这场战斗重放多少次。它不属于场景：换战斗、换武器它都跟着你，官方标尺也不会把它锁住。榜单本身无论这里写多少，都是服务器按 1,000 次跑分的
@@ -1050,7 +1050,7 @@ ui:
   "ignored": 未生效
   "image copied": 图片已复制
   "imported": 已导入
-  "in the current fight": 当前这场仗用的就是它
+  "in the current fight": 当前这场战斗用的就是它
   "in this build": 仅当前配装
   inactive: 未在场
   "install the previous tier first": 需要先安装上一层
@@ -1073,7 +1073,7 @@ ui:
   "kills": 击杀
   "last tested": 上次测试于
   "link copied": 链接已复制
-  "live stacks through the engagement": 整场交战中的实时层数
+  "live stacks through the fight": "整场战斗中的实时层数"
   "Lock-on homes on the body, making headshots hard unless aiming upward (page), so a headshot rate set on the scenario is optimistic for this form.": "锁定会追踪身体，除非往上瞄，否则很难爆头（页面），所以场景里设定的爆头率对这个形态而言偏乐观。"
   "Lock-on marks several targets and sends a missile at each (wiki); the engine fires at the aimed body only, so against a crowd the number reads low by the number marked.": "锁定模式会标记多个目标，并向每个发射一枚导弹（wiki）；引擎只朝瞄准的目标开火，所以面对人群时数字偏低，偏低的倍数就是标记的数量。"
   "locked at the weapon's default by": 已锁定为武器默认值，来自
@@ -1114,9 +1114,8 @@ ui:
   "Max energy": 最大能量
   "Sprint": 冲刺
   "Wielder floor": 持械者保底
-  "The whole fight — every field, including the ones this weapon hides": 完整的一场仗 —— 全部字段，包括这把武器隐藏的那些
+  "The whole fight — every field, including the ones this weapon hides": 完整的一场战斗 —— 全部字段，包括这把武器隐藏的那些
   "The target": 目标
-  "The engagement": 交战
   "The wielder": 持械者
   "What the Warframe brings": 战甲带来的
   "not set — the default": 未设置 —— 用默认
@@ -1235,7 +1234,7 @@ ui:
   "read-only — it belongs to the simulator, which is where it is edited": 只读 —— 它属于模拟器，只在那里编辑
   "read-only — the fight's own, and every candidate is scored under them": 只读——这是战斗自己的设定，每一个候选配装都在它下面评分
   "read-only — the fight's own, and every candidate is scored with them": 只读——属于这场战斗，每个候选配装都带着它们计分
-  "read-only — the fight's own, applied to every candidate; a buff nobody set starts where it would in a fight": 只读 —— 用这场仗自己的设置，套到每个候选上；没人设过的 buff 就从它在战斗中该有的位置开始
+  "read-only — the fight's own, applied to every candidate; a buff nobody set starts where it would in a fight": 只读 —— 用这场战斗自己的设置，套到每个候选上；没人设过的 buff 就从它在战斗中该有的位置开始
   "real damage the simulator does not compute yet": 这是真实的伤害，只是模拟器还没有实现
   "red crit": 红色暴击
   "redo (Ctrl+Shift+Z)": 重做（Ctrl+Shift+Z）
@@ -1286,16 +1285,16 @@ ui:
   "Finishes": 收尾
   "a kill is the fight's and a finish is one seat's — without that split every seat claims them all": 击杀是整场的，收尾才是某一个座位的——不分开的话，每个座位都会声称杀了同样多
   "Damage by combatant": 按参战单位
-  "what each thing acting in this fight dealt": 这场仗里每一个会行动的单位各打出多少
+  "what each thing acting in this fight dealt": 这场战斗里每一个会行动的单位各打出多少
   "You": 你
   "who dealt it": 谁打的
   "the build is sent — the weapon, its mods, evolutions and arcanes. No account, no names and no score.": "发送的是配装——武器、MOD、进化和赋能。不含账号、名字和分数。"
   "turn automatic submission off": 关闭自动投稿
   "turn automatic submission on": 开启自动投稿
-  "{a} of the {b} numbers this engagement popped": "这一场弹出的 {b} 个数字里的 {a} 个"
+  "{a} of the {b} numbers this fight popped": "这一场弹出的 {b} 个数字里的 {a} 个"
   "The result": 结果
   "this build's output in this fight": "这套配装在这场战斗中的输出"
-  "averaged over {runs} engagements": "{runs} 次交战的平均"
+  "averaged over {runs} fights": "{runs} 场战斗的平均"
   "whole fight": 整场
   "Fight conditions": "战斗条件"
   "the conditions the result was measured under": "测出上面结果时的条件"
@@ -1304,16 +1303,16 @@ ui:
   "what it came from": "伤害来自"
   "rows": "行数"
   "biggest": "最大一次"
-  "another gun in this fight": "这场仗里的另一把枪"
+  "another gun in this fight": "这场战斗里的另一把枪"
   "the build this page is about": "这个页面说的那套配装"
   "nothing in this window": "这个窗口里什么都没有"
-  "{n} rows of this engagement's own ledger — every figure above is their sum, and each one opens": "这一场交战自己的账本里的 {n} 行——上面每个数都是它们加起来的，而且每一行都能展开"
+  "{n} rows of this fight's own ledger — every figure above is their sum, and each one opens": "这场战斗自己的账本里的 {n} 行——上面每个数都是它们加起来的，而且每一行都能展开"
   "on death": "死后"
   "replaced at once": "立刻补一具"
   "one gun": "就一把枪"
   "the floor — {n} on it, as the fight opened": "场地 —— 开打时站了 {n} 具"
   "the darker a body, the more damage it took": "颜色越深，承受的伤害越多"
-  "armour, resistances, overguard and every status pile are what this fight arrived at, not numbers typed in": 护甲、抗性、超宏防护和每一摞状态层，都是这场仗自己走到的，不是填进去的
+  "armour, resistances, overguard and every status pile are what this fight arrived at, not numbers typed in": 护甲、抗性、超宏防护和每一摞状态层，都是这场战斗自己走到的，不是填进去的
   "these are granted, not found: this engine models no movement, no survival and no missed shot you would have missed": 这些是直接给定的，不是算出来的：本引擎不模拟走位、不模拟生存，也不会替你打空一枪
   "what is not modelled ↗": 哪些东西没有建模 ↗
   "one body": 单体
@@ -1331,15 +1330,15 @@ ui:
   "quick melee": 快速近战
   "{n} abilities held up": "{n} 个技能常开"
   "{n} squad auras": "{n} 个小队光环"
-  "{runs} engagements · {secs}s each · {rolls} damage instances rolled, on your own machine": "{runs} 次交战 · 每次 {secs} 秒 · 共掷了 {rolls} 次伤害，全在你自己的机器上"
-  "One engagement": "单场交战"
-  "one engagement, following the playhead": "同一场交战，跟随播放头"
-  "this one engagement, at the playhead": 这一场，在播放头所在的时刻
-  "this engagement": 这一场
+  "{runs} fights · {secs}s each · {rolls} damage instances rolled, on your own machine": "{runs} 场战斗 · 每次 {secs} 秒 · 共掷了 {rolls} 次伤害，全在你自己的机器上"
+  "One fight": "单场战斗"
+  "one fight, following the playhead": "同一场战斗，跟随播放头"
+  "this one fight, at the playhead": "这一场，在播放头所在的时刻"
+  "this fight": "这一场"
   "What it was made of": 构成
   "four ways to cut one total — each of them comes to it": 一个总数的四种切法 —— 每一种加回去都等于它
   "where it came from": 从哪来的
-  "this engagement, one bucket a second": 这一场，每秒一格
+  "this fight, one bucket a second": "这一场，每秒一格"
   "Details": "详情"
   "every damage instance, each checkable against in-game footage": "每一次伤害结算，均可与游戏录像逐条核对"
   "Next": "接下来"
@@ -1409,7 +1408,7 @@ ui:
   "The lingering flames the grenades leave are not modelled: the page gives 11 s of damage but no per-tick figure. The number reads low.": "榴弹留下的持续火焰未建模：页面给出持续 11 秒，但没有每跳数值。数字偏低。"
   "the LOADOUT, not what the wielder is doing: off means a full one, which is what the board is scored under. On, this weapon is the only one carried — the Vasto's Lone Gun pays its \"With No Primary Equipped\" half, and every \"On Equip from Primary\" or \"while Holstered\" clause becomes impossible rather than merely unmodelled": 配装本身，而不是使用者在做什么：关闭时表示带着完整的一套武器，榜单也是按这个跑分的。开启后这把枪就是身上唯一的武器——瓦斯托的「孤枪」会付出它「未装备主武器时」的那一半，而所有「从主武器切换时」「收枪状态下」的词条则从「没做建模」变成「根本不可能触发」
   "Lower zoom levels are not modelled: the scope always sits at its top level and its best buff.": "较低的变焦档位未建模：瞄准镜始终在最高档，吃最好的加成。"
-  "A Mercy kill grants +100% damage and multishot for 20 s, refreshed on each Mercy, which doubles the weapon. The arena cannot perform a Mercy, so the number reads low.": "慈悲击杀会获得 20 秒 +100% 伤害与多重射击，每次慈悲都会刷新，相当于把武器翻倍。本场无法执行慈悲处决，所以数字偏低。"
+  "A Mercy kill grants +100% damage and multishot for 20 s, refreshed on each Mercy, which doubles the weapon. This fight cannot perform a Mercy, so the number reads low.": "慈悲击杀会获得 20 秒 +100% 伤害与多重射击，每次慈悲都会刷新，相当于把武器翻倍。本场无法执行慈悲处决，所以数字偏低。"
   "The Microwave status enlarges the body part that was shot (wiki). It deals no damage and has no entry in the engine; its effect is an aiming aid the sim does not use.": "微波异况会放大被击中的身体部位（wiki）。它本身不造成伤害，引擎里也没有对应条目；它的作用是瞄准辅助，模拟用不上。"
   "The partial charge is a separate entry; in game both are the same trigger released at different moments.": "半蓄力射击是一个独立条目；游戏里两者是同一个扳机在不同时刻松开。"
   "The pellet count spools from 1 to 12, and this entry fires 12 from the first shot. The fire-rate spool is modelled and the pellet spool is not, so a short burst reads high.": "弹丸数从 1 爬升到 12，本条目从第一发起就打 12 颗。射速爬升已建模，弹丸数爬升未建模，所以短点射数字偏高。"
@@ -1432,10 +1431,10 @@ ui:
   "The area damage can headshot, which the page marks as a bug; the sim applies headshots to the direct hit only, so the blast is never a headshot here.": "范围伤害可以爆头，页面把它标为 bug；模拟只对直击应用爆头，所以这里的爆炸不会算爆头。"
   "The arrow also throws appendages that grab enemies within 9 m and drag them in, dealing 90 damage each (module). The engine carries one explosion per attack, so neither the pull nor the damage is counted.": "这支箭还会甩出触手，抓住 9 米内的敌人并拖过来，每个造成 90 伤害（模块）。引擎每次攻击只带一次爆炸，所以拖拽和伤害都未计入。"
   "The atmospheric beam's infinite body punch through is not modelled; there is one target, with nothing behind it.": "大气形态光束自带的无限躯体穿透未建模；这里只有一个目标，后面没有东西。"
-  "The barb's 0.9 s eruption delay is not modelled: the explosion arrives with the shot, so a short engagement gets its damage early.": "倒刺 0.9 秒的爆发延迟未建模：爆炸与命中同时到达，所以短交战拿到伤害的时间偏早。"
+  "The barb's 0.9 s eruption delay is not modelled: the explosion arrives with the shot, so a short fight gets its damage early.": "倒刺 0.9 秒的爆发延迟未建模：爆炸与命中同时到达，所以短时间的战斗拿到伤害的时间偏早。"
   "The beacon exists to grant the primary fire +50% absolute critical chance and homing, which the engine cannot carry from one mode to another. On its own it is a three-damage dart.": "信标的作用是给主射击 +50% 绝对暴击率和追踪，而引擎无法把它们从一个模式带到另一个模式。单独使用时，它只是一根 3 点伤害的飞镖。"
   "the beam CHAINS to 2 more enemies within 9 m at 50% of the main beam's damage each — one target here, so it is worth exactly nothing (UNMODELLED.md §one target). It is the largest thing this weapon does in a room and the reason it was nerfed from 4 chains to 2": 光束会连锁到 9 米内另外 2 个敌人，各承受主光束 50% 的伤害 —— 这里只有一个目标，所以它的价值恰好为零（UNMODELLED.md §单目标）。这是这把武器在一个房间里最大的作用，也是它从 4 段连锁被削到 2 段的原因
-  "the beam's 29 m range and its pinpoint accuracy, which this arena has no distance to spend": 光束 29 米的射程和它的极高精度 —— 这个战场没有距离可以消耗它们
+  "the beam's 29 m range and its pinpoint accuracy, which this fight has no distance to spend": "光束 29 米的射程和它的极高精度 —— 这场战斗没有距离可以消耗它们"
   "The blades ricochet off surfaces (wiki); there are no walls here.": "锯片会从表面反弹（wiki）；这里没有墙。"
   "The charged alt-fire is not modelled: a full 10-stack blob over 2 s, for 10 ammo.": "蓄力副射击未建模：用 2 秒蓄出一团满 10 层的粘液，消耗 10 发弹药。"
   "Unpublished: how far an Incarnon pile's explosion grows with its stacks; every pile here goes off at the one-stack 0.3 m.": "未公开：灵化形态一堆粘液的爆炸范围随层数增长多少；这里每一堆都按 1 层的 0.3 米爆炸。"
@@ -1462,7 +1461,7 @@ ui:
   "The bubble holds what it catches until it collapses (wiki); crowd control, and enemies here neither move nor stop.": "气泡会困住抓到的东西直到坍缩（wiki）；这是控制效果，这里的敌人既不会移动也不会被定住。"
   "The bubbles explode 0.6-0.8 s after landing, which can let enemies leave the radius (page); here the blast resolves on impact, so nothing escapes.": "气泡在落地 0.6–0.8 秒后爆炸，敌人可能趁机离开范围（页面）；这里命中即结算，所以没有东西能躲开。"
   "the build and its rivens — no fight and no measurement, so opening it leaves the reader's own scenario untouched":
-    只有这套配装和它的裂罅 —— 不带战场，也不带测量结果，所以对方打开它，他自己的战场设置不会被动过。
+    只有这套配装和它的裂罅 —— 不带场景，也不带测量结果，所以对方打开它，他自己的场景设置不会被动过。
   "The burst can be cancelled with a quick melee to spend less than a full magazine; the sim never does.": "这轮连射可以用快速近战取消，从而不必打完整个弹匣；模拟从不这样做。"
   "The burst can be interrupted by a quick melee, a roll or a weapon swap; the sim does none of those, so it always runs to the end.": "这轮连射可以被快速近战、翻滚或换武器打断；模拟都不做，所以总是打完。"
   "The burst empties the magazine, and this entry fires a fixed 21 rounds, the unmodded magazine. Magazine mods make the real burst longer, so a build with one reads low.": "这轮连射会打空弹匣，本条目固定打 21 发，即未改装的弹匣。弹匣 MOD 会让真实连射更长，所以带这类 MOD 的配装数字偏低。"
@@ -1482,7 +1481,7 @@ ui:
   "The damage type rotation is averaged: the weapon deals 130 of one type at a time, cycling Impact, Puncture, Slash, and this entry splits it evenly. Total damage and status mix are exact; armour is not, because mitigation applies per instance.": "伤害类型轮换按平均计算：这把武器每次打 130 点单一类型，按冲击、穿刺、切割循环，本条目则平均分成三份。总伤害和异况比例是准确的；护甲减伤不准确，因为减伤按每次伤害分别计算。"
   "The damage type rotation is averaged: the weapon deals 160 of one type at a time, cycling Impact, Puncture, Slash, and this entry splits it evenly. Total damage and status mix are exact; armour is not, because mitigation applies per instance.": "伤害类型轮换按平均计算：这把武器每次打 160 点单一类型，按冲击、穿刺、切割循环，本条目则平均分成三份。总伤害和异况比例是准确的；护甲减伤不准确，因为减伤按每次伤害分别计算。"
   "A dart that pierces an enemy deals it only 1 tick of the damage over time (page); not modelled either.": "飞镖穿过的敌人只吃 1 跳持续伤害（页面）；同样未建模。"
-  "The dart's 1.5 s explosion delay is not modelled: the blast arrives with the dart, so a short engagement gets its damage early.": "飞镖 1.5 秒的爆炸延迟未建模：爆炸与飞镖同时到达，所以短交战拿到伤害的时间偏早。"
+  "The dart's 1.5 s explosion delay is not modelled: the blast arrives with the dart, so a short fight gets its damage early.": "飞镖 1.5 秒的爆炸延迟未建模：爆炸与飞镖同时到达，所以短时间的战斗拿到伤害的时间偏早。"
   "The discharge also strips Sentient and Shadow Stalker damage resistances; no target here has any.": "放电还会移除 Sentient 和暗影 Stalker 的伤害抗性；这里没有目标带有这种抗性。"
   "The duplex trigger is not modelled: one pull fires two rounds in game, and this entry paces one per pull.": "双发扳机未建模：游戏里扣一次发射两发，本条目按每次一发计算。"
   "the elite variant: more health, and a pool of Overguard in front of it": 精英变体：更高生命，且生命前面还有一层超宏防护
@@ -1501,8 +1500,8 @@ ui:
   "The fan has a 'very wide spread' (wiki) but the module gives a cone of zero; the module's figure is used, so every knife lands on the reticle here.": "扇形有「非常宽的散布」（wiki），但模块给的锥角是零；这里采用模块的数值，所以每把飞刀都落在准星上。"
   "The page lists as a bug that the field is disabled entirely against enemies with both shields and armor, or with Overguard. Against such a target the 2,250 above is zero.": "页面把这一条列为 bug：对同时有护盾和护甲、或带超宏防护的敌人，力场完全失效。对这样的目标，上面的 2250 是零。"
   "the fight these numbers are measured in — the quick calc runs the Simulator's own scenario, so switch it there and every chip follows": 这些数字是在哪场战斗里测出来的 —— 快速计算跑的就是模拟器当前的场景，去那边切换，每个标签都会跟着变
-  "the fight": "这场仗"
-  "the fight's": 跟随这场仗
+  "the fight": "这场战斗"
+  "the fight's": 跟随这场战斗
   "The first zoom's -50% recoil and +2 m punch through are not read here.": "第一档变焦的 −50% 后坐力和 +2 米穿透，这里不读取。"
   "The gauge also fills by blocking attacks, 10% a second for 2 s (wiki); nothing attacks the wielder here, so only the kill route is modelled.": "充能条也能靠格挡攻击填充，每秒 10%、持续 2 秒（wiki）；这里没有东西攻击使用者，所以只建模了击杀这条途径。"
   "The grenades are detonated by hand with the alt-fire, with no arming delay (wiki). The sim has no second trigger, so each grenade detonates on landing: the ceiling for a player who detonates at once. Laying several and detonating them together is not modelled.": "榴弹由副射击手动引爆，没有解除保险延迟（wiki）。模拟没有第二个扳机，所以每颗榴弹落地即爆，这是立即引爆的玩家能达到的上限。先布置多颗再一起引爆的打法未建模。"
@@ -1518,14 +1517,14 @@ ui:
   "Hip-fire recoil is not modelled; the page notes the burst kicks much harder from the hip, and the sim has no recoil.": "腰射后坐力未建模；页面指出腰射时连射的后坐力大得多，而模拟没有后坐力。"
   "The horizontal spread is not modelled; at zero distance all eight projectiles land.": "水平散布未建模；零距离时八发弹体全部命中。"
   "The in-game falloff display is wrong on this weapon (page): it shows 13-22 m, and full damage holds to about 28 m. The 26-52 m entered here is the module's and infobox's.": "这把武器在游戏里显示的衰减距离是错的（页面）：显示为 13–22 米，实际满伤害可以保持到约 28 米。这里录入的 26–52 米来自模块和信息框。"
-  "the innate INFINITE punch-through is not modelled — this arena has one target, and a wave that passes through a corridor of enemies is most of what this weapon is": 自带的无限穿透尚未建模 —— 这个战场只有一个目标，而一道波穿过整条走廊的敌人才是这把武器的大半价值
-  "the innate infinite body punch-through is not modelled — this arena has one target, so it changes no number, and it is why Dual-Mode Chamber's +4 m adds nothing either": 自带的无限躯干穿透尚未建模 —— 这个战场只有一个目标，所以它不改变任何数字，双模式弹膛的 +4 米穿透同样如此
+  "the innate INFINITE punch-through is not modelled — this fight has one target, and a wave that passes through a corridor of enemies is most of what this weapon is": "自带的无限穿透尚未建模 —— 这场战斗只有一个目标，而一道波穿过整条走廊的敌人才是这把武器的大半价值"
+  "the innate infinite body punch-through is not modelled — this fight has one target, so it changes no number, and it is why Dual-Mode Chamber's +4 m adds nothing either": "自带的无限躯干穿透尚未建模 —— 这场战斗只有一个目标，所以它不改变任何数字，双模式弹膛的 +4 米穿透同样如此"
   "Its innate punch through does not pass surfaces when the projectile's centre hits one; there are no surfaces here.": "弹体中心打到表面时，自带穿透对表面无效；这里没有表面。"
-  "Its innate punch through does not pass surfaces when the projectile's centre hits one; the arena has no surfaces, so this changes nothing here.": "弹体中心打到表面时，自带穿透对表面无效；本场没有表面，所以这里没有影响。"
+  "Its innate punch through does not pass surfaces when the projectile's centre hits one; this fight has no surfaces, so this changes nothing here.": "弹体中心打到表面时，自带穿透对表面无效；本场没有表面，所以这里没有影响。"
   "It reloads 33% of its magazine a second while holstered or deployed; it is never holstered here.": "收枪或架设时每秒自动装填 33% 弹匣；这里从不收枪。"
-  "the innate {m} m punch-through is not modelled — this arena has one target, so it changes no number": 自带的 {m} 米穿透尚未建模 —— 这个战场只有一个目标，所以它不改变任何数字
+  "the innate {m} m punch-through is not modelled — this fight has one target, so it changes no number": "自带的 {m} 米穿透尚未建模 —— 这场战斗只有一个目标，所以它不改变任何数字"
   "The laser sight highlights weak points on screen, an aiming aid; the sim draws headshots from the fight's headshot rate.": "激光瞄具会在屏幕上标出弱点，这是瞄准辅助；模拟的爆头按战斗设定的爆头率计算。"
-  "the link carries the build, its rivens, the fight it was measured in and the measurement — opening it saves a new copy of each": 链接带上了配装、它装的裂罅、测它用的那场仗，以及测出的数字——对方打开会各存一份新的，不会覆盖他原有的
+  "the link carries the build, its rivens, the fight it was measured in and the measurement — opening it saves a new copy of each": 链接带上了配装、它装的裂罅、测它用的那场战斗，以及测出的数字——对方打开会各存一份新的，不会覆盖他原有的
   "The mines are detonated by hand with the alt-fire, and several can be laid first (wiki). The sim detonates each on landing: the ceiling for one mine. Laying several and detonating them together is not modelled.": "地雷由副射击手动引爆，可以先布置多颗（wiki）。模拟让每颗落地即爆，这是单颗地雷的上限。先布置多颗再一起引爆的打法未建模。"
   "The mines are detonated by hand with the alt-fire, up to four at a time (wiki). The sim detonates each on landing: the ceiling for one mine. Sticking four and detonating them together is not modelled.": "地雷由副射击手动引爆，最多同时四颗（wiki）。模拟让每颗落地即爆，这是单颗地雷的上限。先粘上四颗再一起引爆的打法未建模。"
   "The miniature rifles lock onto up to four enemies within 40 degrees and 10 m, paying ammo per target (wiki). The engine fires at the aimed body only: right against one enemy, up to four times low against a crowd.": "微型步枪会锁定 40 度、10 米内最多四个敌人，每个目标都消耗弹药（wiki）。引擎只朝瞄准的目标开火：对单个敌人是准确的，面对人群最多偏低四倍。"
@@ -1611,7 +1610,7 @@ ui:
   "Not offered here: the thrown-exclusive Concealed Explosives.": "这里不提供：投掷专属的 Concealed Explosives。"
   "Not offered here: the thrown-exclusive Concealed Explosives, a second damage source on a weapon with this fire rate.": "这里不提供：投掷专属的 Concealed Explosives；对这种射速的武器来说，它是一整个第二伤害来源。"
   "The very heavy side-to-side recoil (page) makes its accuracy hold only for the first shot; the sim has no recoil.": "很大的左右后坐力（页面）让它的精度只对第一发有效；模拟没有后坐力。"
-  "The wave's wide, flat hitbox is not modelled; the arena has no geometry for it.": "波浪的宽扁判定未建模；本场没有可以表达它的几何。"
+  "The wave's wide, flat hitbox is not modelled; this fight has no geometry for it.": "波浪的宽扁判定未建模；本场没有可以表达它的几何。"
   "the weapon's printed panel": 就是武器面板上印的那样
   "the wielder's state: mods that only pay while Invisible (Spectral Serration) grant nothing when this is off": 使用者状态：只在隐身时生效的 MOD（幽魂锯齿）关掉这个就什么都不给
   "the wielder's state: what a card means by \"With Channeled Ability active\". The ability must DRAIN ENERGY over time — Desecrate, Haven and an empty Gloom do not count": 使用者状态：卡面上说的「引导类技能生效中」指的就是这个。技能必须是持续耗能的——亵渎、庇护所、以及周围没有敌人时的阴郁都不算
@@ -1635,7 +1634,7 @@ ui:
   "this is the aimed enemy, and what the place tool puts down. {n} already on the floor keep the unit they were placed with.": "这是被瞄准的敌人，也是放置工具会放下的单位。场上已有 {n} 个保持着各自放置时的单位。"
   "this matches the live game and is a bug — DE may patch it, and the number here changes when they do": 这与现在的游戏一致，但它是个 bug——DE 随时可能修，修了这里的数字就会变
   "In game this mode is entered by aiming. The sim sets the mode and Aiming separately, so read every while-aiming bonus as active whenever this mode is.": "游戏里靠瞄准进入这个模式。模拟把模式和「瞄准」分开设置，所以只要处于这个模式，就应把所有「瞄准时」加成视为生效。"
-  "this option did not re-roll the fight — run for run it scaled the same engagement, so this comparison is exact": 这个选项没有让战斗重新掷骰——每一次运行它都是把同一场战斗按同一个倍数放大，所以这次比较是精确的
+  "this option did not re-roll the fight — run for run it scaled the same fight, so this comparison is exact": "这个选项没有让战斗重新掷骰——每一次运行它都是把同一场战斗按同一个倍数放大，所以这次比较是精确的"
   "this option re-rolls the fight, so its answer is only good to ±{x} — raise the run count to narrow it": 这个选项会让这场战斗重新掷骰，所以它的答案只精确到 ±{x} —— 提高运行次数可以收窄它
   "this ranking predates the simulator re-run": 这份排名早于"模拟器重跑"这个功能
   "A reload is never interrupted here: in game you can fire mid-reload and keep the shells already loaded. A listed reload is a whole reload, by design.": "这里从不打断换弹：游戏里可以在换弹中途开火并保留已装的弹。按设计，标出的换弹就是完整的一次。"
@@ -1678,7 +1677,7 @@ ui:
   "unintended, modelled as it plays": 非本意，按实际表现建模
   uptime: 在场
   "weakpoint hits": 弱点命中
-  "what a room-clear is paced by, as opposed to a long fight": 清房间的节奏，而不是一场长仗的节奏
+  "what a room-clear is paced by, as opposed to a long fight": 清房间的节奏，而不是一场长时间的战斗的节奏
   "The Bullet Attractor's value as an aiming aid is not counted: its 4.7 s on the target is (one Condition Overload status), but easier headshots are not. The wiki says it does not guarantee a headshot, so the rate needs measuring first.": "子弹吸引力场作为瞄准辅助的价值未计入：它挂在目标身上的 4.7 秒已计入（一层异况超量），但「更容易爆头」没有。wiki 说它并不保证爆头，所以这个比例需要先实测。"
   "what the run is judged by — the headline number and the picker's gain scan both follow it": 这次模拟以什么为准 —— 主数字和选择器的提升排序都跟着它
   "what the search is allowed to assume": 这次搜索被允许做哪些假设
@@ -1713,17 +1712,16 @@ ui:
   "{n} of {t} entries measured · ranked by {m}": "{t} 个参赛位中已测 {n} 个 · 按 {m} 排名"
   "{n} {what} fill it, and the earned form fires {rounds} before it ends.": 需要 {n} 次{what}才能填满，换来的形态能打 {rounds} 发然后结束。
   "{p}% use it": "{p}% 在用"
-  "{runs} engagements · {rolls} damage instances rolled, on your own machine.":
-    "{runs} 次交战 · {rolls} 次伤害判定，全部跑在你自己的机器上。"
+  "{runs} fights · {rolls} damage instances rolled, on your own machine.": "{runs} 场战斗 · {rolls} 次伤害判定，全部跑在你自己的机器上。"
   "{what} — the board takes a weapon built as far as it goes, so this one is not sent": "{what} —— 榜单收的是这把武器的最努力配置，所以这一份不会提交"
   "…as a card →": ……做成一张图 →
   "The search": 搜索方案
   "what to look through, and how hard to look — all of it, and only it, is what a search preset saves": 要搜哪些东西、搜得有多狠 —— 这个框里的全部，也只有这些，才是一份搜索方案保存的内容
   "how many builds survive to the last round": 有多少套配装能进入最后一轮
   "the simulator's, shown read-only — every candidate is scored under it, and it is edited over there": 模拟器的那一场，这里只读 —— 每个候选都在它下面计分，而它在那边编辑
-  "how many simulations each finalist gets in the last round. Yours, not the search's and not the fight's: it is saved by no preset and pinned by no ruler. A smaller number searches faster and is worth re-measuring in the simulator": 最后一轮里每个优胜跑多少次模拟。这是你的设置，既不属于搜索方案也不属于这场仗：没有任何预设保存它，也没有任何官方标尺钉死它。数字小搜得快，值得在模拟器里重测一遍
+  "how many simulations each finalist gets in the last round. Yours, not the search's and not the fight's: it is saved by no preset and pinned by no ruler. A smaller number searches faster and is worth re-measuring in the simulator": 最后一轮里每个优胜跑多少次模拟。这是你的设置，既不属于搜索方案也不属于这场战斗：没有任何预设保存它，也没有任何官方标尺钉死它。数字小搜得快，值得在模拟器里重测一遍
   "yours, in neither preset — the simulator's Runs is the same setting for the replay": 你的设置，不在任何一份预设里 —— 模拟器的「次数」是回放的同一个设置
-  "what to search, and how hard — the fight is the simulator's": 搜什么、搜得多狠 —— 这场仗是模拟器的
+  "what to search, and how hard — the fight is the simulator's": 搜什么、搜得多狠 —— 这场战斗是模拟器的
   "actually {min}–{max}: {why}": "实际 {min}–{max}：{why}"
   "{n} required, plus at least one pooled": "{n} 张必带，加至少 1 张候选"
   "{n} required": "{n} 张必带"
@@ -1950,10 +1948,10 @@ ui:
   "Investment is not ranked: every entry is scored at full Forma, at max rank, and at the maximum roll of any bonus a player can raise by farming duplicates.": 投入不参与排名：每个条目都按满 Forma、满等级、以及任何可以靠刷重复品提升的加成的最大值来计分。
   "Ammo pickups are modelled. An entry that cannot be resupplied runs on its own reserve.": 弹药拾取被建模。无法补给的条目只能靠自己的备弹。
   "An entry that can be played more than one way is ranked once per way, and the way it was played is part of the row.": 一个可以有多种打法的条目，每种打法各排一次，而用哪种打法本身就是这一行的一部分。
-  "A buff starts the fight FULL only if it is permanent — no timer, and not spent by being used. Such a buff can be held for the whole engagement by anyone, so scoring it at anything less would rank how long ago the entrant last topped it up. Every other buff starts at zero and is earned in the fight. Two buffs in the data qualify today.": 一个 buff 只有在它是永久的时候才以满层开局 —— 没有计时，也不会因使用而消耗。这样的 buff 任何人都能全程保持，所以按低于满层计分，等于在排「投稿者上次补层是多久以前」。其余所有 buff 从零开始，在战斗中挣得。目前数据中有两个 buff 符合。
+  "A buff starts the fight FULL only if it is permanent — no timer, and not spent by being used. Such a buff can be held for the whole fight by anyone, so scoring it at anything less would rank how long ago the entrant last topped it up. Every other buff starts at zero and is earned in the fight. Two buffs in the data qualify today.": "一个 buff 只有在它是永久的时候才以满层开局 —— 没有计时，也不会因使用而消耗。这样的 buff 任何人都能全程保持，所以按低于满层计分，等于在排「投稿者上次补层是多久以前」。其余所有 buff 从零开始，在战斗中挣得。目前数据中有两个 buff 符合。"
   "Nobody submits a number. A submission is a BUILD, and its score is computed here by this engine under the pinned seed above, so any row can be reproduced exactly by anyone with the repo.": 没有人提交数字。提交的是一套配装，分数由本引擎在上面钉死的种子下算出，所以任何一行都能被拿到仓库的人精确复现。
   "The target is one Demolisher Devourer at level 9999 on Steel Path, carrying the health a four-player squad gives it. The fight lasts 180 seconds.": "目标是一只 9999 级钢铁之路的爆破型吞噬者，带着四人小队时的血量。战斗持续 180 秒。"
-  "ONE WEAPON FIRES. A four-player squad is a harder TARGET here, not three more guns — this arena has one shooter — so what is ranked is how much of that Demolisher your weapon alone takes off.": "只有一把武器在开火。四人小队在这里意味着更耐打的目标，而不是多出三把枪——这个场地只有一名射手——所以排名比的是你这一把武器单独能把这只爆破使削掉多少。"
+  "ONE WEAPON FIRES. A four-player squad is a harder TARGET here, not three more guns — this fight has one shooter — so what is ranked is how much of that Demolisher your weapon alone takes off.": "只有一把武器在开火。四人小队在这里意味着更耐打的目标，而不是多出三把枪——这个场地只有一名射手——所以排名比的是你这一把武器单独能把这只爆破使削掉多少。"
   "Every shot is aimed and every one lands on the weak point, which is worth 3x.": "每一发都瞄准，并且全部命中弱点，弱点倍率为 3 倍。"
   "Radiation cannot proc on this unit: the type is dropped from the draw, and every other type on the build gets likelier for it.": "辐射无法在这个单位上触发：抽取异常时会去掉辐射，配装上其他每种类型的触发几率都会因此变高。"
   "It can never be Frozen, so Cold climbs to its cap and stays there. An Impact proc lands and counts as a status type, and does not stagger it.": "它永远不会被冰冻，所以冷冻层数会一路叠到上限并保持。冲击异常能触发，也算作一种异常类型，但打不出硬直。"
@@ -1973,7 +1971,7 @@ ui:
   "A polarity can be swapped between this slot and a main one — the slot stays Exilus. So its polarity counts toward any build, even one that leaves it empty.": 极性可以在这个槽和主槽之间对调 —— 槽位本身仍然是 Exilus。所以它的极性对任何配装都算数，哪怕这个槽空着。
   "Assumed: a bounce lands on a weak point 50% of the time. It can headshot (wiki), but where it lands depends on geometry the sim does not model, and no rate is published.": "假设值：反弹有 50% 落在弱点上。它可以爆头（wiki），但落点取决于模拟没有的几何，也没有公开的比例。"
   "The projectile has travel time and must be led at range (wiki). Every shot here connects instantly, so against a moving target the real hit rate is lower.": "弹体有飞行时间，远距离需要提前量（wiki）。这里每一发都瞬间命中，所以面对移动目标时，实际命中率更低。"
-  "The explosion is a reverse cone that damages enemies in front of the target (page); the arena gives a blast no facing, so it is a full 1.9 m sphere. Against a crowd it reaches enemies the game would not, so the number reads high.": "爆炸是一个反向锥形，伤害目标前方的敌人（页面）；本场的爆炸没有朝向，所以按完整的 1.9 米球形计算。面对人群时它会打到游戏里打不到的敌人，所以数字偏高。"
+  "The explosion is a reverse cone that damages enemies in front of the target (page); this fight gives a blast no facing, so it is a full 1.9 m sphere. Against a crowd it reaches enemies the game would not, so the number reads high.": "爆炸是一个反向锥形，伤害目标前方的敌人（页面）；本场的爆炸没有朝向，所以按完整的 1.9 米球形计算。面对人群时它会打到游戏里打不到的敌人，所以数字偏高。"
   "The quick shot is not a form here: tapping fires a smaller explosion (1.7 m, 30-108 Radiation by grip, falloff to 75%) with the same total damage split differently, and that split is unpublished. One in-game reading would settle it.": "快速射击在这里不是一个形态：点按会打出更小的爆炸（1.7 米，按握把为 30–108 辐射伤害，衰减到 75%），总伤害不变但分配不同，而这个分配没有公开。游戏内测一次就能确定。"
   # A Tome's alt fire needs a full meter; this arena fires it continuously.
   # The Grimoire orb: an ENTITY with a position, not a field and not an
@@ -2003,8 +2001,8 @@ ui:
   "Tauforged": "Tau 融造"
   "a TAUFORGED shard of the same colour grants 50% higher stat bonuses": "同色的 **Tau 融造**版源力石，属性加成高 50%"
   "not modelled": "未建模"
-  "nobody shoots back": "本战场没有人向你开火"
-  "no melee in this arena": "本战场没有近战"
+  "nobody shoots back": "这场战斗没有人向你开火"
+  "no melee in this fight": "这场战斗没有近战"
   "pickups": "拾取物"
   "energy economy": "能量循环"
   "movement": "移动"
@@ -2072,7 +2070,7 @@ ui:
   # transcribed, never translated (AGENTS.md). Same rule as Microwave.
   "one row per number the game pops, and everything behind it": "游戏里每弹出一个数字就是一行，连同它背后的全部计算"
   "Read the record": "读取记录"
-  "re-runs this engagement to list every damage instance": "会重跑这场战斗，列出每一次伤害结算"
+  "re-runs this fight to list every damage instance": "会重跑这场战斗，列出每一次伤害结算"
   "reading…": "读取中…"
   "nothing happened in this window": "这个时间窗口里什么都没发生"
   "{n} numbers popped": "弹出了 {n} 个数字"
@@ -2165,7 +2163,7 @@ ui:
   "Its damage is an explosion centred on your own feet, so the weapon's reach does not bound it.": 它的伤害是以自身脚下为中心的爆炸，武器触及距离不构成限制。
   "It spends the combo counter and is multiplied by it, so the cards that read that counter are worth far less here.": 它消耗连击计数器并按其倍率结算，所以读取该计数器的卡在这里价值大打折扣。
   "Forces {procs}, whatever the status roll says.": 强制触发{procs}，与触发几率无关。
-  "Fired in its {form} for the whole engagement — it never transforms.": 整场交战都用{form}射击 —— 它不会变形。
+  "Fired in its {form} for the whole fight — it never transforms.": "整场战斗都用{form}射击 —— 它不会变形。"
   "Its {form} alone, from the first second — a form that has to be bought and runs out, so this is here to read its numbers rather than to play.": 从第一秒起就只用{form}。这个形态需要换取且会耗尽，所以这一项是用来读它自己的数值的，而不是一种打法。
   "Lifted": 浮空
   "Knockdown": 击倒
@@ -2184,7 +2182,7 @@ ui:
   "Viral": 病毒
   "What this mode is": 这个模式是什么
 
-  "Run the fight. Don't estimate it.": 把这场仗打一遍，而不是估出来。
+  "Run the fight. Don't estimate it.": 把这场战斗打一遍，而不是估出来。
   "Builder, simulator, optimizer.": 配装器、模拟器、优化器。
   "items modelled":
     "个条目已建模"
@@ -2204,10 +2202,8 @@ ui:
     "次游戏内实测"
   "Built in the open since {day} — {n} commits, every one of them public.":
     "自 {day} 起一直公开开发，{n} 次提交，每一次都能查。"
-  "It does not score an opening state. It runs the engagement — every ramp, every reload, every status that had to land before the damage depending on it — and reports what happened.":
-    "它不是拿一个初始状态去套公式。它把这一场从头打到尾——起转、换弹、那些得先挂上去才吃得到加成的异常——然后告诉你这一场到底打出了什么。"
-  "You have run {n} simulations on this machine — {e} engagements. That number is kept in this browser.":
-    "你在这台机器上跑了 {n} 次模拟，一共 {e} 场战斗。这个数只存在你自己的浏览器里。"
+  "It does not score an opening state. It runs the fight — every ramp, every reload, every status that had to land before the damage depending on it — and reports what happened.": "它不是拿一个初始状态去套公式。它把这一场从头打到尾——起转、换弹、那些得先挂上去才吃得到加成的异常——然后告诉你这一场到底打出了什么。"
+  "You have run {n} simulations on this machine — {e} fights. That number is kept in this browser.": "你在这台机器上跑了 {n} 次模拟，一共 {e} 场战斗。这个数只存在你自己的浏览器里。"
   "The calculator is the same for everyone":
     "计算器对所有人都一样"
   "Building, simulating and optimizing are the same for everyone. This is AGPL-3.0: the engine, the game data and the wasm are public, and you can run your own copy.":
@@ -2561,7 +2557,7 @@ ui:
   "the same total, split several ways": "同一个总数的几种拆分"
   "Invisibility is not simulated: ticking this treats the wielder as invisible for the whole fight.": "隐身状态不做模拟：勾选即视为使用者整场处于隐身。"
   "Its +30% Ability Strength is not applied to the buffs here; add it to the Ability Strength box if it should be.": "它的 +30% 技能强度不会自动作用于这里的增益；需要的话，请手动加到技能强度一栏。"
-  "Its Energy cost is not modelled: 50 Energy for 5 s at 100% Ability Duration, and this arena has no energy economy. Set the duration to what your build keeps up.": "能量消耗未建模：100% 技能持续时间下，50 能量维持 5 秒，而本场没有能量系统。请把持续时间设为你的配装实际能维持的长度。"
+  "Its Energy cost is not modelled: 50 Energy for 5 s at 100% Ability Duration, and this fight has no energy economy. Set the duration to what your build keeps up.": "能量消耗未建模：100% 技能持续时间下，50 能量维持 5 秒，而本场没有能量系统。请把持续时间设为你的配装实际能维持的长度。"
   "Its reserve refill adds nothing here: reserves are infinite by default. Its effect on how often you reload is modelled.": "它补充备弹的效果在这里不产生收益：备弹默认无限。它对换弹次数的影响已建模。"
   "The pack refills the magazine instantly. Reserves are infinite by default, so the refill adds nothing here, and running the pack dry is not simulated.": "弹药包会立即装满弹匣。备弹默认无限，所以补充在这里不产生收益，弹药包耗尽也不做模拟。"
   "Arch-guns and battery weapons (Kitguns with Pax Charge included) get nothing from it in game. The sim does not exclude them, so on those weapons it reads high.": "空战枪和电池类武器（包括装了 Pax Charge 的组合枪）在游戏里吃不到它。模拟没有排除它们，所以在这些武器上数字偏高。"

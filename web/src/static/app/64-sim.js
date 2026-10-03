@@ -355,7 +355,7 @@ function renderWholeFight() {
   if (!host) return;
   const axes = (META && META.scenario_axes) || [];
   const w = weaponInfo($("weapon").value) || {};
-  const GROUPS = [["target", tr("The target")], ["engagement", tr("The engagement")],
+  const GROUPS = [["target", tr("The target")], ["engagement", tr("The fight")],
                   ["wielder", tr("The wielder")], ["squad", tr("What the Warframe brings")]];
   const shown = (v) => {
     if (v === undefined) return `<i class="wf-absent">${escHtml(tr("not set — the default"))}</i>`;

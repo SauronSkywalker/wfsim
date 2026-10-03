@@ -299,6 +299,38 @@ mod tests {
         assert!(zh.contains("灵化形态"), "the zh overlay lost 灵化形态 entirely");
     }
 
+    /// ONE WORD FOR ONE THING in our own Chinese (`ui.yaml`; DE's card text is
+    /// theirs and is not checked). Each pair is the word to drop and the one
+    /// the page uses: a setup is 场景 and a run is 战斗, and the game terms are
+    /// DE's own.
+    #[test]
+    fn our_chinese_uses_one_word_for_each_thing() {
+        const DROP: &[(&str, &str)] = &[
+            ("紫卡", "裂罅"),
+            ("异况超载", "异况超量"),
+            ("异常状态过载", "异况超量"),
+            ("超卫", "超宏防护"),
+            ("战场", "战斗"),
+            ("交战", "战斗"),
+            ("竞技场", "战斗"),
+            ("这场仗", "这场战斗"),
+        ];
+        let mut found: Vec<String> = Vec::new();
+        for (path, text) in crate::data::files_under("i18n/") {
+            if !path.ends_with("ui.yaml") {
+                continue;
+            }
+            for line in text.lines().filter(|l| !l.trim_start().starts_with('#')) {
+                for (bad, good) in DROP {
+                    if line.contains(bad) {
+                        found.push(format!("{path}: {bad} -> {good}: {}", line.trim()));
+                    }
+                }
+            }
+        }
+        assert!(found.is_empty(), "{}", found.join("\n"));
+    }
+
     /// A mod by id across EVERY class pool (a weapon's pool is a union, and
     /// so is the set of mods an overlay may name).
     fn known_mod(id: &str) -> Option<crate::model::ModDef> {

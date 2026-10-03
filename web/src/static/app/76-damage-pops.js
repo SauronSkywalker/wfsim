@@ -304,7 +304,7 @@ function renderResults(r, testedAt) {
       </div>
     </div>
     <div class="fight-foot">
-      <span>${escHtml(trF("{runs} engagements · {secs}s each · {rolls} damage instances rolled, on your own machine", {
+      <span>${escHtml(trF("{runs} fights · {secs}s each · {rolls} damage instances rolled, on your own machine", {
         runs: Math.round(r.runs || 0).toLocaleString(),
         secs: Math.round(r.duration || 0),
         rolls: Math.round((r.runs || 0) * (r.pellets || 0)).toLocaleString(),
@@ -617,19 +617,19 @@ function renderResults(r, testedAt) {
     <div class="results">
       ${zone(1, tr("The result"), tr("this build's output in this fight"), `
         <div class="hero"><div><div class="hero-label">${escHtml(trF("Average of {runs} runs", { runs: n0(r.runs) }))}</div><div class="hero-num">${heroNum}<span class="hero-unit">${heroUnit}</span></div><div class="hero-sub">${heroSub}</div>${testedAt ? `<div class="hero-tested">${tr("last tested")} ${new Date(testedAt).toLocaleString()}</div>` : ""}</div></div>
-        <div class="row-label">${escHtml(trF("averaged over {runs} engagements", { runs: n0(r.runs) }))} <span class="who-tag">${escHtml(tr("whole fight"))}</span></div>
+        <div class="row-label">${escHtml(trF("averaged over {runs} fights", { runs: n0(r.runs) }))} <span class="who-tag">${escHtml(tr("whole fight"))}</span></div>
         <div class="kpi-row">${kpis}</div>
         ${speedMarkup(r)}`)}
       ${zone(2, tr("Fight conditions"), tr("the conditions the result was measured under"), fightMarkup(r))}
-      ${zone(3, tr("One engagement"), tr("one engagement, following the playhead"), `
+      ${zone(3, tr("One fight"), tr("one fight, following the playhead"), `
         ${benchHead}
         ${replayBar}
-        ${sampleKpis ? `<div class="row-label">${escHtml(tr("this one engagement, at the playhead"))} <span class="who-tag gold">${escHtml(tr("this engagement"))}</span></div><div class="kpi-row bench-kpi">${sampleKpis}</div>${kpiWhose}` : ""}`)}
+        ${sampleKpis ? `<div class="row-label">${escHtml(tr("this one fight, at the playhead"))} <span class="who-tag gold">${escHtml(tr("this fight"))}</span></div><div class="kpi-row bench-kpi">${sampleKpis}</div>${kpiWhose}` : ""}`)}
       ${zone(4, tr("What it was made of"), tr("the same total, split several ways"), `
         ${combatantBlock(r)}
         ${foldBlock("meter", tr("Damage by source"), tr("where it came from"),
           `<div class="meter">${meter.length ? meter : `<div class="sb-empty">${tr("no damage dealt")}</div>`}</div>${composition}`)}
-        ${foldBlock("curve", tr("DPS over time"), tr("this engagement, one bucket a second"), chart)}
+        ${foldBlock("curve", tr("DPS over time"), tr("this fight, one bucket a second"), chart)}
         ${whereBlock}`)}
       ${zone(5, tr("Details"), tr("every damage instance, each checkable against in-game footage"), `
         ${recordMarkup(r)}

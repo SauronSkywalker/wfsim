@@ -369,7 +369,9 @@ sentences in the order a Chinese reader says them, not the English clause
 order and its dashes. 你, never 您. Bilibili's own words where it has them
 (充电, 实测, 配装), and no slang that belittles the reader or the giver (投喂,
 家人们). No 最 / 第一 / 顶级 / 终极 in anything that reads as promotion — the
-Advertising Law forbids superlatives.
+Advertising Law forbids superlatives. ONE WORD FOR ONE THING: a setup is 场景
+and a run is 战斗, and a game term is DE's own (裂罅, 异况超量, 超宏防护);
+`our_chinese_uses_one_word_for_each_thing` holds the list.
 
 ## The build finder
 

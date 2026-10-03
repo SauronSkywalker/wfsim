@@ -179,7 +179,7 @@ function renderSupport() {
     const u = supportUse();
     used.hidden = !u.sims;
     if (u.sims) {
-      used.textContent = tr("You have run {n} simulations on this machine — {e} engagements. That number is kept in this browser.")
+      used.textContent = tr("You have run {n} simulations on this machine — {e} fights. That number is kept in this browser.")
         .replace("{n}", u.sims.toLocaleString()).replace("{e}", u.engagements.toLocaleString());
     }
   }

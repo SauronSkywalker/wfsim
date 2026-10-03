@@ -414,12 +414,12 @@ const gainChip = (g, why, tied) => {
     // what it MEASURED and marks only what it does not MODEL.
     if (g.pct === 0) {
       return `<span class="gainchip flat" title="${escHtml(
-        `${tr("this option did not re-roll the fight — run for run it scaled the same engagement, so this comparison is exact")} · ${why}`
+        `${tr("this option did not re-roll the fight — run for run it scaled the same fight, so this comparison is exact")} · ${why}`
       )}">${gainPct(g.pct)}</span>`;
     }
     // Paired exactly — the fight did not re-roll, so this is not an estimate.
     return `<span class="gainchip ${g.pct >= 0 ? "up" : "down"}" title="${escHtml(
-      `${tr("this option did not re-roll the fight — run for run it scaled the same engagement, so this comparison is exact")} · ${why}`
+      `${tr("this option did not re-roll the fight — run for run it scaled the same fight, so this comparison is exact")} · ${why}`
     )}">${gainPct(g.pct)}${tie}</span>`;
   }
   const cls = Math.abs(g.pct) < band ? "flat" : (g.pct >= 0 ? "up" : "down");
