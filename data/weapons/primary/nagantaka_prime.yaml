@@ -53,8 +53,8 @@ attack:
   damage: { impact: 1.7, puncture: 15.6, slash: 155.7 }   # total 173
 
 unmodeled:
-  - "'headshot kills from direct bolt damage boost reload speed by 50%' (wiki) — a kill-triggered buff this engine has no shape for"
-  - "it gains a metre of innate punch through when used by GARUDA (wiki) — a Warframe-specific grant this arena does not model"
+  - "Headshot kills from the bolt boost reload speed by 50% (wiki); a kill-triggered buff the engine does not model."
+  - "Used by Garuda it gains 1 m of innate punch through (wiki), a Warframe-specific bonus not modelled here."
   - reason: bolt_corpse_ragdoll
   - reason: silent_weapon
 

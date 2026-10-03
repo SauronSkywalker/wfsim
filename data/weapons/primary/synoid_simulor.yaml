@@ -70,8 +70,8 @@ attack:
     damage: { magnetic: 240 }   # total 240
 
 unmodeled:
-  - "ORBS MERGE, and a fully stacked set collapses into a SINGULARITY that deals damage over time in five metres (module: two further attacks). This engine resolves each shot on its own, so neither the merge nor the singularity is counted — which is most of what this weapon is for"
-  - "the ENTROPY syndicate effect, which on a proc detonates enemies and restores the wielder's energy — it fires off a syndicate standing meter this sim does not track"
+  - "Orbs merge, and a full set collapses into a singularity dealing damage over time in 5 m (module). The engine resolves each shot on its own, so neither is counted; this is most of the weapon, and the number reads well low."
+  - "The Entropy syndicate effect detonates enemies and restores the wielder's Energy (wiki). It runs on a syndicate meter the sim does not track; it is not counted."
   - reason: explosion_ignores_cover
   - reason: self_stagger
 

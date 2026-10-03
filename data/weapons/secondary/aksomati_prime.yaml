@@ -58,7 +58,7 @@ attack:
 unmodeled:
   - reason: auto_spool_ramp
     rate: 13.33
-  - "the ACCURACY improves during the spool as well (wiki), which is the half of it the page does state — this entry carries the settled cone, so a burst that would open wide here opens tight"
+  - "Accuracy also improves during the spool (wiki); this entry uses the settled spread, so an early burst is tighter here than in game."
 
 source:
   url: https://wiki.warframe.com/w/Aksomati_Prime

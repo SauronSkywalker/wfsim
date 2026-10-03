@@ -58,7 +58,7 @@ attack:
   damage: { impact: 423, puncture: 23.5, slash: 23.5 }   # total 470
 
 unmodeled:
-  - "the BLIGHT syndicate effect, which on a proc blinds enemies in a radius and opens them to finishers (wiki) — it fires off a syndicate standing meter this sim does not track, and blindness is crowd control this arena's enemies do not suffer"
+  - "The Blight syndicate effect blinds enemies in a radius and opens them to finishers (wiki). It runs on a syndicate meter the sim does not track, and blindness is crowd control; it is not counted."
   - reason: silent_weapon
 
 source:

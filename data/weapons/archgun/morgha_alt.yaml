@@ -62,7 +62,7 @@ attack:
     status_chance: 0.50
 
 unmodeled:
-  - "the CHARGE this form is named for is not modelled as a charge — the page calls it a Charged Shot and then gives it a Semi-Auto trigger with no charge time, so it is paced as a slow semi-auto shot and filed as an alt-fire"
+  - "This form is called a Charged Shot but has a semi-auto trigger with no charge time, so it is paced as a slow semi-auto shot."
   - reason: arch_gun_deployer_cooldown
 
 source:

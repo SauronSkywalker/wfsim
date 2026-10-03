@@ -57,8 +57,8 @@ body_parts:
     crit_bonus: true
 
 unmodeled:
-  - "its tendril bulbs are a third hitbox the sim never aims at — shots land on the body or the head, and the bulbs answer a gun at 1.5x and a melee swing at 0.1x, which is a per-weapon-class multiplier this roster has no field for"
-  - "it burrows and attacks from underground, and it drains health from what it hits — this arena has no movement to lose the target in and no player health to drain, so both are absent"
+  - "Its tendril bulbs are a third hitbox the sim never aims at; they take 1.5x from guns and 0.1x from melee."
+  - "It burrows, attacks from underground and drains health from what it hits. There is no movement and no player health here, so neither applies."
 
 source:
   url: https://wiki.warframe.com/w/Techrot_Babau

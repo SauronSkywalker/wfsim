@@ -54,7 +54,7 @@ attack:
   damage: { impact: 1.8, puncture: 7.2, slash: 9 }   # total 18
 
 unmodeled:
-  - "the page states the spool as a COUNT and not as a starting fraction — 'requires a spool-up of 6 shots before optimal fire rate is achieved' — and the roster's spool field needs both halves to reconcile, so it is left off rather than half-guessed"
+  - "The page gives the spool as a count, 6 shots to full fire rate, not as a starting fraction, so the spool is not entered."
   - reason: auto_spool_ramp
     rate: 12.5
 

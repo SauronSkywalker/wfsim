@@ -60,7 +60,7 @@ pseudo_reload:
   # scale with reload-speed bonuses
 
 unmodeled:
-  - "BURST-FIRING the Incarnon form out of its own spool-down: the rate falls to 60% over 51 held shots and resets the moment you stop firing, so a player who taps rather than holds keeps more of the 13.33/s than this sim does — it holds the trigger until the magazine is dry. The spool itself IS modelled; what is not is the play pattern that dodges it"
+  - "The Incarnon form's fire rate falls to 60% over 51 held shots and resets when firing stops. The sim holds the trigger until the magazine is dry, so a player who taps keeps more of the 13.33/s. The spool-down itself is modelled."
 
 # Same class as the base entry: no Phenmor row exists in the wiki's CO catalog,
 # and absence there means ordinary. CO boosts the DIRECT hit, which is all this

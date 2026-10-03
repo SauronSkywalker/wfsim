@@ -55,7 +55,7 @@ attack:
   damage: { impact: 20, puncture: 10, slash: 70 }   # total 100
 
 unmodeled:
-  - "the blades RICOCHET off surfaces (wiki) and this arena has no walls to bounce off"
+  - "The blades ricochet off surfaces (wiki); there are no walls here."
 
 source:
   url: https://wiki.warframe.com/w/Panthera

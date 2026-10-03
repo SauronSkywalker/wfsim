@@ -38,7 +38,7 @@ attack:
   damage: { impact: 40, puncture: 50, slash: 10 }   # total 100
 
 unmodeled:
-  - "the harpoon 'can reel enemies in close and knock them down', pull flyers out of the air and interrupt enemy casting (wiki) — every one of those is crowd control, and this arena's enemies are neither moved nor interrupted"
+  - "The harpoon pulls enemies in, knocks them down, grounds flyers and interrupts casting (wiki); all crowd control, and enemies here are neither moved nor interrupted."
 
 source:
   url: https://wiki.warframe.com/w/Harpak

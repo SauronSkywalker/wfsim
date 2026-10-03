@@ -35,7 +35,7 @@ attack:
   damage: { electricity: 11, impact: 9, puncture: 2, slash: 7 }   # total 29
 
 unmodeled:
-  - "'each shot lands in a small square formation around where the user is aiming instead of directly on the crosshair, which may lead to misses against smaller targets' (wiki) — this entry carries the module's 1-1.2 degree cone, which is that square described as a spread"
+  - "Each shot lands in a small square around the aim point and can miss small targets (wiki); this entry uses the module's 1-1.2 degree spread for that square."
   - reason: mode_is_the_aim_state
 
 source:

@@ -59,7 +59,7 @@ attack:
 
 unmodeled:
   - reason: silent_weapon
-  - "the laser sight also HIGHLIGHTS weak points on screen, which is an aiming aid rather than a damage bonus — this sim draws its head hits from the fight's headshot percentage and cannot be helped to aim"
+  - "The laser sight highlights weak points on screen, an aiming aid; the sim draws headshots from the fight's headshot rate."
 
 source:
   url: https://wiki.warframe.com/w/Vesper_77

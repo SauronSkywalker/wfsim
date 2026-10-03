@@ -65,7 +65,7 @@ attack:
     damage: { gas: 100 }   # total 100
 
 unmodeled:
-  - "the cloud arrives ONE SECOND after the dart lands (wiki) — this engine resolves it at the point of impact immediately, so nothing walks out of one here"
+  - "The cloud arrives 1 s after the dart lands (wiki); here it resolves on impact, so nothing walks out of it."
   - reason: explosion_ignores_cover
 
 source:

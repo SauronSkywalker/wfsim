@@ -30,7 +30,7 @@ effects:
     rankMax: 12
 
 unmodeled:
-  - "the FIELD is not placed. On a kill this has a 20% chance to leave something on the ground for 3-12 seconds dealing 40 Toxin damage to enemies within 10 m, and none of it is counted — so against a crowd, where kills are frequent and bodies stand close, this arcane is worth more than the zero shown here. Its damage is flat and does not scale with the build, so what it is worth falls as the build gets stronger"
+  - "The field is not placed: on a kill, a 20% chance to leave a field for 3-12 s dealing 40 Toxin to enemies within 10 m. Against a crowd this arcane reads low. Its damage is flat, so it matters less as the build gets stronger."
 
 source:
   url: https://wiki.warframe.com/w/Residual_Viremia

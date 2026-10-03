@@ -15,7 +15,7 @@ transforms_to: zylok_incarnon
 
 # see notes: bulk_intake_stats_are
 unmodeled:
-  - "the duplex trigger is not modelled — one pull fires TWO rounds in game and this entry paces one per pull"
+  - "The duplex trigger is not modelled: one pull fires two rounds in game, and this entry paces one per pull."
 accuracy: 23.53
 disposition: 1.25
 polarities: []

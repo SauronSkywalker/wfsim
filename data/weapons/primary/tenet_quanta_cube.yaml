@@ -78,10 +78,10 @@ attack:
     status_chance: 0.26
 
 unmodeled:
-  - "THE CUBE'S OTHER EXPLOSION, which is four times this one: \"If damaged by any player (e.g. nearby cube explosion), cube explodes in 6 meter radius\" for 600 Blast. It is a two-step play — place a cube, then shoot it — and this arena fires one attack at one aim point, so the step that pays is the one it cannot take"
-  - "a cube left alone detonates after 9 seconds, which needs a miss and a clock this arena does not run"
+  - "A cube that is shot explodes for 600 Blast in 6 m, four times this blast (wiki). The sim never shoots a cube, so the number reads low."
+  - "A cube left alone detonates after 9 s, which needs a miss and a timer the sim does not run."
   - reason: explosion_ignores_cover
-  - "this weapon does NOT inflict self-stagger, which is a real advantage over every other explosive in this batch and is worth nothing here, because the arena never charges any of them for it either"
+  - "This weapon does not self-stagger, unlike other explosives; the sim charges none of them for it, so this changes nothing here."
 
 source:
   url: https://wiki.warframe.com/w/Tenet_Quanta

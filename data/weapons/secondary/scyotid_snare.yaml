@@ -30,9 +30,9 @@ attack:
   damage: { toxin: 40 }   # total 40
 
 unmodeled:
-  - "the snare 'damages, paralyzes for ~6 seconds, and groups up to 8 enemies within 15 meters', and the number pulled is multiplied by Multishot (wiki). This engine resolves it on the aimed body alone: no pull, no paralysis, no crowd — so the 40 Toxin here is the whole of what a mechanic built entirely around crowd control pays"
-  - "its damage 'is NOT affected by mods, nor does it combine with or inflict modded elements' (wiki), and this engine scales every attack by the build — so a modded Scyotid overstates this mode by the whole of its damage bracket"
-  - "the radius is 'NOT affected by Fulmination' (wiki), which is a mod this entry has no radius for anyway"
+  - "The snare damages, paralyses for about 6 s and pulls up to 8 enemies within 15 m, the count multiplied by multishot (wiki). The engine applies it to the aimed body only, so the 40 Toxin here is all it pays."
+  - "Its damage is not affected by mods and does not combine with modded elements (wiki); the engine scales every attack by the build, so a modded build reads high in this mode."
+  - "Its radius is not affected by Fulmination (wiki); this entry has no radius for it to change anyway."
   - reason: silent_weapon
 
 source:

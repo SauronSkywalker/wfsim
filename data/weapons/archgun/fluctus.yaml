@@ -79,7 +79,7 @@ attack:
   range_m: 54.0
   damage: { impact: 100.0, puncture: 50.0, slash: 350.0 }   # 500 total
 unmodeled:
-  - "the wave's vertical hitbox is not modelled — it is a wide flat projectile rather than a point, which this arena has no geometry to express"
+  - "The wave's wide, flat hitbox is not modelled; the arena has no geometry for it."
   - reason: arch_gun_deployer_cooldown
 
 source:

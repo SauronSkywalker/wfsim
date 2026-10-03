@@ -24,37 +24,37 @@
 # more than one numeric spelling.
 reasons:
   blob_over_cap:
-    text: "unmeasured: a shot already over the cap (multishot over {cap}) is read as holding the pile at {cap} and waiting 1.5 s, refreshed by every later shot, so steady fire never sets it off"
+    text: "Unmeasured: a shot already over the cap (multishot over {cap}) is read as holding the pile at {cap} and waiting 1.5 s, refreshed by each later shot, so steady fire never sets it off."
   blob_crossing_cap:
-    text: "unmeasured: a shot that crosses the cap is read as setting the pile off at once for {cap} stacks, the rest lost"
+    text: "Unmeasured: a shot that crosses the cap is read as setting the pile off at once for {cap} stacks, the rest lost."
   arch_gun_deployer_cooldown:
-    text: "the Arch-Gun Deployer's five-minute cooldown is not modelled — when the reserve runs dry the weapon is gone for the rest of a real mission, and this arena simply stops firing"
+    text: "The Arch-Gun Deployer's five-minute cooldown is not modelled: in a mission the weapon is gone once its reserve runs dry; here it simply stops firing."
   companion_fires_it:
-    text: "the companion FIRES THIS WEAPON, not the player — it picks its own targets, fires when it decides to, and stops while the companion is reviving or out of range; this arena fires it continuously at one target, which is the ceiling rather than the average"
+    text: "The companion fires this weapon: it picks its targets, fires when it decides, and stops while reviving or out of range. Here it fires continuously at one target, so the number is the ceiling."
   zoom_steps:
-    text: "the LOWER zoom levels are not modelled — this arena has no field of view to trade for magnification, so the scope always sits at its top level and its best buff"
+    text: "Lower zoom levels are not modelled: the scope always sits at its top level and its best buff."
   # NO `damage_falloff` — IT IS MODELLED. The arena has a range
   # now (`engine::rules::space`), the direct hit takes its published window, and the
   # twenty-three weapons that carried this line say nothing because there is
   # nothing left to admit. Kept as a note rather than silently deleted: this
   # file is where a reader looks to find out whether a gap is still a gap.
   spread_not_transcribed:
-    text: "this attack's SPREAD is not in the data, so none of its shots can miss — the wiki's weapon module publishes a cone for it and the intake could not identify which of that weapon's attacks this entry is, so it took nothing rather than the wrong one. At a range every pellet lands here, which is the ceiling; at point blank it costs nothing, because nothing misses there anyway"
+    text: "This attack's spread is not in the data, so none of its shots miss. At range the number is the ceiling; at point blank it is unaffected."
   # NO `innate_punch_through` — IT IS MODELLED. `punch_through_m`
   # sat in all 224 entries unread for as long as the arena held one body; a
   # formation is what gave it something to reach, and `space::struck_along`
   # spends it at `space::BODY_MATERIAL_M` per body crossed. The 22 weapons that
   # carried this admission carry none now.
   heavy_charge_share_assumed:
-    text: "the heavy attack's CHARGE is ASSUMED to be a third of its published {published} s wind-up, the share measured on a Tonfa: {charge} s of charge, which only wind-up speed shortens, then {swing} s of swing, which attack speed shortens. This weapon's own split is unmeasured, so a wind-up card here is worth what the Tonfa's split says"
+    text: "Assumed: the heavy attack's charge is a third of its published {published} s wind-up, the share measured on a Tonfa: {charge} s of charge, shortened only by wind-up speed, then {swing} s of swing, shortened by attack speed. This weapon's own split is unmeasured."
   # THE OKINA PAIR'S SPECTRAL DAGGERS, on every one of their fourteen entries
   # because a kill in any mode makes one. docs/UNMODELLED.md §"THE OKINA".
   spectral_dagger_orbit_and_target_assumed:
-    text: "how long a spectral dagger ORBITS before it seeks is unpublished — the Incarnon Form card carries a stand-in — and which body it seeks is unpublished too: it takes the nearest one inside 15 m. Both decide how soon a kill pays, and neither is measured"
+    text: "Unpublished: how long a spectral dagger orbits before it seeks (the Incarnon Form card uses a stand-in), and which enemy it seeks (here, the nearest within 15 m). Both decide how soon a kill pays; neither is measured."
   dual_daggers_heavy_unmeasured:
-    text: "the heavy attack is 2x, from this weapon's own infobox; the wiki's class table and its stance module say 5x, and nobody has measured which is right"
+    text: "The heavy attack is 2x, from this weapon's infobox; the wiki's class table and stance module say 5x. Unmeasured."
   sniper_combo_miss:
-    text: "a MISSED shot drops the combo counter and this entry cannot miss — the only thing that misses here is SPREAD, and this one lands on the reticle, so nothing but its {seconds} s timer ever takes a stack off. A player who pulls the shot loses the combo and this sim never pulls one"
+    text: "A missed shot drops the combo counter. This entry cannot miss, so only its {seconds} s timer removes a stack, and the number is the ceiling."
   # NO `radial_falloff` — IT IS MODELLED. The explosion reads the
   # distance from its own epicentre, which is where the projectile actually
   # landed, so a pellet that missed detonates beside the target and the target
@@ -65,12 +65,12 @@ reasons:
   # third the moment another explosive Kuva lands, which is what makes it a
   # reason rather than a sentence.
   explosion_ignores_cover:
-    text: "the blast needs no line of sight and goes through walls — this arena has no geometry, so nothing is ever behind cover and the perk pays nothing extra"
+    text: "The blast needs no line of sight. There is no cover here, so the perk adds nothing."
   # A MODE THAT IS NOT A CHOICE. Some weapons switch form by AIMING rather than
   # by a trigger, and this engine's mode is a build axis while `aiming` is the
   # fight's own flag — so the two can be set to a pair the game cannot produce.
   mode_is_the_aim_state:
-    text: "this mode is entered by AIMING rather than by a trigger, and the simulator treats the mode and the fight's Aiming state as two separate settings — so a run with this mode and Aiming off is a combination the game cannot produce, and every while-aiming bonus should be read as active whenever this mode is"
+    text: "In game this mode is entered by aiming. The sim sets the mode and Aiming separately, so read every while-aiming bonus as active whenever this mode is."
   # SELF-STAGGER, which every modern AoE weapon carries and none of them can
   # suffer here — the wielder is not a body in this arena.
   # A PROJECTILE THAT HAS TO BE LED. Every shot in this arena connects the
@@ -79,7 +79,7 @@ reasons:
   # (Kuva Ogris, Tenet Ferrox, the Dual Toxocyst's Incarnon) and are worth
   # folding in here next time one of them is touched.
   projectile_must_be_led:
-    text: "the projectile has TRAVEL TIME and has to be led — 'hitting a target at range requires leading the target before firing'. Every shot here connects the instant it is fired, so this weapon's real hit rate against anything that moves is worse than the numbers below"
+    text: "The projectile has travel time and must be led at range (wiki). Every shot here connects instantly, so against a moving target the real hit rate is lower."
   # NO `tome_meter` — IT IS MODELLED. The 45 second recharge, the
   # second a landing pellet takes off it and the ten seconds an ammo pickup is
   # worth are `meter:` on the Grimoire's alt fire, and the mode it produces is a
@@ -97,21 +97,21 @@ reasons:
   # thrown at instead of drifting away from it, which is why an in-game six
   # strikes and this model's four disagree.
   orb_bounces_off_walls:
-    text: "the orb BOUNCES off walls and the floor, and this arena has neither — so here it drifts on at {speed} m/s and leaves a standing target behind after about three seconds, landing {open_field} of its {total} strikes and detonating too far away to matter. In a real room it comes back and spends its fuse near what you threw it at, which is worth about {worth} more damage. Everything below for this form is a FLOOR, and an unusually loose one"
+    text: "The orb bounces off walls and the floor, and there are neither here: it drifts on at {speed} m/s, leaves a standing target behind after about three seconds, lands {open_field} of its {total} strikes and detonates out of reach. In a room it stays near its target, worth about {worth} more damage. Every number for this form reads low."
   self_stagger:
-    text: "the blast staggers the WIELDER in game — this arena gives the player no body, so a build that would be unplayable in a corridor costs nothing here"
+    text: "In game the blast staggers the wielder; the player has no body here, so it costs nothing."
   # THE BOMBLETS THEMSELVES ARE MODELLED (`cluster:`); their CO term is not.
   # The catalog gives each cluster weapon's child bomb a rule of its own, and a
   # CO CLASS is a property of the WEAPON in this engine — so the bomblets take
   # none at all rather than take it under a class the catalog denies them.
   cluster_bomblet_co:
-    text: "the bomblets take no Condition Overload. The wiki's CO catalog gives them a rule of their own — {row} — and a CO class is a property of the WEAPON in this engine, so they take none at all rather than take it under a class the catalog denies them. The bomblets below are understated by that term and by nothing else"
+    text: "The bomblets take no Condition Overload: the wiki's catalog gives them a rule of their own ({row}), and the engine sets the rule per weapon. They read low by that term only."
   # A STAGGER IS CROWD CONTROL, and this engine models no such status. The
   # DAMAGE of the hit that carries it is modelled; the stagger is not.
   cluster_bomblet_stagger:
-    text: "the bomblets' forced STAGGER on contact is not modelled — a stagger is crowd control and this engine has no such status, so the contact hit forces nothing and rolls its status chance like any other hit"
+    text: "The bomblets' forced stagger on contact is not modelled; the contact hit rolls its status chance like any other."
   auto_spool_ramp:
-    text: "the AUTO-SPOOL ramp is not modelled — the page gives this trigger as Auto-Spool and the fire rate here is the spooled-up {rate}/s from the first shot, so a short burst is faster in this sim than in game"
+    text: "The auto-spool ramp is not modelled: the rate is the spooled-up {rate}/s from the first shot, so a short burst is faster here than in game."
   # THE RICOCHET ITSELF IS MODELLED — `ricochet:` on the three
   # Latron Incarnon entries, five bounces each dealing the collision and the
   # explosion in full. This is what is LEFT of it: the page says enemies *and
@@ -120,16 +120,16 @@ reasons:
   # comment, because a player deciding whether to trust this weapon's number
   # cannot read a yaml.
   bounce_headshot_assumed:
-    text: "how often a bounce lands on a weak point is ASSUMED — a flat 50%. It can headshot (the wiki's Hit Mechanic page counts a rebound as a main hit), but where it lands is geometry this arena does not model and DE publishes no rate"
+    text: "Assumed: a bounce lands on a weak point 50% of the time. It can headshot (wiki), but where it lands depends on geometry the sim does not model, and no rate is published."
   ricochet_terrain:
-    text: "a bounce here reflects off ENEMIES only — in game a wall or the floor is a surface too, so with cover this number is a FLOOR"
+    text: "A bounce here reflects off enemies only; in game walls and the floor count too, so with cover the number reads low."
   reload_never_interrupted:
-    text: "this run never INTERRUPTS a reload — in game you can fire mid-reload and keep the shells already loaded, and a player who does is trading stacks and a full magazine for uptime. Decided rather than missing: a listed reload is a whole reload, and the alternative is not a more accurate model, it is a different player"
+    text: "A reload is never interrupted here: in game you can fire mid-reload and keep the shells already loaded. A listed reload is a whole reload, by design."
   # THREE USES ON THE DAY IT WAS WRITTEN (Tenet Envoy, Tenet Diplos, Tenet
   # Ferrox) and three different percentages, which is both halves of what earns
   # a reason its place.
   holstered_reload:
-    text: "it reloads {pct}% of its magazine a second while HOLSTERED or deployed, which is free ammunition bought by putting the weapon away — this arena never holsters it, so the reload here is always the full one"
+    text: "It reloads {pct}% of its magazine a second while holstered or deployed; it is never holstered here, so the reload is always the full one."
   # SILENCE. Six weapons in the roster are silent and each said so in its own
   # words; the sentence carries no numbers at all, which is what makes it a
   # reason rather than prose.
@@ -137,37 +137,37 @@ reasons:
   # the Telos, both Gremlins) — the sentence carries no numbers, which is what
   # earns it a template rather than five spellings.
   bolt_corpse_ragdoll:
-    text: "ON KILL THE BODY FOLLOWS THE BOLT, damaging anyone in its path and pinning the corpse to walls (wiki). It is a second damage source that only exists once something has died, and this engine has no ragdoll and no wall for it to pin against — so a bolt weapon fighting a crowd is understated by however much that corpse would have hit on the way past"
+    text: "On a kill the body follows the bolt, damaging anyone in its path (wiki). There is no ragdoll here, so against a crowd the number reads low."
   # THREE WEAPONS AND THREE DIFFERENT RELOAD TIMES (both Veloxes, the Zhuge
   # Prime) — one sentence with one number in it, which is exactly the shape a
   # reason exists for.
   empty_reload_is_faster:
-    text: "it 'reloads 50% faster from a fully depleted magazine' (wiki), and this engine carries ONE reload time per weapon. This sim holds the trigger until the magazine is dry, which is exactly the case that reload applies to — so the {seconds} s here is the SLOW reload for a fight that would always earn the fast one, and the weapon is understated"
+    text: "It reloads 50% faster from an empty magazine (wiki); the engine has one reload time per weapon. The sim always empties the magazine, so the {seconds} s here is the slow reload and the number reads low."
   silent_weapon:
-    text: "this weapon is SILENT and this arena has nobody to alert — stealth is worth nothing here and a great deal in a real mission"
+    text: "This weapon is silent; there is nobody to alert here, so stealth is worth nothing."
   spool_rebuilds_after_reload:
-    text: "the spool rebuilds after every reload: the page says burst firing MAINTAINS it, so a player whose pauses are short enough keeps more of the listed rate than this sim does — here the only pauses are the reloads the weapon forces. The spool itself IS modelled"
+    text: "The spool rebuilds after every reload. Per the page, short pauses in burst fire keep it, so a player who taps keeps more of the rate than the sim. The spool itself is modelled."
   # THE MELEE ROSTER — what a melee weapon's own page describes and the engine
   # does not apply. docs/UNMODELLED.md §"THE MELEE ROSTER".
   melee_attack_unmodelled:
-    text: "not modelled — {attacks}: of this weapon's attacks only the swing, the slam and the heavy slam are"
+    text: "Not modelled: {attacks}. Of this weapon's attacks, only the swing, the slam and the heavy slam are."
   glaive_heavy_is_a_throw:
-    text: "a glaive's heavy attack is a THROW, which is not modelled, so it has no heavy mode here and a Tennokai window converts nothing"
+    text: "A glaive's heavy attack is a throw, which is not modelled, so there is no heavy mode and a Tennokai window converts nothing."
   gunblade_heavy_is_a_shot:
-    text: "a gunblade's heavy attack FIRES, which is not modelled, so it has no heavy mode here and a Tennokai window converts nothing"
+    text: "A gunblade's heavy attack fires, which is not modelled, so there is no heavy mode and a Tennokai window converts nothing."
   melee_heavy_is_special:
-    text: "this weapon's heavy attack is {what}, which is not modelled, so it has no heavy mode here and a Tennokai window converts nothing"
+    text: "This weapon's heavy attack is {what}, which is not modelled, so there is no heavy mode and a Tennokai window converts nothing."
   melee_passive_unmodelled:
-    text: "not modelled — {passive}"
+    text: "Not modelled: {passive}."
   melee_heavy_unpublished:
-    text: "the wiki publishes no heavy attack figure for this weapon, so it has no heavy mode here"
+    text: "The wiki publishes no heavy attack figure for this weapon, so there is no heavy mode."
   melee_slide_unpublished:
-    text: "the wiki publishes no slide attack figure or no slide duration for this weapon, so it has no slide mode here"
+    text: "The wiki publishes no slide attack figure or duration for this weapon, so there is no slide mode."
   melee_own_combo_unmodelled:
-    text: "the wiki's stance tables give this weapon combos of its OWN ({combos}), which replace the equipped stance's and are not transcribed: the stance's (or its class's) are played in their place"
+    text: "The wiki gives this weapon combos of its own ({combos}), which replace the stance's and are not transcribed; the stance's (or its class's) are used instead."
   melee_heavy_total_disputed:
-    text: "the heavy attack is this weapon's infobox figure, {infobox}x; its class's heavy table implies {table}x, and nobody has measured which is right"
+    text: "The heavy attack is the infobox's {infobox}x; the class's heavy table implies {table}x. Unmeasured."
   melee_incarnon_unmodelled:
-    text: "its Incarnon evolutions and Incarnon Form are not modelled"
+    text: "Its Incarnon evolutions and Incarnon Form are not modelled."
   melee_valence_unmodelled:
-    text: "its {family} valence bonus is not modelled: the build cannot state the element and bonus this copy rolled, so it reads without one"
+    text: "Its {family} valence bonus is not modelled: the build cannot state the element and bonus this copy rolled, so it reads without one."

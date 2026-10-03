@@ -86,13 +86,13 @@ effect:
 # in a one-target arena where nobody shoots back it is worth exactly its line in
 # the CO counter — and Void IS on Condition Overload's list of counting procs.
 unmodelled:
-  - "the Bullet Attractor itself — it deals no damage, and what it is actually worth (redirecting enemy fire, letting one punch-through round hit twice) needs enemies that shoot back and a second target"
-  - "the Sentient / Shadow Stalker damage-adaptation reset the Void proc performs"
-  - "The Vast Untime's +50% Void vulnerability and its pause on this buff's timer — that is a second Xaku ability, and no frame layer exists yet"
-  - "the extra hit off a lingering FIELD tick (Torid's cloud): neither wiki says whether a cloud tick triggers one, so it does not here — MEASUREMENTS M40"
+  - "The Bullet Attractor deals no damage. Its value, redirecting enemy fire and letting a punch-through round hit twice, needs enemies that shoot back and a second target; the number is unaffected."
+  - "The Void proc's reset of Sentient and Shadow Stalker damage adaptation is not modelled."
+  - "The Vast Untime's +50% Void vulnerability, and its pause on this buff's timer, belong to another Xaku ability, which is not modelled."
+  - "Whether a lingering field's tick (the Torid's cloud) triggers an extra hit is stated by neither wiki, so it does not here."
 
 live_bugs:
-  - "an extra hit fires off a Blast DETONATION, which is a status payload no other extra hit reacts to, and it takes the faction bonus a third time AND the full elemental bracket the detonation itself is denied. The wiki files it under Bugs; modelled as it plays, and a hotfix changes this number"
+  - "An extra hit also fires off a Blast detonation, taking the faction bonus a third time and the elemental bonus the detonation itself is denied. The wiki lists it as a bug; it is modelled as it plays now, and a fix would change this number."
 
 source:
   url: https://wiki.warframe.com/w/Xata%27s_Whisper

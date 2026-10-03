@@ -35,8 +35,8 @@ attack:
   damage: { impact: 26, puncture: 26, slash: 52 }   # total 104
 
 unmodeled:
-  - "the burst empties the MAGAZINE and this entry fires a fixed count — the unmodded magazine. The page states that magazine mods lengthen it, so a build carrying one is understated here"
-  - "the alternate fire PREVENTS ZOOM, which the page notes stops Hydraulic Crosshairs and Sharpened Bullets working on it — an aim-state gate this entry does not apply"
+  - "The burst empties the magazine, and this entry fires a fixed count, the unmodded magazine. Magazine mods lengthen the burst (page), so a build with one reads low."
+  - "The alt-fire prevents zoom, so Hydraulic Crosshairs and Sharpened Bullets do not work on it (page); this entry does not apply that limit, so with those mods it reads high."
 
 source:
   url: https://wiki.warframe.com/w/Pandero_Prime

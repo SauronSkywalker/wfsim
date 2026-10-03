@@ -122,13 +122,13 @@ body_parts:
     crit_bonus: true
 
 live_bugs:
-  - "its nullifying pulse does not currently dispel Warframe abilities in game, though the wiki describes it doing so — this fight keeps your buffs, and a hotfix restoring the pulse would take them away"
+  - "In game its pulse does not currently dispel Warframe abilities, though the wiki says it does. This fight keeps your buffs; a fix restoring the pulse would remove them."
 
 unmodeled:
-  - "its nullifying pulse is not applied here: in game it dispels every Warframe ability within 6.5 m every 5 seconds, and this fight leaves Roar, Eclipse, Nourish and the elemental augments running"
-  - "the mines on its back are a 0.5x hitbox the sim never aims at — shots land on the body or the head, and a player would not choose the mines"
-  - "it is not stopped or slowed here — a Cold status greatly slows a Demolisher in game (and is the one effect its pulse cannot cleanse), and this sim has no movement for that to matter to"
-  - "the conduit it is walking towards is not modelled: a Disruption run is a race against its arrival, and this fight has no clock but its own"
+  - "Its nullifying pulse is not applied: in game it dispels every Warframe ability within 6.5 m every 5 s. Here Roar, Eclipse, Nourish and the elemental augments stay up."
+  - "The mines on its back are a 0.5x hitbox the sim never aims at; shots land on the body or the head."
+  - "Cold greatly slows a Demolisher in game, and its pulse cannot cleanse it. The sim has no movement, so slowing it changes nothing here."
+  - "The conduit it walks towards is not modelled: a Disruption run races its arrival, and this fight has no such clock."
 
 source:
   url: https://wiki.warframe.com/w/Ghoul_Devourer

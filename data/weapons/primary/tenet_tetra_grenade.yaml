@@ -82,9 +82,9 @@ attack:
     status_chance: 0.30
 
 unmodeled:
-  - "THE DAMAGE SCALES WITH HOW FULL THE MAGAZINE WAS — \"Damage of the alt-fire scales linearly with the percentage of the remaining magazine\" — and this entry fires the full-magazine grenade every time. Every shot after the first in a magazine is therefore overstated here unless the rifle was reloaded first, which is how the weapon is actually played"
+  - "The grenade's damage scales with how full the magazine is (page), and this entry always fires the full-magazine grenade. Every later shot in a magazine reads high unless the rifle is reloaded first, which is how it is played."
   - reason: explosion_ignores_cover
-  - "the alt fire cannot be reloaded manually to skip its delay, and Kinetic Ricochet does not affect its projectile — two cadence rules this arena has no reload interruption for"
+  - "The alt-fire cannot be reloaded early to skip its delay, and Kinetic Ricochet does not affect it; the sim does not interrupt reloads, so neither changes anything here."
   - reason: self_stagger
 
 source:

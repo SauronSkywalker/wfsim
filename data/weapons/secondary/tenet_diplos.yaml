@@ -71,7 +71,7 @@ attack:
 unmodeled:
   - reason: holstered_reload
     pct: 10
-  - "the very heavy side-to-side recoil the page calls out, which is what makes the listed pinpoint accuracy \"only effective for the first shot\". Recoil is a hand-aim cost and this arena has no hand"
+  - "The very heavy side-to-side recoil (page) makes its accuracy hold only for the first shot; the sim has no recoil."
 
 source:
   url: https://wiki.warframe.com/w/Tenet_Diplos

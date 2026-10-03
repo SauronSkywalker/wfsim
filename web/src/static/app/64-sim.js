@@ -882,7 +882,7 @@ const enemyCaveat = (en) => {
   const gaps = (en && en.unmodeled) || [];
   return gaps.length
     ? `<span class="en-gap" title="${escHtml(tr("the sim does not model this yet, so its number against this target is optimistic"))}">⚠ ${
-        escHtml(tr("not modeled") + ": " + gaps.map((g) => tr(g)).join(", "))}</span>`
+        escHtml(tr("not modeled") + ": " + gaps.map((g) => tr(g)).join(" · "))}</span>`
     : "";
 };
 

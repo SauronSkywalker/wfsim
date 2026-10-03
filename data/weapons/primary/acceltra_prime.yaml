@@ -80,8 +80,8 @@ attack:
     damage: { puncture: 42.4, slash: 10.6 }   # total 53
 
 unmodeled:
-  - "the rockets have a MINIMUM ARMING DISTANCE of 7 metres (wiki): closer than that they hit and do not explode. This arena fires at whatever range the scene is set to, and the explosion is applied at every one of them — so a fight staged inside 7 m is overstated here by the whole explosion, which is most of the weapon"
-  - "reloading while SPRINTING gives +25% reload speed (+50% on Gauss) — this arena does not move, so the reload here is always the standing one"
+  - "The rockets arm only after 7 m (wiki); closer, they hit without exploding. The sim applies the explosion at every range, so a fight set inside 7 m reads high by the whole explosion, most of the weapon."
+  - "Reloading while sprinting gives +25% reload speed (+50% on Gauss); nobody moves here, so the reload is always the standing one."
   - reason: explosion_ignores_cover
   - reason: self_stagger
 

@@ -97,7 +97,7 @@ attack:
 # down would be a second copy of a constant that could drift from it.
 
 unmodeled:
-  - "corpses keep conducting the chain, which the page states as 'Enemy corpses will still allow the beam to connect to nearby enemies' — this arena removes a body when it dies, so a chain that would have hopped THROUGH a corpse to a live enemy behind it finds nothing there"
+  - "In game the chain can pass through corpses (page); here a body that dies is removed, so a chain that would hop through a corpse to an enemy behind it finds nothing."
 
 source:
   url: https://wiki.warframe.com/w/Tenet_Glaxion

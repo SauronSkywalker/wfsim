@@ -57,7 +57,7 @@ attack:
   damage: { impact: 16, puncture: 24 }   # total 40
 
 unmodeled:
-  - "THE ACTIVE RELOAD: pressing reload again 22-38% of the way through one cuts the reload to 1 second and gives the magazine Heat rounds dealing '+25% more damage with guaranteed status' (wiki). It is a TIMED INPUT and this sim has no player pressing buttons — every reload here is the full 5 seconds and every round is the ordinary Puncture one, so a player who hits the window is far ahead of this number"
+  - "Pressing reload again 22-38% into a reload cuts it to 1 s and loads Heat rounds with +25% damage and guaranteed status (wiki). It is a timed input the sim does not press, so every reload is the full 5 s with ordinary rounds, and the number reads well low."
 
 source:
   url: https://wiki.warframe.com/w/Reconifex

@@ -43,8 +43,8 @@ effect:
   kind: ammo_efficiency
 
 unmodelled:
-  - "the ENERGY it costs, and how often you can afford to recast it — 50 Energy for 5 seconds at 100% Ability Duration is a real budget, and this arena has no energy economy. Set the duration to what your build actually keeps up, or to the whole fight to ask what the weapon is worth under it rather than around it"
-  - "reserves. Infinite ammo is on by default, so the half of this ability that keeps you shooting between resupplies is worth nothing here — what it does move is the RELOAD count, which is modelled"
+  - "Its Energy cost is not modelled: 50 Energy for 5 s at 100% Ability Duration, and this arena has no energy economy. Set the duration to what your build keeps up."
+  - "Its reserve refill adds nothing here: reserves are infinite by default. Its effect on how often you reload is modelled."
 
 source:
   url: https://wiki.warframe.com/w/Energized_Munitions

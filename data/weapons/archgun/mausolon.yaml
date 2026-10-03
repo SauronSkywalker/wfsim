@@ -96,9 +96,9 @@ unmodeled:
   # MANY: "up to 13" has no floor published and the count plainly depends on
   # where the body is while it floats, which this arena does not model. A
   # measurement decides it (docs/MEASUREMENTS.md), not a guess.
-  - "the LIFTED SYNERGY is not modelled — the wiki gives this weapon 'up to 13 additional instances of direct hit damage' against a Lifted enemy, and its own alt-fire is a guaranteed Lifted proc, so a real engagement alternates between lifting and cashing in; the sim applies the Lifted status (Condition Overload counts it) and none of the extra instances, which makes the primary read LOW for as long as the target is lifted"
-  - "Primary Compression's 444% case is not modelled — the catalog gives this weapon a second effectiveness for aiming DURING the alt-fire, and this arena has no such state; the ordinary 100% is what is applied"
-  - "the radial's falloff is not modelled — this arena has one target at the centre, so it always takes the full 72 and never the 58 at the rim"
+  - "The Lifted synergy is not modelled: the wiki gives up to 13 extra direct-hit instances against a Lifted enemy, and its alt-fire guarantees Lifted. Only the Lifted status is applied (Condition Overload counts it), so the primary reads low while the target is lifted."
+  - "Primary Compression's 444% case is not modelled: the catalog gives a second value for aiming during the alt-fire, a state the sim does not have. The ordinary 100% applies."
+  - "The radial's falloff is not modelled; the one target at the centre always takes the full 72, never the 58 at the rim."
   - reason: arch_gun_deployer_cooldown
 
 source:

@@ -51,7 +51,7 @@ attack:
   damage: { impact: 5, puncture: 75, slash: 20 }   # total 100
 
 unmodeled:
-  - "the bow-exclusive Thunderbolt mod is outside the pools this roster loads — on this weapon it turns every bolt into a grenade, which is a whole second damage source"
+  - "Not offered here: the bow-exclusive Thunderbolt, which on this weapon turns every bolt into a grenade, a second damage source."
   - reason: bolt_corpse_ragdoll
   - reason: silent_weapon
 

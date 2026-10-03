@@ -74,7 +74,7 @@ attack:
 unmodeled:
   - reason: empty_reload_is_faster
     seconds: 3
-  - "the explosion arrives 0.6 SECONDS after the bolt lands, which the page says lets an enemy walk out of it — this engine resolves the blast at the point of impact immediately, so nothing ever escapes one here"
+  - "The explosion arrives 0.6 s after the bolt lands, which lets an enemy walk out of it (page); here it resolves on impact, so nothing escapes."
   - reason: bolt_corpse_ragdoll
   - reason: explosion_ignores_cover
   - reason: self_stagger

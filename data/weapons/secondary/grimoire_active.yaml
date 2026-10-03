@@ -205,12 +205,10 @@ unmodeled:
   # trust this weapon's number cannot read a yaml (the rule `ricochet:`
   # established, 2026-08-21). Prose rather than a reason because it is used
   # once and carries one number.
-  - "how often the orb's strikes land on a weak point is a MEASURED average
-    rather than geometry — about 10% per body hit, counted at 5 weak points in
-    48 hits. Where an orb drifting through a crowd actually puts them depends
-    on how everyone is standing, which this arena does not model, so a fight
-    where you can line them up beats this number and one against a single tall
-    target may not reach it"
+  - "Measured: about 10% of the orb's strikes land on a weak point (5 in 48
+    body hits). Where they land in a crowd depends on positions the sim does
+    not model, so a lined-up fight beats this number and a single tall target
+    may not reach it."
   # WHAT THE POSITION MODEL FOUND, and the answer turned out to be the arena
   # rather than any of this entry's numbers: the orb bounces
   # off walls, and this arena has none. Everything here is right and the fight

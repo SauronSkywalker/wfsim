@@ -88,7 +88,7 @@ attack:
 
 unmodeled:
   - reason: explosion_ignores_cover
-  - "the projectiles arc heavily and travel slowly, so at range the burst has to be led — an aiming cost this arena has no hand to pay"
+  - "The projectiles arc and travel slowly, so at range they must be led; every shot here connects, so against a moving target the real hit rate is lower."
   - reason: self_stagger
 
 source:

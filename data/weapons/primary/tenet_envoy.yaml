@@ -108,8 +108,8 @@ attack:
 
 unmodeled:
   - reason: explosion_ignores_cover
-  - "the rockets are STEERED: \"Aiming will cause fired rockets to travel toward the aiming reticle, allowing them to be guided\", and \"Allows firing rockets from behind cover\". Both are hand-aim mechanics, and both cost the shot half its speed while used (20 m/s guided against 40 unguided). Against a target that does not move, guidance buys nothing and is charged nothing"
-  - "a rocket that hits nothing detonates on its own after 6 seconds, which needs a miss this arena resolves at the wall of its own geometry-free floor"
+  - "The rockets can be guided by aiming and fired from behind cover, at half speed while guided (20 m/s against 40). The target here does not move, so guidance changes nothing."
+  - "A rocket that hits nothing detonates after 6 s; the sim does not model a miss."
   - reason: holstered_reload
     pct: 10
   - reason: self_stagger

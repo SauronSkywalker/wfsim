@@ -34,7 +34,7 @@ attack:
   damage: { impact: 0.9, puncture: 0.9, slash: 7.2 }   # 9 a pellet, 18 a shot
 
 unmodeled:
-  - "the alternate fire SWEEPS the two beams back and forth across the front of the weapon (wiki) — this arena fires a fixed ray at one point, so the sweep neither misses the aimed body nor catches the ones beside it. Against one target this is the ceiling; against a line it is a floor"
+  - "The alt-fire sweeps both beams across the front (wiki); the sim fires a fixed ray, so the number is the ceiling against one target and reads low against a line."
 
 source:
   url: https://wiki.warframe.com/w/Convectrix

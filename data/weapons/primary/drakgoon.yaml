@@ -57,7 +57,7 @@ attack:
   damage: { impact: 7, puncture: 7, slash: 56 }   # 70 a pellet, 700 a shot
 
 unmodeled:
-  - "shots RICOCHET once (wiki), which is what lets a player kill something behind cover — this arena has no walls to bounce off"
+  - "Shots ricochet once (wiki), which reaches enemies behind cover; there are no walls here."
 
 source:
   url: https://wiki.warframe.com/w/Drakgoon

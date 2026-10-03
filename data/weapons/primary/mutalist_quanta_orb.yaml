@@ -53,7 +53,7 @@ attack:
     damage: { toxin: 100 }   # total 100
 
 unmodeled:
-  - "the orb HANGS IN PLACE and damages what walks into it, and the primary fire can be shot THROUGH it for bonus damage (wiki) — a two-step interaction between the two modes, and this engine fires each mode on its own"
+  - "The orb hangs in place and damages what walks into it, and shooting the primary fire through it adds damage (wiki). The engine fires each mode on its own, so this interaction is not modelled."
   - reason: explosion_ignores_cover
   - reason: self_stagger
 

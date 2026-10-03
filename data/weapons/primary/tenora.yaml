@@ -59,7 +59,7 @@ attack:
     over_shots: 8.0
 
 unmodeled:
-  - "'40 shots are required before optimal ACCURACY is achieved' (wiki) — this entry carries the settled cone, so a burst that would open wide here opens tight"
+  - "It needs 40 shots to reach full accuracy (wiki); this entry uses the settled spread, so an early burst is tighter here than in game."
   - reason: spool_rebuilds_after_reload
 
 source:

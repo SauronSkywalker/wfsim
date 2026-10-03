@@ -13,7 +13,7 @@ form: slide
 transform_group: valkyr_talons
 co_behavior: additive_with_base_damage
 unmodeled:
-  - "the stance page says this slide lands 'up to a 5-hit combo against a single target, or 4 hits against multiple enemies', where the module and the ability page say 6; this entry lands 6 and it is unmeasured"
+  - "The stance page gives this slide up to 5 hits on one target or 4 on several; the module and the ability page say 6. This entry lands 6, unmeasured."
 attack:
   # see notes: swing_trigger_pull_engine
   trigger: melee

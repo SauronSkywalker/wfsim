@@ -43,8 +43,8 @@ attack:
   damage: { heat: 88 }   # total 88
 
 unmodeled:
-  - "the burst empties the MAGAZINE and this entry fires a fixed count — the unmodded magazine. The page states that magazine mods lengthen it, so a build carrying one is understated here"
-  - "the cone is 2 METRES THICK (wiki), which is a hit volume this arena's ray has no width for"
+  - "The burst empties the magazine, and this entry fires a fixed count, the unmodded magazine. Magazine mods lengthen the burst (page), so a build with one reads low."
+  - "The cone is 2 m thick (wiki); the sim fires a ray with no width."
 
 source:
   url: https://wiki.warframe.com/w/Athodai

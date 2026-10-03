@@ -15,7 +15,7 @@ transforms_to: miter_incarnon
 
 # see notes: bulk_intake_stats_are_2
 unmodeled:
-  - "the Uncharged Shot is not modelled — this entry carries only the Charged Shot"
+  - "The Uncharged Shot is not modelled; this entry carries only the Charged Shot."
   - reason: spread_not_transcribed
 accuracy: 100
 disposition: 1.5

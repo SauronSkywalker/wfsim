@@ -100,9 +100,9 @@ attack:
     status_chance: 0.349
 
 unmodeled:
-  - "the missiles HOME, and homing is not modelled — this arena has one target at zero distance, so a guided missile and a straight one land the same"
-  - "the 8-degree spread is not modelled — this arena has one target at zero distance, so all six missiles always land on it"
-  - "the explosion's falloff is not stated by the page and is therefore not modelled — the target stands at the centre and takes the full 228 either way"
+  - "The missiles home, which is not modelled; with one target at zero distance, homing and straight missiles land the same."
+  - "The 8-degree spread is not modelled; at zero distance all six missiles land on the one target."
+  - "The explosion's falloff is not published, so it is not modelled; the target stands at the centre and takes the full 228."
   - reason: arch_gun_deployer_cooldown
 
 source:

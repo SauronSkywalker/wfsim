@@ -23,8 +23,8 @@ effect:
   kind: final_crit_damage
 
 unmodelled:
-  - "the condition, the companion's critical chance over 50%, is not checked: ticking this says the companion clears it"
-  - "headshot kills shortening the companion's recovery timer: this fight has no companion to revive"
+  - "The condition, the companion's critical chance over 50%, is not checked: ticking this treats it as met."
+  - "Headshot kills shorten the companion's recovery timer. There is no companion to revive here; the number is unaffected."
 
 source:
   url: https://wiki.warframe.com/w/Tenacious_Bond

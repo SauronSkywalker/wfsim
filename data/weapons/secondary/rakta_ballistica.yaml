@@ -15,7 +15,7 @@ transforms_to: rakta_ballistica_incarnon
 
 # see notes: bulk_intake_stats_are_2
 unmodeled:
-  - "the Burst Shot is not modelled — this entry carries only the Charged Shot"
+  - "The Burst Shot is not modelled; this entry carries only the Charged Shot."
 accuracy: 4
 disposition: 1.2
 polarities: [vazarin, madurai]

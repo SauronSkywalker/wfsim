@@ -71,8 +71,8 @@ attack:
     damage: { blast: 740 }   # total 740
 
 unmodeled:
-  - "the module gives this shot THREE attacks and this engine carries one explosion: the Blast COLLAPSE is the one modelled and the Cold INITIAL BLAST is not counted"
-  - "the bubble HOLDS what it catches until it collapses (wiki) — that is crowd control, and this arena's enemies neither move nor stop"
+  - "The module gives this shot three attacks and the engine carries one explosion: the Blast collapse is modelled, and the Cold initial blast is not counted."
+  - "The bubble holds what it catches until it collapses (wiki); crowd control, and enemies here neither move nor stop."
   - reason: explosion_ignores_cover
   - reason: self_stagger
   - reason: silent_weapon

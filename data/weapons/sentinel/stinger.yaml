@@ -43,7 +43,7 @@ attack:
   forced_procs: [toxin]
   damage: { toxin: 15.0 }
 unmodeled:
-  - "the TOXIN EMBED is not modelled — the page gives this weapon a second attack that deals its damage over 3 seconds on top of the hit, and this entry carries only the hit"
+  - "The Toxin embed, a second attack dealing damage over 3 s on top of the hit (page), is not modelled; only the hit is carried."
   - reason: companion_fires_it
   - reason: spread_not_transcribed
 

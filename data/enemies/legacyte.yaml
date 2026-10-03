@@ -49,10 +49,10 @@ body_parts:
     crit_bonus: false
 
 unmodeled:
-  - "its DAMAGE ATTENUATION is not applied here, and it is this unit's whole defence: the game caps what one instance and what one second can take off it, both as a share of its Max Health, so a build measured here removes far more of it than it would in game — the engine has the machinery and the constants are unpublished, so turning it on would be inventing the numbers rather than measuring them"
-  - "its CAPPED STATUS VULNERABILITY is not applied: the game gives it a partial status immunity, and this roster has only the whole kind — a type either lands here or it does not"
-  - "no weak point is published for it, so nothing on it is a head: a build that lives on headshots scores here as if every shot were a body shot"
-  - "it gains additional random abilities with each generation, from a pool of more than twenty — a fight here is the same Legacyte every time"
+  - "Its damage attenuation is not applied, and it is this unit's main defence: the game caps damage per instance and per second as a share of its max health. A build here removes far more of it than in game, so the number reads high. The caps are unpublished."
+  - "Its capped status vulnerability is not applied: the game gives it partial status immunity, and the sim supports only full immunity, so each status type either lands or does not."
+  - "No weak point is published for it, so it has no head here: a headshot build scores as if every shot were a body shot."
+  - "Each generation gains random abilities from a pool of more than twenty; the Legacyte here is the same every time."
 
 source:
   url: https://wiki.warframe.com/w/Legacyte

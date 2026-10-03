@@ -66,7 +66,7 @@ attack:
     damage: { gas: 41 }   # total 41
 
 unmodeled:
-  - "the projectiles HOME on enemies (wiki) — this arena's shots already go where they are aimed, so the homing buys nothing here"
+  - "The projectiles home on enemies (wiki); shots here already land where aimed, so homing adds nothing."
   - reason: explosion_ignores_cover
   - reason: self_stagger
 

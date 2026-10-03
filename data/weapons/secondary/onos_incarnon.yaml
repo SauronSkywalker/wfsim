@@ -17,9 +17,9 @@ transforms_from: onos
 # from the wiki's own attack rows: 8 beam ticks at 30 Radiation against 2,200
 # Heat direct plus 1,100 Heat radial — the beam is a ninth of it.
 unmodeled:
-  - "the Incarnon Form's CHARGED SHOT is not modelled, and it is most of what this form does: a full charge releases 2,200 Heat with guaranteed status at 38% crit / 3.2x, carrying the same 5 m punch through as the beam. It costs 50 of the 350 Incarnon rounds against the beam's 1 per tick, so one gauge is seven charged shots"
-  - "the charged shot's EXPLOSION is not modelled either: 1,100 Heat in a 3 m radius at the same 38% crit / 3.2x, falling off linearly to 70% at the rim and needing no line of sight to reach a body"
-  - "the beam's CHARGE RAMP is not modelled — its damage climbs linearly to 2.5x the longer the trigger is held, and resets on release or on firing the charged shot. So even the ninth this entry does carry is scored at its floor"
+  - "The Incarnon Form's charged shot is not modelled, and it is most of the form: 2,200 Heat with guaranteed status, 38% crit and 3.2x, with the beam's 5 m punch through. It costs 50 of the 350 Incarnon rounds, so one gauge is seven charged shots. The number reads low."
+  - "The charged shot's explosion is not modelled either: 1,100 Heat in 3 m at 38% crit and 3.2x, falling off to 70% at the rim, needing no line of sight."
+  - "The beam's charge ramp is not modelled: its damage climbs to 2.5x the longer the trigger is held, resetting on release or on a charged shot. The beam here is scored at its lowest."
 
 gauge_form:
   gauge:

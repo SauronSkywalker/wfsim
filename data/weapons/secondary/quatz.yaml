@@ -51,7 +51,7 @@ attack:
   damage: { electricity: 11, impact: 9, puncture: 2, slash: 7 }   # total 29
 
 unmodeled:
-  - "reloading from a FULLY DEPLETED magazine produces an 8 m shockwave dealing 10 Electricity at 100% status plus a forced Electricity proc (wiki). It is a reload-triggered explosion this engine has no shape for, and this sim always empties the magazine — so it would fire on every reload here and is not counted at all"
+  - "Reloading from an empty magazine releases an 8 m shockwave, 10 Electricity at 100% status plus a forced Electricity proc (wiki). The engine has no reload-triggered explosion, so it is not counted."
 
 source:
   url: https://wiki.warframe.com/w/Quatz

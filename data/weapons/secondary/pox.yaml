@@ -94,9 +94,9 @@ attack:
     takes_condition_overload: true
 
 unmodeled:
-  - "the cloud's CONDITION OVERLOAD term reads 50 against its own base of 20 — the catalog's 250% — and there is no per-part CO fraction, so it takes the ordinary 100% here and a status-stacking build is understated on it"
-  - "the throw is SILENT and the cloud is not, which is a stealth distinction this arena has no alarm to raise"
-  - "this weapon cannot equip Concealed Explosives, the thrown-exclusive mod — a card outside the pools this roster loads either way"
+  - "The cloud's Condition Overload term is 50 against its own base of 20, the catalog's 250%; that is not entered here, so it takes 100% and a status-stacking build reads low on it."
+  - "The throw is silent and the cloud is not; there is nobody to alert here."
+  - "This weapon cannot equip Concealed Explosives, the thrown-exclusive mod, which is not offered here either way."
 
 source:
   url: https://wiki.warframe.com/w/Pox

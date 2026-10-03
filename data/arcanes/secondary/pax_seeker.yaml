@@ -49,7 +49,7 @@ effects:
     rankMax: 4
 
 unmodeled:
-  - "the HOMING PROJECTILES are not fired. On a headshot kill this releases 1-4 bolts of their own damage — half Slash, half Puncture, with a forced Impact proc and double the benefit of crit mods — and none of it is counted here, so a headshot build with this arcane is understated by everything the bolts would have done. The formula is transcribed in this file; what is missing is the machinery for a second attack part whose trigger is a KILL"
+  - "The homing bolts are not fired: a headshot kill releases 1-4 bolts, half Slash and half Puncture, with a forced Impact proc and double benefit from crit mods. A headshot build with this arcane reads low by everything the bolts would deal."
 
 source:
   url: https://wiki.warframe.com/w/Pax_Seeker

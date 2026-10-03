@@ -23,8 +23,8 @@ effect:
   kind: final_crit_damage
 
 unmodelled:
-  - "the condition, being invisible, is not simulated: ticking this says the wielder is invisible for the whole fight"
-  - "its +30% Ability Strength: add it to the Ability Strength box yourself if the buffs here should feel it"
+  - "Invisibility is not simulated: ticking this treats the wielder as invisible for the whole fight."
+  - "Its +30% Ability Strength is not applied to the buffs here; add it to the Ability Strength box if it should be."
 
 source:
   url: https://wiki.warframe.com/w/Arcane_Crepuscular

@@ -45,7 +45,7 @@ attack:
   damage: { impact: 13.05, puncture: 56.55, slash: 17.4 }   # 87 per pellet
 
 unmodeled:
-  - "the alt-fire needs four rounds in the magazine and reloads instead when it has fewer — this sim fires it whenever the mode is chosen, so a magazine that has run down does not force the reload here that it would in game"
+  - "The alt-fire needs four rounds and reloads instead when there are fewer; the sim fires it whenever the mode is chosen, so a low magazine does not force a reload here."
 
 source:
   url: https://wiki.warframe.com/w/Kuva_Hek

@@ -89,9 +89,9 @@ attack:
   damage: { radiation: 600 }   # total 600
 
 unmodeled:
-  - "the projectile is a WALL 3 metres thick, which with the infinite body punch through above is most of what this weapon is in a room: one shot sweeps everything in a 3 m band. This arena fires a RAY, so only the bodies on the line are struck and the width buys nothing. The Tenet variant's sheet is 4.4 m"
-  - "the guaranteed Impact proc is capped at 14 metres and is applied at every distance here, since a forced proc carries no range of its own. It overstates the shot past 14 m, where the damage is already most of the way to its falloff floor"
-  - "the innate punch through does not apply to SURFACES when the central portion of the projectile hits one, which the page says makes punch-through MODS worth fitting anyway — a geometry rule in an arena with no geometry"
+  - "The projectile is a wall 3 m thick (4.4 m on the Tenet variant) that sweeps everything in that band; the sim fires a ray, so only bodies on the line are hit and against a crowd the number reads low."
+  - "The guaranteed Impact proc reaches only 14 m but is applied at every distance here, so past 14 m the number reads slightly high."
+  - "Its innate punch through does not pass surfaces when the projectile's centre hits one; the arena has no surfaces, so this changes nothing here."
 
 source:
   url: https://wiki.warframe.com/w/Arca_Plasmor

@@ -86,10 +86,10 @@ attack:
     stacking: refresh
 
 unmodeled:
-  - "THE PULL, which is the field's other half and the reason it is thrown: it \"continuously pulls enemies within 10 meters toward itself\" for thirty seconds. Gathering a room into one place is worth an enormous amount to every AoE weapon the player carries and nothing at all to a damage number measured against bodies that do not move"
-  - "the throw's forced KNOCKDOWN, which is crowd control — worth time and safety rather than damage, and this arena charges for neither"
-  - "the field is DISABLED OUTRIGHT against some enemies and the page states it as a bug: \"For enemies with both Shield and Armor, or with Overguard, the Attraction Field is completely disabled, including damage and traction effects\". Against such a target the 2,250 above is zero"
-  - "the spear must be picked back up or waited out; this arena throws it and keeps firing"
+  - "The field pulls enemies within 10 m toward it for 30 s, the reason it is thrown. Grouping enemies helps every area weapon in a real room; enemies here do not move, so it changes nothing."
+  - "The throw's forced knockdown is crowd control, worth time and safety rather than damage; it changes nothing here."
+  - "The page lists as a bug that the field is disabled entirely against enemies with both shields and armor, or with Overguard. Against such a target the 2,250 above is zero."
+  - "The spear must be picked up or waited out; here it is thrown and firing continues."
 
 source:
   url: https://wiki.warframe.com/w/Tenet_Ferrox

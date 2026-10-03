@@ -42,7 +42,7 @@ effects:
     # THE CARD SAYS +10 AND THE GAME PAYS +14: the wiki's "incorrectly listed
     # as +10 in game", read in the damage on the Prime (M88).
     misprint: >-
-      the card prints +10 and the effect is +14, measured in the damage on the Boar Prime, which shares this card
+      The card says +10; the effect is +14, measured on the Boar Prime, which shares this card.
 
 source:
   url: https://wiki.warframe.com/w/Boar_Incarnon_Genesis

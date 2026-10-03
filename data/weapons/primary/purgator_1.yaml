@@ -54,8 +54,8 @@ attack:
   damage: { impact: 351.45, puncture: 429.55 }   # total 781
 
 unmodeled:
-  - "'Enemies directly killed by Purgator 1 leave behind 1 Gas status effect stack', and 'the gas cloud deals damage each tick equal to HALF of the killing shot's damage' (wiki). It is an Extra Hit keyed on a KILL rather than on a hit, it takes the killing shot's crit tier and faction bonuses and no multishot, and this engine has no shape for a hit that only exists once something has died. Against anything that dies, this weapon is understated by roughly a third of its real output"
-  - "INFINITE BODY PUNCH THROUGH: the page grants this weapon 1.1 m of punch through AND unlimited penetration of BODIES specifically. The 1.1 m is transcribed and spends the same depth on each body as every other weapon's, so the slug stops after two enemies here where in game it would cross the whole line"
+  - "An enemy killed directly by it leaves a Gas cloud whose ticks deal half the killing shot's damage (wiki). The engine has no hit that exists only after a kill, so against anything that dies the number reads low by roughly a third."
+  - "It has 1.1 m of punch through plus unlimited penetration of bodies (page). Only the 1.1 m is entered, spent per body like any other weapon, so the slug stops after two enemies where in game it crosses the whole line."
 
 source:
   url: https://wiki.warframe.com/w/Purgator_1

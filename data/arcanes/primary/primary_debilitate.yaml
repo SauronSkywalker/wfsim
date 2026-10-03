@@ -10,7 +10,7 @@ description: "If an enemy has 10 stacks of a combined Status Effect, inflicting 
 # so a player reading the number is entitled to know which of those it is. The mechanism is in MEASUREMENTS M37; this is
 # the sentence.
 live_bugs:
-  - "the split fires a damage instance of ZERO, and the zero still takes that instance's own multipliers — when the DoT replaces it with the parent hit's damage, they stay behind. Faction bonuses were meant to carry down the chain and do; a per-instance bonus like Devouring Attrition's +2000% was not, and does anyway (x21 twice = x441). Modelled as it behaves today; a fix removes it"
+  - "The split fires a zero-damage instance that still takes its own multipliers. Faction bonuses carry down the chain as intended; a per-instance bonus such as Devouring Attrition's +2000% carries too, which is not intended (x21 twice = x441). Modelled as it behaves now; a fix would remove it."
 
 effects:
   # THE 0% MEMBER OF THE EXTRA HIT CATEGORY (wiki `Extra_Hit`, which names this

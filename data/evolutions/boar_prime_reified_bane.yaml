@@ -39,7 +39,7 @@ effects:
     # THE CARD SAYS +10 AND THE GAME PAYS +14: the wiki's "incorrectly listed
     # as +10 in game", read in the damage (M88).
     misprint: >-
-      the card prints +10 and the effect is +14, measured in the damage: a pellet at 2 Galvanized stacks x 3 status types reads 266, where +10 would read 255
+      The card says +10; the effect is +14, measured: a pellet at 2 Galvanized stacks and 3 status types reads 266, where +10 would read 255.
 
 source:
   url: https://wiki.warframe.com/w/Boar_Incarnon_Genesis

@@ -51,8 +51,8 @@ co_behavior: independent
 # to the head" only pays where the player's aim decides the body part, and here
 # the headshot rate is a number the scenario sets.
 unmodeled:
-  - "what the Bullet Attractor field is WORTH as an aiming aid — the throw plants it and the 4.7 s it puts on the target IS counted (one Condition Overload status), but the easier headshots are not: the wiki says the field does not guarantee a headshot, so the rate has to be MEASURED before this arena's headshot % can be moved by it."
-  - "the innate reload while holstered or deployed (33% of the magazine per second) — this arena never holsters the weapon"
+  - "The Bullet Attractor's value as an aiming aid is not counted: its 4.7 s on the target is (one Condition Overload status), but easier headshots are not. The wiki says it does not guarantee a headshot, so the rate needs measuring first."
+  - "It reloads 33% of its magazine a second while holstered or deployed; it is never holstered here."
 
 attack:
   # see notes: cone_half_angle_from

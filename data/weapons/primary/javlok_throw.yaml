@@ -50,7 +50,7 @@ attack:
     damage: { heat: 300 }   # total 300
 
 unmodeled:
-  - "the thrown spear must be RETRIEVED before the weapon can be used again (wiki) — this sim throws it on a cadence and never walks over to pick it up"
+  - "The spear must be retrieved before the weapon can be used again (wiki); the sim throws on a cadence and never retrieves it."
   - reason: explosion_ignores_cover
   - reason: self_stagger
 

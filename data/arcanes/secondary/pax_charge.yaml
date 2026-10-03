@@ -34,8 +34,8 @@ effects:
     rankMax: 0.50
 
 unmodeled:
-  - "a LIVE reload buff shortens the REFILL here and does not in game. The delay and the refill are one number in this sim's reload, and the arcane's own static bonus is compensated for exactly — so a build with reload MODS is right — but a buff that arrives mid-fight (Conjunction Voltage's stacks, Merciless) also speeds up the rounds-per-second part, which 'is **not** affected by mods or abilities'. Worth at most the refill itself, which is 0.6 s of a 2.0 s empty cycle on a Tombfinger"
-  - "it PREVENTS reload-triggered mods and arcanes from paying — 'such as Pressurized Magazine or Arcane Awakening' — because there is no reload to trigger them. This sim applies no such lock, so a build pairing one with Pax Charge is overstated by whatever that mod is worth"
+  - "A reload buff gained mid-fight (Conjunction Voltage's stacks, Merciless) also shortens the refill here, which in game 'is not affected by mods or abilities'. Reload mods are handled correctly. The effect is at most the refill: 0.6 s of a 2.0 s empty cycle on a Tombfinger, so the number can read slightly high."
+  - "In game it stops reload-triggered mods and arcanes, such as Pressurized Magazine or Arcane Awakening, because there is no reload. The sim does not, so a build pairing one with Pax Charge reads high by that card's worth."
 
 source:
   url: https://wiki.warframe.com/w/Pax_Charge

@@ -88,7 +88,7 @@ attack:
     # explosion" — so it inherits, and is deliberately not restated.
 
 unmodeled:
-  - "the explosion is a REVERSE CONE — 'dealing damage to enemies in front of the original target' — and this arena gives a splash no facing, so it is modelled as a full 1.9 m sphere. That is the generous reading: against a crowd it reaches bodies the game would leave behind the target"
+  - "The explosion is a reverse cone that damages enemies in front of the target (page); the arena gives a blast no facing, so it is a full 1.9 m sphere. Against a crowd it reaches enemies the game would not, so the number reads high."
   - reason: projectile_must_be_led
   - reason: self_stagger
 

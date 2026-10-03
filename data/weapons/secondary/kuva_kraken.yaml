@@ -63,7 +63,7 @@ attack:
   damage: { impact: 32.25, puncture: 5.375, slash: 5.375 }   # total 43
 
 unmodeled:
-  - "the hip-fire recoil is not modelled — the page notes the burst kicks significantly harder when fired from the hip, and this arena has no recoil at all"
+  - "Hip-fire recoil is not modelled; the page notes the burst kicks much harder from the hip, and the sim has no recoil."
 
 source:
   url: https://wiki.warframe.com/w/Kuva_Kraken

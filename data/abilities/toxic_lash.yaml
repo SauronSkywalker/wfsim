@@ -40,8 +40,8 @@ effect:
   forced_status: true
 
 unmodelled:
-  - "the melee half — the card doubles this on Melee Strikes and this simulator fires guns"
-  - "Contagion Cloud, the augment that leaves a damaging cloud where a killed enemy stood: it needs a place for a corpse to be and a second target to walk into it"
+  - "The card doubles this on melee strikes; the sim fires guns, so only the gun half applies."
+  - "Contagion Cloud, its augment, leaves a damaging cloud where an enemy dies. It needs a corpse and a second target, so it is not counted; against a crowd the number reads low."
 
 source:
   url: https://wiki.warframe.com/w/Toxic_Lash

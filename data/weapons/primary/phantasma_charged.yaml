@@ -29,7 +29,7 @@ unmodeled:
   - reason: cluster_bomblet_co
     row: "Phantasma | Alt-fire Child Bomb | Projectile | 3 | 3 | 100% | Multiplying"
   - reason: cluster_bomblet_stagger
-  - "the escalating ammo cost the wiki files under Bugs (2/2/2/3/3/4/6 through a magazine, and -1 damage per extra ammo): a bug is not a rule, and this one takes AWAY what the charge is supposed to buy"
+  - "The escalating ammo cost the wiki lists under Bugs (2/2/2/3/3/4/6 through a magazine, and -1 damage per extra ammo) is not modelled, so the number reads slightly high."
 
 attack:
   # see notes: cone_half_angle_from

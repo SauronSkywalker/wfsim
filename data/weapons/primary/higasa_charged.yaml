@@ -49,8 +49,8 @@ attack:
   damage: { blast: 390 }   # total 390
 
 unmodeled:
-  - "the gauge also fills by BLOCKING enemy attacks, at 10% a second for two seconds (wiki) — nothing attacks the wielder here, so the kill route is the only one modelled"
-  - "'using Alternate Fire without a full gauge still drains it completely' (wiki) — this engine only fires the form once the gauge is full, so it never wastes one"
+  - "The gauge also fills by blocking attacks, 10% a second for 2 s (wiki); nothing attacks the wielder here, so only the kill route is modelled."
+  - "Firing the alt-fire without a full gauge still drains it (wiki); the sim fires only on a full gauge, so it never wastes one."
 
 source:
   url: https://wiki.warframe.com/w/Higasa

@@ -51,7 +51,7 @@ attack:
   damage: { impact: 2.16, puncture: 30.96, slash: 2.88 }   # total 36
 
 unmodeled:
-  - "the alternate fire CYCLES four quill types — Poison, Fire, Electric and Ice — and this entry carries the Poison one. The other three differ in the element they apply and, on two of them, in the physical damage (40 against this quill's 36), so a build around a different quill is understated here by about a tenth"
+  - "The alt-fire cycles four quill types, Poison, Fire, Electric and Ice; this entry is the Poison one. The others differ in element, and two in physical damage (40 against 36), so a build around another quill reads about a tenth low."
 
 source:
   url: https://wiki.warframe.com/w/Hystrix

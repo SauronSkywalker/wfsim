@@ -75,8 +75,8 @@ attack:
   damage: { impact: 128.0, puncture: 16.0, slash: 16.0 }   # 160 each, 1760 a shell
 
 unmodeled:
-  - "the ARCHWING column of this weapon is not offered — in space it is a single 440-damage Impact/Heat projectile with a 13% status chance instead of eleven hit-scan pellets at 1.3%, which is a different weapon rather than a restated one"
-  - "the 11-degree spread is not modelled — this arena has one target at zero distance, so all eleven pellets always land on it"
+  - "The Archwing version is not offered: in space it fires a single 440-damage Impact/Heat projectile at 13% status, which is a different weapon."
+  - "The 11-degree spread is not modelled; at zero distance all eleven pellets land."
   - reason: arch_gun_deployer_cooldown
 
 source:

@@ -51,7 +51,7 @@ attack:
   damage: { impact: 4, puncture: 60, slash: 16 }   # total 80
 
 unmodeled:
-  - "Spring-Loaded Broadhead and the bow-exclusive Thunderbolt are outside the pools this roster loads — Thunderbolt in particular turns every bolt into a grenade, which is a whole second damage source"
+  - "Not offered here: Spring-Loaded Broadhead and the bow-exclusive Thunderbolt. Thunderbolt turns every arrow into a grenade, a second damage source."
   - reason: bolt_corpse_ragdoll
   - reason: silent_weapon
 

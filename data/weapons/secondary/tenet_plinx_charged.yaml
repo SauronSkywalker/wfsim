@@ -101,10 +101,10 @@ attack:
     status_chance: 0.50
 
 unmodeled:
-  - "MAGAZINE CAPACITY IS A DAMAGE STAT here and this entry pins it at the unmodded 10 — \"Increasing Magazine Capacity (Slip Magazine, Primed Slip Magazine, Ice Storm, Tainted Clip, Combo Fury) will increase the Alternate Fire's damage\", multiplicatively with base-damage mods. A build carrying one is understated by exactly that ratio"
-  - "the 0.8 second EMBED DELAY before the slug detonates, during which it pulls enemies within 6 metres in — the pull is a crowd mechanic and the delay is time this arena does not charge"
-  - "Fulmination does not reach the PULL radius, only the blast, which is a distinction that costs nothing while the pull itself is unmodelled"
-  - "the explosion's forced RAGDOLL, and the alt fire's forced KNOCKDOWN on embed — both are crowd control, which is worth time and safety rather than damage. Nothing shoots back here and a body does not move, so neither pays"
+  - "Magazine capacity raises this alt-fire's damage, multiplicatively with base-damage mods (page), and this entry pins it at the unmodded 10. A build with a magazine mod reads low by exactly that ratio."
+  - "The 0.8 s embed delay before the slug detonates, during which it pulls in enemies within 6 m, is not modelled."
+  - "Fulmination reaches only the blast, not the pull radius; the pull is not modelled, so this changes nothing."
+  - "The explosion's forced ragdoll and the alt-fire's forced knockdown on embed are crowd control; enemies here do not move, so neither applies."
   - reason: self_stagger
 
 source:

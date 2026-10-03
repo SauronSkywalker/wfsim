@@ -48,7 +48,7 @@ attack:
     damage: { electricity: 140 }   # total 140
 
 unmodeled:
-  - "the module gives this alternate fire a THIRD attack — 'Alt-Fire Damage over Time', a burn in six metres between the contact hit and the explosion — and this engine carries one direct hit and one explosion per attack. So the burn is not counted at all"
+  - "The alt-fire's third attack, a burn in 6 m between the contact hit and the explosion, is not counted: the engine carries one direct hit and one explosion per attack. The number reads low."
   - reason: explosion_ignores_cover
   - reason: self_stagger
 

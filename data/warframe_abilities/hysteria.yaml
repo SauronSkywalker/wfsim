@@ -79,7 +79,7 @@ stats:
     scales_with: casting_speed
 
 unmodelled:
-  - "the Valkyr Talons as a weapon: its damage, mods and arcanes belong to a weapon build, not to this panel"
+  - "The Valkyr Talons as a weapon, with their damage, mods and arcanes, belong to a weapon build, not to this panel."
 
 tags:
   # "while also becoming immune to Status Effects. / switching weapons will disable Hysteria's effects, including the status immunity"

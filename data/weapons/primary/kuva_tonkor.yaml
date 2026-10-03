@@ -82,7 +82,7 @@ attack:
 unmodeled:
   - reason: explosion_ignores_cover
   - reason: self_stagger
-  - "a direct hit forces a knockdown whatever the explosion does — this arena's enemies are not knocked down, so the crowd control that makes this weapon safe to fire up close pays nothing here"
+  - "A direct hit forces a knockdown (wiki). Enemies here are not knocked down; the number is unaffected."
 
 source:
   url: https://wiki.warframe.com/w/Kuva_Tonkor

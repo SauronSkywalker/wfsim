@@ -30,7 +30,7 @@ attack:
   damage: { slash: 100 }   # total 100
 
 unmodeled:
-  - "the sawblade is DEPLOYED six metres in front of the wielder and stays there — it is not a beam fired at a target, and this engine models it as one, so a fight where the enemy is not standing on that spot is overstated here"
+  - "The sawblade is deployed 6 m in front of the wielder and stays there; the engine fires it like a beam at the target, so if the enemy is not on that spot the number reads high."
 
 source:
   url: https://wiki.warframe.com/w/Panthera_Prime

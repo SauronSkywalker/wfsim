@@ -40,8 +40,8 @@ attack:
   damage: { toxin: 15 }   # total 15
 
 unmodeled:
-  - "the harpoon REELS the target in and holds it (wiki) — this arena's enemies are neither moved nor held, so the whole point of the mode pays nothing here"
-  - "the module gives this mode a THIRD attack, 'Infested Harpoon Contact', which is the damage dealt while the target is held — a state this engine does not track, so it is not counted"
+  - "The harpoon reels the target in and holds it (wiki); enemies here are neither moved nor held, so the mode's purpose adds nothing."
+  - "The module's third attack, 'Infested Harpoon Contact', is the damage dealt while the target is held, a state the engine does not track; it is not counted."
 
 source:
   url: https://wiki.warframe.com/w/Paracyst

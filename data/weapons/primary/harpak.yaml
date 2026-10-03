@@ -54,7 +54,7 @@ attack:
   damage: { impact: 5, puncture: 37.5, slash: 7.5 }   # total 50
 
 unmodeled:
-  - "'bolts fired stick to their target, and will fling bodies on kill. The body will damage targets in its path' (wiki) — this engine has no ragdoll and no wall to pin against, so the corpse damage a crowd would take is not counted"
+  - "Bolts stick and fling bodies on a kill, and a flung body damages targets in its path (wiki). There is no ragdoll here, so against a crowd the number reads low."
 
 source:
   url: https://wiki.warframe.com/w/Harpak

@@ -34,7 +34,7 @@ attack:
   damage: { puncture: 3 }   # total 3
 
 unmodeled:
-  - "the beacon's whole purpose is the +50% absolute critical chance and the homing it grants the PRIMARY fire, neither of which this engine can carry from one mode to another. Fired on its own it is a three-damage dart"
+  - "The beacon exists to grant the primary fire +50% absolute critical chance and homing, which the engine cannot carry from one mode to another. On its own it is a three-damage dart."
 
 source:
   url: https://wiki.warframe.com/w/Buzlok

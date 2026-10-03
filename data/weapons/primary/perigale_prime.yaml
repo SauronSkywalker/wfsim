@@ -55,6 +55,6 @@ unmodeled:
   - reason: sniper_combo_miss
     seconds: 2
   - reason: zoom_steps
-  - "Voruna's signature bonus is not modelled — carried by her the ammo pool grows to 56, and this arena has no Warframe holding it"
+  - "Voruna's signature bonus is not modelled: carried by her, the ammo pool grows to 56."
 source:
   url: https://wiki.warframe.com/w/Perigale_Prime

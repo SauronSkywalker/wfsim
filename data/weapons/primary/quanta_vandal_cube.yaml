@@ -73,8 +73,8 @@ attack:
     status_chance: 0.26
 
 unmodeled:
-  - "THE CUBE'S OTHER EXPLOSION, which is four times this one: a cube damaged by a player goes off in a 6 metre radius for 600 Blast. It is a two-step play — place a cube, then shoot it — and this arena fires one attack at one aim point, so the step that pays is the one it cannot take"
-  - "a cube left alone detonates after 9 seconds, which needs a miss and a clock this arena does not run"
+  - "A cube that is shot explodes for 600 Blast in 6 m, four times this blast (wiki). The sim never shoots a cube, so the number reads low."
+  - "A cube left alone detonates after 9 s, which needs a miss and a timer the sim does not run."
   - reason: explosion_ignores_cover
 
 source:

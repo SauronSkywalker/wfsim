@@ -82,10 +82,10 @@ attack:
   damage: { impact: 5, puncture: 6, slash: 10, toxin: 12 }
 
 unmodeled:
-  - "the three tendrils FAN OUT from the struck enemy ('within 6 meters of the main target'), where the chain here is a path whose every hop measures 6 m from the last. Against a tight group the two agree; a third enemy 6-12 m from the first is reached here and not in game"
-  - "with PUNCH THROUGH the chains come off 'the furthest target hit by the primary beam that can spawn the chain beams', and only one target spawns them; here every body the beam crosses seeds its own"
-  - "'Chain beams will not target an enemy that has already been hit by the primary beam'; here a chain may strike a body the beam punched through"
-  - "the tendril auto-targets, which leaves 'a noticeable delay between opening fire and actually dealing damage', ammo spent all the while"
+  - "The three tendrils fan out within 6 m of the main target (page); here the chain hops 6 m from each previous enemy. Against a tight group the two agree; an enemy 6-12 m from the first is reached here and not in game."
+  - "With punch through, chains come only from the furthest target the beam hits (page); here every body the beam crosses starts its own chain, so the number reads high."
+  - "Chains skip enemies already hit by the main beam (page); here a chain can hit a body the beam passed through, so the number reads high."
+  - "The tendril auto-targets, with a noticeable delay between firing and dealing damage while ammo is spent (page); the delay is not modelled."
 
 source:
   url: https://wiki.warframe.com/w/Vermisplicer

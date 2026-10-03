@@ -34,7 +34,7 @@ echo_multiplier: 2.0
 # line: that banner says the number below is a FLOOR, and this says the number
 # is RIGHT and the reason is unknown.
 live_bugs:
-  - "Secondary Irradiate's echo is measured at 3.6x the hit on this form, not the 1.8x its card states and every pure single-target weapon delivers. The engine reproduces the measurement; nobody has explained it, and a hotfix could change it."
+  - "Secondary Irradiate's echo is measured at 3.6x the hit on this form, not the 1.8x on its card and on every other single-target weapon. The engine follows the measurement; it is unexplained, and a fix could change it."
 
 # TWO WEAPONS MODEL: second entry of the transform group — see
 # data/weapons/secondary/laetum.yaml for the base form and the decision.

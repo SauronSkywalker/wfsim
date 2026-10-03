@@ -67,8 +67,8 @@ attack:
   damage: { impact: 210, puncture: 280, slash: 210 }   # total 700
 
 unmodeled:
-  - "'Fire rate mods apply double their bonuses' is MODELLED, but this weapon's real cost is the other half of its page: it can only be fired FULLY CHARGED, so a player who releases early gets nothing at all. This sim always charges fully, which is the ceiling and is what a careful player does anyway"
-  - "Spring-Loaded Broadhead, Amalgam Daikyu Target Acquired and the bow-exclusive Thunderbolt are outside the pools this roster loads"
+  - "Fires only at full charge; an early release fires nothing. The sim always charges fully, so the number is the ceiling."
+  - "Not offered here: Spring-Loaded Broadhead, Amalgam Daikyu Target Acquired and the bow-exclusive Thunderbolt."
   - reason: bolt_corpse_ragdoll
   - reason: silent_weapon
   - reason: zoom_steps

@@ -30,7 +30,7 @@ attack:
   damage: { puncture: 30.8, slash: 46.2 }   # 77 a pellet, 231 a shot
 
 unmodeled:
-  - "the fan has a 'very wide spread' (wiki) and the module gives this attack a cone of ZERO, which cannot both be true — the module's figure is transcribed rather than a number invented for the sentence, so every knife lands on the reticle here"
+  - "The fan has a 'very wide spread' (wiki) but the module gives a cone of zero; the module's figure is used, so every knife lands on the reticle here."
 
 source:
   url: https://wiki.warframe.com/w/Fusilai

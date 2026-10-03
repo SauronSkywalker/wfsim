@@ -43,7 +43,7 @@ attack:
   damage: { impact: 50.0, puncture: 30.0, slash: 20.0, radiation: 80.0 }   # 180 each
 
 unmodeled:
-  - "the horizontal SPREAD is not modelled — the eight projectiles go out in a wide line and this arena has one target at zero distance, so all eight always land on it"
+  - "The horizontal spread is not modelled; at zero distance all eight projectiles land."
   - reason: arch_gun_deployer_cooldown
 
 source:

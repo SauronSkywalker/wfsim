@@ -57,7 +57,7 @@ attack:
   damage: { puncture: 15.6, slash: 10.4 }   # total 26
 
 unmodeled:
-  - "'aiming projects a field that blocks frontal projectiles' (wiki), and the field closes on a reload or a charge — nothing shoots back in this arena, so the shield half of this weapon is worth nothing here"
+  - "Aiming raises a shield that blocks frontal projectiles, closing on a reload or a charge (wiki). Nothing shoots back here; the number is unaffected."
 
 source:
   url: https://wiki.warframe.com/w/Higasa

@@ -741,7 +741,19 @@ whenever it is up, and that is right for one weapon and wrong for two.
 a weapon references it: `- reason: innate_punch_through` / `m: 1.2`. Eleven
 reasons cover 155 of 248 uses; a weapon whose falloff starts at a new distance
 costs ZERO translation. PROSE IS STILL RIGHT for a gap that happens once and
-needs a paragraph — 61 of them are — and a free-text parameter is not allowed,
+needs its own sentences — 61 of them are — and a free-text parameter is not allowed,
 since it would carry English into every translation. The i18n counter asks for
 the TEMPLATE, and `trGap` fills the same holes into whichever language the
 reader is in.
+
+## How an admission reads
+
+**THREE PARTS, NOTHING ELSE**: what the game does, with its source in
+brackets; what the sim does instead; and which way the number moves: "reads
+low", "reads high", "is the ceiling" or "is unaffected". One sentence each, in
+sentence case, ending in a full stop. No capitals for emphasis, no code
+identifiers or file paths, no history, and no comment on what the gap means to
+a player ("the whole reason a player carries it"). An assumption opens
+"Assumed:" or "Unmeasured:", and a gap with no published number opens
+"Unpublished:". The Chinese is written from the finished English, never
+alongside it.

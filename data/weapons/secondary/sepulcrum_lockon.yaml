@@ -47,8 +47,8 @@ attack:
     damage: { heat: 480 }   # total 480
 
 unmodeled:
-  - "lock-on mode PAINTS SEVERAL TARGETS and sends one missile at each (wiki) — this engine fires the mode at the aimed body alone, so against a crowd it is understated by however many it would have painted"
-  - "the mode is charged by DEALING DAMAGE with the primary fire, which is one mode paying for another and a shape this engine does not have"
+  - "Lock-on marks several targets and sends a missile at each (wiki); the engine fires at the aimed body only, so against a crowd the number reads low by the number marked."
+  - "The mode is charged by dealing damage with the primary fire; the engine has no way for one mode to pay for another."
   - reason: explosion_ignores_cover
   - reason: self_stagger
 

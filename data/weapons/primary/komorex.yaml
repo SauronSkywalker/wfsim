@@ -80,7 +80,7 @@ attack:
 unmodeled:
   - reason: sniper_combo_miss
     seconds: 2
-  - "the SECOND ZOOM LEVEL is not modelled, and on this weapon it is a stat TRADE rather than a buff — 3.5x gives +100% damage, +3 m explosion radius and -75% fire rate, which is half the sustained DPS for a much bigger single hit. Choosing it is a mode, and this entry is the first level"
-  - "the first zoom's own effects are worth nothing here — -50% recoil and +2 m punch-through, neither of which this arena reads"
+  - "The second zoom level is not modelled. On this weapon it is a trade, not a buff: 3.5x gives +100% damage, +3 m explosion radius and -75% fire rate, half the sustained DPS for a much bigger single hit. This entry is the first level."
+  - "The first zoom's -50% recoil and +2 m punch through are not read here."
 source:
   url: https://wiki.warframe.com/w/Komorex

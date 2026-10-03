@@ -57,7 +57,7 @@ attack:
   damage: { impact: 1.2, puncture: 1.2, slash: 9.6 }   # 12 a pellet, 24 a shot
 
 unmodeled:
-  - "the two beams CONVERGE on the crosshair and deal full damage there only once they are aligned (wiki). This arena lands both on the aimed body from the first tick, which is the ceiling"
+  - "The two beams converge on the crosshair and deal full damage only once aligned (wiki); here both land on the target from the first tick, so the number is the ceiling."
 
 source:
   url: https://wiki.warframe.com/w/Convectrix

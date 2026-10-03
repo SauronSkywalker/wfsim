@@ -98,7 +98,7 @@ attack:
 unmodeled:
   - reason: explosion_ignores_cover
   - reason: self_stagger
-  - "the rocket flies at 60 m/s and can be shot down in flight — this sim gives a projectile a travel time but nothing here shoots back, so a rocket always arrives"
+  - "The rocket flies at 60 m/s and can be shot down; nothing shoots back here, so every rocket arrives."
 
 source:
   url: https://wiki.warframe.com/w/Kuva_Ogris

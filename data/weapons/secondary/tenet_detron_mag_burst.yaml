@@ -59,10 +59,10 @@ attack:
   damage: { radiation: 26 }   # 26 a pellet, 10 pellets a round, 6 rounds a pull
 
 unmodeled:
-  - "the burst empties the MAGAZINE and this entry fires a fixed 6 rounds a pull — the unmodded magazine. The page states that magazine mods lengthen it (\"Benefits from magazine increasing mods to further increase the burst's damage\"), so a build carrying one is understated here"
-  - "aiming is disabled for the duration of the burst, so the alternate fire cannot benefit from Acolyte mods — a gate this arena has no aim state to apply"
-  - "the burst can be cancelled with a quick melee, which is a way to spend less than a full magazine and this arena never takes"
-  - "the CO bonus IGNORES damage falloff, per the catalog's Notes cell on this row"
+  - "The burst empties the magazine, and this entry fires a fixed 6 rounds, the unmodded magazine. Magazine mods lengthen the burst (page), so a build with one reads low."
+  - "Aiming is disabled during the burst, so Acolyte mods do not apply to it; this entry does not apply that limit."
+  - "The burst can be cancelled with a quick melee to spend less than a full magazine; the sim never does."
+  - "The Condition Overload bonus ignores damage falloff (the catalog's notes on this row)."
 
 source:
   url: https://wiki.warframe.com/w/Tenet_Detron

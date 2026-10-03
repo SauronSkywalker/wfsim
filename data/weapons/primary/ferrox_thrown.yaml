@@ -77,9 +77,9 @@ attack:
     stacking: refresh
 
 unmodeled:
-  - "THE PULL, which is the field's other half and the reason it is thrown: it draws enemies within 10 metres toward itself for thirty seconds. Gathering a room into one place is worth an enormous amount to every AoE weapon the player carries and nothing at all to a damage number measured against bodies that do not move"
-  - "the throw's forced KNOCKDOWN, which is crowd control — worth time and safety rather than damage, and this arena charges for neither"
-  - "the spear must be picked back up or waited out; this arena throws it and keeps firing"
+  - "The field pulls enemies within 10 m toward it for 30 s, the reason it is thrown. Grouping enemies helps every area weapon in a real room; enemies here do not move, so it changes nothing."
+  - "The throw's forced knockdown is crowd control, worth time and safety rather than damage; it changes nothing here."
+  - "The spear must be picked up or waited out; here it is thrown and firing continues."
 
 source:
   url: https://wiki.warframe.com/w/Ferrox

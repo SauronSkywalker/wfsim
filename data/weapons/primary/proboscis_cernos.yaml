@@ -70,7 +70,7 @@ attack:
     damage: { viral: 1003 }   # total 1003
 
 unmodeled:
-  - "the arrow also throws APPENDAGES that grab enemies within nine metres and drag them to it, dealing 90 damage each (module) — that is crowd control plus a second damage source, and this engine carries one explosion per attack, so neither is counted"
+  - "The arrow also throws appendages that grab enemies within 9 m and drag them in, dealing 90 damage each (module). The engine carries one explosion per attack, so neither the pull nor the damage is counted."
   - reason: explosion_ignores_cover
   - reason: self_stagger
   - reason: silent_weapon

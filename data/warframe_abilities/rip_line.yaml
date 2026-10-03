@@ -43,7 +43,7 @@ stats:
     scales_with: none
 
 unmodelled:
-  - "the combo: a recast inside the window multiplies damage by 200% and cuts the cost by 50%, and every recast after that by 400% and 75%"
+  - "The combo is not modelled: a recast inside the window multiplies damage by 200% and cuts the cost by 50%, and each recast after that by 400% and 75%."
 
 source:
   url: https://wiki.warframe.com/w/Rip_Line

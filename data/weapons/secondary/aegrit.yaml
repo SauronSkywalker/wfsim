@@ -68,8 +68,8 @@ attack:
     damage: { blast: 797 }   # total 797
 
 unmodeled:
-  - "the mines are DETONATED BY HAND via Alternate Fire, and up to four can be ready at once (wiki). This sim detonates each one the moment it lands, which is the ceiling for a single mine and misses the play pattern entirely: the weapon exists to stick four mines and fire them together"
-  - "mines STICK to surfaces, enemies and allies, and multishot throws them in 'a very wide horizontal spread' (wiki) — so on this weapon multishot covers ground rather than stacking damage on one target, which is the opposite of what it does everywhere else"
+  - "The mines are detonated by hand with the alt-fire, up to four at a time (wiki). The sim detonates each on landing: the ceiling for one mine. Sticking four and detonating them together is not modelled."
+  - "Mines stick to surfaces, enemies and allies, and multishot throws them in a very wide horizontal spread (wiki), so on this weapon multishot covers ground rather than adding damage to one target."
   - reason: explosion_ignores_cover
   - reason: self_stagger
   - reason: silent_weapon

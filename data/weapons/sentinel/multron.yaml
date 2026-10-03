@@ -54,7 +54,7 @@ attack:
     crit_multiplier: 2.0
     status_chance: 0.22
 unmodeled:
-  - "the dart's 1.5 s EXPLOSION DELAY is not modelled — in game the blast lands a second and a half after the dart does, and here the two arrive together, so a short engagement gets damage sooner than it should"
+  - "The dart's 1.5 s explosion delay is not modelled: the blast arrives with the dart, so a short engagement gets its damage early."
   - reason: companion_fires_it
   - reason: spread_not_transcribed
 

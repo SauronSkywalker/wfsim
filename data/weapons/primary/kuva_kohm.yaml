@@ -82,7 +82,7 @@ attack:
   damage: { impact: 4.0, puncture: 4.0, slash: 12.0 }   # 20 per pellet
 
 unmodeled:
-  - "the PELLET COUNT spools from 1 to 12 and this entry fires 12 from the first shot — the fire-rate spool is modelled and the multishot one is not, so a short burst puts more pellets downrange here than in game"
+  - "The pellet count spools from 1 to 12, and this entry fires 12 from the first shot. The fire-rate spool is modelled and the pellet spool is not, so a short burst reads high."
 
 source:
   url: https://wiki.warframe.com/w/Kuva_Kohm

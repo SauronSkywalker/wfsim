@@ -62,7 +62,7 @@ attack:
     # half the rate the page gives it.
     status_chance: 0.20
 unmodeled:
-  - "the CHARGE TIME is not modelled because the page publishes none — the weapon is a charge weapon here and mods treat it as one, but its draw adds nothing to the cycle, so it fires on the listed 1.00/s alone and this entry is a CEILING on its rate: a real draw can only make it slower"
+  - "The charge time is not modelled because the page publishes none: mods treat it as a charge weapon, but it fires at the listed 1.00/s. A real draw can only be slower, so the rate is a ceiling."
   - reason: companion_fires_it
   - reason: spread_not_transcribed
 

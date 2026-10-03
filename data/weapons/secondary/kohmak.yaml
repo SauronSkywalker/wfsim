@@ -54,7 +54,7 @@ attack:
   damage: { impact: 6, puncture: 6, slash: 18 }   # 30 a pellet, 150 a shot
 
 unmodeled:
-  - "THE PELLET COUNT SPOOLS TOO: 'each consecutive shot adds an additional pellet' up to the maximum, and this entry IS the fully spooled state — every shot here fires the full count from the first. The page publishes no ramp figures for the fire rate either, so the rate here is the settled one as well"
+  - "The pellet count spools up too, one more per consecutive shot (page); this entry fires the full count from the first shot. No fire-rate ramp is published either, so the rate is the settled one."
   - reason: auto_spool_ramp
     rate: 5.0
 

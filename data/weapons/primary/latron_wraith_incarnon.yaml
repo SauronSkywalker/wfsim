@@ -59,7 +59,7 @@ co_behavior: independent
 # `ricochet:`'s nearest-body walk is the wrong shape for pure geometry — so
 # this entry declares none, and the numbers below are the aimed landing's.
 unmodeled:
-  - "the projectile's BOUNCES are not counted. It bounces at most three times and the fourth contact ends it, a long flight ends it too, and each bounce is a REFLECTION off whatever it touched rather than a hop to the next enemy — so off a body that the collision just killed with a weak-point hit it leaves almost straight up, which is where most of them go. This plane has no surfaces to reflect off, so the shot is scored where it lands; in a tight corridor the bounces are worth up to three more collisions and three more explosions, and this number is a FLOOR"
+  - "The projectile's bounces are not counted. It bounces up to three times, each a reflection off what it hit, so off a body killed by a weak-point hit it leaves almost straight up. The plane has no surfaces, so the shot scores where it lands; in a tight corridor the bounces add up to three more collisions and explosions, and the number reads low."
 
 attack:
   # see notes: cone_half_angle_from

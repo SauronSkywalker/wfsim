@@ -126,7 +126,7 @@ attack:
   damage: { radiation: 21 }   # total 21
 
 unmodeled:
-  - "MICROWAVE's other half: it ENLARGES the body part it was shot at, which is a hit-location mechanic and worth nothing where nobody is aiming by hand. Its status COUNT is modelled"
+  - "Microwave also enlarges the body part it hit, an aiming aid the sim does not use. Its status count is modelled."
 
 source:
   url: https://wiki.warframe.com/w/Kuva_Nukor

@@ -36,8 +36,8 @@ attack:
   damage: { impact: 32.25, puncture: 5.375, slash: 5.375 }   # total 43
 
 unmodeled:
-  - "the burst empties the MAGAZINE and this entry fires a fixed 21 rounds a pull — the unmodded magazine. A magazine mod makes the real burst longer and this one does not grow, so a build carrying one is understated here"
-  - "the burst can be interrupted by a quick melee, a dodge roll or a weapon swap — this arena does none of those, so it always runs to the end"
+  - "The burst empties the magazine, and this entry fires a fixed 21 rounds, the unmodded magazine. Magazine mods make the real burst longer, so a build with one reads low."
+  - "The burst can be interrupted by a quick melee, a roll or a weapon swap; the sim does none of those, so it always runs to the end."
 
 source:
   url: https://wiki.warframe.com/w/Kuva_Kraken

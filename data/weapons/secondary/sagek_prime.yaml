@@ -55,7 +55,7 @@ attack:
   damage: { impact: 6.112, puncture: 8.246, slash: 11.642 }   # total 26
 
 unmodeled:
-  - "'Critical Hits have a 6% chance to set the next shot's Status Chance to 500%' (wiki). A SET ignores mods the way Gotva Prime's crit lock does, and this engine has that shape for a status-triggered CRIT lock and not for a crit-triggered STATUS one — so this weapon procs at the 1% on its card and never at the 500% it was built around. It is the larger half of the weapon"
+  - "Critical hits have a 6% chance to set the next shot's status chance to 500% (wiki). The engine does not model this crit-triggered status lock, so it procs at its card's 1%. It is most of the weapon; the number reads low."
 
 source:
   url: https://wiki.warframe.com/w/Sagek_Prime

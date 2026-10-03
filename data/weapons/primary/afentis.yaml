@@ -70,7 +70,7 @@ attack:
     damage: { blast: 800 }   # total 800
 
 unmodeled:
-  - "a direct hit forces a KNOCKDOWN and the explosion a RAGDOLL (module ForcedProcs) — neither is a damage type and this arena's enemies are neither knocked down nor thrown"
+  - "A direct hit forces a knockdown and the explosion a ragdoll; neither is damage, and enemies here are neither knocked down nor thrown."
   - reason: explosion_ignores_cover
   - reason: self_stagger
 

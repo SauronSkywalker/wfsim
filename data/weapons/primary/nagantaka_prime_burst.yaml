@@ -36,7 +36,7 @@ attack:
   damage: { impact: 1.7, puncture: 15.6, slash: 155.7 }   # total 173
 
 unmodeled:
-  - "the burst empties the MAGAZINE and this entry fires a fixed count — the unmodded magazine. The page states that magazine mods lengthen it, so a build carrying one is understated here"
+  - "The burst empties the magazine, and this entry fires a fixed count, the unmodded magazine. Magazine mods lengthen the burst (page), so a build with one reads low."
   - reason: bolt_corpse_ragdoll
   - reason: silent_weapon
 

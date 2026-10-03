@@ -83,8 +83,8 @@ attack:
     damage: { blast: 600 }   # total 600
 
 unmodeled:
-  - "'Enemies can destroy the rockets with gunfire or area of effect explosions' (wiki) — nothing shoots back in this arena, so every rocket reaches what it was aimed at"
-  - "the launcher-exclusive Adhesive Blast is outside the pools this roster loads — it sticks the rocket to what it hits, which changes where the explosion goes off and is a placement this arena has no room to be wrong about"
+  - "Enemies can shoot down the rockets (wiki); nothing shoots back here, so every rocket arrives."
+  - "Not offered here: the launcher-exclusive Adhesive Blast, which sticks the rocket to what it hits and moves where it explodes."
   - reason: explosion_ignores_cover
   - reason: self_stagger
 

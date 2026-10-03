@@ -61,9 +61,9 @@ attack:
   damage: { puncture: 280, slash: 120 }   # total 400
 
 unmodeled:
-  - "the second INNATE POLARITY the wiki publishes for this weapon is an AURA one, and no weapon mod carries an Aura polarity — so this entry gives that slot no colour at all, which costs a build the discount a matching slot would have paid. Capacity here is therefore a FLOOR: whatever that slot does in game, it cannot be worse than unpolarised"
-  - "EQUIPPING THIS WEAPON OCCUPIES THE MELEE SLOT TOO, so a Vinquibus loadout gives up a melee weapon entirely — a cost this arena cannot price, because it has no melee to give up"
-  - "headshots grant 2 stacks (max 16) of 'Vinquibus Precision', increasing MELEE damage by 250% — the buff is real and lands on a weapon this sim does not fire, so it is worth nothing here and a great deal to the player it was designed for"
+  - "Its second innate polarity is an Aura polarity, which no weapon mod matches, so that slot is left without polarity here. In game it cannot be worse than that, so capacity here is a floor."
+  - "Equipping it also takes the melee slot, so a Vinquibus loadout has no melee weapon; the arena has no melee to give up."
+  - "Headshots grant 2 stacks (max 16) of Vinquibus Precision, +250% melee damage; it lands on a weapon the sim does not fire, so it adds nothing here."
 
 source:
   url: https://wiki.warframe.com/w/Vinquibus

@@ -69,7 +69,7 @@ attack:
     damage: { slash: 20 }   # total 20
 
 unmodeled:
-  - "the blades RICOCHET off surfaces (wiki) and this arena has no walls to bounce off"
+  - "The blades ricochet off surfaces (wiki); there are no walls here."
   - reason: explosion_ignores_cover
   - reason: self_stagger
 

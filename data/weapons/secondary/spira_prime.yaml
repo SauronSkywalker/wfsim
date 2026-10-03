@@ -50,7 +50,7 @@ attack:
   damage: { impact: 6, puncture: 48, slash: 6 }   # total 60
 
 unmodeled:
-  - "the thrown-exclusive Concealed Explosives is outside the pools this roster loads"
+  - "Not offered here: the thrown-exclusive Concealed Explosives."
   - reason: bolt_corpse_ragdoll
   - reason: silent_weapon
 

@@ -58,7 +58,7 @@ attack:
     over_shots: 8.0
 
 unmodeled:
-  - "'increased ACCURACY the longer the weapon is fired' (wiki) — this entry carries the settled cone"
+  - "Accuracy improves the longer it fires (wiki); this entry uses the settled spread."
   - reason: spool_rebuilds_after_reload
 
 source:

@@ -31,8 +31,8 @@ attack:
   damage: { impact: 10, puncture: 10, slash: 80 }   # total 100
 
 unmodeled:
-  - "the sawblade is DEPLOYED six metres in front of the wielder and stays there — it is not a beam fired at a target, and this engine models it as one, so a fight where the enemy is not standing on that spot is overstated here"
-  - "it 'only consumes ammo when dealing damage' and 'can be deployed without consequence when no targets exist' (wiki) — an ammo economy this sim's infinite reserves make invisible"
+  - "The sawblade is deployed 6 m in front of the wielder and stays there; the engine fires it like a beam at the target, so if the enemy is not on that spot the number reads high."
+  - "It uses ammo only when dealing damage (wiki); reserves are infinite here, so this changes nothing."
 
 source:
   url: https://wiki.warframe.com/w/Panthera
