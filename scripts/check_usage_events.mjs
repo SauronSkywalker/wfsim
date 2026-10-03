@@ -11,6 +11,9 @@
 //   node scripts/check_usage_events.mjs
 import worker, { USAGE_EVENTS, USAGE_SCHEMA, usagePoint } from "../worker/index.js";
 import { appSource } from "./app_source.mjs";
+import { USAGE_RESULTS, usageDayRows, rollupUsage } from "../worker/usage_days.js";
+import { DatabaseSync } from "node:sqlite";
+import { readFileSync } from "node:fs";
 
 let failures = 0;
 const check = (what, ok, detail = "") => {
@@ -106,6 +109,62 @@ r = await post(good, {});
 check("no dataset bound is a 503, not a silent 204", r.status === 503, `status ${r.status}`);
 r = await post(null, env, "OPTIONS");
 check("a preflight is answered", r.status === 204 && r.headers.get("access-control-allow-methods"));
+
+// THE KEPT DAYS (worker/usage_days.js): one definition of a result, totals
+// right, no visitor id written, and a day half written is written again.
+const py = readFileSync(new URL("./usage.py", import.meta.url), "utf8").match(/^RESULTS = \(([^)]*)\)/m);
+const pyResults = py ? [...py[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]) : [];
+check("the kept days and usage.py count a result the same way",
+  JSON.stringify(pyResults) === JSON.stringify(USAGE_RESULTS), `${pyResults} vs ${USAGE_RESULTS}`);
+const A = "a".repeat(32), B = "b".repeat(32), C = "c".repeat(32);
+const pt = (day, cid, e, subject = "", country = "CN") =>
+  ({ day: `${day} 00:00:00`, cid, e, subject, country, si: 1, n: 1 });
+const fixture = [
+  pt("2026-10-01", A, "app.boot"),
+  pt("2026-10-02", A, "app.boot"), pt("2026-10-02", A, "simulator.run", "torid"),
+  pt("2026-10-02", B, "app.boot", "", "US"), pt("2026-10-02", C, "app.view", "home"),
+];
+const keptDay = usageDayRows("2026-10-02", fixture);
+const cell = (event, subject, market) => (keptDay.find((o) => o.event === event && o.subject === subject
+  && (!market || o.market === market)) || {}).visitors || 0;
+check("a day counts its visitors, those with a result and those returning",
+  cell("visitors", "all", "china") === 2 && cell("visitors", "all", "overseas") === 1
+  && cell("visitors", "result", "china") === 1 && cell("visitors", "returning", "china") === 1
+  && cell("simulator.run", "torid") === 1 && cell("visitors.country", "US") === 1, JSON.stringify(keptDay));
+check("…and no row carries a visitor id", !JSON.stringify(keptDay).includes(A));
+const tail = keptDay[keptDay.length - 1];
+check("…and its kept marker is the last row written", tail.event === "visitors" && tail.subject === "all");
+{
+  const db = new DatabaseSync(":memory:");
+  db.exec(readFileSync(new URL("../worker/schema.sql", import.meta.url), "utf8"));
+  const stmt = (sql, args = []) => ({
+    bind: (...a) => stmt(sql, a),
+    all: async () => ({ results: db.prepare(sql).all(...args) }),
+    run: async () => db.prepare(sql).run(...args),
+  });
+  const LIBRARY = { prepare: (sql) => stmt(sql), batch: async (ss) => { for (const x of ss) await x.run(); } };
+  // THE DATASET, STUBBED: it holds three days, and a day's query returns every
+  // point before the end of the day it asks for.
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async (_url, init) => {
+    const end = (init.body.match(/timestamp < toDateTime\('(\d{4}-\d\d-\d\d)/) || [])[1];
+    const data = end ? fixture.filter((r) => r.day.slice(0, 10) < end)
+      : ["2026-10-01", "2026-10-02", "2026-10-03"].map((d) => ({ day: `${d} 00:00:00` }));
+    return new Response(JSON.stringify({ data }));
+  };
+  const env = { LIBRARY, USAGE_ACCOUNT: "x", USAGE_READ_TOKEN: "y" };
+  const now = Date.parse("2026-10-03T00:30:00Z");
+  const first = await rollupUsage(env, now);
+  check("a run keeps every finished day it lacks, and not today",
+    JSON.stringify(first) === '["2026-10-01","2026-10-02"]', JSON.stringify(first));
+  check("…and a second run keeps nothing again", (await rollupUsage(env, now)).length === 0);
+  db.exec("DELETE FROM usage_days WHERE day = '2026-10-02' AND event = 'visitors' AND subject = 'all'");
+  const redo = await rollupUsage(env, now);
+  check("…but a day without its marker is written again", JSON.stringify(redo) === '["2026-10-02"]',
+    JSON.stringify(redo));
+  check("no secrets is no run", (await rollupUsage({ LIBRARY }, now)).length === 0);
+  globalThis.fetch = realFetch;
+}
 
 if (failures) {
   console.log(`\n${failures} check(s) failed`);

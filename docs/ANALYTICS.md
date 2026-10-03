@@ -136,9 +136,22 @@ measure of a calculator; producing a result is.
 
 ## Retention
 
-**Analytics Engine keeps three months.** Anything older is gone. A rollup that
-copies daily aggregates somewhere durable is not built; until it is, a trend
-longer than a quarter cannot be drawn.
+**Analytics Engine keeps three months; `usage_days` keeps the totals for
+good.** The site worker's cron (`worker/usage_days.js`, 00:30 UTC) writes each
+finished UTC day the table lacks into the `wfsim` database: per event, subject
+and market the visitors and points, and the day's visitors — `all`, `result`
+(by the same `RESULTS` as `usage.py`, which `check_usage_events` holds equal),
+`returning` (seen in the seven days before) and by country. Totals only; no
+visitor id is kept. A trend longer than a quarter is read from there:
+
+```
+npx wrangler d1 execute wfsim --remote --command "SELECT day, market, visitors FROM usage_days WHERE event = 'visitors' AND subject = 'all' ORDER BY day"
+```
+
+It needs the worker secrets `USAGE_ACCOUNT` and `USAGE_READ_TOKEN` (Account
+Analytics: Read); without them it writes nothing. A day is written whole and
+never revised. Its `visitors`/`all` row goes last and marks it kept, so a run
+that stops part way is redone, and a missed run is made up by the next.
 
 ## Not collected
 

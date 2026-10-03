@@ -94,5 +94,9 @@
   // its first write; nothing to provision. Read back by `scripts/usage.py`.
   "analytics_engine_datasets": [
     { "binding": "USAGE", "dataset": "wfsim" }
-  ]
+  ],
+  // KEEPING THE USAGE DAYS (worker/usage_days.js): after midnight UTC, so the
+  // day before is finished. Reads the dataset with the secrets USAGE_ACCOUNT and
+  // USAGE_READ_TOKEN (Account Analytics: Read); without them it does nothing.
+  "triggers": { "crons": ["30 0 * * *"] }
 }

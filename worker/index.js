@@ -23,6 +23,7 @@ import { accountRoute } from "./accounts.js";
 import { cloudPath, cloudRoute } from "./cloud.js";
 import { agentRoute } from "./agents.js";
 import { BOT_AUTH_DIRECTORY, botAuthDirectory } from "./bot_auth.js";
+import { rollupUsage } from "./usage_days.js";
 
 const MAX_BYTES = 4096;        // a build is a few hundred bytes; this is slack
 // AN OUTER BOUND, NOT THE RULE — see below. It is `MAIN_SLOTS + 1`: eight main
@@ -688,6 +689,9 @@ async function agentPage(request, env, twin) {
 }
 
 export default {
+  async scheduled(_event, env, ctx) {
+    ctx.waitUntil(rollupUsage(env));
+  },
   async fetch(request, env, ctx) {
     const path = new URL(request.url).pathname;
     const twin = markdownTwin(path);

@@ -197,3 +197,21 @@ CREATE TABLE IF NOT EXISTS shares (
   at     TEXT NOT NULL,
   claim  TEXT
 );
+
+-- A FINISHED DAY'S USAGE TOTALS, kept past the Analytics Engine's three months
+-- by the worker's daily cron (worker/usage_days.js, docs/ANALYTICS.md
+-- §Retention). Totals only, never a visitor id. `event` is a usage event, or
+-- `visitors` (subject `all`, `result`, `returning`) or `visitors.country`;
+-- `market` is `china` or `overseas`; `sampled` is 1 when the dataset sampled
+-- that day, so `visitors` is a floor. Added to a live database with this
+-- statement alone.
+CREATE TABLE IF NOT EXISTS usage_days (
+  day      TEXT NOT NULL,
+  event    TEXT NOT NULL,
+  subject  TEXT NOT NULL,
+  market   TEXT NOT NULL,
+  visitors INTEGER NOT NULL,
+  points   INTEGER NOT NULL,
+  sampled  INTEGER NOT NULL,
+  PRIMARY KEY (day, event, subject, market)
+);
