@@ -19,6 +19,10 @@ const ACCOUNT_SLOTS = [
 const AUTH_PATHS = { "/login": "login", "/signup": "signup", "/reset": "reset", "/account": "account",
   "/account/billing": "billing", "/account/sync": "sync", "/pricing": "pricing" };
 const authKindOf = (path) => AUTH_PATHS[path.replace(/\/$/, "")] || null;
+/// EACH PAGE ITS OWN `app.view` KIND, so the way in can be read step by step;
+/// the settings pages carry `account_`, since `sync` alone could be any sync.
+const AUTH_VIEWS = { login: "login", signup: "signup", reset: "reset", pricing: "pricing",
+  account: "account", billing: "account_billing", sync: "account_sync" };
 /// The pages of a signed-in account; every other kind is a way in.
 const isSettings = (kind) => kind === "account" || kind === "billing" || kind === "sync";
 

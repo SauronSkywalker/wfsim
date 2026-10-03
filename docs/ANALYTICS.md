@@ -38,6 +38,10 @@ well". Both come from the usage points below.
   permanently broken time series, because history cannot be backfilled. The
   vocabulary is `USAGE_EVENTS` in `worker/index.js`, and
   `scripts/check_usage_events.mjs` holds the page to it.
+- **What the server records is never sent as a point.** An account made, a
+  sync turned on, a payment: the accounts database already holds each one, and
+  a second count of it is two numbers that disagree. A point counts only what
+  the server cannot see — a page opened, a form left half done.
 - **No PII, no cookies, no accounts.** One random `wfsim-cid` in localStorage,
   clearable like every other `wfsim-*` key. No IP, no user agent is written.
 - **Global Privacy Control or Do Not Track set: nothing is sent.** Nor after
@@ -67,7 +71,7 @@ with this thing, not how many times: forty edits to one build are one build.
 | event | fires when | subject | `n` |
 | --- | --- | --- | --- |
 | `app.boot` | the engine has answered `/api/meta` | how the page was reached: `reload`, `back_forward`, `from_site`, `direct` or `from_<referrer host>` | ms since navigation |
-| `app.view` | a page was drawn | page kind (`home`, `weapon_builder`, `weapon_simulator`, `warframe`, …) | — |
+| `app.view` | a page was drawn | page kind (`home`, `weapon_builder`, `weapon_simulator`, `warframe`, …); each account page is its own kind — `login`, `signup`, `reset`, `pricing`, `account`, `account_sync`, `account_billing` (`AUTH_VIEWS`) | — |
 | `engine.fail` | an engine worker failed to load, or stopped answering | `worker_load` / `worker_silent` | ms since navigation (load only) |
 | `builder.weapon` | the weapon panel computed a build with ≥1 mod | weapon id | — |
 | `builder.warframe` | the Warframe panel computed a build with anything set — a mod, arcane, shard or Helminth ability | frame id | — |

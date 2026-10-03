@@ -123,7 +123,7 @@ async function route() {
   // WHICH PAGE, as a kind and never an address: one point per kind per load.
   track("app.view", w ? `weapon_${mod || "builder"}` : support ? "support" : bench ? "benchmark"
     : dl ? "download" : thx ? "thanks" : wfHit ? "warframe" : opRoute ? "operator"
-    : compHit ? "companion" : authKind ? "account" : "home");
+    : compHit ? "companion" : authKind ? AUTH_VIEWS[authKind] : "home");
   document.body.classList.toggle("on-home", !w && !support && !bench && !dl && !thx && !wfHit && !opRoute && !compHit && !authKind);
   document.body.classList.toggle("on-auth", !!authKind);
   $("auth-page").hidden = !authKind;

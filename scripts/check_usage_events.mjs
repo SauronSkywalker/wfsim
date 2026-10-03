@@ -31,6 +31,19 @@ check("every event the worker accepts is sent by the page", !unsent.length, unse
 const v = src.match(/\bv: (\d+), e: event\b/);
 check("the page writes the worker's schema", v && Number(v[1]) === USAGE_SCHEMA,
   v ? `page ${v[1]}, worker ${USAGE_SCHEMA}` : "no `v:` in track()");
+// A ROUTE WITHOUT A VIEW KIND sends an empty subject, which the worker accepts.
+const kinds = (name) => {
+  const m = src.match(new RegExp(`const ${name} = \\{([^}]*)\\}`));
+  return m ? [...m[1].matchAll(/:\s*"([a-z_]+)"/g)].map((x) => x[1]) : [];
+};
+const viewKeys = (() => {
+  const m = src.match(/const AUTH_VIEWS = \{([^}]*)\}/);
+  return m ? [...m[1].matchAll(/\b([a-z_]+):/g)].map((x) => x[1]) : [];
+})();
+const authKinds = kinds("AUTH_PATHS");
+check("every account route has its own view kind", authKinds.length > 0
+  && authKinds.every((k) => viewKeys.includes(k)) && new Set(kinds("AUTH_VIEWS")).size === viewKeys.length,
+  `routes ${authKinds.join(",")}; views ${viewKeys.join(",")}`);
 const hosts = src.match(/const LIVE_HOSTS = (\[[^\]]*\])/);
 const live = hosts ? JSON.parse(hosts[1]) : [];
 check("no dev or check host is live", live.length > 0
