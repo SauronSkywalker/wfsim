@@ -257,6 +257,7 @@ fn arena_for(c: &Cfg) -> Arena {
             .target_params(c.level, c.steel_path, e.can_be_eximus, TargetMode::InstantRespawn)
             .expect("the target this fight names"),
         body_parts: e.aim_parts(&[("body", 1.0)]).expect("a body to hit"),
+        gauge_charging_body_parts: Vec::new(),
         // POINT BLANK. This harness measures the COST of the engine and asserts
         // the ANSWER did not move, so its fight has to be the one every saved
         // baseline was taken under — a range would move a falloff weapon's

@@ -182,6 +182,8 @@ function fightCardHtml() {
   const play = [
     chip(`${sim.duration} s`),
     chip(`${sim.headshot_pct}% ${tr("headshots")}`),
+    ...(sim.gauge_charging_headshots && (weaponInfo($("weapon").value) || {}).has_cycle
+      ? [chip(tr("headshots while charging"))] : []),
     chip(tr(sim.aiming ? "Aiming" : "hip-fire")),
     chip(`${Math.round(gap * 10) / 10} m`),
     chip(metricLabel(metricOf(sim.metric))),
@@ -539,6 +541,7 @@ function renderScenarioFields(ids, opts = {}) {
     $(ids.technique).innerHTML = `
       ${aimField(w, sim)}
       ${headshotField(w, sim)}
+      ${chargingHeadshotField(w, sim)}
       <label class="check" title="${escHtml(tr("the wielder's state: mods that only pay while Invisible (Spectral Serration) grant nothing when this is off"))}"><input type="checkbox" data-k="invisible"${sim.invisible ? " checked" : ""}> ${escHtml(tr("Invisible"))}</label>
       <label class="check" title="${escHtml(tr("the wielder's state: what a card means by \"while Airborne\""))}"><input type="checkbox" data-k="airborne"${sim.airborne ? " checked" : ""}> ${escHtml(tr("Airborne"))}</label>
       <label class="check" title="${escHtml(tr("the wielder's state: what a card means by \"With Overshields\". Nothing here takes them away, so it is a declaration"))}"><input type="checkbox" data-k="overshields"${sim.overshields ? " checked" : ""}> ${escHtml(tr("Overshields"))}</label>

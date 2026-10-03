@@ -267,6 +267,14 @@ it (`SHARED_DOMAINS`), and switching weapons keeps the fight you are measuring
 under. The one weapon-scoped knob it holds is headshot %, handled the way the
 rulers handle it: the SERVER forces 0 on a weapon that cannot headshot.
 
+**"HEADSHOTS WHILE CHARGING" IS THE AIM OF ONE PHASE.** On a weapon whose mode
+cycles into an Incarnon form, the scenario may say every hit lands on the head
+while the base form charges the gauge (`gauge_charging_headshots`); once the
+weapon transforms, headshot % applies. It is the scenario's, not the mode's:
+how well a player aims belongs to the fight a build is measured in, so a build
+cannot carry a promise of its own aim. Off is what every ruler plays, and the
+server forces it off where it forces headshot % to 0.
+
 **NOTHING OUTSIDE A COLLECTION WRITES ITS STATE.** A build carries no `sim`
 snapshot: a build is a build, and the live scenario is seeded from the active
 `simulator-scenarios` entry and from nowhere else. "What this build was last

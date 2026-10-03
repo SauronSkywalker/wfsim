@@ -717,6 +717,10 @@ pub struct FightParams {
     /// the meter is held. `None` builds it from zero (`crate::data::rage`).
     pub rage_open: Option<(f64, bool)>,
     pub body_parts: Vec<BodyPart>,
+    /// WHERE A SHOT LANDS WHILE THE BASE FORM CHARGES THE GAUGE — every hit on
+    /// the head when the scenario's `gauge_charging_headshots` is on, built
+    /// like `body_parts`. Empty = the same aim as the rest of the fight.
+    pub gauge_charging_body_parts: Vec<BodyPart>,
     /// The TARGET — one of the fight's two actors.
     pub foe: Foe,
     /// THE REST OF THE FORMATION — see [`crate::arena::Arena::others`]. Empty

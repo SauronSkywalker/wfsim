@@ -1804,6 +1804,32 @@ mod form_tests {
         }))
     }
 
+    /// EVERY HIT A HEADSHOT WHILE CHARGING, AND ONLY THEN: a weakpoint-fed
+    /// gauge at 0% headshots never fills, the same fight with the option on
+    /// does, and the Incarnon form then fires at the fight's own 0% — so it
+    /// deals less than a fight at 100% throughout.
+    #[test]
+    fn the_aim_while_charging_the_gauge_is_the_scenarios_own() {
+        let run = |extra: Value| {
+            let mut q = json!({
+                "weapon": "braton", "form": "incarnon_cycle", "mods": [], "arcane": "none",
+                "enemy": "thrax_centurion", "level": 9999, "duration": 30.0,
+                "runs": 8, "headshot_pct": 0.0, "seed": 7,
+            });
+            for (k, x) in extra.as_object().expect("object") {
+                q[k] = x.clone();
+            }
+            simulate_json(&q)
+        };
+        let n = |v: &Value, k: &str| v.get(k).and_then(Value::as_f64).unwrap_or(0.0);
+        let body = run(json!({}));
+        let charging = run(json!({ "gauge_charging_headshots": true }));
+        let heads = run(json!({ "headshot_pct": 100.0 }));
+        assert_eq!(n(&body, "transforms"), 0.0, "a gauge filled with no weak point hit");
+        assert!(n(&charging, "transforms") > 0.0, "charging on the head never filled it");
+        assert!(n(&charging, "dps") < n(&heads, "dps"), "the Incarnon form fired at 100% too");
+    }
+
     /// A GAUGE FED BY KILLS IS WORTH WHAT THE FIGHT LETS YOU EARN.
     ///
     /// The Mausolon's alt-fire costs five kills with the primary (wiki), which

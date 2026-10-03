@@ -232,6 +232,7 @@ impl Default for FightParams {
                 ..ArcaneFx::none()
             },
             body_parts: BodyPart::humanoid(),
+            gauge_charging_body_parts: Vec::new(),
             foe: Foe::training_dummy(),
             tenno: crate::data::tenno::default_tenno().clone(),
             duration_seconds: 10.0,

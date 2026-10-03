@@ -314,6 +314,13 @@ pub const SCENARIO_AXES: &[ScenarioAxis] = &[
         group: Group::Wielder,
         requires: &[Requirement { cap: Capability::AimsAtHead, absent: AxisValue::Number(0.0) }],
     },
+    // …AND EVERY HIT A HEADSHOT WHILE THE BASE FORM CHARGES THE GAUGE.
+    ScenarioAxis {
+        id: "gauge_charging_headshots",
+        kind: AxisKind::Flag,
+        group: Group::Wielder,
+        requires: &[Requirement { cap: Capability::AimsAtHead, absent: AxisValue::Flag(false) }],
+    },
     ScenarioAxis { id: "invisible", kind: AxisKind::Flag, group: Group::Wielder, requires: FREE },
     ScenarioAxis { id: "airborne", kind: AxisKind::Flag, group: Group::Wielder, requires: FREE },
     ScenarioAxis { id: "overshields", kind: AxisKind::Flag, group: Group::Wielder, requires: FREE },

@@ -619,6 +619,9 @@ ui:
   "Grineer": Grineer
   "Standard Multi Target · 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM": 标准群体 · 5x5 间隔 3 米 · 凶魂百夫长 9999 级 钢铁之路 · 180 秒 · KPM
   "Headshot %": 爆头率 %
+  "Headshots while charging": 攒条时全爆头
+  "headshots while charging": 攒条时全爆头
+  "while the weapon is in its base form charging the Incarnon gauge, every hit is a headshot; once it transforms, the headshot % beside this applies": "武器处于基础形态、正在攒灵化条时，每次命中都算爆头；变身之后按旁边的爆头率打"
   "Headshot rate": 爆头率
   "Headshot": 爆头
   Health: 生命

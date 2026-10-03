@@ -78,6 +78,10 @@ pub struct Arena {
     /// The target's hitboxes — where a pellet can land and what each spot
     /// multiplies. They belong to the target, and travel with it.
     pub body_parts: Vec<BodyPart>,
+    /// The same hitboxes weighted for the aim WHILE THE BASE FORM CHARGES THE
+    /// GAUGE — all on the head when the scenario's `gauge_charging_headshots`
+    /// is on. Empty = the same aim as the rest of the fight.
+    pub gauge_charging_body_parts: Vec<BodyPart>,
     /// Engagement length. A property of the FIGHT, not of the measurement,
     /// which is why the optimizer needs it while needing neither run count nor
     /// metric.
@@ -161,6 +165,7 @@ impl Arena {
             squad_size: 1,
             target: Foe::training_dummy(),
             body_parts: crate::target::BodyPart::humanoid(),
+            gauge_charging_body_parts: Vec::new(),
             // CONTACT — as close as two bodies can stand (`space`), which is
             // what point blank means once they have a size at all. The fixture
             // measures weapon numbers, and any more range than this would put a

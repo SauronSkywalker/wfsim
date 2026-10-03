@@ -95,6 +95,7 @@ fn main() {
                 .target_params(9999, true, false, TargetMode::InstantRespawn)
                 .expect("valid target"),
             body_parts: spec.aim_parts(&[("head", 1.0)]).expect("head aim"),
+            gauge_charging_body_parts: Vec::new(),
             // …at point blank, for the same reason: a range is a term of a
             // fight the CLI has no way to state, and 0 is the fight every
             // number this engine has reported was measured under.

@@ -388,6 +388,20 @@ const headshotField = (w, state) => {
     : tr("a per-PELLET aim weight on the body the shot STRUCK, not a whole-spread promise — the landing spot is rolled for each pellet, and nothing a blast or a chain reaches can be a headshot");
   return `<label title="${escHtml(why)}">${escHtml(tr("Headshot %"))} <input type="number" data-k="headshot_pct" min="0" max="100" value="${val}"${forced ? " disabled" : ""}></label>`;
 };
+/// …AND EVERY HIT A HEADSHOT WHILE THE BASE FORM CHARGES THE GAUGE, on a
+/// weapon that has a cycle: a player putting every shot on the head to fill
+/// it, then playing the form at the rate beside it. Off is what every ruler
+/// plays.
+const chargingHeadshotField = (w, state) => {
+  if (!(w && w.has_cycle)) return "";
+  const f = settledAxis(w, "gauge_charging_headshots");
+  const forced = !!f;
+  const on = forced ? !!f.value : !!state.gauge_charging_headshots;
+  const why = forced
+    ? tr(f.why)
+    : tr("while the weapon is in its base form charging the Incarnon gauge, every hit is a headshot; once it transforms, the headshot % beside this applies");
+  return `<label class="check" title="${escHtml(why)}"><input type="checkbox" data-k="gauge_charging_headshots"${on ? " checked" : ""}${forced ? " disabled" : ""}> ${escHtml(tr("Headshots while charging"))}</label>`;
+};
 /// …AND THE AMMO BOX IS THE ONE FIELD A FIGHT MAY ARGUE WITH.
 ///
 /// Settled OFF on a ground Arch-Gun because it cannot be resupplied — but that

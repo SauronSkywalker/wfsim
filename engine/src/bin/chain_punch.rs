@@ -54,6 +54,7 @@ fn arena(weapon_bodies: usize, spacing_m: f64) -> Arena {
             .target_params(150, true, false, TargetMode::InstantRespawn)
             .expect("target"),
         body_parts: e.aim_parts(&[("body", 1.0)]).expect("a body"),
+        gauge_charging_body_parts: Vec::new(),
         player_at: Vec2::ORIGIN,
         target_at,
         duration_seconds: DURATION,

@@ -58,6 +58,7 @@ fn scenario(duration: f64, level: u32) -> Scenario {
             abilities: Vec::new(),
             ability_picks: Vec::new(),
             ability_strength: 1.0,
+            gauge_charging_body_parts: Vec::new(),
             tenno: wfsim_engine::data::tenno::default_tenno().clone(),
             // Point blank: this test grades the SEARCH against an exhaustive
             // reference, so the fight has to be the plainest one there is.

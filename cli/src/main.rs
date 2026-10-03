@@ -222,6 +222,7 @@ fn dual_toxocyst_baseline() -> FightParams {
             ..ArcaneFx::none()
         },
         body_parts: BodyPart::humanoid(),
+        gauge_charging_body_parts: Vec::new(),
         foe: Foe::training_dummy(),
         duration_seconds: 10.0,
         // ONE BODY — a fixture, not a formation.

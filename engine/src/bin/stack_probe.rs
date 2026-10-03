@@ -34,6 +34,7 @@ fn main() {
             .target_params(9999, true, false, TargetMode::InstantRespawn)
             .expect("target"),
         body_parts: e.aim_parts(&[("body", 1.0)]).expect("a body"),
+        gauge_charging_body_parts: Vec::new(),
         player_at: Vec2::ORIGIN,
         target_at: Vec2::new(0.0, wfsim_engine::rules::space::CONTACT_RANGE_M),
         duration_seconds: 60.0,

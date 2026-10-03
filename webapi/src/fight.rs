@@ -708,6 +708,21 @@ pub(crate) fn parse_fight(v: &Value) -> Result<Fight, Value> {
     // (The target's pools are read off the ARENA by whoever reports them —
     // one target, one place it lives.)
     let body_parts = build_body_parts(spec, headshot_pct);
+    // EVERY HIT A HEADSHOT WHILE THE BASE FORM CHARGES THE GAUGE, when the
+    // scenario says so — absent, the fight's own aim throughout. Behind the
+    // same legality as `headshot_pct`: a weapon that cannot aim at a head
+    // cannot while charging either.
+    let gauge_charging_headshots = resolved_flag(
+        "gauge_charging_headshots",
+        &info.id,
+        rule("gauge_charging_headshots"),
+        get_bool(v, "gauge_charging_headshots", false),
+    );
+    let gauge_charging_body_parts = if gauge_charging_headshots {
+        build_body_parts(spec, 100.0)
+    } else {
+        Vec::new()
+    };
 
     let formation = formation_from(v, &specs, enemy_id, level, steel_path, headshot_pct)?;
 
@@ -738,6 +753,7 @@ pub(crate) fn parse_fight(v: &Value) -> Result<Fight, Value> {
         tenno: tenno.clone(),
         target,
         body_parts,
+        gauge_charging_body_parts,
         // THE 2D LAYER, as two POINTS — what the scene drags and what the next
         // enemy will need, since a second body cannot be described by a
         // distance (`engine::space`).

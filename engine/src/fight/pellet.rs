@@ -427,6 +427,11 @@ pub(super) fn settle_pellet(pellet_idx: u32, shot: &Strike, live: &mut Live) {
     // use, so the six strikes of one orb cannot answer differently.
     let part = match active.unaimed_headshot_chance {
         Some(c) => unaimed_part(&params.body_parts, c, &mut d.spine),
+        // …AND WHILE THE BASE FORM CHARGES ITS GAUGE, the aim the scenario
+        // gives that phase: a player aiming for weak points to fill it.
+        None if params.cycle.is_some() && incarnon.in_base_form && !params.gauge_charging_body_parts.is_empty() => {
+            pick_part(&params.gauge_charging_body_parts, &mut d.spine)
+        }
         None => pick_part(&params.body_parts, &mut d.spine),
     };
     let cc_pellet = effective_cc
