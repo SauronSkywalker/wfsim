@@ -17,7 +17,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 ## Not modelled here
 
 - corpses keep conducting the chain, which the page states as 'Enemy corpses will still allow the beam to connect to nearby enemies' — this arena removes a body when it dies
-- Ruinous Extension's reach — the page states the beam is 'extendable to 36 meters', and beam-range mods are shown on the card without being applied until a measurement settles the flat-versus-percent bracket (docs/UNMODELLED.md)
+- Ruinous Extension's reach — the page states the beam is 'extendable to 36 meters', and beam-range mods are shown on the card without being applied until a measurement settles the flat-versus-percent bracket
 
 ## In WFSim
 

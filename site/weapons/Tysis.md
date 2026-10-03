@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- THE INNATE CORROSIVE DoT, which is 81 of this weapon's 130 damage a dart — a `ShotType: DoT` attack of 27 a tick, with each multishot pellet creating its own. Three attacks in the whole game are typed this way and two of them are this weapon's family, so it is recorded rather than built. THE NUMBER ON SCREEN IS THEREFORE ABOUT A THIRD OF THE REAL ONE against a single target
+- THE INNATE CORROSIVE DoT, which is 81 of this weapon's 130 damage a dart — a damage-over-time attack of 27 a tick, with each multishot pellet creating its own. Three attacks in the whole game are typed this way and two of them are this weapon's family, so it is recorded rather than built. THE NUMBER ON SCREEN IS THEREFORE ABOUT A THIRD OF THE REAL ONE against a single target
 
 ## In WFSim
 

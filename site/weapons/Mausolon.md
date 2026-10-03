@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the LIFTED SYNERGY is not modelled — the wiki gives this weapon `up to 13 additional instances of direct hit damage` against a Lifted enemy, and its own alt-fire is a guaranteed Lifted proc, so a real engagement alternates between lifting and cashing in; the sim applies the Lifted status (Condition Overload counts it) and none of the extra instances, which makes the primary read LOW for as long as the target is lifted
+- the LIFTED SYNERGY is not modelled — the wiki gives this weapon 'up to 13 additional instances of direct hit damage' against a Lifted enemy, and its own alt-fire is a guaranteed Lifted proc, so a real engagement alternates between lifting and cashing in; the sim applies the Lifted status (Condition Overload counts it) and none of the extra instances, which makes the primary read LOW for as long as the target is lifted
 - Primary Compression's 444% case is not modelled — the catalog gives this weapon a second effectiveness for aiming DURING the alt-fire, and this arena has no such state; the ordinary 100% is what is applied
 - the radial's falloff is not modelled — this arena has one target at the centre, so it always takes the full 72 and never the 58 at the rim
 - the Arch-Gun Deployer's five-minute cooldown is not modelled — when the reserve runs dry the weapon is gone for the rest of a real mission, and this arena simply stops firing

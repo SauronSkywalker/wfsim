@@ -14,7 +14,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- THIS IS THE PERFECT RELEASE, not the ordinary full draw — the arsenal displays it and this entry carries its numbers, so a player who MISTIMES the window gets the module's second attack instead (a one-second draw for less damage), which is not carried here. The form vocabulary has no word for a timing window: `charged` and `alt_fire` resolve to the same mode, so a group cannot hold both
+- THIS IS THE PERFECT RELEASE, not the ordinary full draw — the arsenal displays it and this entry carries its numbers, so a player who MISTIMES the window gets the module's second attack instead (a one-second draw for less damage), which is not carried here. The form vocabulary has no word for a timing window, so one weapon cannot carry both
 - this weapon is SILENT and this arena has nobody to alert — stealth is worth nothing here and a great deal in a real mission
 
 ## In WFSim

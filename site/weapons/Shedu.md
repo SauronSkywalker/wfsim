@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the BATTERY DISCHARGE that fires when the magazine empties: a 20 m pulse for 100 Impact. It is now fully SPECIFIED and merely unbuilt — the page states its whole scaling rule and I had declared it unknowable: "This is affected by base damage, Faction Damage Bonus, and Firestorm / Primed Firestorm; but not by elemental or multishot bonuses." So: the base-damage bucket and the faction column reach it, elements and multishot do not, and its RADIUS takes the blast-radius mods the shot's own explosion refuses. Its status is a 100% CHANCE rather than a forced proc, so status mods push it past one proc and a negative-status riven makes it miss
+- the BATTERY DISCHARGE that fires when the magazine empties: a 20 m pulse for 100 Impact. It is fully SPECIFIED and merely unbuilt — the page states its whole scaling rule: "This is affected by base damage, Faction Damage Bonus, and Firestorm / Primed Firestorm; but not by elemental or multishot bonuses." So: the base-damage bucket and the faction column reach it, elements and multishot do not, and its RADIUS takes the blast-radius mods the shot's own explosion refuses. Its status is a 100% CHANCE rather than a forced proc, so status mods push it past one proc and a negative-status riven makes it miss
 - the discharge also removes Sentient and Shadow Stalker damage resistances, which is worth nothing against any target in this roster — no Sentient here has one to strip
 - +30% Movement Speed while aiming, and the explosion's self-stagger: neither is a number this arena reads
 

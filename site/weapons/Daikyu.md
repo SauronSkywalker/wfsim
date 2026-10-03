@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- 'Fire rate mods apply double their bonuses' is MODELLED (`class: bow`), but this weapon's real cost is the other half of its page: it can only be fired FULLY CHARGED, so a player who releases early gets nothing at all. This sim always charges fully, which is the ceiling and is what a careful player does anyway
+- 'Fire rate mods apply double their bonuses' is MODELLED, but this weapon's real cost is the other half of its page: it can only be fired FULLY CHARGED, so a player who releases early gets nothing at all. This sim always charges fully, which is the ceiling and is what a careful player does anyway
 - Spring-Loaded Broadhead, Amalgam Daikyu Target Acquired and the bow-exclusive Thunderbolt are outside the pools this roster loads
 - ON KILL THE BODY FOLLOWS THE BOLT, damaging anyone in its path and pinning the corpse to walls (wiki). It is a second damage source that only exists once something has died, and this engine has no ragdoll and no wall for it to pin against — so a bolt weapon fighting a crowd is understated by however much that corpse would have hit on the way past
 - this weapon is SILENT and this arena has nobody to alert — stealth is worth nothing here and a great deal in a real mission

@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- MICROWAVE's other half: it ENLARGES the body part it was shot at, which is a hit-location mechanic and worth nothing where nobody is aiming by hand. Its status COUNT is modelled (`applies_microwave`)
+- MICROWAVE's other half: it ENLARGES the body part it was shot at, which is a hit-location mechanic and worth nothing where nobody is aiming by hand. Its status COUNT is modelled
 
 ## In WFSim
 

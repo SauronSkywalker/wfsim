@@ -6,7 +6,7 @@
 <title>Privacy | WFSim</title>
 <meta name="description" content="What WFSim keeps about a person, with and without an account, and how to remove it.">
 <link rel="canonical" href="https://wfsim.app/privacy">
-<link rel="stylesheet" href="/asset/style.37e1f43a6ead.css">
+<link rel="stylesheet" href="/asset/style.def94b64a177.css">
 <link rel="icon" type="image/svg+xml" href="/logo.svg">
 <style>.legal{max-width:720px;margin:0 auto;padding:32px 16px 64px;line-height:1.6}
 .legal h1{margin-top:0}.legal a{color:var(--accent)}</style>
@@ -59,14 +59,7 @@ account only after you give it a code WFSim mails to your address. Your account
 page lists every agent acting for it and disconnects one in a click; deleting
 the account deletes them.</p>
 
-<h2>If you buy something</h2>
-<p>Payment is taken by Stripe, through Link, which is the seller of record: it
-holds your card and billing details, and sends your receipts and invoices. WFSim
-never sees a card number. For each account that buys, WFSim keeps its Stripe
-customer id; each subscription's status and paid period; each one-time purchase;
-and how much of any metered feature the account has used. Deleting the account
-cancels its subscriptions first and removes all of this; Stripe keeps its own
-payment records as the law requires.</p>
+<div data-ext="privacy-buying"></div>
 
 <h2>Build sync</h2>
 <p>With an account, what you save — builds, fights, searches, rivens, enemies,
@@ -79,7 +72,7 @@ own copy either way.</p>
 
 <h2>Who else handles it</h2>
 <ul>
-<li><b>Stripe and Link</b> take payments and keep the payment records.</li>
+<li data-ext="privacy-processor"></li>
 <li><b>Cloudflare</b> hosts the site and the database, and delivers the verification mail;
 its delivery log keeps the address a code was sent to for up to 30 days.</li>
 <li><b>Google, Discord and GitHub</b> handle a sign-in you choose to make with them.</li>
@@ -92,7 +85,7 @@ its delivery log keeps the address a code was sent to for up to 30 days.</li>
 <li>Passwords, sign-in tokens and emailed codes are kept only as hashes; a
 password's hash is also keyed with a secret the database does not hold, so a
 copy of the database alone cannot test a guess.</li>
-<li>Card and billing details never reach WFSim: Stripe holds them.</li>
+<li data-ext="privacy-card"></li>
 <li>Account data lives in its own database, apart from the one the public
 leaderboard is backed up from, and only the operator of WFSim can reach it.</li>
 <li>Sign-in endpoints are rate-limited, and a state-changing request is accepted
@@ -114,9 +107,9 @@ remains.</li>
 <li><b>不登录时：</b>配装、场景、紫卡只保存在你自己的浏览器里。使用统计记在浏览器保存的一个随机编号下，不记录 IP，不设置 cookie，可在
 <a href="/support#usage">支持页面</a>关闭。提交到排行榜的只有配装本身。</li>
 <li><b>登录后：</b>账号是一个随机编号，最多可绑定 Google、Discord、GitHub、邮箱四种登录方式。每种方式保存：是哪个服务、该服务给你的用户编号、账号页上显示给你看的名字（Google 邮箱、Discord 或 GitHub 用户名、你的邮箱），以及绑定时间。使用邮箱时你会设置一个密码，WFSim 只保存它加盐的慢哈希，无法还原成密码。邮件只在需要验证邮箱时发送（注册、绑定、找回密码），其中的验证码以哈希保存 10 分钟。登录状态以随机令牌的哈希保存（cookie <code>wfsim_session</code>，90 天）。不保存 IP 地址，也不保存第三方返回的访问令牌。WFSim 从不合并两个账号。</li>
-<li><b>购买时：</b>付款由 Stripe（通过 Link，作为销售方）处理，卡号与账单信息由它保存，收据和发票也由它发送；WFSim 看不到卡号。WFSim 为购买过的账号保存：Stripe 客户编号、每项订阅的状态与已付周期、每笔一次性购买、以及计量功能的用量。删除账号会先取消订阅并删除这些记录；Stripe 按法律要求保留它自己的付款记录。</li>
+<li data-ext="privacy-buying-zh"></li>
 <li><b>第三方：</b>Cloudflare 提供托管、数据库和验证邮件投递，其投递日志会保留收件地址最多 30 天；Google、Discord、GitHub 仅在你选择用它们登录时参与。不出售任何数据，不用于广告。</li>
-<li><b>安全措施：</b>全站 HTTPS；密码、登录令牌和邮件验证码只以哈希保存，密码哈希还用一个不在数据库里的密钥加固，单拿到数据库也无法验证任何猜测；卡号与账单信息只由 Stripe 保存，从不经过 WFSim；账号数据放在独立的数据库，与排行榜公开备份的那个分开，只有 WFSim 的运营方能访问；登录接口有频率限制，修改数据的请求只接受来自本站的。</li>
+<li><b>安全措施：</b>全站 HTTPS；密码、登录令牌和邮件验证码只以哈希保存，密码哈希还用一个不在数据库里的密钥加固，单拿到数据库也无法验证任何猜测；<span data-ext="privacy-card-zh"></span>账号数据放在独立的数据库，与排行榜公开备份的那个分开，只有 WFSim 的运营方能访问；登录接口有频率限制，修改数据的请求只接受来自本站的。</li>
 <li><b>你的权利：</b>可在账号面板下载你的全部数据、移除任何登录方式（移除最后一种即删除账号）、直接删除账号。删除立即生效；数据库的时间点历史最多保留 30 天。</li>
 </ul>
 </main>

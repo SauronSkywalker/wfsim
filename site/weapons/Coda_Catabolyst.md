@@ -16,9 +16,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- WHEN in the reload the grenade lands: the page says it is thrown mid-reload and times nothing, so it lands halfway through (`THROW_AT_RELOAD_SHARE_UNMEASURED`); the throw costs no time of its own either way
+- WHEN in the reload the grenade lands: the page says it is thrown mid-reload and times nothing, so it lands halfway through (unmeasured); the throw costs no time of its own either way
 - the explosion's SELF-STAGGER, which costs the wielder time when the target stands inside the blast
-- Galvanized Shot's bug on the grenade's direct hit (multiplicative with base damage, wiki `Catabolyst` Bugs)
+- Galvanized Shot's bug on the grenade's direct hit (multiplicative with base damage, the Bugs section of the wiki's Catabolyst page)
 - interrupting the reload to throw again without reloading, the page's own exploit
 - the 45-degree FAN is read as edge to edge about the reticle, which the page does not spell out
 - this weapon will never reload on its own and must be reloaded manually — a habit cost this arena does not charge

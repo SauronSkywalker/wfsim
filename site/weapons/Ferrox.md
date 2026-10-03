@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the CATALOG gives this weapon's radial its own Condition Overload row at 350% of its base ('Ferrox | Hitscan AoE Direct | Hitscan | 200 | 700 | 350% | Adding'), and there is no per-part CO fraction here — `co_base_fraction` is one number per ENTRY. So the part takes the term at 100% of its own base and a status-stacking build is understated on it
+- the CATALOG gives this weapon's radial its own Condition Overload row at 350% of its base ('Ferrox | Hitscan AoE Direct | Hitscan | 200 | 700 | 350% | Adding'), and that row is not entered here yet. So the part takes the term at 100% of its own base and a status-stacking build is understated on it
 - the blast needs no line of sight and goes through walls — this arena has no geometry, so nothing is ever behind cover and the perk pays nothing extra
 - it reloads 33% of its magazine a second while HOLSTERED or deployed, which is free ammunition bought by putting the weapon away — this arena never holsters it, so the reload here is always the full one
 - the blast staggers the WIELDER in game — this arena gives the player no body, so a build that would be unplayable in a corridor costs nothing here
