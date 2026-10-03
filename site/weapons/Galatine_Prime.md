@@ -10,7 +10,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy slam | 0.1908 | Blood Rush, Primed Pressure Point, Galvanized Reflex, Galvanized Steel, Amalgam Organ Shatter, Melee Elementalist, Seismic Wave, Corrupt Charge, Cleaving Whirlwind, Melee Exposure |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy | 0.2343 | Blood Rush, Primed Pressure Point, Galvanized Reflex, Galvanized Steel, Amalgam Organ Shatter, Melee Elementalist, Seismic Wave, Corrupt Charge, Cleaving Whirlwind, Melee Exposure |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy | 0.2344 | Blood Rush, Primed Pressure Point, Galvanized Reflex, Galvanized Steel, Amalgam Organ Shatter, Melee Elementalist, Seismic Wave, Corrupt Charge, Cleaving Whirlwind, Melee Exposure |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | heavy | 0.01369 | Blood Rush, Primed Pressure Point, Galvanized Reflex, Galvanized Steel, Amalgam Organ Shatter, Melee Elementalist, Seismic Wave, Corrupt Charge, Cleaving Whirlwind, Melee Exposure |
 
 ## Not modelled here
 
