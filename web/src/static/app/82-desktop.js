@@ -88,6 +88,24 @@ function downloadFor(ua) {
   return DOWNLOADS.find((d) => d.detect(ua || "")) || false;
 }
 
+/// THE OLDEST SHELL THIS CONTENT DOES NOT ASK TO BE REPLACED, as the build date
+/// `window.__WFSIM_SHELL__` starts with. Content reaches every shell and a shell
+/// never replaces itself, so this is the only way an old one hears that a new
+/// download fixes something only a download can. Raise it when a released shell
+/// changes behaviour a reader would notice, and only once that file is on the
+/// drive `DOWNLOADS` points at — or the notice sends readers to the old one.
+const SHELL_MINIMUM = [2026, 10, 3];
+/// Whether the running shell predates it. A shell too old to state its build
+/// predates everything.
+function shellIsOld() {
+  if (!window.__WFSIM_DESKTOP__) return false;
+  const m = /^(\d+)\.(\d+)\.(\d+)/.exec(String(window.__WFSIM_SHELL__ || ""));
+  if (!m) return true;
+  const have = [Number(m[1]), Number(m[2]), Number(m[3])];
+  for (let i = 0; i < 3; i++) if (have[i] !== SHELL_MINIMUM[i]) return have[i] < SHELL_MINIMUM[i];
+  return false;
+}
+
 /// The page at /download: the offer, above the questions the markup asks.
 function renderDownloadPage() {
   const host = document.getElementById("dl-offer");
@@ -95,6 +113,11 @@ function renderDownloadPage() {
   // ALREADY RUNNING IT. The URL is typed by hand and read off a video, so it
   // has to answer inside the client too — as the fact that there is nothing
   // here to install rather than as a blank.
+  if (window.__WFSIM_DESKTOP__ && shellIsOld()) {
+    host.innerHTML = downloadOffer(DOWNLOADS[0]) + `<span class="dl-why">${escHtml(
+      tr("This copy of the program is older than the current one. Download the new WFSim.exe and use it in place of this one — your saved builds stay."))}</span>`;
+    return;
+  }
   if (window.__WFSIM_DESKTOP__) {
     host.innerHTML = `<span class="dl-why">${escHtml(
       tr("You are running the Windows app. It updates itself — there is nothing to download here."))}</span>`;
@@ -224,6 +247,28 @@ function mountDesktopUpdater() {
   };
   // Not at boot: the first seconds belong to the page the reader opened.
   setTimeout(look, 8000);
+  setTimeout(offerNewShell, 8000);
   setInterval(look, DESKTOP_CHECK_MS);
 }
 
+/// A SHELL OLDER THAN `SHELL_MINIMUM` IS TOLD A NEW DOWNLOAD EXISTS — once per
+/// minimum: closed, it stays closed until a newer shell raises it again. Its
+/// own corner, so it never covers the restart notice beside it.
+const SHELL_DISMISSED = "wfsim-shell-dismissed";
+function offerNewShell() {
+  if (!shellIsOld()) return;
+  const key = SHELL_MINIMUM.join(".");
+  try { if (localStorage.getItem(SHELL_DISMISSED) === key) return; } catch (_) { /* ask anyway */ }
+  const d = DOWNLOADS[0];
+  const bar = document.createElement("div");
+  bar.className = "dtup dtup-shell";
+  bar.innerHTML = `<span class="dtup-t">${escHtml(tr("A new version of the program is out — the board loads faster and survives a dropped connection."))}</span>`
+    + `<a class="dtup-b" href="${escHtml(d.source.url)}" target="_blank" rel="noopener">${escHtml(tr("Download"))}</a>`
+    + `<button class="dtup-x" title="${escHtml(tr("Later"))}">×</button>`;
+  bar.querySelector(".dtup-b").addEventListener("click", () => track("desktop.download"));
+  bar.querySelector(".dtup-x").addEventListener("click", () => {
+    try { localStorage.setItem(SHELL_DISMISSED, key); } catch (_) { /* this session only */ }
+    bar.remove();
+  });
+  document.body.appendChild(bar);
+}

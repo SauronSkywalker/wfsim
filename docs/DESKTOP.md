@@ -240,6 +240,18 @@ signed. `使用说明.txt` does not travel with it: that file says which of two
 files to download and what SmartScreen will do, and a release page answers both
 in its own body.
 
+### A new shell is offered by the content
+
+**A SHELL NEVER REPLACES ITSELF, BUT CONTENT REACHES EVERY SHELL**, so content
+is what tells an old one. `SHELL_MINIMUM` (`82-desktop.js`) is the oldest
+build date the content does not ask to be replaced; a shell older than it, or
+too old to state `__WFSIM_SHELL__` at all, gets a notice in the corner opposite
+the restart notice, linking the drive `DOWNLOADS` names, and `/download` offers
+the file instead of saying there is nothing to install. Closed, the notice
+stays closed until the minimum moves. **Raise it only once the new file is on
+the drive**: ship it earlier and the notice sends readers to the old one.
+`check_desktop_shell_notice` holds it.
+
 ### The network drive
 
 `dist/` holds `WFSim.exe`, `source.zip` (AGPL requires the source to be offered

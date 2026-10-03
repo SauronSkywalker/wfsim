@@ -2539,6 +2539,9 @@ table.bills td.links a{color:var(--accent);text-decoration:none;margin-left:12px
   box-shadow:0 8px 28px rgba(0,0,0,.35);font-size:13px;color:var(--text);
   max-width:min(440px,calc(100vw - 32px))}
 .dtup[hidden]{display:none}
+.dtup.dtup-shell{right:auto;left:16px;max-width:min(560px,calc(100vw - 32px))}
+.dtup-shell .dtup-t{white-space:normal}
+a.dtup-b{text-decoration:none}
 .dtup-t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dtup-e{color:var(--critical);white-space:normal}
 .dtup-b{border:1px solid var(--gold);background:transparent;color:var(--gold);border-radius:7px;

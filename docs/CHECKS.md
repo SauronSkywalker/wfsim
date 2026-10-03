@@ -745,6 +745,14 @@ entry stays here; the allowance the server states is kept to, and an item the
 server refuses stays here. A riven's row in its list carries the cloud too, and
 a click switches it without opening the riven.
 
+## `check_desktop_shell_notice`
+
+The page made to look like the client, with the build it states varied: a
+shell older than `SHELL_MINIMUM`, and one too old to state its build, are each
+offered the download in the corner and on /download; the current shell is
+offered nothing and /download says there is nothing to install; a notice
+closed stays closed.
+
 ## `check_share_card`
 
 Every builder step has a card block, the card's blocks come in the order the

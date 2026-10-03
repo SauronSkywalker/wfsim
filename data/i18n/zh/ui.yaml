@@ -689,6 +689,9 @@ ui:
   Kills: 击杀
   "LIFTED's crowd control is not modelled — the explosion suspends what it hits, and this arena has no movement to interrupt; what IS modelled is the 1 s status itself, which Condition Overload counts like any other": Lifted 的控制效果尚未建模 —— 爆炸会把命中的目标浮空，而这个战场没有可以被打断的移动；已经建模的是那 1 秒的状态本身，异常状态过载会像统计其他状态一样把它算进去
   "Later": "稍后"
+  "Download": 下载
+  "A new version of the program is out — the board loads faster and survives a dropped connection.": "客户端出新版本了：排行榜加载更快，网络断一下也不会卡住。"
+  "This copy of the program is older than the current one. Download the new WFSim.exe and use it in place of this one — your saved builds stay.": "你现在用的程序比最新版旧。下载新的 WFSim.exe 替换掉这个即可，存下的配装都会保留。"
   "Leaded Gas, the Vesper 77-exclusive mod — a weapon-exclusive card outside the pools this roster loads": "「Leaded Gas」，Vesper 77 的专属 MOD——这是一张武器专属卡，不在本武器库载入的卡池里"
   "Level scaling": 等级缩放
   "Lingering field": 持续云雾
