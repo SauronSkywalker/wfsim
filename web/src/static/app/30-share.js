@@ -597,6 +597,7 @@ async function openShareClaim(panel, url, measured) {
   await drawShareCard(canvas, url, {
     measured: measured && measured.card,
     by: by && { name: by.name, mark: by.mark || "" },
+    theme: (by && by.theme) || "",
   });
 
   // SCOPED TO `more`, NOT TO THE PANEL: the build link above has a `.sh-copy`

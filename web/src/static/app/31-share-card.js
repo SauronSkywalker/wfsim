@@ -15,7 +15,7 @@ const SITE_HOST = "wfsim.app";
 const CARD_W = 1080, CARD_DPR = 2, CARD_PAD = 48;
 
 /// A THEME IS TOKENS, never layout: the blocks and their order are the build's,
-/// and a theme may only say how they look. The default is the only one this
+/// and a theme may only say how they look, and whether a frame is drawn round them. The default is the only one this
 /// repo ships; anything else is registered from outside it.
 const CARD_THEMES = {
   default: {
@@ -482,5 +482,11 @@ async function drawShareCard(canvas, url, opts = {}) {
     g.textAlign = "right"; g.font = `13px ${t.body}`; g.fillStyle = t.muted;
     g.fillText(SITE_HOST, CARD_W - CARD_PAD - QR - 16, fy + QR - 4);
     g.textAlign = "left";
+  }
+  // A FRAME, where a theme names one: drawn last, over every block's edge.
+  if (t.frame) {
+    const fw = t.frameWidth || 2;
+    g.strokeStyle = t.frame; g.lineWidth = fw;
+    roundRect(g, fw / 2 + 6, fw / 2 + 6, CARD_W - fw - 12, H - fw - 12, 14); g.stroke();
   }
 }
