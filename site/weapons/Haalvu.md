@@ -12,7 +12,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 | --- | --- | --- | ---: | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 6.6477 | Hellfire, Heavy Caliber, Primary Acuity, Serration, Rifle Elementalist, Vile Acceleration, Vital Sense, Magnetic Capacity, Vigilante Supplies, Primary Crux |
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 11.8873 | Hellfire, Thermite Rounds, Heavy Caliber, Primary Acuity, Rifle Elementalist, Vile Acceleration, Vital Sense, Magnetic Capacity, Vigilante Supplies, Primary Crux |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.7176 | Hellfire, Thermite Rounds, Heavy Caliber, Primary Acuity, Rifle Elementalist, Vile Acceleration, Vital Sense, Magnetic Capacity, Vigilante Supplies, Primary Crux |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.1185 | Primed Cryo Rounds, Infected Clip, Hellfire, Heavy Caliber, Primary Acuity, Serration, Vile Acceleration, Vital Sense, Primary Crux |
 
 ## Not modelled here
 

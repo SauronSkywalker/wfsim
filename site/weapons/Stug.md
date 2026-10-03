@@ -16,9 +16,13 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the blob economy is not modelled — a shot EMBEDS and only explodes after a delay or at max stacks, and the sim fires the embed as an ordinary hit
 - the Incarnon form's bouncing secondary projectiles are not modelled — a stacked shot releases 2 to 5 of them, each exploding on up to 3 bounces
-- the Blob Explosion is not modelled — this entry carries only the Blob Embed
+- the charged alternate fire is not modelled — a full 10-stack blob over 2 seconds, for 10 ammo
+- unmeasured: how many stacks a shot lays — read as floor(multishot), the count the Grimoire's multishot buys; a roll on the fraction would lay more
+- unmeasured: a shot already over the cap (multishot over 10) is read as holding the pile at 10 and waiting 1.5 s, refreshed by every later shot, so steady fire never sets it off
+- unmeasured: a shot that crosses the cap is read as setting the pile off at once for 10 stacks, the rest lost
+- unmeasured: the explosion's falloff is read as 70%, the page's bug note, over the 30% its table lists
+- unmeasured: a pile is read as staying where its body stood when that body dies, going off on whoever stands there
 
 ## In WFSim
 
