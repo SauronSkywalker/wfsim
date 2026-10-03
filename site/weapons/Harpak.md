@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- 'bolts fired stick to their target, and will fling bodies on kill. The body will damage targets in its path' (wiki) — this engine has no ragdoll and no wall to pin against, so the corpse damage a crowd would take is not counted
+- Bolts stick and fling bodies on a kill, and a flung body damages targets in its path (wiki). There is no ragdoll here, so against a crowd the number reads low.
 
 ## In WFSim
 

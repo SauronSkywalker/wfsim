@@ -16,8 +16,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the throw is SILENT and the cloud is not, which is a stealth distinction this arena has no alarm to raise
-- this weapon cannot equip Concealed Explosives, the thrown-exclusive mod — a card outside the pools this roster loads either way
+- The throw is silent and the cloud is not; there is nobody to alert here.
+- This weapon cannot equip Concealed Explosives, the thrown-exclusive mod, which is not offered here either way.
 
 ## In WFSim
 

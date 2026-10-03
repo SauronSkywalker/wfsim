@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the alternate fire CYCLES four quill types — Poison, Fire, Electric and Ice — and this entry carries the Poison one. The others differ in the element they apply and, on two of them, in the physical damage, so a build around a different quill is not exactly this number
+- The alt-fire cycles four quill types, Poison, Fire, Electric and Ice; this entry is the Poison one. The others differ in element, and two in physical damage, so a build around another quill is not exactly this number.
 
 ## In WFSim
 

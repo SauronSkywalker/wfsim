@@ -6,8 +6,8 @@ Pistol · Secondary · Mastery Rank 14. 30 base damage (impact 12, puncture 18),
 
 ## Not modelled here
 
-- the cloud arrives ONE SECOND after the dart lands (wiki) — this engine resolves it at the point of impact immediately, so nothing walks out of one here
-- the blast needs no line of sight and goes through walls — this arena has no geometry, so nothing is ever behind cover and the perk pays nothing extra
+- The cloud arrives 1 s after the dart lands (wiki); here it resolves on impact, so nothing walks out of it.
+- The blast needs no line of sight. There is no cover here, so the perk adds nothing.
 
 ## In WFSim
 

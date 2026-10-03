@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the duplex trigger is not modelled — one pull fires TWO rounds in game and this entry paces one per pull
+- The duplex trigger is not modelled: one pull fires two rounds in game, and this entry paces one per pull.
 
 ## In WFSim
 

@@ -16,11 +16,11 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- one attack input's own animation length is not published anywhere: the wiki gives a combo's total duration at 1.0x attack speed and one entry per input, so the combo's DURATION is exact and the split between its INPUTS is even. It moves a status tick's start by fractions of a second inside a combo and moves no total
-- Power Spike's partial combo decay is a Warframe passive and is not modelled: this counter drops to zero when its clock runs out, so a build running that passive keeps far more of it than this reports
-- the wiki's stance tables give this weapon combos of its OWN (heavy slam and slam attack), which replace the equipped stance's and are not transcribed: the stance's (or its class's) are played in their place
-- its Tenet valence bonus is not modelled: the build cannot state the element and bonus this copy rolled, so it reads without one
-- not modelled — a slam's shockwave: three explosions 5 m apart in a line, and three such lines from a heavy slam
+- One attack input's animation length is unpublished: the wiki gives each combo's total at 1.0x attack speed, so totals are exact and inputs are split evenly. This shifts a status tick by fractions of a second and changes no total.
+- Power Spike's partial combo decay is a Warframe passive and is not modelled: the counter drops to zero when its timer runs out, so with that passive the number reads low.
+- The wiki gives this weapon combos of its own (heavy slam and slam attack), which replace the stance's and are not transcribed; the stance's (or its class's) are used instead.
+- Its Tenet valence bonus is not modelled: the build cannot state the element and bonus this copy rolled, so it reads without one.
+- Not modelled: a slam's shockwave: three explosions 5 m apart in a line, and three such lines from a heavy slam.
 
 ## In WFSim
 

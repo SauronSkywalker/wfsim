@@ -6,9 +6,9 @@ Bow · Primary · Mastery Rank 7. 410 base damage (impact 369, puncture 20.5, sl
 
 ## Not modelled here
 
-- the CATALOG gives this weapon's lingering its own Condition Overload row at 4100% of its base ('Mutalist Cernos | Charged AoE Toxin Cloud | AoE | 5 | 205 | 4100% | Adding'), and that row is not entered here yet. So the part takes the term at 100% of its own base and a status-stacking build is understated on it
-- the cloud also CONFUSES the enemies standing in it, turning them on each other for its duration (wiki) — that is crowd control, and this arena's enemies neither turn nor stop
-- this weapon is SILENT and this arena has nobody to alert — stealth is worth nothing here and a great deal in a real mission
+- The wiki's Condition Overload catalog gives this weapon's lingering cloud its own row, 4100% of its base; that row is not entered here yet, so the cloud takes 100% and a status-stacking build reads low on it.
+- The cloud confuses enemies in it, turning them on each other (wiki); crowd control, and enemies here neither turn nor stop.
+- This weapon is silent; there is nobody to alert here, so stealth is worth nothing.
 
 ## In WFSim
 

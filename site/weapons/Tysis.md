@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- THE INNATE CORROSIVE DoT, which is 81 of this weapon's 130 damage a dart — a damage-over-time attack of 27 a tick, with each multishot pellet creating its own. Three attacks in the whole game are typed this way and two of them are this weapon's family, so it is recorded rather than built. THE NUMBER ON SCREEN IS THEREFORE ABOUT A THIRD OF THE REAL ONE against a single target
+- The innate Corrosive damage over time, 81 of each dart's 130, ticks at 27, per multishot pellet. The engine has no damage-over-time attack, so it is not counted, and against one target the number is about a third of the real one.
 
 ## In WFSim
 

@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- switching modes takes ONE SECOND of animation (0.5 s on Wisp) and this sim never switches — each mode is measured as if it were the whole weapon
+- Switching modes takes 1 s of animation (0.5 s on Wisp); the sim never switches, so each mode is measured as the whole weapon.
 
 ## In WFSim
 

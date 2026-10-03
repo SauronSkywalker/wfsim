@@ -16,10 +16,10 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- 'weak point hits have +250% CRITICAL CHANCE, additive with mods like Point Strike' (wiki). This engine has no headshot-conditional crit bucket — a crit is rolled for the hit and the body part is drawn beside it — so this arena's crit chance is the unaimed 40% where a headshot lands at 290%. It is the larger half of the weapon
-- ON KILL THE BODY FOLLOWS THE BOLT, damaging anyone in its path and pinning the corpse to walls (wiki). It is a second damage source that only exists once something has died, and this engine has no ragdoll and no wall for it to pin against — so a bolt weapon fighting a crowd is understated by however much that corpse would have hit on the way past
-- this weapon is SILENT and this arena has nobody to alert — stealth is worth nothing here and a great deal in a real mission
-- the LOWER zoom levels are not modelled — this arena has no field of view to trade for magnification, so the scope always sits at its top level and its best buff
+- Weak-point hits get +250% critical chance, additive with Point Strike (wiki). The engine has no headshot-only crit bonus, so the crit chance here is 40% where a headshot lands at 290%. It is most of the weapon; the number reads low.
+- On a kill the body follows the bolt, damaging anyone in its path (wiki). There is no ragdoll here, so against a crowd the number reads low.
+- This weapon is silent; there is nobody to alert here, so stealth is worth nothing.
+- Lower zoom levels are not modelled: the scope always sits at its top level and its best buff.
 
 ## In WFSim
 

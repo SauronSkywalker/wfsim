@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the PURITY syndicate effect, which on a proc heals the wielder and nearby allies and cleanses status from them — the wielder is not a body in this arena and there are no allies, so it pays nothing
+- The Purity syndicate effect heals and cleanses the wielder and nearby allies (wiki). There is no health and no ally here; the number is unaffected.
 
 ## In WFSim
 

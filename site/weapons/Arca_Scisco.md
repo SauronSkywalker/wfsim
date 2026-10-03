@@ -16,8 +16,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- 'TARGET ANALYSIS': every shot grants +4% flat critical chance and +4% flat status chance, stacking to five for +20% of each, lasting 2 seconds and refreshed by the next shot (wiki). This engine has no shot-COUNTING buff of its own, and the two bonuses are FLAT — added to the finished number rather than scaled off the base — so a build here fires at 18%/26% where a player holding the trigger sits at 38%/46%. It is the larger half of the weapon
-- the LOWER zoom levels are not modelled — this arena has no field of view to trade for magnification, so the scope always sits at its top level and its best buff
+- Target Analysis: each shot grants +4% flat critical and status chance, stacking to 5 for 2 s (wiki). The engine has no shot-counting buff, so a build here fires at 18% / 26% where held fire reaches 38% / 46%. It is most of the weapon; the number reads low.
+- Lower zoom levels are not modelled: the scope always sits at its top level and its best buff.
 
 ## In WFSim
 

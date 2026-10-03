@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the blades RICOCHET off surfaces (wiki) and this arena has no walls to bounce off
+- The blades ricochet off surfaces (wiki); there are no walls here.
 
 ## In WFSim
 

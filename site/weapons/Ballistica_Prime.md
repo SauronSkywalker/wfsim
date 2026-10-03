@@ -16,8 +16,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- a PARTLY charged shot is not modelled — releasing early multiplies the Normal Shot's OWN base by (1 + charge progress) and adds the evolution's flat base damage beside that multiplier rather than inside it, so a 50% charge is 40 x 1.5 + 3 rather than 43 x 1.5; this entry carries only the two ends of that ramp: no charge at all, and the full charge that fires this attack instead
-- a GHOST is counted, not fought: a charged-shot kill leaves one for 7 seconds and the run reports how many stood, but what a ghost does is not modelled — it neither attacks nor blocks a shot of yours, so nothing in the fight reads it back
+- A partly charged shot is not modelled: an early release multiplies the Normal Shot's own base by (1 + charge) and adds the evolution's flat damage outside that, so 50% is 40 x 1.5 + 3, not 43 x 1.5. Only the two ends are carried: no charge, and the full charge.
+- A ghost is counted, not fought: a charged-shot kill leaves one for 7 s and the run reports how many there were, but a ghost neither attacks nor blocks here.
 
 ## In WFSim
 

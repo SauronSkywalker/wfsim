@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the LOWER zoom levels are not modelled — this arena has no field of view to trade for magnification, so the scope always sits at its top level and its best buff
+- Lower zoom levels are not modelled: the scope always sits at its top level and its best buff.
 
 ## In WFSim
 

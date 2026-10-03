@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- reloading from a FULLY DEPLETED magazine produces an 8 m shockwave dealing 10 Electricity at 100% status plus a forced Electricity proc (wiki). It is a reload-triggered explosion this engine has no shape for, and this sim always empties the magazine — so it would fire on every reload here and is not counted at all
+- Reloading from an empty magazine releases an 8 m shockwave, 10 Electricity at 100% status plus a forced Electricity proc (wiki). The engine has no reload-triggered explosion, so it is not counted.
 
 ## In WFSim
 

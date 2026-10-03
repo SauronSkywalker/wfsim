@@ -16,8 +16,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the Uncharged Shot is not modelled — this entry carries only the Charged Shot
-- this attack's SPREAD is not in the data, so none of its shots can miss — the wiki's weapon module publishes a cone for it and the intake could not identify which of that weapon's attacks this entry is, so it took nothing rather than the wrong one. At a range every pellet lands here, which is the ceiling; at point blank it costs nothing, because nothing misses there anyway
+- The Uncharged Shot is not modelled; this entry carries only the Charged Shot.
+- This attack's spread is not in the data, so none of its shots miss. At range the number is the ceiling; at point blank it is unaffected.
 
 ## In WFSim
 

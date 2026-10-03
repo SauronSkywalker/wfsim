@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- shots RICOCHET once (wiki), which is what lets a player kill something behind cover — this arena has no walls to bounce off
+- Shots ricochet once (wiki), which reaches enemies behind cover; there are no walls here.
 
 ## In WFSim
 

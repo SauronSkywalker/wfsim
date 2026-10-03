@@ -16,8 +16,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- it reloads 10% of its magazine a second while HOLSTERED or deployed, which is free ammunition bought by putting the weapon away — this arena never holsters it, so the reload here is always the full one
-- the very heavy side-to-side recoil the page calls out, which is what makes the listed pinpoint accuracy "only effective for the first shot". Recoil is a hand-aim cost and this arena has no hand
+- It reloads 10% of its magazine a second while holstered or deployed; it is never holstered here, so the reload is always the full one.
+- The very heavy side-to-side recoil (page) makes its accuracy hold only for the first shot; the sim has no recoil.
 
 ## In WFSim
 

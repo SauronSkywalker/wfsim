@@ -16,11 +16,11 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the blast needs no line of sight and goes through walls — this arena has no geometry, so nothing is ever behind cover and the perk pays nothing extra
-- the rockets are STEERED: "Aiming will cause fired rockets to travel toward the aiming reticle, allowing them to be guided", and "Allows firing rockets from behind cover". Both are hand-aim mechanics, and both cost the shot half its speed while used (20 m/s guided against 40 unguided). Against a target that does not move, guidance buys nothing and is charged nothing
-- a rocket that hits nothing detonates on its own after 6 seconds, which needs a miss this arena resolves at the wall of its own geometry-free floor
-- it reloads 10% of its magazine a second while HOLSTERED or deployed, which is free ammunition bought by putting the weapon away — this arena never holsters it, so the reload here is always the full one
-- the blast staggers the WIELDER in game — this arena gives the player no body, so a build that would be unplayable in a corridor costs nothing here
+- The blast needs no line of sight. There is no cover here, so the perk adds nothing.
+- The rockets can be guided by aiming and fired from behind cover, at half speed while guided (20 m/s against 40). The target here does not move, so guidance changes nothing.
+- A rocket that hits nothing detonates after 6 s; the sim does not model a miss.
+- It reloads 10% of its magazine a second while holstered or deployed; it is never holstered here, so the reload is always the full one.
+- In game the blast staggers the wielder; the player has no body here, so it costs nothing.
 
 ## In WFSim
 

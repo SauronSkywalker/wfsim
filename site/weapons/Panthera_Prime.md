@@ -16,9 +16,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the blades RICOCHET off surfaces (wiki) and this arena has no walls to bounce off
-- the blast needs no line of sight and goes through walls — this arena has no geometry, so nothing is ever behind cover and the perk pays nothing extra
-- the blast staggers the WIELDER in game — this arena gives the player no body, so a build that would be unplayable in a corridor costs nothing here
+- The blades ricochet off surfaces (wiki); there are no walls here.
+- The blast needs no line of sight. There is no cover here, so the perk adds nothing.
+- In game the blast staggers the wielder; the player has no body here, so it costs nothing.
 
 ## In WFSim
 

@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the MICROWAVE status effect, which enlarges the body part that was shot (wiki). It is a unique proc with no damage of its own and this engine's status roster has no entry for it — what it does in game is make the enlarged part easier to hit again, which is an aiming aid this sim cannot use
+- The Microwave status enlarges the body part that was shot (wiki). It deals no damage and has no entry in the engine; its effect is an aiming aid the sim does not use.
 
 ## In WFSim
 

@@ -14,8 +14,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- THIS IS THE PERFECT RELEASE, not the ordinary full draw — the arsenal displays it and this entry carries its numbers, so a player who MISTIMES the window gets the module's second attack instead (a one-second draw for less damage), which is not carried here. The form vocabulary has no word for a timing window, so one weapon cannot carry both
-- this weapon is SILENT and this arena has nobody to alert — stealth is worth nothing here and a great deal in a real mission
+- This is the perfect release, not the ordinary full draw: the arsenal shows it and this entry carries its numbers. A mistimed release gets the module's second attack instead, a one-second draw for less damage, which is not carried. The engine has no way to describe a timing window, so one weapon cannot carry both.
+- This weapon is silent; there is nobody to alert here, so stealth is worth nothing.
 
 ## In WFSim
 

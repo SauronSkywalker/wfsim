@@ -16,8 +16,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the 20-40 degree spread is not modelled — this arena has one target at zero distance, so all six pellets always land on it
-- the companion FIRES THIS WEAPON, not the player — it picks its own targets, fires when it decides to, and stops while the companion is reviving or out of range; this arena fires it continuously at one target, which is the ceiling rather than the average
+- The 20-40 degree spread is not modelled; at zero distance all six pellets land.
+- The companion fires this weapon: it picks its targets, fires when it decides, and stops while reviving or out of range. Here it fires continuously at one target, so the number is the ceiling.
 
 ## In WFSim
 

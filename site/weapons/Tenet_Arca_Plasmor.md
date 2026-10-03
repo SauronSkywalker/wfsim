@@ -16,10 +16,10 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the projectile is a WALL 4.4 metres thick, which with the infinite body punch through above is most of what this weapon is in a room: one shot sweeps everything in a 4.4 m band. This arena fires a RAY, so only the bodies on the line are struck and the width buys nothing
-- shots BOUNCE off surfaces up to 4 times, which the page's own tips call worth doubling a shot's hit count when aimed off a wall behind the target — there are no surfaces here
-- the guaranteed Impact proc is capped at 29 metres ("Shots have a guaranteed Impact proc to enemies up to 29 meters") and is applied at every distance here, since a forced proc carries no range of its own. It overstates the shot only past 29 m, where the damage is already at its falloff floor
-- the innate punch through does not apply to SURFACES when the central portion of the projectile hits one — a geometry rule in an arena with no geometry
+- The projectile is a wall 4.4 m thick that sweeps everything in that band; the sim fires a ray, so only bodies on the line are hit and against a crowd the number reads low.
+- Shots bounce off surfaces up to 4 times, which can double a shot's hits off a wall behind the target (page); there are no surfaces here.
+- The guaranteed Impact proc reaches only 29 m but is applied at every distance here; past 29 m the damage is already at its falloff floor.
+- Its innate punch through does not pass surfaces when the projectile's centre hits one; there are no surfaces here.
 
 ## In WFSim
 

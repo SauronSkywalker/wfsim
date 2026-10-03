@@ -16,8 +16,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- 'successfully landing a tracer round grants a 20 second buff that adds 50% ABSOLUTE critical chance. This buff is retained on target death, and is not affected by mods' (wiki). It is a flat addition to the finished crit chance, granted by the OTHER firing mode, and this engine has no shape for a buff one mode grants another — so this entry fires at its own 23% where a player who has landed a beacon sits at 73%. It is the larger half of the weapon
-- the primary fire HOMES on a beaconed target for 20 seconds (wiki) — this arena's shots already go where they are aimed, so the homing buys nothing here and buys a great deal in a real room
+- Landing a tracer round grants +50% absolute critical chance for 20 s, unaffected by mods (wiki). The bonus comes from the other firing mode and the engine cannot carry it across, so this entry fires at 23% where a player with a beacon on the target fires at 73%. It is most of the weapon; the number reads low.
+- The primary fire homes on a beaconed target for 20 s (wiki); shots here already land where aimed, so homing adds nothing.
 
 ## In WFSim
 

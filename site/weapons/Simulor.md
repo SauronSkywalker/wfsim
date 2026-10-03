@@ -16,9 +16,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- ORBS MERGE. The module gives this weapon a second AoE — 'Orb Merging Damage' in four metres — that fires when a new orb joins one already in the air, and the explosion grows with the number merged (wiki). This engine resolves each shot on its own, so the merge is not counted at all and a player laying orbs on one spot is well ahead of this number
-- the blast needs no line of sight and goes through walls — this arena has no geometry, so nothing is ever behind cover and the perk pays nothing extra
-- the blast staggers the WIELDER in game — this arena gives the player no body, so a build that would be unplayable in a corridor costs nothing here
+- Orbs merge: a new orb joining one in the air triggers 'Orb Merging Damage' in 4 m, growing with the number merged (wiki). The engine resolves each shot on its own, so the merge is not counted and the number reads well low for a player stacking orbs.
+- The blast needs no line of sight. There is no cover here, so the perk adds nothing.
+- In game the blast staggers the wielder; the player has no body here, so it costs nothing.
 
 ## In WFSim
 

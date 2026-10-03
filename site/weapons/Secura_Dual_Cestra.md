@@ -16,8 +16,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the SEQUENCE syndicate effect, which converts damage dealt into shields for the wielder and nearby allies on a proc — the wielder is not a body in this arena and there are no allies, so it pays nothing
-- the AUTO-SPOOL ramp is not modelled — the page gives this trigger as Auto-Spool and the fire rate here is the spooled-up 12.5/s from the first shot, so a short burst is faster in this sim than in game
+- The Sequence syndicate effect turns damage dealt into shields for the wielder and nearby allies (wiki). There are no shields and no allies here; the number is unaffected.
+- The auto-spool ramp is not modelled: the rate is the spooled-up 12.5/s from the first shot, so a short burst is faster here than in game.
 
 ## In WFSim
 

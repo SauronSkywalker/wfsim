@@ -16,9 +16,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- THE RETURN, which is half the weapon: 'upon reloading, the blades return and damage anything in their path as they fly back to the wielder, with an enhanced Critical Chance set to 300%' (wiki). A reload here loads the magazine and fires nothing, so none of that damage is counted and neither is the set — the number below is the throw alone
-- 'Cantare Chorale': striking enemies with the returning reload grants +20% reload speed for 30 seconds to all allies in affinity range (wiki). It rides on a return this sim does not fire, and this arena has no allies to grant it to
-- this weapon is SILENT and this arena has nobody to alert — stealth is worth nothing here and a great deal in a real mission
+- On a reload the blades return, damaging everything in their path with critical chance set to 300% (wiki). A reload here fires nothing, so the number is the throw alone and reads well low.
+- Cantare Chorale: hitting enemies with the returning blades grants allies in range +20% reload speed for 30 s (wiki). The return is not fired and there are no allies here.
+- This weapon is silent; there is nobody to alert here, so stealth is worth nothing.
 
 ## In WFSim
 

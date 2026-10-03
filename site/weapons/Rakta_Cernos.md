@@ -16,8 +16,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the BLIGHT syndicate effect, which on a proc blinds enemies in a radius and opens them to finishers (wiki) — it fires off a syndicate standing meter this sim does not track, and blindness is crowd control this arena's enemies do not suffer
-- this weapon is SILENT and this arena has nobody to alert — stealth is worth nothing here and a great deal in a real mission
+- The Blight syndicate effect blinds enemies in a radius and opens them to finishers (wiki). It runs on a syndicate meter the sim does not track, and blindness is crowd control; it is not counted.
+- This weapon is silent; there is nobody to alert here, so stealth is worth nothing.
 
 ## In WFSim
 

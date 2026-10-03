@@ -16,9 +16,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- a direct hit forces a KNOCKDOWN and the explosion a RAGDOLL (module ForcedProcs) — neither is a damage type and this arena's enemies are neither knocked down nor thrown
-- the blast needs no line of sight and goes through walls — this arena has no geometry, so nothing is ever behind cover and the perk pays nothing extra
-- the blast staggers the WIELDER in game — this arena gives the player no body, so a build that would be unplayable in a corridor costs nothing here
+- A direct hit forces a knockdown and the explosion a ragdoll; neither is damage, and enemies here are neither knocked down nor thrown.
+- The blast needs no line of sight. There is no cover here, so the perk adds nothing.
+- In game the blast staggers the wielder; the player has no body here, so it costs nothing.
 
 ## In WFSim
 

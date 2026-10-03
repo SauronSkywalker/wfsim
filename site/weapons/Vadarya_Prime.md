@@ -16,9 +16,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- a MISSED shot drops the combo counter and this entry cannot miss — the only thing that misses here is SPREAD, and this one lands on the reticle, so nothing but its 2 s timer ever takes a stack off. A player who pulls the shot loses the combo and this sim never pulls one
-- the LOWER zoom levels are not modelled — this arena has no field of view to trade for magnification, so the scope always sits at its top level and its best buff
-- the CHAIN LIGHTNING is not modelled, and it is a third of what this weapon does — every hit rolls 0/1/2/3 extra strikes (30/35/17.5/17.5%), guaranteed after three failures, chaining twice within 10 m and scaling off the same mods. This arena has one target for them to chain between
+- A missed shot drops the combo counter. This entry cannot miss, so only its 2 s timer removes a stack, and the number is the ceiling.
+- Lower zoom levels are not modelled: the scope always sits at its top level and its best buff.
+- Chain lightning is not modelled, and it is a third of the weapon: each hit rolls 0-3 extra strikes (30/35/17.5/17.5%), guaranteed after three failures, chaining twice within 10 m. There is one target here, so the number reads low against a crowd.
 
 ## In WFSim
 

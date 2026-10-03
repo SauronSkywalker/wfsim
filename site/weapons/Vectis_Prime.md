@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- a MISSED shot drops the combo counter and this entry cannot miss — the only thing that misses here is SPREAD, and this one lands on the reticle, so nothing but its 2 s timer ever takes a stack off. A player who pulls the shot loses the combo and this sim never pulls one
+- A missed shot drops the combo counter. This entry cannot miss, so only its 2 s timer removes a stack, and the number is the ceiling.
 
 ## In WFSim
 

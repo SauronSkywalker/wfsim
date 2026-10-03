@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the two beams CONVERGE on the crosshair and deal full damage there only once they are aligned (wiki). This arena lands both on the aimed body from the first tick, which is the ceiling
+- The two beams converge on the crosshair and deal full damage only once aligned (wiki); here both land on the target from the first tick, so the number is the ceiling.
 
 ## In WFSim
 

@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the Single Rocket Explosion is not modelled — this entry carries only the Single Rocket Impact
+- The Single Rocket Explosion is not modelled; this entry carries only the Single Rocket Impact.
 
 ## In WFSim
 

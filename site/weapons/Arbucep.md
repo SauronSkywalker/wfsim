@@ -16,10 +16,10 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the missiles HOME, and homing is not modelled — this arena has one target at zero distance, so a guided missile and a straight one land the same
-- the 8-degree spread is not modelled — this arena has one target at zero distance, so all six missiles always land on it
-- the explosion's falloff is not stated by the page and is therefore not modelled — the target stands at the centre and takes the full 228 either way
-- the Arch-Gun Deployer's five-minute cooldown is not modelled — when the reserve runs dry the weapon is gone for the rest of a real mission, and this arena simply stops firing
+- The missiles home, which is not modelled; with one target at zero distance, homing and straight missiles land the same.
+- The 8-degree spread is not modelled; at zero distance all six missiles land on the one target.
+- The explosion's falloff is not published, so it is not modelled; the target stands at the centre and takes the full 228.
+- The Arch-Gun Deployer's five-minute cooldown is not modelled: in a mission the weapon is gone once its reserve runs dry; here it simply stops firing.
 
 ## In WFSim
 

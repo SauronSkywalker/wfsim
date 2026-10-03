@@ -16,8 +16,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- THE PELLET COUNT SPOOLS TOO: 'each consecutive shot adds an additional pellet' up to the maximum, and this entry IS the fully spooled state — every shot here fires the full count from the first. The page publishes no ramp figures for the fire rate either, so the rate here is the settled one as well
-- the AUTO-SPOOL ramp is not modelled — the page gives this trigger as Auto-Spool and the fire rate here is the spooled-up 5/s from the first shot, so a short burst is faster in this sim than in game
+- The pellet count spools up too, one more per consecutive shot (page); this entry fires the full count from the first shot. No fire-rate ramp is published either, so the rate is the settled one.
+- The auto-spool ramp is not modelled: the rate is the spooled-up 5/s from the first shot, so a short burst is faster here than in game.
 
 ## In WFSim
 

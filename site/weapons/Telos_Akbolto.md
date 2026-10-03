@@ -16,8 +16,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- ON KILL THE BODY FOLLOWS THE BOLT, damaging anyone in its path and pinning the corpse to walls (wiki). It is a second damage source that only exists once something has died, and this engine has no ragdoll and no wall for it to pin against — so a bolt weapon fighting a crowd is understated by however much that corpse would have hit on the way past
-- the TRUTH syndicate effect, which on a proc detonates a radial blast that also strips a portion of enemy armour — it fires off a syndicate standing meter this sim does not track, and the blast is not counted here
+- On a kill the body follows the bolt, damaging anyone in its path (wiki). There is no ragdoll here, so against a crowd the number reads low.
+- The Truth syndicate effect detonates a radial blast that strips some armour (wiki). It runs on a syndicate meter the sim does not track; the blast is not counted.
 
 ## In WFSim
 

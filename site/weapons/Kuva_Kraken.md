@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the hip-fire recoil is not modelled — the page notes the burst kicks significantly harder when fired from the hip, and this arena has no recoil at all
+- Hip-fire recoil is not modelled; the page notes the burst kicks much harder from the hip, and the sim has no recoil.
 
 ## In WFSim
 

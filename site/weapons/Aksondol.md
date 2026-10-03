@@ -14,7 +14,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- RELOADING LEAVES A CLOUD OF FREEZING MIST that applies Cold to anything entering it, and it grows with each round reloaded (wiki). Nothing below models it, and nothing could: the page states the mechanic and publishes no number for it — no damage, no radius, no duration, no tick rate — and the weapon module carries no lingering part. Every figure here is the gun alone, so a real Aksondol applies more Cold than this does
+- Reloading leaves a freezing mist that applies Cold to anything entering it, growing with each round reloaded (wiki). No number for it is published, so it is not modelled and the gun applies more Cold in game than here.
 
 ## In WFSim
 

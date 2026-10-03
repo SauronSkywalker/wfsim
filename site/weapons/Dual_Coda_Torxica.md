@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- THE SPORES, which are most of what this weapon is: "Enemies hit by Dual Coda Torxica and then killed from any source will spread spores to 3 enemies within 20 meters with the closest being prioritized, inflicting guaranteed Cold status per second and 50% Damage Vulnerability lasting for 20 seconds". Three things have to line up for it to pay and this arena has none of them — the trigger is a KILL, the payload lands on OTHER enemies, and the vulnerability applies only to this weapon's own damage. Against one standing target it is worth exactly nothing; in a room it roughly doubles the weapon
+- The spores are most of the weapon: an enemy hit by it and then killed spreads spores to 3 enemies within 20 m, with Cold every second and 50% vulnerability to this weapon for 20 s. It needs a kill and other enemies, so against one standing target it adds nothing; in a room it roughly doubles the weapon.
 
 ## In WFSim
 

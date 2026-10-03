@@ -16,11 +16,11 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the grenades have a MINIMUM ARMING DISTANCE of 7.5 metres (wiki) and deal 'much less damage' when they hit without exploding. This arena applies the explosion at every range, so a fight staged inside 7.5 m is overstated here by the whole explosion — which is 90% of this weapon
-- a direct hit forces a KNOCKDOWN whether or not the grenade explodes (wiki) — this arena's enemies are not knocked down, so the crowd control that makes this weapon safe to fire up close pays nothing here
-- Precision Strike and the launcher-exclusive Adhesive Blast are outside the pools this roster loads
-- the blast needs no line of sight and goes through walls — this arena has no geometry, so nothing is ever behind cover and the perk pays nothing extra
-- the blast staggers the WIELDER in game — this arena gives the player no body, so a build that would be unplayable in a corridor costs nothing here
+- The grenades arm only after 7.5 m and deal much less damage without exploding (wiki). The sim applies the explosion at every range, so a fight set inside 7.5 m reads high by the whole explosion, 90% of the weapon.
+- A direct hit forces a knockdown (wiki). Enemies here are not knocked down; the number is unaffected.
+- Not offered here: Precision Strike and the launcher-exclusive Adhesive Blast.
+- The blast needs no line of sight. There is no cover here, so the perk adds nothing.
+- In game the blast staggers the wielder; the player has no body here, so it costs nothing.
 
 ## In WFSim
 

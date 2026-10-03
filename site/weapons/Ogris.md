@@ -16,10 +16,10 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- 'Enemies can destroy the rockets with gunfire or area of effect explosions' (wiki) — nothing shoots back in this arena, so every rocket reaches what it was aimed at
-- the launcher-exclusive Adhesive Blast is outside the pools this roster loads — it sticks the rocket to what it hits, which changes where the explosion goes off and is a placement this arena has no room to be wrong about
-- the blast needs no line of sight and goes through walls — this arena has no geometry, so nothing is ever behind cover and the perk pays nothing extra
-- the blast staggers the WIELDER in game — this arena gives the player no body, so a build that would be unplayable in a corridor costs nothing here
+- Enemies can shoot down the rockets (wiki); nothing shoots back here, so every rocket arrives.
+- Not offered here: the launcher-exclusive Adhesive Blast, which sticks the rocket to what it hits and moves where it explodes.
+- The blast needs no line of sight. There is no cover here, so the perk adds nothing.
+- In game the blast staggers the wielder; the player has no body here, so it costs nothing.
 
 ## In WFSim
 

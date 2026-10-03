@@ -16,11 +16,11 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the guaranteed Impact proc reaches only 9 metres (further with Projectile Speed mods) and is applied at every distance here, since a forced proc carries no range of its own
-- the projectile has a WIDTH ('significantly smaller projectiles' than the secondary's wide one) and this arena fires a ray, so with the infinite punch through above only the bodies on the line are struck
-- the 42 m range is the projectile's 0.42 s lifetime, so Projectile Speed mods lengthen it in game ('Fatal Acceleration/Lethal Momentum is recommended to increase Catchmoon's limited range'); here they move the falloff and the cut-off stays at 42 m
-- the Eclipse damage buff does not reach this chamber ('Catchmoon Kitguns are not affected by the damage buff from Eclipse', wiki Catchmoon §Bugs), and a buff here reaches every weapon alike — so a fight with Eclipse up pays this weapon a bonus the game does not
-- the projectile has TRAVEL TIME and has to be led — 'hitting a target at range requires leading the target before firing'. Every shot here connects the instant it is fired, so this weapon's real hit rate against anything that moves is worse than the numbers below
+- The guaranteed Impact proc reaches only 9 m (further with Projectile Speed mods) but is applied at every distance here.
+- The projectile has a width, smaller than the secondary's; the sim fires a ray, so with infinite punch through only bodies on the line are hit.
+- Its 42 m range is the projectile's 0.42 s lifetime, so Projectile Speed mods extend it in game; here they move the falloff and the cut-off stays at 42 m.
+- Eclipse's damage buff does not reach this chamber in game (wiki, Bugs); here a buff reaches every weapon, so with Eclipse up the number reads high.
+- The projectile has travel time and must be led at range (wiki). Every shot here connects instantly, so against a moving target the real hit rate is lower.
 
 ## In WFSim
 

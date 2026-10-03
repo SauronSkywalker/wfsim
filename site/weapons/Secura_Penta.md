@@ -16,11 +16,11 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the grenades are DETONATED BY HAND — 'it launches ballistic grenades that can be manually detonated with Alternate Fire', with no arming delay at all (wiki). This sim has no second trigger, so every grenade goes off the instant it lands, which is what a player detonating immediately gets and is therefore the ceiling. What is lost is the play pattern the weapon exists for: laying grenades and firing them together
-- only five grenades may be live at once, and multishot counts towards that limit (wiki) — so on this weapon a multishot mod buys fewer shots rather than more damage per shot, which is the one place multishot is not simply good. This sim resolves each shot on its own and never hits the cap
-- the SEQUENCE syndicate effect, which converts damage dealt into shields for the wielder and nearby allies on a proc — the wielder is not a body in this arena and there are no allies, so it pays nothing
-- the blast needs no line of sight and goes through walls — this arena has no geometry, so nothing is ever behind cover and the perk pays nothing extra
-- the blast staggers the WIELDER in game — this arena gives the player no body, so a build that would be unplayable in a corridor costs nothing here
+- The grenades are detonated by hand with the alt-fire, with no arming delay (wiki). The sim has no second trigger, so each grenade detonates on landing: the ceiling for a player who detonates at once. Laying several and detonating them together is not modelled.
+- Only five grenades can be live at once, and multishot counts toward the limit (wiki). The sim resolves each shot on its own and never reaches the cap, so a multishot build reads high.
+- The Sequence syndicate effect turns damage dealt into shields for the wielder and nearby allies (wiki). There are no shields and no allies here; the number is unaffected.
+- The blast needs no line of sight. There is no cover here, so the perk adds nothing.
+- In game the blast staggers the wielder; the player has no body here, so it costs nothing.
 
 ## In WFSim
 

@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- this mode is entered by AIMING rather than by a trigger, and the simulator treats the mode and the fight's Aiming state as two separate settings — so a run with this mode and Aiming off is a combination the game cannot produce, and every while-aiming bonus should be read as active whenever this mode is
+- In game this mode is entered by aiming. The sim sets the mode and Aiming separately, so read every while-aiming bonus as active whenever this mode is.
 
 ## In WFSim
 

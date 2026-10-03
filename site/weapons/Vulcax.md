@@ -16,9 +16,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the CHARGE TIME is not modelled because the page publishes none — the weapon is a charge weapon here and mods treat it as one, but its draw adds nothing to the cycle, so it fires on the listed 1.00/s alone and this entry is a CEILING on its rate: a real draw can only make it slower
-- the companion FIRES THIS WEAPON, not the player — it picks its own targets, fires when it decides to, and stops while the companion is reviving or out of range; this arena fires it continuously at one target, which is the ceiling rather than the average
-- this attack's SPREAD is not in the data, so none of its shots can miss — the wiki's weapon module publishes a cone for it and the intake could not identify which of that weapon's attacks this entry is, so it took nothing rather than the wrong one. At a range every pellet lands here, which is the ceiling; at point blank it costs nothing, because nothing misses there anyway
+- The charge time is not modelled because the page publishes none: mods treat it as a charge weapon, but it fires at the listed 1.00/s. A real draw can only be slower, so the rate is a ceiling.
+- The companion fires this weapon: it picks its targets, fires when it decides, and stops while reviving or out of range. Here it fires continuously at one target, so the number is the ceiling.
+- This attack's spread is not in the data, so none of its shots miss. At range the number is the ceiling; at point blank it is unaffected.
 
 ## In WFSim
 

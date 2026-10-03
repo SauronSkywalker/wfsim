@@ -6,12 +6,12 @@ Scythe · Melee · Mastery Rank 17. 285 base damage (corrosive 120, impact 20, p
 
 ## Not modelled here
 
-- one attack input's own animation length is not published anywhere: the wiki gives a combo's total duration at 1.0x attack speed and one entry per input, so the combo's DURATION is exact and the split between its INPUTS is even. It moves a status tick's start by fractions of a second inside a combo and moves no total
-- Power Spike's partial combo decay is a Warframe passive and is not modelled: this counter drops to zero when its clock runs out, so a build running that passive keeps far more of it than this reports
-- not modelled — Corrosive Wave and Corrosive Pool: of this weapon's attacks only the swing, the slam and the heavy slam are
-- its Coda valence bonus is not modelled: the build cannot state the element and bonus this copy rolled, so it reads without one
-- the wiki publishes no slide attack figure or no slide duration for this weapon, so it has no slide mode here
-- this weapon's heavy attack is a thrown Corrosive wave, 225 Corrosive losing 40% a second and 20% per enemy, that leaves pools of 98 Corrosive a second for 8 s, which is not modelled, so it has no heavy mode here and a Tennokai window converts nothing
+- One attack input's animation length is unpublished: the wiki gives each combo's total at 1.0x attack speed, so totals are exact and inputs are split evenly. This shifts a status tick by fractions of a second and changes no total.
+- Power Spike's partial combo decay is a Warframe passive and is not modelled: the counter drops to zero when its timer runs out, so with that passive the number reads low.
+- Not modelled: Corrosive Wave and Corrosive Pool. Of this weapon's attacks, only the swing, the slam and the heavy slam are.
+- Its Coda valence bonus is not modelled: the build cannot state the element and bonus this copy rolled, so it reads without one.
+- The wiki publishes no slide attack figure or duration for this weapon, so there is no slide mode.
+- This weapon's heavy attack is a thrown Corrosive wave, 225 Corrosive losing 40% a second and 20% per enemy, that leaves pools of 98 Corrosive a second for 8 s, which is not modelled, so there is no heavy mode and a Tennokai window converts nothing.
 
 ## In WFSim
 

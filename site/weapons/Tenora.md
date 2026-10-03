@@ -16,8 +16,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- '40 shots are required before optimal ACCURACY is achieved' (wiki) — this entry carries the settled cone, so a burst that would open wide here opens tight
-- the spool rebuilds after every reload: the page says burst firing MAINTAINS it, so a player whose pauses are short enough keeps more of the listed rate than this sim does — here the only pauses are the reloads the weapon forces. The spool itself IS modelled
+- It needs 40 shots to reach full accuracy (wiki); this entry uses the settled spread, so an early burst is tighter here than in game.
+- The spool rebuilds after every reload. Per the page, short pauses in burst fire keep it, so a player who taps keeps more of the rate than the sim. The spool itself is modelled.
 
 ## In WFSim
 

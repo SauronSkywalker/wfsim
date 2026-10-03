@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- kills leave an EXTRA CORPSE, which the page names as a synergy with Nekros' Desecrate — a loot mechanic with nothing to drop into here
+- Kills leave an extra corpse, which the page notes for Nekros' Desecrate; it is a loot mechanic and changes nothing here.
 
 ## In WFSim
 

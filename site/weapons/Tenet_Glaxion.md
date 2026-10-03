@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- corpses keep conducting the chain, which the page states as 'Enemy corpses will still allow the beam to connect to nearby enemies' — this arena removes a body when it dies, so a chain that would have hopped THROUGH a corpse to a live enemy behind it finds nothing there
+- In game the chain can pass through corpses (page); here a body that dies is removed, so a chain that would hop through a corpse to an enemy behind it finds nothing.
 
 ## In WFSim
 

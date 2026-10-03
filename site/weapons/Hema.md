@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the HEALTH COST, which is the whole of this weapon's drawback: "health is converted to ammo". Nothing shoots back here and the Tenno has no health pool to spend, so the sim shows this rifle with its price removed
+- Its drawback, converting health to ammo, is not modelled: nothing shoots back and the Tenno has no health here, so the rifle is shown without its cost.
 
 ## In WFSim
 

@@ -16,9 +16,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- a MISSED shot drops the combo counter and this entry cannot miss — the only thing that misses here is SPREAD, and this one lands on the reticle, so nothing but its 2 s timer ever takes a stack off. A player who pulls the shot loses the combo and this sim never pulls one
-- the SECOND ZOOM LEVEL is not modelled, and on this weapon it is a stat TRADE rather than a buff — 3.5x gives +100% damage, +3 m explosion radius and -75% fire rate, which is half the sustained DPS for a much bigger single hit. Choosing it is a mode, and this entry is the first level
-- the first zoom's own effects are worth nothing here — -50% recoil and +2 m punch-through, neither of which this arena reads
+- A missed shot drops the combo counter. This entry cannot miss, so only its 2 s timer removes a stack, and the number is the ceiling.
+- The second zoom level is not modelled. On this weapon it is a trade, not a buff: 3.5x gives +100% damage, +3 m explosion radius and -75% fire rate, half the sustained DPS for a much bigger single hit. This entry is the first level.
+- The first zoom's -50% recoil and +2 m punch through are not read here.
 
 ## In WFSim
 

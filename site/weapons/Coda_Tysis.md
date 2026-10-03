@@ -6,9 +6,9 @@ Pistol · Secondary · Mastery Rank 17. 76 base damage (impact 18, puncture 32, 
 
 ## Not modelled here
 
-- THE INNATE CORROSIVE DoT, which is 177 of this weapon's 253 damage a dart — "The 177 Corrosive damage is dealt in 3 ticks of 59 damage over the course of 2 seconds", with each multishot pellet creating its own. It is a DAMAGE-OVER-TIME ATTACK rather than a status proc or an explosion, and the engine has no shape for one: three attacks in the whole game are typed this way and two of them are this weapon's family, so it is recorded rather than built. THE NUMBER ON SCREEN IS THEREFORE ABOUT A THIRD OF THE REAL ONE against a single target
-- the dart carries its DoT THROUGH what it pierces at a reduced rate — "If the dart punches through an enemy, they will instead receive 1 tick" — which is a second rule about the DoT above and equally unmodelled
-- corpses ride the dart: "On kill, bodies will follow the dart that killed them, damaging anyone in their path", which needs a corpse, a direction and a bystander this arena does not move
+- The innate Corrosive damage over time, 177 of each dart's 253, is dealt in 3 ticks of 59 over 2 s, per multishot pellet. The engine has no damage-over-time attack, so it is not counted, and against one target the number is about a third of the real one.
+- A dart that pierces an enemy deals it only 1 tick of the damage over time (page); not modelled either.
+- On a kill the body follows the dart, damaging anyone in its path (page). There is no ragdoll here, so against a crowd the number reads low.
 
 ## In WFSim
 

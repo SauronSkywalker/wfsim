@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- 'Overdrive': a weak-point KILL grants +100% fire rate, +100% ammo efficiency and -100% recoil for 8 seconds, and it disables Alternate Fire while it lasts (wiki). It is a kill-triggered buff this engine has no shape for, so this entry fires at its listed rate throughout
+- Overdrive: a weak-point kill grants +100% fire rate, +100% ammo efficiency and -100% recoil for 8 s, and disables the alt-fire meanwhile (wiki). The engine does not model kill-triggered buffs, so this entry fires at its listed rate throughout.
 
 ## In WFSim
 

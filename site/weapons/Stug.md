@@ -16,13 +16,13 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the Incarnon form's bouncing secondary projectiles are not modelled — a stacked shot releases 2 to 5 of them, each exploding on up to 3 bounces
-- the charged alternate fire is not modelled — a full 10-stack blob over 2 seconds, for 10 ammo
-- unmeasured: how many stacks a shot lays — read as floor(multishot), the count the Grimoire's multishot buys; a roll on the fraction would lay more
-- unmeasured: a shot already over the cap (multishot over 10) is read as holding the pile at 10 and waiting 1.5 s, refreshed by every later shot, so steady fire never sets it off
-- unmeasured: a shot that crosses the cap is read as setting the pile off at once for 10 stacks, the rest lost
-- unmeasured: the explosion's falloff is read as 70%, the page's bug note, over the 30% its table lists
-- unmeasured: a pile is read as staying where its body stood when that body dies, going off on whoever stands there
+- The Incarnon form's bouncing secondary projectiles are not modelled: a stacked shot releases 2 to 5, each exploding on up to 3 bounces.
+- The charged alt-fire is not modelled: a full 10-stack blob over 2 s, for 10 ammo.
+- Unmeasured: how many stacks a shot lays. Read as floor(multishot), the count the Grimoire's multishot buys; rolling the fraction would lay more.
+- Unmeasured: a shot already over the cap (multishot over 10) is read as holding the pile at 10 and waiting 1.5 s, refreshed by each later shot, so steady fire never sets it off.
+- Unmeasured: a shot that crosses the cap is read as setting the pile off at once for 10 stacks, the rest lost.
+- Unmeasured: the explosion's falloff is read as 70%, from the page's bug note, rather than the 30% in its table.
+- Unmeasured: when a body dies, its pile is read as staying where it stood and going off on whoever is there.
 
 ## In WFSim
 

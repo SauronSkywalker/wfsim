@@ -16,9 +16,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the ARCHWING column of this weapon is not offered — in space it is a single 440-damage Impact/Heat projectile with a 13% status chance instead of eleven hit-scan pellets at 1.3%, which is a different weapon rather than a restated one
-- the 11-degree spread is not modelled — this arena has one target at zero distance, so all eleven pellets always land on it
-- the Arch-Gun Deployer's five-minute cooldown is not modelled — when the reserve runs dry the weapon is gone for the rest of a real mission, and this arena simply stops firing
+- The Archwing version is not offered: in space it fires a single 440-damage Impact/Heat projectile at 13% status, which is a different weapon.
+- The 11-degree spread is not modelled; at zero distance all eleven pellets land.
+- The Arch-Gun Deployer's five-minute cooldown is not modelled: in a mission the weapon is gone once its reserve runs dry; here it simply stops firing.
 
 ## In WFSim
 

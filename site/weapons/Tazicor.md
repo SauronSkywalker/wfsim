@@ -16,8 +16,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the CHAINING is not modelled, and it is what this weapon is for — the beam jumps to up to 3 nearby enemies within 5 metres of each other, and this arena has one target for it to jump between
-- the companion FIRES THIS WEAPON, not the player — it picks its own targets, fires when it decides to, and stops while the companion is reviving or out of range; this arena fires it continuously at one target, which is the ceiling rather than the average
+- Chaining is not modelled, and it is what the weapon is for: the beam jumps to up to 3 enemies within 5 m of each other. There is one target here, so against a crowd the number reads low.
+- The companion fires this weapon: it picks its targets, fires when it decides, and stops while reviving or out of range. Here it fires continuously at one target, so the number is the ceiling.
 
 ## In WFSim
 

@@ -16,8 +16,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- BULLSEYE RELOAD, this weapon's own passive: "Landing a successful headshot grants the 'Bullseye Reload' buff, increasing reload speed by 25% and can stack up to 2 times to a total of 50%. The buff lasts 4 seconds and can be refreshed on subsequent headshots." It is worth a shorter reload in proportion to how often a head is hit, and it is not applied here
-- the blast staggers the WIELDER in game — this arena gives the player no body, so a build that would be unplayable in a corridor costs nothing here
+- Bullseye Reload, its passive: a headshot grants +25% reload speed for 4 s, stacking to 2 (wiki). It is not applied, so a headshot build reads low.
+- In game the blast staggers the wielder; the player has no body here, so it costs nothing.
 
 ## In WFSim
 

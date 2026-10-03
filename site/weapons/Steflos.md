@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the projectile has a LIFESPAN of 0.6 seconds and grows in size and duration as it hits enemies — each enemy hit adds 50% to its life, up to 10 seconds (wiki). This engine resolves a projectile at the body it strikes and has no clock for what it does afterwards, so a pod that would keep travelling and keep hitting stops at the first thing it reaches
+- The projectile lives 0.6 s, and each enemy hit adds 50% to its life and size, up to 10 s (wiki). The engine stops a projectile at the first body it hits, so against a crowd the number reads low.
 
 ## In WFSim
 

@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- 'Critical Hits have a 6% chance to set the next shot's Status Chance to 500%' (wiki). A SET ignores mods the way Gotva Prime's crit lock does, and this engine has that shape for a status-triggered CRIT lock and not for a crit-triggered STATUS one — so this weapon procs at the 1% on its card and never at the 500% it was built around. It is the larger half of the weapon
+- Critical hits have a 6% chance to set the next shot's status chance to 500% (wiki). The engine does not model this crit-triggered status lock, so it procs at its card's 1%. It is most of the weapon; the number reads low.
 
 ## In WFSim
 

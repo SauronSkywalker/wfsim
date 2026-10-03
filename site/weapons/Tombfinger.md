@@ -16,9 +16,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the QUICK SHOT is not a form here. Tapping the trigger fires a smaller explosion (1.7 m, 30-108 Radiation by grip, falloff to 75%) and the page says 'the only change to the projectile is damage distribution' — the total is the same and the split moves — but neither the module nor the page publishes that split, so a quick-shot entry would have to invent one. The explosion's numbers are already transcribed in data/kitguns/chambers/tombfinger_primary.yaml and one in-game reading of the projectile is all that is missing
-- the projectile has TRAVEL TIME and has to be led — 'hitting a target at range requires leading the target before firing'. Every shot here connects the instant it is fired, so this weapon's real hit rate against anything that moves is worse than the numbers below
-- the blast staggers the WIELDER in game — this arena gives the player no body, so a build that would be unplayable in a corridor costs nothing here
+- The quick shot is not a form here: tapping fires a smaller explosion (1.7 m, 30-108 Radiation by grip, falloff to 75%) with the same total damage split differently, and that split is unpublished. One in-game reading would settle it.
+- The projectile has travel time and must be led at range (wiki). Every shot here connects instantly, so against a moving target the real hit rate is lower.
+- In game the blast staggers the wielder; the player has no body here, so it costs nothing.
 
 ## In WFSim
 

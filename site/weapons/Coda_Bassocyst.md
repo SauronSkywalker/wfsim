@@ -16,9 +16,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- THE ALTERNATE FIRE, which is a Mercy-finisher tool rather than a way to fight: it "launches a mite that latches up to 6 enemies, highlighting their heads for 5 seconds while dealing Impact and Magnetic damage and status effects per second for 10 seconds", and against an enemy already opened to a Mercy it teleports the player in for an execution instead. Three things put it out of reach here — it needs a target within 25 m to fire at all, its payload is a ten-second damage-over-time the engine has no shape for, and its real use is the finisher, which this arena has no execution threshold for. The CO catalog's own row for it reads 'Does not apply'
-- the MERCY KILL BUFF that alt fire exists to earn: "Performing a Mercy Kill grants +100% damage and Multishot for 20 seconds", refreshed on every Mercy. A doubling of the weapon, gated behind a finisher this arena cannot perform
-- the projectile has a stated THICKNESS the page leaves blank ("Projectiles have a thickness of ? meters") — this arena fires a ray, so a wide sheet strikes only the bodies on the line either way
+- The alt-fire is a finisher tool: it latches a mite onto up to 6 enemies, marking their heads for 5 s and dealing Impact and Magnetic damage each second for 10 s, and against an enemy open to a Mercy it teleports the player in. It is out of reach here: it needs a target within 25 m, its damage over time has no form in the engine, and the arena has no execution threshold. The catalog's row for it reads 'Does not apply'.
+- A Mercy kill grants +100% damage and multishot for 20 s, refreshed on each Mercy, which doubles the weapon. The arena cannot perform a Mercy, so the number reads low.
+- The projectile's thickness is left blank on the page; the sim fires a ray, so only bodies on the line are hit either way.
 
 ## In WFSim
 

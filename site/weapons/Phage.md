@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- FIRING FROM THE HIP throws the seven beams in a spread and aiming focuses them on the crosshairs (wiki). This arena aims, so all seven land — which is the ceiling. A player firing from the hip covers more ground and lands fewer of them on one enemy
+- From the hip the seven beams spread; aiming focuses them on the crosshair (wiki). The sim aims, so all seven land: the ceiling against one enemy.
 
 ## In WFSim
 

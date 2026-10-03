@@ -16,8 +16,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- this weapon is SILENT and this arena has nobody to alert — stealth is worth nothing here and a great deal in a real mission
-- the laser sight also HIGHLIGHTS weak points on screen, which is an aiming aid rather than a damage bonus — this sim draws its head hits from the fight's headshot percentage and cannot be helped to aim
+- This weapon is silent; there is nobody to alert here, so stealth is worth nothing.
+- The laser sight highlights weak points on screen, an aiming aid; the sim draws headshots from the fight's headshot rate.
 
 ## In WFSim
 

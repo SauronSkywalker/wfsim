@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the innate reload while holstered or deployed (33% of the magazine per second) — this arena never holsters the weapon
+- It reloads 33% of its magazine a second while holstered or deployed; it is never holstered here.
 
 ## In WFSim
 

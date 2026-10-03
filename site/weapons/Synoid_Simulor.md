@@ -16,10 +16,10 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- ORBS MERGE, and a fully stacked set collapses into a SINGULARITY that deals damage over time in five metres (module: two further attacks). This engine resolves each shot on its own, so neither the merge nor the singularity is counted — which is most of what this weapon is for
-- the ENTROPY syndicate effect, which on a proc detonates enemies and restores the wielder's energy — it fires off a syndicate standing meter this sim does not track
-- the blast needs no line of sight and goes through walls — this arena has no geometry, so nothing is ever behind cover and the perk pays nothing extra
-- the blast staggers the WIELDER in game — this arena gives the player no body, so a build that would be unplayable in a corridor costs nothing here
+- Orbs merge, and a full set collapses into a singularity dealing damage over time in 5 m (module). The engine resolves each shot on its own, so neither is counted; this is most of the weapon, and the number reads well low.
+- The Entropy syndicate effect detonates enemies and restores the wielder's Energy (wiki). It runs on a syndicate meter the sim does not track; it is not counted.
+- The blast needs no line of sight. There is no cover here, so the perk adds nothing.
+- In game the blast staggers the wielder; the player has no body here, so it costs nothing.
 
 ## In WFSim
 

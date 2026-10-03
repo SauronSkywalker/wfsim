@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- 'aiming projects a field that blocks frontal projectiles' (wiki), and the field closes on a reload or a charge — nothing shoots back in this arena, so the shield half of this weapon is worth nothing here
+- Aiming raises a shield that blocks frontal projectiles, closing on a reload or a charge (wiki). Nothing shoots back here; the number is unaffected.
 
 ## In WFSim
 

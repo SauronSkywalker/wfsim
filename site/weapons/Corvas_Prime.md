@@ -6,7 +6,7 @@ Archgun · Archgun · Mastery Rank 14. 960 base damage (heat 530, impact 430), 5
 
 ## Not modelled here
 
-- the Arch-Gun Deployer's five-minute cooldown is not modelled — when the reserve runs dry the weapon is gone for the rest of a real mission, and this arena simply stops firing
+- The Arch-Gun Deployer's five-minute cooldown is not modelled: in a mission the weapon is gone once its reserve runs dry; here it simply stops firing.
 
 ## In WFSim
 

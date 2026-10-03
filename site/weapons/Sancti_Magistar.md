@@ -16,10 +16,10 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the LIFE STEAL this weapon is bought for: a heavy attack grants every attack 5% life steal plus 5% per combo level, permanently and shared with allies within 15 m for the rest of the mission. Nothing damages the Tenno in this arena and there are no allies in it, so what it heals is a number this fight has no use for
-- the 20% chance to RESIST A STATUS EFFECT while it is held: a defence of the wielder, and nothing here shoots back
-- one attack input's own animation length is not published anywhere: the wiki gives a combo's total duration at 1.0x attack speed and one entry per input, so the combo's DURATION is exact and the split between its INPUTS is even. It moves a status tick's start by fractions of a second inside a combo and moves no total
-- Power Spike's partial combo decay is a Warframe passive and is not modelled: this counter drops to zero when its clock runs out, so a build running that passive keeps far more of it than this reports
+- A heavy attack grants every attack 5% life steal plus 5% per combo level, permanently, shared with allies within 15 m. Nothing damages the Tenno here and there are no allies, so it adds nothing.
+- A 20% chance to resist a status effect while held protects the wielder; nothing shoots back here.
+- One attack input's animation length is unpublished: the wiki gives each combo's total at 1.0x attack speed, so totals are exact and inputs are split evenly. This shifts a status tick by fractions of a second and changes no total.
+- Power Spike's partial combo decay is a Warframe passive and is not modelled: the counter drops to zero when its timer runs out, so with that passive the number reads low.
 
 ## In WFSim
 

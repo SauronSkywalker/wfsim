@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- EACH PELLET ADDS 2 TO THE MELEE COMBO COUNT, capped at 28 a shot, and equipping it on Kullervo gives his melee +7 s of combo duration (wiki). This arena has no melee weapon for any of that to land on, so the weapon's published reason to exist pays nothing here
+- Each pellet adds 2 to the melee combo count, up to 28 a shot, and on Kullervo it adds 7 s of combo duration (wiki). There is no melee weapon here, so none of this applies.
 
 ## In WFSim
 

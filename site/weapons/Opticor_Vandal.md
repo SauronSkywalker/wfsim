@@ -6,9 +6,9 @@ Rifle · Primary · Mastery Rank 14. 400 base damage (impact 40, puncture 280, s
 
 ## Not modelled here
 
-- the CATALOG gives this weapon's radial its own Condition Overload row at 200% of its base ('Opticor Vandal | Charged Hitscan Radial Attack | Hitscan | 300 | 600 | 200% | Adding'), and that row is not entered here yet. So the part takes the term at 100% of its own base and a status-stacking build is understated on it
-- the blast needs no line of sight and goes through walls — this arena has no geometry, so nothing is ever behind cover and the perk pays nothing extra
-- the blast staggers the WIELDER in game — this arena gives the player no body, so a build that would be unplayable in a corridor costs nothing here
+- The wiki's Condition Overload catalog gives this weapon's radial its own row, 200% of its base; that row is not entered here yet, so the radial takes 100% and a status-stacking build reads low on it.
+- The blast needs no line of sight. There is no cover here, so the perk adds nothing.
+- In game the blast staggers the wielder; the player has no body here, so it costs nothing.
 
 ## In WFSim
 

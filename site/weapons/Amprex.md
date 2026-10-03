@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- 'Enemy corpses will still allow the beam to connect to nearby enemies' (wiki) — a chain in game can route through something already dead, and a body that dies here leaves the formation, so a long fight chains through fewer links than it would in a real room
+- In game the chain can route through corpses (wiki); here a body that dies leaves the formation, so in a long fight the chain reaches fewer enemies and the number reads low.
 
 ## In WFSim
 

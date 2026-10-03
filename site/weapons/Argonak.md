@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- aiming highlights enemies within 100 m through the weapon's energy colour (wiki) — an aiming aid this sim cannot use
+- Aiming highlights enemies within 100 m (wiki), an aiming aid the sim does not use.
 
 ## In WFSim
 

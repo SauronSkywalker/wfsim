@@ -16,8 +16,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the BEAM'S THICKNESS, 0.15 m and the largest of any continuous weapon, is not modelled — this arena's beam is a ray, so a build that would clip an enemy with the edge of the beam misses here, and Heavy Caliber's accuracy penalty costs more in this sim than it does in game
-- the area of effect CAN headshot, which the page marks as a BUG — this sim applies its headshot percentage to the direct hit alone, so the blast is never a head here
+- The beam's 0.15 m thickness, the largest of any continuous weapon, is not modelled: the beam here is a ray, so a shot that would clip an enemy with its edge misses, and Heavy Caliber's accuracy penalty costs more than in game.
+- The area damage can headshot, which the page marks as a bug; the sim applies headshots to the direct hit only, so the blast is never a headshot here.
 
 ## In WFSim
 

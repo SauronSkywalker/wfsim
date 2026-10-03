@@ -16,8 +16,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the page states the spool as a COUNT and not as a starting fraction — 'requires a spool-up of 6 shots before optimal fire rate is achieved' — and the roster's spool field needs both halves to reconcile, so it is left off rather than half-guessed
-- the AUTO-SPOOL ramp is not modelled — the page gives this trigger as Auto-Spool and the fire rate here is the spooled-up 12.5/s from the first shot, so a short burst is faster in this sim than in game
+- The page gives the spool as a count, 6 shots to full fire rate, not as a starting fraction, so the spool is not entered.
+- The auto-spool ramp is not modelled: the rate is the spooled-up 12.5/s from the first shot, so a short burst is faster here than in game.
 
 ## In WFSim
 

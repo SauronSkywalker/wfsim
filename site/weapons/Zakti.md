@@ -16,9 +16,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the cloud arrives ONE SECOND after the dart lands (wiki) — this engine resolves it at the point of impact immediately, so nothing walks out of one here
-- the explosion STAGGERS enemies, opening them to melee finishers and stealth multipliers (wiki) — this arena has no melee and no stealth state, so that half of the weapon pays nothing
-- the blast needs no line of sight and goes through walls — this arena has no geometry, so nothing is ever behind cover and the perk pays nothing extra
+- The cloud arrives 1 s after the dart lands (wiki); here it resolves on impact, so nothing walks out of it.
+- The explosion staggers enemies, opening them to finishers and stealth multipliers (wiki); there is no melee and no stealth here.
+- The blast needs no line of sight. There is no cover here, so the perk adds nothing.
 
 ## In WFSim
 

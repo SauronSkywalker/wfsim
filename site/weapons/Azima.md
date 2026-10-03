@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the ALTERNATE FIRE 'ejects the entire magazine into a single shot that spawns an automated turret that shoots enemies' (wiki), and the module gives that turret's expiry blast 75 Blast for the full 75 rounds. A deployed thing that picks its own targets and fires on its own clock is not a firing mode, and this engine has no shape for one — so the turret is not counted at all, and neither is the magazine it costs
+- The alt-fire spends the whole magazine to deploy a turret that shoots on its own, with a 75 Blast expiry blast (wiki, module). The engine has no deployed turret, so neither the turret nor the magazine it costs is counted.
 
 ## In WFSim
 

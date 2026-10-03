@@ -16,11 +16,11 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the mines are DETONATED BY HAND via Alternate Fire, and up to four can be ready at once (wiki). This sim detonates each one the moment it lands, which is the ceiling for a single mine and misses the play pattern entirely: the weapon exists to stick four mines and fire them together
-- mines STICK to surfaces, enemies and allies, and multishot throws them in 'a very wide horizontal spread' (wiki) — so on this weapon multishot covers ground rather than stacking damage on one target, which is the opposite of what it does everywhere else
-- the blast needs no line of sight and goes through walls — this arena has no geometry, so nothing is ever behind cover and the perk pays nothing extra
-- the blast staggers the WIELDER in game — this arena gives the player no body, so a build that would be unplayable in a corridor costs nothing here
-- this weapon is SILENT and this arena has nobody to alert — stealth is worth nothing here and a great deal in a real mission
+- The mines are detonated by hand with the alt-fire, up to four at a time (wiki). The sim detonates each on landing: the ceiling for one mine. Sticking four and detonating them together is not modelled.
+- Mines stick to surfaces, enemies and allies, and multishot throws them in a very wide horizontal spread (wiki), so on this weapon multishot covers ground rather than adding damage to one target.
+- The blast needs no line of sight. There is no cover here, so the perk adds nothing.
+- In game the blast staggers the wielder; the player has no body here, so it costs nothing.
+- This weapon is silent; there is nobody to alert here, so stealth is worth nothing.
 
 ## In WFSim
 

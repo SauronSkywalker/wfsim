@@ -16,8 +16,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- how often a bounce lands on a weak point is ASSUMED — a flat 50%. It can headshot (the wiki's Hit Mechanic page counts a rebound as a main hit), but where it lands is geometry this arena does not model and DE publishes no rate
-- a bounce here reflects off ENEMIES only — in game a wall or the floor is a surface too, so with cover this number is a FLOOR
+- Assumed: a bounce lands on a weak point 50% of the time. It can headshot (wiki), but where it lands depends on geometry the sim does not model, and no rate is published.
+- A bounce here reflects off enemies only; in game walls and the floor count too, so with cover the number reads low.
 
 ## In WFSim
 

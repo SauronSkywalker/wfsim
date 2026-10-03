@@ -16,9 +16,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the sac BOUNCES up to twice and explodes on each bounce ('Shots explode in a 2.1 meter radius on impact with a surface or enemy, and bounce up to 2 times'); only the first explosion is fired here, because where a bounce lands is room geometry
-- the projectile has TRAVEL TIME and has to be led — 'hitting a target at range requires leading the target before firing'. Every shot here connects the instant it is fired, so this weapon's real hit rate against anything that moves is worse than the numbers below
-- the blast staggers the WIELDER in game — this arena gives the player no body, so a build that would be unplayable in a corridor costs nothing here
+- The sac bounces up to twice and explodes on each bounce (page); only the first explosion is fired here, because where a bounce lands depends on the room.
+- The projectile has travel time and must be led at range (wiki). Every shot here connects instantly, so against a moving target the real hit rate is lower.
+- In game the blast staggers the wielder; the player has no body here, so it costs nothing.
 
 ## In WFSim
 

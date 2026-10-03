@@ -16,9 +16,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- a MISSED shot drops the combo counter and this entry cannot miss — the only thing that misses here is SPREAD, and this one lands on the reticle, so nothing but its 6 s timer ever takes a stack off. A player who pulls the shot loses the combo and this sim never pulls one
-- the LOWER zoom levels are not modelled — this arena has no field of view to trade for magnification, so the scope always sits at its top level and its best buff
-- the PARTIAL CHARGE is a separate entry — in game the two are the same trigger released at different moments, and picking between them here is a form choice rather than something the fight decides
+- A missed shot drops the combo counter. This entry cannot miss, so only its 6 s timer removes a stack, and the number is the ceiling.
+- Lower zoom levels are not modelled: the scope always sits at its top level and its best buff.
+- The partial charge is a separate entry; in game both are the same trigger released at different moments.
 
 ## In WFSim
 

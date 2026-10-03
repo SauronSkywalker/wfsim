@@ -16,10 +16,10 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the rockets home to targets within 15 degrees — the sim always hits, so the aid is worth nothing here
-- the +50% Reload Speed while SPRINTING is not modelled: the sim's player stands still, and reloading on the move is a play pattern rather than a stat (Gauss and Gauss Prime double it to +100%, which is a Warframe-layer bonus this engine has no place for either)
-- self-stagger is not modelled — the wiki notes an explosion at your feet can interrupt the 2-round burst so only one rocket leaves, and nothing damages the player in this fight
-- rockets aim for the torso, so a high headshot percentage is not reachable in play even though this entry will honour whatever is set
+- The rockets home within 15 degrees; every shot here hits anyway, so homing adds nothing.
+- The +50% reload speed while sprinting is not modelled: the player stands still here (Gauss and Gauss Prime double it to +100%).
+- Self-stagger is not modelled: an explosion at the wielder's feet can interrupt the 2-round burst so only one rocket fires (wiki).
+- The rockets aim for the torso, so a high headshot rate is not reachable in play, though this entry uses whatever is set.
 
 ## In WFSim
 

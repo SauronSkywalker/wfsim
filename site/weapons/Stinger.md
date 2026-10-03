@@ -16,9 +16,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the TOXIN EMBED is not modelled — the page gives this weapon a second attack that deals its damage over 3 seconds on top of the hit, and this entry carries only the hit
-- the companion FIRES THIS WEAPON, not the player — it picks its own targets, fires when it decides to, and stops while the companion is reviving or out of range; this arena fires it continuously at one target, which is the ceiling rather than the average
-- this attack's SPREAD is not in the data, so none of its shots can miss — the wiki's weapon module publishes a cone for it and the intake could not identify which of that weapon's attacks this entry is, so it took nothing rather than the wrong one. At a range every pellet lands here, which is the ceiling; at point blank it costs nothing, because nothing misses there anyway
+- The Toxin embed, a second attack dealing damage over 3 s on top of the hit (page), is not modelled; only the hit is carried.
+- The companion fires this weapon: it picks its targets, fires when it decides, and stops while reviving or out of range. Here it fires continuously at one target, so the number is the ceiling.
+- This attack's spread is not in the data, so none of its shots miss. At range the number is the ceiling; at point blank it is unaffected.
 
 ## In WFSim
 

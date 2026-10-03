@@ -16,8 +16,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the sphere also forms at the beam's MAXIMUM RANGE ('The zone of impact or maximum beam range creates a spherical area of effect of 3 meters'); here the reach is a wall, so a target up to 3 m past it takes nothing
-- punch through MOVES the sphere: 'The weapon's area of effect is applied at the final point of contact rather than whenever an enemy is struck', so a punch-through build drops the sphere behind the last body it crosses
+- The sphere also forms at the beam's maximum range (3 m, page); here the range is a hard limit, so a target up to 3 m beyond it takes nothing.
+- Punch through moves the sphere to the last point of contact (page), so a punch-through build sets it off behind the last body it passes.
 
 ## In WFSim
 

@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the semi-auto mode is entered by DEPLOYING A DISC that 'lasts until the Zenith is reloaded, highlighting enemy heads within 20 meters through walls' (wiki). The highlight is an aiming aid this sim cannot use, and the disc's lifetime is a reload clock this engine does not run — so this mode is available here from the first shot
+- The semi-auto mode is entered by deploying a disc that lasts until a reload and highlights enemy heads within 20 m through walls (wiki). The sim does not use the highlight or the disc's timer, so the mode is available from the first shot.
 
 ## In WFSim
 

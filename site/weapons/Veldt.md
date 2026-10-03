@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the ALTERNATE FIRE adjusts the ZOOM and nothing else (wiki), so this weapon has one attack and no mode — there is nothing for the builder's Mode control to offer, and this arena has no field of view to trade anyway
+- The alt-fire only changes the zoom (wiki), so this weapon has one attack and no mode to choose.
 
 ## In WFSim
 

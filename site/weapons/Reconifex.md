@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- THE ACTIVE RELOAD: pressing reload again 22-38% of the way through one cuts the reload to 1 second and gives the magazine Heat rounds dealing '+25% more damage with guaranteed status' (wiki). It is a TIMED INPUT and this sim has no player pressing buttons — every reload here is the full 5 seconds and every round is the ordinary Puncture one, so a player who hits the window is far ahead of this number
+- Pressing reload again 22-38% into a reload cuts it to 1 s and loads Heat rounds with +25% damage and guaranteed status (wiki). It is a timed input the sim does not press, so every reload is the full 5 s with ordinary rounds, and the number reads well low.
 
 ## In WFSim
 

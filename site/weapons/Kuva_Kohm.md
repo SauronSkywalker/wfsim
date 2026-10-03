@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the PELLET COUNT spools from 1 to 12 and this entry fires 12 from the first shot — the fire-rate spool is modelled and the multishot one is not, so a short burst puts more pellets downrange here than in game
+- The pellet count spools from 1 to 12, and this entry fires 12 from the first shot. The fire-rate spool is modelled and the pellet spool is not, so a short burst reads high.
 
 ## In WFSim
 

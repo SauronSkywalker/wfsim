@@ -16,11 +16,11 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the module gives this shot THREE attacks and this engine carries one explosion: the Blast COLLAPSE is the one modelled and the Cold INITIAL BLAST is not counted
-- the bubble HOLDS what it catches until it collapses (wiki) — that is crowd control, and this arena's enemies neither move nor stop
-- the blast needs no line of sight and goes through walls — this arena has no geometry, so nothing is ever behind cover and the perk pays nothing extra
-- the blast staggers the WIELDER in game — this arena gives the player no body, so a build that would be unplayable in a corridor costs nothing here
-- this weapon is SILENT and this arena has nobody to alert — stealth is worth nothing here and a great deal in a real mission
+- The module gives this shot three attacks and the engine carries one explosion: the Blast collapse is modelled, and the Cold initial blast is not counted.
+- The bubble holds what it catches until it collapses (wiki); crowd control, and enemies here neither move nor stop.
+- The blast needs no line of sight. There is no cover here, so the perk adds nothing.
+- In game the blast staggers the wielder; the player has no body here, so it costs nothing.
+- This weapon is silent; there is nobody to alert here, so stealth is worth nothing.
 
 ## In WFSim
 

@@ -16,8 +16,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the AUTO-SPOOL ramp is not modelled — the page gives this trigger as Auto-Spool and the fire rate here is the spooled-up 13.33/s from the first shot, so a short burst is faster in this sim than in game
-- the ACCURACY improves during the spool as well (wiki), which is the half of it the page does state — this entry carries the settled cone, so a burst that would open wide here opens tight
+- The auto-spool ramp is not modelled: the rate is the spooled-up 13.33/s from the first shot, so a short burst is faster here than in game.
+- Accuracy also improves during the spool (wiki); this entry uses the settled spread, so an early burst is tighter here than in game.
 
 ## In WFSim
 

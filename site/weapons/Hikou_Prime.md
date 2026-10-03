@@ -16,8 +16,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the thrown-exclusive Concealed Explosives is outside the pools this roster loads — on a weapon with this fire rate it is a whole second damage source, which is exactly what its own page recommends it for
-- this weapon is SILENT and this arena has nobody to alert — stealth is worth nothing here and a great deal in a real mission
+- Not offered here: the thrown-exclusive Concealed Explosives, a second damage source on a weapon with this fire rate.
+- This weapon is silent; there is nobody to alert here, so stealth is worth nothing.
 
 ## In WFSim
 

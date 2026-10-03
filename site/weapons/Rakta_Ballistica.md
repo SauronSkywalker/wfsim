@@ -16,7 +16,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 ## Not modelled here
 
-- the Burst Shot is not modelled — this entry carries only the Charged Shot
+- The Burst Shot is not modelled; this entry carries only the Charged Shot.
 
 ## In WFSim
 
