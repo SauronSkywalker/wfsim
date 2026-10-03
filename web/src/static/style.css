@@ -486,11 +486,9 @@ body.on-wbench [data-module="builder"]{display:none}
 .topbar-inner .qq-link,.topbar-inner .dc-link,.topbar-inner .gh-link,.topbar-inner .sup-link{
   width:28px;padding:0;text-decoration:none;
   display:inline-flex;align-items:center;justify-content:center}
-/* …EXCEPT the ask, which carries its name and therefore its own width. It is
-   the one entry in this row that is not chrome, and until 2026-08-19 it was
-   drawn exactly like the theme toggle — a bare heart, which reads as
-   "favourite" as often as it reads as "donate". Tinted rather than filled:
-   the topbar is still chrome, so this is the row's emphasis and not a CTA. */
+/* …EXCEPT Support, which carries its name and therefore its own width: a bare
+   heart reads as "favourite" as often as anything else. Tinted rather than
+   filled — the row's emphasis, not a call to action. */
 .topbar-inner .sup-link{width:auto;gap:6px;padding:0 10px;color:var(--gold);
   border-color:color-mix(in srgb,var(--gold) 42%,transparent)}
 .topbar-inner .sup-link:hover{background:color-mix(in srgb,var(--gold) 12%,transparent)}
@@ -1139,65 +1137,26 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
    footer link does not land somewhere that looks like a different site. */
 .support-page{max-width:1060px;margin:0 auto;padding:28px 18px}
 .support-page .block{max-width:760px}
-/* auto-fit, not a fixed track count: with one channel the card must not
-   stretch to the full 1060px, and with three it must still wrap on a phone. */
-.sup-channels{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),300px));gap:14px;margin-bottom:26px}
-.sup-card{display:block;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--panel2);text-decoration:none;color:var(--text);transition:border-color .15s}
-.sup-card:hover{border-color:var(--accent)}
-.sup-name{font-size:17px;font-weight:700}
-.sup-what{font-size:12px;color:var(--text-2);margin-top:4px}
-.sup-card .run-btn{display:block;text-align:center;font-size:13px;padding:8px}
 /* THE FACTS STRIP — what this repository holds, counted rather than claimed.
-   auto-fit for the same reason the channel grid uses it: the number of figures
-   is decided by what could be counted, not by a layout. */
+   auto-fit: the number of figures is decided by what could be counted, not by
+   a layout. */
 .sup-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,140px),1fr));
   gap:10px;margin:18px 0 8px}
 .sup-fact{border:1px solid var(--line);border-radius:12px;background:var(--panel2);padding:12px 14px}
 .sup-fact b{display:block;font-size:22px;font-variant-numeric:tabular-nums;line-height:1.2}
 .sup-fact span{display:block;font-size:11px;color:var(--muted);margin-top:2px}
 /* What the reader has already run here. Gold, because it is the one line on
-   the page that is about them — and set at reading size rather than as a note,
-   since it sits immediately above the ask and is the only sentence there that
-   the reader cannot dispute. */
+   the page that is about them, and at reading size rather than as a note. */
 .sup-usage{font-size:15px;color:var(--gold);border-left:2px solid var(--gold);
   padding:6px 0 6px 14px;margin:26px 0 0;max-width:760px;line-height:1.6}
-/* THE NAMES, AND THEY ARE THE ONLY PEOPLE ON THIS PAGE. A ground of their own:
-   the block sat between two bullet lists at the same weight and read as a third
-   one, and the single thing it is not is more prose. */
-.thx-block{margin:26px 0 0;padding:20px 22px;border-radius:14px;
-  background:var(--panel2);border:1px solid var(--line)}
-.thx-head{font-size:11px;color:var(--muted);font-weight:600;margin:0 0 16px;
-  letter-spacing:.08em;text-transform:uppercase}
-/* EVERY NAME IS DRAWN THE SAME. The order carries the ranking and nothing else
-   may: a larger or brighter name at the top is a price list drawn rather than
-   written, and the page above promises there are no tiers. */
-.thx-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;
-  gap:18px 26px}
-.thx-one{display:inline-flex;font-size:19px;line-height:1.35}
-/* GOLD, the colour this page already gives to the one line that is about a
-   PERSON rather than about the software. */
-.thx-name{color:var(--gold)}
-.thx-from{width:100%}
-.thx-src{font-size:11px;color:var(--muted);font-weight:600;margin:0 0 8px;letter-spacing:.06em}
-.thx-group{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:12px 26px}
-.thx-more{font-size:12px;margin:16px 0 0}
 .share-by{margin:0 0 8px;padding:7px 12px;border-radius:9px;font-size:13px;color:var(--text-2);
   background:var(--panel2);border:1px solid var(--line)}
 .share-by b{color:var(--text)}
-.share-by .sb-tier{color:var(--accent);font-weight:600}
-.share-by.patron .sb-tier{color:var(--gold)}
-.share-by .sb-creator{display:inline-flex;align-items:baseline;gap:.35em;margin-left:.4em;padding:1px 9px;
-  border-radius:999px;background:#ffffff;border:1px solid #a9781f;color:#0b0b0b;font-weight:600;font-size:12px}
-.share-by .sb-creator b{font-weight:800;color:#0b0b0b;letter-spacing:-.02em}
-.share-by .sb-creator i{font-style:normal;font-weight:800;color:#a9781f;margin-left:-.35em;letter-spacing:-.02em}
-.share-by .sb-proof{font-size:11px;color:var(--muted);margin-left:6px}
-.sup-member{margin:0 0 18px}.sup-member p{margin:0 0 8px;font-size:14px;line-height:1.6}
 .sup-costs,.dl-page .sup-costs{list-style:none;margin:0;padding:0;font-size:13px}
 .sup-costs li{padding:7px 0;color:var(--text-2)}
 .sup-costs li+li{border-top:1px solid var(--line)}
 .sup-costs a{color:var(--accent)}
 .sup-note{font-size:11px;color:var(--muted);margin:10px 0 0}
-.sup-fine{font-size:11px;color:var(--muted);max-width:760px;margin:18px 0 0;line-height:1.7}
 .sup-usage{max-width:760px;margin:22px 0 0;font-size:12px;color:var(--muted);line-height:1.7}
 .sup-usage h2{font-size:13px;color:var(--text);margin:0 0 4px}
 .sup-usage p{margin:4px 0}
@@ -1929,36 +1888,6 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
 .settings .tag.muted{background:var(--panel2);color:var(--muted)}
 .settings .tag.warn{border-color:transparent;background:color-mix(in srgb,var(--gold) 16%,transparent);color:var(--gold)}
 .settings .tag.bad{border-color:transparent;background:color-mix(in srgb,var(--critical) 14%,transparent);color:var(--critical)}
-/* /account/billing: the plan card, then the history table (17-account.js). */
-.plan{padding:18px 18px 16px;display:grid;gap:14px}
-.plan-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.plan-head h2{margin:0;font-size:17px}
-.plan-head .fd-seg{margin-left:auto}
-.plan .price{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
-.plan .price b{font-size:28px;font-weight:800;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
-.plan .price span{color:var(--text-2)}
-.plan .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 18px;margin:0;padding:12px 0 0;border-top:1px solid var(--line)}
-.plan .facts div{min-width:0}
-.plan .facts dt{font-size:12px;color:var(--text-2);margin-bottom:2px}
-.plan .facts dd{margin:0;font-size:13.5px;font-variant-numeric:tabular-nums}
-.plan .acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.plan .acts .run-btn{width:auto;margin:0;padding:9px 18px;font-size:14px}
-.plan .notice{padding:10px 12px;border-radius:9px;font-size:13px;line-height:1.5}
-.plan .notice.bad{background:color-mix(in srgb,var(--critical) 9%,transparent)}
-.plan .notice.bad b{color:var(--critical)}
-.plan .notice.warn{background:color-mix(in srgb,var(--gold) 10%,transparent)}
-.plan .includes{display:grid;gap:6px;margin:0;padding:0;list-style:none}
-.plan .includes li{display:flex;gap:8px;align-items:baseline;font-size:13.5px}
-.plan .includes li::before{content:"¹3";color:var(--good-text);font-weight:700}
-.plan .set-note{margin:0}
-.table-wrap{overflow-x:auto}
-table.bills{width:100%;border-collapse:collapse;font-size:13px;min-width:520px}
-table.bills th{text-align:left;font-weight:600;font-size:12px;color:var(--text-2);padding:8px 13px;border-bottom:1px solid var(--line)}
-table.bills td{padding:10px 13px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;vertical-align:middle}
-table.bills tr:last-child td{border-bottom:0}
-table.bills .num{text-align:right}
-table.bills td.links{white-space:nowrap;text-align:right}
-table.bills td.links a{color:var(--accent);text-decoration:none;margin-left:12px}
 .settings .empty{padding:22px 13px;color:var(--muted);font-size:13px;text-align:center}
 .btn-sm{height:30px;display:inline-flex;align-items:center;text-decoration:none;font-size:12.5px}
 .kvs{margin:0}
@@ -1984,7 +1913,6 @@ table.bills td.links a{color:var(--accent);text-decoration:none;margin-left:12px
   .settings{grid-template-columns:1fr}
   .set-side{position:static;flex-direction:row;flex-wrap:wrap}
   .set-side .me{flex-basis:100%}
-  .plan-head .fd-seg{margin-left:0}
   .inline-form,.kvs .kv{grid-template-columns:1fr}
 }
 .tbmore{position:relative}
@@ -2055,9 +1983,8 @@ table.bills td.links a{color:var(--accent);text-decoration:none;margin-left:12px
   .tbmore,.tbmore-panel,.tbmore.open .tbmore-panel{display:contents}
   .topbar-inner .tbmore-btn{display:none}
   /* `.topbar-inner .tblinks>*` sets order:4 on the row's own children; the
-     overflow's promoted children default to 0 and would jump ahead of the ask.
-     They sort after it instead — the ask is LAST of what the reader came for
-     and first of what spilled out of the bar. */
+     overflow's promoted children default to 0 and would jump ahead of
+     Support. They sort after it instead. */
   .topbar-inner .tbmore-panel>*,.topbar-inner .tbmore-panel .tbcomm>*,
   .topbar-inner .tbmore-row>*{order:5}
   /* Back to a ROW of marks, which is what the phone menu has always been:
@@ -2067,16 +1994,6 @@ table.bills td.links a{color:var(--accent);text-decoration:none;margin-left:12px
     justify-content:center;border-color:var(--line)}
   .tbmore-row{display:contents}
 }
-
-/* ---- the ask, beneath a finished result -------------------------------
-   Muted, static, below the last fold — it states the work in numbers the
-   reader can check against the Detail table above it, and only then asks.
-   Never a modal, never a banner, and it does not move: the topbar being
-   chrome was always the rule, and it still is. */
-.sim-ask{margin:16px 0 0;padding-top:12px;border-top:1px solid var(--line);
-  color:var(--muted);font-size:12px;line-height:1.6}
-.sim-ask a{color:var(--gold);text-decoration:none;white-space:nowrap}
-.sim-ask a:hover{text-decoration:underline}
 
 /* ---- the board -------------------------------------------------------- */
 .bench-sub{max-width:70ch;margin:0 0 14px;color:var(--text-2);font-size:15px;line-height:1.55}
@@ -3275,11 +3192,6 @@ iframe.wld-frame{width:100%;height:480px;border:1px solid var(--line);border-rad
 .pchip .pcloud:hover,.rv-all-h .pcloud:hover{color:var(--text)}
 .pchip .pcloud:focus-visible,.rv-all-h .pcloud:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-radius:3px}
 
-/* The pricing page (17-account.js `pricingPage`): the free column beside the
-   membership, one column on a phone. */
-.pricing{max-width:880px;margin:0 auto;padding:24px 16px 48px;display:grid;gap:16px}
-.pricing .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;align-items:start}
-.pricing .plans .block{margin:0}
 
 /* /account/sync (19-cloud-page.js): the usage per pool, and every item with
    the switch for its sync. */

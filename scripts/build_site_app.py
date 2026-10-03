@@ -437,7 +437,6 @@ ASSET_DIR = "asset"
 DEFERRED_PAGES = {
     "/download": "download-page",
     "/support": "support-page",
-    "/thanks": "thanks-page",
     "/benchmark": "bench-page",
 }
 PAGE_BODIES: dict[str, str] = {}
@@ -1378,19 +1377,17 @@ def prerender(flagged: str) -> None:
     # THE SHELL PAGES, AND THIS LIST IS THE ONLY PLACE THEY ARE NAMED.
     #
     # Each is a URL people paste, so each needs its own title, description and
-    # canonical: a link that previews as "WFSim — Warframe Calculator" and opens
-    # on a donation page is the kind of mismatch that reads as a scam.
+    # canonical: a link that previews as one page and opens on another is the
+    # kind of mismatch that reads as a scam.
     #
     # THE SITEMAP READS THE SAME LIST. Written out page by page, a fourth one
     # got a file and no sitemap row — which is a page no crawler is ever told
     # exists, and nothing anywhere would have said so.
     shell_pages = [
         (
-            "support", "Support WFSim — running costs", "h-support", "Support",
-            "What it costs to run WFSim, and where to chip in. WFSim is a free, "
-            "open-source Warframe calculator, AGPL-3.0. A donation covers the "
-            "domain, the CDN and the measurement work — it buys no feature and "
-            "no perk.",
+            "support", "Support WFSim", "h-support", "Support",
+            "How WFSim works, why its numbers can be checked, and what it counts. "
+            "WFSim is a free, open-source Warframe calculator, AGPL-3.0.",
         ),
         (
             "download", "Download WFSim for Windows", "h-download", "Download",
@@ -1404,12 +1401,6 @@ def prerender(flagged: str) -> None:
             "The Operator a Warframe build refers to: the active Focus school, and which "
             "of its nodes that need an Operator action to count as running. Every node "
             "that reaches the Warframe, quoted from the wiki.",
-        ),
-        (
-            "thanks", "Thank you — the people who chipped in", "h-thanks", "Thank you",
-            "The people who have chipped in to keep WFSim running. WFSim is a free, "
-            "open-source Warframe calculator: a donation buys no feature, no perk "
-            "and no place in any queue. This is everyone who gave anyway.",
         ),
     ]
     for path, title, hero, nav, desc in shell_pages:
@@ -1652,14 +1643,7 @@ account only after you give it a code WFSim mails to your address. Your account
 page lists every agent acting for it and disconnects one in a click; deleting
 the account deletes them.</p>
 
-<h2>If you buy something</h2>
-<p>Payment is taken by Stripe, through Link, which is the seller of record: it
-holds your card and billing details, and sends your receipts and invoices. WFSim
-never sees a card number. For each account that buys, WFSim keeps its Stripe
-customer id; each subscription's status and paid period; each one-time purchase;
-and how much of any metered feature the account has used. Deleting the account
-cancels its subscriptions first and removes all of this; Stripe keeps its own
-payment records as the law requires.</p>
+<div data-ext="privacy-buying"></div>
 
 <h2>Build sync</h2>
 <p>With an account, what you save — builds, fights, searches, rivens, enemies,
@@ -1672,7 +1656,7 @@ own copy either way.</p>
 
 <h2>Who else handles it</h2>
 <ul>
-<li><b>Stripe and Link</b> take payments and keep the payment records.</li>
+<li data-ext="privacy-processor"></li>
 <li><b>Cloudflare</b> hosts the site and the database, and delivers the verification mail;
 its delivery log keeps the address a code was sent to for up to 30 days.</li>
 <li><b>Google, Discord and GitHub</b> handle a sign-in you choose to make with them.</li>
@@ -1685,7 +1669,7 @@ its delivery log keeps the address a code was sent to for up to 30 days.</li>
 <li>Passwords, sign-in tokens and emailed codes are kept only as hashes; a
 password's hash is also keyed with a secret the database does not hold, so a
 copy of the database alone cannot test a guess.</li>
-<li>Card and billing details never reach WFSim: Stripe holds them.</li>
+<li data-ext="privacy-card"></li>
 <li>Account data lives in its own database, apart from the one the public
 leaderboard is backed up from, and only the operator of WFSim can reach it.</li>
 <li>Sign-in endpoints are rate-limited, and a state-changing request is accepted
@@ -1707,81 +1691,11 @@ remains.</li>
 <li><b>不登录时：</b>配装、场景、紫卡只保存在你自己的浏览器里。使用统计记在浏览器保存的一个随机编号下，不记录 IP，不设置 cookie，可在
 <a href="/support#usage">支持页面</a>关闭。提交到排行榜的只有配装本身。</li>
 <li><b>登录后：</b>账号是一个随机编号，最多可绑定 Google、Discord、GitHub、邮箱四种登录方式。每种方式保存：是哪个服务、该服务给你的用户编号、账号页上显示给你看的名字（Google 邮箱、Discord 或 GitHub 用户名、你的邮箱），以及绑定时间。使用邮箱时你会设置一个密码，WFSim 只保存它加盐的慢哈希，无法还原成密码。邮件只在需要验证邮箱时发送（注册、绑定、找回密码），其中的验证码以哈希保存 10 分钟。登录状态以随机令牌的哈希保存（cookie <code>wfsim_session</code>，90 天）。不保存 IP 地址，也不保存第三方返回的访问令牌。WFSim 从不合并两个账号。</li>
-<li><b>购买时：</b>付款由 Stripe（通过 Link，作为销售方）处理，卡号与账单信息由它保存，收据和发票也由它发送；WFSim 看不到卡号。WFSim 为购买过的账号保存：Stripe 客户编号、每项订阅的状态与已付周期、每笔一次性购买、以及计量功能的用量。删除账号会先取消订阅并删除这些记录；Stripe 按法律要求保留它自己的付款记录。</li>
+<li data-ext="privacy-buying-zh"></li>
 <li><b>第三方：</b>Cloudflare 提供托管、数据库和验证邮件投递，其投递日志会保留收件地址最多 30 天；Google、Discord、GitHub 仅在你选择用它们登录时参与。不出售任何数据，不用于广告。</li>
-<li><b>安全措施：</b>全站 HTTPS；密码、登录令牌和邮件验证码只以哈希保存，密码哈希还用一个不在数据库里的密钥加固，单拿到数据库也无法验证任何猜测；卡号与账单信息只由 Stripe 保存，从不经过 WFSim；账号数据放在独立的数据库，与排行榜公开备份的那个分开，只有 WFSim 的运营方能访问；登录接口有频率限制，修改数据的请求只接受来自本站的。</li>
+<li><b>安全措施：</b>全站 HTTPS；密码、登录令牌和邮件验证码只以哈希保存，密码哈希还用一个不在数据库里的密钥加固，单拿到数据库也无法验证任何猜测；<span data-ext="privacy-card-zh"></span>账号数据放在独立的数据库，与排行榜公开备份的那个分开，只有 WFSim 的运营方能访问；登录接口有频率限制，修改数据的请求只接受来自本站的。</li>
 <li><b>你的权利：</b>可在账号面板下载你的全部数据、移除任何登录方式（移除最后一种即删除账号）、直接删除账号。删除立即生效；数据库的时间点历史最多保留 30 天。</li>
 </ul>
-"""
-
-
-# WHO RUNS WFSIM, WHAT A PURCHASE IS, AND HOW MONEY COMES BACK. Stripe's
-# Managed Payments sells through Link, so Link's own terms govern the payment;
-# these state what WFSim promises about the product, and change in the commit
-# that changes a rule they state.
-CONTACT = "magenie33@moginlabs.com"
-
-TERMS_BODY = f"""
-<h1>Terms</h1>
-<p>WFSim (wfsim.app) is run by Mogin Labs Pte. Ltd., Singapore. The calculator —
-builder, simulator, optimizer and leaderboard — is free and needs no account.
-Paid features, where there are any, are listed on your account page, with their
-price, before you buy.</p>
-
-<h2>Buying</h2>
-<ul>
-<li>Payments are taken by Stripe through Link, the seller of record, whose terms
-apply to the payment itself. Your statement shows <code>LINK.COM* WFSIM.APP</code>.
-Stripe emails a receipt and an invoice for every payment.</li>
-<li>A subscription renews at the end of each period until it is cancelled.
-Cancel any time from your account page or from Link; it then ends at the end of
-the period already paid for.</li>
-<li>A metered allowance resets each period and does not carry over. Credit bought
-once stays until it is used.</li>
-<li>Refunds: see <a href="/refunds">the refund policy</a>.</li>
-</ul>
-
-<h2>Use</h2>
-<ul>
-<li>One account is one person. Paid features are for that person's own use, not
-for resale or automated bulk use.</li>
-<li>An account used for fraud, or whose payment is disputed, loses its paid
-features.</li>
-<li>Features change as the game and the project change. A paid feature is not
-removed during a period already paid for without a refund for that period.</li>
-<li>WFSim is provided as is. Its numbers aim to match the game, and are checked
-against in-game measurements, but no result is guaranteed.</li>
-</ul>
-
-<h2>Everything else</h2>
-<p>WFSim is not affiliated with or endorsed by Digital Extremes. Warframe and its
-content are trademarks of Digital Extremes Ltd. These terms are governed by the
-laws of Singapore; your rights as a consumer where you live are not affected.
-Questions: <a href="mailto:{CONTACT}">{CONTACT}</a>. What WFSim keeps about you
-is on <a href="/privacy">the privacy page</a>.</p>
-
-<h2>条款（中文）</h2>
-<p>WFSim 由 Mogin Labs Pte. Ltd.（新加坡）运营。计算器（配装器、模拟器、优化器、排行榜）免费、无需账号。付费功能及其价格在购买前列在账号页上。付款由 Stripe 通过 Link（销售方）收取，账单显示为 LINK.COM* WFSIM.APP，每笔付款都会收到收据和发票。订阅在取消前每期自动续费，可随时在账号页或 Link 取消，取消后用到已付周期结束。退款见<a href="/refunds">退款政策</a>。WFSim 与 Digital Extremes 无关联。本条款适用新加坡法律，不影响你所在地的消费者权利。联系：<a href="mailto:{CONTACT}">{CONTACT}</a>。</p>
-"""
-
-REFUNDS_BODY = f"""
-<h1>Refunds</h1>
-<ul>
-<li><b>Within 14 days of any charge</b> — the first payment or a renewal — ask
-and it is refunded in full. No reason is needed.</li>
-<li>A refunded subscription ends at once. A refunded one-time purchase takes back
-what it added.</li>
-<li>After 14 days a charge is not refunded, except where the law where you live
-requires it. You keep what you paid for until the end of its period.</li>
-<li>To ask: write to <a href="mailto:{CONTACT}">{CONTACT}</a> from the address on
-your receipt, or use Link's support from the receipt email. Link may also refund
-a payment itself within 60 days.</li>
-<li>The refund goes back to the way you paid; your bank decides how long it takes
-to show.</li>
-</ul>
-
-<h2>退款（中文）</h2>
-<p>任何一次扣款（首次或续费）后 <b>14 天内</b>申请，全额退款，无需理由。退款后订阅立即结束，一次性购买的内容收回。超过 14 天不予退款，除非你所在地的法律另有规定；已付周期内照常使用。申请方式：用收据上的邮箱写信到 <a href="mailto:{CONTACT}">{CONTACT}</a>，或通过收据邮件里的 Link 客服。退款原路返回。</p>
 """
 
 
@@ -1815,8 +1729,10 @@ def ship_legal(flagged: str, slug: str, title: str, description: str, body: str)
 def ship_privacy(flagged: str) -> None:
     ship_legal(flagged, "privacy", "Privacy",
                "What WFSim keeps about a person, with and without an account, and how to remove it.", PRIVACY_BODY)
-    ship_legal(flagged, "terms", "Terms", "Who runs WFSim, what a purchase is, and how it renews and ends.", TERMS_BODY)
-    ship_legal(flagged, "refunds", "Refunds", "How to get money back from WFSim, and what a refund ends.", REFUNDS_BODY)
+    # THE BODY IS AN EXTENSION'S, filled in by the site's worker
+    # (`worker/ext_documents.js`) so the page still reads with no script.
+    ship_legal(flagged, "terms", "Terms", "The terms of service of WFSim.", '<div data-ext="terms"></div>')
+    ship_legal(flagged, "refunds", "Refunds", "The refund policy of WFSim.", '<div data-ext="refunds"></div>')
 
 def ship_agent_files(by_slot: dict) -> None:
     """The site as an agent reads it: markdown twins of the home page and the

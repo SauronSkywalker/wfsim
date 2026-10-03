@@ -17,14 +17,16 @@ const ACCOUNT_SLOTS = [
   { id: "email", name: "Email" },
 ];
 const AUTH_PATHS = { "/login": "login", "/signup": "signup", "/reset": "reset", "/account": "account",
-  "/account/billing": "billing", "/account/sync": "sync", "/pricing": "pricing" };
-const authKindOf = (path) => AUTH_PATHS[path.replace(/\/$/, "")] || null;
+  "/account/sync": "sync" };
+/// …and the pages an extension mounts (`EXT.pages`), routed the same way.
+const authKindOf = (path) => AUTH_PATHS[path.replace(/\/$/, "")] || extKindOf(path.replace(/\/$/, ""));
 /// EACH PAGE ITS OWN `app.view` KIND, so the way in can be read step by step;
 /// the settings pages carry `account_`, since `sync` alone could be any sync.
-const AUTH_VIEWS = { login: "login", signup: "signup", reset: "reset", pricing: "pricing",
-  account: "account", billing: "account_billing", sync: "account_sync" };
+const AUTH_VIEWS = { login: "login", signup: "signup", reset: "reset",
+  account: "account", sync: "account_sync" };
+const authView = (kind) => AUTH_VIEWS[kind] || (EXT.pages[kind] || {}).view || "other";
 /// The pages of a signed-in account; every other kind is a way in.
-const isSettings = (kind) => kind === "account" || kind === "billing" || kind === "sync";
+const isSettings = (kind) => kind === "account" || kind === "sync" || !!(EXT.pages[kind] || {}).settings;
 
 /// WHAT THE SERVER SAID, in the reader's words — an outcome or a refusal.
 const ACCOUNT_SAYS = {
@@ -54,11 +56,6 @@ const ACCOUNT_SAYS = {
   wrong_code: "That code is not right.",
   too_many_attempts: "Too many wrong codes. Ask for a new one.",
   last_slot: "This is your last way to sign in. Disconnecting it deletes the account — do that below if you mean to.",
-  billing_open: "A subscription could not be ended, so the account was kept. Try again in a moment.",
-  already_subscribed: "This account already holds that subscription.",
-  not_on_sale: "That is not on sale right now.",
-  no_customer: "This account has not bought anything yet.",
-  stripe: "Stripe did not answer. Try again in a moment.",
   bad_username: "A username is 3 to 20 letters, digits or underscores.",
   username_reserved: "That username is reserved.",
   username_taken: "That username is taken.",
@@ -81,12 +78,6 @@ let authFlow = { kind: null, step: 1, email: "", sentAt: 0, error: null, open: n
 let authTimer = null;
 
 let accountState = { providers: [], account: null, loaded: false };
-/// BILLING, as `/api/billing` last said it (docs/ACCOUNTS.md §"Paid features"): off until the
-/// server says Stripe is configured, and drawn only on /account.
-let billingState = { configured: false, names: { offers: {}, meters: {} }, prices: [], features: [], meters: {}, held: [],
-  subscription: null, invoices: [] };
-/// The period the offer card shows before a reader subscribes.
-let billingPeriod = "month";
 let accountLoading = null;
 /// THE AGENTS ACTING FOR THIS ACCOUNT, as `/api/account/agents` last said.
 let agentsState = [];
@@ -106,12 +97,16 @@ async function accountCall(method, path, body) {
 
 function loadAccount() {
   accountLoading = (async () => {
+    if (!extSettled) await extReady;
     const r = await accountCall("GET", "/api/account");
     accountState = r && r.ok
       ? { providers: r.providers || [], account: r.account, loaded: true }
       : { providers: [], account: null, loaded: true };
-    if (accountState.account && isSettings(authKindOf(location.pathname))) await Promise.all([loadBilling(), loadAgents()]);
-    if (authKindOf(location.pathname) === "pricing") await loadBilling();
+    const at = authKindOf(location.pathname);
+    // EVERY SETTINGS PAGE ASKS EVERY EXTENSION PAGE: the navigation shows a
+    // page only once it says it is available.
+    if (accountState.account && isSettings(at)) await Promise.all([loadAgents(), ...extLoads()]);
+    else if ((EXT.pages[at] || {}).open) await Promise.all(extLoads(at));
     renderAccountEntry();
     const kind = authKindOf(location.pathname);
     if (kind) renderAuthPage(kind);
@@ -123,16 +118,6 @@ function loadAccount() {
 async function loadAgents() {
   const r = await accountCall("GET", "/api/account/agents");
   agentsState = (r && r.ok && r.agents) || [];
-}
-
-async function loadBilling() {
-  const b = await accountCall("GET", "/api/billing");
-  if (!(b && b.ok && b.configured)) { billingState = { ...billingState, configured: false, free: (b && b.free) || null }; return; }
-  const inv = accountState.account ? await accountCall("GET", "/api/billing/invoices") : null;
-  billingState = { configured: true, names: b.names || { offers: {}, meters: {} }, prices: b.prices || [], features: b.features || [],
-    free: b.free || {}, member_days: Number.isFinite(b.member_days) ? b.member_days : null,
-    meters: b.meters || {}, held: b.held || [], subscription: b.subscription || null,
-    invoices: (inv && inv.ok && inv.invoices) || [] };
 }
 
 /// A path on this site to go back to after signing in, or `/` — never another
@@ -148,6 +133,10 @@ const authStart = (p, intent, back) =>
 const accountName = (a) => (a && (a.display_name || a.username)) || "WFSim";
 const accountInitial = (a) => (accountName(a).replace(/[^\p{L}\p{N}]/gu, "")[0] || "W").toUpperCase();
 const aT = (s) => escHtml(tr(s));
+const accountLocale = () => (LANG === "zh" ? "zh-CN" : "en-US");
+/// What each extension page needs before it is drawn — one kind's, or all.
+const extLoads = (kind) => Object.entries(EXT.pages)
+  .filter(([k, p]) => p.load && (!kind || k === kind)).map(([, p]) => p.load().catch(() => {}));
 
 // ---- the top bar: one entry --------------------------------------------------------------
 
@@ -315,7 +304,7 @@ function accountMethods(a) {
 function accountProfileBlock(a) {
   const after = a.rename_after
     ? tr("The username can change again after {time}.").replace("{time}",
-      new Date(a.rename_after).toLocaleString(billingLocale(), { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }))
+      new Date(a.rename_after).toLocaleString(accountLocale(), { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }))
     : "";
   const body = authFlow.open === "profile"
     ? `<div class="inline-form">
@@ -363,150 +352,17 @@ function accountEmailBlock(a) {
     <div class="bb">${body}</div></div>`;
 }
 
-// ---- /account/billing ------------------------------------------------------------------------
-//
-// THE SHAPE A MATURE PRODUCT'S BILLING PAGE HAS: the plan first — what is held,
-// its state, the next charge and the card — then the billing history as a
-// table, then who takes the money. Every change of plan, card or renewal is
-// Stripe's own portal; this page states facts and links there.
-
-/// WHAT AN OFFER OR A METER IS CALLED, as the paid half names it in the
-/// reader's language: the page itself knows none of them.
-const billingName = (kind, id) => {
-  const n = (billingState.names[kind] || {})[id] || {};
-  return n[LANG] || n.en || id;
-};
-const billingIncludes = (offer) => ((billingState.names.offers[offer] || {}).includes || []).map((x) => x[LANG] || x.en);
-const billingLocale = () => (LANG === "zh" ? "zh-CN" : "en-US");
-const billingDate = (d) => new Date(d).toLocaleDateString(billingLocale(), { year: "numeric", month: "long", day: "numeric" });
-const billingMoney = (amount, currency) =>
-  new Intl.NumberFormat(billingLocale(), { style: "currency", currency: currency.toUpperCase() }).format(amount / 100);
-const PER_INTERVAL = { month: "/ month", year: "/ year" };
-
-function billingPayment(pm) {
-  if (!pm) return tr("On file with Stripe");
-  return pm.last4 ? `${pm.brand ? pm.brand[0].toUpperCase() + pm.brand.slice(1) : tr("Card")} •••• ${pm.last4}`
-    : pm.type === "link" ? "Link" : pm.type;
-}
-
-/// THE PLAN THE READER HOLDS: its state as a tag, what it costs, the next date
-/// that matters, the card, and the one action that state calls for.
-function billingHeld(s) {
-  const tag = s.status === "past_due" ? `<span class="tag bad">${aT("Renewal failed")}</span>`
-    : s.cancel_at_period_end ? `<span class="tag warn">${escHtml(tr("Ends on {date}").replace("{date}", billingDate(s.period_end)))}</span>`
-      : `<span class="tag ok">${aT("Active")}</span>`;
-  const notice = s.status === "past_due"
-    ? `<div class="notice bad"><b>${aT("The last renewal did not go through.")}</b> ${aT("Stripe tries again over the next few days, and the membership stays on meanwhile. A new payment method is charged at once.")}</div>`
-    : s.cancel_at_period_end
-      ? `<div class="notice warn">${escHtml(tr("Renewal is cancelled. The membership lasts until {date}, and nothing more is charged.").replace("{date}", billingDate(s.period_end)))}</div>`
-      : "";
-  const next = s.cancel_at_period_end ? [tr("Ends"), billingDate(s.period_end)]
-    : [tr("Next charge"), `${billingDate(s.period_end)} · ${billingMoney(s.amount, s.currency)}`];
-  const manage = `<button class="ghost-btn btn-sm" data-auth="portal">${aT("Manage subscription")}</button>`;
-  const acts = s.status === "past_due" ? `<button class="run-btn" data-auth="portal">${aT("Update payment method")}</button>${manage}`
-    : s.cancel_at_period_end ? `<button class="run-btn" data-auth="portal">${aT("Resume renewal")}</button>${manage}`
-      : manage;
-  return `<div class="plan">
-    <div class="plan-head"><h2>${escHtml(billingName("offers", s.offer))}</h2>${tag}</div>
-    <div class="price"><b>${escHtml(billingMoney(s.amount, s.currency))}</b><span>${aT(PER_INTERVAL[s.interval] || "")}</span></div>
-    ${notice}
-    <dl class="facts">
-      <div><dt>${escHtml(next[0])}</dt><dd>${escHtml(next[1])}</dd></div>
-      <div><dt>${aT("Payment method")}</dt><dd>${escHtml(billingPayment(s.payment))}</dd></div>
-      <div><dt>${aT("Member since")}</dt><dd>${escHtml(billingDate(s.started_at))}</dd></div>
-    </dl>
-    <div class="acts">${acts}</div></div>`;
-}
-
-/// THE OFFER, BEFORE A READER HOLDS IT: its price by period, what it contains
-/// as the catalog lists it, and one button — a way to sign in, signed out.
-function billingOffer() {
-  const subs = billingState.prices.filter((p) => p.interval);
-  if (!subs.length) return `<div class="plan"><p class="set-note">${aT("Nothing is on sale yet.")}</p></div>`;
-  const offer = subs[0].offer;
-  const periods = subs.filter((p) => p.offer === offer);
-  const pick = periods.find((p) => p.interval === billingPeriod) || periods[0];
-  const toggle = periods.length > 1 ? `<div class="fd-seg" role="group" aria-label="${aT("Billing period")}">${periods.map((p) =>
-    `<button data-auth="period" data-period="${p.interval}" class="${p === pick ? "on" : ""}">${aT(p.interval === "year" ? "Yearly" : "Monthly")}</button>`).join("")}</div>` : "";
-  const includes = billingIncludes(offer);
-  return `<div class="plan">
-    <div class="plan-head"><h2>${escHtml(billingName("offers", offer))}</h2>${toggle}</div>
-    <div class="price"><b>${escHtml(billingMoney(pick.amount, pick.currency))}</b><span>${aT(PER_INTERVAL[pick.interval] || "")}</span></div>
-    ${includes.length ? `<ul class="includes">${includes.map((x) => `<li>${escHtml(x)}</li>`).join("")}</ul>` : ""}
-    <div class="acts">${accountState.account
-      ? `<button class="run-btn" data-auth="checkout" data-price="${escHtml(pick.key)}">${aT(pick.interval === "year" ? "Subscribe yearly" : "Subscribe monthly")}</button>`
-      : `<a class="run-btn" href="/login?return=${encodeURIComponent("/pricing")}">${aT("Sign in to subscribe")}</a>`}
-      <span class="set-note">${aT("Cancel any time. The builder, simulator, optimizer and leaderboard need no membership.")}</span></div></div>`;
-}
-
-/// AN INVOICE'S STATE in the reader's words; a refund is read off its payment
-/// by the paid half, since Stripe leaves a refunded invoice `paid`.
-const INVOICE_STATUS = { paid: ["ok", "Paid"], refunded: ["", "Refunded"], partly_refunded: ["warn", "Partly refunded"],
-  open: ["bad", "Unpaid"], void: ["", "Void"], uncollectible: ["bad", "Uncollectible"] };
-
-function billingHistory() {
-  const rows = billingState.invoices;
-  if (!rows.length) return `<div class="empty">${aT("No bills yet.")}</div>`;
-  return `<div class="table-wrap"><table class="bills"><thead><tr><th>${aT("Date")}</th><th>${aT("Item")}</th>
-    <th class="num">${aT("Amount")}</th><th>${aT("Status")}</th><th class="num">${aT("Invoice")}</th></tr></thead><tbody>${rows.map((i) => {
-      const st = INVOICE_STATUS[i.status] || ["", i.status];
-      const what = i.offer ? `${billingName("offers", i.offer)}${i.interval ? ` · ${tr(i.interval === "year" ? "Yearly" : "Monthly")}` : ""}` : i.number || "";
-      return `<tr><td>${escHtml(billingDate(i.created))}</td><td>${escHtml(what)}</td>
-        <td class="num">${escHtml(billingMoney(i.total, i.currency))}</td><td><span class="tag ${st[0]}">${aT(st[1])}</span></td>
-        <td class="links">${i.url ? `<a data-native target="_blank" rel="noopener" href="${escHtml(i.url)}">${aT("View")}</a>` : ""}${
-          i.pdf ? `<a data-native href="${escHtml(i.pdf)}">PDF</a>` : ""}</td></tr>`;
-    }).join("")}</tbody></table></div>`;
-}
-
-function billingPage(a) {
-  const s = billingState.subscription;
-  const n = billingState.invoices.length;
-  return `<div class="settings">${settingsNav(a, "billing")}
-    <div class="set-main"><h1 class="page">${aT("Membership and billing")}</h1>
-      <section class="block">${s ? billingHeld(s) : billingOffer()}</section>
-      ${billingState.member_days ? `<p class="set-note">${escHtml(tr("You have been a member for {n} days in all. Only you see this.")
-        .replace("{n}", billingState.member_days.toLocaleString()))}</p>` : ""}
-      <section class="block"><div class="bh"><h2>${aT("Billing history")}</h2>${n ? `<span class="sub">${n}</span>` : ""}</div>${billingHistory()}</section>
-      <p class="set-note">${aT("Payments are handled by Stripe and appear on your statement as LINK.COM* WFSIM.APP. Stripe emails a receipt and an invoice for every payment.")}
-        <a data-native href="/terms">${aT("Terms")}</a> · <a data-native href="/refunds">${aT("Refunds")}</a> · <a data-native href="/privacy">${aT("Privacy")}</a></p></div></div>`;
-}
-
-/// THE PRICE PAGE, signed in or not: what is free and what the membership adds,
-/// side by side. Every number is the server's (`/api/billing`): the offer, its
-/// prices, and the free allowance, which holds before anything is on sale.
-function pricingPage() {
-  const sync = (billingState.free || {}).sync_allowance;
-  const held = billingState.subscription;
-  const free = `<section class="block"><div class="plan">
-    <div class="plan-head"><h2>${aT("Free")}</h2></div>
-    <ul class="includes">
-      <li>${aT("The builder, simulator, optimizer and leaderboard, with no account")}</li>
-      <li>${aT("Saving on your browser, with no limit")}</li>
-      <li>${escHtml(sync
-        ? tr("Syncing to your account: {a} presets and {b} customs").replace("{a}", sync.presets).replace("{b}", sync.customs)
-        : tr("Syncing to your account"))}</li>
-    </ul></div></section>`;
-  const member = !billingState.configured
-    ? `<section class="block"><div class="plan"><p class="set-note">${aT("Membership is not on sale yet.")}</p></div></section>`
-    : held ? `<section class="block"><div class="plan"><div class="plan-head"><h2>${escHtml(billingName("offers", held.offer))}</h2>
-        <span class="tag ok">${aT("Active")}</span></div><div class="acts"><a class="ghost-btn btn-sm" href="/account/billing">${aT("Membership and billing")}</a></div></div></section>`
-      : `<section class="block">${billingOffer()}</section>`;
-  return `<div class="pricing"><h1 class="page">${aT("Pricing")}</h1>
-    <div class="plans">${free}${member}</div>
-    <p class="set-note">${aT("Sold by Mogin Labs Pte. Ltd., Singapore. Payments are handled by Stripe.")}
-      <a data-native href="/terms">${aT("Terms")}</a> · <a data-native href="/refunds">${aT("Refunds")}</a> · <a data-native href="/privacy">${aT("Privacy")}</a></p></div>`;
-}
-
 /// THE SETTINGS PAGES' OWN NAVIGATION: who is signed in, then one link per page.
 function settingsNav(a, here) {
-  const since = new Date(a.created_at).toLocaleDateString(billingLocale(), { year: "numeric", month: "long" });
+  const since = new Date(a.created_at).toLocaleDateString(accountLocale(), { year: "numeric", month: "long" });
   const link = (href, kind, label) => `<a href="${href}"${here === kind ? ' class="on" aria-current="page"' : ""}>${aT(label)}</a>`;
   return `<nav class="set-side" aria-label="${aT("Account settings")}">
     <div class="me"><span class="avatar avatar-lg">${escHtml(accountInitial(a))}</span>
       <div><b>${escHtml(accountName(a))}</b><span>${escHtml(tr("Joined {date}").replace("{date}", since))}</span></div></div>
     ${link("/account", "account", "Account")}
     ${link("/account/sync", "sync", "Cloud sync")}
-    ${billingState.configured ? link("/account/billing", "billing", "Membership and billing") : ""}</nav>`;
+    ${Object.entries(EXT.pages).filter(([, p]) => p.settings && (!p.available || p.available()))
+      .map(([k, p]) => link(p.path, k, p.nav)).join("")}</nav>`;
 }
 
 /// THE SYNC ROW says where `syncStatus` stands and offers the one action that
@@ -515,7 +371,7 @@ function syncRowHtml() {
   const s = syncStatus;
   const row = (dd, act = "<span></span>") => `<dt>${aT("Build sync")}</dt><dd>${dd}</dd>${act}`;
   if (s.state === "on") {
-    const when = new Date(s.at).toLocaleTimeString(billingLocale(), { hour: "2-digit", minute: "2-digit" });
+    const when = new Date(s.at).toLocaleTimeString(accountLocale(), { hour: "2-digit", minute: "2-digit" });
     return row(`<span class="tag ok">${aT("On")}</span> ${escHtml(tr("last synced {time}").replace("{time}", when))}${
       s.full ? ` <span class="tag warn">${aT("Full: new items stay on this browser")}</span>` : ""}${syncUnsyncedHtml(s.unsynced)}`,
     `<button class="ghost-btn btn-sm" data-auth="sync-now">${aT("Sync now")}</button>`);
@@ -562,7 +418,7 @@ function renderSyncStatus() {
 /// here, each one revoked in one click, the way a mature product lists the
 /// apps it has let in (docs/ACCOUNTS.md §"Agents").
 function accountAgentsBlock() {
-  const day = (d) => (d ? new Date(d).toLocaleDateString(billingLocale(), { year: "numeric", month: "short", day: "numeric" }) : "—");
+  const day = (d) => (d ? new Date(d).toLocaleDateString(accountLocale(), { year: "numeric", month: "short", day: "numeric" }) : "—");
   const rows = agentsState.map((g) => `<div class="kv"><dt>${escHtml(g.name)}</dt>
       <dd>${escHtml(tr("connected {date}").replace("{date}", day(g.claimed_at)))} · ${escHtml(tr("last used {date}").replace("{date}", day(g.last_used_at)))}</dd>
       <button class="ghost-btn btn-sm" data-auth="agent-revoke" data-id="${escHtml(g.id)}">${aT("Disconnect")}</button></div>`).join("");
@@ -586,12 +442,14 @@ function accountDangerBlock() {
   return `<div class="block danger" id="delete-account"><div class="bh"><h2>${aT("Delete account")}</h2></div><div class="bb">
     ${authFlow.error === "last_slot" ? `<div class="auth-err" role="alert">${escHtml(accountSaid("last_slot"))}</div>` : ""}
     <p class="set-note" style="margin:0">${aT("Deletes this account, every way to sign in to it and everything it syncs, for good.")}
-      ${billingState.subscription ? aT("Its subscription is cancelled first; receipts stay with Stripe.") : ""}</p>
+      ${accountDeleteNote}</p>
     <div class="confirm"><label for="auth-delete" class="set-note">${aT("Type DELETE to confirm:")}</label>
       <input id="auth-delete" autocomplete="off" spellcheck="false">
       <button class="btn-danger" data-auth="delete" disabled>${aT("Delete account for good")}</button></div></div></div>`;
 }
 
+/// WHAT ELSE A DELETION ENDS, as an extension says it; set before the page is drawn.
+let accountDeleteNote = "";
 function accountPage(a) {
   return `<div class="settings">${settingsNav(a, "account")}
     <div class="set-main"><h1 class="page">${aT("Account settings")}</h1>
@@ -611,29 +469,26 @@ function renderAuthPage(kind) {
   if (!accountState.loaded) { main.innerHTML = ""; return; }
   const { account, providers } = accountState;
   // A SIGNED-IN READER HAS NO SIGN-IN PAGE, and a signed-out one no settings.
-  if (account && !isSettings(kind) && kind !== "pricing") { nav(authReturn()); return; }
+  const ext = EXT.pages[kind];
+  if (account && !isSettings(kind) && !(ext && ext.open)) { nav(authReturn()); return; }
   if (!account && isSettings(kind)) {
     history.replaceState(null, "", `/login?return=${encodeURIComponent(location.pathname)}`); route(); return;
   }
-  // BILLING IS A PAGE ONLY WHERE IT IS ON: anyone else is on the account page.
-  if (kind === "billing" && !billingState.configured) { history.replaceState(null, "", "/account"); route(); return; }
-  if (kind === "pricing") { main.innerHTML = pricingPage(); return; }
+  // AN EXTENSION PAGE THAT IS NOT AVAILABLE IS NOT A PAGE: the reader is on
+  // the account page instead.
+  if (ext && ext.available && !ext.available()) { history.replaceState(null, "", "/account"); route(); return; }
+  if (ext && ext.open) { main.innerHTML = ext.render(account); if (ext.shown) ext.shown(main); return; }
   if (!account && !providers.length) {
     main.innerHTML = `<div class="auth-page"><div class="auth-card"><h2>${aT("Accounts are not available here")}</h2>
       <p class="lede">${aT("Sign in on wfsim.app.")}</p></div></div>`;
     return;
   }
-  main.innerHTML = kind === "account" ? accountPage(account) : kind === "billing" ? billingPage(account)
+  if (kind === "account") accountDeleteNote = extHookNow("deleteNote") || "";
+  main.innerHTML = kind === "account" ? accountPage(account) : ext ? ext.render(account)
     : kind === "sync" ? cloudPage(account)
     : `<div class="auth-page"><div class="auth-card" data-auth-kind="${kind}">${
       kind === "signup" ? authSignupCard() : kind === "reset" ? authResetCard() : authLoginCard()}</div></div>`;
-  // BACK FROM STRIPE'S CHECKOUT: said once, then the page reads again what the
-  // webhook has written by then — the redirect itself grants nothing.
-  if (kind === "billing" && new URLSearchParams(location.search).get("billing") === "done") {
-    history.replaceState(null, "", "/account/billing");
-    presetToast(tr("Payment received. It can take a few seconds to show here."));
-    setTimeout(async () => { await loadBilling(); if (authKindOf(location.pathname) === "billing") renderAuthPage("billing"); }, 4000);
-  }
+  if (ext && ext.shown) ext.shown(main);
   if (kind === "account") {
     const del = $("auth-delete");
     if (del) del.addEventListener("input", () => { main.querySelector("[data-auth=delete]").disabled = del.value.trim() !== "DELETE"; });
@@ -735,16 +590,8 @@ async function authAct(el) {
       await loadAccount();
       return nav("/");
     }
-    if (what === "period") {
-      billingPeriod = el.dataset.period;
-      return renderAuthPage(kind);
-    }
-    if (what === "checkout" || what === "portal") {
-      const r = await accountCall("POST", `/api/billing/${what}`, what === "checkout" ? { price: el.dataset.price } : {});
-      if (!(r && r.ok)) { presetToast(accountSaid((r && r.reason) || "stripe")); return; }
-      location.href = r.url;
-      return;
-    }
+    // AN ACTION THIS FILE DOES NOT KNOW is an extension's, which says whether it took it.
+    if (await extHook("act", el, kind)) return;
     if (what === "profile") {
       const a = accountState.account;
       const r = await accountCall("POST", "/api/account/profile", {

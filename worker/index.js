@@ -24,6 +24,7 @@ import { cloudPath, cloudRoute } from "./cloud.js";
 import { agentRoute } from "./agents.js";
 import { BOT_AUTH_DIRECTORY, botAuthDirectory } from "./bot_auth.js";
 import { rollupUsage } from "./usage_days.js";
+import { EXT_DOCUMENTS, extDocument } from "./ext_documents.js";
 
 const MAX_BYTES = 4096;        // a build is a few hundred bytes; this is slack
 // AN OUTER BOUND, NOT THE RULE — see below. It is `MAIN_SLOTS + 1`: eight main
@@ -703,6 +704,7 @@ export default {
     if (path === BOT_AUTH_DIRECTORY) return botAuthDirectory(request, env);
     // A `.well-known` path is a document or nothing: html here is the SPA
     // fallback claiming a path a client will parse.
+    if (EXT_DOCUMENTS.has(path)) return extDocument(request, env, path);
     if (path.startsWith("/.well-known/")) {
       const doc = await env.ASSETS.fetch(request);
       if ((doc.headers.get("content-type") || "").includes("text/html")) {

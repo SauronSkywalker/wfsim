@@ -80,7 +80,7 @@ check("...and so is the wasm module",
 // answered those with a 404 would have taken down every deep link, every
 // prerendered weapon URL and the app itself — a bigger outage than the one
 // above, shipped as its fix.
-for (const path of ["/weapons/Torid", "/benchmark", "/thanks", "/"]) {
+for (const path of ["/weapons/Torid", "/benchmark", "/account", "/"]) {
   const r = await get(path);
   check(`${path} still reaches the app (negative control)`,
         r.status === 200 && (await r.text()).includes("<!doctype html>"),

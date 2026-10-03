@@ -760,18 +760,6 @@ page shows the steps, and moving a step on the page moves it on the card. The
 backdrop word is the one fewest weapons share (PLASMOR, NIKANA, LATO, BRAMMA);
 the card is drawn 1080 wide at twice the pixels, and the share panel draws it.
 
-## `check_share_signed`
-
-A signed short link, booted on its real address with the short-link store and
-the paid half answered by CDP request interception: the address is cleaned and
-the build lands; over the build bar the line names the sharer and their tier,
-and no time (a Patron's in the Patron's colour, the creator's title over the
-Member grant his account holds, a lapsed membership's name alone); another build opened, the line goes; a signature lifted onto
-another build, one nobody minted, and a link with none name nobody while the
-build still lands. Signing returns the live origin and the path the paid half
-answered, a refusal falls back to the plain link, and off the live site
-nobody is offered a signature.
-
 ## `check_sync_customs`
 
 A custom travels with what names it, against the sync server faked as
@@ -808,13 +796,6 @@ item from every collection and weapon in one list, newest first; a build opens
 on its weapon by id; an item switches off and on; the status filter, the search
 and the by-weapon grouping; several switch at once, and switching several on
 stops at the allowance the server states, out loud; nothing on the page deletes.
-
-## `check_pricing`
-
-`/pricing` against a billing API faked in the page: not on sale it says so and
-states no allowance; on sale it shows the offer, its price and the free
-allowance the server states, a way to sign in when signed out, a subscribe
-button when signed in, and a member's own plan.
 
 ## `check_ability_casting`
 
@@ -965,45 +946,24 @@ shell. Status alone is not the assertion: what must never happen is the app's
 own html arriving under a script's name.
 
 **THE NEGATIVE CONTROL IS EVERY ROUTE.** `/weapons/Torid`, `/benchmark`,
-`/thanks` and `/` are all paths with no file behind them, so a worker that 404s
+`/account` and `/` are all paths with no file behind them, so a worker that 404s
 those has taken down every deep link on the site — a bigger outage shipped as
 the fix. It also reads `build_site_app.py` for the other half, since keeping one
 previous generation only shows up across two builds: a `rmtree` on either
 directory is the bug, and the check names it. Verified to bite by restoring the
 fall-through and by restoring the wholesale clear, one per half.
 
-## `check_thanks`
-
-**THE LIST SAYS WHO, AND MAY NEVER SAY HOW MUCH.** The ledger behind it holds
-names, amounts and dates; `scripts/publish_thanks.py` lets out names and a
-month, and the ORDER those names are in is the only thing the ranking is
-allowed to say. Every assertion here is a property that would break silently —
-the page would still look right, and the leak or the slight would be visible
-only to the person it was about. Four of them: no figure reaches the page, no
-RANK is printed beside a name, every name is drawn at one size and weight and
-colour, and the order is the published one rather than one the page chose. It
-also asserts the block sits BELOW the channels on `/support` and that an empty
-list is silent there while `/thanks` says so in a sentence.
-
-It PUBLISHES ITS OWN FIXTURE into `site/thanks.json` and puts the file back
-afterwards: the real one is empty until somebody chips in, and a check that can
-only run once there is money is a check that never runs. Verified to bite by
-printing a position beside each name, and by giving the first name a larger
-font — one per red line.
-
 ## `check_support`
 
-The page that ASKS for something makes its case in numbers
-it COUNTED. A drawn figure and a counted one look identical, so each is
+`/support` states what WFSim holds in numbers it COUNTED. A drawn figure and
+a counted one look identical, so each is
 compared against the source it claims: the weapons tile against
 `META.weapons`, the mods tile against the union of `META.mod_pools`, the built
 line against the injected `PROJECT_FACTS`. The other half is the one line
 about the READER — how much they have run here — asserted absent on a browser
 that has run nothing, correct after a real run at a run count the check chose,
-and absent from the request that run sent. Its negative control is the
-channels: an entry with no url draws nothing. It FORCES English rather than
-inheriting it,
-since the app boots into the browser's language.
+and absent from the request that run sent. It FORCES English rather than
+inheriting it, since the app boots into the browser's language.
 
 ## `check_forma_plan`
 

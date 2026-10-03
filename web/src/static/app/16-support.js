@@ -1,42 +1,4 @@
-// ---- support: the donation channels -------------------------------------
-// A channel is drawn only when it HAS a working link. An option that does not
-// work yet is worse than one that is not offered, so an entry with an empty
-// `url` renders nothing — and filling that url in is the whole of adding one.
-//
-// SUPPORT LIVES WHERE THE VIDEOS ARE: Bilibili for the Chinese side, YouTube
-// for the rest. The site itself sells only the service, so a donation never
-// meets an account. The ones that match the display language come first.
-//
-// ORDERED, NEVER FILTERED, which is the rule the topbar's community links
-// follow and for the same reason: a reader who can use the other one still has
-// to be able to find it. `locale: null` means "works anywhere" and sorts
-// between the two, and the per-locale ORDER is all that lives here.
-const chRank = (c) => (c.locale === LANG ? 0 : c.locale ? 2 : 1);
-const SUPPORT_CHANNELS = [
-  {
-    id: "bilibili",
-    name: "Bilibili",
-    // THE ONE CHANNEL A MAINLAND READER CAN ACTUALLY PAY THROUGH, which is the
-    // whole reason `locale` exists.
-    //
-    // THE AUTHOR'S SPACE PAGE, not a payment url. Bilibili's charge button
-    // lives there and the flow never leaves an app the reader is already signed
-    // into; a deep link into that flow is a url only Bilibili may build.
-    url: "https://space.bilibili.com/1965302",
-    locale: "zh",
-    what: "One-off or monthly, in CNY, from inside Bilibili — no card, and no new account.",
-  },
-  {
-    id: "youtube",
-    name: "YouTube",
-    // EMPTY UNTIL FAN FUNDING OPENS on the channel (memberships and Super
-    // Thanks need YouTube's Partner Program), which is the rule above: filling
-    // this url in is the whole of adding the channel.
-    url: "",
-    locale: "en",
-    what: "A channel membership or Super Thanks, from inside YouTube.",
-  },
-];
+// ---- support: what the project holds and what the reader has run --------
 
 /// HOW MUCH OF THIS THE READER HAS ACTUALLY USED — on their own machine, and
 /// nowhere else.
@@ -66,92 +28,6 @@ function noteSimRun(engagements) {
   v.sims += 1;
   v.engagements += Math.max(1, engagements | 0);
   try { localStorage.setItem(SUPPORT_USE, JSON.stringify(v)); } catch (_) { /* private mode */ }
-}
-
-/// WHO HAS CHIPPED IN, BY NAME — the only thing that ever leaves the ledger.
-///
-/// A FILE, NOT AN ENDPOINT. `scripts/publish_thanks.py` reads the ledger, works
-/// out the order and writes `site/thanks.json`, which is committed the way
-/// `site/board/` is. Nothing at the edge is bound to the ledger, so no request
-/// to this site can ask what anybody gave.
-///
-/// ORDERED, NEVER NUMBERED, and no rank, no band, no size. The order combines
-/// what somebody gave with how long ago they first gave it; printing a position
-/// beside a name would turn a thank-you into a leaderboard, which is the one
-/// thing the page above it promises it is not.
-///
-/// SILENT WHEN IT IS EMPTY, the rule every count on `/support` follows: a
-/// heading over nothing is worse than no heading.
-let thanksDoc = null;
-const thanksWaiting = [];
-function thanksAsk(then) {
-  if (thanksDoc !== null && thanksDoc !== "asking") { then(); return; }
-  thanksWaiting.push(then);
-  if (thanksDoc === "asking") return;
-  thanksDoc = "asking";
-  const land = (v) => { thanksDoc = v; thanksWaiting.splice(0).forEach((f) => f()); };
-  fetch("/thanks.json")
-    .then((r) => (r.ok ? r.json() : null))
-    // AN UNPUBLISHED LIST ARRIVES AS THE APP'S OWN HTML, with a 200: the SPA
-    // fallback answers every unmatched path with index.html. `.json()` is what
-    // tells a missing file from an empty one, so the catch IS the not-found.
-    .then((j) => land(j && Array.isArray(j.supporters) ? j : "failed"))
-    .catch(() => land("failed"));
-}
-function thanksNames() {
-  return (thanksDoc && typeof thanksDoc === "object" && thanksDoc.supporters) || [];
-}
-
-/// HOW MANY NAMES `/support` SHOWS BEFORE IT DEFERS TO `/thanks`. The block
-/// sits under the channels rather than over them: it is there to say that
-/// people do this, not to be read instead of the thing above it.
-const THANKS_PEEK = 24;
-/// WHERE THEY GAVE, as a heading over the names that gave there — the channels
-/// the page offers first, then any the ledger still remembers. A reader sees
-/// that these people backed WFSim on the video platforms, which is what keeps
-/// a donation apart from a membership; someone who gave in two places is
-/// thanked in both.
-const THANKS_FROM = { bilibili: "On Bilibili", youtube: "On YouTube", kofi: "On Ko-fi", patreon: "On Patreon", afdian: "On Afdian" };
-function thanksGroups(shown) {
-  const order = [...SUPPORT_CHANNELS.map((c) => c.id), ...Object.keys(THANKS_FROM)];
-  const groups = new Map();
-  for (const s of shown) {
-    for (const via of (Array.isArray(s.via) && s.via.length ? s.via : [""])) {
-      if (!groups.has(via)) groups.set(via, []);
-      groups.get(via).push(s);
-    }
-  }
-  const rank = (k) => (order.includes(k) ? order.indexOf(k) : order.length);
-  return [...groups].sort(([a], [b]) => rank(a) - rank(b) || a.localeCompare(b));
-}
-function drawThanks(block, list, limit) {
-  const all = thanksNames();
-  block.hidden = all.length === 0;
-  if (!all.length) return;
-  const shown = limit ? all.slice(0, limit) : all;
-  // THE NAME AND NOTHING ELSE. `since` stays in the published file — it is
-  // what the ordering is derived from and worth keeping as a record — but a
-  // month printed beside a name IS a number beside a name, which is the one
-  // thing /thanks tells the reader it does not do. Where they gave is the
-  // group's heading, never a word beside a name.
-  list.innerHTML = thanksGroups(shown).map(([via, people]) => `<li class="thx-from">`
-    + (via ? `<div class="thx-src">${escHtml(tr(THANKS_FROM[via] || via))}</div>` : "")
-    + `<ul class="thx-group">${people.map((s) => `<li class="thx-one">`
-      + `<span class="thx-name">${escHtml(s.name)}</span></li>`).join("")}</ul></li>`).join("");
-  const more = block.querySelector(".thx-more");
-  if (more) more.hidden = all.length <= shown.length;
-}
-function renderThanksPage() {
-  const block = $("thanks-block");
-  const list = $("thanks-list");
-  if (!block || !list) return;
-  const draw = () => {
-    drawThanks(block, list, 0);
-    const none = $("thanks-none");
-    if (none) none.hidden = thanksNames().length > 0;
-  };
-  thanksAsk(draw);
-  draw();
 }
 
 /// THE FACTS STRIP — what this repository holds, counted rather than claimed.
@@ -275,23 +151,11 @@ function identityLines() {
   draw();
 }
 
-/// THE MEMBERSHIP, while one is on sale to this reader — and Patron only once
-/// the catalog sells it. Before that the page offers the video platforms alone.
-function renderSupportMember() {
-  const box = $("support-member");
-  if (!box) return;
-  const draw = () => {
-    box.hidden = !billingState.configured;
-    const patron = $("support-patron");
-    if (patron) patron.hidden = !(((billingState.names || {}).offers || {}).patron);
-  };
-  draw();
-  if (typeof loadBilling === "function") loadBilling().then(draw, () => {});
-}
-
 function renderSupport() {
   renderUsageNote();
-  renderSupportMember();
+  // WHAT AN EXTENSION ADDS to this page, drawn into its one slot.
+  const slot = $("ext-support");
+  if (slot) { slot.innerHTML = ""; extHook("support", slot); }
   const facts = $("support-facts");
   if (facts) {
     facts.innerHTML = projectFacts().map((f) => `
@@ -315,26 +179,9 @@ function renderSupport() {
     const u = supportUse();
     used.hidden = !u.sims;
     if (u.sims) {
-      used.textContent = tr("You have run {n} simulations on this machine — {e} engagements. That number is in this browser and has never been sent anywhere.")
+      used.textContent = tr("You have run {n} simulations on this machine — {e} engagements. That number is kept in this browser.")
         .replace("{n}", u.sims.toLocaleString()).replace("{e}", u.engagements.toLocaleString());
     }
-  }
-  const box = $("support-channels");
-  if (box) {
-    box.innerHTML = SUPPORT_CHANNELS.filter((c) => c.url)
-      .sort((a, b) => chRank(a) - chRank(b)).map((c) => `
-      <a class="sup-card" href="${escHtml(c.url)}" target="_blank" rel="noopener">
-        <div class="sup-name">${escHtml(c.name)}</div>
-        <div class="sup-what">${escHtml(tr(c.what))}</div>
-        <span class="run-btn">${escHtml(tr("Open"))} ↗</span>
-      </a>`).join("");
-  }
-  const thanksBlock = $("support-thanks");
-  const thanksList = $("support-thanks-list");
-  if (thanksBlock && thanksList) {
-    const draw = () => drawThanks(thanksBlock, thanksList, THANKS_PEEK);
-    thanksAsk(draw);
-    draw();
   }
 }
 

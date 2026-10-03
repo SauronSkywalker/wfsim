@@ -260,7 +260,7 @@ const SHARE_SHORT_HOSTS = LIVE_HOSTS;
 /// offline, on a shell with no network, or a store that is down. The long form
 /// opens exactly as it always has, so a failure here costs length and nothing
 /// else.
-async function shareUrl(claim, sign = false) {
+async function shareUrl(claim, signer = null) {
   const w = weaponInfo($("weapon").value);
   const code = await shareCode();
   if (SHARE_SHORT_HOSTS.includes(location.hostname)) try {
@@ -273,63 +273,19 @@ async function shareUrl(claim, sign = false) {
     clearTimeout(timer);
     const j = r.ok ? await r.json() : null;
     if (j && j.ok && /^[0-9A-Za-z]{10}$/.test(j.id)) {
-      const signed = sign && await signShare(j.id, weaponPath(w.id).slice("/weapons/".length));
+      const signed = signer && await signer.sign(j.id, weaponPath(w.id).slice("/weapons/".length));
       return signed || `${SHARE_ORIGIN}${weaponPath(w.id)}/s/${j.id}`;
     }
   } catch (_) { /* the long form below */ }
   return `${location.origin}${weaponPath(w.id)}?${SHARE_PARAM}=${code}`;
 }
 
-/// A MEMBER'S LINK CARRIES THEIR NAME, signed by the paid half: it mints the
-/// link's last segment and answers anyone who asks who signed it, because a
-/// name this page drew by itself is one any copy of the page could draw.
-/// Signing needs the account's session, so it happens on the site itself; a
-/// link that cannot be signed is the plain short link.
-const SHARE_SIGN = "wfsim-share-sign";
-const shareSignOn = () => { try { return localStorage.getItem(SHARE_SIGN) !== "0"; } catch (_) { return true; } };
-let shareSignable = null;
-async function shareCanSign() {
-  if (location.origin !== SHARE_ORIGIN || typeof accountState === "undefined" || !accountState.account) return false;
-  if (shareSignable === null || shareSignable.account !== accountState.account.id) {
-    try { await loadBilling(); } catch (_) { /* answered below */ }
-    shareSignable = { account: accountState.account.id, can: (billingState.features || []).includes("share_signed") };
-  }
-  return shareSignable.can;
-}
-async function signShare(id, weapon) {
-  try {
-    const r = await fetch("/api/cloud/share/sign", { method: "POST", credentials: "same-origin",
-      headers: { "content-type": "application/json" }, body: JSON.stringify({ share: id, weapon }) });
-    const j = r.ok ? await r.json() : null;
-    return j && j.ok && typeof j.path === "string" ? `${SHARE_ORIGIN}${j.path}` : null;
-  } catch (_) { return null; }
-}
-
-/// WHO SHARED THE BUILD ON SCREEN, as the paid half answers it: shown over the
-/// build bar while that build is open, and only on the link it signed, so a
-/// signature lifted onto another build names nobody. It says who, never that a
-/// number is truer: every build here is computed by the same engine.
+/// WHO SHARED THE BUILD ON SCREEN, when an extension can say (`shareWho`):
+/// drawn over the build bar while that build is open, and only for the link
+/// that names it.
 let shareBy = null;
-/// The titles a signature may carry, as the page names them; one it does not
-/// name is not drawn.
-const SHARE_TITLES = { creator: "WFSim Creator" };
-/// Who signed `sig`, as the paid half answers it — only when it signed `id`.
-async function shareSigner(id, sig) {
-  let j = null;
-  try {
-    const r = await fetch(`${shareApi()}/api/cloud/share/${sig}`);
-    j = r.ok ? await r.json() : null;
-  } catch (_) { j = null; }
-  if (!j || !j.ok || j.share !== id || typeof j.name !== "string") return null;
-  return { name: j.name, tier: j.tier, titles: Array.isArray(j.titles) ? j.titles : [] };
-}
-/// ONE MARK, AND A TITLE OUTRANKS A TIER: who someone is before what they pay.
-const shareMark = (by) => {
-  const title = by.titles.find((t) => SHARE_TITLES[t]);
-  return { title, mark: title ? SHARE_TITLES[title] : { patron: "WFSim Patron", member: "WFSim Member" }[by.tier] };
-};
 async function showShareBy(id, sig) {
-  const by = await shareSigner(id, sig);
+  const by = await extHook("shareWho", id, sig);
   if (!by) return;
   shareBy = { preset: activePreset, ...by };
   renderShareBy();
@@ -340,15 +296,8 @@ function renderShareBy() {
   const on = !!shareBy && activePreset === shareBy.preset;
   el.hidden = !on;
   if (!on) return;
-  const { title, mark } = shareMark(shareBy);
-  el.className = "share-by" + (mark ? ` ${title || shareBy.tier}` : "");
-  el.innerHTML = `${escHtml(tr("Shared by"))} <b>${escHtml(shareBy.name)}</b>`
-    + (title === "creator"
-      // THE CREATOR'S MARK IS THE LOGO'S: white, a thin gold ring, black WF and
-      // gold Sim — the same on either theme, as the logo is.
-      ? ` <span class="sb-creator"><b>WF</b><i>Sim</i> ${escHtml(tr("Creator"))}</span>`
-      : mark ? ` · <span class="sb-tier">${escHtml(tr(mark))}</span>` : "")
-    + ` <span class="sb-proof">${escHtml(tr("checked with wfsim.app"))}</span>`;
+  el.className = "share-by" + (shareBy.className ? ` ${shareBy.className}` : "");
+  el.innerHTML = shareBy.html;
 }
 
 /// THE BUILD A SHORT LINK NAMES, or null. Its id is a hash of what it stores,
@@ -564,12 +513,13 @@ async function openSharePanel(bar) {
   panel.hidden = false;
   let withResult = false;
   try { withResult = localStorage.getItem(SHARE_RESULT) === "1"; } catch (_) { /* off */ }
-  const canSign = await shareCanSign();
+  // A LINK AN EXTENSION CAN SIGN offers it here (`shareSigner`); else it is plain.
+  const signer = await extHook("shareSigner");
   const draw = async () => {
     if (withResult) panel.innerHTML = `<div class="sh-note">${escHtml(tr("simulating this build in the current scenario…"))}</div>`;
     const measured = withResult ? await shareMeasurement() : null;
-    const signing = canSign && shareSignOn();
-    const bUrl = await shareUrl(measured && measured.claim, signing);
+    const signing = !!signer && signer.on();
+    const bUrl = await shareUrl(measured && measured.claim, signing ? signer : null);
     const lines = await shareText();
     const text = measured ? [lines[0], measured.line, ...lines.slice(1)] : lines;
     const native = typeof navigator.share === "function";
@@ -582,12 +532,11 @@ async function openSharePanel(bar) {
       `<label class="sh-opt"><input type="checkbox" class="sh-result"${withResult ? " checked" : ""}> ` +
       `${escHtml(tr("include my result in this scenario"))}` +
       (measured ? ` <b>${escHtml(measured.line)}</b>` : "") + `</label>` +
-      (canSign ? `<label class="sh-opt"><input type="checkbox" class="sh-sign"${signing ? " checked" : ""}> `
-        + `${escHtml(tr("sign it with my name"))} <b>${escHtml(accountName(accountState.account))}</b></label>` : "") +
+      (signer ? `<label class="sh-opt"><input type="checkbox" class="sh-sign"${signing ? " checked" : ""}> ${signer.option}</label>` : "") +
       `<div class="sh-note">${escHtml(tr(measured
         ? "the link still opens the build alone; your result travels beside it, shown as yours"
         : "the build and its rivens, and nothing else: no fight, no measurement, so opening it leaves the reader's own scenario untouched"))}`
-        + (signing ? ` ${escHtml(tr("Whoever opens it sees your name, checked with wfsim.app."))}` : "") + `</div>` +
+        + (signing ? ` ${signer.note}` : "") + `</div>` +
       (SHARE_CARD_ENABLED
         ? `<div class="sh-more"><button class="cu-btn sh-full">${escHtml(tr("…as a card →"))}</button></div>`
         : "");
@@ -612,7 +561,7 @@ async function openSharePanel(bar) {
     };
     const signBox = panel.querySelector(".sh-sign");
     if (signBox) signBox.onchange = (e) => {
-      try { localStorage.setItem(SHARE_SIGN, e.target.checked ? "1" : "0"); } catch (_) { /* this page only */ }
+      signer.set(e.target.checked);
       draw();
     };
     panel.querySelector(".sh-result").onchange = (e) => {
@@ -634,7 +583,7 @@ async function openShareClaim(panel, url, measured) {
   if (!more) return;
   more.innerHTML = `<div class="sh-note">${escHtml(tr("drawing the card…"))}</div>`;
   const signed = url.match(/\/s\/([0-9A-Za-z]{10})\/([^/?#]+)$/);
-  const by = signed ? await shareSigner(signed[1], signed[2]) : null;
+  const by = signed ? await extHook("shareWho", signed[1], signed[2]) : null;
   more.innerHTML =
     `<div class="sh-row"><input class="sh-url" type="text" readonly value="${escHtml(url)}">` +
     `<button class="cu-btn sh-copy">${escHtml(tr("copy link"))}</button>` +
@@ -647,7 +596,7 @@ async function openShareClaim(panel, url, measured) {
   const canvas = more.querySelector(".sh-canvas");
   await drawShareCard(canvas, url, {
     measured: measured && measured.card,
-    by: by && { name: by.name, mark: shareMark(by).mark ? tr(shareMark(by).mark) : "" },
+    by: by && { name: by.name, mark: by.mark || "" },
   });
 
   // SCOPED TO `more`, NOT TO THE PANEL: the build link above has a `.sh-copy`

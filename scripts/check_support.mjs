@@ -1,9 +1,9 @@
-// EVERY NUMBER ON THE PAGE THAT ASKS FOR SOMETHING IS COUNTED, NOT TYPED.
+// EVERY NUMBER ON /support IS COUNTED, NOT TYPED.
 //
-// `/support` is the one page here that asks the reader for money, and it makes
-// its case in counts. A page of counts has exactly one failure mode worth
-// testing for — figures that are DRAWN but not COUNTED, since a hardcoded strip
-// looks identical, reads correctly, and goes stale in a week unnoticed.
+// The page states what WFSim holds in counts. A page of counts has exactly one
+// failure mode worth testing for — figures that are DRAWN but not COUNTED,
+// since a hardcoded strip looks identical, reads correctly, and goes stale in
+// a week unnoticed.
 //
 // So the sharp assertions here compare what is on screen against the source it
 // claims to come from: the weapons tile against `META.weapons`, the mods tile
@@ -14,9 +14,6 @@
 // about them and the one that must never travel. Asserted in both directions:
 // absent on a browser that has run nothing, present and CORRECT after a real
 // run, and absent from the request that run sent.
-//
-// AND THE NEGATIVE CONTROL IS THE CHANNELS: an entry with no url must draw
-// nothing, which is what makes an unopened Patreon safe to declare.
 import { openApp, sleep } from "./cdp.mjs";
 
 const app = await openApp({ boot: 20000 });
@@ -105,35 +102,11 @@ check(`${tag} ...and the page states when it started, with its commit count`,
   JSON.stringify(facts.built));
 
 // ---------------------------------------------------------------------------
-// 3. THE CHANNELS, and the negative control that makes an unopened account safe
-//    to declare: an entry with no url draws nothing at all.
-const chans = await evaluate(`(() => {
-  const cards = [...document.querySelectorAll("#support-channels .sup-card")].map((a) => ({
-    href: a.getAttribute("href"),
-    name: a.querySelector(".sup-name").textContent.trim(),
-    what: a.querySelector(".sup-what").textContent.trim(),
-  }));
-  return {
-    cards,
-    declared: SUPPORT_CHANNELS.map((c) => ({ id: c.id, hasUrl: !!c.url })),
-  };
-})()`);
-
-const withUrl = chans.declared.filter((c) => c.hasUrl);
-const withoutUrl = chans.declared.filter((c) => !c.hasUrl);
-check(`${tag} every channel that has a link is offered`,
-  chans.cards.length === withUrl.length && chans.cards.length > 0,
-  `${chans.cards.length} drawn, ${withUrl.length} with a url`);
-check(`${tag} ...and one that does not is not (negative control)`,
-  withoutUrl.length === 0 || chans.cards.length === withUrl.length,
-  JSON.stringify(chans.declared));
-// NO SUM ANYWHERE ON THE PAGE. Each channel shows its own minimum and ladder at
-// the moment of paying; a number written here is a staler copy of one, and it
-// makes the page read as a price list — the shape DE's rule does not allow. A
-// digit reappearing on a card is exactly how that comes back unnoticed.
+// 3. NO SUM ANYWHERE ON THE PAGE: a price written into prose reads as a price
+//    list, and a digit coming back in a sentence is how that returns unnoticed.
 const money = await evaluate(`[...document.querySelectorAll("#support-page")]
   .map((el) => el.innerText).join(" ").match(/[$¥£€]\s?[0-9]|[0-9]+\s?(元|美元|USD|CNY)/g) || []`);
-check(`${tag} ...and no card, and no sentence, names a sum`,
+check(`${tag} no sentence on the page names a sum`,
   money.length === 0, JSON.stringify(money));
 
 // ---------------------------------------------------------------------------
@@ -205,7 +178,6 @@ const zh = await evaluate(`(() => {
     heads: [...el.querySelectorAll(".bh h2")].map((h) => h.textContent.trim()),
     labels,
     built: $("support-built").textContent.trim(),
-    what: [...el.querySelectorAll(".sup-card .sup-what")].map((s) => s.textContent.trim()),
   };
 })()`);
 const han = (s) => /[一-鿿]/.test(s);
@@ -215,8 +187,6 @@ check(`${tag} zh ...so are the figures' labels`,
   zh.labels.length >= 3 && zh.labels.every(han), JSON.stringify(zh.labels));
 check(`${tag} zh ...and the line the build fills in`,
   han(zh.built) && /\d/.test(zh.built), zh.built);
-check(`${tag} zh ...and what each channel is`,
-  zh.what.length > 0 && zh.what.every(han), JSON.stringify(zh.what));
 
 await sleep(200);
 await finish("the support page counts what it claims, and keeps what is the reader's");

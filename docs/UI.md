@@ -293,8 +293,8 @@ TO THE ACCOUNT**, free to every account — every entry under `wfsim-presets-*`
 and `wfsim-customs-*` the reader leaves synced, entry by entry, matched by `id`.
 Saving on a browser is never limited; what an account holds may be, and the
 server states it. `web/src/static/app/37-sync.js` is the page's half;
-the server's half is the paid worker's `/api/cloud/sync` (docs/ACCOUNTS.md
-§"Paid features"), which keeps the newest write of each entry. localStorage
+the server's half is the private worker's `/api/cloud/sync` (docs/ACCOUNTS.md
+§"The private worker"), which keeps the newest write of each entry. localStorage
 stays the working copy: signed out, or without the feature, nothing runs.
 
 | rule | where it is held |
@@ -353,19 +353,17 @@ estimate it." and nothing louder.
 - **SHORT, AND QUIET.** No exclamation marks, no emoji, no urgency, no
   countdown, nothing scarce.
 - **A PEER, NOT A VENDOR.** "You", never a service desk's "we appreciate your
-  support". Where the maker speaks — the ask, the thanks — it is "I".
-- **NEVER PRESSURE, NEVER PITY.** No guilt, no "we need you", no costs offered
-  as a reason to pay. Paying is what someone who likes the tool chooses.
-- **THE TERMS IN THE OPEN.** What it cannot model, how to cancel, how to get a
-  refund — said where the reader is, before they ask.
+  support". Where the maker speaks, it is "I".
+- **NEVER PRESSURE, NEVER PITY.** No guilt and no "we need you".
+- **THE LIMITS IN THE OPEN.** What it cannot model is said where the reader
+  is, before they ask.
 
 **CHINESE IS WRITTEN FOR THE MAINLAND, NOT TRANSLATED INTO IT.** Short
 sentences in the order a Chinese reader says them, not the English clause
 order and its dashes. 你, never 您. Bilibili's own words where it has them
 (充电, 实测, 配装), and no slang that belittles the reader or the giver (投喂,
 家人们). No 最 / 第一 / 顶级 / 终极 in anything that reads as promotion — the
-Advertising Law forbids superlatives — and an auto-renewing membership says
-自动续费 where the price is.
+Advertising Law forbids superlatives.
 
 ## The build finder
 
@@ -498,23 +496,14 @@ under that address, so `SHARE_CARD_V` is bumped whenever the drawing changes.
 TEXT ONLY, like the weapon cards the build draws: the resvg build does not read
 the site's WebP art, and a card that states things needs no DE art to do it.
 
-**A SIGNED SHARE NAMES WHO SHARED IT, AND THE NAME IS THE SERVER'S WORD.** A
-Member sharing from wfsim.app may sign the link ("sign it with my name", on
-until turned off; browser storage): the short link is then
-`/weapons/<Wiki_Name>/s/<id>/<sig>`, the signature minted by the paid half
-over `/api/cloud/share/sign`. Boot takes both segments off the address; once
-the build lands, the page asks `/api/cloud/share/<sig>` who signed it and
-draws the answer over the build bar — the name and one mark, a title before
-a tier ("WFSim Creator" over the Member grant the creator's account holds), or
-the name alone for a lapsed membership — while that build is open. How long anyone has
-been a member is never on it: that is theirs, shown on their own billing page.
-A NAME THIS PAGE DREW BY ITSELF WOULD BE DRAWABLE BY ANY COPY OF IT, so the page
-draws only what the server answers, and only when the signature's `share` is
-the link it arrived on: a signature lifted onto another build names nobody.
-The line says who, never that a number is truer. Signing needs the session, so
-the desktop shell and a dev server make plain links; any failure to sign is
-the plain short link. `check_share_signed` holds the page's half; the paid
-half is the private repo's.
+**A SHORT LINK MAY NAME WHO SHARED IT, WHEN AN EXTENSION CAN SAY.** It may
+carry a second segment, `/weapons/<Wiki_Name>/s/<id>/<sig>`; boot takes both
+off the address, and once the build lands the page asks the extension
+(`shareWho`) and draws its answer over the build bar while that build is open,
+and on the card. An extension that can sign offers it in the share panel
+(`shareSigner`); any failure is the plain short link. The page draws nothing of
+its own here, so where nothing is mounted a link names nobody
+(docs/UI.md §Extensions).
 
 **THE SHARER'S RESULT MAY TRAVEL BESIDE THE LINK, NEVER IN IT.** A scenario is
 always selected, so the panel offers "include my result in this scenario" (off
@@ -565,22 +554,20 @@ because a phone cannot click a picture.
 **A THEME IS TOKENS, NEVER LAYOUT** (`CARD_THEMES`): colours and fonts. The
 blocks and their order are the build's. This repo ships the default only.
 
-## The page that asks for something
+## The support page
 
-**THE PAGE THAT ASKS FOR SOMETHING ARGUES THE WAY THE REST OF THE SITE DOES.**
-Every figure on `/support` is COUNTED, never typed: `PROJECT_FACTS` is written
-into `app.js` by `build_site_app.py` (commits and the first commit's day) and
-everything else comes from `META` and `BOARD_META`.
+**`/SUPPORT` ARGUES THE WAY THE REST OF THE SITE DOES.** Every figure on it is
+COUNTED, never typed: `PROJECT_FACTS` is written into `app.js` by
+`build_site_app.py` (commits and the first commit's day) and everything else
+comes from `META` and `BOARD_META`.
 
 THREE FIGURES, AND THEY ARE THE THREE MODULES: what is modelled
 (`rosterSize()`, a SUM over META's categories so a new one counts itself and
 the function is never edited again), what players built with it
 (`submissions`), and what came back out (`listed`). Submissions are ONE pool
 every ruler reads, so they are MAXed; listed scores are each ruler's own and are
-ADDED. Test and check counts are gone — a reader deciding whether this is
-worth anything is not moved by how many unit tests it has, and three figures
-an order of magnitude apart read as three facts where two of the same size
-read as one fact printed twice.
+ADDED. Three figures an order of magnitude apart read as three facts where two
+of the same size read as one fact printed twice.
 
 A FIGURE IS CLAIMED ONLY IF A READER CAN CHECK IT against the public
 repository.
@@ -594,87 +581,55 @@ about anybody else's product: a figure would bind the claim to one weapon on
 one day. THE PAGE NEVER COMPARES. It states what this does, and a reader who
 wants a comparison makes it themselves.
 
-THE ORDER IS THE ARGUMENT: what this is and how it works, what it holds, why
-it can be checked, what the reader has already got out of it, the door, and
-then — directly under the door — what giving never buys, which is the answer
-to the question the door has just raised rather than small print two sections
-below it. Only after that does the money go anywhere.
+THE ORDER: what this is and how it works, what it holds, why it can be checked,
+what the reader has already run, the slot an extension fills (`#ext-support`),
+then what is the same for everyone, and what is counted.
 
-NO SUM APPEARS ON THE PAGE — no ladder, no floor, no bill. Every channel shows
-its own minimum and its own ladder at the moment of paying, one screen away and
-always current, so a number written here is a staler copy of one, and a page
-that names a sum reads as a price list. `check_support` asserts the whole page
-against a currency pattern, because a digit comes back on a card unnoticed.
-
-WHAT BACKING MAKES POSSIBLE IS NAMED IN TIME, NEVER IN COSTS. The page says
-what a reader's backing makes possible — the hours a new weapon takes, the
-hours in game a calibrated number is measured against — and names no bill.
-
-TWO WAYS, KEPT APART. A membership is drawn only while one is on sale to the
-reader (`renderSupportMember`), names no price (`/pricing` does), and is said
-as backing, with what a Member receives; the video platforms are support and
-nothing comes back but thanks. The line under the page says both terms a
-reader is owed before paying: a donation buys nothing, and a membership renews
-until cancelled, in one click, and is refunded within 14 days of a charge.
-
-A CHANNEL IS A JOB, AND EACH AUDIENCE GETS EXACTLY ONE. Support lives where
-the videos are: Bilibili is the whole of the Chinese side, because that is where
-those readers already are and its charge button is one click from a video they
-are already watching; YouTube's memberships and Super Thanks are the rest, drawn
-once the channel's fan funding opens. The site sells only the service, so a
-donation never meets an account. A platform with a better fee table but no
-audience here is a road nobody walks: the first payment this project ever took
-came through Bilibili.
+NO SUM APPEARS ON THE PAGE. `check_support` asserts the whole page against a
+currency pattern, because a digit comes back in a sentence unnoticed.
 
 THE PAGE STATES WHAT IS TRUE, IT DOES NOT DENY WHAT ISN'T. "The calculator is
-the same for everyone" carries the four facts that were once a row of refusals —
-a donation never buys a number, never buys a feature. The heading names the
-calculator because that is what is equal; what a membership receives is not,
-and a page that said "everything" would be caught the day it ships. A page that braces against its own
-visitors reads as one with something to brace about, and the same facts said
-forwards are the strongest thing on it. Nothing describes a channel that has
-no url: a paragraph about an option nobody can take is not an option.
+the same for everyone" names the calculator because that is what is equal. A
+page that braces against its own visitors reads as one with something to brace
+about, and the same facts said forwards are the strongest thing on it.
 
-THE PAGE MAKES NO CLAIM ABOUT PRICING, IN EITHER DIRECTION. It states what is
-checkable today — the three modules, the measurements, the licence — and says
-nothing about what may be offered later. A pledge nobody has relied on yet
-costs nothing to withdraw, where breaking one later would cost everything,
-which is the rule the advertising claim was withdrawn under.
+THE PAGE MAKES NO CLAIM ABOUT WHAT MAY BE OFFERED LATER. It states what is
+checkable today — the three modules, the measurements, the licence.
 
-NO MONEY FIGURE IS PUBLISHED, and no endpoint serves one. What arrives is
-recorded by hand in `ledger/schema.sql`'s tables; the only thing that ever
-leaves them is a list of NAMES, written to `site/thanks.json` by
-`scripts/publish_thanks.py` and committed the way `site/board/` is. Nothing at
-the edge is bound to the ledger, so no request to this site can ask what
-anybody gave.
-
-THE LIST IS OPT-IN. A supporter is on it only under a name they asked for
-(`donors.display_name`); everybody else is recorded and ranked, and printed
-nowhere. A nickname is never the fallback: it was not chosen for this list.
-
-THE ORDER IS THE ONLY THING THE RANKING SAYS. It combines what somebody gave
-with how long ago they first gave it — the rule is stated beside the constant
-that sets it — and the page prints no position, no band and no figure, because
-`/support` says in so many words that a donation buys no feature and no perk.
-An ordered list is a list; the same list numbered is a leaderboard.
-WHERE THEY GAVE IS A HEADING, NEVER A WORD BESIDE A NAME: each channel heads
-the names that gave there, so the list says plainly that these people backed
-WFSim on the video platforms, which is what keeps a donation apart from a
-membership. `check_thanks` holds all three.
-
-THE BLOCK SITS BELOW THE CHANNELS on `/support`, and `/thanks` is the whole
-list at an address meant to be PASTED — a video description, the group. Empty,
-the block is absent and the page says so in a sentence: a list of nobody is
-social proof pointing the wrong way, but a page somebody navigated to owes them
-more than a blank.
-
-THE APP NEVER ASKS. `/support` and `/pricing` are reached by a reader who went
-looking; no result, limit, banner or mail points anyone at a membership or a
-donation. A reader at the sync allowance is told the limit and offered Export.
+THE APP NEVER ASKS. No result, limit, banner or mail points the reader
+anywhere they did not go looking. A reader at the sync allowance is told the
+limit and offered Export.
 
 WHAT THE READER HAS RUN NEVER LEAVES THE BROWSER. `wfsim-use` is two integers
 written by `runSim` and read by `/support` alone; the page says so where it
 prints them.
+
+## Extensions
+
+**WHAT A DEPLOYMENT ADDS BEYOND THE CALCULATOR IS MOUNTED, NEVER BUILT IN.** At
+boot the page fetches `/api/cloud/page.js` and runs it (`01-ext.js`); the script
+registers what it adds in `EXT` and draws with the page's own helpers. With
+nothing behind that door — a dev server, a fork, the desktop shell — nothing
+mounts and the calculator is whole, so no line of the page may assume an
+extension is there.
+
+| what an extension registers | the page uses it for |
+| --- | --- |
+| `EXT.pages[kind]` — `path`, `view`, `title`, `nav`, `open`, `settings`, `available()`, `load()`, `render(account)`, `shown(main)` | a page in `#auth-page`, routed by `authKindOf`: `open` for anyone, `settings` among the account's pages and in their navigation while `available()`; `view` is its `app.view` kind |
+| `EXT.strings[lang]` | `tr`, after the page's own table |
+| `EXT.hooks.act(el, kind)` | a `data-auth` action `authAct` does not know; true when taken |
+| `EXT.hooks.deleteNote()` | what else deleting the account ends, under the danger zone |
+| `EXT.hooks.support(slot)` | the support page's `#ext-support` |
+| `EXT.hooks.shareSigner()`, `shareWho(id, sig)` | signing a short link, and naming who signed one |
+
+A hook that throws is a hook that is not there (`extHook`). `route` and
+`loadAccount` wait for the mount only until it has settled, so an extension's
+address opens its page and every later route starts synchronously as before.
+
+**A STATIC DOCUMENT HAS SLOTS, FILLED BY THE WORKER.** `/privacy`, `/terms` and
+`/refunds` read with no script, so their `data-ext` elements are filled by the
+site's worker before the page leaves (`worker/ext_documents.js`); a slot the
+private worker does not answer is removed.
 
 ---
 

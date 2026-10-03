@@ -12,49 +12,15 @@ ui:
   "New chat": 新对话
   "Settings": 设置
   "Close": 关闭
-  "Creator": 作者
-  "WFSim Creator": WFSim 作者
-  "You have been a member for {n} days in all. Only you see this.": "你已累计成为会员 {n} 天。只有你自己能看到。"
   "Shared by": 分享者
-  "WFSim Member": WFSim 会员
-  "WFSim Patron": WFSim 赞助者
   "checked with wfsim.app": 已由 wfsim.app 验证
   "drawing the card…": 正在生成卡片…
   "the card shows the build; the link beside it opens the same build, and never touches the reader's own scenario": "卡片展示的是这套配装；旁边的链接打开的是同一套配装，不会动对方自己的场景"
   "Every number here is the WFSim engine's — open the link to run it yourself.": "这里的每个数字都来自 WF模拟 引擎——打开链接，自己跑一遍。"
   "Stance": 架式
-  "sign it with my name": 署上我的名字
-  "Whoever opens it sees your name, checked with wfsim.app.": 打开链接的人会看到你的名字，由 wfsim.app 验证。
-  "The people who have backed it": "支持过的人"
-  "Nobody has backed it yet. The list starts with whoever is first.": "还没有人支持过。这份名单从第一个人开始。"
-  "How to back WFSim →": "怎么支持 WF模拟 →"
   "Back it ↗": "支持一下 ↗"
-  "how to back WFSim": 怎么支持 WF模拟
-  "The people who backed WFSim on Bilibili and YouTube, earliest and most first. No ranks, and no numbers beside a name.":
-    "在 B 站和 YouTube 支持过 WF模拟 的人，按时间和心意排列。没有名次，名字旁边也不会有数字。"
   "The Warframe calculator that matches the game, measured item by item. The calculator is free for everyone, and the same for everyone.":
     "一个对着游戏实测、逐项校准的 Warframe 计算器。计算器对所有人免费，对所有人都一样。"
-  "Two ways to back it": 两种支持方式
-  "WFSim Member.": WFSim 会员。
-  "If you think WFSim does this right, become a Member. It keeps the work going, and it comes with your name on every build you share, a look of your own, and unlimited sync.":
-    "认可这件事的做法，就成为会员。它让这个项目能一直做下去，作为回馈：分享出去的每套配装都署上你的名字，一套专属外观，以及云同步不限量。"
-  "WFSim Patron.": WFSim 赞助者。
-  "For those who want to do the most for it. Everything a Member has, the Patron look, your name on the thanks page if you want it, and a seat where the work is discussed.":
-    "给想多出一份力的人。会员的全部内容，加上赞助者专属外观、致谢页署名（自愿），以及开发讨论区的一席之地。"
-  "See the prices and become a Member →": 查看价格，成为会员 →
-  "On Bilibili and YouTube.": 在 B 站或 YouTube 支持。
-  "Back the videos where WFSim is built in the open. Nothing is sold there and nothing comes back but thanks — your name on the thanks page, if you want it.":
-    "为记录开发过程的视频充电。这里不卖任何东西，也没有回馈，只有感谢：你愿意的话，名字会出现在致谢页上。"
-  "What your backing makes possible": 你的支持，让这些成为可能
-  "Time, most of all: every new weapon and mechanic, the day it lands.": 最主要的是时间：每一把新武器、每一个新机制，上线当天跟进。
-  "The hours in game that every calibrated number is measured against.": 每一个校准过的数字背后，都是在游戏里一小时一小时测出来的。
-  "A donation is a gift and buys nobody an advantage. A membership renews until you cancel it, which takes one click from your account; within 14 days of any charge, ask and it is refunded in full.":
-    "充电是心意，不换取任何优待。会员为自动续费订阅，可随时在账号页一键取消；每次扣款后 14 天内申请，全额退款。"
-  "On Bilibili": "来自 B 站"
-  "On YouTube": "来自 YouTube"
-  "On Ko-fi": "来自 Ko-fi"
-  "On Patreon": "来自 Patreon"
-  "On Afdian": "来自爱发电"
   "{n} results": "{n} 个结果"
   "Send": 发送
   "Stop": 停止
@@ -607,7 +573,6 @@ ui:
   "Focused Acceleration and Kinetic Ricochet, the Tetra family's exclusive mods — weapon-exclusive cards outside the pools this roster loads": "「Focused Acceleration」与「动能跳弹」，Tetra 家族的专属 MOD——这是武器专属卡，不在本武器库载入的卡池里"
   "Fomorian Accelerant, the Drakgoon-exclusive mod — a weapon-exclusive card outside the pools this roster loads": "「Fomorian Accelerant」，Drakgoon 的专属 MOD——这是一张武器专属卡，不在本武器库载入的卡池里"
   "Form": 形态
-  "Free, and worth more": 不花钱，但更值钱
   "Fulmination does not reach the PULL radius, only the blast, which is a distinction that costs nothing while the pull itself is unmodelled": "「雷霆」只作用于爆炸半径，够不到「牵引」半径。在牵引本身都没建模的前提下，这个区别不花任何代价"
   "Gain": 提升
   "Game data derived from the community": 游戏数据来自社区
@@ -786,8 +751,6 @@ ui:
   "Reload": 装填时间
   "Reloads": 装填次数
   Replay: 回放
-  "Report a number that disagrees with your own in-game measurement. That is the one contribution nothing else can replace — every formula here is calibrated against a real run, and a discrepancy is a bug report on reality.":
-    报一个跟你自己实测对不上的数字。这是唯一没法被替代的贡献——这里每条公式都拿实测校准过，对不上就是现实在给它报 bug。
   "Result": 结果
   "Ruinous Extension's reach — the page states the beam is 'extendable to 36 meters', and beam-range mods are shown on the card without being applied until a measurement settles the flat-versus-percent bracket": "「毁灭延伸」带来的射程——页面写明这道光束「可延长至 36 米」。光束射程类 MOD 会显示在卡片上但不会被施加，直到有一次实测确定它是固定值还是百分比那一档为止"
   "Run Optimizer": 运行优化
@@ -846,8 +809,6 @@ ui:
   "Sprint Speed": 冲刺速度
   "Stagger Resist (aiming)": 抗击退（瞄准时）
   Stalker: 追猎者
-  "Star the repository, or send a build link to someone who is still doing this by hand.":
-    给仓库点个 Star，或者把一个配装链接发给还在手算的人。
   "Stats": 属性
   "Status Chance": 触发几率
   "Status Damage": 触发伤害
@@ -914,7 +875,6 @@ ui:
   "Warframe": 战甲
   "Weapon passive: Frenzy — see its buff card (grants +1 toxin while active).": 武器被动：狂乱 —— 详见它的增益卡（生效期间提供 +1 毒素）。
   "Weapons": 武器
-  "What a donation never buys": 捐助永远买不到什么
   "What each mode is": 每种输出方式分别是什么
   "What is sent is the BUILD: the weapon and its mods, evolutions and arcanes. Not the fight you ran it under — the board scores every build under its OWN rulers, so any scenario can contribute. And nothing about you: no account, no identifier, no address, no time finer than the day, and no score. The board takes a weapon built as far as it goes: every main slot filled, and the exilus slot counted if you use one.": 发送的是这套配装：武器及其 mod、进化、赋能。不包含你跑它的那场仗——榜单会用它自己的标尺去跑每一套配装，所以任何场景都可以做贡献。也不包含关于你的任何东西：没有账号、没有标识符、没有地址、没有精确到天以下的时间，也没有分数。榜单收的是这把武器的最努力配置：8 个主槽位全部装满，用了 exilus 的话也一并计入。
   "What this benchmark measures": 这个基准到底在量什么
@@ -2264,28 +2224,20 @@ ui:
     "自 {day} 起一直公开开发，{n} 次提交，每一次都能查。"
   "It does not score an opening state. It runs the engagement — every ramp, every reload, every status that had to land before the damage depending on it — and reports what happened.":
     "它不是拿一个初始状态去套公式。它把这一场从头打到尾——起转、换弹、那些得先挂上去才吃得到加成的异常——然后告诉你这一场到底打出了什么。"
-  "You have run {n} simulations on this machine — {e} engagements. That number is in this browser and has never been sent anywhere.":
-    "你在这台机器上跑了 {n} 次模拟，一共 {e} 场战斗。这个数只存在你自己的浏览器里，没往任何地方发过。"
+  "You have run {n} simulations on this machine — {e} engagements. That number is kept in this browser.":
+    "你在这台机器上跑了 {n} 次模拟，一共 {e} 场战斗。这个数只存在你自己的浏览器里。"
   "The calculator is the same for everyone":
     "计算器对所有人都一样"
   "An in-game measurement is the only thing that changes what the engine does, and it wins whoever reports it — so the way to move a number here is to go and measure one.":
     "能改这个引擎的只有实测，谁报的都算数——想让这里的数字变，就去测一个回来。"
-  "Building, simulating and optimizing are the same for everyone, and what guarantees that is not me: this is AGPL-3.0, so the engine, the game data and the wasm are public and you can run your own copy.":
-    "构建、模拟、优化对谁都一样，而且保证这件事的不是我：项目是 AGPL-3.0，引擎、游戏数据、wasm 全部公开，你随时可以自己开一份跑。"
-  "A channel membership or Super Thanks, from inside YouTube.":
-    "在 YouTube 里加入频道会员或送超级感谢。"
+  "Building, simulating and optimizing are the same for everyone. This is AGPL-3.0: the engine, the game data and the wasm are public, and you can run your own copy.":
+    "构建、模拟、优化对谁都一样。项目是 AGPL-3.0，引擎、游戏数据、wasm 全部公开，你可以自己跑一份。"
   "A fix to the builder, the simulator or the optimizer ships to everybody at once. There is no earlier copy.":
     "构建器、模拟器、优化器上的任何一处修复，都是同时发给所有人的。没有抢先版。"
-  "What you have run here stays in your own browser and is sent nowhere. The only place a visit is counted at all is Cloudflare's own request log, which is what serves the page.":
-    "你在这里跑过什么，只留在你自己的浏览器里，不会发往任何地方。一次访问唯一被记下的地方，是 Cloudflare 自己的请求日志——页面本来就是它发的。"
-  "A donation buys no priority: not over what gets built next, not in the queue, not on a reply. I will read your message knowing you backed this, and it would be dishonest to claim that changes nothing — but that is a courtesy, not an obligation, and it is the whole of what it is.":
-    "捐助买不到优先权：接下来做什么、排队的先后、回不回复，都不会因此改变。我读你的消息时会知道你支持过这个项目，说这毫无影响是不诚实的——但那是我这边的一份心意，不是你手上的一项权利，而且仅止于此。"
-  "One-off or monthly, in CNY, from inside Bilibili — no card, and no new account.":
-    "单次或包月，人民币，在 B 站里直接充——不用信用卡，也不用注册新号。"
+  "What you have run here stays in your own browser. What the site counts, and how to turn it off, is at the foot of this page.":
+    "你在这里跑过什么，只留在你自己的浏览器里。网站统计了什么、怎么关掉，写在本页最下面。"
   "Thank you":
     "感谢"
-  "Everyone who has →":
-    "全部名单 →"
   "WFSim for Windows": "WFSim Windows 桌面版"
   "The same calculator on your own machine — it opens instantly, works with no connection, and keeps itself up to date. It is not a cut-down version: the engine is the same wasm module this site serves.": "同一个计算器，跑在你自己的电脑上 —— 秒开、可离线、自动更新。它不是缩水版：引擎就是本站在用的同一个 wasm 模块。"
   "The first time you open it": "第一次打开"
@@ -2542,15 +2494,6 @@ ui:
   "too large to sync": 太大，无法同步
   "cannot be synced": 无法同步
   "{n} new items stay on this browser: the account's sync allowance is used": "{n} 个新建项留在这个浏览器：账户的同步额度已用完"
-  "Pricing": 价格
-  "Free": 免费
-  "The builder, simulator, optimizer and leaderboard, with no account": "配装器、模拟器、优化器和排行榜，不需要账号"
-  "Saving on your browser, with no limit": "在浏览器里保存，不限数量"
-  "Syncing to your account: {a} presets and {b} customs": "同步到账户：{a} 个预设和 {b} 个自定义项"
-  "Syncing to your account": 同步到账户
-  "Membership is not on sale yet.": 会员尚未开售。
-  "Sign in to subscribe": 登录后订阅
-  "Sold by Mogin Labs Pte. Ltd., Singapore. Payments are handled by Stripe.": "销售方为新加坡 Mogin Labs Pte. Ltd.，付款由 Stripe 处理。"
   "What syncs": "同步内容"
   "presets {a} · customs {b}": "预设 {a} · 自定义 {b}"
   "The cloud on each item switches it; saving on this browser is never limited.": "每一项上的云朵可以单独开关；在这个浏览器里保存不受任何限制。"
@@ -2615,55 +2558,11 @@ ui:
   "Confirm": "确认"
   "Ways to sign in": "登录方式"
   "Download my data": "下载我的数据"
-  "Membership and billing": "会员与账单"
-  "Billing history": "账单历史"
-  "Renewal failed": "续费失败"
-  "The last renewal did not go through.": "上一次续费没有扣款成功。"
-  "Stripe tries again over the next few days, and the membership stays on meanwhile. A new payment method is charged at once.": "Stripe 会在接下来几天自动重试，期间会员照常可用。更新付款方式后会立即重新扣款。"
-  "Renewal is cancelled. The membership lasts until {date}, and nothing more is charged.": "你已取消续费。会员用到 {date}，之后不再扣款。"
-  "Ends": "结束日期"
-  "Next charge": "下次扣款"
-  "Manage subscription": "管理订阅"
-  "Update payment method": "更新付款方式"
-  "Resume renewal": "恢复续费"
-  "/ month": "/ 月"
-  "/ year": "/ 年"
-  "Payment method": "付款方式"
-  "Member since": "会员开始"
-  "On file with Stripe": "已保存在 Stripe"
-  "Card": "银行卡"
-  "Billing period": "付款周期"
-  "Yearly": "年付"
-  "Monthly": "月付"
-  "Subscribe yearly": "订阅年付"
-  "Subscribe monthly": "订阅月付"
-  "Cancel any time. The builder, simulator, optimizer and leaderboard need no membership.": "随时可以取消。配装器、模拟器、优化器和排行榜不需要会员。"
-  "No bills yet.": "还没有账单。"
-  "Date": "日期"
-  "Item": "内容"
-  "Amount": "金额"
-  "Status": "状态"
-  "Invoice": "发票"
   "Privacy": "隐私"
-  "Ends on {date}": "{date} 到期结束"
   "Active": "生效中"
-  "Paid": "已支付"
-  "Refunded": "已退款"
-  "Partly refunded": "部分退款"
-  "Unpaid": "未支付"
   "Void": "已作废"
-  "Uncollectible": "无法收款"
-  "Nothing is on sale yet.": "暂未开售。"
-  "Payments are handled by Stripe and appear on your statement as LINK.COM* WFSIM.APP. Stripe emails a receipt and an invoice for every payment.": "付款由 Stripe 处理，账单上显示为 LINK.COM* WFSIM.APP。每笔付款 Stripe 都会把收据和发票发到你的邮箱。"
   "Terms": "服务条款"
   "Refunds": "退款政策"
-  "Its subscription is cancelled first; receipts stay with Stripe.": "会先取消它的订阅；收据仍保存在 Stripe。"
-  "Payment received. It can take a few seconds to show here.": "已收到付款，可能需要几秒钟才会显示在这里。"
-  "A subscription could not be ended, so the account was kept. Try again in a moment.": "有一项订阅未能取消，所以账号没有删除。请稍后再试。"
-  "This account already holds that subscription.": "这个账号已经有这项订阅了。"
-  "That is not on sale right now.": "这项目前不在售。"
-  "This account has not bought anything yet.": "这个账号还没有购买过任何东西。"
-  "Stripe did not answer. Try again in a moment.": "Stripe 没有响应，请稍后再试。"
   "Delete account": "删除账号"
   "Cancel": "取消"
   "Account created.": "账号已创建。"

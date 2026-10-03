@@ -2,8 +2,7 @@
 
 An account is optional. Everything WFSim does works without one, and a reader
 who never signs in has the site exactly as it was. What an account adds is a
-place for a person's own things to live beyond one browser, and a holder for
-anything paid (§"Paid features").
+place for a person's own things to live beyond one browser.
 
 ## The model
 
@@ -96,11 +95,10 @@ The shape a mature product has, because that is where the trust comes from:
 | `/reset` | an email, then the code and a new password |
 | `/account` | settings in `.block` sections — ways to sign in, email and password, data and privacy, and a danger zone that asks for `DELETE` typed before it deletes |
 | `/account/sync` | the usage per pool against the allowance, the upload default, and every item this browser holds — filtered, searched, newest first or by weapon — with its sync switch, one or several at once; nothing on it deletes |
-| `/pricing` | what is free beside what the membership adds, signed in or not; every number (the offer, its prices, the free sync allowance) is `/api/billing`'s; the free allowance holds and is stated before anything is on sale |
-| `/account/billing` | where billing is on: the plan card (state, price, next charge or end, card, the one action the state calls for), the billing history as a table, and who takes the money; every change is Stripe's portal |
 
-All five pages are one `<main id="auth-page">`, drawn by
-`web/src/static/app/17-account.js` from the route. Nothing draws where
+These pages, and any page an extension mounts (docs/UI.md §Extensions), are
+one `<main id="auth-page">`, drawn by `web/src/static/app/17-account.js` from
+the route. Nothing draws where
 `/api/account` names no way in, so the dev server, the desktop shell and a site
 whose secrets are not set show no account control. A sign-in page returns the
 reader to `?return=`, and an OAuth round trip from one comes back through
@@ -127,12 +125,11 @@ router leaves to the browser.
 A state-changing call is JSON from this origin; the session cookie is
 `HttpOnly; Secure; SameSite=Lax`, a random token whose hash is the table's key.
 
-## Paid features
+## The private worker
 
-**WHAT IS SOLD IS NOT IN THIS REPOSITORY.** Billing and every paid feature run
-in a separate private worker, `wfsim-cloud`, reached only through the site
-worker's `CLOUD` service binding; public code for a paid feature would be a free
-copy of it. `worker/cloud.js` is the whole of it here, and it forwards:
+**WHAT THIS REPOSITORY DOES NOT HOLD runs in a separate private worker,
+`wfsim-cloud`, reached only through the site worker's `CLOUD` service binding.**
+`worker/cloud.js` is the whole of it here, and it forwards:
 
 | rule | where it is held |
 | --- | --- |
@@ -143,15 +140,16 @@ copy of it. `worker/cloud.js` is the whole of it here, and it forwards:
 | an account is deleted only once the private worker has ended its subscriptions | `cloudEnd`, `billing_open` |
 | with no binding, billing reads as off and nothing is ended | `cloudRoute`, `cloudEnd` |
 
-**EVERY ACCOUNT SYNCS**, up to the free allowance; a Member syncs without one.
-The page's half is public (docs/UI.md §"Build sync"); the
-server's is `/api/cloud/sync` in the private worker, beside what is sold. The
-`/account` page's data block says where sync stands and offers the one action
-the state calls for; the export carries what it holds.
+**EVERY ACCOUNT SYNCS**, up to the allowance the private worker states. The
+page's half is public (docs/UI.md §"Build sync"); the server's is
+`/api/cloud/sync` in the private worker. The `/account` page's data block says
+where sync stands and offers the one action the state calls for; the export
+carries what it holds.
 
-The settings nav links **Membership and billing** (`/account/billing`) only when
-`/api/billing` says it is configured, and the page shows the names, contents and
-prices the private worker sends: it knows no offer itself. `/terms` and `/refunds` are plain pages beside `/privacy`.
+What the private worker adds to the page — its own pages, a link in the
+settings navigation, a line under the danger zone — it mounts (docs/UI.md
+§Extensions). `/terms` and `/refunds` are plain pages beside `/privacy`, their
+bodies filled by the site's worker from the private one.
 
 ## Privacy
 

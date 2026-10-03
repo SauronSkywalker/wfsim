@@ -159,8 +159,7 @@
                THE COMMUNITY LINK IS THE READER'S OWN. A Chinese reader will
                never click Discord and an English reader will never click QQ,
                so the one that matches the display language is on the bar and
-               the other is in the overflow — ordered, never dropped, which is
-               the same rule `SUPPORT_CHANNELS` follows. English is the source
+               the other is in the overflow — ordered, never dropped. English is the source
                here as everywhere, so the markup ships the English order and
                `applyCommunityOrder()` swaps it. -->
           <span id="lang-select"></span>
@@ -177,20 +176,10 @@
           <span class="tbcomm" id="community-primary">
             <a class="dc-link ghost-btn" href="https://discord.gg/H4BMqvYFVg" target="_blank" rel="noopener" title="Join the Discord" data-i18n-title aria-label="Discord"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" focusable="false"><path fill="currentColor" d="M19.54 4.94A16.3 16.3 0 0 0 15.5 3.7a.06.06 0 0 0-.06.03c-.17.31-.37.72-.5 1.03a15.1 15.1 0 0 0-4.5 0 10.4 10.4 0 0 0-.51-1.03.06.06 0 0 0-.06-.03A16.26 16.26 0 0 0 5.83 4.94a.06.06 0 0 0-.03.02C3.24 8.77 2.54 12.48 2.89 16.14a.07.07 0 0 0 .03.05 16.4 16.4 0 0 0 4.94 2.5.06.06 0 0 0 .07-.02c.38-.52.72-1.07 1.01-1.64a.06.06 0 0 0-.03-.09c-.54-.2-1.05-.45-1.54-.73a.06.06 0 0 1 0-.11l.3-.24a.06.06 0 0 1 .07 0 11.7 11.7 0 0 0 9.94 0 .06.06 0 0 1 .07 0l.3.24a.06.06 0 0 1 0 .11c-.5.29-1 .53-1.55.73a.06.06 0 0 0-.03.09c.3.57.63 1.12 1 1.64a.06.06 0 0 0 .08.02 16.35 16.35 0 0 0 4.95-2.5.06.06 0 0 0 .02-.05c.42-4.23-.67-7.9-2.85-11.18a.05.05 0 0 0-.03-.02zM9.68 13.91c-.97 0-1.78-.9-1.78-2s.79-2 1.78-2c1 0 1.8.91 1.78 2 0 1.1-.79 2-1.78 2zm6.57 0c-.98 0-1.78-.9-1.78-2s.78-2 1.78-2c1 0 1.8.91 1.78 2 0 1.1-.78 2-1.78 2z"/></svg><span class="tbl">Discord</span></a>
           </span>
-          <!-- SUPPORT, and it is the only thing in this row that is not
-               chrome — so it is the only one that carries its NAME. An icon
-               button is a control; a control is not an ask, and a heart with
-               no word beside it is read as "favourite" about as often as it is
-               read as "donate".
-               THE RULE IS NARROW. "No modal, no banner, no thank-you box
-               after a run" puts the ask in the chrome and nowhere else — as
-               far from the moment the tool delivers anything as a page can put
-               it. What
-               still holds is the half that matters: the topbar is never the
-               path of a calculation, and nothing INTERRUPTS one. An ask
-               BENEATH a finished result is not an interruption — see
-               `renderResults`, where it is drawn after the answer and states
-               the work before it states the ask. -->
+          <!-- SUPPORT, the only thing in this row that is not chrome — so the
+               only one that carries its NAME: a heart with no word beside it
+               is read as "favourite" as often as anything else. The topbar is
+               never the path of a calculation, and nothing interrupts one. -->
           <a class="sup-link ghost-btn" href="/support" title="Support WFSim" data-i18n-title aria-label="Support"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 20.35l-1.32-1.2C6.03 14.92 3 12.17 3 8.79 3 6.03 5.16 3.87 7.92 3.87c1.56 0 3.06.72 4.04 1.86l.04.05.04-.05c.98-1.14 2.48-1.86 4.04-1.86C18.84 3.87 21 6.03 21 8.79c0 3.38-3.03 6.13-7.68 10.37l-1.32 1.19z"/></svg><span class="tbl" data-i18n>Support</span></a>
           <!-- The overflow. On a desktop it is a real popover; at 768px and below it
                is `display:contents` and its children flatten into the phone
@@ -370,87 +359,15 @@
     <div id="bench-board"></div>
   </main>
 
-  <!-- Support: how to back WFSim, and where. NOT a module and
-       not an editor — a page of the SHELL, like the home grid, reached from the
-       footer and from nowhere else. It never interrupts a calculation: no
-       modal, no banner, no thank-you box after a run. A calculator that
-       interrupts the calculation has stopped being a tool.
-
-       THE PAGE MAKES NO CLAIM ABOUT PRICING, IN EITHER DIRECTION. It states
-       what is true and checkable TODAY and says nothing about what may be
-       offered later — the same withdrawal the advertising claim took below,
-       and for the same reason: a pledge nobody has relied on yet costs nothing
-       to drop, where breaking one later would cost everything.
-
-       WHAT IT SAYS INSTEAD IS A FACT RATHER THAN A PLEDGE. A donation buys no
-       feature and no perk: that is a statement about the DONATION, it stays
-       true whatever else ever exists, and it is what somebody who has just
-       been asked for money is actually owed. The THREE MODULES and the
-       MEASUREMENTS are named the same way — both are things a reader can go
-       and check, which is the only shape of claim this page may make.
-
-       ITS GUARANTOR IS THE LICENCE, NOT THE AUTHOR. This is AGPL-3.0: the
-       engine, the data and the wasm are public, so being locked out is not
-       something the reader has to take on trust — it is not available to us.
-       That is a stronger statement than any pledge on this page and it was
-       being spent as the adjective in "free and open source".
-
-       NO CLAIM ABOUT ADVERTISING, in either direction. The
-       page carried "no ads" as a promise; it is withdrawn rather than
-       reversed, and withdrawing one nobody has relied on yet costs nothing
-       where breaking it later would cost everything.
-
-       NO AMOUNT APPEARS ANYWHERE ON THIS PAGE — no ladder, no floor, no bill.
-       Each channel shows its own minimum and its own ladder at the moment of
-       paying, one screen away and always current, so a sum written here is a
-       staler copy of one, and a page that names a sum reads as a price list.
-
-       THE ORDER: what this is and what it holds, then why it can be
-       checked, then what the reader has already got out of it, and only then
-       the door (docs/UI.md §"The page that asks for something").
-
-       EVERY NUMBER ON IT IS COUNTED, NOT TYPED: `PROJECT_FACTS` (the site
-       build) and `META`/`BOARD` (the page itself) supply them, so nothing here
-       is a number anybody has to remember to update. And a figure is claimed
-       only if a READER can check it against the public repository — the
-       measurements are one tracked file each under `docs/measurements/`, so
-       that count is theirs to take too. -->
-  <!-- WHAT A MONTHLY SUBSCRIPTION BUYS, and the line it may not cross. What it
-       buys is ORDER and PRESENCE rather than product: a channel where the
-       development is discussed, and reports read first. Every fix still ships
-       to everyone at once, and every measurement still wins on being right.
-
-       IT IS NOT THE WEAPON QUEUE. Voting on intake order is a perk with an
-       expiry date — the roster fills — and a perk that quietly becomes
-       worthless is worse than none.
-
-       NO RESPONSE TIME IS PROMISED ANYWHERE, in any language. "Read first" is
-       an order; "within N hours" is an obligation that grows with every
-       subscriber, and that is the shape maintainers are buried by. -->
-  <!-- THE THANKS PAGE. A URL meant to be PASTED — a video description, the
-       group — so it is a real address with its own title and its own preview
-       rather than a section of /support somebody has to be told to scroll to.
-       It carries no figure: `publish_thanks.py` writes names and a month, and
-       the order is the only thing the ranking is allowed to say. -->
-  <!-- /login, /signup, /reset and /account — `17-account.js` draws them. -->
+  <!-- Support: what WFSim holds, why its numbers can be checked, and what the
+       reader has run. A page of the SHELL, reached from the footer; it never
+       interrupts a calculation. Every number on it is COUNTED, NOT TYPED:
+       `PROJECT_FACTS` (the site build) and `META`/`BOARD` (the page) supply
+       them, and a figure is claimed only if a reader can check it against the
+       public repository. An extension adds to it through `#ext-support`. -->
+  <!-- /login, /signup, /reset, /account, and any page an extension mounts —
+       `17-account.js` draws them. -->
   <main id="auth-page" hidden></main>
-  <main id="thanks-page" class="support-page" hidden>
-    <h1 id="h-thanks" class="hero-h" data-i18n>Thank you</h1>
-    <p class="hero-sub" data-i18n>The people who backed WFSim on Bilibili and YouTube, earliest and most first. No ranks, and no numbers beside a name.</p>
-    <section class="block">
-      <div class="bb">
-        <div id="thanks-block" class="thx-block" hidden>
-          <ul id="thanks-list" class="thx-list thx-full"></ul>
-        </div>
-        <!-- WHAT AN EMPTY LIST SAYS. On /support the block is simply absent —
-             a list of nobody is social proof pointing the wrong way — but a
-             page somebody navigated TO owes them a sentence rather than a
-             blank. -->
-        <p id="thanks-none" class="sup-note" hidden data-i18n>Nobody has backed it yet. The list starts with whoever is first.</p>
-        <p class="sup-note"><a href="/support" data-i18n>How to back WFSim →</a></p>
-      </div>
-    </section>
-  </main>
 
   <main id="support-page" class="support-page" hidden>
     <h1 id="h-support" class="hero-h" data-i18n>Support WFSim</h1>
@@ -515,96 +432,30 @@
       </div>
     </section>
 
-    <!-- WHAT THE READER HAS ALREADY GOT OUT OF IT, counted on their own
-         machine. It is the last thing before the door because that is where a
-         reason to give is worth the most, and it is drawn only once there is
-         something to draw — a fresh visitor is told nothing about themselves. -->
+    <!-- WHAT THE READER HAS RUN, counted on their own machine and drawn only
+         once there is something to draw — a fresh visitor is told nothing
+         about themselves. -->
     <p id="support-usage" class="sup-usage" hidden></p>
 
-    <section class="block">
-      <div class="bh"><h2 data-i18n>Two ways to back it</h2></div>
-      <div class="bb">
-        <!-- A MEMBERSHIP, drawn only while one is on sale to this reader
-             (`renderSupportMember`): a way to back WFSim that nobody can take
-             is not offered. Patron is drawn only once the catalog sells it. -->
-        <div id="support-member" class="sup-member" hidden>
-          <p><b data-i18n>WFSim Member.</b> <span data-i18n>If you think WFSim does this right, become a Member. It keeps the work going, and it comes with your name on every build you share, a look of your own, and unlimited sync.</span></p>
-          <p id="support-patron" hidden><b data-i18n>WFSim Patron.</b> <span data-i18n>For those who want to do the most for it. Everything a Member has, the Patron look, your name on the thanks page if you want it, and a seat where the work is discussed.</span></p>
-          <p><a href="/pricing" data-i18n>See the prices and become a Member →</a></p>
-        </div>
-        <!-- THE VIDEO PLATFORMS, where support is support and nothing else. -->
-        <p class="sup-note"><b data-i18n>On Bilibili and YouTube.</b> <span data-i18n>Back the videos where WFSim is built in the open. Nothing is sold there and nothing comes back but thanks — your name on the thanks page, if you want it.</span></p>
-        <div id="support-channels" class="sup-channels"></div>
-        <!-- THE NAMES, UNDER THE DOOR AND NOT OVER IT. Social proof is the one
-             lever here with a replicated experiment behind it, and a name
-             carries it where a count could not: a reader recognises the kind
-             of person who does this. It sits BELOW the channels because it is
-             there to say that people do this, not to be read instead of the
-             thing above it. Drawn only when there is somebody to draw. -->
-        <div id="support-thanks" class="thx-block" hidden>
-          <h3 class="thx-head" data-i18n>The people who have backed it</h3>
-          <ul id="support-thanks-list" class="thx-list"></ul>
-          <p class="thx-more" hidden><a href="/thanks" data-i18n>Everyone who has →</a></p>
-        </div>
-      </div>
-    </section>
+    <div id="ext-support"></div>
 
-    <!-- DIRECTLY UNDER THE DOOR, because it answers the question the door has
-         just put in the reader's head, and STATED RATHER THAN DENIED. The same
-         four facts written as "it never buys a number, it never buys a feature"
-         are a row of refusals: they argue with a reader who has not asked for
-         anything, and a page that braces against its own visitors reads as one
-         with something to brace about. Said forwards they are the strongest
-         thing here — everyone gets the same build, the same engine and the same
-         answer, and the licence is what guarantees it rather than a promise. -->
+    <!-- STATED RATHER THAN DENIED: everyone gets the same build, the same
+         engine and the same answer, and the licence guarantees it rather than
+         a promise. -->
     <section class="block">
       <div class="bh"><h2 data-i18n>The calculator is the same for everyone</h2></div>
       <div class="bb">
         <ul class="sup-costs">
           <li data-i18n>An in-game measurement is the only thing that changes what the engine does, and it wins whoever reports it — so the way to move a number here is to go and measure one.</li>
-          <li data-i18n>Building, simulating and optimizing are the same for everyone, and what guarantees that is not me: this is AGPL-3.0, so the engine, the game data and the wasm are public and you can run your own copy.</li>
+          <li data-i18n>Building, simulating and optimizing are the same for everyone. This is AGPL-3.0: the engine, the game data and the wasm are public, and you can run your own copy.</li>
           <li data-i18n>A fix to the builder, the simulator or the optimizer ships to everybody at once. There is no earlier copy.</li>
           <li data-i18n>There are no recommended builds here and no curated list. Every row on the board is what this engine computed under the benchmark's own pinned terms, so anyone with the repository reproduces the same number.</li>
-          <li data-i18n>What you have run here stays in your own browser and is sent nowhere. The only place a visit is counted at all is Cloudflare's own request log, which is what serves the page.</li>
-          <!-- THE LINE THAT PREVENTS AN ARGUMENT LATER, and the only one on
-               this page that says something true about the author rather than
-               about the software. A page that claims supporters get NOTHING is
-               not believed, because everybody knows a person reads a backer's
-               message differently; a page that stays silent lets each supporter
-               invent their own entitlement. So it states both halves and names
-               which is which — a courtesy is offered and an obligation is owed,
-               and only one of them can be claimed. -->
-          <li data-i18n>A donation buys no priority: not over what gets built next, not in the queue, not on a reply. I will read your message knowing you backed this, and it would be dishonest to claim that changes nothing — but that is a courtesy, not an obligation, and it is the whole of what it is.</li>
+          <li data-i18n>What you have run here stays in your own browser. What the site counts, and how to turn it off, is at the foot of this page.</li>
         </ul>
       </div>
     </section>
 
-    <section class="block">
-      <div class="bh"><h2 data-i18n>What your backing makes possible</h2></div>
-      <div class="bb">
-        <!-- WHAT BACKING MAKES POSSIBLE, in time and never as a cost —
-             `docs/UI.md` §"The page that asks for something". -->
-        <ul class="sup-costs">
-          <li data-i18n>Time, most of all: every new weapon and mechanic, the day it lands.</li>
-          <li data-i18n>The hours in game that every calibrated number is measured against.</li>
-        </ul>
-      </div>
-    </section>
 
-    <section class="block">
-      <div class="bh"><h2 data-i18n>Free, and worth more</h2></div>
-      <div class="bb">
-        <ul class="sup-costs">
-          <li><span data-i18n>Report a number that disagrees with your own in-game measurement. That is the one contribution nothing else can replace — every formula here is calibrated against a real run, and a discrepancy is a bug report on reality.</span> <a href="https://github.com/magenie33/wfsim/issues" target="_blank" rel="noopener">GitHub Issues</a> · <a href="https://qm.qq.com/q/uiXrMSTs8S" target="_blank" rel="noopener" data-i18n>QQ group</a> · <a href="https://discord.gg/H4BMqvYFVg" target="_blank" rel="noopener">Discord</a></li>
-          <li><span data-i18n>Star the repository, or send a build link to someone who is still doing this by hand.</span> <a href="https://github.com/magenie33/wfsim" target="_blank" rel="noopener">github.com/magenie33/wfsim</a></li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- THE TWO TERMS A READER IS OWED BEFORE PAYING: a donation buys nothing,
-         and a membership renews until cancelled and is refunded within 14 days
-         — said where the ask is, as the renewal rules require. -->
-    <p class="sup-fine" data-i18n>A donation is a gift and buys nobody an advantage. A membership renews until you cancel it, which takes one click from your account; within 14 days of any charge, ask and it is refunded in full.</p>
     <!-- WHAT IS COUNTED, said where a reader looking for it will look, with the
          way out beside it. docs/ANALYTICS.md is the whole of it. -->
     <section class="sup-usage" id="usage">
@@ -1211,7 +1062,7 @@
     <!-- The ONLY entry to /support. It stays a footer link at footer weight:
          the ask belongs where someone who already wants to give will look for
          it, not in the path of someone doing a calculation. -->
-    <a href="/support" title="how to back WFSim" data-i18n-title data-i18n>Support</a> ·
+    <a href="/support" title="Support WFSim" data-i18n-title data-i18n>Support</a> ·
     <a href="/support#usage" data-i18n>Usage statistics</a>
     <!-- WHICH BUILD YOU ARE LOOKING AT. `build_site_app.py` stamps the commit
          and the time it generated `site/`; the dev server leaves the

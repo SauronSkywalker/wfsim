@@ -16,7 +16,7 @@ import { openApp } from "./cdp.mjs";
 
 const SITE = resolve(dirname(fileURLToPath(import.meta.url)), "..", "site");
 const PAGES = { "/download": "download-page", "/support": "support-page",
-  "/thanks": "thanks-page", "/benchmark": "bench-page" };
+  "/benchmark": "bench-page" };
 
 /// What sits between `<main id="x" …>` and its own `</main>`, depth-counted —
 /// `<main>` nests in this document and the first close is not its own.

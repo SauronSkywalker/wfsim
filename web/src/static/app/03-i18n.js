@@ -40,7 +40,7 @@ let ALT_NAMES = null;
 // UI strings and effect phrases live in data/i18n/<locale>.yaml (served at
 // /api/i18n) — nothing hardcoded here. English needs no catalog: the source
 // string is the fallback.
-const tr = (s) => (I18N && I18N.ui && I18N.ui[s]) || s;
+const tr = (s) => (I18N && I18N.ui && I18N.ui[s]) || (EXT.strings[LANG] || {})[s] || s;
 /// ONE ADMISSION, in the display language.
 ///
 /// A gap that repeats is a REASON with parameters rather than a sentence

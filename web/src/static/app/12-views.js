@@ -39,6 +39,8 @@ function nav(path) {
 }
 let routeGen = 0;
 async function route() {
+  // AN EXTENSION'S PAGES ARE ROUTES TOO, so nothing is routed before it mounts.
+  if (!extSettled) await extReady;
   leaveStartEdit();
   // A SHARED LINK is answered before anything else on the page is drawn for
   // it, and the query is stripped afterwards so a refresh does not import the
@@ -81,12 +83,8 @@ async function route() {
   const support = /^\/support\/?$/.test(location.pathname);
   const bench = /^\/benchmark\/?$/.test(location.pathname);
   const dl = /^\/download\/?$/.test(location.pathname);
-  // `/thanks` is a page of the SHELL like the three above it, and it is a URL
-  // meant to be PASTED — into a video description, into the group — so it is a
-  // real address rather than a section somebody has to scroll to.
-  const thx = /^\/thanks\/?$/.test(location.pathname);
   // `/login`, `/signup`, `/reset`, `/account` — the account's pages, which
-  // belong to no weapon (`17-account.js`).
+  // belong to no weapon (`17-account.js`) — and any page an extension mounts.
   const authKind = authKindOf(location.pathname);
   // `/warframes/<Wiki_Name>` — the Warframe builder, a page of its own that
   // belongs to no weapon. Matched by id or by the wiki name, like a weapon.
@@ -101,7 +99,7 @@ async function route() {
   const compSlug = compRoute && decodeURIComponent(compRoute[1]).trim().toLowerCase().replace(/[\s-]+/g, "_");
   const compHit = compSlug && compHosts().find((c) =>
     c.id === compSlug || c.name.toLowerCase().replace(/[\s-]+/g, "_") === compSlug) || null;
-  const m = (support || bench || dl || thx || wfHit || opRoute || compHit || authKind) ? null : location.pathname.match(/^\/weapons\/([^/]+?)(\/simulator|\/optimizer|\/rivens|\/enemies|\/benchmark)?\/?$/);
+  const m = (support || bench || dl || wfHit || opRoute || compHit || authKind) ? null : location.pathname.match(/^\/weapons\/([^/]+?)(\/simulator|\/optimizer|\/rivens|\/enemies|\/benchmark)?\/?$/);
   // A hand-typed URL is not the canonical slug. Fold case and treat spaces
   // (and their %20) as underscores, so "/weapons/Dual Toxocyst" reaches the
   // same weapon as "/weapons/Dual_Toxocyst" instead of silently falling back
@@ -122,9 +120,9 @@ async function route() {
   if (gen !== routeGen) return;
   // WHICH PAGE, as a kind and never an address: one point per kind per load.
   track("app.view", w ? `weapon_${mod || "builder"}` : support ? "support" : bench ? "benchmark"
-    : dl ? "download" : thx ? "thanks" : wfHit ? "warframe" : opRoute ? "operator"
-    : compHit ? "companion" : authKind ? AUTH_VIEWS[authKind] : "home");
-  document.body.classList.toggle("on-home", !w && !support && !bench && !dl && !thx && !wfHit && !opRoute && !compHit && !authKind);
+    : dl ? "download" : wfHit ? "warframe" : opRoute ? "operator"
+    : compHit ? "companion" : authKind ? authView(authKind) : "home");
+  document.body.classList.toggle("on-home", !w && !support && !bench && !dl && !wfHit && !opRoute && !compHit && !authKind);
   document.body.classList.toggle("on-auth", !!authKind);
   $("auth-page").hidden = !authKind;
   document.body.classList.toggle("on-warframe", !!wfHit);
@@ -134,7 +132,6 @@ async function route() {
   $("operator-page").hidden = !opRoute;
   $("companion-page").hidden = !compHit;
   document.body.classList.toggle("on-support", support);
-  document.body.classList.toggle("on-thanks", thx);
   document.body.classList.toggle("on-benchmark", bench);
   document.body.classList.toggle("on-download", dl);
   document.body.classList.toggle("on-simulator", mod === "simulator");
@@ -150,19 +147,18 @@ async function route() {
   // them (`11-page-bodies.js`), and the route runs again once the file lands —
   // `ensurePageBodies` answers null the second time, so it cannot loop.
   const away = dl ? "download-page" : support ? "support-page"
-    : thx ? "thanks-page" : bench ? "bench-page" : null;
+    : bench ? "bench-page" : null;
   if (away) {
     const ask = ensurePageBodies(away);
     if (ask) ask.then(() => route());
   }
-  $("home-page").hidden = !!w || support || bench || dl || thx || !!wfHit || opRoute || !!compHit || !!authKind;
+  $("home-page").hidden = !!w || support || bench || dl || !!wfHit || opRoute || !!compHit || !!authKind;
   $("support-page").hidden = !support;
-  $("thanks-page").hidden = !thx;
   $("bench-page").hidden = !bench;
   $("download-page").hidden = !dl;
   // The nav says where you are. `data-nav` rather than a path compare: the
   // roster lives at "/" and a path compare there matches every page.
-  const here = bench ? "benchmark" : (!w && !support && !dl && !thx && !wfHit && !opRoute && !compHit && !authKind) ? "home" : "";
+  const here = bench ? "benchmark" : (!w && !support && !dl && !wfHit && !opRoute && !compHit && !authKind) ? "home" : "";
   document.querySelectorAll(".tnav").forEach((a) => {
     a.classList.toggle("sel", a.dataset.nav === here);
   });
@@ -173,9 +169,8 @@ async function route() {
   // that has to be found rather than enjoyed. The joke
   // stays on the page, which is where a player meets it.
   document.title = authKind ? `${tr({ login: "Sign in", signup: "Create an account", reset: "Reset your password",
-    account: "Account settings", billing: "Membership and billing", sync: "Cloud sync", pricing: "Pricing" }[authKind])} — WFSim`
+    account: "Account settings", sync: "Cloud sync" }[authKind] || (EXT.pages[authKind] || {}).title || "")} — WFSim`
     : support ? `${tr("Support")} — WFSim`
-    : thx ? `${tr("Thank you")} — WFSim`
     : dl ? `${tr("WFSim for Windows")} — WFSim`
     : bench ? `${tr("Benchmark")} — WFSim`
     : wfHit ? `${wfHit.name} — WFSim`
@@ -198,8 +193,6 @@ async function route() {
     renderAuthPage(authKind);
   } else if (support) {
     renderSupport();
-  } else if (thx) {
-    renderThanksPage();
   } else if (dl) {
     renderDownloadPage();
   } else if (bench) {
