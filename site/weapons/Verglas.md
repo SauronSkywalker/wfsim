@@ -10,8 +10,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.5452 | Primed Cryo Rounds, Malignant Force, Hellfire, Wildfire, Thermite Rounds, Split Chamber, Serration, Magnetic Capacity |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.5452 | Primed Cryo Rounds, Malignant Force, Hellfire, Wildfire, Thermite Rounds, Split Chamber, Serration, Magnetic Capacity |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.6367 | Malignant Force, Rime Rounds, Wildfire, Thermite Rounds, Primed Shred, Split Chamber, Rifle Elementalist, Magnetic Capacity |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 2.6755 | Malignant Force, Rime Rounds, Wildfire, Thermite Rounds, Primed Shred, Split Chamber, Rifle Elementalist, Magnetic Capacity |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.06732 | Primed Cryo Rounds, Malignant Force, Hellfire, Wildfire, Thermite Rounds, Split Chamber, Serration, Vile Acceleration |
 
 ## Not modelled here
