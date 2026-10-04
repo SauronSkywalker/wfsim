@@ -556,7 +556,9 @@ const metricValue = (m, r) => {
 /// Its unit, translated. The label is the engine's; the translation is ours.
 const metricLabel = (m) => tr(m.label);
 
-const escHtml = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+/// ANY VALUE, NEVER A THROW: a number or a stale field reaching it once took a
+/// whole page down; it is drawn as text instead (null and undefined as nothing).
+const escHtml = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
 // Decimal formatting with a SIGNIFICANCE floor: two
 // decimals normally, but a very small number grows decimals until it
