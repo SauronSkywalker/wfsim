@@ -121,8 +121,8 @@ check("...with a mark, pointing at the same place",
 // more scrolling.
 for (const [what, needle] of [
   ["what SmartScreen does", /SmartScreen|protected your PC|已保护你的电脑/],
-  ["why it is unsigned", /code-signing|代码签名/],
-  ["how updating works", /updates itself|自己更新/],
+  ["why it is unsigned", /code-sign|代码签名/],
+  ["how updating works", /updates itself|自己更新|自动更新/],
   ["how to uninstall", /LOCALAPPDATA/],
   ["where the source is", /AGPL/],
 ]) {
