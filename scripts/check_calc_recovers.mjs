@@ -264,4 +264,31 @@ check(
   s2.stopped === true && s2.pendingCleared === true && s2.workersDropped === true,
   `stopped ${s2.stopped}, pending cleared ${s2.pendingCleared}, workers dropped ${s2.workersDropped} (had ${s2.hadWorkers})`,
 );
+
+// A MODULE THAT WILL NOT DOWNLOAD IS A FAILURE NOW, not after the 90 s watchdog
+// — the wait a reader on a bad connection closed the tab during. Last, because
+// it blocks the wasm for the rest of the page. BLOCKED IN EACH WORKER'S OWN
+// SESSION: the page's `Network.setBlockedURLs` does not reach a worker's fetch.
+app.on("Target.attachedToTarget", ({ sessionId, targetInfo }) => {
+  if (targetInfo.type !== "worker") return;
+  [["Network.enable", {}], ["Network.setCacheDisabled", { cacheDisabled: true }],
+    ["Network.setBlockedURLs", { urls: ["*.wasm"] }], ["Runtime.runIfWaitingForDebugger", {}]]
+    .forEach(([method, params], i) => send("Target.sendMessageToTarget",
+      { sessionId, message: JSON.stringify({ id: i + 1, method, params }) }));
+});
+await send("Target.setAutoAttach", { autoAttach: true, waitForDebuggerOnStart: true, flatten: false });
+const m = await evaluate(`(async () => {
+  LANE_WATCHDOG.loading = 90000;
+  const t0 = performance.now();
+  const r = await Promise.race([
+    makeLane().call('/api/meta'),
+    new Promise((res) => setTimeout(() => res({ timedOut: true }), 20000)),
+  ]);
+  return { dead: !!r.worker_dead, timedOut: !!r.timedOut, ms: Math.round(performance.now() - t0) };
+})()`);
+check(
+  "a worker whose wasm cannot download fails its lane at once, not on the watchdog",
+  m.dead && !m.timedOut && m.ms < 15000,
+  `worker_dead ${m.dead}, still silent at 20 s ${m.timedOut}, ${m.ms} ms`,
+);
 process.exit(0);

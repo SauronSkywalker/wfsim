@@ -498,6 +498,12 @@ key, which is now stamped only by a scan that measured everything. On the old
 behaviour it reports `86 of 87 could not be measured`, which is the bug as the
 reader met it.
 
+**A MODULE THAT WILL NOT DOWNLOAD FAILS ITS LANE AT ONCE.** The wasm is blocked
+in the worker's own CDP session (the page's blocklist does not reach a
+worker's fetch), and the lane must report `worker_dead` well inside the 90 s
+loading watchdog, which is how long a reader whose download failed would
+otherwise wait.
+
 ## `check_build_finder`
 
 **THE FINDER FINDS, THE BAR HOLDS.** The build finder is a query over the

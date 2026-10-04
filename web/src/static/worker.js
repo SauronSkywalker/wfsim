@@ -12,7 +12,13 @@
 // page runs it in a DEDICATED worker and cancels by terminating it.
 importScripts("pkg/wfsim_wasm.js");
 
-const ready = wasm_bindgen({ module_or_path: "pkg/wfsim_wasm_bg.wasm" });
+// A MODULE THAT WILL NOT DOWNLOAD IS SAID OUT LOUD, after one retry. A rejected
+// `ready` only rejects each message's await, which the page never sees, so the
+// lane sat silent until `LANE_WATCHDOG.loading` ran out; a throw from a task
+// reaches the page's `onerror` now, which settles the lane as dead.
+const load = () => wasm_bindgen({ module_or_path: "pkg/wfsim_wasm_bg.wasm" });
+const ready = load().catch(load);
+ready.catch((err) => setTimeout(() => { throw err; }));
 
 onmessage = async (e) => {
   await ready;
