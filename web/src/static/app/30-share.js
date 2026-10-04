@@ -513,12 +513,14 @@ async function openSharePanel(bar) {
   panel.hidden = false;
   let withResult = false;
   try { withResult = localStorage.getItem(SHARE_RESULT) === "1"; } catch (_) { /* off */ }
-  // A LINK AN EXTENSION CAN SIGN offers it here (`shareSigner`); else it is plain.
+  // A LINK AN EXTENSION CAN SIGN offers it here (`shareSigner`); one it signs
+  // only for some readers is shown `locked`, greyed, with the extension's words
+  // on whose it is — never a prompt. Otherwise the link is plain.
   const signer = await extHook("shareSigner");
   const draw = async () => {
     if (withResult) panel.innerHTML = `<div class="sh-note">${escHtml(tr("simulating this build in the current scenario…"))}</div>`;
     const measured = withResult ? await shareMeasurement() : null;
-    const signing = !!signer && signer.on();
+    const signing = !!signer && !signer.locked && signer.on();
     const bUrl = await shareUrl(measured && measured.claim, signing ? signer : null);
     const lines = await shareText();
     const text = measured ? [lines[0], measured.line, ...lines.slice(1)] : lines;
@@ -532,7 +534,9 @@ async function openSharePanel(bar) {
       `<label class="sh-opt"><input type="checkbox" class="sh-result"${withResult ? " checked" : ""}> ` +
       `${escHtml(tr("include my result in this scenario"))}` +
       (measured ? ` <b>${escHtml(measured.line)}</b>` : "") + `</label>` +
-      (signer ? `<label class="sh-opt"><input type="checkbox" class="sh-sign"${signing ? " checked" : ""}> ${signer.option}</label>` : "") +
+      (signer ? (signer.locked
+        ? `<label class="sh-opt sh-locked"><input type="checkbox" class="sh-sign" disabled> ${signer.option}</label>`
+        : `<label class="sh-opt"><input type="checkbox" class="sh-sign"${signing ? " checked" : ""}> ${signer.option}</label>`) : "") +
       `<div class="sh-note">${escHtml(tr(measured
         ? "the link still opens the build alone; your result travels beside it, shown as yours"
         : "the build and its rivens, and nothing else: no fight, no measurement, so opening it leaves the reader's own scenario untouched"))}`

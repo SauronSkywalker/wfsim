@@ -1448,6 +1448,9 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
   border:1px solid var(--line);border-radius:8px;padding:6px 10px;font:inherit;font-size:12px}
 .sh-note{color:var(--muted);font-size:12px;margin:8px 0 6px}
 .sh-opt{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:12px;margin-top:8px;cursor:pointer}
+/* A SIGNATURE ONLY SOME READERS GET: the option greyed, its words naming whose it is. */
+.sh-opt.sh-locked{color:var(--muted);cursor:default}
+.sh-opt.sh-locked a{color:var(--accent)}
 .sh-opt b{color:var(--gold);font-weight:600}
 .sh-canvas{max-width:100%;height:auto;border:1px solid var(--line);border-radius:10px;display:block}
 

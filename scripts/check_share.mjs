@@ -344,4 +344,23 @@ check("...and the sender's measurement did not land", bo.landedResult === false)
     `v4=${enc.len.v4} v3=${enc.len.v3} v2=${enc.len.v2}`);
 }
 
+// A SIGNATURE ONLY SOME READERS GET is drawn greyed, with the extension's words,
+// and the link stays plain: nothing is signed by an option nobody can tick.
+const locked = await evaluate(`(async () => {
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  history.pushState({}, '', '/weapons/Torid'); route(); await sleep(1400);
+  const was = EXT.hooks.shareSigner;
+  EXT.hooks.shareSigner = async () => ({ locked: true, option: 'sign it with my name · <a href="/membership">for Members</a>' });
+  const bar = document.querySelector('#preset-bar-builder-builds');
+  await openSharePanel(bar); await sleep(900);
+  const box = bar.querySelector('.pshare .sh-sign');
+  const label = box && box.closest('label');
+  const out = { disabled: !!box && box.disabled, link: !!(label && label.querySelector('a[href="/membership"]')),
+    url: ((bar.querySelector('.pshare .sh-url') || {}).value) || '' };
+  EXT.hooks.shareSigner = was;
+  return out;
+})()`);
+check("a signature only some readers get is drawn greyed, with its link, and the shared link stays plain",
+  locked.disabled && locked.link && /\?b=/.test(locked.url) && !/\/s\//.test(locked.url), JSON.stringify(locked));
+
 await app.finish("a shared link lands whole, on screen, first time");

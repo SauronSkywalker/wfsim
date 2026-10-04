@@ -154,6 +154,7 @@ function renderAccountEntry() {
           <span>@${escHtml(account.username || "")}</span></div></div>
         <a href="/account" role="menuitem">${aT("Account settings")}</a>
         <a href="/account/sync" role="menuitem">${aT("Cloud sync")}</a>
+        ${Object.values(EXT.pages).filter((p) => p.menu).map((p) => `<a href="${escHtml(p.path)}" role="menuitem">${aT(p.menu)}</a>`).join("")}
         <hr><a href="#" role="menuitem" data-acct="logout">${aT("Sign out")}</a>
       </div>`
     : `<a class="signin-btn" href="/login?return=${encodeURIComponent(authKindOf(location.pathname) ? "/" : here)}">${aT("Sign in")}</a>`;
