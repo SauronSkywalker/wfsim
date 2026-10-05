@@ -718,10 +718,10 @@ def ship_ocr() -> None:
                  "run `python scripts/fetch_ocr.py`")
     # THE PAGE ASKS FOR EACH PIN BY NAME, so a renamed pin is a 404 nobody sees
     # until a reader reads a screenshot.
-    page = (ROOT / "web" / "src" / "static" / "app" / "19-riven-ocr.js").read_text(encoding="utf-8")
+    page = (ROOT / "web" / "src" / "static" / "app" / "25-riven-ocr.js").read_text(encoding="utf-8")
     unasked = [p["name"] for p in pins if p["name"] not in page]
     if unasked:
-        sys.exit(f"19-riven-ocr.js does not ask for {', '.join(unasked)} — web/ocr/pins.json and the page disagree")
+        sys.exit(f"25-riven-ocr.js does not ask for {', '.join(unasked)} — web/ocr/pins.json and the page disagree")
     out = APP / "ocr"
     shutil.rmtree(out, ignore_errors=True)
     out.mkdir(parents=True)

@@ -175,7 +175,7 @@ change that page in the commit that changes what is kept.
 
 ## Offered screenshots
 
-A riven screenshot is read in the reader's browser (`19-riven-ocr.js`) and does
+A riven screenshot is read in the reader's browser (`25-riven-ocr.js`) and does
 not leave it. What it read becomes a new card, and a review window holds the
 screenshot and the riven editor itself until OK; Cancel deletes the card.
 Ticking **Send this read and your corrections** there sends, on OK, the rectangle around the lines that named a

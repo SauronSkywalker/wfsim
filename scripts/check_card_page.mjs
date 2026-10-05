@@ -1,4 +1,4 @@
-// THE LONG IMAGE THE BOTS SEND (44-card-page.js): each kind of card draws its
+// THE LONG IMAGE THE BOTS SEND (45-card-page.js): each kind of card draws its
 // cards, its code and every riven's values, and says it is ready — the moment
 // the bot server's screenshot is taken — with nothing else on the page.
 //   node scripts/check_card_page.mjs            (WFSIM_BASE=http://127.0.0.1:8787 against a dev server)

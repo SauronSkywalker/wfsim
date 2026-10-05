@@ -165,7 +165,7 @@ that stops part way is redone, and a missed run is made up by the next.
 
 ## Shown publicly
 
-**THE POPULARITY RANKING** on the home page (`13-home-hot.js`), from
+**THE POPULARITY RANKING** on the home page (`15-home-hot.js`), from
 `/api/popularity` (`worker/popularity.js`): per weapon, its `tested` rows —
 the visitors who finished a simulation OR a search on it that day, each once
 whichever they ran — summed over the last 30 days `usage_days` has finished,

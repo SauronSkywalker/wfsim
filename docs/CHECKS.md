@@ -38,7 +38,7 @@ different answers from the same seed with no error anywhere.
 
 ## `check_card_page`
 
-The long image the bots send (`44-card-page.js`, docs/AGENT.md §"The QQ bot"):
+The long image the bots send (`45-card-page.js`, docs/AGENT.md §"The QQ bot"):
 each kind of card draws what its address asks for and its code, keeps the
 address's question through the weapon opening, is the only thing on the page,
 and says `data-card-ready` only once every riven's values have arrived — a card

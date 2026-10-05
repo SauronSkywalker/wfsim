@@ -219,7 +219,7 @@ async function route() {
     // rewrites the address to the weapon's plain path — so by the time the
     // weapon is on screen the query is already gone, and the mode with it.
     const wantMode = new URLSearchParams(location.search).get("mode");
-    // …AND THE CARD'S OWN QUESTION, for the same reason (44-card-page.js).
+    // …AND THE CARD'S OWN QUESTION, for the same reason (45-card-page.js).
     const cardAsk = mod === "card" ? cardParams() : null;
     // WHICH RULER, from a board row. A row is a build AND the ruler it was
     // measured under; arriving with only the build gives you a number you
