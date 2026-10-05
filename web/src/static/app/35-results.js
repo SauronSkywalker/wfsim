@@ -65,12 +65,12 @@ async function loadResults() {
 
 /// THE RUN AS A RECORD. The replay stays out — it is the one part of a result
 /// a button regenerates, and it is `resultMem`'s for the session.
-function resultRecord(r) {
+function resultRecord(r, build) {
   return {
     id: presetNewId(), schema: RESULT_SCHEMA, at: Date.now(),
     engine: ENGINE_ID, release: RELEASE_ID,
     weapon: presetWeapon(), preset: activePreset, scenario: activeScenario,
-    key: simKey(), build: snapshotState(), fight: snapshotScenario(),
+    key: simKey(), build, fight: snapshotScenario(),
     kept: false, r: { ...r, replay: null },
   };
 }
@@ -84,9 +84,9 @@ const resultLatest = (weapon, preset) => resultsFor(weapon, preset)[0] || null;
 
 /// Record a run, and trim what that build keeps for that fight. The blank
 /// (no preset open) records nothing: no build is there for a record to name.
-function resultAdd(r) {
+function resultAdd(r, build) {
   if (!activePreset) return null;
-  const rec = resultRecord(r);
+  const rec = resultRecord(r, build);
   results.push(rec);
   const same = (x) => !x.kept && x.weapon === rec.weapon && x.preset === rec.preset && x.scenario === rec.scenario;
   const drop = results.filter(same).slice(0, -RESULT_KEEP).map((x) => x.id);

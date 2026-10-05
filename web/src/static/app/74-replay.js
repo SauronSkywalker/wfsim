@@ -718,7 +718,7 @@ function wireReplay(r) {
       cur.tracked = [...(cur.tracked || []), id];
       cur.dstacks = [...(cur.dstacks || []), rp.dstacks[k]];
       replayFoe = cur.tracked.length - 1;
-      renderResults(shownResult.r, shownResult.at);
+      renderResults(shownResult.r, shownResult.at, shownResult.build);
     } catch (_) {
       el.querySelector(".nm").innerHTML = was;
       el.dataset.busy = "";
@@ -731,7 +731,7 @@ function wireReplay(r) {
     // FROM THE RESULT IN HAND. No simulation, and no storage lookup either —
     // see `shownResult`. Picking an enemy is a question about a run that has
     // already happened and cannot be a reason to lose it.
-    if (shownResult) renderResults(shownResult.r, shownResult.at);
+    if (shownResult) renderResults(shownResult.r, shownResult.at, shownResult.build);
     else renderStoredSimResult();
   };
   document.querySelectorAll("[data-rpfoe]").forEach((el) => {
@@ -740,7 +740,7 @@ function wireReplay(r) {
   document.querySelectorAll("[data-rpseat]").forEach((el) => {
     el.onclick = () => {
       replaySeat = Number(el.dataset.rpseat);
-      if (shownResult) renderResults(shownResult.r, shownResult.at);
+      if (shownResult) renderResults(shownResult.r, shownResult.at, shownResult.build);
       else renderStoredSimResult();
     };
   });

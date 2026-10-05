@@ -1157,6 +1157,9 @@ async function runSim() {
     // `replay: true` only HERE. The gain scan hits the same endpoint once per
     // candidate and shows no replay, so it must not pay for one.
     const body = { ...buildPayload(), ...theFight({ replay: true }) };
+    // THE BUILD AS IT WAS SENT, copied now: a fight can take a minute, and an
+    // edit made while it runs must not become the build this number is about.
+    const build = snapshotState();
     // STARTED, beside `simulator.run` for finished: the gap is what was stopped or failed.
     track("simulator.start", body.weapon, simRuns());
     // THROTTLED BY THE FRAME, not by the message: the worker already sends one
@@ -1201,8 +1204,8 @@ async function runSim() {
     // is "already on the board", a stale one is a claim about the wrong build.
     boardState = "";
     boardOnBoard = null;
-    renderResults(r);
-    saveSimResult(r);
+    renderResults(r, undefined, build);
+    saveSimResult(r, build);
     track("simulator.run", body.weapon, simRuns());
     // ONE INTEGER PAIR, FOR THE READER'S OWN EYES. `/support` is the only thing
     // that reads it and it never leaves this browser — see `SUPPORT_USE`. It is

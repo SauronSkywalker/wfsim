@@ -210,8 +210,24 @@ function popsDraw(rp, i, live) {
 /// survives a RELOAD or a preset switch, and nothing else asks it a question.
 let shownResult = null;
 
-function renderResults(r, testedAt) {
-  shownResult = { r, at: testedAt };
+/// THE MEASURED BUILD AS A START (`simulator.result.send`): the copy
+/// taken when the shown result's run was sent, never the preset as it stands
+/// now, which may have moved since — then the optimizer, opened. Null when the
+/// shown result carries no build.
+async function startFromResult() {
+  const build = shownResult && shownResult.build;
+  const w = weaponInfo($("weapon").value);
+  if (!w || !build) return null;
+  const start = JSON.parse(JSON.stringify(build));
+  history.pushState({}, "", `${weaponPath(w.id)}/optimizer`);
+  await route();
+  const added = !opt.starts.some((s) => JSON.stringify(s.build) === JSON.stringify(start));
+  if (added) addStart(start);
+  return { added, starts: opt.starts.length };
+}
+
+function renderResults(r, testedAt, build) {
+  shownResult = { r, at: testedAt, build };
   // …AND THE BUILD CARD WITH IT: the action priority list it prints is this
   // run's answer, so a new verdict is a new list (`aplHtml`).
   renderSimBuild();
@@ -662,12 +678,9 @@ function renderResults(r, testedAt) {
   });
   const toOpt = $("exit-optimize");
   if (toOpt) {
-    toOpt.onclick = () => {
-      const w = weaponInfo($("weapon").value);
-      if (!w) return;
-      history.pushState({}, "", `${weaponPath(w.id)}/optimizer`);
-      route();
-    };
+    toOpt.disabled = !build;
+    if (!build) toOpt.title = tr("this result was stored without its build — run it again to send it");
+    toOpt.onclick = () => startFromResult();
   }
   const toShare = $("exit-share");
   if (toShare) {

@@ -10,9 +10,9 @@ function simKey() {
   return JSON.stringify([st.slots, st.arcane, st.arcaneRank, st.evoSel, snapshotScenario()]);
 }
 
-function saveSimResult(r) {
+function saveSimResult(r, build) {
   resultViewing = null;
-  const rec = resultAdd(r);
+  const rec = resultAdd(r, build);
   // …AND IN MEMORY, which is where the REPLAY stays for good: a record has none.
   if (rec) resultMem.set(resultMemKey(), { ...rec, r });
 }
@@ -38,9 +38,10 @@ async function resultForShare() {
   // count, and on a crowd the difference is a minute against a quarter of one.
   // A share card that takes a minute to appear is a share card nobody waits
   // for.
+  const build = snapshotState();
   const r = await simulateFleet({ ...buildPayload(), ...theFight() });
   if (!r || r.ok === false) return null;
-  saveSimResult(r);
+  saveSimResult(r, build);
   renderStoredSimResult();
   return { r, at: Date.now(), key: simKey() };
 }
@@ -67,7 +68,7 @@ function renderStoredSimResult() {
   renderResultHistory(viewing);
   if (viewing) {
     show("sim-results-block", true);
-    renderResults(viewing.r, viewing.at);
+    renderResults(viewing.r, viewing.at, viewing.build);
     return;
   }
   let shown = resultLatest(presetWeapon(), activePreset);
@@ -81,7 +82,7 @@ function renderStoredSimResult() {
   if (mem && shown && mem.id === shown.id && mem.r.replay) shown = mem;
   const has = !!(shown && shown.r);
   show("sim-results-block", has); // an untested build shows no Result block
-  if (has) renderResults(shown.r, shown.at);
+  if (has) renderResults(shown.r, shown.at, shown.build);
   else box.innerHTML = "";
 }
 

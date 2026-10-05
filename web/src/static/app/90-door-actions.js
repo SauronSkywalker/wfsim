@@ -928,6 +928,15 @@ const AGENT_ACTIONS = [
     run({ bar }) { const cfg = AGENT_BARS[bar](); const id = copyActivePreset(cfg); return { preset: id, name: presetLabel(presetFind(cfg.load(), id)) }; },
   },
   {
+    id: "simulator.result.send",
+    writes: "search",
+    what: "Add the build the shown simulated fight measured — as it was when that run was sent, not as its preset stands now — to the optimizer's starts, and open the optimizer.",
+    anchor: "#exit-optimize, #sim-results",
+    needs_weapon: true,
+    args: {},
+    async run() { return (await startFromResult()) || agentNo("nothing_measured", { try: "simulator.run.start" }); },
+  },
+  {
     id: "simulator.result.read",
     query: true,
     what: "Read the last simulated fight for this build: the headline and whether it is still this build's, kills, time to kill, crit and headshot rates, and which damage sources dealt what share.",
