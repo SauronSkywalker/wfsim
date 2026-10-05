@@ -10,9 +10,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | auto | 2.0735 | Primed Cryo Rounds, Malignant Force, Hellfire, Galvanized Chamber, Primary Acuity, Galvanized Aptitude, Vital Sense, Magnetic Capacity, Primary Deadhead |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 11.4409 | Primed Cryo Rounds, Malignant Force, Hellfire, Galvanized Chamber, Primary Acuity, Galvanized Aptitude, Vital Sense, Magnetic Capacity, Primary Deadhead |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | auto | 0.1330 | Primed Cryo Rounds, Malignant Force, Hellfire, Galvanized Chamber, Primary Acuity, Galvanized Aptitude, Vital Sense, Magnetic Capacity, Primary Deadhead |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 4.7561 | Hellfire, Thermite Rounds, Heavy Caliber, Primary Acuity, Serration, Hammer Shot, Vile Acceleration, Vital Sense, Vigilante Supplies, Primary Deadhead |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 29.3257 | Hellfire, Thermite Rounds, Heavy Caliber, Primary Acuity, Galvanized Scope, Bladed Rounds, Vile Acceleration, Vital Sense, Vigilante Supplies, Primary Deadhead |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | auto | 0.8448 | Hellfire, Thermite Rounds, Heavy Caliber, Primary Acuity, Hammer Shot, Rifle Elementalist, Semi-Rifle Cannonade, Vital Sense, Vigilante Supplies, Primary Crux |
 
 ## Not modelled here
 

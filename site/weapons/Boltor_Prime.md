@@ -11,7 +11,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 31.5358 | Primed Cryo Rounds, Infected Clip, Thermite Rounds, Primary Acuity, Galvanized Aptitude, Galvanized Scope, Vile Acceleration, Vital Sense, Primary Deadhead |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 116.8680 | Primed Cryo Rounds, Infected Clip, Hellfire, Galvanized Chamber, Primed Shred, Galvanized Aptitude, Galvanized Scope, Vital Sense, Primary Deadhead |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 151.1725 | Primed Cryo Rounds, Infected Clip, Thermite Rounds, Primary Acuity, Primed Shred, Galvanized Aptitude, Galvanized Scope, Vital Sense, Vigilante Supplies, Primary Deadhead |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 3.8348 | Primed Cryo Rounds, Infected Clip, Thermite Rounds, Primary Acuity, Galvanized Aptitude, Galvanized Scope, Vile Acceleration, Vital Sense, Primary Deadhead |
 
 ## In WFSim

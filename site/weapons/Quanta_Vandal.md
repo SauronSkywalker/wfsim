@@ -10,8 +10,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 4.7290 | Stormbringer, Galvanized Chamber, Heavy Caliber, Serration, Critical Delay, Vigilante Armaments, Vile Acceleration, Vital Sense, Primary Crux |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 17.2013 | Stormbringer, Galvanized Chamber, Heavy Caliber, Serration, Critical Delay, Vigilante Armaments, Vile Acceleration, Vital Sense, Primary Crux |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.2791 | Stormbringer, Galvanized Chamber, Serration, Critical Delay, Rifle Elementalist, Vigilante Armaments, Vile Acceleration, Vital Sense, Primary Crux |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 26.7446 | Stormbringer, High Voltage, Galvanized Chamber, Serration, Critical Delay, Rifle Elementalist, Vile Acceleration, Vital Sense, Primary Crux |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.7772 | High Voltage, Malignant Force, Hellfire, Galvanized Chamber, Serration, Critical Delay, Vile Acceleration, Vital Sense, Primary Crux |
 
 ## In WFSim

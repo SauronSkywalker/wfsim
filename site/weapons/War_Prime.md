@@ -11,8 +11,8 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy | 3.7199 | Volcanic Edge, Sacrificial Steel, Condition Overload, Primed Fury, Galvanized Reflex, Amalgam Organ Shatter, Corrupt Charge, Magnetic Rush, Dreamer's Wrath, Melee Exposure |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy | 3.9590 | Volcanic Edge, Sacrificial Steel, Condition Overload, lasting_sting@9, Primed Fury, Amalgam Organ Shatter, Corrupt Charge, Magnetic Rush, Dreamer's Wrath, Melee Exposure |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | heavy | 0.3358 | Volcanic Edge, Sacrificial Steel, Condition Overload, lasting_sting@9, Primed Fury, Amalgam Organ Shatter, Corrupt Charge, Magnetic Rush, Dreamer's Wrath, Melee Exposure |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy | 5.9651 | Volcanic Edge, Sacrificial Steel, Condition Overload, Primed Fury, Galvanized Reflex, Amalgam Organ Shatter, Corrupt Charge, Magnetic Rush, Dreamer's Wrath, Melee Exposure |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | heavy | 0.3438 | Volcanic Edge, Lasting Sting, Sacrificial Steel, Condition Overload, Primed Fury, Amalgam Organ Shatter, Corrupt Charge, Magnetic Rush, Dreamer's Wrath, Melee Exposure |
 
 ## Not modelled here
 

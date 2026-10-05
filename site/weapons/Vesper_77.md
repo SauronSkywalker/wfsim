@@ -10,9 +10,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 8.6204 | Jolt, Pistol Pestilence, Pistol Acuity, Hornet Strike, Primed Target Cracker, Pistol Elementalist, Semi-Pistol Cannonade, Leaded Gas, Secondary Deadhead |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 11.0928 | Primed Heated Charge, Pistol Acuity, Hornet Strike, Primed Target Cracker, Creeping Bullseye, Pistol Elementalist, Semi-Pistol Cannonade, Leaded Gas, Secondary Deadhead |
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 46.2367 | Primed Heated Charge, Pistol Acuity, Hornet Strike, Primed Target Cracker, Creeping Bullseye, Pistol Elementalist, Semi-Pistol Cannonade, Leaded Gas, Secondary Deadhead |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.6353 | Jolt, Pistol Pestilence, Pistol Acuity, Hornet Strike, Primed Target Cracker, Pistol Elementalist, Semi-Pistol Cannonade, Leaded Gas, Secondary Deadhead |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.2103 | Primed Heated Charge, Pistol Acuity, Hornet Strike, Primed Target Cracker, Creeping Bullseye, Pistol Elementalist, Semi-Pistol Cannonade, Leaded Gas, Secondary Deadhead |
 
 ## Not modelled here
 
