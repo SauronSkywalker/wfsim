@@ -369,6 +369,22 @@ Advertising Law forbids superlatives. ONE WORD FOR ONE THING: a setup is 场景
 and a run is 战斗, and a game term is DE's own (裂罅, 异况超量, 超宏防护);
 `our_chinese_uses_one_word_for_each_thing` holds the list.
 
+## Every box takes a Chinese input method
+
+An input method COMPOSES: pinyin is typed, then characters are picked, and
+every keystroke between fires `input` with `isComposing` set.
+
+- **A BOX THAT REDRAWS ITSELF LISTENS WITH `onTyped`**, which skips the
+  composing and runs once the characters are committed. Rebuilding the box
+  under a composition kills it, and nothing Chinese can be typed at all.
+- **AN ENTER OR AN ESC ASKS `imeComposing(e)` FIRST.** While composing, Enter
+  picks a candidate and Esc drops the pinyin; neither is the page's to submit,
+  close or cancel on. Safari sends the committing Enter with `isComposing`
+  already false, which is why the helper also reads keyCode 229.
+
+`check_ime_keys` holds the second rule over every handler; `check_ime_search`
+types pinyin into each box that filters as it is typed in.
+
 ## The build finder
 
 **EVERY BUILD IS IN THE BUILD BAR; THE FINDER ONLY FINDS.** The builder's top

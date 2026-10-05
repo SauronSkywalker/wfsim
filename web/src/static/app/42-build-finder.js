@@ -376,6 +376,7 @@ function renderBuildFinder() {
   };
   input.addEventListener("input", () => { finder.hi = 0; drawSugg(); });
   input.addEventListener("keydown", (e) => {
+    if (imeComposing(e)) return;
     const hs = hits();
     if (e.key === "ArrowDown") { finder.hi = Math.min(finder.hi + 1, hs.length - 1); drawSugg(); e.preventDefault(); }
     else if (e.key === "ArrowUp") { finder.hi = Math.max(finder.hi - 1, 0); drawSugg(); e.preventDefault(); }

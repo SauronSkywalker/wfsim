@@ -244,7 +244,7 @@ document.addEventListener("change", (e) => {
   } else return;
   renderCloudList();
 });
-document.addEventListener("input", (e) => {
+onTyped(document, (e) => {
   if (!e.target || e.target.id !== "cloud-q") return;
   cloudView.q = e.target.value;
   renderCloudList();

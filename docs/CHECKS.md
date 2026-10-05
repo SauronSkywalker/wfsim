@@ -610,6 +610,20 @@ finishes reports `exhaustive`, one the budget cuts reports its COVERAGE and
 does not pretend, and the WORKER FLEET covers more ground than one worker
 would.
 
+## `check_ime_keys`
+
+Every keydown handler that reads Enter or Escape asks whether an input method
+is composing (docs/UI.md §"Every box takes a Chinese input method"). No
+browser; runs beside `check_app_parts` in CI.
+
+## `check_ime_search`
+
+Chrome's own IME emulation types pinyin into each box that filters as it is
+typed in — the home search, the board's, the optimizer's mod filter, the sync
+page's list and a long preset bar's — and asserts the box survives the
+composing, holds the committed characters and filters by them. A box added
+that redraws itself belongs in its list.
+
 ## `check_gain_band`
 
 A quick-calc chip says HOW WELL IT KNOWS its own number

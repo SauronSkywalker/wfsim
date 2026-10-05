@@ -69,6 +69,9 @@ jobs:
       # them, no part outgrows the ceiling, and no whole app.js competes.
       - name: app.js is its parts
         run: node scripts/check_app_parts.mjs
+      # AN ENTER OR AN ESC IS THE INPUT METHOD'S while it composes pinyin.
+      - name: Enter and Esc wait for the input method
+        run: node scripts/check_ime_keys.mjs
       # THE ENGINE'S LAYERS: no module names one above its own, and no two reach
       # each other. The compiler accepts both inside a crate, so this is where
       # they are caught. Milliseconds, no browser.
@@ -107,6 +110,10 @@ jobs:
         run: node scripts/check_bot_auth.mjs
       - name: The browser's agent gets the door's table
         run: node scripts/check_webmcp.mjs
+      # A BOX THAT REDRAWS UNDER A COMPOSITION takes no Chinese at all, while
+      # Latin typing looks fine.
+      - name: Every search box takes a Chinese input method
+        run: node scripts/check_ime_search.mjs
       # NONA RUNS ON THE DOOR, against a local stand-in provider: her tools are
       # the door's table at request time, and her first change branches the
       # reader's build. Neither is visible until a reader loses a build.

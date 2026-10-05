@@ -187,7 +187,7 @@ function renderAccountEntry() {
     if (e.target.closest(".acct-menu a[href]")) menu(false);
   });
   document.addEventListener("click", (e) => { if (!e.target.closest("#account")) menu(false); });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") menu(false); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !imeComposing(e)) menu(false); });
   // AN OAUTH ROUND TRIP COMES BACK WITH ITS OUTCOME ON THE ADDRESS, said once
   // as a toast — or, on a sign-in page, in the card — and taken off.
   const q = new URLSearchParams(location.search);
@@ -647,6 +647,7 @@ async function authAct(el) {
   });
   // ENTER SUBMITS what it is typed into, as the button under it would.
   main.addEventListener("keydown", (e) => {
+    if (imeComposing(e)) return;
     if (e.key === "Enter" && e.target.matches("input")) {
       const box = e.target.closest(".auth-card, .inline-form, .inline-code, .confirm");
       const go = box && box.querySelector(".run-btn, .btn-danger");

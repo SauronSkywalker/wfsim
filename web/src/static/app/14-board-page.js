@@ -371,7 +371,7 @@ function renderBenchBoard() {
     });
     filters.querySelector("[data-bmeasured]").onclick = () => { benchMeasuredOnly = !benchMeasuredOnly; redraw(); };
     const input = $("bench-q");
-    input.oninput = () => { benchQuery = input.value; redraw(); };
+    onTyped(input, () => { benchQuery = input.value; redraw(); });
     if (typing) { input.focus(); input.setSelectionRange(input.value.length, input.value.length); }
   }
   // THE RULES, under the ruler that makes them. Collapsed by default: a reader

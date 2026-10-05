@@ -156,7 +156,7 @@ document.addEventListener("click", (e) => {
 });
 document.addEventListener("keydown", (e) => {
   const row = e.target && e.target.closest && e.target.closest("#sim-history [data-rview]");
-  if (row && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); row.click(); }
+  if (row && !imeComposing(e) && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); row.click(); }
 });
 
 // ---- REPLAY -------------------------------------------------------------

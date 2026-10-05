@@ -4,6 +4,16 @@
 // official polarity icons from the wiki, art from DE's Public Export.
 
 const $ = (id) => document.getElementById(id);
+/// AN INPUT METHOD IS COMPOSING (pinyin before its characters are picked).
+/// A box that redraws itself must wait for `onTyped`, and an Enter or Esc
+/// during it picks or cancels a candidate — never the page's own action.
+const imeComposing = (e) => e.isComposing || e.keyCode === 229;
+/// TYPED TEXT, once an input method has committed it: a handler that redraws
+/// the box under a composition kills it, and nothing Chinese can be typed.
+function onTyped(el, fn) {
+  el.addEventListener("input", (e) => { if (!e.isComposing) fn(e); });
+  el.addEventListener("compositionend", fn);
+}
 /// A SHORT SHARE LINK'S ID, taken off the address BEFORE anything reads it:
 /// `/weapons/<name>/s/<id>` becomes the weapon's own path, so boot, the router
 /// and the board all see an ordinary weapon page, and `route` lands the build

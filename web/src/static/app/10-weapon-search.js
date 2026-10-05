@@ -104,7 +104,7 @@ function initWeaponSearch() {
     if (!e.target.closest(".wsearch")) shut();
   });
   document.addEventListener("keydown", (e) => {
-    if (e.key !== "Escape" || panel.hidden) return;
+    if (e.key !== "Escape" || panel.hidden || imeComposing(e)) return;
     shut();
     input.blur();
   });
@@ -188,7 +188,7 @@ const QQ_GROUP = "995078378";
   document.addEventListener("click", (e) => {
     if (!e.target.closest("#topmenu, #menu-toggle, #dd-popover")) set(false);
   });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") set(false); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !imeComposing(e)) set(false); });
   // A DESTINATION closes it — the page moves and the menu would be left open
   // over the new one. A CONTROL does not: after switching the theme you can
   // still want the language, and neither moves the page.
@@ -239,7 +239,7 @@ applyCommunityOrder();
   document.addEventListener("click", (e) => {
     if (!e.target.closest("#tbmore, #dd-popover")) set(false);
   });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") set(false); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !imeComposing(e)) set(false); });
   addEventListener("resize", () => set(false));
 })();
 
@@ -351,7 +351,7 @@ async function init() {
     // must not be the click that closes it again.
     if (!e.target.closest(".popover") && !e.target.closest(".slot") && !e.target.closest(".rv-pick")) closePopovers();
   });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closePopovers(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !imeComposing(e)) closePopovers(); });
   window.addEventListener("popstate", route);
   // Reloading or closing the tab KILLS a run in progress: the worker dies with
   // the page. That is not a limitation we can engineer around — measured

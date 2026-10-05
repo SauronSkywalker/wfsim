@@ -441,11 +441,11 @@ function renderHome() {
     const input = $("home-q");
     // ON A PHONE THE HERO FILLS THE SCREEN, so typing brings the search and
     // its results to the top rather than leaving them below the fold.
-    input.oninput = () => {
+    onTyped(input, () => {
       homeQuery = input.value;
       renderHome();
       if (matchMedia("(max-width: 700px)").matches) $("home-nav").scrollIntoView({ block: "start" });
-    };
+    });
     if (typing) { input.focus(); input.setSelectionRange(input.value.length, input.value.length); }
   }
   // A SLOT WITH NOTHING IN IT IS NOT LISTED: a heading over an empty grid

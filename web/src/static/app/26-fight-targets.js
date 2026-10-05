@@ -216,7 +216,7 @@ function renderEnemyTools() {
       openIt(cur.id);
       renderSimTargetIfAny();
     };
-    inp.onkeydown = (e) => { if (e.key === "Enter") commit(); if (e.key === "Escape") { done = true; renderEnemyTools(); } };
+    inp.onkeydown = (e) => { if (imeComposing(e)) return; if (e.key === "Enter") commit(); if (e.key === "Escape") { done = true; renderEnemyTools(); } };
     inp.onblur = commit;
   });
 }
@@ -385,6 +385,7 @@ function renderRivenTools() {
       renderMods(); refreshPanel();
     };
     inp.onkeydown = (ev) => {
+      if (imeComposing(ev)) return;
       if (ev.key === "Enter") commit(true);
       if (ev.key === "Escape") commit(false);
     };

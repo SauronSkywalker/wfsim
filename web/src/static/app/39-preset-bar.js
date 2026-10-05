@@ -245,7 +245,7 @@ function renderPresetBarIn(bar, cfg) {
 
   // Typing re-renders the bar (chips re-filter), so hand focus back.
   const filt = bar.querySelector(".pfilter");
-  if (filt) filt.addEventListener("input", () => {
+  if (filt) onTyped(filt, () => {
     presetFilters[bar.id] = filt.value;
     cfg.rerender();
     const nf = bar.querySelector(".pfilter");
@@ -272,6 +272,7 @@ function renderPresetBarIn(bar, cfg) {
       onCommit((inp.value || "").trim());
     };
     inp.addEventListener("keydown", (ev) => {
+      if (imeComposing(ev)) return;
       if (ev.key === "Enter") commit();
       if (ev.key === "Escape") { done = true; cfg.rerender(); }
     });

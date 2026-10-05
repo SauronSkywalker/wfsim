@@ -163,7 +163,7 @@ function renderOptLimits() {
     limitsChanged();
   }));
   const f = $("opt-limit-filter");
-  f.addEventListener("input", () => {
+  onTyped(f, () => {
     const at = f.selectionStart;
     renderOptLimits();
     const g = $("opt-limit-filter");
