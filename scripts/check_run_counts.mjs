@@ -132,10 +132,10 @@ const r = await evaluate(`(async () => {
       // one at every sample point, where it is deliberately hidden ("about 0s
       // left" is noise). 600 buys about three seconds of wait, which is the
       // thing being tested.
-      // A FLEET MAKES THIS FAST, so the count has to grow with it: eight
-      // workers over a sentinel weapon finish 600 runs before a 100 ms sampler
-      // sees anything worth reporting.
-      setSimRuns(4000);
+      // A FLEET MAKES THIS FAST, so the count has to outlast it: fourteen
+      // workers finish 4,000 runs of this fight in about a second, and a time
+      // remaining under one second is deliberately not stated.
+      setSimRuns(20000);
       out.progBodies = 1 + (sim.formation || []).length;
       const seen = [];
       document.getElementById('run-sim').click();
@@ -156,7 +156,7 @@ const r = await evaluate(`(async () => {
       // string stops parsing. Plain string work has no such trap.
       out.progCounts = uniq.every((u) => {
         const words = u.split('|')[0].trim().split(' ');
-        return words[1] === '/' && words[2] === '4000';
+        return words[1] === '/' && words[2] === '20000';
       });
       out.progAll = uniq.slice(0, 6);
       // …AND HOW MUCH LONGER, which is the number they actually want.
@@ -179,13 +179,19 @@ const r = await evaluate(`(async () => {
   {
     const ruler = scenarioList().find((p) => presetId(p) === 'standard_multi_target');
     if (ruler) {
-      setSimRuns(4000);
+      // LONG ENOUGH TO CATCH, AND CAUGHT AS SOON AS IT REPORTS: a fleet runs
+      // 4,000 of these in under two seconds on a big machine, so a fixed wait
+      // found the run already over and no stop to press.
+      setSimRuns(20000);
       document.getElementById('run-sim').click();
-      await sleep(2000);
+      for (let i = 0; i < 300; i++) {
+        await sleep(20);
+        if (((document.getElementById('sim-prog-n') || {}).textContent || '').length) break;
+      }
       out.stopOffered = !!document.getElementById('sim-stop');
       out.stopMidRun = (document.getElementById('sim-prog-n') || {}).textContent || '';
       const t0 = Date.now();
-      document.getElementById('sim-stop').click();
+      document.getElementById('sim-stop')?.click();
       // MEASURED AT THE CLICK, not after a sleep: terminating a worker is
       // synchronous, so what is being timed is the call and not the wait.
       out.stopMs = Date.now() - t0;
