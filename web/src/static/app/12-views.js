@@ -99,7 +99,7 @@ async function route() {
   const compSlug = compRoute && decodeURIComponent(compRoute[1]).trim().toLowerCase().replace(/[\s-]+/g, "_");
   const compHit = compSlug && compHosts().find((c) =>
     c.id === compSlug || c.name.toLowerCase().replace(/[\s-]+/g, "_") === compSlug) || null;
-  const m = (support || bench || dl || wfHit || opRoute || compHit || authKind) ? null : location.pathname.match(/^\/weapons\/([^/]+?)(\/simulator|\/optimizer|\/rivens|\/enemies|\/benchmark)?\/?$/);
+  const m = (support || bench || dl || wfHit || opRoute || compHit || authKind) ? null : location.pathname.match(/^\/weapons\/([^/]+?)(\/simulator|\/optimizer|\/rivens|\/riven-analyst|\/enemies|\/benchmark)?\/?$/);
   // A hand-typed URL is not the canonical slug. Fold case and treat spaces
   // (and their %20) as underscores, so "/weapons/Dual Toxocyst" reaches the
   // same weapon as "/weapons/Dual_Toxocyst" instead of silently falling back
@@ -137,6 +137,7 @@ async function route() {
   document.body.classList.toggle("on-simulator", mod === "simulator");
   document.body.classList.toggle("on-optimizer", mod === "optimizer");
   document.body.classList.toggle("on-rivens", mod === "rivens");
+  document.body.classList.toggle("on-ranalyst", mod === "riven-analyst");
   document.body.classList.toggle("on-enemies", mod === "enemies");
   // THE WEAPON'S OWN BOARD, and NOT `on-benchmark`: that class already
   // means the site-wide ranking page, and one class with two meanings is
@@ -163,7 +164,7 @@ async function route() {
     a.classList.toggle("sel", a.dataset.nav === here);
   });
   document.querySelector(".config-page").hidden = !w;
-  const modTitle = { simulator: " · Simulator", optimizer: " · Optimizer", rivens: " · Rivens", enemies: " · Enemies", benchmark: " · Benchmark" }[mod] || "";
+  const modTitle = { simulator: " · Simulator", optimizer: " · Optimizer", rivens: " · Rivens", "riven-analyst": " · Riven Analyst", enemies: " · Enemies", benchmark: " · Benchmark" }[mod] || "";
   // The home title carries the SEARCH TERMS, not the headline: nobody looks
   // for "Simulacrum Prime", and the tab/result/share-card is the one place
   // that has to be found rather than enjoyed. The joke
@@ -256,6 +257,7 @@ async function route() {
       `<a class="mtab ${mod === "simulator" ? "sel" : ""}" href="${weaponPath(w.id)}/simulator">${tr("Simulator")}</a>` +
       `<a class="mtab ${mod === "optimizer" ? "sel" : ""}" href="${weaponPath(w.id)}/optimizer">${tr("Optimizer")}</a>` +
       `<a class="mtab ${mod === "rivens" ? "sel" : ""}" href="${weaponPath(w.id)}/rivens">${tr("Rivens")}</a>` +
+      `<a class="mtab ${mod === "riven-analyst" ? "sel" : ""}" href="${weaponPath(w.id)}/riven-analyst">${tr("Riven Analyst")}</a>` +
       `<a class="mtab ${mod === "benchmark" ? "sel" : ""}" href="${weaponPath(w.id)}/benchmark">${tr("Benchmark")}</a>` +
       `<a class="mtab ${mod === "enemies" ? "sel" : ""}" href="${weaponPath(w.id)}/enemies">${tr("Enemies")}</a>`;
     // Arriving on the simulator: refresh its build summary (builder edits
@@ -266,6 +268,7 @@ async function route() {
     if (mod === "simulator") renderSim();
     if (mod === "optimizer") { renderOptFight(); updateOptEstimate(); }
     if (mod === "rivens") renderRivens();
+    if (mod === "riven-analyst") renderRivenAnalyst();
     if (mod === "enemies") renderEnemies();
     if (mod === "benchmark") renderWeaponBench();
     // THE PAGE'S OWN ANSWER, on every module: it describes the WEAPON and
@@ -281,7 +284,7 @@ async function route() {
 
 // The current module's path suffix — weapon switches (search, select,
 // preset load) keep the visitor on the tab they are on.
-const modSuffix = () => (location.pathname.match(/\/(simulator|optimizer|rivens|benchmark)\/?$/) || [null, ""])[1];
+const modSuffix = () => (location.pathname.match(/\/(simulator|optimizer|rivens|riven-analyst|benchmark)\/?$/) || [null, ""])[1];
 const weaponModPath = (id) => weaponPath(id) + (modSuffix() ? "/" + modSuffix() : "");
 
 // WHAT AN ARCANE SEAT IS CALLED: the pool it draws, which is a weapon type or

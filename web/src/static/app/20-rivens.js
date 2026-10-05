@@ -45,8 +45,8 @@ const rivenStat = (id) => rivenPoolAll().find((s) => s.id === id);
 // on a riven as on Point Strike.
 // The unit sits between the hole and the name — `%` on most, `s` on Combo
 // Duration — and is not part of what the stat is called.
-const rivenStatNameEn = (s) =>
-  s.text.replace("|val|", "").replace(/^\s*[%s]\s*/, "").replace(/\s+/g, " ").trim();
+// `rivenStatNameEn` is the headless part's (87-headless.js), which a surface
+// with no page names stats with too.
 const rivenStatName = (s) => tf(rivenStatNameEn(s));
 // The disclaimer every spliced stat carries (see notes: spliced_riven_stat).
 const RIVEN_SPLICED_NOTE = "A spliced stat's value uses the formula every rolled stat uses, on DE's own base number, and no in-game card has been checked against it yet — the number on your card may differ.";

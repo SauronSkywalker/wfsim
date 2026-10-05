@@ -991,6 +991,12 @@ lives at its id rather than at nothing (`urlSlug`, and `url_slug` in
 the opposite of an editor. So it is a block of the Simulator tab, shut until
 opened, and never a tab of its own. `docs/SHAPLEY.md`.
 
+**…EXCEPT A REPORT WHOSE SUBJECT IS NOT THE BUILD ON SCREEN.** The Riven
+Analyst (`/weapons/<Name>/riven-analyst`, `21-riven-analyst.js`) reports on
+every riven the weapon's board has measured, so it belongs to no one module's
+open build and has a tab.
+Its numbers are the headless query's (docs/BOARD.md §"The Riven Analyst").
+
 ---
 
 ## The builder's steps run in the order a build is made

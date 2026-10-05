@@ -354,6 +354,35 @@ function headlessUnknown(id) {
 
 const HEADLESS_WEAPON_ARG = { kind: "string", what: "weapon id; on the page, the one open when omitted" };
 
+// ---- the Riven Analyst --------------------------------------------------------
+//
+// docs/BOARD.md §"The Riven Analyst". GLOBAL: every riven row the board
+// publishes for a weapon against that ruler's and mode's #1 riven-free row.
+// Every number is a published score — nothing here measures anything.
+
+/// A riven stat's English name off its card template — `|val|` and the unit go.
+const rivenStatNameEn = (s) =>
+  s.text.replace("|val|", "").replace(/^\s*[%s]\s*/, "").replace(/\s+/g, " ").trim();
+
+/// THE ANALYSIS of `w`'s board rows: one group per ruler and mode that has a
+/// riven row, best riven row first. `gain` is null where no riven-free row
+/// stands to be compared against.
+function rivenGroups(meta, w, rows) {
+  const benches = (meta.benchmarks || []).map((b) => b.id);
+  const ranked = rankBoard(rows, benches, w.modes);
+  const groups = new Map();
+  for (const x of ranked) {
+    const k = `${x.row.benchmark}#${x.mode}`;
+    const g = groups.get(k) || { ruler_id: x.row.benchmark, mode: x.mode, top: null, rivens: [] };
+    if (x.riven) g.rivens.push(x);
+    else if (!g.top) g.top = x;
+    groups.set(k, g);
+  }
+  return [...groups.values()].filter((g) => g.rivens.length).map((g) => ({
+    ...g, rivens: g.rivens.map((x) => ({ ...x, gain: g.top ? x.row.score / g.top.row.score - 1 : null })),
+  }));
+}
+
 const HEADLESS_QUERIES = [
   {
     id: "builder.weapons.find",
@@ -448,6 +477,44 @@ const HEADLESS_QUERIES = [
           })),
         })),
         conditionals: r.conditionals, buffs: r.buffs,
+      };
+    },
+  },
+  {
+    id: "builder.rivens.read",
+    what: "The Riven Analyst: every riven the board has measured for a weapon, each as its best build's score against the board's #1 riven-free build under the same ruler and mode — what that riven is worth. Global and published; a riven nobody has submitted is not on it.",
+    anchor: "#riven-analyst",
+    args: {
+      weapon: HEADLESS_WEAPON_ARG,
+      ruler: { kind: "string", what: "only this benchmark id" },
+      mode: { kind: "string", what: "only this mode id" },
+    },
+    async run({ weapon, ruler, mode: m }, host) {
+      const w = headlessWeapon(host, weapon);
+      if (w.ok === false) return w;
+      const rows = await host.board(w.id);
+      if (!rows) return headlessNo("board_not_loaded", { because: "this weapon has no board rows yet" });
+      const meta = host.meta();
+      const name = headlessNameOf(meta);
+      const pool = (meta.riven_stats || {})[w.riven_class] || [];
+      const stat = (id) => { const d = pool.find((x) => x.id === id); return d ? rivenStatNameEn(d) : id; };
+      const benches = meta.benchmarks || [];
+      const shown = (r) => String(r.shown != null ? r.shown : (r.score || 0).toFixed(4));
+      const link = (r, rv) => `${host.origin}${headlessWeaponPath(meta.weapons || [], w.id)}?bench=${encodeURIComponent(r.benchmark)}`
+        + `&mode=${encodeURIComponent(r.mode || "base")}&riven=${rv ? 1 : 0}`;
+      const mods = (r) => (r.mods || []).filter((x) => x && x !== BOARD_RIVEN_SLOT).map(name);
+      return {
+        weapon: w.id,
+        groups: rivenGroups(meta, w, rows).filter((g) => (!ruler || g.ruler_id === ruler) && (!m || g.mode === m))
+          .map((g) => ({
+            ruler: host.tr((benches.find((b) => b.id === g.ruler_id) || { name: g.ruler_id }).name),
+            ruler_id: g.ruler_id, mode: g.mode,
+            riven_free: g.top ? { score: shown(g.top.row), mods: mods(g.top.row), link: link(g.top.row, false) } : null,
+            rivens: g.rivens.map((x) => ({
+              bonuses: x.row.riven.bonuses.map(stat), malus: x.row.riven.malus ? stat(x.row.riven.malus) : null,
+              score: shown(x.row), gain: x.gain, mods: mods(x.row), link: link(x.row, true),
+            })),
+          })),
       };
     },
   },

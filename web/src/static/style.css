@@ -147,12 +147,14 @@ body{background:var(--plane);color:var(--text);font-family:system-ui,"Segoe UI",
    module's tab is on. */
 body:not(.on-optimizer) [data-module="optimizer"],
 body:not(.on-rivens) [data-module="rivens"],
+body:not(.on-ranalyst) [data-module="riven-analyst"],
 body:not(.on-enemies) [data-module="enemies"],
 body:not(.on-wbench) [data-module="benchmark"],
 body:not(.on-simulator) [data-module="simulator"]{display:none}
 body.on-optimizer [data-module="builder"],
 body.on-simulator [data-module="builder"],
 body.on-rivens [data-module="builder"],
+body.on-ranalyst [data-module="builder"],
 body.on-enemies [data-module="builder"],
 body.on-wbench [data-module="builder"]{display:none}
 /* THE SIMULATOR'S BLOCKS, and `#wfbuff-block` is one of them: a Warframe buff
@@ -217,15 +219,16 @@ body.on-wbench [data-module="builder"]{display:none}
 /* THE BUILD FINDER IS THE BUILDER'S ALONE. The build bar follows a build onto
    the simulator; finding one is a builder question, so every other module
    hides it. */
-.on-simulator #build-finder,.on-optimizer #build-finder,.on-rivens #build-finder,.on-enemies #build-finder,
+.on-simulator #build-finder,.on-optimizer #build-finder,.on-rivens #build-finder,.on-ranalyst #build-finder,.on-enemies #build-finder,
 .on-wbench #build-finder{display:none}
-.on-simulator #forma-block,.on-optimizer #forma-block,.on-rivens #forma-block,.on-enemies #forma-block,
+.on-simulator #forma-block,.on-optimizer #forma-block,.on-rivens #forma-block,.on-ranalyst #forma-block,.on-enemies #forma-block,
 .on-wbench #forma-block{display:none}
 /* The builder's furniture that is not a `.block`: its preset bar and the quick
    calc travel with the blocks the other modules hide. */
 .on-optimizer #preset-bar-builder-builds,.on-optimizer #quick-calc{display:none}
 /* The RIVENS tab is its own bench: the builder's blocks step aside, the same
    way they do for the other two modules. */
+.on-ranalyst #preset-bar-builder-builds,.on-ranalyst #quick-calc,.on-ranalyst #mode-block,.on-ranalyst #mod-block,.on-ranalyst #arcane-block,.on-ranalyst #evo-block,.on-ranalyst #element-block,.on-ranalyst #stats-block,
 .on-rivens #preset-bar-builder-builds,.on-rivens #quick-calc,.on-rivens #mode-block,.on-rivens #mod-block,.on-rivens #arcane-block,.on-rivens #evo-block,.on-rivens #element-block,.on-rivens #stats-block{display:none}
 /* The ENEMIES editor is the same shape as the rivens one: its own bench, the
    builder's blocks step aside. */
@@ -1079,6 +1082,7 @@ label.check input{width:auto}
 .start-pin.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent)}
 .slot.fixed-pin{box-shadow:inset 0 0 0 1.5px var(--accent)}
 .oseg{display:flex;gap:3px;flex:0 0 auto;margin-top:2px}
+.ra-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
 .oseg .seg.dis{opacity:.4;pointer-events:none}
 .oseg .seg{font-size:11px;padding:3px 9px;border-radius:7px;border:1px solid var(--line);cursor:pointer;user-select:none;color:var(--muted);background:var(--panel2)}
 .oseg .seg.on{border-color:var(--accent);color:#fff;background:var(--accent)}

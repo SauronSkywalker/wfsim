@@ -70,6 +70,19 @@ const stats = top && await run("builder.stats.read", { build: top.build });
 check("a row's build reads the stats panel", !!stats && Array.isArray(stats.forms) && stats.forms.length > 0,
   JSON.stringify(stats).slice(0, 300));
 
+// THE RIVEN ANALYST WITH NO PAGE: published rows against the riven-free #1.
+const rvBoard = (await host.board("acceltra_prime")) || [];
+const rv = await run("builder.rivens.read", { weapon: "acceltra_prime" });
+const rvGroup = (rv.groups || []).find((g) => g.riven_free && g.rivens.length);
+const rvFree = rvGroup && Math.max(...rvBoard.filter((r) => !r.riven && r.benchmark === rvGroup.ruler_id
+  && (r.mode || "base") === rvGroup.mode).map((r) => r.score));
+const rvTop = rvGroup && Math.max(...rvBoard.filter((r) => r.riven && r.benchmark === rvGroup.ruler_id
+  && (r.mode || "base") === rvGroup.mode).map((r) => r.score));
+check("a riven's gain is its published score over the riven-free #1's", !!rvGroup
+  && Math.abs(rvGroup.rivens[0].gain - (rvTop / rvFree - 1)) < 1e-9, JSON.stringify(rv).slice(0, 300));
+check("...and its stats by name, not id", !!rvGroup && rvGroup.rivens.every((x) => x.bonuses.every((b) => !/^[a-z_]+$/.test(b))),
+  JSON.stringify(rvGroup && rvGroup.rivens[0]));
+
 const nobody = await run("builder.stats.read", {});
 check("with no screen, a missing build is refused, not guessed", nobody.ok === false && nobody.reason === "missing_argument",
   JSON.stringify(nobody));

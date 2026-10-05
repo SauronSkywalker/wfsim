@@ -879,6 +879,20 @@ enters the library, and for four builds in five it costs nothing at all — the
 god roll needs no fight. A riven build is then an ordinary build with numbers on
 it, scored once like any other, and the scorer probes nothing.
 
+### The Riven Analyst
+
+What each riven is worth, read off the board. GLOBAL: every riven row a weapon's
+board publishes, against the #1 riven-free row of the same ruler and mode —
+gain = riven row score / riven-free score. `rivenGroups` in `87-headless.js`
+groups them; the tab (`/weapons/<Name>/riven-analyst`) and the headless query
+`builder.rivens.read` both answer with it.
+
+Nothing here measures anything: every figure is a published score, so it moves
+only when the board does. A riven nobody has submitted is not on it, and a row
+that reads below the riven-free #1 is a riven whose best build has not been
+submitted yet. One reader's own card is a different question, and not this
+tab's: it is answered by the optimizer, never by re-measuring here.
+
 ## What is not on the board
 
 *(The exilus slot is on the board — see below.)*
