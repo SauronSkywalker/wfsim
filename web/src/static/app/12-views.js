@@ -367,6 +367,7 @@ const homeFiltersOpen = (id) => homeOpen[id] ?? !matchMedia("(max-width: 700px)"
 
 function renderHome() {
   renderHomeFacts();
+  renderHomeHot();
   const box = $("home-sections");
   if (!box) return;
   const tag = (t) => `<span class="tag">${escHtml(tr(t))}</span>`;

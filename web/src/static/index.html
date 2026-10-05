@@ -323,6 +323,9 @@
     <!-- ONE SECTION PER EQUIPMENT SLOT, in `META.equipment_slots` order
          (data/equipment_slots.yaml) — the page names no slot of its own. -->
     <div id="home-nav" class="snav"></div>
+    <!-- THE POPULARITY RANKING: every weapon, by the people who test it
+         (13-home-hot.js). Hidden where /api/popularity is not offered. -->
+    <section id="home-hot" class="wgroup" hidden></section>
     <div id="home-sections"></div>
   </main>
 
@@ -457,7 +460,7 @@
          way out beside it. docs/ANALYTICS.md is the whole of it. -->
     <section class="sup-usage" id="usage">
       <h2 data-i18n>What is counted</h2>
-      <p><span data-i18n>WFSim counts what gets used — which pages open, whether a build was computed, a simulation or a search started and finished, whether the page itself failed (the kind of failure and where in WFSim's own code, never its text), a board build opened, a link shared, how many presets and customs are saved — under a random id this browser keeps. The count records no IP address and sets no cookie, and the id is not linked to anything that identifies you. With Global Privacy Control or Do Not Track on, nothing is sent.</span></p>
+      <p><span data-i18n>WFSim counts what gets used — which pages open, whether a build was computed, a simulation or a search started and finished, whether the page itself failed (the kind of failure and where in WFSim's own code, never its text), a board build opened, a link shared, how many presets and customs are saved — under a random id this browser keeps. The count records no IP address and sets no cookie, and the id is not linked to anything that identifies you. With Global Privacy Control or Do Not Track on, nothing is sent. Per weapon, how many people ran a simulation or a search each day is added up and shown on the home page as its popularity ranking — totals only.</span></p>
       <p><span data-i18n>This browser's id:</span> <code id="usage-id">—</code> <button id="usage-off" class="cu-btn" type="button"></button></p>
     </section>
     <!-- WHAT THIS CLIENT IS RUNNING — the release, the board it is reading, and

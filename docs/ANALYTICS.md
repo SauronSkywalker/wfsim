@@ -153,6 +153,17 @@ Analytics: Read); without them it writes nothing. A day is written whole and
 never revised. Its `visitors`/`all` row goes last and marks it kept, so a run
 that stops part way is redone, and a missed run is made up by the next.
 
+## Shown publicly
+
+**THE POPULARITY RANKING** on the home page (`13-home-hot.js`), from
+`/api/popularity` (`worker/popularity.js`): per weapon, the `visitors` of
+`simulator.run` and `optimizer.run` summed over the last 30 days `usage_days`
+has finished — both markets together. A visitor counts once a day per kind, so
+a hundred runs in an afternoon add one and a search beside them adds one more;
+a count of runs would rank the most persistent reader, not the most tested
+weapon. Totals the cron already keeps, cached an hour at each edge; `/support`
+says it is shown. Nothing new is collected for it.
+
 ## Not collected
 
 Referrer PATHS and campaign attribution, Google Analytics, user accounts, and any
