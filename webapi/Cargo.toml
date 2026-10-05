@@ -13,3 +13,5 @@ serde_json.workspace = true
 serde_norway.workspace = true
 wfsim-engine = { path = "../engine" }
 wfsim-optimizer = { path = "../optimizer" }
+# QR codes for the long images the bots send (`/api/qr`); SVG only, no image stack.
+qrcode = { version = "0.14", default-features = false, features = ["svg"] }

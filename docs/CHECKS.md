@@ -36,6 +36,21 @@ second and third are the ones that matter most: an unhashed module path is a bro
 that can hold the PREVIOUS engine under this build's `app.js`, which is
 different answers from the same seed with no error anywhere.
 
+## `check_card_page`
+
+The long image the bots send (`44-card-page.js`, docs/AGENT.md §"The QQ bot"):
+each kind of card draws what its address asks for and its code, keeps the
+address's question through the weapon opening, is the only thing on the page,
+and says `data-card-ready` only once every riven's values have arrived — a card
+drawn before it went onto the page lost them, and the screenshot showed bare
+stat names.
+
+## `check_qq`
+
+The QQ door (`worker/qq.js`) with no network: the address check signs QQ's
+published example, a signed event is kept and a changed one refused, and the
+bot server's pull hands each message out once until it is answered.
+
 ## `check_agent_door`
 
 `window.wfsim` is one door, and an action is something a

@@ -26,6 +26,7 @@ mod log;
 mod meta;
 mod optimize;
 mod panel;
+mod qr;
 mod registry;
 mod request;
 mod rivens;
@@ -83,6 +84,7 @@ pub const ROUTES: &[(&str, Endpoint)] = &[
     ("/api/warframe/catalog", |_| warframe_catalog_json()),
     ("/api/warframe/panel", warframe_panel_json),
     ("/api/operator/panel", operator_panel_json),
+    ("/api/qr", qr::qr_json),
 ];
 
 /// The response to a pure endpoint, or `None` for a path [`ROUTES`] does not

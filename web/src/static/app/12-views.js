@@ -99,7 +99,7 @@ async function route() {
   const compSlug = compRoute && decodeURIComponent(compRoute[1]).trim().toLowerCase().replace(/[\s-]+/g, "_");
   const compHit = compSlug && compHosts().find((c) =>
     c.id === compSlug || c.name.toLowerCase().replace(/[\s-]+/g, "_") === compSlug) || null;
-  const m = (support || bench || dl || wfHit || opRoute || compHit || authKind) ? null : location.pathname.match(/^\/weapons\/([^/]+?)(\/simulator|\/optimizer|\/rivens|\/riven-analyst|\/enemies|\/benchmark)?\/?$/);
+  const m = (support || bench || dl || wfHit || opRoute || compHit || authKind) ? null : location.pathname.match(/^\/weapons\/([^/]+?)(\/simulator|\/optimizer|\/rivens|\/riven-analyst|\/enemies|\/benchmark|\/card)?\/?$/);
   // A hand-typed URL is not the canonical slug. Fold case and treat spaces
   // (and their %20) as underscores, so "/weapons/Dual Toxocyst" reaches the
   // same weapon as "/weapons/Dual_Toxocyst" instead of silently falling back
@@ -138,6 +138,10 @@ async function route() {
   document.body.classList.toggle("on-optimizer", mod === "optimizer");
   document.body.classList.toggle("on-rivens", mod === "rivens");
   document.body.classList.toggle("on-ranalyst", mod === "riven-analyst");
+  // THE LONG IMAGE is the page and nothing else, in the light theme whatever
+  // the reader's choice: a chat shows it on either background.
+  document.body.classList.toggle("on-card", mod === "card");
+  if (mod === "card") document.documentElement.dataset.theme = "light";
   document.body.classList.toggle("on-enemies", mod === "enemies");
   // THE WEAPON'S OWN BOARD, and NOT `on-benchmark`: that class already
   // means the site-wide ranking page, and one class with two meanings is
@@ -215,6 +219,8 @@ async function route() {
     // rewrites the address to the weapon's plain path — so by the time the
     // weapon is on screen the query is already gone, and the mode with it.
     const wantMode = new URLSearchParams(location.search).get("mode");
+    // …AND THE CARD'S OWN QUESTION, for the same reason (44-card-page.js).
+    const cardAsk = mod === "card" ? cardParams() : null;
     // WHICH RULER, from a board row. A row is a build AND the ruler it was
     // measured under; arriving with only the build gives you a number you
     // cannot reproduce, and arriving with neither gave you the FIRST ruler's
@@ -269,6 +275,7 @@ async function route() {
     if (mod === "optimizer") { renderOptFight(); updateOptEstimate(); }
     if (mod === "rivens") renderRivens();
     if (mod === "riven-analyst") renderRivenAnalyst();
+    if (mod === "card") renderCardPage(w, cardAsk);
     if (mod === "enemies") renderEnemies();
     if (mod === "benchmark") renderWeaponBench();
     // THE PAGE'S OWN ANSWER, on every module: it describes the WEAPON and

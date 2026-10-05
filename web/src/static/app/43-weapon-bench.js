@@ -81,7 +81,7 @@ function renderWeaponDoc() {
   const w = weaponInfo($("weapon").value);
   if (!box || !w || !META) return;
   const here = location.pathname.replace(/\/[a-z-]+\/?$/, (m) =>
-    /^\/(simulator|optimizer|rivens|riven-analyst|enemies|benchmark)\/?$/.test(m) ? "" : m);
+    /^\/(simulator|optimizer|rivens|riven-analyst|enemies|benchmark|card)\/?$/.test(m) ? "" : m);
   if (box.dataset.url && box.dataset.url === here) { box.hidden = false; return; }
   const cells = wbenchCells(w.id);
   const gaps = gapsOf(w).map(trGap).filter(Boolean);

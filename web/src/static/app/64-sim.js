@@ -170,6 +170,9 @@ const rivenCardHead = (name, generated) => `<div class="sb-h">${escHtml(tr("Rive
 /// Each riven's stats as `/api/riven` printed them, by weapon and card — the
 /// page never computes a riven value itself.
 const rivenCardStats = new Map();
+/// The engine's answers still on their way — a surface that must not be caught
+/// half drawn (the long-image card page) waits for this to empty.
+const rivenCardPending = new Set();
 const rivenCardBody = (name, got) => rivenCardHead(name, got.generated)
   + `<div class="sb-chips">${rivenCardChips(got.stats)}</div>`;
 const rivenCardChips = (stats) => stats.map((x) => `<span class="sb-chip${x.value < 0 ? " neg" : ""}"><span>${
@@ -190,7 +193,7 @@ function rivenCardHtml(w, id) {
       + (rivenStat(x.id) ? rivenStatName(rivenStat(x.id)) : x.id), roll: x.roll, value: i < (sp.bonuses || []).length ? 1 : -1 }));
     got = { stats, generated: "" };
     rivenCardStats.set(key, got);
-    api("/api/riven", { weapon: w.id, ...sp }).then((a) => {
+    const ask = api("/api/riven", { weapon: w.id, ...sp }).then((a) => {
       if (!a || a.ok === false) return;
       const done = { generated: a.name || "",
         stats: (a.stats || []).map((x) => ({ label: tf(x.text), roll: x.roll, value: x.value })) };
@@ -198,7 +201,8 @@ function rivenCardHtml(w, id) {
       document.querySelectorAll("[data-riven-card]").forEach((el) => {
         if (el.dataset.rivenCard === key) el.innerHTML = rivenCardBody(el.dataset.rivenName, done);
       });
-    }, () => {});
+    }, () => {}).finally(() => rivenCardPending.delete(ask));
+    rivenCardPending.add(ask);
   }
   return `<div data-riven-card="${escHtml(key)}" data-riven-name="${escHtml(r.name)}">${rivenCardBody(r.name, got)}</div>`;
 }
