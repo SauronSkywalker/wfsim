@@ -382,7 +382,9 @@ function renderRivenStats() {
 
 // The same searchable popover the mod and arcane pickers use — a riven stat
 // is picked the way everything else on this page is picked.
-function openRivenPicker(anchor, slot) {
+/// `card` and `pick` let another surface — the screenshot's review window — use
+/// this picker on a card that is not the open one; the choice is handed back.
+function openRivenPicker(anchor, slot, card = riven, pick = null) {
   closePopovers();
   // ITS OWN popover. Borrowing the mod picker's nodes dragged the mod
   // picker's sort header in with them, and using it rendered the mod list
@@ -391,10 +393,10 @@ function openRivenPicker(anchor, slot) {
   const pop = $("riven-popover");
   const search = $("riven-search");
   const menu = $("riven-menu");
-  const at = slot === "malus" ? riven.malus : riven.bonuses[Number(slot)];
-  const used = new Set(riven.bonuses.map((x) => x.id).concat(riven.malus ? [riven.malus.id] : []));
+  const at = slot === "malus" ? card.malus : card.bonuses[Number(slot)];
+  const used = new Set(card.bonuses.map((x) => x.id).concat(card.malus ? [card.malus.id] : []));
   // ONE SPLICED STAT A CARD: another slot holding one takes the rest off the list.
-  const splicedElsewhere = riven.bonuses.concat(riven.malus ? [riven.malus] : [])
+  const splicedElsewhere = card.bonuses.concat(card.malus ? [card.malus] : [])
     .some((x) => x !== at && (rivenStat(x.id) || {}).spliced);
   const unconfirmed = weaponInfo($("weapon").value).riven_unconfirmed || [];
   const draw = (q) => {
@@ -417,6 +419,7 @@ function openRivenPicker(anchor, slot) {
     menu.querySelectorAll("[data-rvid]").forEach((el) => el.onclick = () => {
       at.id = el.dataset.rvid;
       closePopovers();
+      if (pick) return pick();
       markRivenDirty();
       renderRivens();
     });

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// CORRECTIONS — a riven screenshot a reader sent back after reading it on the
-// Rivens tab, kept to make reading better (docs/ACCOUNTS.md §"Offered
-// screenshots"). The page sends the card's own rectangle, the lines read, what
-// they first read as, and the card as the reader corrected it; stored under
+// CORRECTIONS — a riven screenshot's read and what the reader confirmed it
+// should have been, sent from the review window when they ticked it (docs/
+// ACCOUNTS.md §"Offered screenshots"). The card's own rectangle, the lines,
+// what they first read as and what was confirmed; stored under
 // `ocr-samples/<day>/<id>` and nothing else: no address, no account, no id a
 // reader could be found by. With no bucket bound it is not offered.
 
@@ -27,15 +27,15 @@ export async function ocrSample(request, env) {
   const bytes = m ? Uint8Array.from(atob(m[1]), (c) => c.charCodeAt(0)) : null;
   if (!bytes || bytes.length > MAX_IMAGE_BYTES) return reply({ ok: false, error: "a JPEG under 1.5 MB" }, 400);
   const lines = Array.isArray(b.lines) ? b.lines.slice(0, MAX_LINES).map((x) => String(x).slice(0, 200)) : [];
-  const riven = b.riven && typeof b.riven === "object" ? b.riven : null;
   const read = b.read && typeof b.read === "object" ? b.read : null;
-  if (JSON.stringify([riven, read]).length > 8000) return reply({ ok: false, error: "riven too large" }, 400);
+  const confirmed = b.confirmed && typeof b.confirmed === "object" ? b.confirmed : null;
+  if (JSON.stringify([read, confirmed]).length > 8000) return reply({ ok: false, error: "riven too large" }, 400);
   const weapon = /^[a-z0-9_]{1,64}$/.test(b.weapon) ? b.weapon : null;
   const lang = /^[a-z-]{2,8}$/.test(b.lang) ? b.lang : null;
   const day = new Date().toISOString().slice(0, 10);
   const key = `ocr-samples/${day}/${crypto.randomUUID()}`;
   await env.UPLOADS.put(key + ".jpg", bytes, { httpMetadata: { contentType: "image/jpeg" } });
-  await env.UPLOADS.put(key + ".json", JSON.stringify({ day, weapon, lang, lines, read, riven }),
+  await env.UPLOADS.put(key + ".json", JSON.stringify({ day, weapon, lang, lines, read, confirmed }),
     { httpMetadata: { contentType: "application/json" } });
   return reply({ ok: true, kept_days: DAYS_KEPT });
 }

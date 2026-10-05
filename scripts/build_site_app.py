@@ -1641,9 +1641,10 @@ and lets you turn it off.</li>
 <li>A build you send to the leaderboard carries the build and nothing about you.
 A short share link stores the build it links to.</li>
 <li>A riven screenshot you read on the Rivens tab is read inside your browser and
-does not leave it. Only if you press <em>Send a correction</em> does WFSim
-receive the rectangle around the card's stats, the lines read from it, what they
-were first read as and the card as you corrected it, to make reading better. It is kept for up to 365
+does not leave it. Only if you tick <em>Send this read and your corrections</em>
+in the review window and press OK does WFSim receive the rectangle around the
+card's stats, the lines read from it, what they were first read as and what you
+confirmed, to make reading better. It is kept for up to 365
 days and carries no account, address or other identifier — so it cannot be
 traced back to you, nor withdrawn once sent.</li>
 </ul>
@@ -1731,7 +1732,7 @@ remains.</li>
 <ul>
 <li><b>不登录时：</b>配装、场景、裂罅只保存在你自己的浏览器里。使用统计记在浏览器保存的一个随机编号下，不记录 IP，不设置 cookie，可在
 <a href="/support#usage">支持页面</a>关闭。提交到排行榜的只有配装本身。</li>
-<li><b>识别裂罅截图：</b>在「裂罅」页读取的截图只在你的浏览器里识别，不会发出。只有你点了「提交修正」，WF模拟 才会收到卡上词条区域的截图、识别出的文字、最初的识别结果和你改正后的卡，用来改进识别，最多保存 365 天。它不带账号、IP 或任何编号，因此无法追溯到你，发出后也无法撤回。</li>
+<li><b>识别裂罅截图：</b>在「裂罅」页读取的截图只在你的浏览器里识别，不会发出。只有你在识别结果窗口里勾选「把这次识别和修正提交给 WF模拟」并点了确定，WF模拟 才会收到卡上词条区域的截图、识别出的文字、最初的识别结果和你确认后的结果，用来改进识别，最多保存 365 天。它不带账号、IP 或任何编号，因此无法追溯到你，发出后也无法撤回。</li>
 <li><b>登录后：</b>账号是一个随机编号，最多可绑定 Google、Discord、GitHub、邮箱四种登录方式。每种方式保存：是哪个服务、该服务给你的用户编号、账号页上显示给你看的名字（Google 邮箱、Discord 或 GitHub 用户名、你的邮箱），以及绑定时间。使用邮箱时你会设置一个密码，WFSim 只保存它加盐的慢哈希，无法还原成密码。邮件只在需要验证邮箱时发送（注册、绑定、找回密码），其中的验证码以哈希保存 10 分钟。登录状态以随机令牌的哈希保存（cookie <code>wfsim_session</code>，90 天）。不保存 IP 地址，也不保存第三方返回的访问令牌。WFSim 从不合并两个账号。如果 Discord 是你的登录方式之一，WFSim 会在 WFSim Discord 服务器里给你的 Discord 账号对应的身份组（Verified，以及持有时的 WFSim Member 或 WFSim Patron）；移除 Discord 或删除账号后一天内收回。</li>
 <li><b>配装同步：</b>登录后，你保存的配装、场景、搜索方案、裂罅、自定义敌人，以及战甲、同伴和指挥官配装会随账号保存，每个登录的浏览器看到的都一样。每一项按浏览器保存的样子存放，不含测量结果，并记录最后修改时间。你删除的条目保留 30 天，可在「云同步」页面恢复；之后只留一个删除标记，让每个浏览器都移除它。这些都在你的数据下载里，删除账号会立即删除它们；你的浏览器始终保留自己的那份。</li>
 <li data-ext="privacy-buying-zh"></li>

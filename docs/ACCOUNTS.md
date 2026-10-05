@@ -176,16 +176,19 @@ change that page in the commit that changes what is kept.
 ## Offered screenshots
 
 A riven screenshot is read in the reader's browser (`19-riven-ocr.js`) and does
-not leave it. **Send a correction** sends the rectangle around the lines that
-named a stat, every line read, what they first read as, and the card as it
-stands then — the reader saying what the screenshot should have read — to `/api/ocr/sample`
-(`worker/ocr_samples.js`), stored in the bucket under `ocr-samples/<day>/`.
+not leave it. What it read opens in a review window, corrected there until OK,
+and only then is entered as a card. Ticking **Send this read and your
+corrections** there sends, on OK, the rectangle around the lines that named a
+stat, every line read, what they first read as and what was confirmed — to
+`/api/ocr/sample` (`worker/ocr_samples.js`), stored in the bucket under
+`ocr-samples/<day>/`. An edit on the card afterwards is a change of mind, not a
+correction, and is never sent.
 
 - No account, no address, no identifier is stored, and the session cookie is
   not read. A sample therefore cannot be found again for its sender, which is
   why `/privacy` says it cannot be withdrawn.
 - 365 days, by the bucket's lifecycle rule (`wrangler.jsonc` states it).
-- A correction is never sent for the reader: it is a button, pressed per card.
+- The box starts unticked, every time.
 
 ## Setup
 
