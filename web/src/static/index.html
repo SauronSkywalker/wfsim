@@ -801,10 +801,14 @@
              What it read, and the offer to send the card, land here. -->
         <input type="file" id="riven-ocr-file" accept="image/*" hidden>
         <div id="riven-ocr" class="rv-ocr"></div>
-        <div id="riven-shape" class="rv-shape"></div>
-        <div id="riven-stats"></div>
-        <div id="riven-foot" class="rv-foot"></div>
-        <div id="riven-card" class="rv-card"></div>
+        <!-- THE EDITOR AS ONE PIECE, so a screenshot's review window can hold
+             it while the read is corrected (19-riven-ocr.js). -->
+        <div id="riven-editor">
+          <div id="riven-shape" class="rv-shape"></div>
+          <div id="riven-stats"></div>
+          <div id="riven-foot" class="rv-foot"></div>
+          <div id="riven-card" class="rv-card"></div>
+        </div>
         <div class="fold sect" data-fold="riven-all">
           <h3 class="sim-h fold-h" id="riven-all-h" data-i18n>All rivens <span class="sim-hint" data-i18n>every riven you have made for this weapon, with what it actually rolls</span></h3>
           <div id="riven-all"></div>
@@ -1032,6 +1036,9 @@
        picker's nodes at first, and the mod picker's sort header came with
        them — clicking it rendered the MOD list into the riven menu. Two
        features sharing one element is not a picker, it is a collision. -->
+  <!-- THE SCREENSHOT'S REVIEW WINDOW: the riven editor itself moves in while a
+       read is corrected. Below the popovers, so the stat picker opens over it. -->
+  <div id="riven-ocr-win" class="rv-ocr-win" hidden></div>
   <div id="riven-popover" class="popover" hidden>
     <div class="addbar"><input id="riven-search" type="text" placeholder="Search a riven stat…" data-i18n-ph autocomplete="off" /></div>
     <div id="riven-menu" class="combo-menu"></div>

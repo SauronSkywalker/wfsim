@@ -136,11 +136,11 @@ async function ocrCardCrop(blob, lines) {
 
 // ---- the editor's side ----------------------------------------------------
 //
-// READ, REVIEW, THEN CONFIRM — in the editor itself. What the screenshot read
-// becomes a new card at once, open in the same editor a card typed by hand is
-// made in, and a bar above it holds the screenshot until OK. While the bar is
-// up an edit means "this was misread"; after OK it is a change of mind. So a
-// correction is sent from OK and nowhere else, and Cancel deletes the card.
+// READ, REVIEW, THEN CONFIRM. What the screenshot read becomes a new card, and
+// a window opens holding the screenshot and the riven editor itself until OK.
+// While the window is up an edit means "this was misread"; after OK it is a
+// change of mind. So a correction is sent from OK and nowhere else, and Cancel
+// deletes the card the way its ✕ does.
 
 /// The card under review, or null: its id, what the screenshot read as, and
 /// whether the reader ticked the box.
@@ -173,6 +173,7 @@ async function ocrRead(blob) {
       first: { bonuses: res.bonuses, malus: res.malus },
       read: lines.filter((l) => ocrNumber(l.text) && !res.unread.includes(l.text)) };
     ocrNote = null;
+    openOcrWindow(ocrReview);
   } catch (e) {
     ocrNote = { state: "error", note: String((e && e.message) || e) };
   }
@@ -197,6 +198,7 @@ async function ocrConfirm() {
   if (!v) return;
   const confirmed = ocrCardAsShown();
   ocrReview = null;
+  closeOcrWindow();
   ocrNote = v.give ? { state: "sending" } : null;
   renderRivenOcr();
   if (v.give) {
@@ -211,6 +213,7 @@ function ocrCancel() {
   const v = ocrReview;
   if (!v) return;
   ocrReview = null;
+  closeOcrWindow();
   URL.revokeObjectURL(v.url);
   deleteRiven(v.id);
   renderRivenOcr();
@@ -236,34 +239,11 @@ async function ocrGive(v, confirmed) {
   }
 }
 
-/// THE BAR ABOVE THE CARD: the review while its card is open, else the status.
+/// THE STATUS LINE under the tools: reading, a failure, sending, sent.
 function renderRivenOcr() {
   const box = $("riven-ocr");
   if (!box) return;
-  // A CARD DELETED MID-REVIEW takes its review with it.
-  if (ocrReview && !loadPresetList(RIVENS).some((p) => p.id === ocrReview.id)) {
-    URL.revokeObjectURL(ocrReview.url);
-    ocrReview = null;
-  }
-  const v = ocrReview && ocrReview.id === activeRivenId() ? ocrReview : null;
   const o = ocrNote;
-  if (v) {
-    box.innerHTML = `<img class="rv-ocr-shot" src="${v.url}" alt="">
-      <div class="rv-ocr-in">
-        <div>${escHtml(tr("Read from the screenshot into the card below. Correct anything misread, then press OK."))}</div>
-        ${v.unread.length ? `<div class="sb-empty">${escHtml(tr("not read"))}: ${v.unread.map(escHtml).join(" · ")}</div>` : ""}
-        <label class="rv-ocr-give"><input type="checkbox" class="rv-ocr-givebox" ${v.give ? "checked" : ""}>
-          <span>${escHtml(tr("Send this read and your corrections to WFSim, with the rectangle around the card's stats, to make reading better"))}</span></label>
-        <div class="rv-ocr-foot">
-          <button class="cu-btn rv-ocr-cancel">${escHtml(tr("Cancel"))}</button>
-          <button class="cu-btn rv-ocr-ok">${escHtml(tr("OK"))}</button>
-        </div>
-      </div>`;
-    box.querySelector(".rv-ocr-givebox").onchange = (e) => { v.give = e.target.checked; };
-    box.querySelector(".rv-ocr-cancel").onclick = ocrCancel;
-    box.querySelector(".rv-ocr-ok").onclick = ocrConfirm;
-    return;
-  }
   const text = !o ? "" : o.state === "reading"
     ? escHtml(tr("Reading the screenshot…"))
       + (o.first ? ` <span class="sb-empty">${escHtml(tr("the first time downloads the reader, about 30 MB"))}</span>` : "")
@@ -274,6 +254,44 @@ function renderRivenOcr() {
     ? `<div class="rv-ocr-in">${text}</div><button class="cu-btn rv-ocr-x" title="${escHtml(tr("close"))}">✕</button>` : "";
   const x = box.querySelector(".rv-ocr-x");
   if (x) x.onclick = () => { ocrNote = null; renderRivenOcr(); };
+}
+
+/// THE REVIEW WINDOW: the screenshot beside THE RIVEN EDITOR ITSELF, moved in
+/// for as long as the read is being corrected — the same controls a card typed
+/// by hand is made with, so the window owns nothing but OK and Cancel.
+function openOcrWindow(v) {
+  const win = $("riven-ocr-win");
+  const title = escHtml(tr("What the screenshot reads as"));
+  win.innerHTML = `<div class="rv-ocr-back"></div>
+    <div class="rv-ocr-card" role="dialog" aria-modal="true" aria-label="${title}">
+      <div class="jump-head"><span class="jh-t">${title}</span></div>
+      <div class="rv-ocr-body">
+        <div class="rv-ocr-side"><img class="rv-ocr-shot" src="${v.url}" alt="">
+          ${v.unread.length ? `<div class="sb-empty">${escHtml(tr("not read"))}: ${v.unread.map(escHtml).join(" · ")}</div>` : ""}</div>
+        <div><div class="sb-empty">${escHtml(tr("Correct anything misread, then press OK."))}</div>
+          <div class="rv-ocr-slot"></div></div>
+      </div>
+      <div class="rv-ocr-foot">
+        <label class="rv-ocr-give"><input type="checkbox" class="rv-ocr-givebox">
+          <span>${escHtml(tr("Send this read and your corrections to WFSim, with the rectangle around the card's stats, to make reading better"))}</span></label>
+        <button class="cu-btn rv-ocr-cancel">${escHtml(tr("Cancel"))}</button>
+        <button class="cu-btn rv-ocr-ok">${escHtml(tr("OK"))}</button>
+      </div>
+    </div>`;
+  win.querySelector(".rv-ocr-slot").appendChild($("riven-editor"));
+  win.querySelector(".rv-ocr-givebox").onchange = (e) => { v.give = e.target.checked; };
+  win.querySelector(".rv-ocr-cancel").onclick = ocrCancel;
+  win.querySelector(".rv-ocr-ok").onclick = ocrConfirm;
+  win.hidden = false;
+}
+
+/// …and the editor back where it lives, under the status line.
+function closeOcrWindow() {
+  const win = $("riven-ocr-win");
+  $("riven-ocr").after($("riven-editor"));
+  closePopovers();
+  win.hidden = true;
+  win.innerHTML = "";
 }
 
 /// THREE WAYS IN, wired once: the button's file, Ctrl+V on the Rivens tab, and
@@ -288,7 +306,7 @@ function wireRivenOcr() {
     if (f) ocrRead(f);
   });
   document.addEventListener("paste", (e) => {
-    if (!document.body.classList.contains("on-rivens")) return;
+    if (!document.body.classList.contains("on-rivens") || ocrReview) return;
     const item = [...((e.clipboardData && e.clipboardData.items) || [])].find((x) => x.type.startsWith("image/"));
     if (!item) return;
     e.preventDefault();
