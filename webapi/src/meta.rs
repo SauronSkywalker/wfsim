@@ -1108,6 +1108,15 @@ pub fn meta_json() -> Value {
                                 // the mod's own `elemental`.
                                 "elemental": s.kind == "elemental_damage_bonus",
                                 "modeled": s.kind != "unmodelled",
+                                // HOW THE CARD PRINTS IT, which decides what a
+                                // number read off a card means — a malus is the
+                                // sign a bonus never shows, and a multiplier's
+                                // neutral is 1, not 0.
+                                "unit": match s.shown_as() {
+                                    wfsim_engine::build::rivens::Shown::Percent => "%",
+                                    wfsim_engine::build::rivens::Shown::Multiplier => "x",
+                                    wfsim_engine::build::rivens::Shown::Number => "",
+                                },
                                 // A Riven Splicer's stat: one a card, and unmeasured.
                                 "spliced": s.spliced,
                             }))

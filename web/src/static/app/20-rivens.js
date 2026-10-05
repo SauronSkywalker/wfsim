@@ -214,12 +214,13 @@ function openRiven(id) {
   renderRivens();
 }
 
-/// "+ new riven": a blank card, saved and opened. Returns its id.
-function newRiven() {
+/// "+ new riven": a blank card — or `card`, one read off a screenshot — saved
+/// and opened. Returns its id.
+function newRiven(card) {
   const ps = loadPresetList(RIVENS);
   const name = freeName(ps, (n) => autoPresetName("riven", n));
   const id = newRivenId(loadPresetWhole(RIVENS));
-  riven = { ...withDrafts(blankRiven()), __weapon: $("weapon").value };
+  riven = { ...withDrafts(card && card.bonuses ? card : blankRiven()), __weapon: $("weapon").value };
   ps.push({ id, name, savedAt: Date.now(), state: snapshotRiven() });
   storePresetList(RIVENS, ps);
   openRiven(id);
@@ -248,6 +249,8 @@ function copyRiven() {
 
 function renderRivens() {
   if (!META || !$("riven-block")) return;
+  wireRivenOcr();
+  renderRivenOcr();
   const w = weaponInfo($("weapon").value);
   const ps = ensureRivenList();
   const open = ps.find((p) => p.id === activeRivenId());

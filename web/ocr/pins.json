@@ -1,0 +1,22 @@
+{
+  "files": [
+    { "name": "ort-1.30.0.wasm.min.js", "package": "onnxruntime-web", "version": "1.30.0",
+      "path": "package/dist/ort.wasm.min.js",
+      "sha256": "faece07e84faa9001f5104bbe4e5c70861d06cb2376a0dea1fa0ad33a67adc81" },
+    { "name": "ort-wasm-simd-threaded-1.30.0.mjs", "package": "onnxruntime-web", "version": "1.30.0",
+      "path": "package/dist/ort-wasm-simd-threaded.mjs",
+      "sha256": "e13f7f94fc51b4ca72b12faeb1ee95f4ace6dfbc8939bc718aabdc0a27c4299b" },
+    { "name": "ort-wasm-simd-threaded-1.30.0.wasm", "package": "onnxruntime-web", "version": "1.30.0",
+      "path": "package/dist/ort-wasm-simd-threaded.wasm",
+      "sha256": "3398c10d07d229bd91b364548e130e0e51a8e5704b88c7c083ebbeb78842dee2" },
+    { "name": "ch-ppocrv4-det.onnx", "package": "@gutenye/ocr-models", "version": "1.4.2",
+      "path": "package/assets/ch_PP-OCRv4_det_infer.onnx",
+      "sha256": "30a86f5731181461d08021402766601e4302a9b9b9666be8aff402696339cdff" },
+    { "name": "ch-ppocrv4-rec.onnx", "package": "@gutenye/ocr-models", "version": "1.4.2",
+      "path": "package/assets/ch_PP-OCRv4_rec_infer.onnx",
+      "sha256": "06b3e6af6c59a1ba5d53790ed8c2e4b2de389870b6cf5a97f349f3412cb269c0" },
+    { "name": "ppocr-keys-v1.txt", "package": "@gutenye/ocr-models", "version": "1.4.2",
+      "path": "package/assets/ppocr_keys_v1.txt",
+      "sha256": "28b2362ad4ab2dc38769aa72feb535e3a9ddb3fd2a7585a05920e6393b1dc7f7" }
+  ]
+}

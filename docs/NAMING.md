@@ -147,6 +147,7 @@ it and not a container per thing. The CONTENT is named one level down.
 | Worker | `wfsim-mcp` | the MCP server — its own because it bundles the engine, which the site's cold start must not carry (`docs/AGENT.md`) |
 | D1 database | `wfsim` | the board's `inbox`, `builds`, `scores`, `batches`, `queue`, `shares`, `usage_days`; and the private worker's own tables |
 | D1 database | `wfsim-accounts` | `accounts`, `identities`, `sessions`, `email_codes` — personal data, restored apart and never in the public backup (`docs/ACCOUNTS.md`) |
+| R2 bucket | `wfsim` | `ocr-samples/` — the riven screenshots readers offer (`docs/ACCOUNTS.md`) |
 | Analytics Engine dataset | `wfsim` | usage points, one per thing a reader did (`docs/ANALYTICS.md`) |
 
 **A NAME DESCRIBES THE RESOURCE, NOT WHAT HAPPENS TO BE IN IT.** A bucket named

@@ -167,6 +167,7 @@ function renderEnemyTools() {
       `<button class="cu-btn cu-back">← ${escHtml(tr("all targets"))}</button>` +
       `<span class="cu-open"><b>${escHtml(cur.name)}</b></span>` +
       `<span class="cu-ops">` +
+      `<button class="cu-btn cu-ocr" title="${escHtml(tr("or paste a screenshot here"))}">${escHtml(tr("read a screenshot"))}</button>` +
       `<button class="cu-btn cu-dup" title="${escHtml(tr("duplicate"))}">⧉</button>` +
       `<button class="cu-btn cu-ren" title="${escHtml(tr("rename"))}">✎</button>` +
       `<button class="cu-btn cu-del" title="${escHtml(tr("delete"))}">✕</button>` +
@@ -334,6 +335,7 @@ function renderRivenTools() {
   if (!cur) {
     box.innerHTML =
       `<button class="cu-btn cu-new">+ ${escHtml(tr("new riven"))}</button>` +
+      `<button class="cu-btn cu-ocr" title="${escHtml(tr("or paste a screenshot here"))}">${escHtml(tr("read a screenshot"))}</button>` +
       `<span class="cu-ops">${undoButtons(RIVENS)}</span>`;
   } else {
     const official = (rivenNames[cur.id] || {}).name || "";
@@ -353,7 +355,8 @@ function renderRivenTools() {
   const openIt = openRiven;
   const click = (sel, fn) => { const b = q(sel); if (b) b.onclick = (e) => { e.stopPropagation(); fn(); }; };
 
-  click(".cu-new", newRiven);
+  click(".cu-new", () => newRiven());
+  click(".cu-ocr", () => $("riven-ocr-file").click());
   click(".cu-back", () => openIt(""));
   click(".cu-dup", copyRiven);
   click(".cu-del", () => {

@@ -25,6 +25,7 @@ import { agentRoute } from "./agents.js";
 import { BOT_AUTH_DIRECTORY, botAuthDirectory } from "./bot_auth.js";
 import { rollupUsage } from "./usage_days.js";
 import { EXT_DOCUMENTS, extDocument } from "./ext_documents.js";
+import { ocrSample } from "./ocr_samples.js";
 
 const MAX_BYTES = 4096;        // a build is a few hundred bytes; this is slack
 // AN OUTER BOUND, NOT THE RULE — see below. It is `MAIN_SLOTS + 1`: eight main
@@ -754,6 +755,7 @@ export default {
       return new Response(rewriteShareHead(await res.text(), preview, own.origin + own.pathname, image),
         { status: res.status, headers });
     }
+    if (path === "/api/ocr/sample") return ocrSample(request, env);
     if (path === "/api/board/pending") {
       return request.method === "GET" ? pending(env) : bad("GET only", 405);
     }
@@ -778,7 +780,7 @@ export default {
     // is what makes it LOUD when it happens anyway. Nothing under these two
     // prefixes is ever html, so html here is the fallback and never the file.
     const asset = await env.ASSETS.fetch(request);
-    if ((path.startsWith("/asset/") || path.startsWith("/pkg/"))
+    if ((path.startsWith("/asset/") || path.startsWith("/pkg/") || path.startsWith("/ocr/"))
         && (asset.headers.get("content-type") || "").includes("text/html")) {
       return new Response("not found", { status: 404, headers: { "content-type": "text/plain" } });
     }

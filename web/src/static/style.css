@@ -1082,6 +1082,10 @@ label.check input{width:auto}
 .start-pin.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent)}
 .slot.fixed-pin{box-shadow:inset 0 0 0 1.5px var(--accent)}
 .oseg{display:flex;gap:3px;flex:0 0 auto;margin-top:2px}
+.rv-ocr:empty{display:none}
+.rv-ocr{display:flex;gap:8px;align-items:flex-start;margin:8px 0;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-size:13px}
+.rv-ocr-in{flex:1}
+.rv-ocr-give{margin-top:6px}
 .ra-builds{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:14px}
 .ra-build{border:1px solid var(--line);border-radius:10px;padding:10px 12px}
 .ra-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
