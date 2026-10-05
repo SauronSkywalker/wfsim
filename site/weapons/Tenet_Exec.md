@@ -20,7 +20,6 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 - Power Spike's partial combo decay is a Warframe passive and is not modelled: the counter drops to zero when its timer runs out, so with that passive the number reads low.
 - The wiki gives this weapon combos of its own (heavy slam and slam attack), which replace the stance's and are not transcribed; the stance's (or its class's) are used instead.
 - Its Tenet valence bonus is not modelled: the build cannot state the element and bonus this copy rolled, so it reads without one.
-- Not modelled: a slam's shockwave: three explosions 5 m apart in a line, and three such lines from a heavy slam.
 
 ## In WFSim
 
