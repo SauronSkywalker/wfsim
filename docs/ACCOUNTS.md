@@ -188,7 +188,9 @@ correction, and is never sent.
   not read. A sample therefore cannot be found again for its sender, which is
   why `/privacy` says it cannot be withdrawn.
 - 365 days, by the bucket's lifecycle rule (`wrangler.jsonc` states it).
-- The box starts unticked, every time.
+- The box is unticked until the reader ticks it once; this browser then
+  remembers either answer (`wfsim-ocr-give`, a preference like the board's) and
+  shows it on every window, where it is changed.
 
 ## Setup
 

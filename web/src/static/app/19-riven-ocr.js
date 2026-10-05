@@ -148,6 +148,13 @@ let ocrReview = null;
 /// The status line under the tools: reading, a failure, sending, sent.
 let ocrNote = null;
 
+/// WHETHER THIS BROWSER SENDS CORRECTIONS — a preference of the browser, like
+/// the board's. Unticked until the reader ticks it once; either answer is then
+/// remembered, and the box shows it every time so it can be changed there.
+const OCR_GIVE_KEY = "wfsim-ocr-give";
+const ocrGivePref = () => { try { return localStorage.getItem(OCR_GIVE_KEY) === "1"; } catch (_) { return false; } };
+const setOcrGivePref = (on) => { try { localStorage.setItem(OCR_GIVE_KEY, on ? "1" : "0"); } catch (_) {} };
+
 async function ocrRead(blob) {
   const w = weaponInfo($("weapon").value);
   if (!w || !blob) return;
@@ -169,7 +176,7 @@ async function ocrRead(blob) {
     while (bonuses.length < 2) bonuses.push({ id: null, roll: 1 });
     const id = newRiven({ bonuses, malus: res.malus ? { id: res.malus.id, roll: roll("malus") } : null,
       rank: rivenRules().max_rank, polarity: "madurai" });
-    ocrReview = { id, blob, url: URL.createObjectURL(blob), lines, unread: res.unread, give: false,
+    ocrReview = { id, blob, url: URL.createObjectURL(blob), lines, unread: res.unread, give: ocrGivePref(),
       first: { bonuses: res.bonuses, malus: res.malus },
       read: lines.filter((l) => ocrNumber(l.text) && !res.unread.includes(l.text)) };
     ocrNote = null;
@@ -272,14 +279,14 @@ function openOcrWindow(v) {
           <div class="rv-ocr-slot"></div></div>
       </div>
       <div class="rv-ocr-foot">
-        <label class="rv-ocr-give"><input type="checkbox" class="rv-ocr-givebox">
+        <label class="rv-ocr-give"><input type="checkbox" class="rv-ocr-givebox" ${v.give ? "checked" : ""}>
           <span>${escHtml(tr("Send this read and your corrections to WFSim, with the rectangle around the card's stats, to make reading better"))}</span></label>
         <button class="cu-btn rv-ocr-cancel">${escHtml(tr("Cancel"))}</button>
         <button class="cu-btn rv-ocr-ok">${escHtml(tr("OK"))}</button>
       </div>
     </div>`;
   win.querySelector(".rv-ocr-slot").appendChild($("riven-editor"));
-  win.querySelector(".rv-ocr-givebox").onchange = (e) => { v.give = e.target.checked; };
+  win.querySelector(".rv-ocr-givebox").onchange = (e) => { v.give = e.target.checked; setOcrGivePref(v.give); };
   win.querySelector(".rv-ocr-cancel").onclick = ocrCancel;
   win.querySelector(".rv-ocr-ok").onclick = ocrConfirm;
   win.hidden = false;
