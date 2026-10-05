@@ -10,9 +10,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | block | 15.7103 | Vicious Frost, Virulent Scourge, Shocking Touch, Condition Overload, Primed Fury, Primed Pressure Point, Galvanized Elementalist, Weeping Wounds, Spinning Needle, Dreamer's Wrath, Melee Influence |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 3.4010 | Shocking Touch, Voltaic Strike, Blood Rush, Primed Fury, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Weeping Wounds, Spinning Needle, Dreamer's Wrath, Melee Influence |
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | block | 819.0016 | Shocking Touch, Voltaic Strike, Blood Rush, Primed Fury, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Weeping Wounds, Spinning Needle, Dreamer's Wrath, Melee Influence |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | block | 2.4228 | Vicious Frost, Virulent Scourge, Shocking Touch, Condition Overload, Primed Fury, Primed Pressure Point, Galvanized Elementalist, Weeping Wounds, Spinning Needle, Dreamer's Wrath, Melee Influence |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.2662 | Vicious Frost, Virulent Scourge, Shocking Touch, Condition Overload, Primed Fury, Primed Pressure Point, Galvanized Elementalist, Weeping Wounds, Spinning Needle, Dreamer's Wrath, Melee Influence |
 
 ## Not modelled here
 

@@ -223,6 +223,6 @@ export function mountPanel(door, agent) {
   };
   $("nona-send").addEventListener("click", submit);
   $("nona-input").addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); submit(); }
+    if (e.key === "Enter" && !e.shiftKey && !e.isComposing && e.keyCode !== 229) { e.preventDefault(); submit(); }
   });
 }

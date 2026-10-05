@@ -10,9 +10,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | slide | 96.6417 | Condition Overload, Blood Rush, Primed Fury, Primed Reach, Galvanized Steel, Gladiator Might, Weeping Wounds, Magnetic Rush, Blind Justice, Dreamer's Wrath, Melee Exposure |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | slide | 997.4091 | Shocking Touch, Condition Overload, Blood Rush, Primed Fury, Primed Reach, Galvanized Elementalist, Galvanized Steel, Weeping Wounds, Blind Justice, Dreamer's Wrath, Melee Influence |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | slide | 13.8103 | Condition Overload, Blood Rush, Primed Fury, Primed Reach, Galvanized Steel, Gladiator Might, Weeping Wounds, Magnetic Rush, Blind Justice, Dreamer's Wrath, Melee Exposure |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 9.2900 | Condition Overload, Blood Rush, Primed Fury, Primed Reach, Galvanized Steel, Gladiator Might, Weeping Wounds, Magnetic Rush, Blind Justice, Dreamer's Wrath, Melee Exposure |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | slide | 982.1164 | Shocking Touch, Condition Overload, Blood Rush, Primed Fury, Primed Reach, Galvanized Steel, Gladiator Might, Weeping Wounds, Blind Justice, Dreamer's Wrath, Melee Influence |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.6711 | Condition Overload, Blood Rush, Primed Fury, Primed Reach, Galvanized Steel, Gladiator Might, Weeping Wounds, Magnetic Rush, Blind Justice, Dreamer's Wrath, Melee Exposure |
 
 ## Not modelled here
 

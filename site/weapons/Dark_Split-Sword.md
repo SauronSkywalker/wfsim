@@ -10,9 +10,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | block forward | 1.2336 | Shocking Touch, Blood Rush, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Galvanized Steel, Quickening, Weeping Wounds, Rending Crane, Discipline's Merit, Melee Influence |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | forward | 0.4270 | Shocking Touch, Blood Rush, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Galvanized Steel, Quickening, Weeping Wounds, Rending Crane, Discipline's Merit, Melee Influence |
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | block forward | 141.1921 | Shocking Touch, Blood Rush, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Galvanized Steel, Quickening, Weeping Wounds, Rending Crane, Discipline's Merit, Melee Influence |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | block forward | 0.06434 | Shocking Touch, Blood Rush, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Galvanized Steel, Quickening, Weeping Wounds, Rending Crane, Discipline's Merit, Melee Influence |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | forward | 0.02202 | Shocking Touch, Blood Rush, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Galvanized Steel, Quickening, Weeping Wounds, Rending Crane, Discipline's Merit, Melee Influence |
 
 ## Not modelled here
 

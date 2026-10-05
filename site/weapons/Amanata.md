@@ -10,9 +10,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | block forward | 0.2074 | Shocking Touch, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Galvanized Steel, Berserker Fury, Organ Shatter, Weeping Wounds, Bleeding Willow, Dreamer's Wrath, Melee Influence |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.1794 | Shocking Touch, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Galvanized Steel, Berserker Fury, Organ Shatter, Weeping Wounds, Bleeding Willow, Dreamer's Wrath, Melee Influence |
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | block forward | 11.5033 | Shocking Touch, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Galvanized Steel, Berserker Fury, Organ Shatter, Weeping Wounds, Bleeding Willow, Dreamer's Wrath, Melee Influence |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | block forward | 0.004619 | Shocking Touch, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Galvanized Steel, Berserker Fury, Organ Shatter, Weeping Wounds, Bleeding Willow, Dreamer's Wrath, Melee Influence |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | block forward | 0.004057 | Healing Return, Blood Rush, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Galvanized Steel, Spring-Loaded Blade, Weeping Wounds, Bleeding Willow, Discipline's Merit, Melee Influence |
 
 ## Not modelled here
 

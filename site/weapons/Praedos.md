@@ -10,9 +10,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | block forward | 36.5314 | Vicious Frost, Virulent Scourge, Shocking Touch, Blood Rush, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Weeping Wounds, Gemini Cross, Dreamer's Wrath, Melee Influence |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 11.2962 | Primed Fever Strike, Vicious Frost, Condition Overload, Blood Rush, Primed Fury, Galvanized Steel, Weeping Wounds, Magnetic Rush, Sovereign Outcast, Discipline's Merit, Melee Exposure |
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | block forward | 1199.2206 | Vicious Frost, Virulent Scourge, Shocking Touch, Blood Rush, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Weeping Wounds, Gemini Cross, Dreamer's Wrath, Melee Influence |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | block forward | 7.4452 | Vicious Frost, Virulent Scourge, Shocking Touch, Blood Rush, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Weeping Wounds, Gemini Cross, Dreamer's Wrath, Melee Influence |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.6718 | Primed Fever Strike, Vicious Frost, Condition Overload, Blood Rush, Primed Fury, Organ Shatter, Weeping Wounds, Magnetic Rush, Sovereign Outcast, Dreamer's Wrath, Melee Exposure |
 
 ## Not modelled here
 

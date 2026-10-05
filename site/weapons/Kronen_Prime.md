@@ -10,9 +10,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 13.9859 | Condition Overload, Blood Rush, Primed Fury, Primed Pressure Point, Primed Reach, Galvanized Steel, Organ Shatter, Magnetic Rush, Sovereign Outcast, Discipline's Merit, Melee Exposure |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.0294 | Condition Overload, Blood Rush, Primed Fury, Primed Reach, Galvanized Steel, Amalgam Organ Shatter, Gladiator Might, Magnetic Rush, Sovereign Outcast, Discipline's Merit, Melee Exposure |
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 140.7578 | Shocking Touch, Condition Overload, Blood Rush, Primed Fury, Primed Reach, Galvanized Elementalist, Galvanized Steel, Organ Shatter, Sovereign Outcast, Discipline's Merit, Melee Influence |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.2587 | Sacrificial Steel, Condition Overload, Blood Rush, Primed Fury, Primed Reach, Amalgam Organ Shatter, Gladiator Might, Magnetic Rush, Sovereign Outcast, Discipline's Merit, Melee Exposure |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.3941 | Sacrificial Steel, Condition Overload, Blood Rush, Primed Fury, Primed Reach, Amalgam Organ Shatter, Gladiator Might, Magnetic Rush, Sovereign Outcast, Discipline's Merit, Melee Exposure |
 
 ## Not modelled here
 

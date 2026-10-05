@@ -10,9 +10,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.6484 | Vicious Frost, Virulent Scourge, Shocking Touch, Condition Overload, Primed Fury, Primed Reach, Galvanized Elementalist, Magnetic Rush, Shimmering Blight, Condition's Perfection, Melee Influence |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.0628 | Vicious Frost, Virulent Scourge, Shocking Touch, Condition Overload, Primed Fury, Primed Reach, Galvanized Elementalist, Magnetic Rush, Shimmering Blight, Condition's Perfection, Melee Influence |
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 74.2738 | Vicious Frost, Virulent Scourge, Shocking Touch, Condition Overload, Primed Fury, Primed Reach, Galvanized Elementalist, Magnetic Rush, Shimmering Blight, Condition's Perfection, Melee Influence |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.05463 | Vicious Frost, Virulent Scourge, Shocking Touch, Condition Overload, Primed Fury, Primed Reach, Galvanized Elementalist, Magnetic Rush, Shimmering Blight, Condition's Perfection, Melee Influence |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.03621 | Vicious Frost, Virulent Scourge, Shocking Touch, Condition Overload, Primed Fury, Primed Reach, Galvanized Elementalist, Magnetic Rush, Shimmering Blight, Condition's Perfection, Melee Influence |
 
 ## Not modelled here
 

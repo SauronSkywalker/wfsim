@@ -10,9 +10,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy | 8.2282 | Volcanic Edge, Sacrificial Steel, Condition Overload, Primed Fury, Galvanized Reflex, Amalgam Organ Shatter, Focus Radon, Magnetic Rush, Dreamer's Wrath, Melee Exposure |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy | 14.5266 | Volcanic Edge, Sacrificial Steel, Condition Overload, Primed Fury, Galvanized Reflex, Amalgam Organ Shatter, Focus Radon, Magnetic Rush, Dreamer's Wrath, Melee Exposure |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | heavy | 0.4969 | Volcanic Edge, Sacrificial Steel, Condition Overload, Primed Fury, Galvanized Reflex, Amalgam Organ Shatter, Corrupt Charge, Focus Radon, Dreamer's Wrath, Melee Exposure |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy | 6.3485 | Volcanic Edge, Sacrificial Steel, Condition Overload, Primed Fury, Galvanized Reflex, Amalgam Organ Shatter, Focus Radon, Magnetic Rush, Dreamer's Wrath, Melee Exposure |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy | 14.1654 | Volcanic Edge, Sacrificial Steel, Condition Overload, Galvanized Reflex, Amalgam Organ Shatter, Berserker Fury, Focus Radon, Magnetic Rush, Dreamer's Wrath, Melee Exposure |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | heavy | 0.3767 | Volcanic Edge, Sacrificial Steel, Condition Overload, Primed Fury, Galvanized Reflex, Amalgam Organ Shatter, Corrupt Charge, Focus Radon, Dreamer's Wrath, Melee Exposure |
 
 ## Not modelled here
 
