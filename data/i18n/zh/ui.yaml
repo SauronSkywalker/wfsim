@@ -1757,8 +1757,7 @@ ui:
   # "+150% Critical Chance" reads the same on a riven as on Point Strike.
   "Rivens": 裂罅
   "Riven Analyst": "裂罅分析"
-  "What the screenshot reads as": "识别结果"
-  "Correct anything misread, then press OK; the card is entered as if typed.": "把认错的地方改对，再点确定；确定后会像手动输入一样建立这张裂罅。"
+  "Read from the screenshot into the card below. Correct anything misread, then press OK.": "截图已识别并填入下面这张卡。把认错的地方改对，再点确定。"
   "Send this read and your corrections to WFSim, with the rectangle around the card's stats, to make reading better": "把这次识别和修正提交给 WF模拟，用来改进识别（会发送卡上词条区域的截图）"
   "correction sent — thank you": "修正已提交，谢谢"
   "OK": "确定"

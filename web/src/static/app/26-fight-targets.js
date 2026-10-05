@@ -359,17 +359,7 @@ function renderRivenTools() {
   click(".cu-ocr", () => $("riven-ocr-file").click());
   click(".cu-back", () => openIt(""));
   click(".cu-dup", copyRiven);
-  click(".cu-del", () => {
-    storePresetList(RIVENS, loadPresetList(RIVENS).filter((x) => x.id !== open));
-    // …AND EVERY SAVED BUILD IN THE FAMILY LETS IT GO. `pruneDanglingRivens`
-    // below clears the LIVE build; these are the ones nobody has open, which
-    // would otherwise come back holding an id nothing resolves.
-    repointRivenInBuilds(rivenKinWeapons(), open, null);
-    // Back to the LIST, not to another riven: deleting the thing you had open
-    // is not a request to open a different one.
-    openIt("");
-    pruneDanglingRivens();
-  });
+  click(".cu-del", () => deleteRiven(open));
   // Renaming happens in an INLINE input — no prompt(), which the owner's
   // browser blocks. Enter commits, Esc cancels.
   click(".cu-ren", () => {

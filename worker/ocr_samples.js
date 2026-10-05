@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // CORRECTIONS — a riven screenshot's read and what the reader confirmed it
-// should have been, sent from the review window when they ticked it (docs/
+// should have been, sent from the bar above that card when they ticked it (docs/
 // ACCOUNTS.md §"Offered screenshots"). The card's own rectangle, the lines,
 // what they first read as and what was confirmed; stored under
 // `ocr-samples/<day>/<id>` and nothing else: no address, no account, no id a
