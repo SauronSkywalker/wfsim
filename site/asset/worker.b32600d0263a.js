@@ -10,15 +10,21 @@
 //   `checkpoint` (a JSON string from a previous session) RESUMES that run.
 // The optimize call blocks this worker until done — that is the design: the
 // page runs it in a DEDICATED worker and cancels by terminating it.
-importScripts("/pkg/wfsim_wasm.6155025d2fd8.js");
+importScripts("/pkg/wfsim_wasm.d771cb857441.js");
 
 // A MODULE THAT WILL NOT DOWNLOAD IS SAID OUT LOUD, after one retry. A rejected
 // `ready` only rejects each message's await, which the page never sees, so the
 // lane sat silent until `LANE_WATCHDOG.loading` ran out; a throw from a task
 // reaches the page's `onerror` now, which settles the lane as dead.
-const load = () => wasm_bindgen({ module_or_path: "/pkg/wfsim_wasm_bg.6155025d2fd8.wasm" });
+const load = () => wasm_bindgen({ module_or_path: "/pkg/wfsim_wasm_bg.d771cb857441.wasm" });
 const ready = load().catch(load);
 ready.catch((err) => setTimeout(() => { throw err; }));
+// …AND ONE THAT IS STILL DOWNLOADING SAYS SO, so a slow line is not taken for a
+// dead lane: the page's watchdog resets on any word. It says so for five
+// minutes at most, so a download that has truly stalled still ends.
+const arriving = setInterval(() => postMessage({ kind: "alive" }), 5000);
+setTimeout(() => clearInterval(arriving), 300000);
+ready.then(() => clearInterval(arriving), () => clearInterval(arriving));
 
 onmessage = async (e) => {
   await ready;

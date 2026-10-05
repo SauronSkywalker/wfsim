@@ -4,6 +4,14 @@ Chinese name: 虫置
 
 Rifle · Primary · Mastery Rank 0. 33 base damage (impact 5, puncture 6, slash 10, toxin 12), 25% crit chance, 2x crit multiplier, 25% status chance.
 
+## Best riven-free build on the WFSim board, as of 2026-10-05
+
+A score belongs to its ruler: compare it only with scores under the same ruler.
+
+| Ruler | Fight | Mode | Score | Build |
+| --- | --- | --- | ---: | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 9.3257 | High Voltage, Primary Acuity, Galvanized Aptitude, Rifle Elementalist, Vile Acceleration, Vital Sense, Magnetic Capacity, Radiated Reload, Vigilante Supplies, Pax Charge, Primary Deadhead |
+
 ## Not modelled here
 
 - The three tendrils fan out within 6 m of the main target (page); here the chain hops 6 m from each previous enemy. Against a tight group the two agree; an enemy 6-12 m from the first is reached here and not in game.
