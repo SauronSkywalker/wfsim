@@ -1,0 +1,17 @@
+# THE QQ BOT SERVER as a systemd unit — docs/AGENT.md §"The QQ bot".
+# Installed to /etc/systemd/system/ on the bot server; the code lives in
+# /opt/wfsim-bot (bot/, mcp/, site/pkg/) and the secrets in /etc/wfsim-bot.env.
+[Unit]
+Description=WFSim QQ bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/opt/wfsim-bot
+ExecStart=/usr/bin/node bot/qq.mjs
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

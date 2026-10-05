@@ -585,6 +585,7 @@ const HEADLESS_QUERIES = [
             riven_free: g.top ? { score: shown(g.top.row), mods: mods(g.top.row), link: link(g.top.row, false) } : null,
             rivens: g.rivens.map((x) => ({
               bonuses: x.row.riven.bonuses.map(stat), malus: x.row.riven.malus ? stat(x.row.riven.malus) : null,
+              stat_ids: { bonuses: x.row.riven.bonuses, malus: x.row.riven.malus || null },
               score: shown(x.row), gain: x.gain, mods: mods(x.row), link: link(x.row, true),
             })),
           })),
