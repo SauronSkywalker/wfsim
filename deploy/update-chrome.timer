@@ -1,0 +1,11 @@
+# Once a week, a minute or so after boot if a week was missed.
+[Unit]
+Description=Weekly check that the WFSim bot's Chrome is the current Stable
+
+[Timer]
+OnCalendar=weekly
+Persistent=true
+RandomizedDelaySec=1h
+
+[Install]
+WantedBy=timers.target

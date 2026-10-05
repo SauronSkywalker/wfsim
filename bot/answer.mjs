@@ -5,6 +5,7 @@
 // answer out, in the language overlay's words (`ui` keyed by English).
 
 const MAX_SHOWN = 10;
+const SITE = "https://wfsim.app";
 const squash = (s) => String(s || "").toLowerCase().replace(/\s+/g, "");
 
 export function makeAnswer({ run, meta, zh, headless }) {
@@ -62,11 +63,14 @@ export function makeAnswer({ run, meta, zh, headless }) {
     const rows = r.rows.filter((x) => x.ruler_id === ruler.id);
     if (!rows.length) return t("Nothing measured for this weapon under this ruler yet.");
     const mode = rows[0].mode;
-    return [`${weaponName(hit.w)} · ${rulerShort(ruler)}`]
+    const shown = rows.filter((x) => x.mode === mode).length;
+    const card = `${SITE}${headless.headlessWeaponPath(meta.weapons || [], hit.w.id)}/card?kind=pz&ruler=${encodeURIComponent(ruler.id)}&mode=${encodeURIComponent(mode)}&n=${shown}`;
+    const text = [`${weaponName(hit.w)} · ${rulerShort(ruler)}`]
       .concat(rows.filter((x) => x.mode === mode).map((x) => `#${x.rank} ${x.score}  ${(x.build ? x.build.mods : []).map(modName).join("、")}${
         x.build && x.build.arcane.length ? ` | ${t("Arcane")}: ${x.build.arcane.map(arcaneName).join("、")}` : ""}${
         x.build && x.build.evolutions.length ? ` | ${t("Evolutions")}: ${x.build.evolutions.map(evoName).join("、")}` : ""}`))
       .join("\n");
+    return { line: `${weaponName(hit.w)} · ${rulerShort(ruler)}`, card, text };
   }
 
   async function zk(rest, n) {
@@ -76,17 +80,21 @@ export function makeAnswer({ run, meta, zh, headless }) {
     if (r.ok === false || !r.groups.length) return t("No riven of this weapon has been measured yet.");
     const g = r.groups[0];
     const cls = hit.w.riven_class;
+    const shown = Math.min(n || 3, g.rivens.length);
+    const card = `${SITE}${headless.headlessWeaponPath(meta.weapons || [], hit.w.id)}/card?kind=zk&ruler=${encodeURIComponent(g.ruler_id)}&mode=${encodeURIComponent(g.mode)}&n=${shown}`;
     const line = (x, i) => `${i + 1}. ${x.stat_ids.bonuses.map((id) => "+" + statZh(cls, id)).join(" ")}${
       x.stat_ids.malus ? " −" + statZh(cls, x.stat_ids.malus) : ""}  ${x.score}${x.gain == null ? "" : `（${x.gain >= 0 ? "+" : "−"}${Math.abs(x.gain * 100).toFixed(1)}%）`}`;
-    return [`${weaponName(hit.w)} · ${t(g.ruler).split(" · ")[0]}`,
+    const text = [`${weaponName(hit.w)} · ${t(g.ruler).split(" · ")[0]}`,
       `${t("The board's best riven-free build")}: ${g.riven_free ? g.riven_free.score : "—"}`]
-      .concat(g.rivens.slice(0, n || 3).map(line)).join("\n");
+      .concat(g.rivens.slice(0, shown).map(line)).join("\n");
+    return { line: `${weaponName(hit.w)} · ${t(g.ruler).split(" · ")[0]} · ${t("Riven Analyst")}`, card, text };
   }
 
+  /// `{ text }`, or `{ line, card, text }` — the long image at `card` with
+  /// `line` under it, and `text` the answer in words if the image cannot be made.
   return async function answer(text) {
     const p = parse(text);
-    if (p.cmd === "zk") return zk(p.rest, p.n);
-    if (p.cmd === "pz") return pz(p.rest, p.n);
-    return help();
+    const r = p.cmd === "zk" ? await zk(p.rest, p.n) : p.cmd === "pz" ? await pz(p.rest, p.n) : help();
+    return typeof r === "string" ? { text: r } : r;
   };
 }

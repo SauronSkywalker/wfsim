@@ -7,6 +7,7 @@
 import { readFileSync } from "node:fs";
 import { loadEngine, SITE } from "./engine.mjs";
 import { makeAnswer } from "./answer.mjs";
+import { renderCard } from "./render.mjs";
 
 const ENV_FILE = process.env.BOT_ENV || "/etc/wfsim-bot.env";
 const env = Object.fromEntries(readFileSync(ENV_FILE, "utf8").split(/\r?\n/)
@@ -27,20 +28,38 @@ async function accessToken() {
 }
 
 /// THE REPLY'S ADDRESS: a private chat answers its user, a group its group.
-function replyPath(row) {
+function chatPath(row) {
   const d = row.body;
-  if (row.kind === "C2C_MESSAGE_CREATE") return `/v2/users/${d.author.user_openid}/messages`;
-  if (row.kind === "GROUP_AT_MESSAGE_CREATE") return `/v2/groups/${d.group_openid}/messages`;
+  if (row.kind === "C2C_MESSAGE_CREATE") return `/v2/users/${d.author.user_openid}`;
+  if (row.kind === "GROUP_AT_MESSAGE_CREATE") return `/v2/groups/${d.group_openid}`;
   return null;
 }
 
-async function send(row, content) {
-  const path = replyPath(row);
-  if (!path) return;
+async function qq(path, body) {
   const r = await fetch(API + path, { method: "POST", headers: { "content-type": "application/json",
-    authorization: `QQBot ${await accessToken()}`, "x-union-appid": env.QQ_APP_ID },
-    body: JSON.stringify({ content, msg_type: 0, msg_id: row.body.id, msg_seq: 1 }) });
-  if (!r.ok) console.error(`reply ${row.id}: ${r.status} ${(await r.text()).slice(0, 300)}`);
+    authorization: `QQBot ${await accessToken()}`, "x-union-appid": env.QQ_APP_ID }, body: JSON.stringify(body) });
+  const text = await r.text();
+  if (!r.ok) throw new Error(`${path}: ${r.status} ${text.slice(0, 300)}`);
+  return text ? JSON.parse(text) : {};
+}
+
+/// THE ANSWER, SENT: the long image with its line, or the answer in words when
+/// the image cannot be made or taken — a reader is never left with nothing.
+async function send(row, ans) {
+  const chat = chatPath(row);
+  if (!chat) return;
+  const reply = { msg_id: row.body.id, msg_seq: 1 };
+  if (ans.card) {
+    try {
+      const png = await renderCard(ans.card);
+      const media = await qq(`${chat}/files`, { file_type: 1, file_data: png.toString("base64"), srv_send_msg: false });
+      await qq(`${chat}/messages`, { ...reply, msg_type: 7, content: ans.line, media: { file_info: media.file_info } });
+      return;
+    } catch (e) {
+      console.error(`image ${row.id}: ${e && e.message || e}`);
+    }
+  }
+  await qq(`${chat}/messages`, { ...reply, msg_type: 0, content: ans.text });
 }
 
 async function claim(done) {

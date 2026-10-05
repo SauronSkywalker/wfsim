@@ -1,0 +1,7 @@
+# THE WEEKLY CHROME CHECK's job (deploy/update-chrome.sh), run by its timer.
+[Unit]
+Description=Keep the WFSim bot's Chrome on Stable
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh /opt/wfsim-bot/deploy/update-chrome.sh
