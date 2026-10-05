@@ -40,12 +40,15 @@ async function page() {
   return { send, close };
 }
 
-/// The card at `url` as a PNG buffer, or an Error.
-export async function renderCard(url) {
+/// The card at `url` as a PNG buffer in the page's language `lang`, or an Error.
+export async function renderCard(url, lang = "zh") {
   const p = await page();
   try {
     await p.send("Emulation.setDeviceMetricsOverride", { width: 760, height: 1200, deviceScaleFactor: 1.5, mobile: false });
-    await p.send("Page.addScriptToEvaluateOnNewDocument", { source: `try { localStorage.setItem("wfsim-lang", "zh"); } catch (_) {}` });
+    // THE LANGUAGE BEFORE THE PAGE'S FIRST SCRIPT, which reads it once at load;
+    // an injected script only runs on a page whose Page domain is enabled.
+    await p.send("Page.enable");
+    await p.send("Page.addScriptToEvaluateOnNewDocument", { source: `try { localStorage.setItem("wfsim-lang", ${JSON.stringify(lang)}); } catch (_) {}` });
     await p.send("Page.navigate", { url });
     const ask = async (expr) => ((await p.send("Runtime.evaluate", { expression: expr, returnByValue: true })).result || {}).result?.value;
     const until = Date.now() + READY_MS;
