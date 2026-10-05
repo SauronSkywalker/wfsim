@@ -2228,7 +2228,8 @@ change actually reached, and only those are rescored.
 in it: `inbox`, what players sent, verbatim, until intake has made a build of
 it; `builds`, the library; and `scores`, the facts computed from it. `batches`
 and `queue` are the work list beside them, and they may only ever CAUSE work.
-Nothing else is a live store — there is no KV namespace and no R2 bucket.
+Nothing else is a live store of the board's — no KV namespace, and nothing of
+it in the R2 bucket.
 
 The division is decided by two questions, asked of each piece of data:
 
@@ -2251,7 +2252,7 @@ write, and "which weapons are under-covered" could not be asked at all. Its free
 plan meters LIST and WRITE at a thousand a DAY against D1's hundred thousand
 rows, and it was the listing that took the board down.
 
-**WHY R2 HAS NOTHING LEFT.** It held the score blobs, and a score is a row now.
+**WHY R2 HOLDS NOTHING OF THE BOARD.** It held the score blobs, and a score is a row now.
 The one job it might have inherited is the off-vendor copy, and it is the wrong
 vendor for that (below).
 

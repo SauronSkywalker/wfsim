@@ -92,13 +92,9 @@
     { "name": "OCR_LIMIT", "namespace_id": "1002", "simple": { "limit": 10, "period": 60 } }
   ],
   // THE PRODUCT'S ONE BUCKET (docs/NAMING.md §8): the screenshots readers offer,
-  // under `ocr-samples/`, kept 365 days by the bucket's own lifecycle rule.
-  // A DEPLOY FAILS ON A BUCKET THAT DOES NOT EXIST, so the binding stays out
-  // until these have run; without it `/api/ocr/sample` answers "not offered".
-  //
-  //   npx wrangler r2 bucket create wfsim
+  // under `ocr-samples/`, kept 365 days by the bucket's own lifecycle rule —
   //   npx wrangler r2 bucket lifecycle add wfsim ocr-samples-365 ocr-samples/ --expire-days 365
-  // "r2_buckets": [{ "binding": "UPLOADS", "bucket_name": "wfsim" }],
+  "r2_buckets": [{ "binding": "UPLOADS", "bucket_name": "wfsim" }],
   // WHAT READERS DID — `POST /api/e`, docs/ANALYTICS.md. A dataset is created by
   // its first write; nothing to provision. Read back by `scripts/usage.py`.
   "analytics_engine_datasets": [
