@@ -238,6 +238,8 @@ pub(super) struct MeleeState {
     /// first kill"*, so the swing that earns the chain does not carry it.
     pub(super) tennokai_chained: bool,
     pub(super) tennokai_hits: u32,
+    /// Has the INPUT under way landed? Tennokai counts inputs, not strikes.
+    pub(super) tennokai_input_landed: bool,
     /// MELEE ANIMOSITY'S PILE, and whether the input under way has landed yet:
     /// *"Only provides 1 stack per melee input, regardless of how many enemies
     /// are hit"* (wiki), so a stack is paid when an input ENDS, not per hit.
@@ -312,14 +314,11 @@ pub(super) fn after_swing(
         //
         // *"Triggering Tennokai requires directly striking an enemy ...
         // striking multiple enemies from a single hit and multi-strike
-        // attacks do not count as hits"* — so it is ONE roll per swing that
-        // landed, not one per body, which is why `landed > 0` rather than
-        // `landed` times anything.
-        //
-        // A CADENCE REPLACES THE ROLL where a card sets one (Discipline's
-        // Merit: every 4 hits), and the count only advances while the
-        // window is SHUT: a hit landed during the flash is a hit the player
-        // is about to spend it on.
+        // attacks do not count as hits"* — ONE per INPUT that landed:
+        // Discipline's Merit counts *"4 melee inputs that hit an enemy"*, and
+        // a stance input of four strikes is one (a row with a delay closes
+        // an input). Its count skips heavies — *"Heavy attacks do not count
+        // as a hit"* — and only advances while the window is SHUT.
         // TRUTH'S FLAME'S TWO TERMS, settled before the ordinary roll
         // because a chain replaces it: a Tennokai KILL re-opens the window
         // with no hit in between, which is the only way in this mechanic to
@@ -341,10 +340,19 @@ pub(super) fn after_swing(
                 active.tennokai.curse_heat_per_second * active.tennokai.curse_seconds,
             );
         }
-        if active.tennokai.enabled && landed > 0.0 && t >= melee.tennokai_until {
-            melee.tennokai_hits += 1;
+        let heavy = active.spends_combo || tennokai_heavy;
+        melee.tennokai_input_landed |= landed > 0.0;
+        let input_ends = heavy || h.delay_seconds > 0.0;
+        if active.tennokai.enabled
+            && input_ends
+            && std::mem::take(&mut melee.tennokai_input_landed)
+            && t >= melee.tennokai_until
+        {
             let opens = if active.tennokai.every_n_hits > 0 {
-                melee.tennokai_hits.is_multiple_of(active.tennokai.every_n_hits)
+                if !heavy {
+                    melee.tennokai_hits += 1;
+                }
+                !heavy && melee.tennokai_hits.is_multiple_of(active.tennokai.every_n_hits)
             } else {
                 d.spine.chance(tennokai_open_chance(&active.tennokai))
             };

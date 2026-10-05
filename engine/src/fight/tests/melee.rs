@@ -886,15 +886,16 @@ fn a_tennokai_heavy_restarts_the_stance_combo() {
     };
     assert_eq!(script(&[]).len(), 5, "the fixture's combo is four swings and a slam");
 
-    // EVERY FOUR HITS is the combo's own length, so a chain that restarts
-    // never reaches the finisher — and one that merely skips a swing does.
-    // The two readings therefore differ, and by more than noise.
+    // EVERY FOUR INPUTS on a three-input combo: the chain plays it whole and
+    // its 400% opener again before each heavy, and restarts — so the cadence is
+    // worth about what a 15% roll is (which can chain off a heavy), and a
+    // window that never opened would read half of it.
     let merit = magistar("magistar", &["mentors_legacy", "disciplines_merit"], 60.0, None)
         .mean_damage;
     let roll = magistar("magistar", &["mentors_legacy"], 60.0, None).mean_damage;
     assert!(
-        merit > roll,
-        "a guaranteed window every four hits is worth less than a 15% roll:              {roll:.0} -> {merit:.0}",
+        merit > roll * 0.9,
+        "a guaranteed window every four inputs fell well short of a 15% roll: {roll:.0} -> {merit:.0}",
     );
     // …AND THE OPENER IS WHAT GETS FIRED. A restarting chain spends its
     // swings on the first entries of the script, so a build whose window
@@ -950,16 +951,14 @@ fn every_tennokai_card_enables_it_and_a_build_with_none_has_no_window() {
         flame < none * 1.5,
         "truths_flame is priced as an unconditional bonus again: {none:.0} -> {flame:.0}",
     );
-    // …AND A CADENCE BEATS THE ROLL. `every 4 melee hits` is 25% against
-    // the base 15%, so the two together are worth more than either alone.
-    // THE MARGIN IS THINNER THAN THE TWO CHANCES SUGGEST, because a heavy
-    // attack earns no combo points: a build that converts one swing in four
-    // climbs the counter Blood Rush reads more slowly.
+    // …AND A CADENCE REPLACES THE ROLL. `every 4 melee inputs` is 25% of
+    // light inputs against 15% of every input, heavies included, which can
+    // chain — on this three-input combo the two land within a few per cent.
     let roll = dps(&["mentors_legacy"]);
     let both = dps(&["mentors_legacy", "disciplines_merit"]);
     assert!(
-        both > roll * 1.1,
-        "every-4-hits bought nothing over the 15% roll: {roll:.0} -> {both:.0}",
+        both > roll * 0.9,
+        "every-4-inputs fell well short of the 15% roll: {roll:.0} -> {both:.0}",
     );
 }
 
@@ -2113,4 +2112,46 @@ fn dreamers_wrath_multiplies_the_tennokai_chance() {
     let panel = crate::build::loadout::resolve(&base, &[card], crate::model::StackPolicy::Emergent);
     let chance = crate::fight::melee::tennokai_open_chance(&panel.tennokai);
     assert!((chance - 0.225).abs() < 1e-9, "{chance}");
+}
+
+/// **TENNOKAI COUNTS INPUTS, NOT STRIKES.** Discipline's Merit opens the window
+/// *"after 4 melee inputs that hit an enemy"* and *"Multi-strike attacks do not
+/// count as additional hits"*. Baleful Sin's first input is four strikes, so
+/// counted per strike one press opened the window and the combo fired a free
+/// heavy every 0.575 s — four times the game's rate, and twice any other combo
+/// on the same Praedos. Sovereign Outcast's Rogue Edict is the stronger loop.
+#[test]
+fn tennokai_counts_inputs_so_a_four_strike_input_is_one_hit() {
+    let evos = ["praedos_evo1_incarnon_form", "praedos_drifting_grace", "praedos_adept_reflexes", "praedos_evolved_ascension", "praedos_universal_readiness"];
+    let dmg = |form: &str, stance: &str| {
+        let mods = ["condition_overload", "weeping_wounds", "blood_rush", "galvanized_steel", "primed_fury", "disciplines_merit", stance];
+        melee_fight(form, &evos, &mods, Some("melee_exposure"), 60.0, None).mean_damage
+    };
+    let (baleful, rogue) = (dmg("praedos_block_forward", "gemini_cross"), dmg("praedos", "sovereign_outcast"));
+    assert!(baleful < rogue, "Baleful Sin {baleful:.0} against Rogue Edict {rogue:.0}");
+}
+
+/// **EVERY SCRIPT CLOSES ITS LAST INPUT.** A stance puts an input's time on its
+/// last row, so a row with a delay is where one press ends — Tennokai and
+/// Melee Animosity count presses by it. A script whose last row carried no
+/// delay would leave its closing strikes in no press at all. Every combo's
+/// press count was checked against `Module:Stances/data` when this was written.
+#[test]
+fn every_combo_script_ends_on_a_row_that_closes_an_input() {
+    let mut open: Vec<String> = Vec::new();
+    for class in crate::data::mods::classes() {
+        for m in crate::data::mods::class_pool(class) {
+            for (form, script) in m.stance.unwrap_or(&[]) {
+                if script.last().is_some_and(|h| h.delay_seconds <= 0.0) {
+                    open.push(format!("{} {form}", m.id));
+                }
+            }
+        }
+    }
+    for s in crate::data::weapons::all() {
+        if s.attack.combo_script.last().is_some_and(|h| h.delay_seconds <= 0.0) {
+            open.push(s.id.clone());
+        }
+    }
+    assert!(open.is_empty(), "scripts whose last strikes close no input: {open:?}");
 }

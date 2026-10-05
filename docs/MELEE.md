@@ -342,9 +342,9 @@ It decides which swings ever happen, which is why it could not be left to
 whichever behaviour fell out of the code. Raging Whirlwind is
 `400 / 200 / 300 / 500`, and a chain that restarts on every window fires the
 opener again and again. The sharp case is Discipline's Merit: it opens the
-window every FOUR hits, which is exactly that combo's length, so the 500%
-finisher is never reached at all. `swing_idx += 1` against `swing_idx = 0` was
-the whole difference.
+window every FOUR INPUTS, so a combo of three inputs plays whole and then its
+opener again before each heavy, and one of five never reaches its fifth.
+`swing_idx += 1` against `swing_idx = 0` was the whole difference.
 
 The slot is drawn on a melee weapon and on nothing else, the picker's filter
 runs BOTH ways (a stance is refused from the eight, and only a stance is offered
@@ -527,11 +527,17 @@ counter to 12x with its swings and fires FREE 12x heavy attacks between them,
 which is why a 15% chance is worth nearly three times the build. The play
 pattern is to use the window the moment it fires.
 
+**TENNOKAI COUNTS INPUTS, NOT STRIKES.** Discipline's Merit opens the window
+*"after 4 melee inputs that hit an enemy"*, *"Multi-strike attacks do not count
+as additional hits"* and *"Heavy attacks do not count as a hit"*; the random 15%
+is rolled once an input the same way. A row with a delay closes an input, so
+Baleful Sin's opening four strikes are one. Counted per strike, that one press
+opened the window and Gemini Cross's forward-block loop fired a free heavy
+every 0.575 s — twice any other combo on the same Praedos.
+
 **A TENNOKAI HEAVY BREAKS THE STANCE CHAIN**, so the next light swing starts
-the combo over, and that decides which swings ever happen: Raging Whirlwind is
-`400/200/300/500` and Discipline's Merit opens the window every FOUR hits,
-which is that combo's length — so under a restarting chain the 500% finisher is
-never reached.
+the combo over, and that decides which swings ever happen: under Discipline's
+Merit a combo plays four inputs, wrapping or cut short, and then the heavy.
 
 **A TENNOKAI SWING LANDS ONCE.** The window does not buff a light swing, it
 SUBSTITUTES a heavy attack for it — and a heavy attack's multiplier is the
