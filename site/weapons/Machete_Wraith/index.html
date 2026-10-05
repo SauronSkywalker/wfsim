@@ -18,7 +18,7 @@
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Machete Wraith","description":"Machete Wraith (马谢特砍刀·亡魂) — Machete · Melee · Mastery Rank 11. 211 base damage (impact 31.65, puncture 31.65, slash 147.7), 19% crit chance, 2.1x crit multiplier, 33% status chance. Build it, simulate the fight, and optimize the mods.","url":"https://wfsim.app/weapons/Machete_Wraith","inLanguage":"en","isPartOf":{"@type":"WebApplication","name":"WFSim","url":"https://wfsim.app/"},"breadcrumb":{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"WFSim","item":"https://wfsim.app/"},{"@type":"ListItem","position":2,"name":"Machete Wraith","item":"https://wfsim.app/weapons/Machete_Wraith"}]},"dateModified":"2026-10-05","about":{"@type":"Thing","name":"Machete Wraith","alternateName":"马谢特砍刀·亡魂"}}</script>
   <meta name="twitter:card" content="summary" />
   
-  <link rel="stylesheet" href="/asset/style.0e98c34146a2.css" />
+  <link rel="stylesheet" href="/asset/style.c2b9195507f0.css" />
   <link rel="icon" type="image/svg+xml" href="/logo.svg" />
   <link rel="ai-catalog" href="/.well-known/ai-catalog.json" type="application/json" />
   
@@ -356,15 +356,26 @@
       <div class="bb">
         
         <div class="cu-tools" id="riven-tools"></div>
-        <div id="riven-shape" class="rv-shape"></div>
-        <div id="riven-stats"></div>
-        <div id="riven-foot" class="rv-foot"></div>
-        <div id="riven-card" class="rv-card"></div>
+        
+        <input type="file" id="riven-ocr-file" accept="image/*" hidden>
+        <div id="riven-ocr" class="rv-ocr"></div>
+        
+        <div id="riven-editor">
+          <div id="riven-shape" class="rv-shape"></div>
+          <div id="riven-stats"></div>
+          <div id="riven-foot" class="rv-foot"></div>
+          <div id="riven-card" class="rv-card"></div>
+        </div>
         <div class="fold sect" data-fold="riven-all">
           <h3 class="sim-h fold-h" id="riven-all-h" data-i18n>All rivens <span class="sim-hint" data-i18n>every riven you have made for this weapon, with what it actually rolls</span></h3>
           <div id="riven-all"></div>
         </div>
       </div>
+    </section>
+
+    <section class="block" data-module="riven-analyst" id="riven-analyst-block">
+      <div class="bh"><h2 data-i18n>Riven Analyst</h2><span class="sub" data-i18n>every riven the board has measured, against its best riven-free build</span></div>
+      <div class="bb"><div id="riven-analyst"></div></div>
     </section>
 
     <section class="block" data-module="enemies" id="enemy-block">
@@ -543,7 +554,8 @@
     <div id="picker-tools" class="picker-tools"></div>
     <div id="mod-menu" class="combo-menu"></div>
   </div>
-  
+
+  <div id="riven-ocr-win" class="rv-ocr-win" hidden></div>
   <div id="riven-popover" class="popover" hidden>
     <div class="addbar"><input id="riven-search" type="text" placeholder="Search a riven stat…" data-i18n-ph autocomplete="off" /></div>
     <div id="riven-menu" class="combo-menu"></div>
@@ -580,13 +592,13 @@
     <a href="/support" title="Support WFSim" data-i18n-title data-i18n>Support</a> ·
     <a href="/support#usage" data-i18n>Usage statistics</a>
     
-    · <span class="build-stamp" id="build-stamp" title="which build this page is">318b95fa</span>
+    · <span class="build-stamp" id="build-stamp" title="which build this page is">6513643f</span>
     </div>
   </footer>
 
   <script>window.WFSIM_WASM = true;</script>
 
-  <script src="/asset/app.bc8ea3aa0358.js"></script>
+  <script src="/asset/app.2bb30dd194f8.js"></script>
   <script type="module" src="/asset/nona.64cbe6b08b16/index.js"></script>
 
 <div class="calc-status" id="calc-status" hidden></div>

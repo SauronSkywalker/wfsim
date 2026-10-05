@@ -8,6 +8,8 @@
   Cache-Control: public, max-age=604800
 /pkg/*
   Cache-Control: public, max-age=31536000, immutable
+/ocr/*
+  Cache-Control: public, max-age=31536000, immutable
 /asset/*
   Cache-Control: public, max-age=31536000, immutable
 /board/*

@@ -2,7 +2,7 @@
   "serverInfo": {
     "name": "wfsim",
     "title": "WFSim",
-    "version": "d771cb857441"
+    "version": "9538130a9293"
   },
   "description": "WFSim is a Warframe weapon calculator. It builds a loadout, simulates the fight against a named enemy, and searches for the best mods. Every formula cites its source, and every golden test is calibrated against a real in-game run. A board score belongs to its ruler, the named benchmark fight: compare scores only under one ruler, quote the ruler with the number, and give the reader the row's link, which opens the build in the calculator.",
   "transport": {
@@ -81,6 +81,29 @@
           "build": {
             "type": "object",
             "description": "the build: {weapon, mods: [mod ids], arcane: [arcane ids], evolutions: [ids], mode} — a board row's `build` is one; on the page, the one on screen when omitted"
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "builder_rivens_read",
+      "title": "builder.rivens.read",
+      "description": "The Riven Analyst: every riven the board has measured for a weapon, each as its best build's score against the board's #1 riven-free build under the same ruler and mode — what that riven is worth. Global and published; a riven nobody has submitted is not on it.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "weapon": {
+            "type": "string",
+            "description": "weapon id; on the page, the one open when omitted"
+          },
+          "ruler": {
+            "type": "string",
+            "description": "only this benchmark id"
+          },
+          "mode": {
+            "type": "string",
+            "description": "only this mode id"
           }
         },
         "required": []

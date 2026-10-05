@@ -10,9 +10,9 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 2.5135 | Primed Cryo Rounds, Malignant Force, Galvanized Chamber, Primed Firestorm, Serration, Critical Delay, Vile Acceleration, Vital Sense, Primary Compression |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 2.5135 | Primed Cryo Rounds, Malignant Force, Galvanized Chamber, Primed Firestorm, Serration, Critical Delay, Vile Acceleration, Vital Sense, Primary Compression |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.1728 | Primed Cryo Rounds, Malignant Force, Galvanized Chamber, Primed Firestorm, Serration, Critical Delay, Vile Acceleration, Vital Sense, Primary Compression |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 7.7099 | Primed Cryo Rounds, Malignant Force, Galvanized Chamber, Heavy Caliber, Galvanized Aptitude, Point Strike, Vile Acceleration, Magnetic Capacity, Vigilante Supplies, Primary Compression |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 7.7471 | Primed Cryo Rounds, Malignant Force, Galvanized Chamber, Heavy Caliber, Galvanized Aptitude, Galvanized Scope, Vile Acceleration, Magnetic Capacity, Vigilante Supplies, Primary Compression |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.4246 | Primed Cryo Rounds, Malignant Force, Galvanized Chamber, Heavy Caliber, Galvanized Aptitude, Critical Delay, Vile Acceleration, Vital Sense, Vigilante Supplies, Primary Compression |
 
 ## Not modelled here
 

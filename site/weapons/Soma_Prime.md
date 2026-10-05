@@ -10,7 +10,7 @@ A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 22.9906 | Primed Cryo Rounds, Malignant Force, Thermite Rounds, Galvanized Chamber, Primed Shred, Vital Sense, Hata-Satya, Magnetic Capacity, Primary Deadhead |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 26.2647 | Primed Cryo Rounds, Malignant Force, Thermite Rounds, Galvanized Chamber, Vile Acceleration, Vital Sense, Hata-Satya, Magnetic Capacity, Primary Deadhead |
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 114.4563 | Primed Cryo Rounds, Malignant Force, Thermite Rounds, Galvanized Chamber, Primed Shred, Vital Sense, Hata-Satya, Magnetic Capacity, Primary Deadhead |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 4.2971 | Primed Cryo Rounds, Malignant Force, Hellfire, Primary Acuity, Galvanized Aptitude, Vile Acceleration, Vital Sense, Hata-Satya, Primary Deadhead |
 
