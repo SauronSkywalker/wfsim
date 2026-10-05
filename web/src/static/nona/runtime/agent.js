@@ -41,6 +41,9 @@ const uid = (p) => `${p}${Date.now().toString(36)}${Math.random().toString(36).s
 /// `calling` ({line}), `say` ({kind, text} — shown, not kept; `text` is a ui
 /// string unless `raw`), `busy`, `settings` (none are set), `done`.
 export function createAgent(door) {
+  // WHICH OF HER TWO VOICES this reader hears, fixed per browser so the rules
+  // stay byte-stable (docs/NONA.md §"Her voice").
+  const persona = (door.usage && door.usage.cohort("nona_persona")) || "a";
   const listeners = new Set();
   const emit = (ev) => listeners.forEach((f) => f(ev));
   const s = { conv: null, list: [], busy: false, abort: null, owned: new Set(), shrink: 1 };
@@ -102,7 +105,7 @@ export function createAgent(door) {
   /// table — S, M and T, the stable prefix.
   function parts(cfg) {
     return {
-      rules: rules({ lang: door.observe().lang, concise: !!cfg.concise }),
+      rules: rules({ lang: door.observe().lang, concise: !!cfg.concise, persona }),
       memory: (s.conv.memory && s.conv.memory.text) || "",
       tools: fixedTools(door.skills, catalogue(door.skills)),
     };
@@ -242,6 +245,7 @@ export function createAgent(door) {
     const here = (page.route || {}).module;
     const preload = here && door.skills.some((x) => x.id === here) && !loaded().has(here) ? { preload: docsFor([here]), skills: [here] } : {};
     append({ role: "user", text, page: JSON.stringify(page), at: Date.now(), ...preload });
+    if (door.usage) door.usage.count("nona.ask", persona, c.messages.filter((m) => m.role === "user").length);
     const asked = s.conv.messages.length;
     s.busy = true; s.abort = new AbortController(); emit({ type: "busy" });
     const signal = s.abort.signal;
@@ -329,6 +333,7 @@ export function createAgent(door) {
   }
 
   return {
+    persona,
     on: (f) => listeners.add(f),
     get conv() { return s.conv; },
     get list() { return s.list; },

@@ -139,6 +139,10 @@ const run = (provider, base) => evaluate(`(async () => {
   await wait(600);
   const mine = window.wfsim.observe().open.build;
   localStorage.setItem("wfsim-nona", JSON.stringify({ proto: ${JSON.stringify(provider === "anthropic" ? "anthropic" : "openai")}, base: ${JSON.stringify(base)}, key: "test", remember: true, model: "mock", price: [1, 2] }));
+  // HER USAGE POINTS, as she hands them to the door.
+  const counted = [];
+  const realCount = window.wfsim.usage.count;
+  window.wfsim.usage.count = (e, s, n) => { counted.push([e, s, n]); realCount(e, s, n); };
   document.getElementById("nona-fab").click();
   document.getElementById("nona-new").click();
   for (let i = 0; i < 20 && !document.querySelector("#nona-suggest [data-q]"); i++) await wait(100);
@@ -163,7 +167,9 @@ const run = (provider, base) => evaluate(`(async () => {
   const takenObs = window.wfsim.observe();
   const taken = takenObs.build;
   document.getElementById("nona-close").click();
+  window.wfsim.usage.count = realCount;
   return {
+    counted, arm: window.wfsim.usage.cohort("nona_persona"),
     log, mine, copy: onCopyObs.open.build, foot, suggested, card, cardText,
     taken: takenObs.open.build === mine && taken.slots.some(s => s.mod === "serration"),
     copyHasIt: onCopy.slots.some(s => s.mod === "serration"),
@@ -177,6 +183,12 @@ for (const [provider, base, path] of [["openrouter", `${MOCK}/v1`, "/v1/chat/com
   seen.length = 0;
   const r = await run(provider, base);
   const sent = seen.filter((x) => x.url === path);
+  const point = (e) => r.counted.find((c) => c[0] === e);
+  check(`${provider}: opening her counts nona.open with this reader's voice arm and a key set`,
+    point("nona.open") && point("nona.open")[1] === r.arm && point("nona.open")[2] === 1 && /^[ab]$/.test(r.arm),
+    JSON.stringify(r.counted));
+  check(`${provider}: asking her counts nona.ask as the conversation's first message`,
+    point("nona.ask") && point("nona.ask")[1] === r.arm && point("nona.ask")[2] === 1, JSON.stringify(r.counted));
   const tools = (sent[0] && sent[0].body.tools) || [];
   const names = tools.map((t) => (t.function ? t.function.name : t.name));
   check(`${provider}: she is sent her seven tools, whatever the door holds`,

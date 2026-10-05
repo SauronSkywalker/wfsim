@@ -1244,6 +1244,12 @@ window.wfsim = {
   // translation, its dropdown and its escaping, so such a panel looks and
   // reads like the page without reaching into it.
   ui: { tr: (s) => tr(s), dd: (id, cfg) => ddButton(id, cfg), esc: (s) => escHtml(s) },
+  // HER USAGE POINTS AND HER EXPERIMENT ARM, for Nona (docs/ANALYTICS.md): only
+  // `nona.*` events, through the page's own counter and its rules.
+  usage: {
+    count: (event, subject, n) => trackNona(event, subject, n),
+    cohort: (name) => usageCohort(name),
+  },
   get actions() {
     return AGENT_ACTIONS.map((a) => ({ id: a.id, what: a.what, anchor: a.anchor, query: !!a.query,
       writes: a.writes || null, hand: !!a.hand }));

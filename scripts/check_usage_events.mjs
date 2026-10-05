@@ -13,7 +13,7 @@ import worker, { USAGE_EVENTS, USAGE_SCHEMA, usagePoint } from "../worker/index.
 import { appSource } from "./app_source.mjs";
 import { USAGE_RESULTS, usageDayRows, rollupUsage } from "../worker/usage_days.js";
 import { DatabaseSync } from "node:sqlite";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 
 let failures = 0;
 const check = (what, ok, detail = "") => {
@@ -28,7 +28,17 @@ check("every track() call names its event as a literal", named.length === calls.
   calls.filter((a) => !/^"[^"]*"$/.test(a)).join(", "));
 const unknown = named.filter((e) => !USAGE_EVENTS.includes(e));
 check("every event the page sends is one the worker accepts", !unknown.length, unknown.join(", "));
-const unsent = USAGE_EVENTS.filter((e) => !named.includes(e));
+// NONA'S, named as literals at her `count(...)` calls under `nona/`.
+const walk = (d) => readdirSync(d, { withFileTypes: true })
+  .flatMap((x) => (x.isDirectory() ? walk(`${d}/${x.name}`) : x.name.endsWith(".js") ? [`${d}/${x.name}`] : []));
+const nonaSrc = walk("web/src/static/nona").map((f) => readFileSync(f, "utf8")).join("\n");
+const nonaCalls = [...nonaSrc.matchAll(/\bcount\(([^,)]*)/g)].map((m) => m[1].trim());
+const nonaNamed = nonaCalls.filter((a) => /^"[^"]*"$/.test(a)).map((a) => a.slice(1, -1));
+check("every event Nona sends is a literal of her own the worker accepts",
+  nonaNamed.length > 0 && nonaNamed.length === nonaCalls.length
+    && nonaNamed.every((e) => e.startsWith("nona.") && USAGE_EVENTS.includes(e)),
+  nonaCalls.join(", "));
+const unsent = USAGE_EVENTS.filter((e) => !named.includes(e) && !nonaNamed.includes(e));
 check("every event the worker accepts is sent by the page", !unsent.length, unsent.join(", "));
 
 const v = src.match(/\bv: (\d+), e: event\b/);

@@ -27,6 +27,16 @@ function usageVisitor() {
 
 /// THE READER'S OWN SWITCH, on /support beside what is counted. Browser storage,
 /// so a browser that cannot keep it is counted — and says so by showing the id.
+/// WHICH ARM OF AN EXPERIMENT this browser is in: a letter fixed by its id and
+/// the experiment's name, so it holds across visits and two experiments split
+/// independently. It is assigned whether or not counting is on — what a reader
+/// sees never depends on whether they are counted.
+function usageCohort(name, arms = 2) {
+  let h = 0x811c9dc5;
+  for (const ch of `${usageVisitor()}:${name}`) h = Math.imul(h ^ ch.charCodeAt(0), 0x01000193) >>> 0;
+  return String.fromCharCode(97 + (h % arms));
+}
+
 const USAGE_OFF = "wfsim-usage-off";
 const usageOff = () => { try { return localStorage.getItem(USAGE_OFF) === "1"; } catch (_) { return false; } };
 
@@ -91,6 +101,10 @@ const usageSent = new Set();
 /// A text/plain body is a SIMPLE request: the desktop shell posts cross-origin
 /// without a preflight.
 function track(event, subject = "", n) { usageSend(event, subject, n); }
+/// NONA'S POINTS, which reach the counter through the door (`wfsim.usage`):
+/// her own events only, named as literals in `nona/`, where
+/// `check_usage_events` reads them beside the page's.
+function trackNona(event, subject, n) { if (/^nona\.[a-z]+$/.test(event)) usageSend(event, subject, n); }
 function usageSend(event, subject, n) {
   try {
     if (!LIVE_HOSTS.includes(location.hostname)) return;
