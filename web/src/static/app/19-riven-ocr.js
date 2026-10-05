@@ -162,15 +162,16 @@ async function ocrRead(blob) {
       malus: res.malus ? { id: res.malus.id, roll: roll("malus") } : null,
       rank: rivenRules().max_rank, polarity: "madurai" });
     const read = lines.filter((l) => ocrNumber(l.text) && !res.unread.includes(l.text));
-    ocrLast = { state: "done", blob, lines, read, unread: res.unread, rivenId: id, offer: "" };
+    ocrLast = { state: "done", blob, lines, read, unread: res.unread, rivenId: id, offer: "",
+      first: { bonuses: res.bonuses, malus: res.malus } };
   } catch (e) {
     ocrLast = { state: "error", note: String((e && e.message) || e) };
   }
   renderRivenOcr();
 }
 
-/// THE OFFER: the card's rectangle and what the reader's card says NOW — after
-/// they corrected it, which is what makes it worth having.
+/// A CORRECTION: the card's rectangle, what the reader first got, and what the
+/// card says NOW — the reader telling us what this screenshot should have read.
 async function ocrGive() {
   const o = ocrLast;
   if (!o || o.state !== "done") return;
@@ -186,7 +187,8 @@ async function ocrGive() {
     });
     const card = (loadPresetList(RIVENS).find((p) => p.id === o.rivenId) || {}).state || null;
     const r = await fetch("/api/ocr/sample", { method: "POST", headers: { "content-type": "application/json" },
-      body: JSON.stringify({ weapon: $("weapon").value, lang: LANG, image, lines: o.lines.map((l) => l.text), riven: card }) });
+      body: JSON.stringify({ weapon: $("weapon").value, lang: LANG, image, lines: o.lines.map((l) => l.text),
+        read: o.first, riven: card }) });
     o.offer = r.ok ? "sent" : r.status === 501 || r.status === 404 ? "closed" : "failed";
   } catch (_) {
     o.offer = "failed";
@@ -215,8 +217,8 @@ function renderRivenOcr() {
     body = escHtml(tr("A new card from the screenshot. Check its numbers; they are read at the card's maximum rank, so change the rank if yours is lower."))
       + (o.unread.length ? `<div class="sb-empty">${escHtml(tr("not read"))}: ${o.unread.map(escHtml).join(" · ")}</div>` : "")
       + `<div class="rv-ocr-give">${done ? `<span class="sb-empty">${escHtml(done)}</span>`
-        : `<button class="cu-btn rv-ocr-send">${escHtml(tr("Offer this card's screenshot to WFSim"))}</button>`
-          + ` <span class="sb-empty">${escHtml(tr("only the card's rectangle and its stats, to make reading better — after you have corrected them"))}</span>`}</div>`;
+        : `<button class="cu-btn rv-ocr-send">${escHtml(tr("Send a correction"))}</button>`
+          + ` <span class="sb-empty">${escHtml(tr("tells WFSim this screenshot should read as the card does now; sends the rectangle around its stats"))}</span>`}</div>`;
   }
   box.innerHTML = `<div class="rv-ocr-in">${body}</div>${close}`;
   box.querySelector(".rv-ocr-x").onclick = () => { ocrLast = null; renderRivenOcr(); };

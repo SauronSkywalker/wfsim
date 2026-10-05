@@ -176,16 +176,16 @@ change that page in the commit that changes what is kept.
 ## Offered screenshots
 
 A riven screenshot is read in the reader's browser (`19-riven-ocr.js`) and does
-not leave it. Pressing the offer sends the rectangle around the lines that named
-a stat, every line read and the card as it stands then — after the reader's
-corrections, which is what makes it worth keeping — to `/api/ocr/sample`
+not leave it. **Send a correction** sends the rectangle around the lines that
+named a stat, every line read, what they first read as, and the card as it
+stands then — the reader saying what the screenshot should have read — to `/api/ocr/sample`
 (`worker/ocr_samples.js`), stored in the bucket under `ocr-samples/<day>/`.
 
 - No account, no address, no identifier is stored, and the session cookie is
   not read. A sample therefore cannot be found again for its sender, which is
   why `/privacy` says it cannot be withdrawn.
 - 365 days, by the bucket's lifecycle rule (`wrangler.jsonc` states it).
-- An offer is never made for the reader: it is a button, pressed per card.
+- A correction is never sent for the reader: it is a button, pressed per card.
 
 ## Setup
 
