@@ -3,7 +3,8 @@
 // docs/ANALYTICS.md §"Shown publicly". ONE ranking of every weapon, by the
 // people-days that ran a simulation or a search on it in the last 30 finished
 // days (`/api/popularity`); the board page's own filters narrow it to a kind,
-// and its rows draw it. Ten show; the rest is one click away.
+// and its rows draw it. The PLACE is shown, never the count behind it. Ten
+// show; the rest is one click away.
 
 /// `/api/popularity`'s answer; null while unasked, false where it is not offered.
 let hotScores = null;
@@ -39,8 +40,6 @@ function renderHomeHot() {
   const active = (hotSlot !== "all") + !!hotFilter.type + !!hotFilter.cls + hotFilter.tags.length;
   const open = box.querySelector("details") ? box.querySelector("details").open : false;
   box.innerHTML = `<h2 class="home-h">${escHtml(tr("Popular"))} <span class="muted">${ranked} / ${rows.length}</span></h2>
-    <div class="bench-meta">${escHtml(trF("people-days in the last {d} days that ran a simulation or a search",
-      { d: hotScores.window_days }))}</div>
     <details class="slotf-box"${open ? " open" : ""}><summary>${escHtml(tr("Filters"))}${
       active ? ` <span class="bcnt">${active}</span>` : ""}</summary>
       <div class="slotf-row"><span class="slotf-lab">${escHtml(tr("Equipment slot"))}</span>${
@@ -52,8 +51,7 @@ function renderHomeHot() {
     ${rows.length ? `<div class="bench-rows">${shown.map((w, i) => `<a class="brow${score(w) ? "" : " none"}" href="/weapons/${urlSlug(w)}">
         <span class="brank">${score(w) ? `#${i + 1}` : "—"}</span>
         ${imgTag(IMG(w.image), "bimg")}
-        <span class="bname">${escHtml(w.name)}</span>
-        <span class="bscore">${score(w) || ""}</span></a>`).join("")}</div>`
+        <span class="bname">${escHtml(w.name)}</span></a>`).join("")}</div>`
       : `<div class="sim-empty">${escHtml(tr("No weapon matches these filters."))}</div>`}
     ${rows.length > HOT_SHOWN ? `<button type="button" class="ghost-btn small hot-more">${escHtml(hotAll
       ? tr("Show the top 10") : trF("Show all {n}", { n: rows.length }))}</button>` : ""}`;

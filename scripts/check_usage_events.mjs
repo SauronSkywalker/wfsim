@@ -122,7 +122,9 @@ const pt = (day, cid, e, subject = "", country = "CN") =>
 const fixture = [
   pt("2026-10-01", A, "app.boot"),
   pt("2026-10-02", A, "app.boot"), pt("2026-10-02", A, "simulator.run", "torid"),
-  pt("2026-10-02", B, "app.boot", "", "US"), pt("2026-10-02", C, "app.view", "home"),
+  pt("2026-10-02", A, "optimizer.run", "torid"),
+  pt("2026-10-02", B, "app.boot", "", "US"), pt("2026-10-02", B, "simulator.run", "furis", "US"),
+  pt("2026-10-02", C, "app.view", "home"),
 ];
 const keptDay = usageDayRows("2026-10-02", fixture);
 const cell = (event, subject, market) => (keptDay.find((o) => o.event === event && o.subject === subject
@@ -131,6 +133,8 @@ check("a day counts its visitors, those with a result and those returning",
   cell("visitors", "all", "china") === 2 && cell("visitors", "all", "overseas") === 1
   && cell("visitors", "result", "china") === 1 && cell("visitors", "returning", "china") === 1
   && cell("simulator.run", "torid") === 1 && cell("visitors.country", "US") === 1, JSON.stringify(keptDay));
+check("a weapon is tested once a day by a reader who simulated AND searched on it",
+  cell("tested", "torid", "china") === 1 && cell("tested", "furis", "overseas") === 1, JSON.stringify(keptDay.filter((o) => o.event === "tested")));
 check("…and no row carries a visitor id", !JSON.stringify(keptDay).includes(A));
 const tail = keptDay[keptDay.length - 1];
 check("…and its kept marker is the last row written", tail.event === "visitors" && tail.subject === "all");

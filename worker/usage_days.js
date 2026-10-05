@@ -14,6 +14,10 @@
 /// definition is a trend that moves for no reason.
 export const USAGE_RESULTS = ["builder.weapon", "builder.warframe", "builder.operator", "builder.riven",
   "simulator.run", "optimizer.run"];
+/// A WEAPON TESTED: a simulation or a search that finished on it. Kept per
+/// weapon as one visitor count, so a reader who did both on one day is ONE —
+/// the popularity ranking reads it (`worker/popularity.js`).
+export const USAGE_TESTED = ["simulator.run", "optimizer.run"];
 const DATASET = "wfsim";
 const CHECK_RELEASE = "deploy-check";
 /// The dataset keeps ~92 days; a day older than this may be cut short.
@@ -39,7 +43,8 @@ async function usageSql(env, query) {
 
 /// ONE DAY'S ROWS, as `usage_days` holds them: per (event, subject, market) the
 /// visitors and the points; and the derived visitor counts under event
-/// `visitors` — `all`, `result`, `returning` — and `visitors.country`.
+/// `visitors` — `all`, `result`, `returning` — `visitors.country`, and per
+/// weapon `tested`.
 export function usageDayRows(day, rows) {
   const before = new Set(), today = new Map(), sampled = { any: false };
   const out = new Map();
@@ -55,6 +60,7 @@ export function usageDayRows(day, rows) {
     if (r.day.slice(0, 10) !== day) { before.add(r.cid); continue; }
     const mkt = market(r.country);
     add(r.e, r.subject || "", mkt, r.cid, Number(r.n));
+    if (USAGE_TESTED.includes(r.e) && r.subject) add("tested", r.subject, mkt, r.cid, Number(r.n));
     const v = today.get(r.cid) || { mkt, country: r.country || "", result: false };
     if (USAGE_RESULTS.includes(r.e)) v.result = true;
     today.set(r.cid, v);

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // THE POPULARITY RANKING — docs/ANALYTICS.md §"Shown publicly". Per weapon, how
-// many people ran a simulation or a search on it, each counted once a day per
-// kind, added up over the last 30 finished days `usage_days` holds. Totals the
-// cron already keeps; nothing new is collected, and no visitor is in it.
+// many people finished a simulation or a search on it, each once a day whichever
+// they ran (`tested` in `usage_days`), added up over the last 30 finished days.
+// Totals the cron already keeps; nothing new is collected, and no visitor is in it.
 
 const DAYS = 30;
-const EVENTS = ["simulator.run", "optimizer.run"];
+const EVENTS = ["tested"];
 
 const reply = (body, status, maxAge) => new Response(JSON.stringify(body), {
   status, headers: { "content-type": "application/json; charset=utf-8",
