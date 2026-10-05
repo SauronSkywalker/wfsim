@@ -58,15 +58,29 @@ function usageArrival() {
 
 /// AN UNCAUGHT FAILURE IN THIS PAGE'S OWN CODE, as `app.error`: `boot` before the
 /// app is ready (the reader sees "could not start"), `script` or `promise`
-/// after. A KIND, NEVER THE MESSAGE — that can carry what the reader typed.
-/// Only this origin's files count, so a browser extension's errors are not ours.
-const usageOwn = (text) => typeof text === "string" && text.includes(location.origin + "/");
-function usageError(kind, own) {
-  if (own) track("app.error", window.__wfsimReady ? kind : "boot", Math.round(performance.now()));
+/// after — and WHERE in our own file, as `<kind>_<file>_<line>_<column>`, which
+/// with the point's release names the line in that build's committed bundle.
+/// A PLACE, NEVER THE MESSAGE — that can carry what the reader typed. Only this
+/// origin's files count, so a browser extension's errors are not ours.
+const USAGE_FILES = [["/asset/app.", "app"], ["/asset/nona.", "nona"]];
+function usagePlace(text) {
+  const at = typeof text === "string" ? text.indexOf(location.origin + "/") : -1;
+  const m = at < 0 ? null : /^(\/[^\s:)]*):(\d+):(\d+)/.exec(text.slice(at + location.origin.length));
+  if (!m) return null;
+  const file = (USAGE_FILES.find(([p]) => m[1].startsWith(p)) || [, "page"])[1];
+  return `${file}_${m[2]}_${m[3]}`;
 }
-window.addEventListener("error", (e) => usageError("script", usageOwn(e && e.filename)));
-window.addEventListener("unhandledrejection", (e) =>
-  usageError("promise", usageOwn(e && e.reason && e.reason.stack)));
+/// `place` is null for another origin's failure, "" for ours with no position.
+function usageError(kind, place) {
+  if (place === null) return;
+  const k = window.__wfsimReady ? kind : "boot";
+  track("app.error", (place ? `${k}_${place}` : k).slice(0, 64), Math.round(performance.now()));
+}
+window.addEventListener("error", (e) => usageError("script",
+  e && typeof e.filename === "string" && e.filename.startsWith(location.origin + "/")
+    ? usagePlace(`${e.filename}:${e.lineno}:${e.colno}`) || "" : null));
+window.addEventListener("unhandledrejection", (e) => usageError("promise",
+  usagePlace(e && e.reason && e.reason.stack)));
 
 /// ONCE PER (event, subject) PER PAGE LOAD. A point says a reader got this far
 /// with this thing, not how many times: forty edits to one build are one build.

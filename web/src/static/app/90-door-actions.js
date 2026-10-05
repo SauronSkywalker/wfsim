@@ -1266,7 +1266,7 @@ init()
   .catch((e) => {
     // …unless the reason already put its own, better sentence on the page.
     if (bootReported) return;
-    usageError("boot", true);
+    usageError("boot", usagePlace(e && e.stack) || "");
     if (window.__wfsimBootFailed) {
       window.__wfsimBootFailed(
         "WFSim could not start. / WFSim 启动失败。",

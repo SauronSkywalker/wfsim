@@ -265,6 +265,30 @@ check(
   `stopped ${s2.stopped}, pending cleared ${s2.pendingCleared}, workers dropped ${s2.workersDropped} (had ${s2.hadWorkers})`,
 );
 
+// A MODULE THAT IS ONLY SLOW IS NOT A DEAD LANE. The worker says so while it
+// downloads, and the watchdog resets on any word: with the loading window cut
+// to 7.5 s and the wasm held back 16 s by the server — nothing in Chrome slows a
+// worker's own fetch — the lane must still answer. The watchdog looks every
+// 5 s, so the hold has to outlast two looks for a silent lane to be caught at
+// all. Its own page, so the hold reaches nothing above.
+const slowApp = await openApp({ boot: 30000, delay: { ".wasm": 16000 }, profile: `wfsim-calc-slow-${process.pid}` });
+const slowLane = await slowApp.evaluate(`(async () => {
+  LANE_WATCHDOG.loading = 7500;
+  const t0 = performance.now();
+  const r = await Promise.race([
+    makeLane().call('/api/meta'),
+    new Promise((res) => setTimeout(() => res({ timedOut: true }), 60000)),
+  ]);
+  LANE_WATCHDOG.loading = 90000;
+  return { dead: !!(r && r.worker_dead), timedOut: !!(r && r.timedOut), meta: !!(r && r.weapons), ms: Math.round(performance.now() - t0) };
+})()`);
+await slowApp.close();
+check(
+  "a worker whose wasm is only slow keeps its lane alive past the loading window, and answers",
+  slowLane.meta && !slowLane.dead && !slowLane.timedOut && slowLane.ms > 16000,
+  `answered ${slowLane.meta}, worker_dead ${slowLane.dead}, timed out ${slowLane.timedOut}, ${slowLane.ms} ms`,
+);
+
 // A MODULE THAT WILL NOT DOWNLOAD IS A FAILURE NOW, not after the 90 s watchdog
 // — the wait a reader on a bad connection closed the tab during. Last, because
 // it blocks the wasm for the rest of the page. BLOCKED IN EACH WORKER'S OWN

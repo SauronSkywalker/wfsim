@@ -72,7 +72,7 @@ with this thing, not how many times: forty edits to one build are one build.
 | --- | --- | --- | --- |
 | `app.boot` | the engine has answered `/api/meta` | how the page was reached: `reload`, `back_forward`, `from_site`, `direct` or `from_<referrer host>` | ms since navigation |
 | `app.view` | a page was drawn | page kind (`home`, `weapon_builder`, `weapon_simulator`, `warframe`, …); each account page is its own kind — `login`, `signup`, `reset`, `account`, `account_sync` (`AUTH_VIEWS`) — and a page an extension mounts names its own (`authView`) | — |
-| `app.error` | this page's own code failed uncaught — another origin's script (an extension) is not counted | `boot` (the app did not start), `script`, `promise`: a kind, never the message | ms since navigation |
+| `app.error` | this page's own code failed uncaught — another origin's script (an extension) is not counted | `boot` (the app did not start), `script`, `promise`, then where in our own file — `<kind>_<app\|nona\|page>_<line>_<column>`, read against that release's committed `site/asset/` bundle: a place, never the message | ms since navigation |
 | `engine.fail` | an engine worker failed to load, or stopped answering | `worker_load` / `worker_silent` | ms since navigation (load only) |
 | `builder.weapon` | the weapon panel computed a build with ≥1 mod | weapon id | — |
 | `builder.warframe` | the Warframe panel computed a build with anything set — a mod, arcane, shard or Helminth ability | frame id | — |

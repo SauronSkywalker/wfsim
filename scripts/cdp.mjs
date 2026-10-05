@@ -57,12 +57,15 @@ const SITE = resolve(dirname(fileURLToPath(import.meta.url)), "..", "site");
 /// is what lets a check push `/weapons/Torid` into the address bar; the
 /// directory rule is what makes the PRERENDERED weapon pages reachable, which a
 /// check of the crawler's view needs and a fallback-only server hides.
-async function serveSite(root) {
+/// `delay` holds a file back by its extension — `{ ".wasm": 9000 }` is a slow
+/// line, which nothing in Chrome can impose on a worker's own fetch.
+async function serveSite(root, delay = {}) {
   const srv = createServer(async (q, s) => {
     const p = decodeURIComponent(q.url.split("?")[0]);
     for (const c of [p, join(p, "index.html")]) {
       try {
         const b = await readFile(join(root, c));
+        if (delay[extname(c)]) await sleep(delay[extname(c)]);
         s.writeHead(200, {
           "content-type": MIME[extname(c)] || "application/octet-stream",
           "cache-control": "no-store",
@@ -139,6 +142,7 @@ function sweepStaleProfiles() {
  * @param {string}  [o.root]    directory to serve (defaults to `site/`).
  * @param {string}  [o.base]    an EXTERNAL origin to test instead of `site/` —
  *                              no server is started and `root` is ignored.
+ * @param {object}  [o.delay]   ms to hold a file back, by extension.
  */
 export async function openApp(o = {}) {
   const root = o.root ? resolve(o.root) : SITE;
@@ -154,7 +158,7 @@ export async function openApp(o = {}) {
   sweepStaleProfiles();
   // An EXTERNAL base skips the server entirely, so a check can be pointed at
   // wfsim.app (or a preview deploy) and assert the same things about it.
-  const srv = o.base ? null : await serveSite(root);
+  const srv = o.base ? null : await serveSite(root, o.delay);
   const BASE = o.base || `http://127.0.0.1:${srv.address().port}`;
 
   const proc = spawn(CHROME, [
@@ -296,6 +300,13 @@ export async function openApp(o = {}) {
     async finish(message) {
       const failed = app.failures;
       console.log(failed ? `\n${failed} failed` : `\n${message}`);
+      await app.close();
+      process.exit(failed ? 1 : 0);
+    },
+
+    /// What `finish` shuts down, without ending the process — for a check that
+    /// opens a second app of its own.
+    async close() {
       try { ws.close(); } catch { /* already gone */ }
       // THE WHOLE TREE, not the launcher. Chrome forks a renderer, a gpu
       // process and more, and on Windows `kill()` reaches only the one node
@@ -329,7 +340,6 @@ export async function openApp(o = {}) {
           await sleep(200);
         }
       }
-      process.exit(failed ? 1 : 0);
     },
   };
 

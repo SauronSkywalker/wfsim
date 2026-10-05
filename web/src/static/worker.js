@@ -19,6 +19,12 @@ importScripts("pkg/wfsim_wasm.js");
 const load = () => wasm_bindgen({ module_or_path: "pkg/wfsim_wasm_bg.wasm" });
 const ready = load().catch(load);
 ready.catch((err) => setTimeout(() => { throw err; }));
+// …AND ONE THAT IS STILL DOWNLOADING SAYS SO, so a slow line is not taken for a
+// dead lane: the page's watchdog resets on any word. It says so for five
+// minutes at most, so a download that has truly stalled still ends.
+const arriving = setInterval(() => postMessage({ kind: "alive" }), 5000);
+setTimeout(() => clearInterval(arriving), 300000);
+ready.then(() => clearInterval(arriving), () => clearInterval(arriving));
 
 onmessage = async (e) => {
   await ready;

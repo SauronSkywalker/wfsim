@@ -498,6 +498,12 @@ key, which is now stamped only by a scan that measured everything. On the old
 behaviour it reports `86 of 87 could not be measured`, which is the bug as the
 reader met it.
 
+**A MODULE THAT IS ONLY SLOW KEEPS ITS LANE.** The worker says so every 5 s
+while its wasm downloads, for five minutes at most; with the loading watchdog
+cut to 7.5 s and the wasm held back 16 s by the test server (`openApp`'s
+`delay` — nothing in Chrome slows a worker's own fetch), the lane still answers
+`/api/meta`. Verified to bite: with the beat removed, the lane dies.
+
 **A MODULE THAT WILL NOT DOWNLOAD FAILS ITS LANE AT ONCE.** The wasm is blocked
 in the worker's own CDP session (the page's blocklist does not reach a
 worker's fetch), and the lane must report `worker_dead` well inside the 90 s
