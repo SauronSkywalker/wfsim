@@ -1103,7 +1103,6 @@ label.check input{width:auto}
 body.on-card > *:not(#card-page){display:none!important}
 body.on-card #card-page{display:block;width:720px;margin:0 auto;padding:22px 24px 26px;background:var(--bg);color:var(--text)}
 .lc-top{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:18px}
-.lc-top img{height:26px}
 .lc-top .sb-empty{margin-left:auto}
 .lc-title{font-size:22px;margin:4px 0 2px}
 .lc-sub{margin-bottom:14px}

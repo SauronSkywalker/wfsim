@@ -54,7 +54,9 @@ async function renderCardPage(w, ask) {
   }
   const qr = await api("/api/qr", { text: link });
   const cards = body();
-  box.innerHTML = `<header class="lc-top"><img src="/logo.svg" alt=""><b>${escHtml(tr("WFSim · Nona"))}</b><span class="sb-empty">wfsim.app</span></header>
+  // THE SITE'S OWN WORDMARK, as the topbar draws it: the brand is WFSim, and
+  // Nona speaks in the line the bot sends with the image, not on it.
+  box.innerHTML = `<header class="lc-top"><span class="brand">WF<span>Sim</span></span><span class="sb-empty">wfsim.app</span></header>
     <h1 class="lc-title">${escHtml(title)}</h1>
     <div class="sb-empty lc-sub">${escHtml(bench ? tr(bench.name) : "")}</div>
     ${cards || `<p class="sim-empty">${escHtml(tr("Nothing measured for this weapon yet."))}</p>`}
