@@ -133,10 +133,12 @@ function cardOfState(st, w, fixed) {
     // builder opens this weapon in; the simulator's build shows the builder's.
     mode: modeLabel(w, st.mode || (fixed ? defaultMode(w.id, null) : mode)),
     mods: (st.slots || []).map((s, i) => {
+      if (s && isRivenId(s.mod)) return { label: rivenCardName(s.mod), cls: pinned("mods:" + i) };
       const m = s && s.mod && modById(s.mod);
       return m ? { img: IMG(m.image), label: m.name, rank: s.rank == null ? m.max_rank : s.rank,
         cls: pinned("mods:" + i) } : null;
     }).filter(Boolean),
+    riven: rivenCardHtml(w, ((st.slots || []).find((s) => s && isRivenId(s.mod)) || {}).mod),
     arcanes: (w.arcane_slots || 0) >= 1
       ? arcs.map((id, i) => {
         const a = id !== "none" && arcaneById(id);
@@ -151,6 +153,56 @@ function cardOfState(st, w, fixed) {
   });
 }
 
+/// WHERE A RIVEN IN A BUILD IS DEFINED: the reader's own card, or a board row's,
+/// registered by `boardRowState` until the row is taken.
+function rivenSpecFor(id) {
+  const own = loadPresetList(RIVENS).find((p) => RIVEN_PREFIX + p.id === id);
+  if (own) return { name: own.name, spec: own.state || {} };
+  const rv = boardRivenDefs[id];
+  return rv ? { name: "", spec: boardRivenState(rv) } : null;
+}
+const rivenCardName = (id) => (rivenSpecFor(id) || {}).name || tr("Riven");
+/// The section's heading: the reader's name for the card, then the name the
+/// game generates from its stats.
+const rivenCardHead = (name, generated) => `<div class="sb-h">${escHtml(tr("Riven"))}${
+  [name, generated].filter(Boolean).map((x) => ` · ${escHtml(x)}`).join("")}</div>`;
+
+/// Each riven's stats as `/api/riven` printed them, by weapon and card — the
+/// page never computes a riven value itself.
+const rivenCardStats = new Map();
+const rivenCardBody = (name, got) => rivenCardHead(name, got.generated)
+  + `<div class="sb-chips">${rivenCardChips(got.stats)}</div>`;
+const rivenCardChips = (stats) => stats.map((x) => `<span class="sb-chip${x.value < 0 ? " neg" : ""}"><span>${
+  escHtml(x.label)}</span>${x.roll != null ? `<span class="rk">×${Number(x.roll).toFixed(2)}</span>` : ""}</span>`).join("");
+
+/// THE RIVEN SECTION OF A BUILD CARD. Until the engine has answered it names
+/// each stat with its roll; the answer then fills every card on the page that
+/// shows this riven, whoever drew it.
+function rivenCardHtml(w, id) {
+  const r = id && rivenSpecFor(id);
+  if (!r) return "";
+  const key = JSON.stringify([w.id, r.spec]);
+  let got = rivenCardStats.get(key);
+  if (!got) {
+    const sp = r.spec;
+    const rows = (sp.bonuses || []).concat(sp.malus ? [sp.malus] : []).filter((x) => x && x.id);
+    const stats = rows.map((x, i) => ({ label: (i < (sp.bonuses || []).length ? "+" : "−")
+      + (rivenStat(x.id) ? rivenStatName(rivenStat(x.id)) : x.id), roll: x.roll, value: i < (sp.bonuses || []).length ? 1 : -1 }));
+    got = { stats, generated: "" };
+    rivenCardStats.set(key, got);
+    api("/api/riven", { weapon: w.id, ...sp }).then((a) => {
+      if (!a || a.ok === false) return;
+      const done = { generated: a.name || "",
+        stats: (a.stats || []).map((x) => ({ label: tf(x.text), roll: x.roll, value: x.value })) };
+      rivenCardStats.set(key, done);
+      document.querySelectorAll("[data-riven-card]").forEach((el) => {
+        if (el.dataset.rivenCard === key) el.innerHTML = rivenCardBody(el.dataset.rivenName, done);
+      });
+    }, () => {});
+  }
+  return `<div data-riven-card="${escHtml(key)}" data-riven-name="${escHtml(r.name)}">${rivenCardBody(r.name, got)}</div>`;
+}
+
 function buildCardHtml(d) {
   const chip = (c) => `<span class="sb-chip${c.cls ? " " + c.cls : ""}"${c.title ? ` title="${escHtml(c.title)}"` : ""}>` +
     `${c.img ? imgTag(c.img, "sb-img") : ""}<span>${escHtml(c.label)}</span>${c.rank != null ? `<span class="rk">R${c.rank}</span>` : ""}</span>`;
@@ -159,6 +211,8 @@ function buildCardHtml(d) {
   return [
     d.mode != null ? section(tr("Mode"), [{ label: d.mode }]) : "",
     section(`${tr("Mods")} · ${d.mods.length}`, d.mods, tr("no mods equipped")),
+    // THE RIVEN SPELLED OUT: every other card is fixed, its numbers are this build's own.
+    d.riven || "",
     d.parts ? section(tr("Parts"), d.parts) : "",
     section(tr("Arcane"), d.arcanes, tr("no arcane")),
     section(tr("Evolutions"), d.evolutions, tr("none selected")),

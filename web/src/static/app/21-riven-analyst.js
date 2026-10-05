@@ -26,10 +26,7 @@ const raRolls = (rv) => {
 
 /// A BOARD ROW AS THE SIMULATOR DRAWS A BUILD, and the way into the Builder.
 function raBuild(w, x, head) {
-  const rv = x.row.riven;
   return `<div class="ra-build"><div class="sb-h">${escHtml(head)} · <b>${escHtml(raShown(x.row))}</b></div>`
-    + (rv ? `<div class="sb-h">${escHtml(tr("Riven"))}</div><div class="sb-chips"><span class="sb-chip"><span>${
-      escHtml(raRolls(rv))}</span></span></div>` : "")
     + cardOfState(boardRowState(w, x.row), w)
     + `<a class="ghost-btn small sb-edit" href="${weaponPath(w.id)}" data-ra-open="${escHtml(x.key)}">${
       escHtml(tr("open in Builder"))}</a></div>`;
