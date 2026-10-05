@@ -831,12 +831,40 @@ pub(super) fn settle_pellet(pellet_idx: u32, shot: &Strike, live: &mut Live) {
         .cluster
         .filter(|_| pellet_idx == 0 && radial_stage.is_some());
     let bomblets = cluster.map_or(0, |c| c.count.round().max(0.0) as usize);
-    let n_stages = 1 + usize::from(radial_stage.is_some()) + 2 * bomblets;
+    // …AND THEN THE SHOCKWAVE, the slam again at each point down the ground:
+    // a heavy slam's own, or the closing slam of a combo that sends one. Each
+    // is a whole slam instance — crit, status, falloff, on-hit — in a sphere
+    // the wave's width across.
+    let shockwave = active.shockwave.filter(|_| {
+        pellet_idx == 0
+            && radial_stage.is_some()
+            && match swing.as_ref() {
+                Some(h) if h.slam_multiplier.is_some() => h.sends_shockwave,
+                _ => active.radial.as_ref().is_some_and(|r| r.blast_kind == crate::model::BlastKind::Slam),
+            }
+    });
+    let shock_radial = shockwave.zip(radial_stage).map(|(sw, r)| crate::build::loadout::ResolvedRadial {
+        radius_m: sw.width_m / 2.0,
+        ..r
+    });
+    let first_shock = 1 + usize::from(radial_stage.is_some()) + 2 * bomblets;
+    let n_stages = first_shock + shockwave.map_or(0, |sw| (sw.lines * sw.explosions) as usize);
     for stage in 0..n_stages {
         let rad = match stage {
             0 => None,
             1 => radial_stage,
+            s if s >= first_shock => shock_radial,
             s => cluster.map(|c| if s % 2 == 0 { c.contact } else { c.blast }),
+        };
+        let det = match shockwave.filter(|_| stage >= first_shock) {
+            Some(sw) => crate::rules::space::Detonation {
+                at: sw
+                    .epicentres(params.player_at, params.aim_point())
+                    .nth(stage - first_shock)
+                    .unwrap_or(det.at),
+                height_m: det.height_m,
+            },
+            None => det,
         };
         let direct = rad.is_none();
         // EVERY INSTANCE RE-READS THE TARGET — not every shot, and not
@@ -1207,7 +1235,7 @@ pub(super) fn settle_pellet(pellet_idx: u32, shot: &Strike, live: &mut Live) {
         let omitted = active.compression_multiplier * range_falloff * (1.0 + next_shot_bonus);
         let beside_co = beside_adding_co(omitted, co_mult.co_share, active.co_behavior);
         let dt_here = if direct && active.consecutive_hit_radial_only { 1.0 } else { dt_mult };
-        let raw = qtotal
+        let raw_at_epicentre = qtotal
             * part_factor
             * crit_multiplier
             * bucket
@@ -1251,8 +1279,24 @@ pub(super) fn settle_pellet(pellet_idx: u32, shot: &Strike, live: &mut Live) {
             // way — "multiplicative to other sources of damage", so it
             // stands here beside Double Tap rather than in a bucket.
             * ms_damage
-            * pm_mult
-            * falloff;
+            * pm_mult;
+        let raw = raw_at_epicentre * falloff;
+        // AN EXPLOSION THAT MISSES THE AIMED BODY STILL CATCHES THE ONES IT
+        // REACHES — a shockwave 5 m down the floor, a grenade landed beside the
+        // target. Nothing lands on the aimed body, so its whole path (status,
+        // kill, on-hit) is skipped and the formation is all there is; read at
+        // `falloff` the share would be zero for everyone.
+        if !direct && falloff <= 0.0 {
+            if let (Some(rr), false) = (rad, bodies.len() < 2) {
+                spread_from_blast(
+                    seat, windows, det, bodies, params, active, &rr,
+                    body_only(raw_at_epicentre / bucket),
+                    shares, crit_multiplier, tier, attrition, spread_mb, status_chance, forced, &qvec,
+                    &mut *gal, &mut *arc, &mut *r, rec, d, t,
+                );
+            }
+            continue;
+        }
         let head_direct = direct && part.is_head;
         let col = bodies[0].state.incoming_column(&params.foe);
         // THE TARGET AS IT STOOD, before this instance touched it. Read

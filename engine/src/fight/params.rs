@@ -492,6 +492,8 @@ pub struct FightParams {
     /// THE WEAPON'S OWN SLAM, fired by a combo swing that ends on one — three
     /// of Crushing Ruin's four combos do. `None` everywhere else.
     pub slam: Option<crate::build::loadout::ResolvedRadial>,
+    /// The ground shockwave a slam of this form sends (Tenet Exec).
+    pub shockwave: Option<crate::model::Shockwave>,
     /// THE CLASS'S HEAVY ATTACK, on every melee form — what a TENNOKAI swing
     /// fires when the window is open on a light combo.
     pub heavy: Option<crate::model::HeavyAttack>,

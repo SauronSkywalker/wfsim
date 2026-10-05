@@ -605,6 +605,11 @@ pub struct ComboHit {
     /// Exalted stance: one per hit, the rest riding along. Zero on a row of a
     /// form that spends the counter, which earns nothing.
     pub combo_points_base: f64,
+    /// Does this row's slam send the weapon's [`crate::model::Shockwave`]?
+    /// Set by `resolve` on a combo's LAST row when it is a slam and the form
+    /// declares one — never written in data.
+    #[serde(skip)]
+    pub sends_shockwave: bool,
 }
 
 fn one_hit() -> u32 {

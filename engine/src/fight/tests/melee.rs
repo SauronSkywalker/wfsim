@@ -820,15 +820,37 @@ fn spring_loaded_blade_stacks_reach_and_reaches_what_it_brings_into_range() {
 /// **A SLIDE ATTACK OPENS THE WINDOW AND TAKES IT.** A slide lands direct
 /// melee hits like any light swing, so it rolls for the flash, and a slide
 /// loop that gets one fires the class's heavy attack in place of its next
-/// slide — the play is to use the window the moment it opens.
+/// slide — the play is to use the window the moment it opens. The heavy plays
+/// its own swing (1.33 s on the Talons against a 0.8 s slide), so the margin is
+/// what a heavy is worth over the slide time it displaces.
 #[test]
 fn a_slide_attack_opens_tennokai_and_takes_it() {
     for form in ["praedos_slide", "valkyr_talons_slide"] {
         let dps = |mods: &[&str]| magistar(form, mods, 60.0, None).mean_damage;
         let off = dps(&[]);
         let on = dps(&["disciplines_merit"]);
-        assert!(on > off * 1.3, "{form}: a slide loop with Tennokai must fire its heavies: {off:.0} -> {on:.0}");
+        assert!(on > off * 1.1, "{form}: a slide loop with Tennokai must fire its heavies: {off:.0} -> {on:.0}");
     }
+}
+
+/// **A TENNOKAI HEAVY PLAYS THE HEAVY'S OWN SWING**, one heavy's share of the
+/// weapon's heavy form. Parting Knee is `0 / 0 / 0.91 s` — its time is on the
+/// last row — so a heavy that took the converted row's zero and restarted the
+/// chain never paid the 0.91 s, and the loop swung four times as often.
+#[test]
+fn a_tennokai_heavy_pays_the_heavy_swing_not_the_row_it_replaced() {
+    let swing = |id: &str| {
+        crate::data::weapons::heavy_swing_seconds(crate::data::weapons::spec(id).expect("in the roster"))
+    };
+    assert!((swing("nikana_prime_slide") - 0.3333).abs() < 1e-9);
+    assert!((swing("valkyr_talons") - 1.3333).abs() < 1e-9);
+    let shots = |mods: &[&str]| magistar("nikana_prime_slide", mods, 60.0, None).mean_shots;
+    let plain = shots(&["blind_justice"]);
+    let tennokai = shots(&["blind_justice", "dreamers_wrath"]);
+    assert!(
+        tennokai < plain * 1.5,
+        "a Tennokai slide loop swings at the heavy's pace, not free: {plain:.0} -> {tennokai:.0}"
+    );
 }
 
 /// **A TENNOKAI HEAVY BREAKS THE STANCE CHAIN**, so the next light swing
@@ -1991,4 +2013,34 @@ fn a_swing_sweeps_an_arc_rather_than_everything_in_front() {
         vec![0, 1, 2],
         "a spin takes everything in range whatever angle it stands at",
     );
+}
+
+/// **EVERY MODE FIRES THE WEAPON'S SLAM.** It is written once, on the default
+/// entry, and a form that states its own `attack:` inherits none of it — so a
+/// stance swing that ends on a slam fired nothing on every module-built
+/// weapon. The body behind the wielder at 3 m is out of every swing's arc and
+/// inside the 4 m sphere at his feet, so only the slam can reach it.
+#[test]
+fn a_stance_slam_fires_the_weapons_slam_in_every_mode() {
+    for form in ["tenet_exec_block_forward", "tenet_exec_forward"] {
+        let base = crate::model::WeaponBase::from_data(form, false, &[]);
+        assert!(base.slam.is_some(), "{form}: the default entry's slam reaches this form");
+    }
+    let r = magistar("tenet_exec_block_forward", &["cleaving_whirlwind"], 30.0, Some(3.0));
+    assert!(r.mean_damage_by_body.0[6] > 0.0, "the closing slam reaches the body behind");
+}
+
+/// **A SHOCKWAVE CATCHES WHAT THE SLAM CANNOT.** A body 10 m ahead is past
+/// any slam's sphere (a heavy slam's is 6 m from 15 m up) and on the second
+/// blast; one 10 m behind is on neither. Only the forms that send one reach it
+/// (M110).
+#[test]
+fn a_tenet_exec_shockwave_reaches_down_the_line_and_not_behind() {
+    let ahead = |form: &str, mods: &[&str]| magistar(form, mods, 30.0, Some(10.0)).mean_damage_by_body.0;
+    let heavy = ahead("tenet_exec_heavy_slam", &[]);
+    assert!(heavy[2] > 0.0 && heavy[6] == 0.0, "heavy slam: ahead {:.0}, behind {:.0}", heavy[2], heavy[6]);
+    let closing = ahead("tenet_exec_block_forward", &["cleaving_whirlwind"]);
+    assert!(closing[2] > 0.0 && closing[6] == 0.0, "closing slam: ahead {:.0}, behind {:.0}", closing[2], closing[6]);
+    let none = ahead("tenet_exec_forward", &["cleaving_whirlwind"]);
+    assert_eq!(none[2], 0.0, "a combo that does not close on a slam sends none");
 }

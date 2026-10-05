@@ -1345,6 +1345,7 @@ impl FightParams {
             combo_script: panel.combo_script.clone(),
             follow_through: panel.follow_through,
             slam: panel.slam,
+            shockwave: panel.shockwave,
             heavy: panel.heavy,
             tennokai: panel.tennokai,
             spends_combo: panel.spends_combo,

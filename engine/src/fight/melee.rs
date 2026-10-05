@@ -534,6 +534,14 @@ pub(super) fn seconds_to_next_shot(
             if tennokai && (tennokai_heavy || active.spends_combo) {
                 w = active.tennokai.windup_seconds;
             }
+            // …AND A CONVERTED SWING PLAYS THE HEAVY'S ANIMATION, not the
+            // light row's: a row inside one input carries no delay of its
+            // own, so a Parting Knee converted on its opener cost nothing and
+            // the restarted chain never reached the row that pays 0.91 s.
+            let d = match (tennokai_heavy, active.heavy) {
+                (true, Some(h)) if !active.spends_combo => h.swing_seconds,
+                _ => d,
+            };
             // A HEAVY ATTACK BREAKS THE CHAIN, so the next light swing
             // starts the combo over (owner — the wiki says
             // nothing about a stance chain's position, so this is his

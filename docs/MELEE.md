@@ -198,6 +198,32 @@ where the two hammers carried nothing; it now carries nothing either.
   function. It is why a slam ignores the 2.5 m reach that decides every other
   melee mode.
 
+### Shockwaves
+
+A Tenet Exec slam sends its explosion down the ground: *"Slam attacks send out
+a series of 3 shockwaves in a straight line. Heavy slam attacks send out 3 sets
+of 3 shockwaves in a spread"*, triggering *"every 5 meters"* (wiki).
+`model::Shockwave` states it on the form — lines, fan, blasts, spacing, width —
+and `fight::pellet` fires each blast as another stage of the slam's own pellet:
+
+- **EACH BLAST IS THE SLAM AGAIN** — its damage, crit, status, combo multiplier
+  and falloff — re-centred and shrunk to the wave's width (3 m, M110).
+  `Module:Stances/data` agrees: 200% x 3 for a slam, 300% x 9 for a heavy slam.
+- **A COMBO SENDS ONE ON ITS CLOSING SLAM** — *"Each heavy blade stance will
+  trigger a shockwave on the last hit of the forward block combo"*. The form
+  declares the wave and `resolve` marks the script's last row when it is a
+  slam (`ComboHit::sends_shockwave`), so Tempo Royale's block sends one and a
+  neutral combo ending on a slam does not.
+- **A BLAST THAT MISSES THE AIMED BODY STILL CATCHES THE CROWD.** The aimed
+  body stands at contact and every blast is 5 m out, so the aimed path is
+  skipped and the blast goes to the formation alone; read at the aimed body's
+  falloff it would have been zero for everyone. The same is true of any
+  explosion that lands beside its target.
+
+Still assumed, and declared on the entries (M110): the fan between a heavy
+slam's lines, the blasts going off with the slam, and the falloff the page and
+the module state the opposite way round.
+
 ### …and the heavy slam LOOP, which is the only cadence a player chooses
 
 `climb -> slam -> recover`, and **only the recovery is a fixed cost**:
@@ -516,6 +542,12 @@ is the card's own clause and not an artefact. The window's own speed-up is
 **+100%** and it is the one number in the mechanic DE publishes nothing for —
 `build::loadout::TENNOKAI_WINDUP_SPEED`, declared on every melee entry.
 
+**AND IT SWINGS THE HEAVY'S OWN ANIMATION**, one heavy's share of the weapon's
+heavy form (`HeavyAttack::swing_seconds`), never the light row it replaced. A
+stance puts an input's whole time on its LAST row, so a row inside one carries
+none: a Parting Knee converted on its opener paid nothing, the chain restarted,
+and the 0.91 s row was never reached — a slide loop swung four times as often.
+
 **A SLIDE OPENS IT TOO.** A slide attack lands direct melee hits like any light
 swing, so it rolls for the flash, and a slide loop that gets one fires the
 class's heavy attack in place of its next slide
@@ -791,7 +823,7 @@ melee_from_the_modules`), then were audited against their own page's
 
 | form | where its numbers come from |
 | --- | --- |
-| neutral (the weapon) | the infobox: swing damage, crit, status, attack speed, reach, Follow Through, combo clock, polarities, disposition; its slam is `Slam Attack` at 100% |
+| neutral (the weapon) | the infobox: swing damage, crit, status, attack speed, reach, Follow Through, combo clock, polarities, disposition; its slam is `Slam Attack` at 100%, and every form that states none reads this one |
 | forward / block / block_forward | the same attack and NO script — the stance supplies it, and an empty slot is refused |
 | heavy | the CLASS's heavy block from the module, scaled so one heavy totals the infobox's `HeavyAttack`; wind-up split by `heavy_charge_share_assumed` |
 | slide | the class's slide block, each hit at the infobox's `SlideAttack`, timed by the block's `Duration` |

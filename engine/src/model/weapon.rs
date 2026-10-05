@@ -190,6 +190,52 @@ pub struct HeavyAttack {
     /// The charge before it, in seconds at 1.0x wind-up speed. Attack speed
     /// does not shorten it (wiki, Melee).
     pub windup_seconds: f64,
+    /// THE SWING AFTER THE CHARGE, seconds at 1.0x attack speed — one heavy's
+    /// share of the weapon's own heavy form's script, never declared here
+    /// (`data::weapons::heavy_swing_seconds`). A Tennokai heavy pays it: the
+    /// light row it replaces may carry no animation of its own, and a heavy
+    /// that took that row's zero cost nothing at all.
+    #[serde(skip)]
+    pub swing_seconds: f64,
+}
+
+/// THE SHOCKWAVE A SLAM SENDS ALONG THE GROUND (Tenet Exec): `explosions` blasts
+/// `spacing_m` apart down each of `lines` lines fanned `fan_deg` edge to edge
+/// about the facing. Each is the slam that sent it — its damage, crit, status
+/// and falloff — in a sphere `width_m` across. docs/MELEE.md §"Shockwaves".
+#[derive(Debug, Clone, Copy, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Shockwave {
+    pub lines: u32,
+    #[serde(default)]
+    pub fan_deg: f64,
+    pub explosions: u32,
+    pub spacing_m: f64,
+    pub width_m: f64,
+}
+
+impl Shockwave {
+    /// Every epicentre, nearest first down each line, for a wielder at `from`
+    /// facing `toward`.
+    pub fn epicentres(
+        &self,
+        from: crate::rules::space::Vec2,
+        toward: crate::rules::space::Vec2,
+    ) -> impl Iterator<Item = crate::rules::space::Vec2> + '_ {
+        let heading = (toward.y - from.y).atan2(toward.x - from.x);
+        (0..self.lines).flat_map(move |i| {
+            let spread = if self.lines > 1 {
+                self.fan_deg * (f64::from(i) / f64::from(self.lines - 1) - 0.5)
+            } else {
+                0.0
+            };
+            let a = heading + spread.to_radians();
+            (1..=self.explosions).map(move |k| {
+                let d = f64::from(k) * self.spacing_m;
+                crate::rules::space::Vec2::new(from.x + d * a.cos(), from.y + d * a.sin())
+            })
+        })
+    }
 }
 
 /// Which of the wiki's two charge-weapon cadence formulas applies.
@@ -759,6 +805,8 @@ pub struct WeaponBase {
     /// See [`crate::data::weapons::AttackSpec::slam`] — the weapon's own slam,
     /// unmodded, fired by a combo swing that ends on one.
     pub slam: Option<RadialBase>,
+    /// See [`crate::data::weapons::AttackSpec::shockwave`].
+    pub shockwave: Option<Shockwave>,
     /// See [`crate::data::weapons::AttackSpec::heavy`] — the class's heavy
     /// attack, stated on every melee form because Tennokai turns a LIGHT swing
     /// into one.

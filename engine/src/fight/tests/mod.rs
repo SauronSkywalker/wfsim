@@ -181,6 +181,7 @@ impl Default for FightParams {
             combo_script: Vec::new(),
             follow_through: None,
             slam: None,
+            shockwave: None,
             heavy: None,
             tennokai: crate::model::Tennokai::default(),
             spends_combo: false,

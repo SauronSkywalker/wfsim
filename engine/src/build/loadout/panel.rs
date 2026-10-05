@@ -397,6 +397,8 @@ pub struct ResolvedPanel {
     /// THE WEAPON'S OWN SLAM, resolved: what a combo swing that ends on one
     /// detonates. `None` on everything else.
     pub slam: Option<ResolvedRadial>,
+    /// See [`crate::data::weapons::AttackSpec::shockwave`]; nothing modifies it.
+    pub shockwave: Option<crate::model::Shockwave>,
     /// THE CLASS'S HEAVY ATTACK — its multiplier, and its wind-up already
     /// shortened by the wind-up bucket. What a Tennokai swing fires.
     pub heavy: Option<crate::model::HeavyAttack>,

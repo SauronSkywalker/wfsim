@@ -621,6 +621,8 @@ ui:
   "Power Spike's partial combo decay is a Warframe passive and is not modelled: the counter drops to zero when its timer runs out, so with that passive the number reads low.": "Power Spike 的连击部分衰减是战甲被动，未建模：计时结束时计数直接归零，所以带这个被动时数字偏低。"
   "attack speed shortens this mode's whole cadence, and in game it should not: the 1.2s heavy wind-up is fixed and only the interval BETWEEN heavy attacks is shortened. The swing delay here is one number covering both, so an attack-speed build reads HIGH in this mode": 攻速在这里缩短了整个循环，而游戏里不该如此：1.2 秒的重击蓄力是固定的，被缩短的只是两次重击**之间**的间隔。此处的出手间隔是一个数字同时代表了这两者，所以攻速流派在这个模式下读数偏高
   "The climb is not timed: this loop takes the 150% radius of a slam dropped from 15 m and spends no time getting up there. A player who hops instead gets less radius, down to the 2.5 m / listed floor; this fight has no vertical axis to tell the two apart.": "爬升不计时间：这个循环吃的是从 15 米落下的 150% 半径，而爬上去不花时间。改成小跳的玩家半径更小，最低到 2.5 米或面板半径；本场没有垂直轴，分不出这两者。"
+  "The shockwave's blasts go off with the slam that sends them; the page says the wave travels and times nothing (M110).": "冲击波的各次爆炸与触发它的捶地同时发生；页面说冲击波会向前推进，但没有给出任何时间 (M110)。"
+  "The fan between a heavy slam's three shockwave lines is unpublished: 60 degrees edge to edge is assumed (M110).": "重击捶地三道冲击波之间的扇形角度未公开：此处假设两侧边缘相距 60 度 (M110)。"
   "Condition Overload does not apply to slams, heavy slams or radial attacks (the mod's own words), and this entry does not yet exempt it — a build carrying Condition Overload therefore reads HIGH in this mode": 异况超量不作用于捶地、重击捶地和径向攻击（MOD 卡面原话），而本条目尚未做这个豁免——所以带异况超量的配装在这个模式下读数偏高
   "{n} of {m} builds": "{n} / {m} 个配装"
   "{n} swings coming to {total}% of base, over {secs}s at 1.0x attack speed.": 共 {n} 击，合计基伤的 {total}%，在 1.0x 攻速下耗时 {secs} 秒。

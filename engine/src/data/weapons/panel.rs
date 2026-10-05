@@ -118,6 +118,25 @@ pub fn spec_assembled<'a>(
     Some(std::borrow::Cow::Owned(out))
 }
 
+/// ONE HEAVY ATTACK'S SWING, seconds at 1.0x attack speed: the animation the
+/// weapon's own HEAVY form plays after each charge, its script's delays over the
+/// heavies in it (a row with a charge opens one). Zero where the group has no
+/// heavy form — a weapon whose heavy is not a swing.
+pub fn heavy_swing_seconds(s: &WeaponSpec) -> f64 {
+    let Some(heavy) = all()
+        .iter()
+        .find(|e| e.group() == s.group() && e.form_kind() == crate::model::FormKind::Heavy)
+    else {
+        return 0.0;
+    };
+    let script = &heavy.attack.combo_script;
+    let charges = script.iter().filter(|h| h.windup_seconds > 0.0).count();
+    if charges == 0 {
+        return 0.0;
+    }
+    script.iter().map(|h| h.delay_seconds).sum::<f64>() / charges as f64
+}
+
 pub fn base_panel(id: &str, frenzy_active: bool) -> WeaponBase {
     base_panel_assembled(id, frenzy_active, None)
 }
@@ -266,7 +285,21 @@ pub fn base_panel_assembled(
         }
     };
     let radial = s.attack.radial.as_ref().map(&a_radial);
-    let slam = s.attack.slam.as_ref().map(&a_radial);
+    // THE WEAPON'S SLAM IS WRITTEN ONCE, on its default entry, and every form
+    // reads it from there: a form states its `attack:` whole and `inherits:`
+    // fills top-level keys only, so a stance slam in any other mode fired
+    // nothing. A form that states its own still wins.
+    let slam = s
+        .attack
+        .slam
+        .as_ref()
+        .or_else(|| {
+            all()
+                .iter()
+                .find(|e| e.group() == s.group() && e.default_form)
+                .and_then(|e| e.attack.slam.as_ref())
+        })
+        .map(&a_radial);
     // THE BLOB'S EXPLOSION is one stack's, and a pile is a count of them —
     // multishot buys stacks, never a second explosion.
     let blob = s.attack.blob.as_ref().map(|b| crate::model::BlobBase {
@@ -583,6 +616,7 @@ pub fn base_panel_assembled(
         blob,
         reload_from_empty_speed: s.reload_from_empty_speed.unwrap_or(0.0),
         slam,
+        shockwave: s.attack.shockwave,
         spread: s.attack.spread,
         // Only an EVOLUTION grants one (Lone Enforcer); no weapon declares it.
         multishot_beyond_range: None,
@@ -615,7 +649,10 @@ pub fn base_panel_assembled(
         windup_seconds: s.attack.windup_seconds,
         no_magazine: s.attack.no_magazine,
         combo_script: s.attack.combo_script.clone(),
-        heavy: s.attack.heavy,
+        heavy: s.attack.heavy.map(|h| crate::model::HeavyAttack {
+            swing_seconds: heavy_swing_seconds(s),
+            ..h
+        }),
         // A GENESIS FILLS THESE IN, and an entry states none of them.
         evo_base_damage_bonus: 0.0,
         evo_combo_count_on_slam_hit: 0.0,

@@ -10,8 +10,6 @@ unmodeled:
     combos: "heavy slam and slam attack"
   - reason: melee_valence_unmodelled
     family: Tenet
-  - reason: melee_passive_unmodelled
-    passive: "a slam's shockwave: three explosions 5 m apart in a line, and three such lines from a heavy slam"
 attack:
   # see notes: swing_trigger_pull_engine
   trigger: melee

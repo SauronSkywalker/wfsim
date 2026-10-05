@@ -11,8 +11,8 @@ unmodeled:
     combos: "heavy slam and slam attack"
   - reason: melee_valence_unmodelled
     family: Tenet
-  - reason: melee_passive_unmodelled
-    passive: "a slam's shockwave: three explosions 5 m apart in a line, and three such lines from a heavy slam"
+  - "The shockwave's blasts go off with the slam that sends them; the page says the wave travels and times nothing (M110)."
+  - "The fan between a heavy slam's three shockwave lines is unpublished: 60 degrees edge to edge is assumed (M110)."
 attack:
   # see notes: swing_trigger_pull_engine
   trigger: melee
@@ -38,6 +38,9 @@ attack:
     falloff_reduction: 0.3
     forced_procs: []
     takes_multishot: false
+  # "Heavy slam attacks send out 3 sets of 3 shockwaves in a spread" (page);
+  # each blast is this slam again in a sphere 3 m across (M110).
+  shockwave: { lines: 3, fan_deg: 60.0, explosions: 3, spacing_m: 5.0, width_m: 3.0 }
   # see notes: combo_points_from_multiplier
   combo_script:
     - { multiplier: 1.0, delay_seconds: 2.0, combo_points: 0, combo_points_base: 0 }

@@ -266,6 +266,11 @@ pub struct AttackSpec {
     /// on, and it is stated at 100% so a swing's own multiplier scales it.
     #[serde(default)]
     pub slam: Option<RadialSpec>,
+    /// The ground shockwave this form's slam sends — see
+    /// [`crate::model::Shockwave`]. On a combo form it rides the combo's
+    /// closing slam; on a heavy slam, the slam itself.
+    #[serde(default)]
+    pub shockwave: Option<crate::model::Shockwave>,
     /// Does swinging this form SPEND the melee combo counter?
     ///
     /// True on the two heavy forms. The fraction is not here: it is

@@ -12,8 +12,7 @@ unmodeled:
     combos: "heavy slam and slam attack"
   - reason: melee_valence_unmodelled
     family: Tenet
-  - reason: melee_passive_unmodelled
-    passive: "a slam's shockwave: three explosions 5 m apart in a line, and three such lines from a heavy slam"
+  - "The shockwave's blasts go off with the slam that sends them; the page says the wave travels and times nothing (M110)."
 attack:
   # see notes: swing_trigger_pull_engine
   trigger: melee
@@ -30,6 +29,9 @@ attack:
   follow_through: 0.6
   heavy: { multiplier: 6.0, windup_seconds: 0.3667 }
   damage: { impact: 102.6, slash: 87.4 }   # total 190
+  # A slam sends three blasts 5 m apart down the facing (page); each is the
+  # slam again in a sphere 3 m across (M110). Only the combo's closing slam.
+  shockwave: { lines: 1, explosions: 3, spacing_m: 5.0, width_m: 3.0 }
 
 source:
   url: https://wiki.warframe.com/w/Tenet_Exec

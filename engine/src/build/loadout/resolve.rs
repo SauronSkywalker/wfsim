@@ -1505,18 +1505,30 @@ pub fn resolve_for(
         // same weapon in the same mode is a different sequence of swings under
         // Crushing Ruin and under Shattering Storm. The entry's own script is
         // the UNSTANCED fallback, which is what an empty stance slot gives you.
-        combo_script: mods
-            .iter()
-            .find_map(|m| m.stance)
-            .and_then(|c| c.iter().find(|(f, _)| *f == base.form.id()).map(|(_, h)| h))
-            .map_or_else(|| base.combo_script.clone(), |h| h.to_vec())
-            .iter()
-            .map(|h| crate::model::ComboHit {
-                windup_seconds: h.windup_seconds
-                    / (1.0 + windup_speed + base.evo_heavy_windup_speed).max(1e-9),
-                ..h.clone()
-            })
-            .collect(),
+        combo_script: {
+            let script = mods
+                .iter()
+                .find_map(|m| m.stance)
+                .and_then(|c| c.iter().find(|(f, _)| *f == base.form.id()).map(|(_, h)| h))
+                .map_or_else(|| base.combo_script.clone(), |h| h.to_vec());
+            let last = script.len().saturating_sub(1);
+            script
+                .iter()
+                .enumerate()
+                .map(|(i, h)| crate::model::ComboHit {
+                    windup_seconds: h.windup_seconds
+                        / (1.0 + windup_speed + base.evo_heavy_windup_speed).max(1e-9),
+                    // THE COMBO'S CLOSING SLAM sends the shockwave, whichever
+                    // stance supplied it: *"Each heavy blade stance will trigger
+                    // a shockwave on the last hit of the forward block combo"*
+                    // (wiki, Tenet Exec) — the form says whether, the script when.
+                    sends_shockwave: base.shockwave.is_some()
+                        && h.slam_multiplier.is_some()
+                        && i == last,
+                    ..h.clone()
+                })
+                .collect()
+        },
         // FOLLOW THROUGH IS NOT MODDABLE — no card in the pool moves it, and
         // the wiki's own table is per weapon class — but an EVOLUTION is
         // (Crushing Verdict's `+40% Follow Through`), so the entry's value is
@@ -1554,6 +1566,7 @@ pub fn resolve_for(
         // Reflex Coil, 10% of the combo counter will still be consumed"*.
         heavy_attack_efficiency: heavy_efficiency.clamp(0.0, 0.9),
         slam,
+        shockwave: base.shockwave,
         // THE HEAVY'S WIND-UP TAKES THE SAME BUCKET the script's does, because
         // it is the same clock: a Tennokai swing is a heavy attack, and the
         // window's own speed bonus is on top of whatever the build bought.

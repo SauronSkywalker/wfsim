@@ -34,6 +34,7 @@ fn dual_toxocyst_baseline() -> FightParams {
         combo_script: Vec::new(),
         follow_through: None,
         slam: None,
+        shockwave: None,
         heavy: None,
         tennokai: wfsim_engine::model::Tennokai::default(),
         spends_combo: false,
