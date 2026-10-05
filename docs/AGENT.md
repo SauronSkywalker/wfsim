@@ -318,6 +318,23 @@ carrying six megabytes of wasm would start every page load colder.
 
 The bots come next, over the same table; auth only with accounts.
 
+## The QQ bot
+
+**QQ TAKES CALLS ONLY FROM A WHITELISTED ADDRESS**, so the bot is two halves.
+The door in is the site's worker (`worker/qq.js`): QQ calls back to
+`/api/qq`, the address check (op 13) is signed there, every event's Ed25519
+signature is checked against the AppSecret-derived key, and the messages the
+bot answers are kept in `bot_inbox` (`worker/schema.sql`). Nothing is sent from
+the worker. The bot server — the one address on QQ's whitelist — pulls those
+rows over `/api/qq/claim` (bearer `BOT_RELAY_TOKEN`), answers each from the
+headless table, and replies through QQ's API; a row is handed to one pull at a
+time, again if it was never marked done, and deleted a day after it arrived.
+
+It serves nothing inbound, so it needs no ICP filing. Secrets: the worker holds
+`QQ_APP_SECRET` and `BOT_RELAY_TOKEN`; the server holds the AppID, the
+AppSecret (for its access token) and the same relay token.
+`scripts/check_qq.mjs` holds the door to QQ's published signing example.
+
 ## Machine-readable
 
 An agent that fetches the site rather than driving the page reads what

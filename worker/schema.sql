@@ -215,3 +215,19 @@ CREATE TABLE IF NOT EXISTS usage_days (
   sampled  INTEGER NOT NULL,
   PRIMARY KEY (day, event, subject, market)
 );
+
+-- WHAT A CHAT SENT THE BOT, until the bot server has answered it
+-- (worker/qq.js, docs/AGENT.md §"The QQ bot"). `id` is the platform's own message id, so a
+-- retried callback lands on the row it already wrote; `body` is the event as
+-- the platform sent it. The server claims a row, answers from its whitelisted
+-- address and marks it done; a row is deleted a day after it arrived, answered
+-- or not. Added to a live database with this statement alone.
+CREATE TABLE IF NOT EXISTS bot_inbox (
+  id         TEXT PRIMARY KEY,
+  channel    TEXT NOT NULL,
+  kind       TEXT NOT NULL,
+  body       TEXT NOT NULL,
+  at         INTEGER NOT NULL,
+  claimed_at INTEGER,
+  done_at    INTEGER
+);
