@@ -330,15 +330,14 @@ async function init() {
   // updateOptEstimate is also the search's auto-save, so these land in the
   // active preset the same way the starts do.
   $("opt-cand-runs").value = String(optRun.candidate_runs);
-  $("opt-cand-runs").title = tr("how many fights each candidate gets while the search compares them. 1 is ten times faster and noisier; the answers are re-measured at the final-round runs either way");
+  $("opt-cand-runs").title = tr("how many fights each candidate gets while the search compares them. 1 is ten times faster and noisier; the answers are re-measured in the simulator either way");
   $("opt-cand-runs").addEventListener("change", () => setOptSizes({ candidate_runs: Number($("opt-cand-runs").value) || 10 }));
   $("opt-finalists").value = String(optRun.finalists);
-  $("opt-finalists").title = tr("how many builds the search answers with: the best that many of every build it scored, re-measured at the final-round runs");
+  $("opt-finalists").title = tr("how many builds the search answers with: the best that many of every build it scored, re-measured in the simulator");
   $("opt-finalists").addEventListener("change", () => setOptSizes({ finalists: Number($("opt-finalists").value) }));
-  // (The final-round run count is not wired here: it is a PREFERENCE and
-  // draws itself — `renderOptRuns`, outside both halves because it is in
-  // neither preset. There is no CPU-thread box, because the topbar's compute
-  // picker is the one place that question is answered.)
+  // (The final round runs at the simulator's Runs, so it has no box here; nor
+  // do threads, because the topbar's compute picker is the one place that
+  // question is answered.)
   // BEFORE ANY LIST IS READ: a riven is the FAMILY's as of 2026-08-25, and the
   // lists already on this machine are filed per weapon. It needs `META`, which
   // is why it is called here rather than beside the migrations it belongs with.

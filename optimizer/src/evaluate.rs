@@ -5,7 +5,7 @@
 use std::sync::atomic::Ordering;
 
 use wfsim_engine::arena::Arena;
-use wfsim_engine::fight::{monte_carlo, BuffConfig, BuffLock, FightParams, LockMode, Summary};
+use wfsim_engine::fight::{monte_carlo, FightParams, Summary};
 use wfsim_engine::model::StackPolicy;
 
 use crate::{Candidate, FunnelState, RoundBoardFn};
@@ -14,118 +14,47 @@ use crate::threads::{deprioritize_current_thread, worker_threads};
 #[cfg(target_arch = "wasm32")]
 use crate::{tick, BOARD_TOP};
 
-/// The benchmark engagement: an [`Arena`] plus what the SEARCH needs on top of
-/// it. The arcane is a SEARCH DIMENSION — passed per
-/// evaluation job, not fixed here.
+/// HOW A CANDIDATE BECOMES A FIGHT: a candidate and an arcane INDEX in, the
+/// fight's params out — `None` when the simulator refuses the build.
+pub type ParamsFn = dyn Fn(&Candidate, usize) -> Option<FightParams> + Send + Sync;
+
+/// What a search scores in. THE OPTIMIZER BUILDS NO FIGHT: `params` is the
+/// simulator's own construction, handed in by the caller (`webapi::simulate::
+/// ready`, on the candidate's `replay`), so a build is scored exactly as it is
+/// replayed. A fixture with no simulator states its own (`from_panels`).
 #[derive(Clone)]
 pub struct Scenario {
-    /// The fight itself — both actors and how long they are at it. EMBEDDED,
-    /// not restated: the optimizer scores a build under the same arena the
-    /// simulator will replay it in, and a lookalike of the four fields is how
-    /// the two drift a field at a time.
+    pub params: std::sync::Arc<ParamsFn>,
+    /// The fight's arena, for what is read off it beside the score: the Tenno a
+    /// candidate's panel is resolved for, and how long the fight lasts.
     pub arena: Arena,
-    /// EVERYTHING ELSE FIRING IN THAT FIGHT, resolved once — the scenario's
-    /// roster, exactly as `simulate` resolves it.
-    ///
-    /// THE SEARCH ANSWERS THE FIGHT THE SIMULATOR REPORTS. A squad kills
-    /// faster, so what an uptime mod is worth moves with it; a search that
-    /// dropped these would rank builds under a fight nobody asked for and the
-    /// replay of its own winner would disagree with it.
-    ///
-    /// Resolved ONCE and cloned per candidate: a seat is not a search
-    /// dimension — only the open build is — so every candidate faces the same
-    /// squad and the resolution is not repeated per evaluation.
-    pub also_acting: Vec<FightParams>,
-    /// Run the REAL Incarnon two-form cycle (full gauge start → dump →
-    /// revert → rebuild 9 weakpoint charges → transmute → …) instead of
-    /// the locked-gauge pseudo-reload model. Needs candidates enumerated
-    /// with a second form.
-    pub incarnon_cycle: bool,
-    /// Frenzy's per-buff lock setting for the base-form phase.
-    pub frenzy_lock: LockMode,
-    /// The same setting for a SINGLE-form run, where the lock is a vector on
-    /// the params rather than something baked into the cycle. Frenzy is the
-    /// weapon's passive and persists across its forms, so a build scored in
-    /// one form keeps it — a cycle is not what grants it.
-    pub frenzy_locks: Vec<BuffLock>,
-    /// Does the weapon under search carry the Frenzy passive? It is a
-    /// per-weapon perk, not a constant — see data::weapons::has_perk.
-    pub frenzy: bool,
-    /// Per-buff configured policy applied to every evaluated build (same id
-    /// scheme as the web Sim panel). Empty = the emergent default.
-    pub buff_cfg: BuffConfig,
-    /// WHICH TRIGGERS FIRE NO BUFF HERE (`engine::buff_events`), off the
-    /// scenario like every other term — skipping it would rank builds by stacks
-    /// the simulator then refuses them.
-    pub denied_buff_triggers: Vec<String>,
-    /// INFINITE RESERVE — the simulator's own scenario knob, which the
-    /// optimizer READS. Ignoring it SEARCHES a weapon with a finite reserve
-    /// (Larkspur Prime) running dry while the simulator replays it resupplied,
-    /// and the search then reports half the number for the same build.
-    pub infinite_ammo: bool,
-    /// How conditional buffs are valued. NOT a constant: a SENTINEL weapon
-    /// resolves under `BaseOnly` — this arena fires one weapon, so nothing on
-    /// the field can trigger a companion gun's conditionals — and hardcoding
-    /// `Emergent` handed it buffs the simulator refuses it.
+    /// How conditional buffs are valued when a candidate's panel is resolved
+    /// for the enumeration — the fight's, never a constant.
     pub policy: StackPolicy,
 }
 
-/// Evaluate one candidate with a given arcane: engine Monte Carlo only.
-pub fn evaluate(
-    c: &Candidate,
-    arcane: &wfsim_engine::data::arcanes::ArcaneFx,
-    s: &Scenario,
-    runs: u32,
-    seed: u64,
-) -> Summary {
-    // The cycle needs a form to transform INTO, and whether this candidate
-    // has one is the candidate's own question: the Incarnon form is unlocked
-    // by an evolution and evolutions are a search dimension, so one scope can
-    // hold both sets that transform and sets that cannot. A candidate
-    // enumerated without a second form is fired in the one form it has.
-    let mut params = match (s.incarnon_cycle, c.base_panel.as_ref()) {
-        (true, Some(base)) => {
-            let mut p = FightParams::incarnon_cycle_from_panels(
-                &c.panel,
-                base,
-                s.frenzy,
-                s.frenzy_lock,
-                &s.arena,
-                arcane,
-            );
-            // The cycle reports the form it transforms INTO, so its reserve is
-            // that form's — the same line `simulate_json` runs.
-            p.infinite_reserve = c.panel.reserve_is_infinite(s.infinite_ammo);
-            p
-        }
-        _ => {
-            let mut d = FightParams::from_panel(&c.panel, &s.arena, arcane);
-            // The scenario's ammo rule, exactly as `simulate_json` applies it.
-            d.infinite_reserve = c.panel.reserve_is_infinite(s.infinite_ammo);
-            // Frenzy is the WEAPON's passive: it rides whichever form is
-            // fired (the Sim's rule). Dropping it here scored a base-form
-            // Dual Toxocyst without its own x2.5 fire rate.
-            d.frenzy = s.frenzy;
-            d.locked_buffs = if s.frenzy { s.frenzy_locks.clone() } else { Vec::new() };
-            d
-        }
-    };
-    // …AND THE REST OF THE ROSTER, on both arms: a candidate is scored in the
-    // fight the simulator will replay it in, squad included.
-    params.also_acting.clone_from(&s.also_acting);
-    // NOT `params.arcane = arcane` any more: `from_panel` took the arcane
-    // above, because a build and an arcane meet in exactly one place — this is
-    // where Primary Compression learns which radius it is compressing and where
-    // a stat lock silences an arcane's buff.
-    // Per-buff configured policy (weapon-scoped; recurses into the cycle base
-    // form). Empty cfg = no-op → the emergent default.
-    if !s.buff_cfg.is_empty() {
-        params.apply_buff_config(&s.buff_cfg);
+impl Scenario {
+    /// A FIXTURE'S FIGHT: the candidate's own panel under `arena`, with no
+    /// roster and no fight terms — for a test or the CLI, which have no
+    /// simulator to call. Never the product's.
+    pub fn from_panels(arena: Arena, policy: StackPolicy, arcanes: Vec<wfsim_engine::data::arcanes::ArcaneFx>) -> Self {
+        let fight = arena.clone();
+        let params = move |c: &Candidate, ai: usize| -> Option<FightParams> {
+            let mut p = FightParams::from_panel(&c.panel, &fight, arcanes.get(ai)?);
+            p.infinite_reserve = c.panel.reserve_is_infinite(true);
+            Some(p)
+        };
+        Self { params: std::sync::Arc::new(params), arena, policy }
     }
-    // …then what the fight refuses, in the order the simulator applies them:
-    // the cards say where a run OPENS, this says what it can EARN.
-    params.deny_buff_triggers(&s.denied_buff_triggers);
-    monte_carlo(&params, runs, seed)
+}
+
+/// Score one candidate under one arcane: the simulator's fight, the engine's
+/// Monte Carlo. A refused build scores nothing.
+pub fn evaluate(c: &Candidate, ai: usize, s: &Scenario, runs: u32, seed: u64) -> Summary {
+    match (s.params)(c, ai) {
+        Some(p) => monte_carlo(&p, runs, seed),
+        None => Summary::refused(s.arena.duration_seconds),
+    }
 }
 
 /// One evaluation job: a candidate paired with an arcane INDEX into the
@@ -151,7 +80,6 @@ pub(crate) fn job_seed(seed: u64, ci: usize, ai: usize) -> u64 {
 pub fn evaluate_batch(
     cands: &[Candidate],
     jobs: &[Job],
-    arcanes: &[wfsim_engine::data::arcanes::ArcaneFx],
     scenario: &Scenario,
     runs: u32,
     seed: u64,
@@ -176,7 +104,7 @@ pub fn evaluate_batch(
                     }
                     res[k] = Some(evaluate(
                         &cands[ci],
-                        &arcanes[ai],
+                        ai,
                         &scenario,
                         runs,
                         job_seed(seed, ci, ai),
@@ -198,7 +126,6 @@ pub fn evaluate_batch(
 pub fn evaluate_batch(
     cands: &[Candidate],
     jobs: &[Job],
-    arcanes: &[wfsim_engine::data::arcanes::ArcaneFx],
     scenario: &Scenario,
     runs: u32,
     seed: u64,
@@ -223,7 +150,7 @@ pub fn evaluate_batch(
         }
         let s = evaluate(
             &cands[ci],
-            &arcanes[ai],
+            ai,
             scenario,
             runs,
             job_seed(seed, ci, ai),

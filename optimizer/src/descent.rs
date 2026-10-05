@@ -130,9 +130,8 @@ impl Run<'_> {
             if self.out_of_budget() {
                 return None;
             }
-            let (expand, arcanes, scenario, cfg, state) =
-                (self.expand, self.arcanes, self.scenario, self.cfg, self.state);
-            let results = par_map(&fresh, |p| eval_point(p, expand, arcanes, scenario, cfg, state));
+            let (expand, scenario, cfg, state) = (self.expand, self.scenario, self.cfg, self.state);
+            let results = par_map(&fresh, |p| eval_point(p, expand, scenario, cfg, state));
             for (p, res) in fresh.iter().zip(results) {
                 self.stats.subsets += 1;
                 self.stats.candidates += res.len() as u64;
@@ -333,13 +332,13 @@ impl Run<'_> {
 }
 
 /// The default starts: one per primary element the scope can field, holding
-/// its strongest carrier (ties to pool order). The fill picks the partner, so
-/// four starts reach every pair that six pair-starts would, for less: graded,
-/// Verglas 1,092 evals against 1,535 and Boar Prime 601 against 971, same
-/// answer. ONE start holding all four elements is the wrong shape — it stuck
-/// at 49% regret, because shedding an element costs its combination first.
-/// Required mods ride in every start; an element one of them carries is not
-/// added twice.
+/// its DUAL-STAT carrier — element plus status chance, Rime Rounds' shape,
+/// which every class has one of per element — and the strongest carrier only
+/// where there is none (ties to pool order). The fill picks the partner, so
+/// four starts reach every pair that six pair-starts would, for less. ONE
+/// start holding all four elements is the wrong shape — it stuck at 49%
+/// regret, because shedding an element costs its combination first. Required
+/// mods ride in every start; an element one of them carries is not added twice.
 pub fn seeds(space: &SubsetSpace, pool: &[ModDef]) -> Vec<Start> {
     let strength = |i: usize, t: DamageType| -> Option<f64> {
         pool[i].effects.iter().find_map(|e| match e {
@@ -347,15 +346,17 @@ pub fn seeds(space: &SubsetSpace, pool: &[ModDef]) -> Vec<Start> {
             _ => None,
         })
     };
+    let dual = |i: usize| pool[i].effects.iter().any(|e| matches!(e, ModEffect::StatusChance(_)));
     let carrier = |t: DamageType| -> Option<usize> {
         if let Some(&r) = space.required().iter().find(|&&r| strength(r, t).is_some()) {
             return Some(r);
         }
-        let mut best: Option<(usize, f64)> = None;
+        let mut best: Option<(usize, (bool, f64))> = None;
         for &i in space.choosable() {
             if let Some(v) = strength(i, t) {
-                if best.is_none_or(|(_, b)| v > b) {
-                    best = Some((i, v));
+                let rank = (dual(i), v);
+                if best.is_none_or(|(_, b)| rank > b) {
+                    best = Some((i, rank));
                 }
             }
         }
@@ -466,19 +467,17 @@ pub fn descent(
 /// any two are compared on paired runs, across threads natively.
 pub fn evaluate_paired(
     jobs: &[(&Candidate, usize)],
-    arcanes: &[wfsim_engine::data::arcanes::ArcaneFx],
     scenario: &Scenario,
     runs: u32,
     seed: u64,
 ) -> Vec<Summary> {
     let seed = job_seed(seed, 0, 0);
-    par_map(jobs, |(c, ai)| evaluate(c, &arcanes[*ai], scenario, runs, seed))
+    par_map(jobs, |(c, ai)| evaluate(c, *ai, scenario, runs, seed))
 }
 
 fn eval_point(
     p: &Point,
     expand: &Expand<'_>,
-    arcanes: &[wfsim_engine::data::arcanes::ArcaneFx],
     scenario: &Scenario,
     cfg: &SearchConfig,
     state: Option<&FunnelState>,
@@ -489,7 +488,7 @@ fn eval_point(
         if state.is_some_and(|s| s.cancel.load(Ordering::Relaxed)) {
             break;
         }
-        let s = evaluate(&c, &arcanes[p.ai], scenario, cfg.runs, job_seed(cfg.seed, ci, 0));
+        let s = evaluate(&c, p.ai, scenario, cfg.runs, job_seed(cfg.seed, ci, 0));
         out.push((Arc::new(c), s));
     }
     out

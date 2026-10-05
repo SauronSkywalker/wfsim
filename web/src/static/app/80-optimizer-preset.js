@@ -123,7 +123,7 @@ function updateOptEstimate() {
   if ($("opt-cand-runs")) $("opt-cand-runs").value = String(optRun.candidate_runs);
   const en = allEnemies().find((e) => e.id === sim.enemy) || {};
   $("opt-estimate").innerHTML = escHtml(tr("{n} starts · best {k} · {r} runs a candidate · final round {f} runs")
-    .replace("{n}", n).replace("{k}", optRun.finalists).replace("{r}", optRun.candidate_runs).replace("{f}", finalRuns().toLocaleString()))
+    .replace("{n}", n).replace("{k}", optRun.finalists).replace("{r}", optRun.candidate_runs).replace("{f}", simRuns().toLocaleString()))
     + ` · ${escHtml(tr("vs"))} <b>${escHtml(en.name || sim.enemy)}</b> Lv ${sim.level}${sim.steel_path ? " (SP)" : ""} · ${sim.duration} s`;
   // A START THAT PINS WHAT A LIMIT RULES OUT has no answer to give: the run
   // waits until one side changes, and says so here.
@@ -198,7 +198,7 @@ async function runOptimize() {
       ...theFight(),
       // The best N of every whole build the starts' sweeps scored, each
       // re-measured at the final runs.
-      final_runs: finalRuns(), finalists: optRun.finalists,
+      finalists: optRun.finalists,
       strategy: "quick",
       starts, candidate_runs: optRun.candidate_runs,
       // What the player ruled out; the rest of the builder's lists is the scope.
@@ -446,9 +446,9 @@ function renderOptResults(r) {
   const html = rows.map((res) => `<div class="opt-row">
       <div class="opt-head">
         <span class="opt-rank">#${res.rank}</span>
-        <span class="opt-kills" id="opt-kpm-${res.rank}" data-search="${kpm(res.kill_progress ?? res.kills, d)}">${
-          sig2(kpm(res.kill_progress ?? res.kills, d))}<small> KPM</small><span class="opt-repro pending" title="${
-          escHtml(tr("re-measuring this build in the simulator"))}">·</span></span>
+        <span class="opt-kills" id="opt-kpm-${res.rank}">${
+          sig2(kpm(res.kill_progress ?? res.kills, d))}<small> KPM</small>${res.simulator_error ? `<span class="opt-repro failed" title="${
+          escHtml(tr("the simulator refused this build — see the build's own card"))}">!</span>` : ""}</span>
         <span class="opt-dps">± ${sig2(kpm(res.kill_progress_se || 0, d))}</span>
         ${tied(res) ? `<span class="opt-tie">${escHtml(tr("tied"))}</span>` : ""}
         <span class="forma-badge legal">${res.forma.used} Forma</span>
@@ -478,72 +478,6 @@ function renderOptResults(r) {
   $("opt-results").querySelectorAll(".opt-card").forEach(async (el) => {
     try { el.innerHTML = cardOfState(await resultToState(byRank.get(Number(el.dataset.rank))), w); } catch (_) { /* the row still stands */ }
   });
-  verifyOptRows(r);
-}
-
-/// THE NUMBER ON A ROW IS THE SIMULATOR'S.
-///
-/// The hard rule made operational on the PAGE. "The simulator is the truth"
-/// covers the ENGINE, where `parse_fight` sees to it; a page with its own
-/// translation of a ranked row into a build ranks by one thing while the
-/// builder fires another, measured at 26 KPM against 15.
-///
-/// So each row is re-run through `/api/simulate` — with the request the SERVER
-/// wrote for that candidate — and the KPM on screen is what came back. The
-/// search's own figure keeps one job, ORDERING the list, since re-measuring
-/// cannot reorder a ranking without making it meaningless.
-///
-/// The two are compared, and both sides report their own standard error, so
-/// "they disagree" is arithmetic rather than a tolerance somebody picked: 4
-/// sigma of the two combined. Any axis lost anywhere on the chain moves the
-/// number and trips it, which is why this checks the ANSWER instead of counting
-/// fields — it cannot go stale when an axis is added.
-///
-/// Top-down and sequential: the leader is what a reader looks at first, and
-/// twenty engagements at the final round's precision is real time.
-let optVerifyToken = 0;
-async function verifyOptRows(r) {
-  const token = ++optVerifyToken;
-  const rows = (r.results || []).slice();
-  for (const res of rows) {
-    if (token !== optVerifyToken) return;          // a newer ranking owns the panel
-    const el = $(`opt-kpm-${res.rank}`);
-    if (!el) continue;
-    const mark = el.querySelector(".opt-repro");
-    if (!res.replay) {
-      if (mark) { mark.className = "opt-repro stale"; mark.textContent = ""; mark.title = tr("this ranking predates the simulator re-run"); }
-      continue;
-    }
-    // …ALSO THROUGH THE FLEET. Every ranked row is re-simulated, so on a crowd
-    // ruler this is the finalist count TIMES a full simulation — the one place
-    // on the page where the fleet is worth the most.
-    let s = null;
-    try { s = await simulateFleet(res.replay); } catch (_) { s = null; }
-    if (token !== optVerifyToken) return;
-    if (!s || s.ok === false || s.score == null) {
-      if (mark) { mark.className = "opt-repro failed"; mark.textContent = "!"; mark.title = tr("the simulator refused this build — see the build's own card"); }
-      continue;
-    }
-    const shown = kpm(s.score, r.duration);
-    const search = Number(el.dataset.search) || 0;
-    // FOUR SIGMA OF THE TWO COMBINED. Both are means of independent runs, so
-    // their difference has the two standard errors added in quadrature — there
-    // is no systematic gap to allow for, and any tolerance written as a flat
-    // percentage would be too tight at 40 runs and too loose at 1000.
-    const se = Math.hypot(kpm(s.score_se || 0, r.duration),
-                          kpm(res.kill_progress_se || 0, r.duration));
-    const off = Math.abs(shown - search) > Math.max(4 * se, 0.01 * Math.abs(search));
-    el.firstChild.nodeValue = sig2(shown);
-    if (mark) {
-      mark.className = "opt-repro " + (off ? "off" : "ok");
-      mark.textContent = off ? "≠" : "✓";
-      mark.title = off
-        ? tr("the simulator does not reproduce the search's own score for this build — the build shown may not be the one that was scored")
-          + ` (${sig2(search)} → ${sig2(shown)} KPM)`
-        : tr("re-run in the simulator: this is the simulator's own number for this build");
-    }
-    if (off) el.closest(".opt-row").classList.add("opt-unreproduced");
-  }
 }
 
 // An optimizer result as a builder-builds preset STATE (snapshotState

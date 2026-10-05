@@ -3,12 +3,11 @@
 //! row makes.
 
 use serde_json::{json, Value};
-use wfsim_engine::fight::{BuffLock, FightParams};
+use wfsim_engine::fight::FightParams;
 use wfsim_engine::build::loadout::{resolve_for, ResolvedPanel};
-use wfsim_engine::model::WeaponBase;
-use wfsim_engine::model::{ModDef, StackPolicy};
+use wfsim_engine::model::{ModDef, WeaponBase};
 use wfsim_engine::rules::capacity::PlannedMod;
-use crate::buffs::{arcane_choices, arcane_fx_for};
+use crate::buffs::{arcane_base, arcane_choices, arcane_fx_for};
 use crate::fight::{Fight, parse_fight};
 use crate::registry::{WeaponInfo, base_for, incarnon_id, innate_slots_for, mod_not_here, wspec};
 use crate::request::{err_json, get_bool, r1, r3};
@@ -174,101 +173,132 @@ enum Work {
     Merged(Box<wfsim_engine::fight::Shard>),
 }
 
-/// THE FIGHT'S AMMO ECONOMY — the three settings that travel together because
-/// none of them decides anything on its own: drops pay only into a finite
-/// reserve, a reach only matters once something has fallen, and the squad's
-/// place only moves the rate.
-#[derive(Debug, Clone, Copy)]
-pub(crate) struct AmmoEconomy {
-    pub(crate) drops: bool,
-    pub(crate) pickup_range_m: f64,
-    pub(crate) landscape: bool,
+/// THE PART OF A FIGHT A BUILD'S MODS DO NOT MOVE — the parsed fight, the
+/// weapon's mod pool, its arcane, the bases it fires and the rest of the
+/// roster — prepared ONCE per request shape. `ready` is this and one
+/// `params`; the optimizer keeps one per variant and arcane and asks `params`
+/// of every candidate, so a search fights exactly the simulator's fight
+/// without parsing it again per build.
+pub(crate) struct Entrant {
+    pub(crate) fight: Fight,
+    terms: wfsim_engine::fight::EntrantTerms,
+    pool: Vec<ModDef>,
+    /// Where each card of `pool` sits, by id.
+    index: std::collections::HashMap<&'static str, usize>,
+    arcane_fx: wfsim_engine::data::arcanes::ArcaneFx,
+    /// The base fired; the one a cycle returns to; a melee Incarnon's
+    /// un-armed self (the tiers that state the window left out).
+    fire: WeaponBase,
+    from: Option<WeaponBase>,
+    unarmed: Option<WeaponBase>,
+    roster: Vec<FightParams>,
+    pub(crate) seat_weapons: Vec<String>,
 }
 
-impl AmmoEconomy {
-    fn apply(self, p: &mut FightParams) {
-        p.ammo_drops = self.drops;
-        p.pickup_range_m = self.pickup_range_m;
-        p.landscape = self.landscape;
-    }
-}
-
-/// THE PANEL AND THE ENGINE PARAMS a parsed fight resolves to.
-///
-/// Lifted out of `simulate_from` so `/api/log` runs the SAME fight rather than
-/// a second spelling of it — which is the server's half of "THERE IS ONE
-/// FIGHT" said about the thing `parse_fight` hands over rather than about the
-/// request. Nothing is decided here that is not decided here for both.
-// FOURTEEN ARGUMENTS, and they are the fight: grouping them into a struct
-// would move the same list one line down and add a name nobody reads.
-#[allow(clippy::too_many_arguments)]
-pub(crate) fn sim_params(
-    v: &Value,
-    info: &'static WeaponInfo,
-    policy: StackPolicy,
-    evo_refs: &[&str],
-    refs: &[&ModDef],
-    tenno: &wfsim_engine::data::tenno::Tenno,
-    arena: &wfsim_engine::arena::Arena,
-    cycle_from: Option<&str>,
-    single_form: &str,
-    infinite_ammo: bool,
-    ammo: AmmoEconomy,
-    frenzy_single: bool,
-    cycle_frenzy_lock: wfsim_engine::fight::LockMode,
-    frenzy_locks: &[BuffLock],
-) -> Result<(ResolvedPanel, FightParams), Value> {
-    let arcane_fx = {
-        let ab = WeaponBase::from_data(incarnon_id(info).unwrap_or(&info.id), true, evo_refs);
-        arcane_fx_for(v, info, &ab, policy)
-    };
-    // Either ONE registered form, or the real two-form cycle (which needs the
-    // gauge form and the form it transforms out of, so it resolves both).
-    let panel_of = |id: &str| resolve_for(&base_for(v, id, evo_refs), refs, policy, tenno);
-    if let Some(cycle_from) = cycle_from {
-        let incarnon_panel = panel_of(incarnon_id(info).unwrap_or(&info.id));
-        let base_panel = panel_of(cycle_from);
-        // A TOME'S CYCLE IS NOT A TRANSFORMATION. Both are "fill a meter in one
-        // form, spend it in the other", and only one of them puts the weapon in
-        // the other form: a Tome shoots its primary fire the whole engagement
-        // and THROWS the other form's orb, which is an entity rather than a
-        // state you enter. So the params stay the base form's and the orb rides
-        // along — see `FightParams::tome_cycle_from_panels`.
-        //
-        // Told apart by the METER rather than by the weapon, so the second Tome
-        // costs nothing here.
-        if incarnon_panel.meter.is_some() {
-            let mut params = FightParams::tome_cycle_from_panels(
-                &base_panel,
-                &incarnon_panel,
-                arena,
-                &arcane_fx,
-            );
-            params.infinite_reserve = base_panel.reserve_is_infinite(infinite_ammo);
-            ammo.apply(&mut params);
-            params.frenzy = frenzy_single;
-            params.locked_buffs = frenzy_locks.to_vec();
-            // THE CYCLE REPORTS THE FORM IT FIRES, which for a Tome is the one
-            // you are holding. An Incarnon cycle reports the form it transforms
-            // INTO because that is where its damage is; here the primary fire
-            // is a real part of the engagement and the panel is its own.
-            return Ok((base_panel, params));
+impl Entrant {
+    /// `seat`: one seat of someone else's roster — no roster of its own, and
+    /// its arcanes are not the report's to refuse.
+    pub(crate) fn new(v: &Value, seat: bool) -> Result<Self, Value> {
+        // THE FIGHT, parsed by the ONE function that parses it.
+        let fight = parse_fight(v)?;
+        let info = fight.info;
+        let evo_refs: Vec<&str> = fight.evos.iter().map(String::as_str).collect();
+        riven_stat_ids_ok(v, info).map_err(err_json)?;
+        // An arcane the weapon cannot seat is an ERROR, not a silent drop: the
+        // sim is the one place a visitor is owed a reason.
+        if !seat {
+            for (pool, aid, _) in arcane_choices(v, info) {
+                if wfsim_engine::data::arcanes::for_slot(&pool, &aid).is_none() {
+                    return Err(err_json(match wfsim_engine::data::arcanes::slot_of(&aid) {
+                        Some(s) => format!("{aid} is a {s} arcane — {} seats {}", info.name, info.arcane_pools.join(" + ")),
+                        None => format!("unknown arcane id: {aid}"),
+                    }));
+                }
+            }
         }
-        let params = FightParams::incarnon_cycle_from_panels(
-            &incarnon_panel,
-            &base_panel,
-            frenzy_single,
-            cycle_frenzy_lock,
-            arena,
-            &arcane_fx,
-        );
-        // The cycle reports the form it transforms INTO, as it always has.
-        let mut params = params;
-        params.infinite_reserve = incarnon_panel.reserve_is_infinite(infinite_ammo);
-        ammo.apply(&mut params);
-        Ok((incarnon_panel, params))
-    } else {
-        let panel = panel_of(single_form);
+        // THE ARCANE IS RESOLVED BEFORE THE PARAMS, because params are built
+        // with it rather than assigned it afterwards (`FightParams::for_entrant`).
+        let arcane_fx = arcane_fx_for(v, info, &arcane_base(info), fight.policy);
+        // A CYCLE fires the Incarnon form and returns to `cycle_from`; a single
+        // form may state a melee Incarnon window, whose other half is this
+        // weapon without the tiers that say so (`states_incarnon_window`).
+        let (fire, from, unarmed) = match fight.cycle_from {
+            Some(cf) => (base_for(v, incarnon_id(info).unwrap_or(&info.id), &evo_refs), Some(base_for(v, cf, &evo_refs)), None),
+            None => (
+                base_for(v, fight.single_form, &evo_refs),
+                None,
+                evo_refs
+                    .iter()
+                    .any(|e| wfsim_engine::data::evolutions::states_incarnon_window(e))
+                    .then(|| base_for(v, fight.single_form, &without_window(&evo_refs))),
+            ),
+        };
+        // EVERYTHING ELSE ACTING IN THIS FIGHT. Each entry is a request of its
+        // own and resolves through the same path; the ARENA is this fight's, so
+        // no seat can quietly be fighting a different enemy.
+        let (roster, seat_weapons) =
+            if seat { (Vec::new(), vec![info.id.to_string()]) } else { seats_beside(v, &fight.arena, info)? };
+        let pool = mod_pool_with_rivens(v, info, &evo_refs);
+        // The FIRST card of an id, as a scan of the pool would find it.
+        let mut index = std::collections::HashMap::new();
+        for (i, m) in pool.iter().enumerate() {
+            index.entry(m.id).or_insert(i);
+        }
+        Ok(Self {
+            terms: fight.entrant_terms(),
+            index,
+            pool,
+            fight,
+            arcane_fx,
+            fire,
+            from,
+            unarmed,
+            roster,
+            seat_weapons,
+        })
+    }
+
+    /// The mods, by id, from this weapon's pool — refused when one is not on
+    /// it, or two share a family (wiki Incompatible mods). No count is checked:
+    /// slot legality is the UI's job and the engine resolves any list honestly.
+    pub(crate) fn seat<'a>(&'a self, ids: &[&str]) -> Result<Vec<&'a ModDef>, Value> {
+        let info = self.fight.info;
+        let evo_refs: Vec<&str> = self.fight.evos.iter().map(String::as_str).collect();
+        let mut refs: Vec<&ModDef> = Vec::with_capacity(ids.len());
+        for id in ids {
+            match self.index.get(id) {
+                Some(&i) => refs.push(&self.pool[i]),
+                None => return Err(err_json(mod_not_here(id, info, &evo_refs))),
+            }
+        }
+        for i in 0..refs.len() {
+            for j in (i + 1)..refs.len() {
+                if let (Some(fi), Some(fj)) = (refs[i].family, refs[j].family) {
+                    if fi == fj {
+                        return Err(err_json(format!(
+                            "{} and {} are incompatible (both in the {fi} family)",
+                            refs[i].id, refs[j].id
+                        )));
+                    }
+                }
+            }
+        }
+        Ok(refs)
+    }
+
+    /// THE BUILD'S OWN FIGHT in `arena`: the panel a report shows and the
+    /// params, with no roster and no buff terms — what a seat is.
+    fn bare(&self, refs: &[&ModDef], arena: &wfsim_engine::arena::Arena) -> Result<(ResolvedPanel, FightParams), Value> {
+        let (policy, tenno, info) = (self.fight.policy, &self.fight.tenno, self.fight.info);
+        let panel_of = |b: &WeaponBase| resolve_for(b, refs, policy, tenno);
+        // A CYCLE: the report shows the form whose damage the fight is about —
+        // the Incarnon form, or a Tome's primary fire.
+        if let Some(from) = &self.from {
+            let (fire, from) = (panel_of(&self.fire), panel_of(from));
+            let params = FightParams::for_entrant(&fire, Some(&from), || unreachable!(), arena, &self.arcane_fx, &self.terms);
+            return Ok((if fire.meter.is_some() { from } else { fire }, params));
+        }
+        let panel = panel_of(&self.fire);
         // A GROUND COMBO IS PLAYED FROM A STANCE, and every reader of a fight
         // resolves here — so the refusal is one decision, not three.
         if wfsim_engine::data::weapons::combo_needs_a_stance(&info.id, panel.form) {
@@ -278,80 +308,39 @@ pub(crate) fn sim_params(
                 return Err(err_json(if seated.is_some() { STANCE_LACKS_COMBO } else { STANCELESS_COMBO }));
             }
         }
-        // A MELEE INCARNON IS THE SAME WEAPON RESOLVED TWICE, and the second
-        // resolve is this one without the tiers that turn it on. It is not a
-        // form and unlocks no entry — `single_form` is unchanged — but the
-        // numbers it grants are TIMED, so the fight needs both halves.
-        //
-        // The tiers are found by what they SAY (`states_incarnon_window`) and
-        // not by id, so the next Genesis needs no edit here.
-        let mut d = FightParams::for_panel(&panel, arena, &arcane_fx, || {
-            let unarmed: Vec<&str> = evo_refs
-                .iter()
-                .copied()
-                .filter(|id| !wfsim_engine::data::evolutions::states_incarnon_window(id))
-                .collect();
-            resolve_for(&base_for(v, single_form, &unarmed), refs, policy, tenno)
-        });
-        d.infinite_reserve = panel.reserve_is_infinite(infinite_ammo);
-        ammo.apply(&mut d);
-        // Frenzy is the WEAPON's passive: it persists across its forms, so it rides whichever one is fired.
-        d.frenzy = frenzy_single;
-        d.locked_buffs = frenzy_locks.to_vec();
-        Ok((panel, d))
+        let params = FightParams::for_entrant(&panel, None, || {
+            panel_of(self.unarmed.as_ref().expect("a stated window prepared its un-armed base"))
+        }, arena, &self.arcane_fx, &self.terms);
+        Ok((panel, params))
+    }
+
+    /// WHAT A SIMULATE RUNS for these mods: the build's fight, then the rest of
+    /// the roster, the fight's buff policy and the triggers it refuses.
+    pub(crate) fn params(&self, refs: &[&ModDef]) -> Result<(ResolvedPanel, FightParams), Value> {
+        let (panel, mut params) = self.bare(refs, &self.fight.arena)?;
+        params.sample_by = self.fight.metric.run;
+        params.also_acting.extend(self.roster.iter().cloned());
+        // The per-buff configured policy onto the live specs (weapon-scoped:
+        // recurses into the incarnon cycle's base form)…
+        if let Some(cfg) = &self.fight.buff_cfg {
+            params.apply_buff_config(cfg);
+        }
+        // …then what the fight refuses to hand out: the cards say where a run
+        // OPENS, this says what it can EARN.
+        params.deny_buff_triggers(&self.fight.denied_buff_triggers);
+        Ok((panel, params))
     }
 }
 
-/// THE MODS A REQUEST NAMES, resolved against the weapon's own pool.
-///
-/// A FUNCTION BECAUSE EVERY SEAT DOES IT. The fight can hold more than one
-/// build now, and a second one resolving its mods through a second copy of
-/// this would be a second answer to "is this mod on this weapon" — which is
-/// the class of defect this repo keeps closing, not opening.
-///
-/// `Err` is the answer already shaped for the wire, so a caller returns it.
-fn seat_mods<'a>(
-    v: &Value,
-    info: &'static WeaponInfo,
-    evo_refs: &[&str],
-    pool: &'a [ModDef],
-) -> Result<Vec<&'a ModDef>, Value> {
-    // No count validation here: the sim runs whatever it is given — slot
-    // legality (8 main + 1 exilus) is the UI's job, and the engine resolves any
-    // mod list honestly.
-    if let Err(e) = riven_stat_ids_ok(v, info) {
-        return Err(err_json(e));
-    }
-    let mod_ids: Vec<String> = v
-        .get("mods")
-        .and_then(|x| x.as_array())
-        .map(|a| {
-            a.iter()
-                .filter_map(|m| m.as_str().map(String::from))
-                .collect()
-        })
-        .unwrap_or_default();
-    let mut refs: Vec<&ModDef> = Vec::with_capacity(mod_ids.len());
-    for id in &mod_ids {
-        match pool.iter().find(|m| m.id == id) {
-            Some(m) => refs.push(m),
-            None => return Err(err_json(mod_not_here(id, info, evo_refs))),
-        }
-    }
-    // Reject family collisions (wiki Incompatible mods).
-    for i in 0..refs.len() {
-        for j in (i + 1)..refs.len() {
-            if let (Some(fi), Some(fj)) = (refs[i].family, refs[j].family) {
-                if fi == fj {
-                    return Err(err_json(format!(
-                        "{} and {} are incompatible (both in the {fi} family)",
-                        refs[i].id, refs[j].id
-                    )));
-                }
-            }
-        }
-    }
-    Ok(refs)
+/// The mod ids a request names, in order.
+pub(crate) fn mod_ids(v: &Value) -> Vec<&str> {
+    v.get("mods").and_then(Value::as_array).map(|a| a.iter().filter_map(Value::as_str).collect()).unwrap_or_default()
+}
+
+/// An evolution set without the tiers that state a melee Incarnon window — the
+/// un-armed half, for `simulate` and the optimizer alike.
+pub(crate) fn without_window<'a>(evos: &[&'a str]) -> Vec<&'a str> {
+    evos.iter().copied().filter(|id| !wfsim_engine::data::evolutions::states_incarnon_window(id)).collect()
 }
 
 /// THE REST OF THE ROSTER — every seat beside the one being reported on, and
@@ -380,18 +369,6 @@ pub(crate) fn seats_beside(
     Ok((seats, weapons))
 }
 
-/// [`seats_beside`], put straight into a fight the caller is holding.
-pub(crate) fn seat_the_rest(
-    params: &mut FightParams,
-    v: &Value,
-    arena: &wfsim_engine::arena::Arena,
-    info: &'static WeaponInfo,
-) -> Result<Vec<String>, Value> {
-    let (seats, weapons) = seats_beside(v, arena, info)?;
-    params.also_acting.extend(seats);
-    Ok(weapons)
-}
-
 /// ANOTHER THING ACTING IN THIS FIGHT, resolved through the SAME path as the
 /// build the answer is about.
 ///
@@ -401,27 +378,13 @@ pub(crate) fn seat_the_rest(
 /// different enemy at a different level than the first. That is the one thing
 /// a caller could otherwise get wrong and nothing would say so.
 ///
-/// It resolves through `parse_fight`, `mod_pool_with_rivens`, `seat_mods` and
-/// `sim_params` — every one of them the function the reported build uses. A
+/// It resolves through `Entrant` — the construction the reported build uses. A
 /// second resolution path would be a second answer, and the point of the fight
 /// holding n builds is that they are the same kind of thing.
 pub(crate) fn seat_from(v: &Value, arena: &wfsim_engine::arena::Arena) -> Result<FightParams, Value> {
-    let fight = parse_fight(v)?;
-    let Fight {
-        info, policy, evos, cycle_from, single_form, tenno, infinite_ammo,
-        ammo_drops, pickup_range_m, landscape,
-        frenzy_single, frenzy_locks, cycle_frenzy_lock, ..
-    } = fight;
-    let ammo = AmmoEconomy { drops: ammo_drops, pickup_range_m, landscape };
-    let evo_refs: Vec<&str> = evos.iter().map(String::as_str).collect();
-    let pool = mod_pool_with_rivens(v, info, &evo_refs);
-    let refs = seat_mods(v, info, &evo_refs, &pool)?;
-    let (_panel, params) = sim_params(
-        v, info, policy, &evo_refs, &refs, &tenno, arena,
-        cycle_from, single_form, infinite_ammo, ammo, frenzy_single, cycle_frenzy_lock,
-        &frenzy_locks,
-    )?;
-    Ok(params)
+    let e = Entrant::new(v, true)?;
+    let refs = e.seat(&mod_ids(v))?;
+    Ok(e.bare(&refs, arena)?.1)
 }
 
 /// WHAT THE BUILD COSTS IN CAPACITY AND FORMA — a report about the build, and
@@ -480,29 +443,40 @@ fn forma_of(info: &'static WeaponInfo, refs: &[&ModDef]) -> Value {
 
 }
 
-fn simulate_from(v: &Value, work: Work, on_run: &mut impl FnMut(u32, u32)) -> Value {
-    // THE FIGHT, parsed by the ONE function that parses it. The optimizer
-    // calls the same one — see `parse_fight`.
-    let fight = match parse_fight(v) {
-        Ok(f) => f,
-        Err(e) => return e,
-    };
-    let Fight {
-        info, policy, buff_cfg, denied_buff_triggers, arena, evos, cycle_from, single_form,
-        enemy_name, metric, level, steel_path, eximus, tenno, infinite_ammo, runs, seed,
-        ammo_drops, pickup_range_m, landscape,
-        frenzy_single, frenzy_locks, cycle_frenzy_lock, ..
-    } = fight;
-    let ammo = AmmoEconomy { drops: ammo_drops, pickup_range_m, landscape };
-    let evo_refs: Vec<&str> = evos.iter().map(String::as_str).collect();
+/// A FIGHT READY TO RUN: the parsed fight, the entrant's params with the
+/// whole roster and every term applied, and what the report reads beside them.
+pub(crate) struct Ready {
+    pub(crate) fight: Fight,
+    pub(crate) panel: ResolvedPanel,
+    pub(crate) params: FightParams,
+    pub(crate) seat_weapons: Vec<String>,
+    /// What the build costs — the report's, so only asked for with `report`.
+    pub(crate) forma: Value,
+}
 
-    let p = mod_pool_with_rivens(v, info, &evo_refs);
-    let refs = match seat_mods(v, info, &evo_refs, &p) {
+/// THE ONE CONSTRUCTION OF A FIGHT FROM A REQUEST. `simulate` runs what it
+/// returns, and the optimizer scores every candidate through it — a candidate
+/// IS a request (`replay`) — so the search and the replay cannot fight two
+/// different fights. `report` adds what only a report reads.
+pub(crate) fn ready(v: &Value, report: bool) -> Result<Ready, Value> {
+    let e = Entrant::new(v, false)?;
+    let refs = e.seat(&mod_ids(v))?;
+    // WHAT THE BUILD COSTS — a REPORT, not a resolution. Nothing the fight does
+    // depends on it, which is why it is a function of its own.
+    let forma = if report { forma_of(e.fight.info, &refs) } else { Value::Null };
+    let (panel, params) = e.params(&refs)?;
+    drop(refs);
+    Ok(Ready { fight: e.fight, panel, params, seat_weapons: e.seat_weapons, forma })
+}
+
+fn simulate_from(v: &Value, work: Work, on_run: &mut impl FnMut(u32, u32)) -> Value {
+    let Ready { fight, panel: report_panel, params, seat_weapons, forma } = match ready(v, true) {
         Ok(r) => r,
         Err(e) => return e,
     };
-
-    // ---- enemy / target ----
+    let Fight {
+        arena, enemy_name, level, steel_path, eximus, runs, seed, tenno, ..
+    } = fight;
     // The target's pools, for the report. Read off the arena rather than kept
     // beside it: one target, one place it lives.
     let (og, sh, hp, ar) = (
@@ -511,60 +485,6 @@ fn simulate_from(v: &Value, work: Work, on_run: &mut impl FnMut(u32, u32)) -> Va
         arena.target.max_health(),
         arena.target.armor(),
     );
-
-    // WHAT THE BUILD COSTS — a REPORT, not a resolution. Nothing the fight does
-    // depends on it, which is why it is a function of its own: a seat that is
-    // not the one being reported on resolves without ever asking.
-    let forma = forma_of(info, &refs);
-
-    // ---- resolve panel(s) and build sim params, per weapon ----
-    // Either ONE registered form, or the real two-form cycle (which needs the
-    // gauge form and the form it transforms out of, so it resolves both).
-    // THE ARCANE IS RESOLVED FIRST, because params are built with it rather
-    // than assigned it afterwards: `from_panel` is where a build meets an
-    // arcane (Primary Compression reads THIS build's blast radius, a stat lock
-    // silences an arcane's buff), and an argument cannot be forgotten the way
-    // a follow-up assignment can — the Incarnon cycle's inner base form never
-    // got one.
-    let (report_panel, mut params) = match sim_params(
-        v, info, policy, &evo_refs, &refs, &tenno, &arena,
-        cycle_from, single_form, infinite_ammo, ammo, frenzy_single, cycle_frenzy_lock,
-        &frenzy_locks,
-    ) {
-        Ok(p) => p,
-        Err(e) => return e,
-    };
-    params.sample_by = metric.run;
-    // EVERYTHING ELSE ACTING IN THIS FIGHT. Each entry is a request of its own
-    // and resolves through the same path; the ARENA is this fight's, so no
-    // seat can quietly be fighting a different enemy.
-    let seat_weapons = match seat_the_rest(&mut params, v, &arena, info) {
-        Ok(w) => w,
-        Err(e) => return e,
-    };
-    // An arcane the weapon cannot seat is an ERROR here, not a silent drop:
-    // the sim is the one place a visitor is owed a reason.
-    for (pool, aid, _) in arcane_choices(v, info) {
-        if wfsim_engine::data::arcanes::for_slot(&pool, &aid).is_none() {
-            return err_json(match wfsim_engine::data::arcanes::slot_of(&aid) {
-                Some(s) => format!(
-                    "{aid} is a {s} arcane — {} seats {}",
-                    info.name,
-                    info.arcane_pools.join(" + ")
-                ),
-                None => format!("unknown arcane id: {aid}"),
-            });
-        }
-    }
-    // ---- apply the per-buff configured policy onto the live specs ----
-    // (weapon-scoped: recurses into the incarnon cycle's base form). Frenzy is
-    // already applied above (cycle lock at construction / single-form vector).
-    if let Some(cfg) = &buff_cfg {
-        params.apply_buff_config(cfg);
-    }
-    // …then what the fight refuses to hand out: the cards say where a run
-    // OPENS, this says what it can EARN.
-    params.deny_buff_triggers(&denied_buff_triggers);
     let report_panel = &report_panel;
 
     // ---- run ----
@@ -2319,16 +2239,14 @@ mod wide_beam {
             .iter().map(|c| c["weapon"].as_str().unwrap_or_default().to_string()).collect();
         assert_eq!(seats, ["cernos_prime", "braton_prime"], "{rec}");
 
-        // THE SEARCH is handed the same roster before a candidate is scored.
+        // THE SEARCH scores a candidate in the fight its request makes, and
+        // that fight has the same roster.
         let mut plan_req = req.clone();
         plan_req["mods"] = json!({ "serration": "search" });
-        match crate::optimize::parse_optimize(&plan_req) {
-            Ok(plan) => assert_eq!(
-                plan.scenario.also_acting.len(), 1,
-                "the search was handed a fight with nobody else in it"
-            ),
-            Err(e) => panic!("the plan was refused: {e}"),
-        }
+        let plan = crate::optimize::parse_optimize(&plan_req).unwrap_or_else(|e| panic!("the plan was refused: {e}"));
+        let out = crate::optimize::run_optimize(plan, &wfsim_optimizer::FunnelState::default(), |_, _| {}, None);
+        let fight = ready(&out["results"][0]["replay"], false).unwrap_or_else(|e| panic!("{e}"));
+        assert_eq!(fight.params.also_acting.len(), 1, "the search fought with nobody else in it: {out}");
     }
 
     /// THE FURIS INCARNON BEAM IS 2 M WIDE and pierces only on a modded punch

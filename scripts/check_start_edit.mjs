@@ -77,7 +77,7 @@ const r = await app.evaluate(`(async () => {
   // Optimize from the start: Hellfire is fixed, so every answer carries it.
   const body = { weapon: 'verglas_prime',
     mods: Object.fromEntries(['serration','split_chamber','vital_sense','point_strike','hellfire','cryo_rounds','infected_clip','hammer_shot','heavy_caliber'].map(m => [m, 'search'])),
-    build_size: 8, build_min: 8, ...theFight(), duration: 20, final_runs: 10, finalists: 3,
+    build_size: 8, build_min: 8, ...theFight(), duration: 20, runs: 10, finalists: 3,
     strategy: 'quick', candidate_runs: 3, starts: opt.starts.map(startPayload) };
   await api('/api/optimize', body);
   let s = null;

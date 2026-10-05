@@ -81,9 +81,11 @@ fn main() {
         }
     }
 
-    let scenario = Scenario {
-        // ONE GUN. The CLI has no scenario UI to put a squad in.
-        also_acting: Vec::new(),
+    // ONE GUN, no squad and no fight terms: the CLI has no scenario UI and no
+    // simulator to call, so it states its own fight below, once the arcanes
+    // it ranges over are known.
+    let mut scenario = Scenario {
+        params: std::sync::Arc::new(|_: &Candidate, _: usize| None),
         arena: wfsim_engine::arena::Arena {
             apl: Default::default(),
             squad_size: 1,
@@ -112,24 +114,7 @@ fn main() {
             // …and the weapon points AT it.
             aim_at: None,
         },
-        // The CLI drives Dual Toxocyst, which carries the Frenzy passive.
-        frenzy: wfsim_engine::data::weapons::has_perk("dual_toxocyst", "frenzy"),
-        // Unused here: the CLI runs the cycle, which bakes its own lock.
-        frenzy_locks: Vec::new(),
-        // The CLI drives one weapon with an infinite reserve and no companion,
-        // so these are the ordinary answers rather than a choice it offers.
-        infinite_ammo: true,
         policy: wfsim_engine::model::StackPolicy::Emergent,
-        // The REAL Incarnon cycle (user flow): full gauge start -> dump ->
-        // revert 1.0 s -> rebuild 9 weakpoint charges in base form ->
-        // transmute 2.35 s -> repeat. Frenzy locked Permanent (chosen
-        // sim setting) - its +100% Toxin injection is folded into the
-        // base-form panel.
-        incarnon_cycle: true,
-        frenzy_lock: LockMode::Permanent,
-        // CLI: no per-buff configured policy (the emergent default).
-        buff_cfg: wfsim_engine::fight::BuffConfig::new(),
-        denied_buff_triggers: Vec::new(),
     };
     println!(
         "[scenario] {} @9999 STEEL PATH, instant respawn, 100% headshots, {} s, REAL incarnon cycle",
@@ -231,6 +216,21 @@ fn main() {
             .map(|id| fx_of(id))
             .collect(),
     };
+    // The REAL Incarnon cycle (user flow): full gauge start -> dump -> revert
+    // 1.0 s -> rebuild 9 weakpoint charges in base form -> transmute 2.35 s ->
+    // repeat, Frenzy (Dual Toxocyst's passive) locked Permanent, infinite reserve.
+    {
+        let (fight, fx) = (scenario.arena.clone(), arcanes.clone());
+        let frenzy = wfsim_engine::data::weapons::has_perk("dual_toxocyst", "frenzy");
+        scenario.params = std::sync::Arc::new(move |c: &Candidate, ai: usize| {
+            let base = c.base_panel.as_ref()?;
+            let mut p = wfsim_engine::fight::FightParams::incarnon_cycle_from_panels(
+                &c.panel, base, frenzy, LockMode::Permanent, &fight, fx.get(ai)?,
+            );
+            p.infinite_reserve = c.panel.reserve_is_infinite(true);
+            Some(p)
+        });
+    }
     let alive: Vec<Job> = (0..cands.len())
         .flat_map(|i| (0..arcanes.len()).map(move |a| (i, a)))
         .collect();
@@ -257,7 +257,6 @@ fn main() {
     // endpoint); the CLI runs it verbosely for per-round progress.
     let last = run_funnel(
         &cands,
-        &arcanes,
         &scenario,
         alive,
         &rounds,

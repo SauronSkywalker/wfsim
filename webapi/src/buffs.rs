@@ -654,6 +654,13 @@ pub(crate) fn buffs_json(list: &[BuffMeta]) -> Vec<Value> {
 
 // The build's resolved arcane fx (buff specs are policy-independent in shape);
 // used for buff enumeration. `none` when the weapon can't equip arcanes.
+/// THE WEAPON AN ARCANE READS: the Incarnon form where there is one, since an
+/// arcane meets the weapon through its TRAITS and those are the spec's — no
+/// evolution moves them. One construction for `simulate` and the optimizer.
+pub(crate) fn arcane_base(info: &WeaponInfo) -> WeaponBase {
+    WeaponBase::from_data(crate::registry::incarnon_id(info).unwrap_or(&info.id), true, &[])
+}
+
 pub(crate) fn arcane_fx_for(
     v: &Value,
     info: &WeaponInfo,

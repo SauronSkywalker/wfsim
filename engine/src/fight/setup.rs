@@ -1471,6 +1471,52 @@ impl FightParams {
         }
     }
 
+    /// THE ENTRANT'S FIGHT, from the panels it fires and the fight's terms —
+    /// the ONE construction the simulator and the optimizer both call, so a
+    /// build is scored in the search exactly as it is replayed.
+    ///
+    /// `cycle_from` is the form a cycle returns to (`fire` is the form it fires);
+    /// without one, `unarmed` is a melee Incarnon's other half, asked for only
+    /// when the panel states a window (see [`Self::for_panel`]). A Tome's cycle
+    /// is told apart by the METER: it fires its primary form throughout and
+    /// throws the other one's orb, so its params are the base form's.
+    pub fn for_entrant(
+        fire: &crate::build::loadout::ResolvedPanel,
+        cycle_from: Option<&crate::build::loadout::ResolvedPanel>,
+        unarmed: impl FnOnce() -> crate::build::loadout::ResolvedPanel,
+        arena: &crate::arena::Arena,
+        arcane: &ArcaneFx,
+        t: &EntrantTerms,
+    ) -> Self {
+        let mut p = match cycle_from {
+            Some(from) if fire.meter.is_some() => {
+                let mut p = Self::tome_cycle_from_panels(from, fire, arena, arcane);
+                p.infinite_reserve = from.reserve_is_infinite(t.infinite_ammo);
+                p.frenzy = t.frenzy;
+                p.locked_buffs = t.frenzy_locks.clone();
+                p
+            }
+            Some(from) => {
+                let mut p =
+                    Self::incarnon_cycle_from_panels(fire, from, t.frenzy, t.cycle_frenzy_lock, arena, arcane);
+                p.infinite_reserve = fire.reserve_is_infinite(t.infinite_ammo);
+                p
+            }
+            None => {
+                let mut p = Self::for_panel(fire, arena, arcane, unarmed);
+                p.infinite_reserve = fire.reserve_is_infinite(t.infinite_ammo);
+                // Frenzy is the WEAPON's passive: it rides whichever form is fired.
+                p.frenzy = t.frenzy;
+                p.locked_buffs = t.frenzy_locks.clone();
+                p
+            }
+        };
+        p.ammo_drops = t.ammo_drops;
+        p.pickup_range_m = t.pickup_range_m;
+        p.landscape = t.landscape;
+        p
+    }
+
     /// A MELEE INCARNON, from the same weapon resolved twice: once with the
     /// Genesis tier that states the window and once without it.
     ///

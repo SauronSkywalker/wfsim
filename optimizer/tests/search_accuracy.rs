@@ -12,7 +12,6 @@
 //! losing builds — which is the failure mode that has no other symptom.
 
 use wfsim_engine::arena::Arena;
-use wfsim_engine::fight::{BuffConfig, LockMode};
 use wfsim_engine::target::{BodyPart, TargetMode};
 use wfsim_engine::model::WeaponBase;
 use wfsim_engine::model::{ModDef, StackPolicy};
@@ -49,9 +48,9 @@ fn scenario(duration: f64, level: u32) -> Scenario {
     // A sentinel weapon aims at nothing in particular: spread over the body.
     let bodies: Vec<_> = spec.body_parts.iter().filter(|p| !p.is_head).collect();
     let w = 1.0 / bodies.len().max(1) as f64;
-    Scenario {
-        also_acting: Vec::new(),
-        arena: Arena {
+    // sentinel policy: nothing on the field triggers its conditionals
+    Scenario::from_panels(
+        Arena {
             apl: Default::default(),
             squad_size: 1,
             target_id: "e1".to_string(),
@@ -84,15 +83,9 @@ fn scenario(duration: f64, level: u32) -> Scenario {
             // …and the weapon points AT it.
             aim_at: None,
         },
-        incarnon_cycle: false,
-        frenzy_lock: LockMode::Initial(0),
-        frenzy_locks: Vec::new(),
-        frenzy: false,
-        buff_cfg: BuffConfig::new(),
-        denied_buff_triggers: Vec::new(),
-        infinite_ammo: true,
-        policy: StackPolicy::BaseOnly, // sentinel: nothing on the field triggers its conditionals
-    }
+        StackPolicy::BaseOnly,
+        vec![wfsim_engine::data::arcanes::ArcaneFx::none()],
+    )
 }
 
 /// The exhaustive scope: every legal 8-mod build over `SCOPE`, every element
@@ -140,9 +133,8 @@ fn the_reference_reproduces_itself_under_a_different_seed() {
     const RUNS: u32 = 60;
     let s = scenario(30.0, 150);
     let (cands, jobs) = exhaust(&s, 8);
-    let arcanes = vec![wfsim_engine::data::arcanes::ArcaneFx::none()];
-    let a = Truth::measure(&cands, &jobs, &arcanes, &s, RUNS, 0xA11CE);
-    let b = Truth::measure(&cands, &jobs, &arcanes, &s, RUNS, 0xB0B);
+    let a = Truth::measure(&cands, &jobs, &s, RUNS, 0xA11CE);
+    let b = Truth::measure(&cands, &jobs, &s, RUNS, 0xB0B);
 
     // The answer SET is what a search is graded against, so that is what has
     // to be stable — not the arbitrary order inside it.
@@ -241,7 +233,7 @@ fn run_pipeline(
         n
     };
     let last = run_funnel(
-        &sc, &arcanes, s, sjobs, &rounds, 0xDEAD_BEEF, false, None, None, 0, None, None,
+        &sc, s, sjobs, &rounds, 0xDEAD_BEEF, false, None, None, 0, None, None,
     );
     // Map every result back to its place in the exhaustive list BY IDENTITY.
     // Both sides build candidates through `expand_one` from an ascending
@@ -276,8 +268,7 @@ fn a_scope_that_fits_is_searched_exhaustively_and_solved() {
     const RUNS: u32 = 60;
     let s = scenario(30.0, 150);
     let (cands, jobs) = exhaust(&s, 8);
-    let arcanes = vec![wfsim_engine::data::arcanes::ArcaneFx::none()];
-    let truth = Truth::measure(&cands, &jobs, &arcanes, &s, RUNS, 0xA11CE);
+    let truth = Truth::measure(&cands, &jobs, &s, RUNS, 0xA11CE);
     let (v, stats, unmatched, _) = run_pipeline(&s, &truth, &cands, &jobs, 8, 0, None);
     println!(
         "[search] {} of {} index positions, exhaustive {} -> rank {} (regret {:.2}%, recall {:.0}%) in {} sims",
@@ -304,8 +295,7 @@ fn a_budget_it_cannot_finish_leaves_an_honest_sample() {
     const RUNS: u32 = 40;
     let s = scenario(30.0, 150);
     let (cands, jobs) = exhaust(&s, 1);
-    let arcanes = vec![wfsim_engine::data::arcanes::ArcaneFx::none()];
-    let truth = Truth::measure(&cands, &jobs, &arcanes, &s, RUNS, 0xA11CE);
+    let truth = Truth::measure(&cands, &jobs, &s, RUNS, 0xA11CE);
     let (v, stats, unmatched, _) = run_pipeline(&s, &truth, &cands, &jobs, 1, 120, None);
     println!(
         "[search] {} of {} index positions ({:.1}%), exhaustive {} -> rank {} of {} (regret {:.2}%)",
@@ -337,8 +327,7 @@ fn the_descent_reaches_the_answer_set_from_any_start() {
     const RUNS: u32 = 40;
     let s = scenario(30.0, 150);
     let (cands, jobs) = exhaust(&s, 1);
-    let arcanes = vec![wfsim_engine::data::arcanes::ArcaneFx::none()];
-    let truth = Truth::measure(&cands, &jobs, &arcanes, &s, RUNS, 0xA11CE);
+    let truth = Truth::measure(&cands, &jobs, &s, RUNS, 0xA11CE);
     let serration = pool().iter().position(|m| m.id == "serration").expect("in scope");
     for (label, starts) in [("one start per element", vec![]), ("serration alone", vec![start(&[serration])])] {
         let (v, stats, unmatched, _) = run_pipeline(&s, &truth, &cands, &jobs, 1, 0, Some(&starts));
@@ -373,8 +362,7 @@ fn a_locked_card_stays_in_every_build_its_start_scores() {
     const RUNS: u32 = 40;
     let s = scenario(30.0, 9999);
     let (cands, jobs) = exhaust(&s, 8);
-    let arcanes = vec![wfsim_engine::data::arcanes::ArcaneFx::none()];
-    let truth = Truth::measure(&cands, &jobs, &arcanes, &s, RUNS, 0xA11CE);
+    let truth = Truth::measure(&cands, &jobs, &s, RUNS, 0xA11CE);
     let pool = pool();
     let best = &cands[jobs[truth.best()].0].ordered;
     // A card the unconstrained winner does NOT carry, so the lock has to bite.
@@ -410,6 +398,8 @@ fn a_locked_arcane_is_the_only_one_its_start_scores() {
         wfsim_engine::data::arcanes::ArcaneFx::none(),
         merciless.fx(merciless.max_rank, s.policy, base.traits, &s.arena.tenno),
     ];
+    // The arcanes the search ranges over are the ones its fight seats.
+    let s = Scenario::from_panels(s.arena.clone(), s.policy, arcanes.clone());
     let families: Vec<Option<&'static str>> = pool.iter().map(|m| m.family).collect();
     let usable: Vec<usize> = (0..pool.len()).collect();
     let space = SubsetSpace::new(&families, &usable, &[], 8, 8);
@@ -443,8 +433,7 @@ fn the_funnel_lands_inside_the_reference_answer_set() {
     const RUNS: u32 = 60;
     let s = scenario(30.0, 150);
     let (cands, jobs) = exhaust(&s, 8);
-    let arcanes = vec![wfsim_engine::data::arcanes::ArcaneFx::none()];
-    let truth = Truth::measure(&cands, &jobs, &arcanes, &s, RUNS, 0xA11CE);
+    let truth = Truth::measure(&cands, &jobs, &s, RUNS, 0xA11CE);
 
     let rounds = schedule_to(jobs.len(), RUNS, 10);
     let sims: u64 = {
@@ -458,7 +447,6 @@ fn the_funnel_lands_inside_the_reference_answer_set() {
     };
     let last = run_funnel(
         &cands,
-        &arcanes,
         &s,
         jobs.clone(),
         &rounds,

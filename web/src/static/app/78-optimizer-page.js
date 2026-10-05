@@ -4,28 +4,9 @@
 // OPTIMIZER.md, "The quick descent"), and a start's pins are the one way to
 // keep something. The fight is the simulator's, drawn as a card.
 
-/// THE FINAL ROUND'S RUN COUNT — the simulator's Runs control, said again.
-/// Saved by no preset (`OPT_RUNS_KEY`): how hard to measure right now is the
-/// reader's, and neither the search nor the fight has an opinion about it.
-function renderOptRuns() {
-  const box = $("opt-runs-block");
-  if (!box) return;
-  box.innerHTML =
-    `<label title="${escHtml(tr("how many simulations each finalist gets in the last round. Yours, not the search's and not the fight's: it is saved by no preset and pinned by no ruler. A smaller number searches faster and is worth re-measuring in the simulator"))}">${
-      escHtml(tr("Final-round runs"))} <input type="number" id="opt-runs" min="1" max="20000" step="10" value="${finalRuns()}"></label>` +
-    `<span class="sim-hint">${escHtml(tr("yours, in neither preset — the simulator's Runs is the same setting for the replay"))}</span>`;
-  const el = $("opt-runs");
-  el.addEventListener("change", () => {
-    setFinalRuns(el.value);
-    el.value = String(finalRuns());
-    updateOptEstimate();
-  });
-}
-
 function renderOpt() {
   ["opt-block", "opt-fight-block", "opt-run-block"].forEach((id) => show(id, !!META));
   if (!META) return;
-  renderOptRuns();
   // A weapon's first visit: one blank start, then the active preset.
   if (!optSeeded) {
     opt.starts = [blankStart()];

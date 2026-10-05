@@ -63,7 +63,7 @@ const runFor = (w) => evaluate(`(async () => {
     evolutions: evos, modes: {}, exilus: {},
     ...W.extra,
     ...theFight(),
-    duration: 30, runs: 12, final_runs: 12, finalists: 3, threads: 1, buffs: {},
+    duration: 30, runs: 12, finalists: 3, threads: 1, buffs: {},
   };
   const r0 = await postJson('/api/optimize', body);
   let s = r0;

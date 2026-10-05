@@ -333,11 +333,26 @@ pub(crate) struct Fight {
     pub(crate) duration: f64,
     pub(crate) runs: u32,
     pub(crate) seed: u64,
-    pub(crate) has_frenzy: bool,
     pub(crate) frenzy_single: bool,
     /// The single-form frenzy locks, built beside `frenzy_single`.
     pub(crate) frenzy_locks: Vec<BuffLock>,
     pub(crate) cycle_frenzy_lock: LockMode,
+}
+
+impl Fight {
+    /// What this fight puts on its entrant beside the panels — the ONE value
+    /// `simulate` and the optimizer hand to `FightParams::for_entrant`.
+    pub(crate) fn entrant_terms(&self) -> wfsim_engine::fight::EntrantTerms {
+        wfsim_engine::fight::EntrantTerms {
+            infinite_ammo: self.infinite_ammo,
+            ammo_drops: self.ammo_drops,
+            pickup_range_m: self.pickup_range_m,
+            landscape: self.landscape,
+            frenzy: self.frenzy_single,
+            cycle_frenzy_lock: self.cycle_frenzy_lock,
+            frenzy_locks: self.frenzy_locks.clone(),
+        }
+    }
 }
 
 /// WHICH WEAPON ENTRY FIRES, in ONE place.
@@ -826,7 +841,6 @@ pub(crate) fn parse_fight(v: &Value) -> Result<Fight, Value> {
         duration,
         runs,
         seed,
-        has_frenzy,
         frenzy_single,
         frenzy_locks,
         cycle_frenzy_lock,

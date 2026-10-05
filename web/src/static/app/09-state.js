@@ -248,28 +248,11 @@ let optSeeded = false;
 // and about nothing else, so it rides the search preset.
 //
 // The optimizer tab is TWO HALVES and the page now draws them as two BOXES: the search preset owns everything in the first, the
-// simulator owns everything in the second and it is read-only here. What sits
-// outside both boxes is in neither preset — which is exactly one thing.
+// simulator owns everything in the second and it is read-only here.
 //
-// THE FINAL ROUND'S RUN COUNT IS THAT THING. A run count is not what to
-// search and it is not the fight either — `sim.runs` does not exist, because
-// "how hard do I want to measure right now" is a fact about the person (see
-// `SIM_RUNS_KEY`). So it is a PREFERENCE with a key of its own, typed rather
-// than defaulted, saved by no preset and pinned by no ruler.
-//
-// The cost is stated rather than hidden: the two counts can differ, so a winner
-// may be crowned at a precision the replay will not use. The ranking reports it
-// — each row is re-run through `/api/simulate` and marked `≠` when the two
-// disagree by more than 4σ.
-const OPT_RUNS_KEY = "wfsim-opt-final-runs";
-const finalRuns = () => {
-  const v = Math.round(Number(localStorage.getItem(OPT_RUNS_KEY)));
-  return Number.isFinite(v) && v >= 1 && v <= 20000 ? v : SIM_RUNS_DEFAULT;
-};
-const setFinalRuns = (n) => {
-  const v = Math.max(1, Math.min(20000, Math.round(Number(n)) || SIM_RUNS_DEFAULT));
-  localStorage.setItem(OPT_RUNS_KEY, String(v));
-};
+// THE FINAL ROUND IS THE SIMULATOR'S, runs included: the server measures each
+// contender through `simulate_json` with the fight's own `runs` (`simRuns()`),
+// so a row's number is what simulating its build answers.
 // `threads` LEFT ON 2026-08-29. How much of this machine the page may
 // use is ONE setting and it lives in the topbar beside the language and the
 // theme (`compute-select`, a share of the reported cores); a per-search

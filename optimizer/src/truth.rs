@@ -64,12 +64,11 @@ impl Truth {
     pub fn measure(
         cands: &[Candidate],
         jobs: &[Job],
-        arcanes: &[wfsim_engine::data::arcanes::ArcaneFx],
         scenario: &Scenario,
         runs: u32,
         seed: u64,
     ) -> Truth {
-        let sums = evaluate_batch(cands, jobs, arcanes, scenario, runs, seed, None, None, true);
+        let sums = evaluate_batch(cands, jobs, scenario, runs, seed, None, None, true);
         let est: Vec<Estimate> = sums
             .iter()
             .map(|s| Estimate::of(s.as_ref().expect("flat evaluation is never cancelled"), runs))

@@ -63,6 +63,15 @@ pub trait QuickSpace: Sync {
     fn pending(&self) -> bool {
         false
     }
+    /// A step's SHORT measurement, on the same stream as [`Self::score`];
+    /// `None` = no screen, every candidate is measured in full.
+    fn screen(&self, _bs: &[Self::Build]) -> Option<Vec<Score>> {
+        None
+    }
+    /// The share of a step's screened candidates measured in full.
+    fn keep_ratio(&self) -> f64 {
+        1.0
+    }
 }
 
 /// Where a descent begins, what it may never change, and what it did not name.
@@ -128,6 +137,9 @@ struct Run<'a, S: QuickSpace> {
     space: &'a S,
     cfg: &'a QuickConfig<'a>,
     cache: HashMap<String, Score>,
+    /// Screen scores of builds the screen dropped. Never in `cache`, so a
+    /// dropped build is never a move and never on the list.
+    rough: HashMap<String, Score>,
     /// Every build a SWEEP asked about, by key: whole builds, legal, one change
     /// from where some start stood. The fill's half-empty builds are not here.
     seen: HashMap<String, S::Build>,
@@ -169,6 +181,44 @@ impl<S: QuickSpace> Run<'_, S> {
         Some(keys.iter().map(|k| self.cache[k]).collect())
     }
 
+    /// `alts` less what the screen drops: of the candidates with no full score
+    /// yet, the best `keep_ratio` by a short measurement go on. `None` = the
+    /// budget ran out first.
+    fn screened(&mut self, alts: Vec<S::Build>) -> Option<Vec<S::Build>> {
+        let keys: Vec<String> = alts.iter().map(|b| self.space.key(b)).collect();
+        let mut fresh: Vec<usize> = Vec::new();
+        for (i, k) in keys.iter().enumerate() {
+            if !self.cache.contains_key(k) && !fresh.iter().any(|&j| keys[j] == *k) {
+                fresh.push(i);
+            }
+        }
+        if fresh.len() < 2 {
+            return Some(alts);
+        }
+        let unseen: Vec<usize> = fresh.iter().copied().filter(|&i| !self.rough.contains_key(&keys[i])).collect();
+        if !unseen.is_empty() {
+            if self.out_of_budget() {
+                return None;
+            }
+            let batch: Vec<S::Build> = unseen.iter().map(|&i| alts[i].clone()).collect();
+            let Some(got) = self.space.screen(&batch) else { return Some(alts) };
+            if self.space.pending() {
+                return None;
+            }
+            for (&i, s) in unseen.iter().zip(got) {
+                self.rough.insert(keys[i].clone(), s);
+            }
+        }
+        let mut ranked = fresh.clone();
+        ranked.sort_by(|&a, &b| {
+            let (sa, sb) = (self.rough[&keys[a]], self.rough[&keys[b]]);
+            if better(sa, sb) { std::cmp::Ordering::Less } else if better(sb, sa) { std::cmp::Ordering::Greater } else { a.cmp(&b) }
+        });
+        let keep = ((self.space.keep_ratio() * fresh.len() as f64).ceil() as usize).clamp(1, fresh.len());
+        let dropped: std::collections::HashSet<&String> = ranked[keep..].iter().map(|&i| &keys[i]).collect();
+        Some(alts.iter().zip(&keys).filter(|(_, k)| !dropped.contains(k)).map(|(b, _)| b.clone()).collect())
+    }
+
     /// The best LEGAL candidate of `alts`. Legality is asked before anything is
     /// simulated: dropping first and taking the best of the rest is the same
     /// answer as simulating all and walking down the ranking, for less.
@@ -177,6 +227,7 @@ impl<S: QuickSpace> Run<'_, S> {
         if alts.is_empty() {
             return Some(None);
         }
+        let alts = self.screened(alts)?;
         let scores = self.score(&alts)?;
         if self.sweeping {
             for b in &alts {
@@ -297,6 +348,7 @@ pub fn quick_descent<S: QuickSpace>(
         space,
         cfg,
         cache: HashMap::new(),
+        rough: HashMap::new(),
         seen: HashMap::new(),
         sweeping: false,
         stats: QuickStats::default(),

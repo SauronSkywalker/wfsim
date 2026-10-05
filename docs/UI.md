@@ -210,13 +210,9 @@ preset.
 
 THE OPTIMIZER TAB IS TWO HALVES AND TWO BOXES: one box is the SEARCH and is
 exactly what a search preset saves; the next is the SIMULATOR's fight,
-read-only, edited there. What sits OUTSIDE both boxes is in neither preset —
-the final round's run count is that thing. It is a PREFERENCE with a key of
-its own, TYPED rather than defaulted from elsewhere, saved by no preset and
-pinned by no ruler. The cost is stated rather than hidden: the two counts can
-differ, so a winner may be crowned at a precision the replay will not use —
-and the ranking already reports it, marking a row `≠` when the two disagree by
-more than 4σ.
+read-only, edited there. The final round has no count of its own: it is a
+simulation at the simulator's Runs, so a row's number is what simulating its
+build answers (docs/OPTIMIZER.md §"The answer").
 
 CPU THREADS IS GONE: how much of this machine the page may use is ONE setting,
 in the TOPBAR (`compute-select`). `woptWorkerCount()` is `poolSize()`; an

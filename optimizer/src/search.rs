@@ -314,7 +314,7 @@ fn eval_one(
     let n = cands.len();
     let mut results = Vec::with_capacity(n * arcanes.len());
     for (ci, c) in cands.iter().enumerate() {
-        for (ai, arc) in arcanes.iter().enumerate() {
+        for ai in 0..arcanes.len() {
             if state.is_some_and(|s| s.cancel.load(Ordering::Relaxed)) {
                 return (p.seq, n, results);
             }
@@ -322,7 +322,7 @@ fn eval_one(
             // own sequence number, so two candidates of one subset are not
             // handed the same random stream.
             let seed = job_seed(cfg.seed, p.seq.wrapping_mul(64).wrapping_add(ci), ai);
-            let s = evaluate(c, arc, scenario, cfg.runs, seed);
+            let s = evaluate(c, ai, scenario, cfg.runs, seed);
             results.push((c.clone(), ai, s));
         }
     }

@@ -1,7 +1,7 @@
 use super::*;
 
 /// Aggregate statistics over many engagements.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Default)]
 pub struct Summary {
     /// MEAN EFFECTIVE DAMAGE PER BODY, index for index with
     /// [`RunResult::damage_by_body`] — 0 is the aimed one.
@@ -171,6 +171,14 @@ pub struct RunSeries {
 }
 
 /// Run `runs` engagements from a single seed and summarize.
+impl Summary {
+    /// A BUILD THE SIMULATOR REFUSES fights nothing: it kills nothing and deals
+    /// nothing, so a search ranks it below every build that can be fought.
+    pub fn refused(duration_seconds: f64) -> Self {
+        Self { duration_seconds, ..Self::default() }
+    }
+}
+
 pub fn monte_carlo(params: &FightParams, runs: u32, seed: u64) -> Summary {
     monte_carlo_inner(params, runs, seed, false, &mut |_| {}).0
 }

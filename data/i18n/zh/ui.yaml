@@ -489,7 +489,6 @@ ui:
   "Extra stats": 额外属性
   Faction: 派系
   "From the hip the seven beams spread; aiming focuses them on the crosshair (wiki). The sim aims, so all seven land: the ceiling against one enemy.": "腰射时七道光束会散开，瞄准时汇聚到准星（wiki）。模拟是瞄准状态，所以七道全部命中：这是对单个敌人的上限。"
-  "Final-round runs": 最终轮次数
   Finalists: 优胜名额
   "improving the starts — {b} builds scored, {s} fights": 正在改进起点 —— 已评估 {b} 套配装，模拟 {s} 场
   "every worker scores each batch; in the browser a search takes minutes": 每一批候选都由全部 worker 一起评估；在浏览器里一次搜索要几分钟
@@ -528,11 +527,11 @@ ui:
   "round {r}, position {k} of {n}": 第 {r} 轮扫描，位置 {k}/{n}
   "{d} of {n} starts settled": "{d}/{n} 个起点已收敛"
   "each start improved until no change helped — the best those starts reach, not a proven best; add a start to look further": 每个起点都改到了再换什么都不涨 —— 这是这些起点能到的最好，不是证明过的最优；想找得更远就加起点
-  "how many fights each candidate gets while the search compares them. 1 is ten times faster and noisier; the answers are re-measured at the final-round runs either way": 搜索比较候选时每个候选打几场。1 场快十倍但更吵；无论选哪个，答案最后都按最终轮次数重新测量
+  "how many fights each candidate gets while the search compares them. 1 is ten times faster and noisier; the answers are re-measured in the simulator either way": 搜索比较候选时每个候选打几场。1 场快十倍但更吵；无论选哪个，答案最后都在模拟器里重新测量
   "+ a blank start": "+ 空白起点"
   "{n} starts · best {k} · {r} runs a candidate · final round {f} runs": "{n} 个起点 · 取前 {k} · 每个候选 {r} 场 · 最终轮 {f} 场"
   "How many results": 结果个数
-  "how many builds the search answers with: the best that many of every build it scored, re-measured at the final-round runs": 搜索给出几个配装：从它打过分的所有配装里取最好的这么多个，再按最终轮次数重新测量
+  "how many builds the search answers with: the best that many of every build it scored, re-measured in the simulator": 搜索给出几个配装：从它打过分的所有配装里取最好的这么多个，再在模拟器里重新测量
   "{s}'s answer with": "{s} 的答案里"
   "vs": 对
   "start": 起点
@@ -1229,8 +1228,6 @@ ui:
   "put what you place and drag on the grid you can see": "让放置和拖动落在你看得见的网格上"
   "range": "射程"
   "rank a slot's options by what they would change — off, nothing is simulated": 按「换上去会有多大变化」给槽位的候选排序 —— 关闭后不会进行任何模拟
-  "re-measuring this build in the simulator": 正在模拟器里重测这套配装
-  "re-run in the simulator: this is the simulator's own number for this build": 已在模拟器里重跑：这就是模拟器对这套配装给出的数字
   "read-only — it belongs to the simulator, which is where it is edited": 只读 —— 它属于模拟器，只在那里编辑
   "read-only — the fight's own, and every candidate is scored under them": 只读——这是战斗自己的设定，每一个候选配装都在它下面评分
   "read-only — the fight's own, and every candidate is scored with them": 只读——属于这场战斗，每个候选配装都带着它们计分
@@ -1594,7 +1591,7 @@ ui:
   "The tendrils aim themselves at different enemies and can fail to lock, losing damage (page). All five land on the target here, which is what staying at melee range and aiming directly produces.": "触须会各自锁定不同的敌人，也可能锁定失败，损失伤害（页面）。这里五条全部命中目标，这是贴身直接瞄准时的情况。"
   "An auto-targeted tendril always aims at the enemy's centre and never headshots; only one aimed above the enemy can.": "自动索敌的触须总是瞄准敌人中心，不会爆头；只有往敌人上方瞄的那条可以。"
   "the sim does not model this yet, so its number against this target is optimistic": 模拟还没有实现这条机制，所以对这个目标算出的数字偏高
-  "the simulator does not reproduce the search's own score for this build — the build shown may not be the one that was scored": 模拟器复现不出搜索给这套配装打的分 —— 屏幕上这套可能不是被评分的那一套
+  "this result was stored without its build — run it again to send it": 这条结果保存时没有带上配装 —— 重新跑一次才能交给优化器
   "the simulator refused this build — see the build's own card": 模拟器拒绝了这套配装 —— 看它自己的卡片
   "The snare damages, paralyses for about 6 s and pulls up to 8 enemies within 15 m, the count multiplied by multishot (wiki). The engine applies it to the aimed body only, so the 40 Toxin here is all it pays.": "陷阱会造成伤害、麻痹约 6 秒，并把 15 米内最多 8 个敌人拉到一起，数量受多重射击加成（wiki）。引擎只对瞄准的目标结算，所以这里只计 40 毒素伤害。"
   "The sniper combo counter and the scope's headshot bonus are not modelled in this form. Both are on the base form, and no source says whether either survives the transform.": "狙击连击计数和瞄准镜爆头加成在这个形态中未建模。两者在基础形态上已建模，没有资料说明变身后是否保留。"
@@ -1636,7 +1633,6 @@ ui:
   "In game this mode is entered by aiming. The sim sets the mode and Aiming separately, so read every while-aiming bonus as active whenever this mode is.": "游戏里靠瞄准进入这个模式。模拟把模式和「瞄准」分开设置，所以只要处于这个模式，就应把所有「瞄准时」加成视为生效。"
   "this option did not re-roll the fight — run for run it scaled the same fight, so this comparison is exact": "这个选项没有让战斗重新掷骰——每一次运行它都是把同一场战斗按同一个倍数放大，所以这次比较是精确的"
   "this option re-rolls the fight, so its answer is only good to ±{x} — raise the run count to narrow it": 这个选项会让这场战斗重新掷骰，所以它的答案只精确到 ±{x} —— 提高运行次数可以收窄它
-  "this ranking predates the simulator re-run": 这份排名早于"模拟器重跑"这个功能
   "A reload is never interrupted here: in game you can fire mid-reload and keep the shells already loaded. A listed reload is a whole reload, by design.": "这里从不打断换弹：游戏里可以在换弹中途开火并保留已装的弹。按设计，标出的换弹就是完整的一次。"
   "this target dispels it — nothing ticked here is running against it": 这个目标会把它驱散 —— 对它而言这里勾选的都没有生效
   "this target nullifies Warframe abilities — it pulses every 5 seconds and dispels everything in range, so none of these are running and the sim scores it that way": 这个目标会驱散战甲技能 —— 它每 5 秒脉冲一次、清除范围内的一切,所以下面勾选的都没有生效,模拟也是按没有生效来算的
@@ -1719,8 +1715,6 @@ ui:
   "what to look through, and how hard to look — all of it, and only it, is what a search preset saves": 要搜哪些东西、搜得有多狠 —— 这个框里的全部，也只有这些，才是一份搜索方案保存的内容
   "how many builds survive to the last round": 有多少套配装能进入最后一轮
   "the simulator's, shown read-only — every candidate is scored under it, and it is edited over there": 模拟器的那一场，这里只读 —— 每个候选都在它下面计分，而它在那边编辑
-  "how many simulations each finalist gets in the last round. Yours, not the search's and not the fight's: it is saved by no preset and pinned by no ruler. A smaller number searches faster and is worth re-measuring in the simulator": 最后一轮里每个优胜跑多少次模拟。这是你的设置，既不属于搜索方案也不属于这场战斗：没有任何预设保存它，也没有任何官方标尺钉死它。数字小搜得快，值得在模拟器里重测一遍
-  "yours, in neither preset — the simulator's Runs is the same setting for the replay": 你的设置，不在任何一份预设里 —— 模拟器的「次数」是回放的同一个设置
   "what to search, and how hard — the fight is the simulator's": 搜什么、搜得多狠 —— 这场战斗是模拟器的
   "actually {min}–{max}: {why}": "实际 {min}–{max}：{why}"
   "{n} required, plus at least one pooled": "{n} 张必带，加至少 1 张候选"

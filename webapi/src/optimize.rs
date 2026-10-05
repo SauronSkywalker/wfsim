@@ -69,7 +69,7 @@ pub fn opt_buffs_json(v: &Value) -> Value {
         .collect();
     let mut out: Vec<BuffMeta> = Vec::new();
     let none = wfsim_engine::data::arcanes::ArcaneFx::none();
-    let arc_base = WeaponBase::from_data(&info.id, true, &[]);
+    let arc_base = crate::buffs::arcane_base(info);
     let tenno = tenno_from(v, info);
     let always: Vec<&ModDef> = full
         .iter()
@@ -129,9 +129,6 @@ pub(crate) struct ModeForms {
     id: String,
     /// The entry that FIRES. For a cycle this is the transformed half.
     fire_id: String,
-    /// The entry a cycle returns to between transmutes; `None` for a single
-    /// form, which is also what tells `evaluate` this candidate is not cycling.
-    cycle_from: Option<String>,
     /// The evolution that unlocks the second form, and what to fire without it.
     /// Evolutions are their own dimension, so one scope holds sets that
     /// transform and sets that cannot — and which of the two a candidate is
@@ -158,14 +155,12 @@ pub(crate) fn mode_forms(info: &WeaponInfo, mode_id: &str) -> ModeForms {
         Some(m) if m.other_id.is_some() => ModeForms {
             id: m.id.to_string(),
             fire_id: m.other_id.unwrap().to_string(),
-            cycle_from: Some(m.weapon_id.to_string()),
             unlock_evo: form_unlock_evo(info).map(String::from),
             untransformed_id: untransformed,
         },
         Some(m) => ModeForms {
             id: m.id.to_string(),
             fire_id: m.weapon_id.to_string(),
-            cycle_from: None,
             // A mode that fires the weapon's OWN default entry needs no
             // unlocking; any other one is a second form, and the tier-1
             // evolution is what installs it.
@@ -177,12 +172,92 @@ pub(crate) fn mode_forms(info: &WeaponInfo, mode_id: &str) -> ModeForms {
         None => ModeForms {
             id: "base".into(),
             fire_id: info.id.clone(),
-            cycle_from: None,
             unlock_evo: None,
             untransformed_id: untransformed,
         },
     }
 }
+
+/// THE BASE ONE VARIANT FIRES: the entry it fires — or, when its evolution
+/// set lacks the unlock, the weapon untransformed. A candidate's panel is read
+/// for legality and dedup only; how the variant FIGHTS (a cycle, a melee
+/// Incarnon's window) is the simulator's, from the candidate's request.
+fn variant_base(
+    m: &ModeForms,
+    refs: &[&str],
+    val: &str,
+    deployed: &dyn Fn(&str, &[&str], &str) -> WeaponBase,
+) -> WeaponBase {
+    if m.unlock_evo.as_deref().is_some_and(|u| !refs.contains(&u)) {
+        return deployed(&m.untransformed_id, refs, val);
+    }
+    deployed(&m.fire_id, refs, val)
+}
+
+/// THE REQUEST A CANDIDATE IS: the optimize request with the axes the search
+/// ranges over overwritten. A row carries it as `replay`, and EVERY candidate
+/// is scored through it — `simulate::ready` on this request is the search's
+/// fight — so what a row says and what the simulator runs cannot differ.
+pub(crate) struct Replay {
+    base: Value,
+    mods: Vec<&'static str>,
+    exilus: Vec<Option<&'static str>>,
+    /// Per arcane index: the cards and their ranks, one per seat.
+    arcanes: Vec<(Vec<String>, Vec<u32>)>,
+    /// Per variant: the mode, the evolution set, and the progenitor element.
+    variants: Vec<(String, Vec<String>, Option<String>)>,
+}
+
+impl Replay {
+    pub(crate) fn arcane(&self, ai: usize) -> (&[String], &[u32]) {
+        self.arcanes.get(ai).map_or((&[], &[]), |(ids, ranks)| (ids.as_slice(), ranks.as_slice()))
+    }
+
+    /// ONE FLAT LIST OF MOD IDS, exilus included — the shape `simulate_json`
+    /// reads and the shape the builder's own payload has.
+    pub(crate) fn mod_ids(&self, c: &Candidate) -> Vec<&'static str> {
+        let mut all: Vec<&'static str> = c.ordered.iter().map(|&i| self.mods[i]).collect();
+        if let Some(Some(x)) = self.exilus.get(c.exilus as usize) {
+            all.push(x);
+        }
+        all
+    }
+
+    pub(crate) fn request(&self, c: &Candidate, ai: usize) -> Value {
+        self.with(c.variant, ai, &self.mod_ids(c))
+    }
+
+    /// THE SHAPE every candidate of one variant and arcane shares: the
+    /// request with EVERY card of the scope named, so the pool an `Entrant`
+    /// prepares from it holds each rank any candidate can seat.
+    pub(crate) fn shape(&self, variant: u32, ai: usize) -> Value {
+        let every: Vec<&'static str> = self.mods.iter().copied().chain(self.exilus.iter().flatten().copied()).collect();
+        self.with(variant, ai, &every)
+    }
+
+    fn with(&self, variant: u32, ai: usize, mods: &[&str]) -> Value {
+        let mut r = self.base.clone();
+        let Some(o) = r.as_object_mut() else { return r };
+        o.insert("mods".into(), json!(mods));
+        let (ids, ranks) = self.arcane(ai);
+        o.insert("arcane".into(), json!(ids));
+        o.insert("arcane_rank".into(), json!(ranks));
+        if let Some((mode, evos, valence)) = self.variants.get(variant as usize) {
+            o.insert("evolutions".into(), json!(evos));
+            o.insert("mode".into(), json!(mode));
+            // The ELEMENT is the axis; the BONUS is the scope's and rode in
+            // with the request.
+            if let Some(el) = valence {
+                o.insert("valence_element".into(), json!(el));
+            }
+        }
+        r
+    }
+}
+
+/// The simulator's fight per (variant, arcane index), prepared on first use;
+/// `None` = the simulator refuses that shape, so every candidate of it does.
+type Prepared = std::sync::Mutex<std::collections::HashMap<(u32, usize), Option<std::sync::Arc<crate::simulate::Entrant>>>>;
 
 /// Everything the heavy phase needs, validated up front.
 pub struct OptimizePlan {
@@ -208,9 +283,6 @@ pub struct OptimizePlan {
     /// "none" for an empty one. The effects are merged and cannot be read
     /// back apart, so the naming travels beside them.
     arcane_sets: Vec<Vec<String>>,
-    /// The DEPLOYMENT every candidate is built in — see `base_for`. Empty =
-    /// the weapon's own column.
-    deployment: String,
     /// THE VALENCE ELEMENTS this scope searches, and the roll they are all
     /// built at. A SET, because the progenitor element is a dimension like the
     /// mode: a different element is a different build, so a scope may ask which
@@ -219,9 +291,6 @@ pub struct OptimizePlan {
     /// One entry is the ordinary case and reproduces exactly what a pinned
     /// element did; an empty list is a weapon with no valence at all, and the
     /// variant table still holds one slot for it.
-    ///
-    /// It rides the plan for the same reason the deployment does: the search
-    /// builds its bases in a worker that never sees the request.
     valences: Vec<String>,
     valence_bonus: f64,
     pub(crate) scenario: Scenario,
@@ -293,6 +362,7 @@ pub struct OptimizePlan {
     /// only the axes the search ranged over. `runs` becomes the FINAL ROUND's,
     /// because that is the precision the row's number was measured at.
     replay_base: Value,
+    replay: std::sync::Arc<Replay>,
 }
 
 /// Validate an optimize request. `Err` is the ready-to-send error response.
@@ -655,7 +725,7 @@ pub fn parse_optimize(v: &Value) -> Result<OptimizePlan, Value> {
                 .collect()
         })
         .unwrap_or_default();
-    let arc_base = WeaponBase::from_data(&info.id, true, &[]);
+    let arc_base = crate::buffs::arcane_base(info);
     // The FIGHT's player, not a second one built the same way. Identical today
     // — same function, same request — which is exactly why it was easy to leave
     // and exactly why it should not be: two constructions of one fact is how
@@ -676,9 +746,12 @@ pub fn parse_optimize(v: &Value) -> Result<OptimizePlan, Value> {
     // rejected id and report those runs as if they had been real options.
     // Each slot also always offers the EMPTY choice, so "one arcane, not two"
     // stays reachable — the scope says what MAY be worn, not what must be.
+    // A weapon that seats no arcane in the simulator (`arcane_fx_for`) seats
+    // none here either.
     let per_slot: Vec<Vec<(String, wfsim_engine::data::arcanes::ArcaneFx)>> = info
         .arcane_pools
         .iter()
+        .filter(|_| info.uses_arcane)
         .map(|pool| {
             // THE EMPTY CHOICE IS AN OPTION LIKE ANY OTHER, and it is marked
             // like any other — `none:<pool>`. The id names
@@ -698,7 +771,7 @@ pub fn parse_optimize(v: &Value) -> Result<OptimizePlan, Value> {
                 .collect();
             let fx = |id: &str| {
                 arcane_at_rank(pool, id)
-                    .map(|(d, rank)| d.fx(rank, StackPolicy::Emergent, arc_base.traits, tenno))
+                    .map(|(d, rank)| d.fx(rank, fight.policy, arc_base.traits, tenno))
                     .unwrap_or_else(wfsim_engine::data::arcanes::ArcaneFx::none)
             };
             let empty = || {
@@ -741,7 +814,6 @@ pub fn parse_optimize(v: &Value) -> Result<OptimizePlan, Value> {
         })
         .collect();
     // The product, in pool order: `arcane_sets[i]` names what `arcanes[i]` is.
-    let deployment = get_str(v, "deployment", "").to_string();
     // THE VALENCE AXIS. `valence` is a MARK MAP (element -> "search"), the same
     // shape `modes` and `arcanes` use; `valence_element` is what a request with
     // no axis pins, and what every caller written before the axis existed sends.
@@ -803,14 +875,10 @@ pub fn parse_optimize(v: &Value) -> Result<OptimizePlan, Value> {
     // before only whittles the field down (schedule + adaptive racing).
     //
     // `final_runs` FALLS BACK TO THE SCENARIO'S `runs`.
-    // How hard you measure is the scenario's question and it is already
-    // answered there — a second default here is how a winner gets crowned at a
-    // precision the replay never used. The web client stops sending its own
-    // and this is what it lands on.
-    // Falls back to the FIGHT's run count rather than a second reading of
-    // `runs`. The two differed only past 20,000 — where the sim clamps and the
-    // search did not — which is a divergence nobody would have gone looking for.
-    let final_runs = get_u32(v, "final_runs", fight.runs).clamp(1, 100_000);
+    // THE FINAL ROUND IS THE SIMULATOR'S RUN COUNT, and nothing else may set
+    // it: a winner crowned at another precision is a number the reader's own
+    // simulation of that build does not reproduce.
+    let final_runs = fight.runs.clamp(1, 100_000);
     let finalists = get_u32(v, "finalists", 10).clamp(1, 100) as usize;
 
     // ---- THE FIGHT: the simulator's, not a second reading of it ----------
@@ -859,7 +927,7 @@ pub fn parse_optimize(v: &Value) -> Result<OptimizePlan, Value> {
         }
         None => vec![fight.mode.clone()],
     };
-    // A GROUND COMBO IS PLAYED FROM A STANCE — the same refusal `sim_params`
+    // A GROUND COMBO IS PLAYED FROM A STANCE — the same refusal `Entrant`
     // gives, so a search never ranks a mode the simulator will not play.
     let unplayable = |m: &ModeForms| {
         wfsim_engine::data::weapons::spec(&m.fire_id).is_some_and(|s| {
@@ -896,32 +964,84 @@ pub fn parse_optimize(v: &Value) -> Result<OptimizePlan, Value> {
     let (headshot_pct, duration, level, steel_path) =
         (fight.headshot_pct, fight.duration, fight.level, fight.steel_path);
     let fight_enemy_name = fight.enemy_name.clone();
-    // THE REST OF THE ROSTER, resolved once for the search — see `seats_beside`.
-    let (roster, _) = crate::simulate::seats_beside(v, &fight.arena, info)?;
-
-
-    // Assembled ENTIRELY from the fight — no field is re-read from the request
-    // here, which is what makes "the search and the replay run the same fight"
-    // structural rather than a thing to keep checking.
-    let scenario = Scenario {
-        // THE FIGHT'S OWN ROSTER, resolved through `seat_the_rest` — the same
-        // function `simulate` and the combat record go through, so a search
-        // ranks builds in the fight its winner will be replayed in.
-        also_acting: roster,
-        arena: fight.arena,
-        denied_buff_triggers: fight.denied_buff_triggers.clone(),
-        frenzy: fight.has_frenzy,
-        // ANY mode in the scope that cycles turns this on; a candidate that is
-        // not cycling has no second form, and `evaluate` reads the PAIR
-        // (`incarnon_cycle`, `base_panel`) — so a scope holding both plays each
-        // variant its own way rather than forcing one on the other.
-        incarnon_cycle: variants
+    // The roster is the simulator's to seat, per candidate (`simulate::ready`);
+    // asking once here refuses a fight with a seat it cannot resolve before
+    // any search starts.
+    crate::simulate::seats_beside(v, &fight.arena, info)?;
+    let replay_base = {
+        // A CLONE, not a rebuild. Listing the fields to copy is the mistake
+        // this exists to end — the whole request is the fight plus the
+        // build, `simulate_json` reads exactly the keys it knows and
+        // ignores the rest, so the optimizer's own marks (`arcanes`,
+        // `modes`, `valence`, `exilus`, the budget) simply ride along
+        // inert while `entry` overwrites the axes that differ per row.
+        let mut r = v.clone();
+        if let Some(o) = r.as_object_mut() {
+            // The FINAL ROUND's precision, because that is what the row's
+            // number is the mean of. The fight's own count is what the
+            // replay would otherwise use, and a row measured at one
+            // precision re-run at another is a comparison of two things.
+            o.insert("runs".into(), json!(final_runs));
+            // The one field worth stripping: a resume checkpoint is the
+            // whole surviving field, and twenty rows would each carry a
+            // copy of it.
+            o.remove("__resume");
+            // …and the fleet's traffic, which is the search's, never the build's.
+            o.remove("quick_fleet");
+            // …and a whole scope this parse filled in, which is every card.
+            if whole.is_some() {
+                for k in ["mods", "exilus", "arcanes", "evolutions", "modes", "valence"] {
+                    o.remove(k);
+                }
+            }
+        }
+        r
+    };
+    let replay = std::sync::Arc::new(Replay {
+        base: replay_base.clone(),
+        mods: pool.iter().map(|m| m.id).collect(),
+        exilus: exilus_defs.iter().map(|x| x.as_ref().map(|m| m.id)).collect(),
+        // One id per seat, with its rank — the builder's own shape.
+        arcanes: arcane_sets
             .iter()
-            .any(|&(mi, _, _)| modes[mi].cycle_from.is_some()),
-        frenzy_lock: fight.cycle_frenzy_lock,
-        frenzy_locks: fight.frenzy_locks,
-        buff_cfg: fight.buff_cfg.unwrap_or_default(),
-        infinite_ammo: fight.infinite_ammo,
+            .map(|set| {
+                set.iter()
+                    .map(|id| {
+                        let card = wfsim_engine::data::mods::split_rank(id).0;
+                        let rank = wfsim_engine::data::arcanes::slot_of(card)
+                            .and_then(|s| arcane_at_rank(s, id))
+                            .map_or(0, |(_, r)| r);
+                        (card.to_string(), rank)
+                    })
+                    .unzip()
+            })
+            .collect(),
+        variants: variants
+            .iter()
+            .map(|&(mi, ei, li)| (modes[mi].id.clone(), evo_sets[ei].clone(), valences.get(li).cloned()))
+            .collect(),
+    });
+    // THE OPTIMIZER BUILDS NO FIGHT: a candidate is scored in the fight the
+    // simulator builds from its request (`simulate::Entrant`), prepared once per
+    // variant and arcane, and a build it refuses scores nothing.
+    let scoring = replay.clone();
+    let prepared: Prepared = Default::default();
+    let scenario = Scenario {
+        params: std::sync::Arc::new(move |c: &Candidate, ai: usize| {
+            let key = (c.variant, ai);
+            let held = prepared.lock().ok()?.get(&key).cloned();
+            let entrant = match held {
+                Some(e) => e?,
+                None => {
+                    let e = crate::simulate::Entrant::new(&scoring.shape(c.variant, ai), false).ok().map(std::sync::Arc::new);
+                    prepared.lock().ok()?.insert(key, e.clone());
+                    e?
+                }
+            };
+            let refs = entrant.seat(&scoring.mod_ids(c)).ok()?;
+            entrant.params(&refs).ok().map(|(_, p)| p)
+        }),
+        arena: fight.arena,
         policy: fight.policy,
     };
 
@@ -940,7 +1060,6 @@ pub fn parse_optimize(v: &Value) -> Result<OptimizePlan, Value> {
         exilus_defs,
         arcanes,
         arcane_sets,
-        deployment: deployment.clone(),
         valences: valences.clone(),
         valence_bonus,
         scenario,
@@ -963,35 +1082,8 @@ pub fn parse_optimize(v: &Value) -> Result<OptimizePlan, Value> {
         starts,
         shards: v.get("shards").and_then(|x| x.as_u64()).unwrap_or(1).clamp(1, 64) as u32,
         shard: v.get("shard").and_then(|x| x.as_u64()).unwrap_or(0).min(63) as u32,
-        replay_base: {
-            // A CLONE, not a rebuild. Listing the fields to copy is the mistake
-            // this exists to end — the whole request is the fight plus the
-            // build, `simulate_json` reads exactly the keys it knows and
-            // ignores the rest, so the optimizer's own marks (`arcanes`,
-            // `modes`, `valence`, `exilus`, the budget) simply ride along
-            // inert while `entry` overwrites the axes that differ per row.
-            let mut r = v.clone();
-            if let Some(o) = r.as_object_mut() {
-                // The FINAL ROUND's precision, because that is what the row's
-                // number is the mean of. The fight's own count is what the
-                // replay would otherwise use, and a row measured at one
-                // precision re-run at another is a comparison of two things.
-                o.insert("runs".into(), json!(final_runs));
-                // The one field worth stripping: a resume checkpoint is the
-                // whole surviving field, and twenty rows would each carry a
-                // copy of it.
-                o.remove("__resume");
-                // …and the fleet's traffic, which is the search's, never the build's.
-                o.remove("quick_fleet");
-                // …and a whole scope this parse filled in, which is every card.
-                if whole.is_some() {
-                    for k in ["mods", "exilus", "arcanes", "evolutions", "modes", "valence"] {
-                        o.remove(k);
-                    }
-                }
-            }
-            r
-        },
+        replay_base,
+        replay,
     })
 }
 
@@ -1103,6 +1195,46 @@ fn parse_starts(
     Ok(out)
 }
 
+/// THE FINAL ROUND IS A SIMULATION. Each contender's `replay` goes through
+/// `simulate_json` — the simulator's own function, runs and seed — and the
+/// rows are ranked by what it answers, so a reader who simulates a row's build
+/// gets the row's number to the last digit. A row the simulator refuses keeps
+/// the reason and ranks last.
+fn measured_by_the_simulator(rows: Vec<Value>, finalists: usize, state: &FunnelState) -> Vec<Value> {
+    use std::sync::atomic::Ordering::Relaxed;
+    let mut rows: Vec<Value> = rows
+        .into_iter()
+        .map(|mut row| {
+            let sim = crate::simulate::simulate_json_reporting(&row["replay"], &mut |_, _| {
+                state.sims_done.fetch_add(1, Relaxed);
+            });
+            if sim.get("ok").and_then(Value::as_bool) == Some(false) {
+                row["simulator_error"] = sim.get("error").cloned().unwrap_or(Value::Null);
+                row["kill_progress"] = Value::Null;
+                return row;
+            }
+            for (to, from) in [
+                ("kill_progress", "score"),
+                ("kill_progress_se", "score_se"),
+                ("kills", "kills"),
+                ("kills_min", "kills_min"),
+                ("kills_max", "kills_max"),
+                ("dps", "dps"),
+            ] {
+                row[to] = sim.get(from).cloned().unwrap_or(Value::Null);
+            }
+            row
+        })
+        .collect();
+    let at = |r: &Value, k: &str| r.get(k).and_then(Value::as_f64).unwrap_or(f64::NEG_INFINITY);
+    rows.sort_by(|a, b| at(b, "kill_progress").total_cmp(&at(a, "kill_progress")).then(at(b, "dps").total_cmp(&at(a, "dps"))));
+    rows.truncate(finalists);
+    for (i, r) in rows.iter_mut().enumerate() {
+        r["rank"] = json!(i + 1);
+    }
+    rows
+}
+
 /// GRADE the search against ground truth — the same request, the same plan,
 /// the same fight, answered twice: once by the production search and once by
 /// exhausting the scope and evaluating every job flat.
@@ -1150,7 +1282,6 @@ pub fn grade_optimize(
         scenario,
         final_runs,
         finalists,
-        deployment,
         valences,
         valence_bonus,
         modes,
@@ -1176,15 +1307,15 @@ pub fn grade_optimize(
     // a scope searching three progenitor elements builds three different
     // weapons, and a closure that knew only one would score all of them as the
     // first.
+    // THE SIMULATOR'S BASE (`registry::base_for`) for this variant's element:
+    // parts, deployment and valence exactly as a simulate of the build reads them.
     let deployed = |id: &str, refs: &[&str], val: &str| {
-        let mut b = WeaponBase::from_data(id, true, refs);
-        if !deployment.is_empty() {
-            wfsim_engine::data::weapons::apply_deployment(&mut b, id, &deployment);
+        if val.is_empty() {
+            return crate::registry::base_for(v, id, refs);
         }
-        if !val.is_empty() {
-            wfsim_engine::data::weapons::apply_valence(&mut b, id, val, valence_bonus);
-        }
-        b
+        let mut r = v.clone();
+        r["valence_element"] = json!(val);
+        crate::registry::base_for(&r, id, refs)
     };
 
     // ---- exhaust the scope (the same walk the search starts from) ----
@@ -1194,18 +1325,7 @@ pub fn grade_optimize(
         let (m, set) = (&modes[mi], &evo_sets[ei]);
         let val: &str = valences.get(li).map_or("", String::as_str);
         let refs: Vec<&str> = set.iter().map(String::as_str).collect();
-        let unlocked = match m.unlock_evo.as_deref() {
-            Some(u) => set.iter().any(|e| e == u),
-            None => true,
-        };
-        let (base, base_form) = if unlocked {
-            (
-                deployed(&m.fire_id, &refs, val),
-                m.cycle_from.as_ref().map(|id| deployed(id, &refs, val)),
-            )
-        } else {
-            (deployed(&m.untransformed_id, &refs, val), None)
-        };
+        let base = variant_base(m, &refs, val, &deployed);
         // What THIS variant cannot equip is a forbid like any other: a mod that
         // needs the same trigger on every firing mode is out of the sets that
         // install a second one. The grader must walk exactly the space the
@@ -1234,7 +1354,7 @@ pub fn grade_optimize(
         let (mut c, _stats, complete) = enumerate_candidates_observed(
             &pool,
             &base,
-            base_form.as_ref(),
+            None,
             vi as u32,
             min_slots as u32,
             build_size as u32,
@@ -1273,13 +1393,13 @@ pub fn grade_optimize(
 
     // ---- the reference, twice: a reference that cannot reproduce itself
     // under a second seed has not established anything.
-    let mut a = Truth::measure(&cands, &jobs, &arcanes, &scenario, truth_runs, 0xA11CE);
+    let mut a = Truth::measure(&cands, &jobs, &scenario, truth_runs, 0xA11CE);
     // ONE BUILD TO THE FIGHT IS ONE ROW: jobs that are `one_build` on a paired
     // stream are twins, so a top `k` holding two copies of one build is not
     // counted as knowing two.
     let paired: Vec<(&Candidate, usize)> = jobs.iter().map(|&(ci, ai)| (&cands[ci], ai)).collect();
-    a.merge_twins(&wfsim_optimizer::descent::evaluate_paired(&paired, &arcanes, &scenario, 10, 0x7715));
-    let b = Truth::measure(&cands, &jobs, &arcanes, &scenario, truth_runs, 0xB0B);
+    a.merge_twins(&wfsim_optimizer::descent::evaluate_paired(&paired, &scenario, 10, 0x7715));
+    let b = Truth::measure(&cands, &jobs, &scenario, truth_runs, 0xB0B);
     let answer = a.indistinguishable(3.0);
     let settled = answer.contains(&b.best()) && b.indistinguishable(3.0).contains(&a.best());
     let overlap = a.agrees_with(&b, finalists);
@@ -1301,29 +1421,18 @@ pub fn grade_optimize(
         .collect();
     let space =
         wfsim_optimizer::space::SubsetSpace::new(&families, &usable, &required, min_slots, build_size);
-    let forms: Vec<(WeaponBase, Option<WeaponBase>)> = variants
+    let forms: Vec<WeaponBase> = variants
         .iter()
         .map(|&(mi, ei, li)| {
             let (m, set) = (&modes[mi], &evo_sets[ei]);
             let val: &str = valences.get(li).map_or("", String::as_str);
             let refs: Vec<&str> = set.iter().map(String::as_str).collect();
-            let unlocked = match m.unlock_evo.as_deref() {
-                Some(u) => set.iter().any(|e| e == u),
-                None => true,
-            };
-            if unlocked {
-                (
-                    deployed(&m.fire_id, &refs, val),
-                    m.cycle_from.as_ref().map(|id| deployed(id, &refs, val)),
-                )
-            } else {
-                (deployed(&m.untransformed_id, &refs, val), None)
-            }
+            variant_base(m, &refs, val, &deployed)
         })
         .collect();
     let expand = |subset: &[usize]| -> Vec<Candidate> {
         let mut out = Vec::new();
-        for (vi, (base, base_form)) in forms.iter().enumerate() {
+        for (vi, base) in forms.iter().enumerate() {
             // A mod this variant cannot equip vetoes the (subset, variant)
             // PAIR, not the subset: the same eight mods are a legal build under
             // an evolution set that leaves the Incarnon form out. Indexed by
@@ -1334,7 +1443,7 @@ pub fn grade_optimize(
                 continue;
             }
             wfsim_optimizer::expand_one(
-                &pool, base, base_form.as_ref(), vi as u32, cap, &innate, &exilus_refs,
+                &pool, base, None, vi as u32, cap, &innate, &exilus_refs,
                 subset, &scenario.arena.tenno, scenario.policy, &mut out,
             );
         }
@@ -1359,7 +1468,6 @@ pub fn grade_optimize(
             mode_ids: modes.iter().map(|m| m.id.clone()).collect(),
             valences: &valences,
             valence_bonus,
-            arcanes: &arcanes,
             arcane_sets: &arcane_sets,
             exilus_defs: &exilus_defs,
             exilus_refs: &exilus_refs,
@@ -1375,6 +1483,8 @@ pub fn grade_optimize(
             progress: None,
             lead: false,
             mod_slots: build_size.min(8),
+            screen_ratio: replay_base.get("screen_ratio").and_then(Value::as_f64).unwrap_or(quick::SCREEN_RATIO),
+            keep_ratio: replay_base.get("keep_ratio").and_then(Value::as_f64).unwrap_or(quick::KEEP_RATIO),
         };
         let st = ctx.starts(&starts, wfsim_optimizer::descent::seeds(&space, &pool));
         let (sj, stats, _) = quick::run_quick(&ctx, st, search_evals, None, 0, 1, space.len(), finalists);
@@ -1408,7 +1518,7 @@ pub fn grade_optimize(
         n
     };
     let last = run_funnel(
-        &sc, &arcanes, &scenario, sjobs, &rounds, 0xDEAD_BEEF, false,
+        &sc, &scenario, sjobs, &rounds, 0xDEAD_BEEF, false,
         None, None, 0, None, None,
     );
     // Map each result back to its position in the exhaustive job list BY
@@ -1540,7 +1650,6 @@ pub fn run_optimize_resumable(
         exilus_defs,
         arcanes,
         arcane_sets,
-        deployment,
         valences,
         valence_bonus,
         scenario,
@@ -1563,6 +1672,7 @@ pub fn run_optimize_resumable(
         shard,
         shards,
         replay_base,
+        replay,
     } = plan;
     // Compute budget: 0 = auto (all cores minus two — the machine must stay
     // usable while the search runs). Applies to the screen and every round.
@@ -1588,39 +1698,25 @@ pub fn run_optimize_resumable(
     // a scope searching three progenitor elements builds three different
     // weapons, and a closure that knew only one would score all of them as the
     // first.
+    // THE SIMULATOR'S BASE (`registry::base_for`) for this variant's element:
+    // parts, deployment and valence exactly as a simulate of the build reads them.
     let deployed = |id: &str, refs: &[&str], val: &str| {
-        let mut b = WeaponBase::from_data(id, true, refs);
-        if !deployment.is_empty() {
-            wfsim_engine::data::weapons::apply_deployment(&mut b, id, &deployment);
+        if val.is_empty() {
+            return crate::registry::base_for(&replay_base, id, refs);
         }
-        if !val.is_empty() {
-            wfsim_engine::data::weapons::apply_valence(&mut b, id, val, valence_bonus);
-        }
-        b
+        let mut r = replay_base.clone();
+        r["valence_element"] = json!(val);
+        crate::registry::base_for(&r, id, refs)
     };
     // A VARIANT IS A (MODE, EVOLUTION SET) PAIR, so the forms come from both:
     // the mode says which entries this candidate fires, the set says whether it
     // can reach the second one.
-    let forms_for = |vi: usize, set: &[String], refs: &[&str]| {
+    let forms_for = |vi: usize, _set: &[String], refs: &[&str]| {
         let m = &modes[variants[vi].0];
         // …and WHICH WEAPON this variant is: the progenitor element is the
         // third leg of the triple, so a scope searching several builds several.
         let val: &str = valences.get(variants[vi].2).map_or("", String::as_str);
-        // Can THIS evolution set reach the second form? Without the unlock
-        // there is nothing to transform into, so the candidate is fired in
-        // the form it has and carries no second panel — which is what tells
-        // `evaluate` not to run a cycle for it.
-        let unlocked = match m.unlock_evo.as_deref() {
-            Some(u) => set.iter().any(|e| e == u),
-            None => true,
-        };
-        if !unlocked {
-            return (deployed(&m.untransformed_id, refs, val), None);
-        }
-        (
-            deployed(&m.fire_id, refs, val),
-            m.cycle_from.as_ref().map(|id| deployed(id, refs, val)),
-        )
+        variant_base(m, refs, val, &deployed)
     };
     let cancelled_json = |n_cands: usize| {
         // Cancelled before anything was ranked — a clean empty cancellation.
@@ -1639,67 +1735,19 @@ pub fn run_optimize_resumable(
     // as a completed one — same fields, same renderer.
     let entry = |rank: usize, c: &Candidate, ai: usize, s: &Summary| -> Value {
         let mods: Vec<&str> = c.ordered.iter().map(|&i| pool[i].id).collect();
-        // One id per slot, in pool order — the same shape the builder takes,
+        // One id per seat, with its rank — the same shape the builder takes,
         // because "apply this result" should be a copy and not a translation.
-        let marked: Vec<String> = arcane_sets
-            .get(ai)
-            .cloned()
-            .unwrap_or_else(|| vec!["none".to_string()]);
-        let (ids, ranks): (Vec<String>, Vec<u32>) = marked
-            .iter()
-            .map(|id| {
-                let card = wfsim_engine::data::mods::split_rank(id).0;
-                let rank = wfsim_engine::data::arcanes::slot_of(card)
-                    .and_then(|s| arcane_at_rank(s, id))
-                    .map_or(0, |(_, r)| r);
-                (card.to_string(), rank)
-            })
-            .unzip();
-        // THE ROW, AS A REQUEST THAT REPRODUCES IT. POST this to
-        // `/api/simulate` and the answer is this row's number — no assembly, no
-        // translation, nothing for a caller to forget.
-        //
-        // The named fields below still say what the build IS, because a reader
-        // and a build editor both need that; this says how to RUN it, and it is
-        // the half that must never be reconstructed by hand. See `replay_base`:
-        // everything not overwritten here rode in from the request, so an axis
-        // added tomorrow arrives without this function being touched.
-        let replay = {
-            let mut r = replay_base.clone();
-            if let Some(o) = r.as_object_mut() {
-                // ONE FLAT LIST OF MOD IDS, exilus included — the shape
-                // `simulate_json` reads and the shape the builder's own payload
-                // has. The exilus slot is a slot.
-                let mut all: Vec<&str> = mods.clone();
-                if let Some(m) = exilus_defs[c.exilus as usize].as_ref() {
-                    all.push(m.id);
-                }
-                o.insert("mods".into(), json!(all));
-                o.insert("arcane".into(), json!(ids));
-                o.insert("arcane_rank".into(), json!(ranks));
-                o.insert(
-                    "evolutions".into(),
-                    json!(evo_sets[variants[c.variant as usize].1]),
-                );
-                o.insert("mode".into(), json!(modes[variants[c.variant as usize].0].id));
-                // The ELEMENT is the axis; the BONUS is the scope's and rode in
-                // with the request. A row that is not out of a Lich leaves both
-                // alone.
-                if let Some(el) = valences.get(variants[c.variant as usize].2) {
-                    o.insert("valence_element".into(), json!(el));
-                }
-            }
-            r
-        };
+        let (ids, ranks) = replay.arcane(ai);
+        // THE ROW, AS A REQUEST THAT REPRODUCES IT — the one every candidate
+        // was scored through (`Replay`). POST it to `/api/simulate` and the
+        // answer is this row's number.
+        let replay = replay.request(c, ai);
         json!({
             "rank": rank + 1,
             "kills": s.mean_kills,
             "kill_progress": s.mean_kill_progress,
-            // HOW WELL THE SEARCH KNOWS ITS OWN NUMBER. The page re-measures
-            // this row through `/api/simulate` and shows THAT; this is what
-            // lets it say whether the two disagree by more than the dice.
-            // Without it the comparison needs a hand-picked tolerance, which is
-            // a number that is too tight at 40 runs and too loose at 1000.
+            // HOW WELL THE ROW KNOWS ITS OWN NUMBER: the simulator's own
+            // `score_se` once `measured_by_the_simulator` has run.
             "kill_progress_se": s.std_kill_progress / f64::from(final_runs.max(1)).sqrt(),
             "dps": s.effective_dps,
             "kills_min": s.min_kills,
@@ -1766,7 +1814,7 @@ pub fn run_optimize_resumable(
     // The bases each VARIANT resolves to, built ONCE. `forms_for` reads data
     // and applies the deployment, which is far too expensive to repeat per
     // proposal.
-    let forms: Vec<(WeaponBase, Option<WeaponBase>)> = variants
+    let forms: Vec<WeaponBase> = variants
         .iter()
         .enumerate()
         .map(|(vi, &(_, ei, _))| {
@@ -1781,7 +1829,7 @@ pub fn run_optimize_resumable(
     // stochastic search is how an answer gets lost for no reason.
     let expand = |subset: &[usize]| -> Vec<Candidate> {
         let mut out = Vec::new();
-        for (vi, (base, base_form)) in forms.iter().enumerate() {
+        for (vi, base) in forms.iter().enumerate() {
             // A mod this variant cannot equip vetoes the (subset, variant)
             // PAIR, not the subset: the same eight mods are a legal build under
             // an evolution set that leaves the Incarnon form out. Indexed by
@@ -1794,7 +1842,7 @@ pub fn run_optimize_resumable(
             wfsim_optimizer::expand_one(
                 &pool,
                 base,
-                base_form.as_ref(),
+                None,
                 vi as u32,
                 cap,
                 &innate,
@@ -1847,9 +1895,9 @@ pub fn run_optimize_resumable(
                 continue;
             }
             let refs: Vec<&str> = set.iter().map(String::as_str).collect();
-            let (base, base_form) = forms_for(*variant as usize, set, &refs);
+            let base = forms_for(*variant as usize, set, &refs);
             let Some(c) = wfsim_optimizer::rebuild_candidate(
-                &pool, &base, base_form.as_ref(), &innate, plan.cap, &scenario.arena.tenno, scenario.policy,
+                &pool, &base, None, &innate, plan.cap, &scenario.arena.tenno, scenario.policy,
                 ordered, *variant, *exilus, &exilus_refs,
             ) else { continue };
             if *ai >= arcanes.len() {
@@ -1893,7 +1941,7 @@ pub fn run_optimize_resumable(
             cp(round, started_with, &ids_at(alive), &board_of(alive, n_cands, n_jobs));
         });
         let last = run_funnel(
-            &cands, &arcanes, &scenario, jobs, &rounds, 0xDEAD_BEEF, false,
+            &cands, &scenario, jobs, &rounds, 0xDEAD_BEEF, false,
             Some(state), on_round, r_round,
             wrap.as_ref().map(|f| f as &wfsim_optimizer::CheckpointFn<'_>),
             rboard.as_ref().map(|f| f as &wfsim_optimizer::RoundBoardFn<'_>),
@@ -1937,7 +1985,6 @@ pub fn run_optimize_resumable(
             mode_ids: modes.iter().map(|m| m.id.clone()).collect(),
             valences: &valences,
             valence_bonus,
-            arcanes: &arcanes,
             arcane_sets: &arcane_sets,
             exilus_defs: &exilus_defs,
             exilus_refs: &exilus_refs,
@@ -1953,6 +2000,8 @@ pub fn run_optimize_resumable(
             progress: Some(state),
             lead: fleet.get("lead").is_some(),
             mod_slots: build_size.min(8),
+            screen_ratio: replay_base.get("screen_ratio").and_then(Value::as_f64).unwrap_or(quick::SCREEN_RATIO),
+            keep_ratio: replay_base.get("keep_ratio").and_then(Value::as_f64).unwrap_or(quick::KEEP_RATIO),
         };
             // A FLEET WORKER'S SHARE: score these builds and nothing else.
             if let Some(builds) = fleet.get("score").and_then(Value::as_array) {
@@ -2028,6 +2077,12 @@ pub fn run_optimize_resumable(
             // is the best-so-far leaderboard.
             let n = slast.len();
             (sc, slast, true, n)
+        } else if strategy.as_deref() == Some("quick") {
+            // THE DESCENT'S CONTENDERS GO STRAIGHT TO THE SIMULATOR
+            // (`measured_by_the_simulator`), which is the final round.
+            let n = slast.len();
+            on_enumerated(sc.len(), n);
+            (sc, slast, false, n)
         } else {
             let jobs: Vec<Job> = slast.iter().map(|(j, _)| *j).collect();
             let n = jobs.len();
@@ -2055,7 +2110,7 @@ pub fn run_optimize_resumable(
                 cp(round, n, &ids_at(alive), &board_of_sc(alive, n_sc, n));
             });
             let last = run_funnel(
-                &sc, &arcanes, &scenario, jobs, &rounds, 0xDEAD_BEEF, false,
+                &sc, &scenario, jobs, &rounds, 0xDEAD_BEEF, false,
                 Some(state), on_round,
                 0, // the search always screens first, so the funnel starts fresh
                 wrap.as_ref().map(|f| f as &wfsim_optimizer::CheckpointFn<'_>),
@@ -2068,9 +2123,10 @@ pub fn run_optimize_resumable(
 
     // ---- the finalists leaderboard (on cancel: the last completed
     // round's top slice — intermediate rounds can be huge) ----
+    let measure = strategy.as_deref() == Some("quick") && !cancelled;
     let results: Vec<Value> = last
         .iter()
-        .take(finalists)
+        .take(if measure { usize::MAX } else { finalists })
         .enumerate()
         .map(|(rank, ((ci, ai), s))| {
             let mut row = entry(rank, &cands[*ci], *ai, s);
@@ -2090,6 +2146,7 @@ pub fn run_optimize_resumable(
             row
         })
         .collect();
+    let results = if measure { measured_by_the_simulator(results, finalists, state) } else { results };
 
     // WHAT THE SEARCH ACTUALLY COVERED. A run that did not reach the end of
     // its space has not searched the scope it was given, and it must not read
@@ -2931,11 +2988,14 @@ mod whole_scope_tests {
         // Three elements pinned: several element orders, so a worker's choice
         // of order is part of what has to reach the leader intact.
         let three = json!([{ "kind": "mods", "idx": 0 }, { "kind": "mods", "idx": 1 }, { "kind": "mods", "idx": 2 }]);
+        // At ten runs a candidate the step screen is on, and its short
+        // measurements travel the fleet as `{build, runs}` items too.
+        for candidate_runs in [1, 10] {
         let req = json!({
             "weapon": "braton_prime", "enemy": "thrax_centurion", "level": 100,
-            "duration": 5.0, "runs": 4, "final_runs": 4, "finalists": 2,
-            "candidate_runs": 1, "strategy": "quick",
-            "starts": [start(json!([]), json!([])), start(json!(["hellfire", "infected_clip", "stormbringer"]), three)],
+            "duration": 5.0, "runs": 4, "finalists": 2,
+            "candidate_runs": candidate_runs, "strategy": "quick",
+            "starts": [start(json!([]), json!([])), start(json!(["hellfire", "infected_clip", "stormbringer"]), three.clone())],
         });
         let alone = run_optimize(parse_optimize(&req).unwrap(), &FunnelState::default(), |_, _| {}, None);
         let with = |fleet: Value| {
@@ -2959,7 +3019,34 @@ mod whole_scope_tests {
             v["results"].as_array().unwrap().iter().map(|r| json!([r["mods"], r["arcane"], r["evolutions"], r["from_starts"], r["near"]])).collect()
         };
         assert!(steps > 1, "the leader paused {steps} times");
-        assert_eq!(rows(&led), rows(&alone), "after {steps} steps");
+        assert_eq!(rows(&led), rows(&alone), "candidate_runs {candidate_runs}, after {steps} steps");
+        }
+    }
+
+    /// THE ROW IS THE SIMULATOR'S NUMBER: a row's `replay`, simulated, answers
+    /// its kill progress to the last digit, at the fight's own runs, and the
+    /// rows are ranked by it — with the step screen on.
+    #[test]
+    fn a_quick_row_is_the_simulators_own_number() {
+        let blank = json!({ "slots": [], "evolutions": [], "arcane": [], "fixed": [] });
+        let req = json!({
+            "weapon": "braton_prime", "enemy": "thrax_centurion", "level": 100,
+            "duration": 5.0, "runs": 6, "final_runs": 40, "finalists": 3,
+            "candidate_runs": 10, "strategy": "quick", "starts": [blank],
+        });
+        let out = run_optimize(parse_optimize(&req).unwrap(), &FunnelState::default(), |_, _| {}, None);
+        assert_eq!(out["ok"], json!(true), "{out}");
+        assert_eq!(out["final_runs"], json!(6), "a final_runs of its own is not obeyed: {out}");
+        let rows = out["results"].as_array().unwrap();
+        assert!(!rows.is_empty(), "{out}");
+        for r in rows {
+            assert_eq!(r["replay"]["runs"], json!(6), "{r}");
+            let sim = crate::simulate::simulate_json(&r["replay"]);
+            assert_eq!(sim["score"], r["kill_progress"], "rank {}: the simulator answers otherwise", r["rank"]);
+            assert_eq!(sim["dps"], r["dps"], "rank {}", r["rank"]);
+        }
+        let kp: Vec<f64> = rows.iter().map(|r| r["kill_progress"].as_f64().unwrap()).collect();
+        assert!(kp.windows(2).all(|w| w[0] >= w[1]), "ranked by the simulator's number: {kp:?}");
     }
 
     /// A LIMIT IS NEVER CROSSED: an excluded card, arcane or evolution is in no

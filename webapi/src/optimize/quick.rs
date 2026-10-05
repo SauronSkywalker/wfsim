@@ -73,6 +73,11 @@ pub(crate) struct Fleet {
     candidates: HashMap<(QBuild, Position), Vec<QBuild>>,
     legal: HashMap<QBuild, bool>,
     pending: Vec<QBuild>,
+    /// The step screen's short scores, by key, and the builds still waiting
+    /// for one — each handed out with its own run count, so the page passes
+    /// the batch through without knowing a screen exists.
+    rough: HashMap<String, Score>,
+    pending_rough: Vec<(QBuild, u32)>,
     missed: bool,
     /// Where each start stood when the last call ended.
     progress: Value,
@@ -88,14 +93,13 @@ pub(crate) struct QuickCtx<'a> {
     /// Per pool index: not forbidden by the scope.
     pub(crate) usable: Vec<bool>,
     pub(crate) required: Vec<usize>,
-    pub(crate) forms: &'a [(wfsim_engine::model::WeaponBase, Option<wfsim_engine::model::WeaponBase>)],
+    pub(crate) forms: &'a [wfsim_engine::model::WeaponBase],
     pub(crate) variants: &'a [(usize, usize, usize)],
     pub(crate) variant_forbids: &'a [Vec<bool>],
     pub(crate) evo_sets: &'a [Vec<String>],
     pub(crate) mode_ids: Vec<String>,
     pub(crate) valences: &'a [String],
     pub(crate) valence_bonus: f64,
-    pub(crate) arcanes: &'a [wfsim_engine::data::arcanes::ArcaneFx],
     pub(crate) arcane_sets: &'a [Vec<String>],
     pub(crate) exilus_defs: &'a [Option<ModDef>],
     pub(crate) exilus_refs: &'a [Option<&'a ModDef>],
@@ -122,7 +126,19 @@ pub(crate) struct QuickCtx<'a> {
     pub(crate) lead: bool,
     /// How many of the eight main slots a build may fill (`build_size`).
     pub(crate) mod_slots: usize,
+    /// THE SCREEN: a step's new candidates first fight `screen_ratio × runs`,
+    /// and the best `keep_ratio` of them go on to `runs`. 0 = no screen.
+    pub(crate) screen_ratio: f64,
+    pub(crate) keep_ratio: f64,
 }
+
+/// THE STEP SCREEN (docs/OPTIMIZER.md, "Each step is screened"): a step's new
+/// candidates first fight this share of `candidate_runs`, and this share of
+/// them is measured in full. Over five weapons at 0.2 / 0.2 every answer was
+/// the unscreened search's own, for a quarter to a third of its full
+/// evaluations.
+pub(crate) const SCREEN_RATIO: f64 = 0.2;
+pub(crate) const KEEP_RATIO: f64 = 0.2;
 
 /// Jobs scored between progress updates: small enough that a single-threaded
 /// browser worker reports every few seconds, large enough to keep cores busy.
@@ -151,12 +167,12 @@ impl QuickCtx<'_> {
             return Vec::new();
         }
         subset.sort_unstable();
-        let (base, second) = &self.forms[vi];
+        let base = &self.forms[vi];
         let mut out = Vec::new();
         wfsim_optimizer::expand_one(
             self.pool,
             base,
-            second.as_ref(),
+            None,
             vi as u32,
             self.cap,
             self.innate,
@@ -509,6 +525,40 @@ impl QuickSpace for QuickCtx<'_> {
         self.lead && FLEET.with(|f| f.borrow().missed)
     }
 
+    /// Below two fights there is no spread to rank by, and at `runs` or more
+    /// the screen is the full measurement — either way, no screen.
+    fn screen(&self, bs: &[QBuild]) -> Option<Vec<Score>> {
+        let short = (self.screen_ratio * f64::from(self.runs)).ceil() as u32;
+        if self.keep_ratio <= 0.0 || short < 2 || short >= self.runs {
+            return None;
+        }
+        if !self.lead {
+            return Some(self.score_orders_at(bs, short).into_iter().map(|(s, _, _)| s).collect());
+        }
+        FLEET.with(|f| {
+            let mut f = f.borrow_mut();
+            f.missed = false;
+            let mut out = Vec::with_capacity(bs.len());
+            for b in bs {
+                match f.rough.get(&self.key(b)) {
+                    Some(&s) => out.push(s),
+                    None => {
+                        f.missed = true;
+                        if !f.pending_rough.iter().any(|(x, _)| x == b) {
+                            f.pending_rough.push((b.clone(), short));
+                        }
+                        out.push(None);
+                    }
+                }
+            }
+            Some(out)
+        })
+    }
+
+    fn keep_ratio(&self) -> f64 {
+        self.keep_ratio
+    }
+
     /// ORDER-BLIND: the cards as a set, since a build scores at its best order.
     fn key(&self, b: &QBuild) -> String {
         let mut mods: Vec<&str> = b.mods.iter().flatten().map(|&i| self.pool[i].id).collect();
@@ -614,6 +664,12 @@ impl QuickCtx<'_> {
     /// Every build's score at its best element order, and WHICH order that is
     /// (its index in [`Self::orders`]) — what a fleet worker hands back.
     fn score_orders(&self, bs: &[QBuild]) -> Vec<(Score, usize, f64)> {
+        self.score_orders_at(bs, self.runs)
+    }
+
+    /// [`Self::score_orders`] at `runs` fights a candidate, on the same seed —
+    /// the screen's short count is the first `runs` of the full paired stream.
+    fn score_orders_at(&self, bs: &[QBuild], runs: u32) -> Vec<(Score, usize, f64)> {
         let orders: Vec<Vec<Candidate>> = bs.iter().map(|b| self.orders(b)).collect();
         let jobs: Vec<(&Candidate, usize)> = orders
             .iter()
@@ -621,13 +677,13 @@ impl QuickCtx<'_> {
             .flat_map(|(os, b)| os.iter().map(move |c| (c, b.arcane)))
             .collect();
         use std::sync::atomic::Ordering::Relaxed;
-        self.sims.fetch_add(jobs.len() as u64 * u64::from(self.runs), Relaxed);
+        self.sims.fetch_add(jobs.len() as u64 * u64::from(runs), Relaxed);
         // One seed for every chunk, so the chunks stay one paired stream.
         let mut sums = Vec::with_capacity(jobs.len());
         for chunk in jobs.chunks(PROGRESS_CHUNK) {
-            sums.extend(wfsim_optimizer::descent::evaluate_paired(chunk, self.arcanes, self.scenario, self.runs, self.seed));
+            sums.extend(wfsim_optimizer::descent::evaluate_paired(chunk, self.scenario, runs, self.seed));
             if let Some(p) = self.progress {
-                p.sims_done.fetch_add(chunk.len() as u64 * u64::from(self.runs), Relaxed);
+                p.sims_done.fetch_add(chunk.len() as u64 * u64::from(runs), Relaxed);
             }
             wfsim_optimizer::tick();
         }
@@ -658,18 +714,34 @@ impl QuickCtx<'_> {
     }
 
     /// A fleet worker's share of a batch: each build's score and best order.
+    /// An item is a build, scored at `runs`, or `{build, runs}` — a step
+    /// screen's short measurement, answered with `rough: true`.
     pub(crate) fn score_json(&self, builds: &[Value]) -> Value {
-        let bs: Vec<QBuild> = builds.iter().filter_map(QBuild::from_json).collect();
+        let mut groups: Vec<(u32, Vec<QBuild>)> = Vec::new();
+        for item in builds {
+            let (b, runs) = match item.get("build") {
+                Some(b) => (b, item.get("runs").and_then(Value::as_u64).map_or(self.runs, |r| r as u32)),
+                None => (item, self.runs),
+            };
+            let Some(b) = QBuild::from_json(b) else { continue };
+            match groups.iter_mut().find(|(r, _)| *r == runs) {
+                Some((_, g)) => g.push(b),
+                None => groups.push((runs, vec![b])),
+            }
+        }
         let before = self.sims.load(std::sync::atomic::Ordering::Relaxed);
-        let got = self.score_orders(&bs);
+        let mut rows: Vec<Value> = Vec::new();
+        for (runs, bs) in &groups {
+            let got = self.score_orders_at(bs, *runs);
+            rows.extend(bs.iter().zip(got).map(|(b, (s, oi, sd))| {
+                let mut row = json!({ "key": self.key(b), "score": s.map(|(k, e)| json!([k, e])), "order": oi, "sd": sd });
+                if *runs != self.runs {
+                    row["rough"] = json!(true);
+                }
+                row
+            }));
+        }
         let fights = self.sims.load(std::sync::atomic::Ordering::Relaxed) - before;
-        let rows: Vec<Value> = bs
-            .iter()
-            .zip(got)
-            .map(|(b, (s, oi, sd))| {
-                json!({ "key": self.key(b), "score": s.map(|(k, e)| json!([k, e])), "order": oi, "sd": sd })
-            })
-            .collect();
         json!({ "ok": true, "scores": rows, "fights": fights })
     }
 
@@ -682,9 +754,14 @@ impl QuickCtx<'_> {
                 *f = Fleet::default();
             }
             f.pending.clear();
+            f.pending_rough.clear();
             for r in scores {
                 let Some(key) = r.get("key").and_then(Value::as_str) else { continue };
                 let s = r.get("score").and_then(Value::as_array).and_then(|a| Some((a.first()?.as_f64()?, a.get(1)?.as_f64()?)));
+                if r.get("rough").and_then(Value::as_bool) == Some(true) {
+                    f.rough.insert(key.to_string(), s);
+                    continue;
+                }
                 let oi = r.get("order").and_then(Value::as_u64).unwrap_or(0) as usize;
                 let sd = r.get("sd").and_then(Value::as_f64).unwrap_or(0.0);
                 f.scores.insert(key.to_string(), (s, oi, sd));
@@ -697,10 +774,12 @@ impl QuickCtx<'_> {
     pub(crate) fn lead_pending() -> Option<Value> {
         FLEET.with(|f| {
             let f = f.borrow();
-            (!f.pending.is_empty()).then(|| {
+            (!f.pending.is_empty() || !f.pending_rough.is_empty()).then(|| {
+                let full = f.pending.iter().map(QBuild::to_json);
+                let short = f.pending_rough.iter().map(|(b, runs)| json!({ "build": b.to_json(), "runs": runs }));
                 json!({
                     "ok": true,
-                    "pending": f.pending.iter().map(QBuild::to_json).collect::<Vec<_>>(),
+                    "pending": full.chain(short).collect::<Vec<_>>(),
                     "scored": f.scores.len(),
                     "progress": f.progress,
                 })
@@ -858,7 +937,7 @@ pub(crate) fn run_quick(
         built.push((c, b.arcane));
     }
     let jobs: Vec<(&Candidate, usize)> = built.iter().map(|(c, a)| (c, *a)).collect();
-    let sums = wfsim_optimizer::descent::evaluate_paired(&jobs, ctx.arcanes, ctx.scenario, ctx.runs, ctx.seed);
+    let sums = wfsim_optimizer::descent::evaluate_paired(&jobs, ctx.scenario, ctx.runs, ctx.seed);
     let screened = built
         .into_iter()
         .zip(sums)

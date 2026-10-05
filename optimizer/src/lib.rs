@@ -42,7 +42,7 @@ pub use enumerate::{
     rebuild_candidate, Candidate, Constraints, EnumStats,
 };
 pub(crate) use evaluate::job_seed;
-pub use evaluate::{evaluate, evaluate_batch, Job, Scenario};
+pub use evaluate::{evaluate, evaluate_batch, Job, ParamsFn, Scenario};
 pub(crate) use funnel::Scored;
 pub use funnel::{
     run_funnel, schedule, schedule_to, CheckpointFn, FunnelState, RoundBoardFn, RoundNote,

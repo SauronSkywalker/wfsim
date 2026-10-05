@@ -321,12 +321,11 @@ rulers' 1000 so a first number is comparable with the board without touching a
 box (1.3 s a run in the shipping build, against 0.14 s at 100). The quick calc
 takes its own with a FLOOR of 10, where a status mod stops being a coin flip
 (M24: one run swings it ±39 points), and a number under it is raised rather
-than obeyed. The optimizer's final round takes its own too, and it is a
-PREFERENCE: typed, never blank, in the run bar and in NEITHER preset. It
-asserts the number on screen is the number sent, that the box is in the run
-bar, that `snapshotOpt` does not carry it, that
-restoring a scope leaves it where the reader put it — and, its negative
-control, that the CPU threads box is gone and no `threads` reaches the request.
+than obeyed. The optimizer has no count of its own — its final round is a
+simulation at the simulator's — so it asserts there is no final-round box, no
+`final_runs` in the request, that the request carries the simulator's runs and
+follows them when they change — and, its negative control, that the CPU
+threads box is gone and no `threads` reaches the request.
 
 ## `check_arena`
 
@@ -593,6 +592,14 @@ another changed; Done writes both into the start, Discard leaves it as it was,
 and each time the player's build and preset come back with identical contents.
 An optimize from the start is a quick descent whose every answer keeps the
 pinned card.
+
+## `check_result_to_start`
+
+"Send this build to the optimizer" adds the build the shown result MEASURED as
+a start — the copy taken when the run was sent — and opens the optimizer: a
+short fight is run, a card changed afterwards, and the new start holds the
+measured cards and not the edited ones. Sending it again through the door
+(`simulator.result.send`) adds no second copy.
 
 ## `check_search`
 

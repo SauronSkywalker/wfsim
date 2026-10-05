@@ -256,7 +256,7 @@ const opt = await evaluate(`(async () => {
       valence: marks,
       valence_element: 'impact', valence_bonus: 0.6,
       ...theFight(),
-      duration: 8, runs: 2, final_runs: 2, finalists: 3, threads: 1, buffs: {},
+      duration: 8, runs: 2, finalists: 3, threads: 1, buffs: {},
       strategy: 'exhaust',
     };
     const r = await postJson('/api/optimize', body);
@@ -316,7 +316,7 @@ const added = await evaluate(`(async () => {
     valence: { magnetic: 'fixed' },
     valence_element: opened, valence_bonus: 0.6,
     ...theFight(),
-    duration: 8, runs: 2, final_runs: 2, finalists: 3, threads: 1, buffs: {},
+    duration: 8, runs: 2, finalists: 3, threads: 1, buffs: {},
   };
   const r0 = await postJson('/api/optimize', body);
   let s = r0;

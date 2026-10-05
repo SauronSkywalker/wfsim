@@ -1189,10 +1189,7 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
    not, which is the one state a reader must never have to discover with a
    stopwatch. Recessive until it is the second one. */
 .opt-head .opt-repro{font-size:11px;font-weight:700;margin-left:4px}
-.opt-head .opt-repro.pending,.opt-head .opt-repro.stale{color:var(--muted);opacity:.5}
-.opt-head .opt-repro.ok{color:var(--good-text)}
-.opt-head .opt-repro.off,.opt-head .opt-repro.failed{color:var(--critical)}
-.opt-row.opt-unreproduced{outline:1px solid var(--critical);outline-offset:2px;border-radius:6px}
+.opt-head .opt-repro.failed{color:var(--critical)}
 .opt-head .opt-dps{font-size:12px;color:var(--text-2);font-variant-numeric:tabular-nums}
 /* The engagement TOTAL, beside the rate — recessive, like a unit suffix. */
 .opt-head .opt-total{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}

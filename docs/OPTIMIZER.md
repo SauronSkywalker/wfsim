@@ -148,7 +148,7 @@ fold:
                   · ② limits                  — what a search preset saves
 ▶ THE FIGHT       the scenario, a link to edit it in the Simulator, and the
                   fight as a card (`fightCardHtml`) with no control in it
-★ OPTIMIZE        run · runs per candidate · final-round runs · the estimate,
+★ OPTIMIZE        run · runs per candidate · the estimate,
                   then the progress and the results
 ```
 
@@ -156,13 +156,13 @@ fold:
 |---|---|---|
 | the starts, runs per candidate | the SEARCH preset | decisions about one search |
 | the fight, the player, the buffs | the SCENARIO preset, read here as a card | the winner is scored under the fight the replay runs |
-| the final round's run count | **neither** — `OPT_RUNS_KEY`, a preference | how hard to measure right now is the reader's |
+| the final round's run count | the simulator's Runs (`simRuns()`) | the final round IS a simulation |
 | how many cores to use | **neither** — the topbar's compute share | one setting for the whole page |
 
 There is no scope to mark: what may change is what the quick calc offers, and
-a pin on a start is the one way to keep something. The final-round count can
-differ from the simulator's, so every row is re-run through `/api/simulate`
-and marked `≠` when the two disagree by more than 4σ of their standard errors.
+a pin on a start is the one way to keep something. The final round is the
+simulator's own run (§"The answer"), so a row's number is what simulating its
+build answers.
 
 **The stance slot is not searched.** A stance decides what the weapon swings
 (Crushing Ruin against Shattering Storm is 1,275 against 1,162 DPS on the same
@@ -190,32 +190,23 @@ The same list decides what the board's intake asks — docs/BOARD.md §Rivens.
 
 ## The search and the replay must be the SAME fight
 
-Three ways they were not, all found by running one build through both:
+**THE OPTIMIZER BUILDS NO FIGHT.** A candidate is a request — `Replay::request`,
+the function a row's `replay` comes from — and it is scored by
+`simulate::ready` on that request, the one construction `/api/simulate` and
+`/api/log` run. `Scenario.params` is that call, and the optimizer crate holds
+no fight term of its own: the reserve, the ammo economy, Frenzy, a melee
+Incarnon's window, a Tome's cycle, a kitgun's parts, the roster, the arcane's
+stack policy are all the simulator's, so none can be missing from the search.
+A build the simulator refuses scores nothing (`Summary::refused`). A test or
+the CLI, which have no simulator to call, state their own fight
+(`Scenario::from_panels`); the product never does.
 
-| what | the simulator | the optimizer (was) |
-|---|---|---|
-| `infinite_ammo` | applied — `infinite_reserve = infinite_ammo \|\| !panel.finite_reserve` | IGNORED; the panel's own reserve stood |
-| `StackPolicy` for a SENTINEL | `BaseOnly` — nothing on the field triggers a companion gun's conditionals | `Emergent`, hardcoded |
-| the Incarnon-form unlock | applied only when the request CARRIED an `evolutions` key | applied unconditionally |
+A candidate's PANEL is still resolved at enumeration, for legality and dedup
+only, from the simulator's own base (`registry::base_for`).
 
-The first is why the search reported LOWER: Larkspur Prime bare, Thrax Lv 300
-SP, 300 s — **0.301 with a reserve, 0.149 without**, and the optimizer always
-searched it without. Now 0.30085 vs 0.30074, which is seed noise.
-
-The third produced an eye-watering 8x for anything that skipped the key — the
-Torid's cycle for free (5.400 vs 0.663). The web always sent it, so only the
-CLI, the API and anyone testing by hand ever saw it. The guard is gone: no
-unlock, no transformation, whoever is asking.
-
-`Scenario` carries `infinite_ammo` and `policy` now, so a scenario fact the
-simulator applies has a field the optimizer applies it from — the two cannot
-drift by omission again.
-
-It carries `also_acting` for the same reason: a fight holds n guns, and a
-squad kills faster, so what an uptime mod is worth moves with it. The roster
-is resolved ONCE per plan (`seats_beside`, the same function `/api/simulate`
-and `/api/log` go through) and cloned onto every candidate — a seat is not a
-search dimension, only the open build is.
+Going through the request costs 5–25% CPU per search over a hand-built fight
+(five weapons, 10 runs a candidate), and every answer was unchanged where the
+two already agreed.
 
 ## …AND SO MUST THE BUILD
 
@@ -255,16 +246,16 @@ translation, which the rule above never covered.
 `entry()` emits `replay`: a complete simulate request, built by cloning the
 optimize request and overwriting only the axes the search ranged over. Cloning
 rather than assembling is the whole trick — every field that reaches the
-optimizer rides along, including ones nobody has invented yet — and `runs`
-becomes the final round's, so the row's precision is the replay's precision.
+optimizer rides along, including ones nobody has invented yet — and `runs` is
+the fight's own, so the row's precision is the replay's precision.
 POST it and you get the row's number, with no assembly at any caller.
 
-**And the ranking reports the simulator.** Each row is re-run through
-`/api/simulate` and the KPM on screen is what came back, marked ✓. The search's
-own figure keeps exactly one job — ordering the list — and the two are compared
-at 4σ of their combined standard errors (`kill_progress_se` on the row,
-`score_se` from the sim), so a divergence is arithmetic rather than a tolerance
-somebody chose. A row that fails it is marked `≠`.
+**And the quick search's final round IS the simulator.** Each contender's
+`replay` goes through `simulate_json` and the row's number and rank are what it
+answers (`measured_by_the_simulator`), so simulating a row's build reproduces it
+to the last digit (`a_quick_row_is_the_simulators_own_number`). The other
+strategies keep a funnel final round, and `check_opt_replay` compares their
+rows with the simulator at 4σ of the two standard errors.
 
 That comparison is the durable part. Every earlier guard was a LIST of axes,
 and a list has to be maintained by whoever adds the fifth; this one is an
@@ -511,8 +502,9 @@ stays searchable.
    locks it for every start). An id outside the scope is refused, not
    dropped: a start that silently lost its pin searches something the player
    did not ask for. Without any, there is one start per primary element, one
-   card each; the fill picks the partner, and which card does not matter,
-   because the sweep upgrades it. ONE start holding all four is the wrong
+   card each — the element's DUAL-STAT card (element plus status chance, Rime
+   Rounds' shape, which every class has per element), the strongest carrier
+   only where there is none; the fill picks the partner. ONE start holding all four is the wrong
    shape: shedding an element costs its combination before the freed slot
    pays, so it stalls (49% regret below).
 2. **Fill**: add the best card until the build is full.
@@ -651,6 +643,22 @@ above runs only when a tool asks for it by name.
 3. The best legal candidate that beats the build replaces it, and the sweep
    restarts at the first position.
 
+### Each step is screened
+
+Step 2 measures in full only what a SHORT measurement cannot rule out. A
+step's candidates with no full score yet first fight ⌈`SCREEN_RATIO` ×
+`candidate_runs`⌉ on the same paired stream, and the best ⌈`KEEP_RATIO` × k⌉ of
+those k go on to `candidate_runs`; the rest keep only their short score, so
+they are never a move and never on the list. Both ratios are 0.2
+(`webapi::optimize::quick`), overridable per request (`screen_ratio`,
+`keep_ratio`). Below two short fights there is no spread to rank by, so at
+`candidate_runs` under 6 there is no screen. On the fleet a short measurement
+is a pending item of its own, `{build, runs}`, answered `rough`.
+
+Measured over Rubico Prime, Torid, Kuva Nukor, Sancti Magistar and Acceltra
+Prime at 10 runs: every answer was the unscreened search's own, for 23–36% of
+its full evaluations (CPU, measured at a keep of 0.25: 26–39% less).
+
 The FILL is one pass in the same order, before any sweep. It fills what the
 start left EMPTY (a mod slot: its best legal candidate) and what it did not
 NAME (a mode, an evolution tier, the valence, an arcane seat, the exilus: the
@@ -680,9 +688,9 @@ the work from 6,569 builds to 1,876 and reached the same build.
   the answer itself off the list.
 - **THE CONTENDERS** are the pool's best N and every one below that ties the
   N-th — `tied_at_the_line`, the funnel's own cut: ±3·SE from the pooled σ of
-  kill progress, capped at 2N. They go STRAIGHT TO THE FINAL ROUND at
-  `final_runs`; a 1-run round in front of it would re-rank them on less than
-  they were chosen by. The best N of that round are the rows.
+  kill progress, capped at 2N. They go STRAIGHT TO THE SIMULATOR: each one's
+  `replay` is simulated at the fight's own runs, and the best N by what it
+  answers are the rows.
 - A row a start settled on carries `from_starts` — per start, its score before
   the descent and the changes it took. Any other row carries `near`: the
   starts of the answer on the list it is nearest to, and `changes`, one
@@ -780,12 +788,9 @@ only the ranged axes are overwritten. POST it and you get the row's number.
 "+ add" applies it through `stateFromBuild`, the inverse of `buildPayload` and
 the ONLY translation between a request and the page; the pair round-trips.
 
-AND THE RANKING REPORTS THE SIMULATOR. Each row is re-run through
-`/api/simulate` and the KPM on screen is what came back, with a ✓. The
-search's own figure keeps one job — ORDERING the list — and the two are
-compared at 4σ of the two standard errors, both of which the server reports,
-so "they disagree" is arithmetic rather than a tolerance somebody picked. A
-row that fails it is marked `≠`.
+AND THE RANKING IS THE SIMULATOR'S: the quick search's final round simulates
+each contender's `replay`, so the page shows that number and has nothing to
+re-run.
 
 ## A build’s axes are declared once — in the engine
 
@@ -812,7 +817,7 @@ the simulator does not — or omits that the simulator applies — scores builds
 nobody can reproduce. The optimizer must CALL the simulator's code and add
 only its own scope and budget. `parse_fight` is that shared parse:
 `simulate_json` reads `replay` and nothing else; `parse_optimize` reads
-`build_size`, `build_min`, `finalists`, `final_runs`, `deployment` and nothing
+`build_size`, `build_min`, `finalists`, `deployment` and nothing
 else. Neither builds a second Tenno. Anything that is a property of the FIGHT
 goes in `parse_fight`. A shared helper is not enough — the DECISIONS around it
 have to be shared too.

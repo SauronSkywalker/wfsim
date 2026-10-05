@@ -2,11 +2,7 @@
 //! `/api/log`: the combat record of one engagement, on the wire.
 
 use serde_json::{json, Value};
-use wfsim_engine::model::ModDef;
-use crate::fight::{Fight, parse_fight};
 use crate::request::{get_f64, r1, r3};
-use crate::rivens::mod_pool_with_rivens;
-use crate::simulate::{AmmoEconomy, sim_params};
 
 /// THE COMBAT RECORD of one engagement — see [`wfsim_engine::record`].
 ///
@@ -25,49 +21,13 @@ use crate::simulate::{AmmoEconomy, sim_params};
 /// `run: [hi, lo]` from that call's answer, and optionally `from`, `to`,
 /// `body` and `limit`. Same fight + same run = the same numbers, bit for bit.
 pub fn log_json(v: &Value) -> Value {
-    let fight = match parse_fight(v) {
-        Ok(f) => f,
+    // THE FIGHT `simulate` MEASURED, through the one construction it runs —
+    // the whole roster included: a record drawn from the wielder alone is a
+    // true record of a different engagement.
+    let crate::simulate::Ready { params, seat_weapons, .. } = match crate::simulate::ready(v, false) {
+        Ok(r) => r,
         Err(e) => return e,
     };
-    let Fight {
-        info, policy, buff_cfg, denied_buff_triggers, arena, evos, cycle_from,
-        single_form, tenno,
-        infinite_ammo, ammo_drops, pickup_range_m, landscape,
-        frenzy_single, frenzy_locks, cycle_frenzy_lock, ..
-    } = fight;
-    let ammo = AmmoEconomy { drops: ammo_drops, pickup_range_m, landscape };
-    let evo_refs: Vec<&str> = evos.iter().map(String::as_str).collect();
-    let mod_ids: Vec<String> = v
-        .get("mods")
-        .and_then(|x| x.as_array())
-        .map(|a| a.iter().filter_map(|m| m.as_str().map(String::from)).collect())
-        .unwrap_or_default();
-    let pool = mod_pool_with_rivens(v, info, &evo_refs);
-    let refs: Vec<&ModDef> = mod_ids
-        .iter()
-        .filter_map(|id| pool.iter().find(|m| m.id == *id))
-        .collect();
-    let (_, mut params) = match sim_params(
-        v, info, policy, &evo_refs, &refs, &tenno, &arena,
-        cycle_from, single_form, infinite_ammo, ammo, frenzy_single, cycle_frenzy_lock,
-        &frenzy_locks,
-    ) {
-        Ok(p) => p,
-        Err(e) => return e,
-    };
-    // THE WHOLE ROSTER, because this replays the fight `simulate` measured. A
-    // record drawn from the wielder alone is a true record of a different
-    // engagement, which is the one kind of wrong nothing in it contradicts.
-    let seat_weapons = match crate::simulate::seat_the_rest(&mut params, v, &arena, info) {
-        Ok(w) => w,
-        Err(e) => return e,
-    };
-    if let Some(cfg) = &buff_cfg {
-        params.apply_buff_config(cfg);
-    }
-    // AFTER the cards: a card may open an on-kill buff at five stacks, and a
-    // fight with no kills does not owe them.
-    params.deny_buff_triggers(&denied_buff_triggers);
 
     // THE RUN, as two u32 halves — see the `run` key `/api/simulate` answers
     // with. A caller that sends none gets the run that state 0 produces, which

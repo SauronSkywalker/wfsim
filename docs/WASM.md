@@ -242,12 +242,15 @@ into steps the PAGE drives (`woptQuickFleet`):
    lists and legality are cached between calls (`Fleet`, a thread-local that
    lives as long as the worker). A start that reaches builds nobody has scored
    PAUSES and the next start runs, so one call returns every start's next
-   batch: `{ pending: [...] }`.
+   batch: `{ pending: [...] }`. An item is a build, or `{build, runs}` — a
+   step screen's short measurement (docs/OPTIMIZER.md, "Each step is
+   screened"), answered `rough: true`; the page passes both through unread.
 2. The page splits the batch across all workers, the leader included:
    `quick_fleet: { score: [...] }` → each build's score and the element order
    it scored best at.
-3. The scores go back to the leader. When no start pauses, the leader runs
-   the final round itself and answers with the ordinary result.
+3. The scores go back to the leader. When no start pauses, the leader
+   simulates the contenders — the final round is the simulator's — and
+   answers with the ordinary result.
 
 Every build is scored on the one paired stream wherever it runs, so the fleet
 lands exactly where one process does

@@ -280,8 +280,8 @@ const agentBarArg = { kind: "string", required: true, what: "which bar", enum: (
 /// A SEARCH'S ANSWER as a caller reads it: the ranking the page draws, with
 /// mods named, and where each row came from — the starts that settled on it, or
 /// the answer it is nearest to and what differs, the row's own line on the page.
-/// The page re-measures each row in the simulator after drawing it, so a caller
-/// that wants the number to quote saves the row and runs the fight.
+/// A finished run's numbers are the simulator's own (the server's final round
+/// IS a simulation); a cancelled run's are the search's.
 function agentSearchResults(limit) {
   const r = optLast;
   const named = (id) => {
@@ -316,7 +316,7 @@ function agentSearchResults(limit) {
       ? { covered: `the best ${r.finalists || rows.length} of every build a descent from ${r.starts || 0} starts scored${r.cut ? ", cut by the time budget" : ", every start settled"} — not a proven best` }
       : r.exhaustive ? { covered: "every candidate" } : r.coverage != null ? { covered: `${Math.round(r.coverage * 1000) / 10}% of ${r.space} candidates, sampled uniformly` } : {}),
     results: rows,
-    note: "search numbers; the simulator re-measures a saved row",
+    note: r.cancelled ? "search numbers: the run stopped before the simulator measured them" : "the simulator's own numbers for these builds",
   };
 }
 
@@ -335,7 +335,6 @@ const AGENT_EXEMPT = [
   { sel: "#nona-fab", kind: "view", why: "opens Nona herself" },
   { sel: "#theme-toggle", kind: "pref", why: "light or dark, for this browser" },
   { sel: "#quick-calc", kind: "pref", why: "the quick calc's own settings, for this browser" },
-  { sel: "#opt-runs", kind: "pref", why: "final-round runs, a preference of this browser" },
   { sel: "#board-no", kind: "pref", why: "whether this browser sends results to the board" },
   { sel: "#w-name a", kind: "outward", why: "links to the wiki and the market" },
   { sel: "#qq-copy-foot", kind: "outward", why: "copies the community group number" },

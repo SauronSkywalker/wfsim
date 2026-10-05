@@ -40,3 +40,19 @@ impl BuffLock {
         }
     }
 }
+
+/// WHAT A FIGHT PUTS ON ITS ENTRANT beside the panels it fires: the reserve,
+/// the ammo economy and Frenzy. Built once from the parsed fight and read by
+/// [`super::FightParams::for_entrant`] for the simulator and the optimizer
+/// alike, so neither can carry a value the other does not.
+#[derive(Debug, Clone, PartialEq)]
+pub struct EntrantTerms {
+    pub infinite_ammo: bool,
+    pub ammo_drops: bool,
+    pub pickup_range_m: f64,
+    pub landscape: bool,
+    /// The weapon OWNS the passive and the fight leaves it on.
+    pub frenzy: bool,
+    pub cycle_frenzy_lock: LockMode,
+    pub frenzy_locks: Vec<BuffLock>,
+}

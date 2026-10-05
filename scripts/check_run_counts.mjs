@@ -1,21 +1,17 @@
 // HOW HARD YOU MEASURE IS A NUMBER SOMEONE CAN SET, in all three modules.
 //
-// A run count is three different kinds of thing — the simulator's own setting,
-// a floor the quick calc keeps to itself, and the optimizer's final round — so
-// this walks all three and asserts the number a reader picks is the number the
-// request carries.
+// A run count is two different kinds of thing — the simulator's own setting,
+// and a floor the quick calc keeps to itself; the optimizer's final round is
+// the simulator's — so this walks all three modules and asserts the number a
+// reader picks is the number the request carries.
 //
 //   the SIMULATOR   defaults to 1000, the official rulers' count, so a first
 //                   number is comparable with the board without touching a box
 //   the QUICK CALC  takes its own, floored at 10 — where a status mod stops
 //                   being a coin flip (M24)
-//   the OPTIMIZER   takes its own for the final round, TYPED, saved by no
-//                   preset and pinned by no ruler
-//
-// The last one is why this is a check rather than a comment: a blank box
-// meaning "the fight's own count" is one control with two readings, which reads
-// as broken and works, or reads as fine and sends 0. It is a preference, in
-// neither half of the tab and in neither preset, and this asserts all three.
+//   the OPTIMIZER   has no count of its own: its final round IS a simulation
+//                   at the simulator's, so a row's number is what simulating
+//                   its build answers (`a_quick_row_is_the_simulators_own_number`)
 //
 //   node scripts/check_run_counts.mjs
 import { openApp } from "./cdp.mjs";
@@ -101,32 +97,15 @@ const r = await evaluate(`(async () => {
   };
   const set = async (el,v) => { const n=document.getElementById(el); n.value=String(v); n.dispatchEvent(new Event('input',{bubbles:true})); await sleep(200); };
 
-  // IT IS A PREFERENCE, TYPED, AND IN NEITHER PRESET. Riding the search preset
-  // with a BLANK box meaning "the fight's own count" is one control with two
-  // readings, and the wrong home for both: a run count is not what to search,
-  // and the fight carries none.
-  const setC = async (el,v) => { const n=document.getElementById(el); n.value=String(v); n.dispatchEvent(new Event('change',{bubbles:true})); await sleep(200); };
-  const runsBox = document.getElementById('opt-runs');
-  out.optOnScreen = !!runsBox;
-  // FILLED, never blank — the reader can always say what the last round used.
-  out.optShown = runsBox ? runsBox.value : 'MISSING';
-  out.sentDefault = (await sendOnce()).final_runs;
-  // IN THE RUN BAR, beside the controls that start a run.
-  out.optRunsInBar = !!runsBox && !!runsBox.closest('#opt-runbar');
-  // A number of its own reaches the request, and does not move the simulator's.
-  await setC('opt-runs', 60);
-  out.sentOwn = (await sendOnce()).final_runs;
-  out.simStillDefault = simRuns();
-  // NOT SAVED BY THE SEARCH PRESET, which is the half a round-trip test would
-  // have got backwards before today: the snapshot must not carry it at all,
-  // and restoring a scope taken while it read something else must leave it
-  // exactly where the reader put it.
-  const snap = snapshotOpt();
-  out.notInPreset = !('runs' in snap) && !('threads' in snap);
-  await setC('opt-runs', 250);
-  applyOptState(snap); await sleep(200);
-  out.survivesPreset = [finalRuns(), document.getElementById('opt-runs').value];
-  await setC('opt-runs', 100);
+  // NO COUNT OF ITS OWN: the final round is the simulator's, so the request
+  // carries the fight's runs and nothing that could differ from them.
+  out.optRunsBox = !!document.getElementById('opt-runs');
+  const first = await sendOnce();
+  out.sentFinal = 'final_runs' in first;
+  out.sentRuns = first.runs;
+  setSimRuns(60); await sleep(100);
+  out.sentRunsAfter = (await sendOnce()).runs;
+  setSimRuns(100); await sleep(100);
   // …and the CPU-thread box is gone: how much of the machine the page may use
   // is the topbar's one setting.
   out.threadsBox = !!document.getElementById('opt-threads');
@@ -277,15 +256,10 @@ check("the box is on screen with the floor declared", r.qcOnScreen === true);
 check("...and typing in it reaches the scan", r.qcFromScreen === 40, `${r.qcFromScreen}`);
 check("...a rejected number snaps back to what was taken", r.qcSnapBack === "10", r.qcSnapBack);
 
-check("the optimizer offers a final-round count", r.optOnScreen === true);
-check("...with a number in it, never blank", r.optShown === "100", `"${r.optShown}"`);
-check("...and that number is what it SENDS", r.sentDefault === 100, `${r.sentDefault}`);
-check("...drawn in the run bar", r.optRunsInBar === true);
-check("...its own number reaches the request", r.sentOwn === 60, `${r.sentOwn}`);
-check("...and does not edit the simulator's", r.simStillDefault === 100, `${r.simStillDefault}`);
-check("...the search preset does not carry it", r.notInPreset === true);
-check("...so restoring a scope leaves it where the reader put it",
-  String(r.survivesPreset) === "250,250", String(r.survivesPreset));
+check("the optimizer has no final-round count of its own", r.optRunsBox === false && r.sentFinal === false,
+  `box ${r.optRunsBox}, sent final_runs ${r.sentFinal}`);
+check("...it sends the simulator's runs", r.sentRuns === 100, `${r.sentRuns}`);
+check("...and follows them when they change", r.sentRunsAfter === 60, `${r.sentRunsAfter}`);
 check("...and CPU threads is gone, the topbar owning that question",
   r.threadsBox === false && r.sentThreads === false,
   `box ${r.threadsBox}, sent ${r.sentThreads}`);

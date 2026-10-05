@@ -270,7 +270,6 @@ pub const BOARD_TOP: usize = 64;
 #[allow(clippy::too_many_arguments)] // search-config surface, like enumerate_candidates
 pub fn run_funnel(
     cands: &[Candidate],
-    arcanes: &[wfsim_engine::data::arcanes::ArcaneFx],
     scenario: &Scenario,
     mut alive: Vec<Job>,
     rounds: &[(u32, usize, bool)],
@@ -324,7 +323,6 @@ pub fn run_funnel(
         let summaries = evaluate_batch(
             cands,
             &alive,
-            arcanes,
             scenario,
             runs,
             seed_base + round as u64,
@@ -470,7 +468,6 @@ mod tests {
     use super::*;
     use crate::{enumerate_candidates_observed, pool, rebuild_candidate, Constraints};
     use wfsim_engine::arena::Arena;
-    use wfsim_engine::fight::LockMode;
     use wfsim_engine::model::StackPolicy;
 
     #[test]
@@ -486,9 +483,8 @@ mod tests {
         );
         assert!(cands.len() > 40, "need a field to cut, got {}", cands.len());
         let arcanes = vec![wfsim_engine::data::arcanes::ArcaneFx::none()];
-        let scenario = Scenario {
-            also_acting: Vec::new(),
-            arena: Arena {
+        let scenario = Scenario::from_panels(
+            Arena {
                 body_parts: vec![BodyPart {
                     name: "body".into(), aim_weight: 1.0, multiplier: 1.0,
                     is_head: false,
@@ -497,22 +493,16 @@ mod tests {
                 duration_seconds: 2.0,
                 ..Arena::training(2.0)
             },
-            incarnon_cycle: false,
-            frenzy_lock: LockMode::Initial(0),
-            frenzy_locks: Vec::new(),
-            frenzy: false,
-            buff_cfg: Default::default(),
-            denied_buff_triggers: Vec::new(),
-            infinite_ammo: true,
-            policy: StackPolicy::Emergent,
-        };
+            StackPolicy::Emergent,
+            arcanes.clone(),
+        );
         let jobs: Vec<Job> = (0..cands.len()).map(|i| (i, 0)).collect();
         let rounds = schedule_to(jobs.len(), 8, 4);
         assert!(rounds.len() >= 3, "need several rounds, got {}", rounds.len());
 
         // (a) straight through.
         let whole = run_funnel(
-            &cands, &arcanes, &scenario, jobs.clone(), &rounds, 0xDEAD_BEEF,
+            &cands, &scenario, jobs.clone(), &rounds, 0xDEAD_BEEF,
             false, None, None, 0, None, None,
         );
 
@@ -528,7 +518,7 @@ mod tests {
             }
         };
         run_funnel(
-            &cands, &arcanes, &scenario, jobs, &rounds, 0xDEAD_BEEF,
+            &cands, &scenario, jobs, &rounds, 0xDEAD_BEEF,
             false, None, None, 0, Some(&cp), None,
         );
         let (next_round, ids) = saved.into_inner().expect("round 1 checkpointed");
@@ -546,7 +536,7 @@ mod tests {
             rjobs.push((rebuilt.len() - 1, *ai));
         }
         let resumed = run_funnel(
-            &rebuilt, &arcanes, &scenario, rjobs, &rounds, 0xDEAD_BEEF,
+            &rebuilt, &scenario, rjobs, &rounds, 0xDEAD_BEEF,
             false, None, None, next_round, None, None,
         );
 
