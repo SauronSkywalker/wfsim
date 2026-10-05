@@ -183,6 +183,11 @@ pub(super) fn effect(v: &Value) -> Option<ArcEffect> {
                 _ => 0,
             },
         },
+        "duplicate_on_base_crit" => ArcEffect::DuplicateOnBaseCrit(scale(v)),
+        "heavy_crit_per_input" => ArcEffect::HeavyCritPerInput {
+            scale: scale(v),
+            max_stacks: u(v, "max_stacks").max(1),
+        },
         "status_spread" => ArcEffect::StatusSpread {
             scale: scale(v),
             radius0: f(v, "radius_rank0").unwrap_or(0.0),

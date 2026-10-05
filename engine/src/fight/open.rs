@@ -655,6 +655,8 @@ pub(super) fn open<'a>(
         tennokai_until: f64::NEG_INFINITY,
         tennokai_chained: false,
         tennokai_hits: 0u32,
+        animosity_stacks: 0u32,
+        animosity_input_landed: false,
     };
     // MELEE INFLUENCE'S WINDOW. One number, and the clause that makes it one:
     // *"Cannot refresh while active"* — so a roll that lands while it is open

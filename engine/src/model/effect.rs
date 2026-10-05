@@ -1242,6 +1242,8 @@ pub type StanceCombos = &'static [(&'static str, &'static [crate::model::ComboHi
 #[derive(Debug, Clone, Copy, Default, PartialEq)]
 pub struct Tennokai {
     pub enabled: bool,
+    /// A MULTIPLIER on the 15% base, not an addition to it: Dreamer's Wrath's
+    /// +50% is 22.5% (wiki).
     pub chance: f64,
     pub every_n_hits: u32,
     pub window_seconds: f64,

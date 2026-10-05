@@ -311,6 +311,11 @@ impl ArcaneDef {
                     fx.influence_radius_m = lerp(*radius0, *radius1);
                     fx.influence_seconds = lerp(*seconds0, *seconds1);
                 }
+                ArcEffect::DuplicateOnBaseCrit(sc) => fx.duplicate_chance = sc.at(rank, self.max_rank),
+                ArcEffect::HeavyCritPerInput { scale, max_stacks } => {
+                    fx.heavy_crit_per_input = scale.at(rank, self.max_rank);
+                    fx.heavy_crit_max_stacks = *max_stacks;
+                }
                 ArcEffect::DamageVsFrozen(sc) => fx.frozen_multiplier = sc.at(rank, self.max_rank),
                 ArcEffect::OverguardDamage(sc) => {
                     fx.overguard_multiplier = 1.0 + sc.at(rank, self.max_rank);
@@ -392,6 +397,8 @@ impl ArcaneDef {
                 // NO `X` TO FILL: this card's text carries its numbers
                 // literally, the way every melee arcane's does.
                 ArcEffect::StatusSpread { .. }
+                | ArcEffect::DuplicateOnBaseCrit(_)
+                | ArcEffect::HeavyCritPerInput { .. }
                 | ArcEffect::DamageVsFrozen(_)
                 | ArcEffect::HeadshotMultiplier { .. }
                 | ArcEffect::ReloadSpeed { .. }
@@ -575,6 +582,15 @@ impl ArcaneDef {
                         ramp(*seconds0, *seconds1),
                     ));
                 }
+                ArcEffect::DuplicateOnBaseCrit(sc) => out.push(format!(
+                    "on a base (yellow) critical melee hit: {} chance it strikes again, its crit and status rolled anew",
+                    pct(at(sc))
+                )),
+                ArcEffect::HeavyCritPerInput { scale, max_stacks } => out.push(format!(
+                    "each melee input that lands: +{} critical chance on the next heavy attack, up to {}; spent when that heavy connects",
+                    pct(at(scale)),
+                    pct(at(scale) * f64::from(*max_stacks))
+                )),
                 // DE PRINTS THE EXTRA, and so does this: "x8 Extra Damage to
                 // Overguard" is the card, ×9 is what it does (M38). Printing
                 // the total here would put a number on the panel that appears

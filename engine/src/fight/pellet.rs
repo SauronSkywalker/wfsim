@@ -113,6 +113,24 @@ pub(super) struct Live<'a> {
 ///
 /// Called once per body the round killed that way — the aimed one, and each
 /// one behind it the same round punched through.
+/// DOES THIS INSTANCE STRIKE AGAIN? Melee Duplicate: *"On Base Critical
+/// Hits"* — yellow, and only yellow, which is what the wiki's best-crit-chance
+/// formula `(3M - 4) / (2M - 2)` requires — and not off a hit that killed,
+/// since *"If a hit that would trigger an Extra Hit kills the enemy, the Extra
+/// Hit will not be triggered"*. A replay arms nothing, and a zero-damage
+/// instance (a heavy slam's empty swing) has nothing to repeat.
+pub(super) fn arms_replay(
+    params: &FightParams,
+    replay: bool,
+    tier: u32,
+    damage: f64,
+    killed: bool,
+    d: &mut crate::rules::rng::Draws,
+) -> bool {
+    let chance = params.arcane.duplicate_chance;
+    chance > 0.0 && !replay && tier == 1 && damage > 0.0 && !killed && d.spine.chance(chance)
+}
+
 fn weakpoint_kill(
     params: &FightParams,
     arc: &mut ArcRuntime,
@@ -347,7 +365,7 @@ pub(super) fn settle_pellet(pellet_idx: u32, shot: &Strike, live: &mut Live) {
         + buff_total(active, crate::model::BuffGrant::FlatBaseDamage, &mut *buff_stacks, t)
         // …AND KILLING BLOW, which is a term in this bucket and not a
         // multiplier — see `heavy_attack_base_damage`.
-        + heavy_attack_base_damage(active)
+        + heavy_attack_base_damage(active, tennokai_heavy)
         // …AND RAGE: "additive with mods like Pressure Point".
         + arc.rage_bonus(t);
     // FEIGNED RETREAT / SWIFT CONCLUSION: a condition on the TARGET,
@@ -849,7 +867,17 @@ pub(super) fn settle_pellet(pellet_idx: u32, shot: &Strike, live: &mut Live) {
     });
     let first_shock = 1 + usize::from(radial_stage.is_some()) + 2 * bomblets;
     let n_stages = first_shock + shockwave.map_or(0, |sw| (sw.lines * sw.explosions) as usize);
-    for stage in 0..n_stages {
+    // MELEE DUPLICATE: every stage has a REPLAY slot after it, which runs only
+    // when the stage armed it — a base (yellow) crit that did not kill, won
+    // on the card's chance. The replay is the same instance with its crit and
+    // status rolled anew (wiki, Extra Hit) and arms nothing itself.
+    let mut replay_armed = false;
+    for slot in 0..2 * n_stages {
+        let stage = slot / 2;
+        let replay = slot % 2 == 1;
+        if replay && !std::mem::take(&mut replay_armed) {
+            continue;
+        }
         let rad = match stage {
             0 => None,
             1 => radial_stage,
@@ -984,6 +1012,10 @@ pub(super) fn settle_pellet(pellet_idx: u32, shot: &Strike, live: &mut Live) {
             Some(pellet_idx as usize % variants.len())
         };
         let (qvec, tier) = match &rad {
+            None if replay => (
+                own.map_or(*qvec, |i| variants[i].0),
+                upgrade_crit_tier(roll_crit_tier(cc_pellet, &mut d.spine), active.crit_tier_upgrade_chance, &mut d.spine),
+            ),
             None => (own.map_or(*qvec, |i| variants[i].0), tier),
             Some(r) => {
                 // NO `weakened_cc` here. Puncture's Weakened is a flat
@@ -1055,6 +1087,7 @@ pub(super) fn settle_pellet(pellet_idx: u32, shot: &Strike, live: &mut Live) {
         // understated Toxin's shield bypass by exactly that factor.
         let shares = TypeShares::of(&qvec);
         let crit_multiplier = match &rad {
+            None if replay => 1.0 + tier as f64 * (cd - 1.0),
             None => crit_multiplier,
             Some(r) => {
                 // No `part.crit_bonus` doubling: that is the crit-
@@ -1295,6 +1328,7 @@ pub(super) fn settle_pellet(pellet_idx: u32, shot: &Strike, live: &mut Live) {
                     &mut *gal, &mut *arc, &mut *r, rec, d, t,
                 );
             }
+            replay_armed = arms_replay(params, replay, tier, qtotal, false, d);
             continue;
         }
         let head_direct = direct && part.is_head;
@@ -1317,6 +1351,7 @@ pub(super) fn settle_pellet(pellet_idx: u32, shot: &Strike, live: &mut Live) {
         );
         let (effective, killed, broke) =
             (settled.effective, settled.killed, settled.broken);
+        replay_armed = arms_replay(params, replay, tier, qtotal, killed, d);
         // THE AIMED SEED'S CHAINS, HERE, so they take multishot the
         // only way that is honest: by being inside the pellet loop.
         // *"only targets directly hit by the beam benefit"*, and a
@@ -1569,6 +1604,7 @@ pub(super) fn settle_pellet(pellet_idx: u32, shot: &Strike, live: &mut Live) {
                     rec,
                     d,
                     t,
+                    tennokai_heavy,
                 );
             }
             if params.beam.is_none() {

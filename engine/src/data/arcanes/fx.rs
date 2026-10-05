@@ -148,6 +148,13 @@ pub struct ArcaneFx {
     pub influence_chance: f64,
     pub influence_radius_m: f64,
     pub influence_seconds: f64,
+    /// MELEE DUPLICATE — the chance a base-crit melee instance strikes again.
+    /// Zero = not equipped. `fight::pellet`'s replay slot is the mechanism.
+    pub duplicate_chance: f64,
+    /// MELEE ANIMOSITY — relative crit chance per stack on the next heavy
+    /// attack, and the stack cap. Zero = not equipped.
+    pub heavy_crit_per_input: f64,
+    pub heavy_crit_max_stacks: u32,
 }
 
 impl Default for ArcaneFx {
@@ -182,6 +189,9 @@ impl Default for ArcaneFx {
             influence_chance: 0.0,
             influence_radius_m: 0.0,
             influence_seconds: 0.0,
+            duplicate_chance: 0.0,
+            heavy_crit_per_input: 0.0,
+            heavy_crit_max_stacks: 0,
         }
     }
 }

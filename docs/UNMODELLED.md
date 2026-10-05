@@ -355,6 +355,17 @@ rather than observed, because this arena fires one weapon and casts nothing:
 
 ---
 
+## MELEE DUPLICATE'S TWO BUGS ARE NOT APPLIED
+
+Both are listed under Bugs on its page, and both would move a number:
+
+- **Beside Toxic Lash or Xata's Whisper it duplicates their extra hit, not the
+  swing** — *"a critical hit creates two Xata's Whisper or Toxic Lash instances
+  but no Duplicate"* (wiki, Extra Hit). Here the swing is replayed whatever
+  else is up, so with either ability active the number reads HIGH.
+- **A slam's duplicate does not bypass shield gating** where those abilities'
+  extra hits do. Nothing in this arena gates shields, so it costs nothing yet.
+
 ## MELEE INFLUENCE SPREADS FROM THINGS IT SHOULD NOT
 
 The arcane is modelled — the roll, the window, the ten spreadable elements, the

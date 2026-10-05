@@ -95,7 +95,7 @@ has none.
 | Silken Stride | 40% | Toxin | ? | — |
 | Uriel's Demonium Rune | 30% | Heat | ? | — |
 | Reconifex Active Reload | 25% | Heat | ? | — |
-| Melee Duplicate | 100% | — | — | out of scope (melee) |
+| **Melee Duplicate** | 100%, on a base crit | the swing's own | **rolled anew**, crit too | `data/arcanes/melee/melee_duplicate.yaml` ✅ — the instance replayed, faction once |
 | **Melee Influence** | the element's own share | the status that landed | **guaranteed** | `data/arcanes/melee/melee_influence.yaml` ✅ |
 
 ### The three things a member may differ in, and nothing else

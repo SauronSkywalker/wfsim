@@ -301,10 +301,15 @@ pub(super) fn spread_hit(
     // WHICH MECHANISM PUT IT HERE — see [`SpreadBy`]. The only thing it
     // changes is which kills spawn another tendril.
     by: SpreadBy,
+    // IS THE SWING A TENNOKAI HEAVY? Killing Blow's term joins this body's
+    // bucket then, as it joins the aimed body's.
+    tennokai_heavy: bool,
 ) -> Landed {
     let base_damage = active.base_damage_bonus;
     let arcane_base_damage =
-        arc.total(&params.arcane.buffs, ArcGrant::BaseDamage, t) + heavy_attack_base_damage(active) + arc.rage_bonus(t);
+        arc.total(&params.arcane.buffs, ArcGrant::BaseDamage, t)
+            + heavy_attack_base_damage(active, tennokai_heavy)
+            + arc.rage_bonus(t);
     let arc_ratio = (1.0 + base_damage + arcane_base_damage) / (1.0 + base_damage);
     let half_hp = if spec.params.max_health() > 0.0
         && foe.state.health < 0.5 * spec.params.max_health()
@@ -609,6 +614,7 @@ pub(super) fn spread_from_follow_through(
     rec: &mut crate::record::Record,
     d: &mut crate::rules::rng::Draws,
     t: f64,
+    tennokai_heavy: bool,
 ) {
     for (n, &sidx) in struck.iter().enumerate().skip(1) {
         let share = follow_through.powi(n as i32);
@@ -632,6 +638,7 @@ pub(super) fn spread_from_follow_through(
             &inst, foe, &spec, raw_per_bucket, shares, crit_multiplier, crit_tier, attrition,
             modded_base, status_chance, forced, vector, params, active, gal, arc, r, rec, d, t,
             SpreadBy::FollowThrough,
+            tennokai_heavy,
         );
         seeds.push((sidx, landed));
     }
@@ -788,6 +795,7 @@ pub(super) fn spread_from_punch_through(
             d,
             t,
             SpreadBy::PunchThrough,
+            false,
         );
         if inst.headshot {
             punched.hits += 1;
@@ -891,6 +899,7 @@ pub(super) fn spread_from_ricochet(
             d,
             t,
             SpreadBy::Ricochet,
+            false,
         );
     }
 }
@@ -1005,6 +1014,7 @@ pub(super) fn spread_from_echo(
             d,
             t,
             SpreadBy::Echo,
+            false,
         );
     }
 }
@@ -1113,6 +1123,7 @@ pub(super) fn spread_from_tendrils(
             d,
             t,
             SpreadBy::Tendril,
+            false,
         );
     }
 }
@@ -1277,6 +1288,7 @@ pub(super) fn blast_at(
             d,
             t,
             by,
+            false,
         );
     }
 }
@@ -1393,6 +1405,7 @@ pub(super) fn spread_from_seeds(
             d,
             t,
             SpreadBy::Chain,
+            false,
         );
     }
 }

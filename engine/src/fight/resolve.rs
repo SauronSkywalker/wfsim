@@ -61,6 +61,8 @@ pub(super) fn resolve_the_shot(
     body: &mut Body,
     weakpoint_pile: &mut LiveStacks,
     double_tap: &mut DoubleTap,
+    // MELEE ANIMOSITY'S PILE when this swing is a heavy attack, else zero.
+    heavy_crit_relative: f64,
 ) -> Resolved {
     let Body { state: target, debuffs } = body;
         // Timed buffs (Frenzy) lapse before this shot reads the bar;
@@ -215,7 +217,10 @@ pub(super) fn resolve_the_shot(
             + active.crit_chance_per_combo * (combo_multiplier - 1.0)
             // …AND EVERY STACKING GRANT OF IT, the bracket Prolific
             // Perforation's card puts itself in by naming Pistol Gambit.
-            + buff_total(active, crate::model::BuffGrant::CritChance, buff_stacks, t);
+            + buff_total(active, crate::model::BuffGrant::CritChance, buff_stacks, t)
+            // MELEE ANIMOSITY: *"Critical Chance bonus is additive to mods like
+            // True Steel"* — this bracket, on the heavy attack that spends it.
+            + heavy_crit_relative;
         // VICIOUS PROMISE, both halves of it. VERBATIM (wiki, Paris Incarnon
         // Genesis): "Enemies are undamaged as long as their health and shield
         // have not been damaged. Damaging Overguard is not taken into account."

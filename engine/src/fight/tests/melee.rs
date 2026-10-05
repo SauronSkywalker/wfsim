@@ -2044,3 +2044,73 @@ fn a_tenet_exec_shockwave_reaches_down_the_line_and_not_behind() {
     let none = ahead("tenet_exec_forward", &["cleaving_whirlwind"]);
     assert_eq!(none[2], 0.0, "a combo that does not close on a slam sends none");
 }
+
+/// **MELEE DUPLICATE REPLAYS A YELLOW CRIT AND NOTHING ELSE.** *"On Base
+/// Critical Hits"*: an orange crit does not arm it (the wiki's best-crit-chance
+/// formula only holds if it does not), a hit that killed does not, and the
+/// replay itself does not.
+#[test]
+fn melee_duplicate_arms_on_a_yellow_crit_only() {
+    let mut p = FightParams::default();
+    p.arcane.duplicate_chance = 1.0;
+    let mut d = crate::rules::rng::Draws::new(7);
+    let arms = |tier, replay, killed, d: &mut crate::rules::rng::Draws| {
+        crate::fight::pellet::arms_replay(&p, replay, tier, 100.0, killed, d)
+    };
+    assert!(arms(1, false, false, &mut d), "a yellow crit strikes again");
+    assert!(!arms(0, false, false, &mut d), "a hit that did not crit");
+    assert!(!arms(2, false, false, &mut d), "an orange crit is not a base crit");
+    assert!(!arms(1, true, false, &mut d), "a replay arms nothing");
+    assert!(!arms(1, false, true, &mut d), "a killing hit triggers no extra hit");
+}
+
+/// …AND IN A FIGHT IT IS WORTH ABOUT ONE MORE INSTANCE PER YELLOW CRIT: the
+/// Tenet Exec's 38% crits are all yellow here, so the replay adds about 38%.
+#[test]
+fn melee_duplicate_adds_a_copy_of_every_yellow_crit() {
+    let dmg = |arcane| melee_fight("tenet_exec", &[], &["cleaving_whirlwind"], arcane, 60.0, None).mean_damage;
+    let (off, on) = (dmg(None), dmg(Some("melee_duplicate")));
+    assert!(on > off * 1.25 && on < off * 1.55, "{off:.0} -> {on:.0}");
+}
+
+/// **MELEE ANIMOSITY PAYS A HEAVY THAT LIGHT INPUTS BUILT FOR.** A combo loop
+/// with no heavy in it reads exactly the same with the card — the pile only
+/// ever reaches a heavy — and a Tennokai heavy between light inputs crits more.
+#[test]
+fn melee_animosity_pays_the_heavy_its_light_inputs_built() {
+    let dmg = |mods: &[&str], arcane| melee_fight("nikana_prime", &[], mods, arcane, 60.0, None).mean_damage;
+    let light = ["blind_justice"];
+    assert_eq!(dmg(&light, None), dmg(&light, Some("melee_animosity")), "no heavy, no payout");
+    let tennokai = ["blind_justice", "dreamers_wrath"];
+    let (off, on) = (dmg(&tennokai, None), dmg(&tennokai, Some("melee_animosity")));
+    assert!(on > off * 1.02, "a Tennokai heavy spends the pile: {off:.0} -> {on:.0}");
+}
+
+/// **KILLING BLOW ON A TENNOKAI HEAVY IS A TERM IN THE BASE-DAMAGE BUCKET**,
+/// beside Condition Overload — *"additive to mods such as Pressure Point"*. As
+/// a ratio over the panel's bucket it multiplied past Condition Overload, and a
+/// card paying +120% on the heavies alone outscored Pressure Point's +120% on
+/// every hit.
+#[test]
+fn killing_blow_on_a_tennokai_heavy_does_not_outpay_pressure_point() {
+    let base = ["condition_overload", "blood_rush", "weeping_wounds", "blind_justice", "dreamers_wrath"];
+    let dmg = |extra: &str| {
+        let mods: Vec<&str> = base.iter().copied().chain([extra]).collect();
+        melee_fight("nikana_prime", &[], &mods, None, 60.0, None).mean_damage
+    };
+    let (kb, pp) = (dmg("killing_blow"), dmg("pressure_point"));
+    assert!(kb < pp, "Killing Blow {kb:.0} against Pressure Point {pp:.0}");
+}
+
+/// **DREAMER'S WRATH MULTIPLIES THE 15%**: *"Tennokai opportunity chance is a
+/// multiplicative bonus, at max rank the chance to proc Tennokai is increased
+/// to 22.5%"*. Read as an addition it was 65%.
+#[test]
+fn dreamers_wrath_multiplies_the_tennokai_chance() {
+    let base = crate::model::WeaponBase::from_data("nikana_prime", false, &[]);
+    let pool = crate::data::mods::pool_for_weapon("nikana_prime");
+    let card = pool.iter().find(|m| m.id == "dreamers_wrath").expect("in the pool");
+    let panel = crate::build::loadout::resolve(&base, &[card], crate::model::StackPolicy::Emergent);
+    let chance = crate::fight::melee::tennokai_open_chance(&panel.tennokai);
+    assert!((chance - 0.225).abs() < 1e-9, "{chance}");
+}

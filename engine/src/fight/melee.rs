@@ -71,10 +71,11 @@ pub(super) fn melee_combo_points(held: f64, initial: f64, since_spend_seconds: f
 /// damage (e.g. Pressure Point)"* (wiki, Seismic Wave). Both cards read "+X%
 /// Melee Damage on <kind of attack>" and they land in different places.
 ///
-/// Zero on every mode that does not spend the counter, which is what "heavy
-/// attack" means here.
-pub(super) fn heavy_attack_base_damage(active: &FightParams) -> f64 {
-    if active.spends_combo { active.heavy_attack_damage } else { 0.0 }
+/// Zero on every swing that is not a heavy attack: a mode that spends the
+/// counter, or a TENNOKAI heavy on a light one — the same bucket either way,
+/// so Condition Overload and Rage dilute it as they dilute Pressure Point.
+pub(super) fn heavy_attack_base_damage(active: &FightParams, tennokai_heavy: bool) -> f64 {
+    if active.spends_combo || tennokai_heavy { active.heavy_attack_damage } else { 0.0 }
 }
 
 /// HOW OFTEN A HEAVY MODE SWINGS, in seconds — and it is not always as soon as
@@ -106,6 +107,13 @@ pub(super) fn heavy_cycle_seconds(floor_seconds: f64, earned: f64, initial: f64)
         }
     }
     best
+}
+
+/// THE CHANCE A LANDED HIT OPENS THE WINDOW: 15% base, and a card MULTIPLIES
+/// it — *"Tennokai opportunity chance is a multiplicative bonus, at max rank the
+/// chance to proc Tennokai is increased to 22.5%"* (wiki, Dreamer's Wrath).
+pub(super) fn tennokai_open_chance(t: &crate::model::Tennokai) -> f64 {
+    TENNOKAI_BASE_CHANCE * (1.0 + t.chance)
 }
 
 /// HOW MANY TIMES ONE SWING LANDS — the stance row's count, or ONE where the
@@ -230,6 +238,20 @@ pub(super) struct MeleeState {
     /// first kill"*, so the swing that earns the chain does not carry it.
     pub(super) tennokai_chained: bool,
     pub(super) tennokai_hits: u32,
+    /// MELEE ANIMOSITY'S PILE, and whether the input under way has landed yet:
+    /// *"Only provides 1 stack per melee input, regardless of how many enemies
+    /// are hit"* (wiki), so a stack is paid when an input ENDS, not per hit.
+    pub(super) animosity_stacks: u32,
+    pub(super) animosity_input_landed: bool,
+}
+
+/// MELEE ANIMOSITY'S BONUS on this swing: the pile, on a heavy attack only.
+pub(super) fn animosity_crit(params: &FightParams, melee: &MeleeState, heavy: bool) -> f64 {
+    if heavy {
+        params.arcane.heavy_crit_per_input * f64::from(melee.animosity_stacks)
+    } else {
+        0.0
+    }
 }
 
 /// WHAT THIS SWING DID TO THE COMBO COUNTER, and what the counter did back.
@@ -268,6 +290,24 @@ pub(super) fn after_swing(
             g.build(t, landed * s.per_hit + f64::from(r.kills - melee.rage_kill_mark) * s.per_kill);
         }
         melee.rage_kill_mark = r.kills;
+        // MELEE ANIMOSITY: a light input that lands adds a stack when it ends
+        // (a stance puts an input's time on its last row, so a row with a
+        // delay closes one); *"Slams and heavy attacks do not"*. A heavy that
+        // CONNECTS spends the pile — *"Whiffing a heavy attack will preserve
+        // the critical chance bonus"*.
+        if params.arcane.heavy_crit_per_input > 0.0 {
+            if active.spends_combo || tennokai_heavy {
+                if landed > 0.0 {
+                    melee.animosity_stacks = 0;
+                }
+            } else if h.slam_multiplier.is_none() || h.multiplier > 0.0 {
+                melee.animosity_input_landed |= landed > 0.0;
+                if h.delay_seconds > 0.0 && std::mem::take(&mut melee.animosity_input_landed) {
+                    melee.animosity_stacks =
+                        (melee.animosity_stacks + 1).min(params.arcane.heavy_crit_max_stacks);
+                }
+            }
+        }
         // …AND A LANDED HIT MAY OPEN THE TENNOKAI WINDOW.
         //
         // *"Triggering Tennokai requires directly striking an enemy ...
@@ -306,8 +346,7 @@ pub(super) fn after_swing(
             let opens = if active.tennokai.every_n_hits > 0 {
                 melee.tennokai_hits.is_multiple_of(active.tennokai.every_n_hits)
             } else {
-                // 15% BASE, and the cards add to it.
-                d.spine.chance(TENNOKAI_BASE_CHANCE + active.tennokai.chance)
+                d.spine.chance(tennokai_open_chance(&active.tennokai))
             };
             if opens {
                 let w = if active.tennokai.window_seconds > 0.0 {
@@ -715,17 +754,13 @@ pub(super) fn swing_this_shot(
     // to 12x fires free 12x heavy attacks between its swings.
     //
     // Killing Blow's `on Heavy Attack` bonus rides it too, because this IS
-    // one; Master's Edge and Truth's Flame are the window's own.
+    // one — in the base-damage bucket (`heavy_attack_base_damage`), never
+    // here: a ratio over the panel's bucket multiplied it past Condition
+    // Overload, which the game adds. Master's Edge and Truth's Flame are the
+    // window's own.
     let swing_mult = if tennokai_heavy {
         active.heavy.map_or(1.0, |h| h.multiplier)
             * combo_multiplier
-            // KILLING BLOW ON A LIGHT FORM'S FREE HEAVY. The card's bucket
-            // is the base-damage one, so what it is worth here is the
-            // RATIO that bucket grows by — `heavy_attack_base_damage` reads
-            // zero on a form that does not spend the counter, which this
-            // one is.
-            * (1.0 + active.base_damage_bonus + active.heavy_attack_damage)
-            / (1.0 + active.base_damage_bonus)
             // …AND ONLY WHERE THE CARD PAYS IT. Truth's Flame's bonus is
             // the CHAINED window's; every other card's is unconditional.
             * (1.0

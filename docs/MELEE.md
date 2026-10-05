@@ -433,8 +433,8 @@ engine tests — the golden values among them — are unchanged.
 ## 5. THE ARCANE SLOT, AND ONE BUG THE AUDIT FOUND
 
 A melee weapon seats a MELEE arcane, and `arcane_pools` already answered
-`["melee"]` before there was a pool behind it. All twelve are in now. **Four of
-them pay and eight declare**, which is an honest ratio for a family whose
+`["melee"]` before there was a pool behind it. All twelve are in now. **Six of
+them pay and six declare**, which is an honest ratio for a family whose
 triggers are a Warframe's shields breaking, a roll, a finisher and a knockdown:
 
 - **Melee Exposure** is the pool's biggest number and the one card that reaches
@@ -452,13 +452,21 @@ triggers are a Warframe's shields breaking, a roll, a finisher and a knockdown:
   *"this Warframe has 0 shields — 0 whole steps of 200, so it pays 0%"*. That is
   the honest answer rather than a broken gate, the same reading Secondary
   Kinship gets in a solo fight.
-- **Melee Duplicate** is the biggest declared gap in the pool: *"On Base
-  Critical Hits: 100% chance for your attack to strike a second time"* — an
-  extra hit in exactly the sense `docs/EXTRA_HIT.md` means, and worth a second
-  copy of every critical swing. The engine's extra-hit machinery fires from a
-  PERCENTAGE and an element; this one repeats the instance off a crit roll,
-  which is a trigger nothing here has. Approximating it would be most of the
-  weapon.
+- **Melee Duplicate** replays the instance: *"The Extra Hit copies all stats
+  from the initial hit, and it rolls critical and status chance independently
+  ... only applying faction damage once"* (wiki, Extra Hit). Every stage of a
+  pellet has a replay slot after it (`fight::pellet::arms_replay`), armed by a
+  BASE (yellow) crit only — the wiki's best-crit-chance formula
+  `(3M - 4) / (2M - 2)` holds only if an orange one does not — and never by a
+  hit that killed or by a replay. A slam's explosion replays too. Its two Bugs
+  (it duplicates Toxic Lash's or Xata's Whisper's extra hit instead, and a
+  slam's copy does not bypass shield gating) are not applied.
+- **Melee Animosity** pays only where light inputs and heavy attacks mix: a
+  landed light INPUT adds a stack (a row with a delay closes one, so a combo of
+  many hits per input earns one), ten to the cap, *"additive to mods like True
+  Steel"*; slams and heavies build nothing, and a heavy that CONNECTS spends the
+  pile while a whiff keeps it. In practice that is a Tennokai heavy in a combo
+  mode — a pure heavy mode never builds one.
 - **Melee Influence** is the meta card, it is entirely a CROWD effect, and it
   is the fourth that pays. An Electricity status opens an 18 s window that
   *cannot be refreshed while it runs*; inside it, every spreadable elemental
@@ -566,8 +574,7 @@ movement, which this arena has neither of.
 Each of these is on the page, in both languages, on the entry or the card it
 applies to.
 
-1. **Melee Duplicate**, and the eight other arcanes whose triggers this arena
-   has not got — see §5.
+1. **The six arcanes whose triggers this arena has not got** — see §5.
 2. **Finisher Damage on a melee riven.** It rolls, it occupies a slot and it
    names the card, and a finisher is an animation this arena has none of — the
    same answer Finishing Touch already gets. The editor and the mod list both

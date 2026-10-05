@@ -705,6 +705,7 @@ pub fn run_once_traced(
             &mut bodies[0],
             &mut me.weakpoint_pile,
             &mut me.double_tap,
+            super::melee::animosity_crit(me.params, &me.melee, active.spends_combo || tennokai_heavy),
         );
         // AN ORB ATTACK FIRES NO PELLETS — when the TRIGGER is what deploys it.
         // The shot settles no collision and no explosion, because everything it

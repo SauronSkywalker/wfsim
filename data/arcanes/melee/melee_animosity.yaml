@@ -7,11 +7,13 @@ description: "On Melee Hit: Gain 42% Critical Chance on your next Heavy Attack, 
 
 # Rank 0: On Melee Hit: Gain 7% Critical Chance on your next Heavy Attack, up to 70%
 effects:
-  # +42% crit chance per melee hit ON THE NEXT HEAVY ATTACK, up to 420%.
-  # It needs a stack that LIGHT swings build and a HEAVY swing spends, which
-  # is a shape this engine has no bucket for — every other stacking crit
-  # card here is spent by time or by a reload, not by one of seven modes.
-  - kind: unmodelled
+  # ONE STACK PER LANDED LIGHT INPUT, ten to the cap, spent by the heavy that
+  # connects (wiki Notes) — so it pays only where light swings and heavy
+  # attacks mix: a Tennokai heavy in a combo mode. `fight::melee::after_swing`.
+  - kind: heavy_crit_per_input
+    rank0: 0.07
+    rankMax: 0.42
+    max_stacks: 10
 
 source:
   url: https://wiki.warframe.com/w/Melee_Animosity

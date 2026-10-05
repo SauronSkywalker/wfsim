@@ -422,7 +422,7 @@ pub(super) fn field_tick_seeded(
     } else {
         arc.total(&params.arcane.buffs, ArcGrant::BaseDamage, at)
             + ctx.base_damage_add_mods
-            + heavy_attack_base_damage(active)
+            + heavy_attack_base_damage(active, false)
             + arc.rage_bonus(at)
     };
     let arc_ratio = (1.0 + base_damage + arcane_base_damage) / (1.0 + base_damage);

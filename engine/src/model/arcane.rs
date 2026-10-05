@@ -113,6 +113,12 @@ pub enum ArcEffect {
     /// arcane in the pool whose headline number does not climb — and what the
     /// ranks buy is the RADIUS and the CLOCK.
     StatusSpread { scale: Scale, radius0: f64, radius1: f64, seconds0: f64, seconds1: f64 },
+    /// Melee Duplicate: the chance a BASE (yellow) critical melee instance
+    /// strikes again — the same instance, its crit and status rolled anew.
+    DuplicateOnBaseCrit(Scale),
+    /// Melee Animosity: critical chance per stack on the next HEAVY attack; a
+    /// melee input that lands adds one stack, up to `max_stacks`.
+    HeavyCritPerInput { scale: Scale, max_stacks: u32 },
     /// `kind: unmodeled` — an effect whose payload is OUT OF THE SIM'S WORLD
     /// (Warframe armor/energy, enemy behaviour, a mechanic still to be built).
     /// No sim payload, but it OWNS a description `X`: its per-rank value still
