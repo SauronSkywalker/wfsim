@@ -1757,6 +1757,8 @@ ui:
   # "+150% Critical Chance" reads the same on a riven as on Point Strike.
   "Rivens": 裂罅
   "Riven Analyst": "裂罅分析"
+  "open in Builder": "在配装器中打开"
+  "With this riven": "带这张裂罅"
   "every riven the board has measured, against its best riven-free build": "榜单测过的每张裂罅，对比不带裂罅的最佳配装"
   "No riven build of this weapon has been measured yet.": "这把武器还没有测过带裂罅的配装。"
   "vs the best riven-free build": "对比不带裂罅的最佳配装"
