@@ -75,6 +75,10 @@ pub(crate) struct Row {
     /// The ROLLS the scorer settled on go in `riven_rolls`, because opening
     /// this row has to be able to build that riven on the reader's machine.
     pub(crate) riven: Option<RowRiven>,
+    /// WHEN THIS NUMBER WAS MEASURED — its fact's `finished_at`, the scores
+    /// table's own clock. Published to the minute, so a reader sees how old a
+    /// row is rather than how old the board is.
+    pub(crate) measured_at: String,
 }
 
 /// A row's riven: the SHAPE it states, and the ROLLS this engine found best for
@@ -108,6 +112,12 @@ pub(crate) struct Published<'a> {
 /// it is CARRIED and never indexed — dropping it would take it off the board.
 pub(crate) fn published(raw: &RawValue) -> Option<Published<'_>> {
     serde_json::from_str(raw.get()).ok()
+}
+
+/// `2026-10-05T13:52:07Z` → `2026-10-05T13:52Z`: the minute, still UTC and
+/// still an ISO time a browser parses.
+pub(crate) fn measured_minute(at: &str) -> Option<String> {
+    (at.len() >= 16 && at.as_bytes()[10] == b'T').then(|| format!("{}Z", &at[..16]))
 }
 
 /// ONE ROW AS THE PAGE RECEIVES IT — `site/board/<weapon>.json`'s shape, in one
@@ -153,6 +163,13 @@ pub(crate) fn page_row(bench_id: &str, r: &Row) -> Value {
     if !r.exilus.is_empty() {
         if let Some(o) = row.as_object_mut() {
             o.insert("exilus".into(), json!(r.exilus));
+        }
+    }
+    // A ROW MIGRATED WITH NO CLOCK OMITS IT rather than publishing a time
+    // nobody recorded.
+    if let Some(at) = measured_minute(&r.measured_at) {
+        if let Some(o) = row.as_object_mut() {
+            o.insert("measured_at".into(), json!(at));
         }
     }
     // …AND THE PARTS. The builder reads `row.grip` / `row.loader` to open a
@@ -456,7 +473,18 @@ mod page_row_tests {
             grip: String::new(),
             loader: String::new(),
             riven,
+            measured_at: "2026-10-05T13:52:07Z".into(),
         }
+    }
+
+    /// **A ROW SAYS WHEN IT WAS MEASURED**, to the minute, and a row with no
+    /// clock says nothing rather than a time nobody recorded.
+    #[test]
+    fn a_row_carries_its_minute_and_a_clockless_row_omits_it() {
+        let v = page_row("standard_single_target", &row(None));
+        assert_eq!(v["measured_at"], json!("2026-10-05T13:52Z"), "{v}");
+        let none = Row { measured_at: String::new(), ..row(None) };
+        assert!(page_row("standard_single_target", &none).get("measured_at").is_none());
     }
 
     /// **THE RIVEN REACHES THE PAGE**, which is the whole of what went wrong.

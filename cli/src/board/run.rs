@@ -510,10 +510,10 @@ pub fn run() {
                 malus: shape.malus.clone(),
                 rolls: card_of(&v, shape),
             });
-            let score = match current {
+            let (score, measured_at) = match current {
                 Some(f) => {
                     reused += 1;
-                    f.score
+                    (f.score, f.finished_at.clone())
                 }
                 None => {
                     // A ROW WITH NO FACT IS NOT ON THIS BOARD. `--project`
@@ -707,6 +707,7 @@ pub fn run() {
                     // 11.05 a minute over 300 s. The RANKING survives either way,
                     // being a linear rescale; the number people read does not.
                     let s = score_in(&out);
+                    let at = stamp(&std::time::SystemTime::now());
                     computed.insert(key.clone(), s);
                     // …AND THE FACT IS DURABLE HERE, not when the run ends. A
                     // shard whose work becomes useful only once it FINISHES and
@@ -721,7 +722,7 @@ pub fn run() {
                             score: s,
                             cost_seconds: began.elapsed().as_secs_f64(),
                             started_at: began_at,
-                            finished_at: stamp(&std::time::SystemTime::now()),
+                            finished_at: at.clone(),
                         },
                     );
                     // THIRTY SECONDS is a row worth naming: the median row is under
@@ -738,7 +739,7 @@ pub fn run() {
                             v.arcanes.len(),
                         );
                     }
-                    s
+                    (s, at)
                 }
             };
             let exilus_for_row = v.exilus.clone().unwrap_or_default();
@@ -755,6 +756,7 @@ pub fn run() {
                 grip: v.assembly.as_ref().map(|a| a.grip.clone()).unwrap_or_default(),
                 loader: v.assembly.as_ref().map(|a| a.loader.clone()).unwrap_or_default(),
                 riven: row_riven,
+                measured_at,
             });
         }
     }

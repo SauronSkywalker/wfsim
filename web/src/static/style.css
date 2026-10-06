@@ -1110,9 +1110,9 @@ body.on-card #card-page{display:block;width:720px;margin:0 auto;padding:22px 24p
 .lc-head{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
 .lc-rank,.lc-score,.lc-gain{font-size:19px}
 .lc-gain{color:var(--good-text)}
-.lc-foot{display:flex;align-items:center;gap:16px;margin-top:18px;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--panel2)}
-.lc-qr svg{display:block;width:112px;height:112px}
-.lc-slogan{font-size:20px}
+.lc-foot{display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:10px;border-top:1px solid var(--line);color:var(--text-2);font-size:12px}
+.lc-qr svg{display:block;width:64px;height:64px}
+.lc-slogan{font-size:13px;font-weight:600;color:var(--text-2)}
 .ra-builds{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:14px}
 .ra-build{border:1px solid var(--line);border-radius:10px;padding:10px 12px}
 .ra-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
@@ -2090,7 +2090,8 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
    COMPARED. Quiet on purpose — it is a footnote on the number, not a warning
    about the row — and it carries the whole list in its title. */
 .brow .bgap{margin-left:5px;color:var(--warn,#c8a24a);font-size:11px;cursor:help}
-.brow .bscore{flex:0 0 auto;font-size:13px;font-variant-numeric:tabular-nums}
+.brow .bscore{flex:0 0 auto;font-size:13px;font-variant-numeric:tabular-nums;text-align:right}
+.brow .bwhen{display:block;color:var(--text-2);font-size:10.5px}
 /* An unmeasured weapon is not a low score — it is the invitation, and it reads
    as one rather than as a zero at the bottom of a ranking. */
 .brow.none{opacity:.62}

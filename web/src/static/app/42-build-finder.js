@@ -144,6 +144,7 @@ function renderBuildFinder() {
   const score = (p) => (p.board || {}).score || 0;
   const list = all.filter((p) => inScope(p) && passes(p)).sort((a, b) => score(b) - score(a) || a.rank - b.rank);
   const scopeTotal = all.filter((p) => p.benchmark === finder.b && p.mode === finder.mo).length;
+  const updated = measuredText(boardMeasuredAt(all.filter((p) => p.benchmark === finder.b).map((p) => p.board)));
   const benchOf = (id) => (META.benchmarks || []).find((b) => b.id === id) || { name: id };
   const unit = rulerUnit(tr(benchOf(finder.b).name));
   const shown = (p) => String((p.board || {}).shown != null ? p.board.shown : score(p).toFixed(2));
@@ -321,7 +322,8 @@ function renderBuildFinder() {
   const inMode = all.filter((p) => p.benchmark === finder.b && p.mode === finder.mo);
 
   box.innerHTML =
-    `<div class="fd-head fold-h">${title}<small class="fd-count">${escHtml(trF("{n} of {m} builds", { n: list.length, m: scopeTotal }))}</small></div>` +
+    `<div class="fd-head fold-h">${title}<small class="fd-count">${escHtml(trF("{n} of {m} builds", { n: list.length, m: scopeTotal })
+      + (updated ? " · " + trF("updated {t}", { t: updated }) : ""))}</small></div>` +
     `<div class="fd-scope">` +
     `<div class="fd-seg"><span>${escHtml(tr("Ruler"))}</span>${rulers.map((id) => {
       const name = tr(benchOf(id).name);

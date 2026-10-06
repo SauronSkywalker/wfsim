@@ -39,7 +39,7 @@ async function renderCardPage(w, ask) {
   if (kind === "pz") {
     const ranked = rankBoard(rows.filter((r) => r.benchmark === ruler && !r.riven), [ruler], w.modes);
     const mode = wantMode && ranked.some((x) => x.mode === wantMode) ? wantMode : (ranked[0] || {}).mode;
-    const shown = ranked.filter((x) => x.mode === mode).slice(0, n);
+    const shown = distinctTop(ranked.filter((x) => x.mode === mode), n, () => "", (x) => cardShown(x.row));
     title = trF("{w} · top {n} builds", { w: w.name, n: shown.length });
     link = `${LIVE_ORIGIN}${weaponPath(w.id)}?bench=${encodeURIComponent(ruler)}&mode=${encodeURIComponent(mode || "base")}&riven=0`;
     body = () => shown.map((x) => cardBox(`<b class="lc-rank">#${x.rank}</b><b class="lc-score">${escHtml(cardShown(x.row))}</b><span class="sb-empty">${escHtml(metric)}</span>`,
@@ -50,16 +50,19 @@ async function renderCardPage(w, ask) {
     link = `${LIVE_ORIGIN}${weaponPath(w.id)}/riven-analyst`;
     body = () => !g ? "" : (g.top ? cardBox(`<span class="sb-h">${escHtml(tr("The board's best riven-free build"))}</span><b class="lc-score">${escHtml(cardShown(g.top.row))}</b>`,
       cardOfState(boardRowState(w, g.top.row), w)) : "")
-      + g.rivens.filter((x) => rivenMatches(x.row.riven, rivenAsk)).slice(0, n).map((x, i) => cardBox(`<b class="lc-rank">#${i + 1}</b><b class="lc-score">${escHtml(cardShown(x.row))}</b>${
+      + distinctTop(g.rivens.filter((x) => rivenMatches(x.row.riven, rivenAsk)).map((x, i) => ({ ...x, rank: i + 1 })), n, () => "",
+        (x) => cardShown(x.row)).map((x) => cardBox(`<b class="lc-rank">#${x.rank}</b><b class="lc-score">${escHtml(cardShown(x.row))}</b>${
         x.gain == null ? "" : `<b class="lc-gain">${pct(x.gain)}</b>`}`, cardOfState(boardRowState(w, x.row), w))).join("");
   }
+  const updated = measuredText(boardMeasuredAt(rows.filter((r) => r.benchmark === ruler)));
   const qr = await api("/api/qr", { text: link });
   const cards = body();
   // THE SITE'S OWN WORDMARK, as the topbar draws it: the brand is WFSim, and
   // Nona speaks in the line the bot sends with the image, not on it.
   box.innerHTML = `<header class="lc-top"><span class="brand">WF<span>Sim</span></span><span class="sb-empty">wfsim.app</span></header>
     <h1 class="lc-title">${escHtml(title)}</h1>
-    <div class="sb-empty lc-sub">${escHtml(bench ? tr(bench.name) : "")}</div>
+    <div class="sb-empty lc-sub">${escHtml([bench ? tr(bench.name) : "", updated ? trF("updated {t}", { t: updated }) : ""]
+      .filter(Boolean).join(" · "))}</div>
     ${cards || `<p class="sim-empty">${escHtml(tr("Nothing measured for this weapon yet."))}</p>`}
     <footer class="lc-foot"><div class="lc-qr">${qr && qr.svg ? qr.svg.replace(/^<\?xml[^>]*>/, "") : ""}</div>
       <div><b class="lc-slogan">${escHtml(tr("The real Simulacrum Prime."))}</b><div class="sb-empty">wfsim.app</div></div></footer>`;

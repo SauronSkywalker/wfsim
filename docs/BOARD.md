@@ -1053,6 +1053,15 @@ scoring **at least half their group's leader** by default, and offers a quarter
 and everything. `BOARD_DEPTHS` holds `0` rather than a copy of the line for
 "everything", because "no filter" stays true wherever the line is drawn.
 
+**A ROW SAYS WHEN IT WAS MEASURED.** `measured_at` is its fact's `finished_at`
+to the minute (UTC, ISO), omitted on a row with no clock. A weapon's "updated"
+time is its newest row under that ruler, shown in the reader's clock — on the
+board beside each leader, in the build finder and on the long image.
+
+**A TOP N COUNTS SCORES, NOT ROWS** wherever a short list is drawn (the long
+image, the bots): builds that tie are one answer, so the first of a tie is
+shown and the next row is the next score (`distinctTop`).
+
 A GROUP IS ONE WEAPON, IN ONE MODE, UNDER ONE RULER, and riven builds are a
 group of their own. A riven build and a plain one compete with each other for
 nothing, and one ruler's leader says nothing about another's; a shared

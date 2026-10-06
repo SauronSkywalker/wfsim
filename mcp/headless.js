@@ -439,6 +439,38 @@ function rivenFromOcr(pool, locales, lines) {
   };
 }
 
+// ---- the top N, one per score ------------------------------------------------
+
+/// THE FIRST `n` SCORES of each ranking, one row each: rows that tie are one
+/// answer, so a tie shows its first build and the next row shown is the next
+/// score — ranks 1, 4 and 5 when the first three tie. `list` is in rank order;
+/// `group` names the ranking a row is in and `shown` the score as printed.
+function distinctTop(list, n, group, shown) {
+  const seen = new Map();
+  return list.filter((x) => {
+    const g = seen.get(group(x)) || new Set();
+    seen.set(group(x), g);
+    if (g.size >= n || g.has(shown(x))) return false;
+    g.add(shown(x));
+    return true;
+  });
+}
+
+// ---- when a number was measured ---------------------------------------------
+
+/// WHEN A WEAPON'S NUMBERS LAST MOVED: the newest of its rows' `measured_at`,
+/// the scores table's own clock published to the minute, or "" where none says.
+const boardMeasuredAt = (rows) =>
+  (rows || []).reduce((m, r) => (r && r.measured_at && r.measured_at > m ? r.measured_at : m), "");
+
+/// `2026-10-05T13:52Z` in the reader's own clock, to the minute: `2026-10-05 21:52`.
+function measuredText(at) {
+  const d = new Date(at);
+  if (!at || Number.isNaN(d.getTime())) return "";
+  const p = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
 // ---- asking for a riven in words ---------------------------------------------
 //
 // `双暴 负任意`: the stats a card must have and what its malus may be, read
@@ -532,8 +564,9 @@ const HEADLESS_QUERIES = [
       riven: { kind: "string", what: "\"without\" (default), \"with\" or \"any\"", enum: () => ["without", "with", "any"] },
       mode: { kind: "string", what: "only this mode id" },
       limit: { kind: "number", min: 1, max: 20, what: "rows per group, default 3" },
+      distinct: { kind: "boolean", what: "one row per score: a tie shows its first build, and `limit` counts scores" },
     },
-    async run({ weapon, riven = "without", mode: m, limit = 3 }, host) {
+    async run({ weapon, riven = "without", mode: m, limit = 3, distinct = false }, host) {
       const w = headlessWeapon(host, weapon);
       if (w.ok === false) return w;
       const rows = await host.board(w.id);
@@ -542,8 +575,11 @@ const HEADLESS_QUERIES = [
       const name = headlessNameOf(host.meta());
       const evos = (w.evolutions || []).flatMap((t) => t.options || []);
       const evo = (id) => (evos.find((x) => x.id === id) || { name: id }).name;
-      const picked = rankBoard(rows, benches.map((b) => b.id), w.modes)
-        .filter((x) => (riven === "any" || x.riven === (riven === "with")) && (!m || x.mode === m) && x.rank <= limit);
+      const scoped = rankBoard(rows, benches.map((b) => b.id), w.modes)
+        .filter((x) => (riven === "any" || x.riven === (riven === "with")) && (!m || x.mode === m));
+      const picked = distinct
+        ? distinctTop(scoped, limit, (x) => `${x.row.benchmark}#${x.mode}#${x.riven}`, (x) => String(x.row.shown != null ? x.row.shown : x.row.score))
+        : scoped.filter((x) => x.rank <= limit);
       return {
         weapon: w.id,
         rows: picked.map(({ row: r, mode, riven: rv, rank, key }) => {
@@ -630,7 +666,8 @@ const HEADLESS_QUERIES = [
             ruler: host.tr((benches.find((b) => b.id === g.ruler_id) || { name: g.ruler_id }).name),
             ruler_id: g.ruler_id, mode: g.mode,
             riven_free: g.top ? { score: shown(g.top.row), mods: mods(g.top.row), link: link(g.top.row, false) } : null,
-            rivens: g.rivens.filter((x) => rivenMatches(x.row.riven, { bonuses, malus })).map((x) => ({
+            rivens: g.rivens.filter((x) => rivenMatches(x.row.riven, { bonuses, malus })).map((x, i) => ({
+              rank: i + 1,
               bonuses: x.row.riven.bonuses.map(stat), malus: x.row.riven.malus ? stat(x.row.riven.malus) : null,
               stat_ids: { bonuses: x.row.riven.bonuses, malus: x.row.riven.malus || null },
               score: shown(x.row), gain: x.gain, mods: mods(x.row), link: link(x.row, true),
@@ -642,4 +679,4 @@ const HEADLESS_QUERIES = [
 ];
 
 export { HEADLESS_ABOUT, HEADLESS_QUERIES, HEADLESS_RETIRED, headlessCheckArgs, headlessSchema, headlessNo, headlessToolName, headlessUnknown,
-  headlessSeat, headlessStateAxes, headlessWeapon, headlessWeaponPath, rivenStatNames, rivenStatNameEn, ocrFold, rivenQuery };
+  headlessSeat, headlessStateAxes, headlessWeapon, headlessWeaponPath, rivenStatNames, rivenStatNameEn, ocrFold, rivenQuery, boardMeasuredAt, measuredText, distinctTop };

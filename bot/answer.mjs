@@ -61,7 +61,7 @@ export function makeAnswer({ run, meta, zh, headless }) {
     const benches = meta.benchmarks || [];
     const ruler = benches.find((b) => hit.left && (squash(rulerShort(b)) === hit.left || squash(b.name.split(" · ")[0]) === hit.left))
       || benches.find((b) => b.primary) || benches[0];
-    const r = await run("builder.board.read", { weapon: hit.w.id, riven: "without", limit: n || 1 });
+    const r = await run("builder.board.read", { weapon: hit.w.id, riven: "without", limit: n || 1, distinct: true });
     if (r.ok === false) return t(NOT_MEASURED);
     const rows = r.rows.filter((x) => x.ruler_id === ruler.id);
     if (!rows.length) return t(NOT_MEASURED);
@@ -73,7 +73,7 @@ export function makeAnswer({ run, meta, zh, headless }) {
         x.build && x.build.arcane.length ? ` | ${t("Arcane")}: ${x.build.arcane.map(arcaneName).join("、")}` : ""}${
         x.build && x.build.evolutions.length ? ` | ${t("Evolutions")}: ${x.build.evolutions.map(evoName).join("、")}` : ""}`))
       .join("\n");
-    return { line: t("The top {n} builds of {w} under {ruler}, all measured. (￣ー￣)ゞ", { w: weaponName(hit.w), ruler: rulerShort(ruler), n: shown }), card, text };
+    return { line: t("The top {n} builds of {w} under {ruler}. (￣ー￣)ゞ", { w: weaponName(hit.w), ruler: rulerShort(ruler), n: shown }), card, text };
   }
 
   async function zk(rest, n) {
@@ -86,15 +86,16 @@ export function makeAnswer({ run, meta, zh, headless }) {
     if (r.ok === false || !r.groups.length) return t(NOT_MEASURED);
     const g = r.groups.find((x) => x.rivens.length);
     if (!g) return t("No riven on the board has these stats yet. (￣^￣)");
-    const shown = Math.min(n || 3, g.rivens.length);
+    const top = headless.distinctTop(g.rivens, n || 3, () => "", (x) => x.score);
+    const shown = top.length;
     const card = `${SITE}${headless.headlessWeaponPath(meta.weapons || [], hit.w.id)}/card?kind=zk&ruler=${encodeURIComponent(g.ruler_id)}&mode=${encodeURIComponent(g.mode)}&n=${shown}`
       + (ask.bonuses.length ? `&has=${ask.bonuses.map(encodeURIComponent).join(",")}` : "")
       + (ask.malus ? `&malus=${encodeURIComponent(ask.malus)}` : "");
-    const line = (x, i) => `${i + 1}. ${x.stat_ids.bonuses.map((id) => "+" + statZh(cls, id)).join(" ")}${
+    const line = (x) => `#${x.rank} ${x.stat_ids.bonuses.map((id) => "+" + statZh(cls, id)).join(" ")}${
       x.stat_ids.malus ? " −" + statZh(cls, x.stat_ids.malus) : ""}  ${x.score}${x.gain == null ? "" : `（${x.gain >= 0 ? "+" : "−"}${Math.abs(x.gain * 100).toFixed(1)}%）`}`;
     const text = [`${weaponName(hit.w)} · ${t(g.ruler).split(" · ")[0]}`,
       `${t("The board's best riven-free build")}: ${g.riven_free ? g.riven_free.score : "—"}`]
-      .concat(g.rivens.slice(0, shown).map(line)).join("\n");
+      .concat(top.map(line)).join("\n");
     return { line: t("These are {w}'s rivens, against the best build without one. I ran every one. (*/ω＼*)", { w: weaponName(hit.w) }), card, text };
   }
 

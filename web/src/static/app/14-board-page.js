@@ -504,6 +504,7 @@ const benchRowHtml = (cur, { w, mode, row }, i) => `
             : ""}</span>
         <span class="bscore">${row
           ? escHtml(row.shown != null ? String(row.shown) : row.score.toFixed(4))
+            + (row.measured_at ? `<small class="bwhen">${escHtml(measuredText(row.measured_at))}</small>` : "")
           : `<span class="bnone">${escHtml(tr("not measured"))}</span>`}</span>
       </a>`;
 

@@ -45,6 +45,9 @@ export async function renderCard(url, lang = "zh") {
   const p = await page();
   try {
     await p.send("Emulation.setDeviceMetricsOverride", { width: 760, height: 1200, deviceScaleFactor: 1.5, mobile: false });
+    // THE READERS' CLOCK, not the server's: a card's "updated" time is printed
+    // in the time zone of the chat it is sent to.
+    await p.send("Emulation.setTimezoneOverride", { timezoneId: lang === "zh" ? "Asia/Shanghai" : "UTC" });
     // THE LANGUAGE BEFORE THE PAGE'S FIRST SCRIPT, which reads it once at load;
     // an injected script only runs on a page whose Page domain is enabled.
     await p.send("Page.enable");
