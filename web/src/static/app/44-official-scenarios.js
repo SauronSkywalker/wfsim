@@ -107,15 +107,15 @@ const weaponExists = (id) => !!id && META.weapons.some((w) => w.id === id);
 /// not it is the bug of the day.
 const weaponEvos = (weaponId) =>
   (weaponInfo(weaponId || $("weapon").value) || {}).evolutions || [];
-// THE TIER LADDER, in one place. Tier N is choosable only once N-1 is filled:
-// a tier-2 perk with no tier 1 is not a weaker build, it is not a build. The
-// builder greys the later rows out; the gain scan has to obey the same rule or
-// it measures — and recommends — evolutions nobody can select.
-const evoOpenTo = () => {
-  let n = 0;
-  for (const t of weaponEvos()) { if (!evoSel[t.tier]) break; n = t.tier; }
-  return n + 1; // the deepest tier that may be chosen
-};
+// EVERY TIER INSTALLED, onto THIS weapon's options: a finished Genesis cannot
+// be emptied, so a tier `sel` does not name — or names another weapon's perk
+// for — holds its first option, which is the game's order
+// (`evolutions::complete`, the rule the server applies to every request).
+const defaultEvolutions = (weaponId, sel) => Object.fromEntries(weaponEvos(weaponId).map((t) => {
+  const opts = t.options || [];
+  const pick = sel && sel[t.tier];
+  return [t.tier, opts.some((o) => o.id === pick) ? pick : opts.length ? opts[0].id : null];
+}));
 const modById = (id) => poolWithRivens().find((m) => m.id === id);
 // A SECTION THAT IS NOT THERE IS NOT A DEAD APP.
 //
@@ -230,6 +230,7 @@ function applyWeaponInner(id, presetMods) {
   // `defaultScenario()` rather than the last one's fight. `restoreState`
   // overwrites this immediately when a preset is being applied.
   mode = defaultMode(id, null);
+  evoSel = defaultEvolutions(id, null);
   // NOTHING CROSSES BETWEEN WEAPONS: a valence is a statement about one of
   // them, so opening another starts with none.
   valence = defaultValence(id, null);

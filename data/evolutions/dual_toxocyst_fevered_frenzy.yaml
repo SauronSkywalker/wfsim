@@ -2,6 +2,7 @@ id: dual_toxocyst_fevered_frenzy
 name: Fevered Frenzy
 weapon: dual_toxocyst
 tier: 2
+position_in_tier: 2
 icon: IncreasedFireRateOnAbilityUseStacks(xWhite).png   # wiki File: name (Dual_Toxocyst_Incarnon_Genesis)
 description: "Increase Base Damage by +50.\nOn Ability Cast: +5% Multishot. Stacks up to 20x."
 selection: choose_one

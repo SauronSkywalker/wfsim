@@ -2,6 +2,7 @@ id: paris_prime_marksmans_focus
 name: Marksman's Focus
 weapon: paris_prime
 tier: 3
+position_in_tier: 2
 icon: LowerFOV.png
 description: "-30% Zoom."
 # see notes: genesis_family_s_adapter

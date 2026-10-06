@@ -280,9 +280,9 @@ mod tests {
         assert!((phi[0] - alone[0]).abs() < 1e-3 && (phi[1] - alone[1]).abs() < 1e-3, "{r}");
     }
 
-    /// TAKING TIER 2 OUT TAKES OUT TIER 2's PERK, not the tiers above it. The
-    /// ladder truncates a build at its first empty rung, and under it a part's
-    /// value would carry every perk it opens; `evolutions_as_given` skips it.
+    /// TAKING TIER 2 OUT TAKES OUT TIER 2's PERK, not the tiers above it, and
+    /// does not put its default back — which every other request would, and
+    /// under which a part's value would be measured against another perk.
     #[test]
     fn a_tier_taken_out_leaves_the_tiers_above_it() {
         let score = |evos: &[&str], ladder: bool| {
@@ -295,8 +295,10 @@ mod tests {
         };
         let (t1, t3, t4) =
             ("torid_evo1_incarnon_form", "torid_extended_volley", "torid_survivors_edge");
-        let only_form = score(&[t1], true);
-        assert_eq!(score(&[t1, t3, t4], true), only_form, "the ladder stops at the empty rung");
+        let only_form = score(&[t1], false);
+        let defaults = wfsim_engine::data::evolutions::complete("torid", &[t1, t3, t4]);
+        let defaults: Vec<&str> = defaults.iter().map(String::as_str).collect();
+        assert_eq!(score(&[t1, t3, t4], true), score(&defaults, false), "tier 2 holds its default");
         assert!(score(&[t1, t3, t4], false) > only_form * 1.05, "tiers 3 and 4 must still apply");
     }
 

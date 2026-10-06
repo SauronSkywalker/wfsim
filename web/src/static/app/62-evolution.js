@@ -603,30 +603,19 @@ function renderMode() {
 function renderEvo() {
   const tiers = weaponEvos();
   const rows = [];
-  // TIERS UNLOCK IN ORDER, as they do in game: tier N is reachable only once
-  // tier N-1 is installed. Without it the whole branch is
-  // void — a tier-2 perk with no tier 1 is not a weaker build, it is not a
-  // build — so the later rows are DISABLED rather than silently contributing
-  // to a number nobody could reach.
-  const openTo = evoOpenTo();
   const genesis = wikiUrl(wikiWeaponName(weaponInfo($("weapon").value)));
   const cfgs = {};
   for (const t of tiers) {
     const sel = evoSel[t.tier] || null;
-    const locked = t.tier > openTo;
     const id = "dd-evo-" + t.tier;
     const o = (t.options || []).find((x) => x.id === sel);
     cfgs[id] = {
       axis: { kind: "evo", idx: 0 },
       label: `EVO ${ROMAN(t.tier)}`,
-      addLabel: tr("add evolution"),
       value: sel || "",
-      // A TIER CAN BE EMPTY — a bare weapon is every tier empty — so this one
-      // HAS a Remove. That is the whole of the difference from a part or an
-      // element, and it is one menu item rather than a second shape.
-      removable: !!sel,
-      locked,
-      lockedWhy: locked ? tr("install the previous tier first") : "",
+      // NO REMOVE: a finished Genesis has no empty tier, the same shape as a
+      // part or an element.
+      removable: false,
       items: t.options.map((x) => ({
         key: x.id,
         value: x.id,
@@ -640,7 +629,7 @@ function renderEvo() {
         extra: (x.broken ? ' <i class="bx">BROKEN</i>' : "") + evoGapChips(x, "i"),
       })),
       card: o ? evoCardOf(o, genesis) : null,
-      onPick: (v) => pickEvolution(t.tier, v || null),
+      onPick: (v) => { if (v) pickEvolution(t.tier, v); },
     };
     rows.push(rankedSlot(id, cfgs[id]));
   }
@@ -694,14 +683,9 @@ function evoCardOf(o, genesis) {
   };
 }
 
-/// INSTALLING OR REMOVING ONE TIER, and everything that follows from it.
+/// SWAPPING ONE TIER'S PERK, and everything that follows from it.
 function pickEvolution(tier, id) {
-  const tiers = weaponEvos();
   evoSel[tier] = id;
-  // Removing a tier removes everything that stood on it. Leaving them
-  // selected-but-void would show a build the game cannot make, and the engine
-  // would price perks the weapon never reached.
-  if (!id) tiers.forEach((x) => { if (x.tier > tier) evoSel[x.tier] = null; });
   // ...and an installed form takes with it every mod that needed the weapon
   // not to have it (a Cannonade under the Incarnon form). Said out loud, never
   // silently: the slot emptying under you is exactly the kind of change a
@@ -716,8 +700,6 @@ function pickEvolution(tier, id) {
       tr("it needs the same trigger on every firing mode")}`);
     renderMods();
   }
-  // Redraw the whole ladder, not just this row: a pick opens (or a removal
-  // shuts) every tier below it.
   renderEvo(); renderMode(); refreshPanel();
 }
 

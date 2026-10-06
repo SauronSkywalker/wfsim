@@ -11,7 +11,7 @@ use wfsim_optimizer::{
 };
 use wfsim_engine::fight::Summary;
 use crate::buffs::{BuffMeta, arcane_at_rank, arcane_in_pools, buffs_json, enumerate_buffs, evo_buffs};
-use crate::fight::{ladder_prefix, parse_fight};
+use crate::fight::parse_fight;
 use crate::kitgun::valence_element_of;
 use crate::registry::{WeaponInfo, form_unlock_evo, innate_slots_for, mod_not_here, weapon, wspec};
 use crate::request::{err_json, get_f64, get_str, get_u32};
@@ -603,50 +603,28 @@ pub fn parse_optimize(v: &Value) -> Result<OptimizePlan, Value> {
 
     // ---- evolution scope: per-tier options → the Cartesian product ----
     // The tier COUNT is per weapon (DT 4, Laetum 5) — read it from the data.
+    // EVERY TIER IS FILLED: an unmarked tier holds its default, the same rule
+    // `chosen_evolutions` applies to the replay.
     let evo_req = v.get("evolutions").and_then(|x| x.as_object());
+    let evo_group = wspec(&info.id).transform_group.as_deref().unwrap_or(&info.id);
     let mut evo_sets: Vec<Vec<String>> = vec![Vec::new()];
-    let evo_tiers = wfsim_engine::data::evolutions::tier_count(
-        wspec(&info.id).transform_group.as_deref().unwrap_or(&info.id),
-    );
+    let evo_tiers = wfsim_engine::data::evolutions::tier_count(evo_group);
     for tier in 1u32..=evo_tiers {
-        // `"none"` IS AN OPTION THE LIST MAY NAME, which is
-        // how a tier says "0–1": search this tier both unfilled and filled.
-        // Unambiguous here where it is not for arcanes, because the wire is
-        // already one array PER TIER. An array holding only "none" is "0–0" —
-        // search this tier empty while its candidates stay marked for later.
-        let opts: Vec<Option<String>> = evo_req
+        let picks: Vec<String> = evo_req
             .and_then(|o| o.get(&tier.to_string()))
             .and_then(|a| a.as_array())
-            .map(|a| {
-                a.iter()
-                    .filter_map(|x| x.as_str())
-                    .map(|s| if s == "none" { None } else { Some(s.to_string()) })
-                    .collect()
-            })
+            .map(|a| a.iter().filter_map(|x| x.as_str()).filter(|s| *s != "none").map(String::from).collect())
             .unwrap_or_default();
-        let picks = if opts.is_empty() { vec![None] } else { opts }; // unmarked = nothing at this tier
         let mut next = Vec::new();
         for base in &evo_sets {
-            for pick in &picks {
+            for pick in picks.iter().map(Some).chain(picks.is_empty().then_some(None)) {
                 let mut e = base.clone();
-                if let Some(id) = pick {
-                    e.push(id.clone());
-                }
+                e.extend(pick.cloned());
                 next.push(e);
             }
         }
         evo_sets = next;
     }
-    // The product can skip a tier — mark tier 2 and leave tier 1 unmarked and
-    // it pairs "nothing at 1" with "Final Fusillade at 2", which is a build
-    // the game cannot make. Cut each set to its reachable prefix (the same
-    // rule every other entry point applies) and dedupe, rather than searching
-    // variants that would be filtered away at the moment they were scored.
-    for set in evo_sets.iter_mut() {
-        *set = ladder_prefix(std::mem::take(set));
-    }
-    evo_sets.sort();
-    evo_sets.dedup();
     for set in &evo_sets {
         for id in set {
             if wfsim_engine::data::evolutions::get(id).is_none() {
@@ -654,13 +632,17 @@ pub fn parse_optimize(v: &Value) -> Result<OptimizePlan, Value> {
             }
         }
     }
+    for set in evo_sets.iter_mut() {
+        *set = wfsim_engine::data::evolutions::complete(evo_group, set);
+    }
+    evo_sets.sort();
+    evo_sets.dedup();
 
     // ---- what each variant may not EQUIP -----------------------------------
     //
-    // An equip rule is asked of every firing mode a weapon has, and a variant
-    // that installs the Incarnon form has two — so a Cannonade is legal in the
-    // variants that leave tier 1 out and illegal in the ones that do not. That
-    // is a per-CANDIDATE fact, not a per-scope one: narrowing the pool to what
+    // An equip rule is asked of every firing mode a weapon has, and an
+    // evolution can change them — so what a variant may equip is a
+    // per-CANDIDATE fact, not a per-scope one: narrowing the pool to what
     // every variant can equip would throw away the builds where the mod is the
     // point, and leaving it alone would crown a build the game refuses.
     //
@@ -2405,36 +2387,17 @@ mod optimizer_evolution_tests {
         .evo_sets
     }
 
-    /// The scope's Cartesian product must not enumerate a gapped LADDER.
-    ///
-    /// A tier with no marks contributes "nothing here", so marking tier 2 and
-    /// leaving tier 1 blank pairs them into a set the game cannot make. Every
-    /// such set would be truncated at the moment it was scored, so searching
-    /// it is not a wrong answer, it is a wasted variant — and a reported one,
-    /// since the winner prints the set it was given.
+    /// EVERY SEARCHED SET INSTALLS EVERY TIER: a tier with no marks holds its
+    /// default, the same set `chosen_evolutions` gives the replay.
     #[test]
-    fn the_search_never_enumerates_a_tier_without_the_one_below_it() {
-        // Tier 2 alone: nothing to search, one empty set.
-        assert_eq!(sets(json!({ "2": ["torid_final_fusillade"] })), vec![Vec::<String>::new()]);
+    fn every_searched_set_installs_every_tier() {
+        let defaults = wfsim_engine::data::evolutions::complete::<&str>("torid", &[]);
+        assert_eq!(sets(json!({})), vec![defaults.clone()]);
+        assert_eq!(sets(json!({ "2": ["none"] })), vec![defaults], "no empty tier to ask for");
 
-        // Tier 1 alone: the tier's own two options, both legal.
-        let one = sets(json!({ "1": ["torid_evo1_incarnon_form"] }));
-        assert_eq!(one, vec![vec!["torid_evo1_incarnon_form".to_string()]]);
-
-        // Both marked: the product stands, because now every set is reachable.
-        let two = sets(json!({
-            "1": ["torid_evo1_incarnon_form"],
-            "2": ["torid_final_fusillade", "torid_survivors_edge"],
-        }));
+        let two = sets(json!({ "2": ["torid_final_fusillade", "torid_survivors_edge"] }));
         assert_eq!(two.len(), 2, "{two:?}");
-        assert!(two.iter().all(|s| s.contains(&"torid_evo1_incarnon_form".to_string())));
-
-        // A gap ABOVE a legal prefix cuts only what is above it.
-        let gapped = sets(json!({
-            "1": ["torid_evo1_incarnon_form"],
-            "3": ["torid_extended_volley"],
-        }));
-        assert_eq!(gapped, vec![vec!["torid_evo1_incarnon_form".to_string()]]);
+        assert!(two.iter().all(|s| s.len() == 4 && s[0] == "torid_evo1_incarnon_form"), "{two:?}");
     }
 
     /// THE SEARCH WEARS THE STANCE IT WAS HANDED, in every candidate.
@@ -2516,30 +2479,30 @@ mod equip_rule_tests {
 
     #[test]
     fn the_simulator_refuses_a_cannonade_beside_an_unlocked_incarnon_form() {
-        // Nothing installed, base form: an ordinary build.
-        let ok = sim("base", json!([]));
-        assert_eq!(ok["ok"], json!(true), "{ok}");
-
-        // Tier 1 installed: the weapon gained a full-auto firing mode.
-        let bad = sim("base", json!([EVO1]));
-        assert_eq!(bad["ok"], json!(false), "{bad}");
-        let msg = bad["error"].as_str().unwrap_or_default();
-        assert!(msg.contains("firing mode"), "the error says WHY: {msg}");
-
-        // ...and ASKING FOR THE FORM is installing it (`parse_fight` implies the
-        // unlock), so the cycle refuses it with no evolution named at all. This
-        // is the case the page starts in on this weapon, and the alternative —
-        // scoring the mod while firing a form it cannot be worn beside — is a
-        // number nobody can reproduce.
-        for form in ["incarnon", "incarnon_cycle"] {
-            assert_eq!(sim(form, json!([]))["ok"], json!(false), "form {form}");
+        // Every tier is installed, so the weapon has its full-auto firing mode
+        // whichever form is fired — the mod is refused in all of them.
+        for form in ["base", "incarnon", "incarnon_cycle"] {
+            let bad = sim(form, json!([]));
+            assert_eq!(bad["ok"], json!(false), "form {form}: {bad}");
+            let msg = bad["error"].as_str().unwrap_or_default();
+            assert!(msg.contains("firing mode"), "the error says WHY: {msg}");
         }
+        // The rule is the pool's, asked of the evolutions: without tier 1
+        // (only the Shapley analysis can ask for that) it is an ordinary build.
+        let ok = simulate_json(&json!({
+            "weapon": "dual_toxocyst", "form": "base", "mods": [CANNON], "arcane": "none",
+            "evolutions": [], "evolutions_as_given": true,
+            "enemy": "thrax_centurion", "duration": 10.0, "runs": 2,
+            "headshot_pct": 100.0, "seed": 7,
+        }));
+        assert_eq!(ok["ok"], json!(true), "{ok}");
+        assert_eq!(sim("base", json!([EVO1]))["ok"], json!(false));
     }
 
-    /// Evolutions are a search DIMENSION, so the scope holds sets that can wear
-    /// the mod and sets that cannot. Narrowing the pool to their intersection
-    /// would throw away the builds the mod is FOR; leaving it alone would crown
-    /// one the game refuses. It is decided per candidate instead.
+    /// Evolutions are a search DIMENSION, so what a set can wear is decided per
+    /// candidate: narrowing the pool to what every set can wear would throw
+    /// away the builds a mod is FOR, and leaving it alone would crown one the
+    /// game refuses.
     #[test]
     fn the_optimizer_forbids_the_pair_and_not_the_mod() {
         let plan = |evolutions: Value| {
@@ -2556,15 +2519,11 @@ mod equip_rule_tests {
             p.variant_forbids.iter().map(|f| f[i]).collect()
         };
 
-        // Tier 1 unmarked: one variant, nothing installed, both mods legal.
-        let bare = plan(json!({}));
-        assert_eq!(bare.evo_sets.len(), 1);
-        assert_eq!(forbids(&bare, CANNON), vec![false]);
-
-        // Tier 1 marked: every set installs the form, so the Cannonade is out of
-        // all of them — and `hornet_strike` is out of none, because this rule
-        // excludes one mod and does not narrow the pool.
-        let inc = plan(json!({ "1": [EVO1] }));
+        // Every set installs the form, so the Cannonade is out of all of them —
+        // and `hornet_strike` is out of none, because this rule excludes one
+        // mod and does not narrow the pool.
+        let inc = plan(json!({ "2": ["dual_toxocyst_fevered_frenzy", "dual_toxocyst_carnage_reign"] }));
+        assert_eq!(inc.evo_sets.len(), 2);
         assert!(inc.evo_sets.iter().all(|s| s.iter().any(|e| e == EVO1)));
         assert!(forbids(&inc, CANNON).iter().all(|&f| f), "the pair is illegal");
         assert!(forbids(&inc, "hornet_strike").iter().all(|&f| !f), "the pool is not");
@@ -2575,10 +2534,8 @@ mod equip_rule_tests {
     ///
     /// A single-slot axis has three answers and every one of them is now
     /// reachable — 0–0 (search it unfilled, candidates kept for later), 0–1
-    /// (both), 1–1 (always filled, the derived answer and the old one). The
-    /// exilus slot has been able to say all three since it was written; the
-    /// arcane seats and the evolution tiers could say only 0–0 and 1–1, and
-    /// which of those you got was decided by whether you had marked anything.
+    /// (both), 1–1 (always filled, the derived answer and the old one). An
+    /// evolution tier is not one of them: it is never empty.
     ///
     /// THE DERIVED ANSWER IS UNTOUCHED, which is the half that must not
     /// regress: marking candidates and saying nothing else still means 1–1, so
@@ -2622,21 +2579,6 @@ mod equip_rule_tests {
         );
         assert_eq!(seat(&unworn), vec!["none"]);
 
-        // AND THE SAME THREE ON AN EVOLUTION TIER, where the wire is an array
-        // per tier and "none" is simply one of its entries.
-        let one_tier = |ids: Value| {
-            let p = plan(json!({}), json!({ "1": ids }));
-            let mut n: Vec<usize> = p.evo_sets.iter().map(|s| s.len()).collect();
-            n.sort();
-            n
-        };
-        assert_eq!(one_tier(json!(["laetum_evo1_incarnon_form"])), vec![1], "1–1");
-        assert_eq!(
-            one_tier(json!(["laetum_evo1_incarnon_form", "none"])),
-            vec![0, 1],
-            "0–1"
-        );
-        assert_eq!(one_tier(json!(["none"])), vec![0], "0–0");
     }
 
     /// THE EMPTY MARK NAMES ITS SEAT, and this is the case that forces it.
@@ -2908,13 +2850,13 @@ mod lower_ranks {
     fn a_ranked_id_reaches_the_resolved_stats() {
         let duration = |id: &str| {
             let mut out = Vec::new();
-            let panel = panel_json(&json!({ "weapon": "burston_prime", "mods": [id] }));
+            let panel = panel_json(&json!({ "weapon": "grakata", "mods": [id] }));
             finals(&panel, "status_duration", &mut out);
             out
         };
         assert_eq!(duration("hunter_track"), vec!["+90%"]);
         assert_eq!(duration("hunter_track@0"), vec!["+15%"]);
-        let refused = panel_json(&json!({ "weapon": "burston_prime", "mods": ["hunter_track@9"] }));
+        let refused = panel_json(&json!({ "weapon": "grakata", "mods": ["hunter_track@9"] }));
         assert!(refused["error"].as_str().is_some_and(|e| e.contains("rank 9")), "{refused}");
     }
 

@@ -2,6 +2,7 @@ id: praedos_shockwave_synergy
 name: Shockwave Synergy
 weapon: praedos
 tier: 3
+position_in_tier: 1
 icon: EvolutionShockwaveSynergy.png
 description: "For each enemy hit by Slam radius, gain 4 Combo Count."
 # THE ORDINARY SLAM PAYS IT AND A HEAVY SLAM DOES NOT --

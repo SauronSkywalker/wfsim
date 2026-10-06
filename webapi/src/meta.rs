@@ -1256,10 +1256,10 @@ pub fn meta_json() -> Value {
             // form (`default_form` in data/weapons) where there is not. A
             // fixed string could only ever be right for one of the two.
             "form": "default",
-            // The page starts EMPTY (user decision): no mods, no arcane, no
-            // evolutions — a bare weapon. Reference builds live as presets /
-            // data/builds, not as the initial state.
-            "evolutions": {},
+            // The page starts EMPTY (user decision): no mods, no arcane.
+            // Evolutions are never empty — every tier holds its default.
+            // Reference builds live as presets / data/builds, not as the
+            // initial state.
             "arcane": "none",
             "enemy": "thrax_centurion",
             "level": 9999,

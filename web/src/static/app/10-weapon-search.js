@@ -316,7 +316,6 @@ async function init() {
   const d = META.defaults;
   $("weapon").value = bootWeapon;
   arcanes = arcanesFor(bootWeapon, d.arcane);
-  evoSel = { 1: null, 2: null, 3: null, 4: null, ...(d.evolutions || {}) };
   sim = defaultScenario();
   await boardBoot;            // before presets: the board's rows ARE build presets
   applyWeapon(bootWeapon, d.mods);

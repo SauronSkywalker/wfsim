@@ -2,6 +2,7 @@ id: phenmor_survivors_edge
 name: Survivor's Edge
 weapon: phenmor
 tier: 4
+position_in_tier: 1
 icon: EvolutionCriticalStatusUp.png
 description: "Increase Base Critical Chance by +10%. Increase Base Status Chance by +10%."
 # see notes: natural_incarnon_phenmor_carries

@@ -2,6 +2,7 @@ id: furis_extended_volley
 name: Extended Volley
 weapon: furis
 tier: 3
+position_in_tier: 2
 icon: IncarnonClipSize(xWhite).png
 description: "Increase Base Magazine Capacity by +25."
 # see notes: genesis_family_s_furis

@@ -2,6 +2,7 @@ id: furis_headcracker
 name: Headcracker
 weapon: furis
 tier: 4
+position_in_tier: 1
 icon: OnHeadshotFireRateForXSecs(xWhite).png
 description: "On Headshot: +5% Fire Rate for 2s. Stacks up to 10x."
 # see notes: genesis_family_s_furis

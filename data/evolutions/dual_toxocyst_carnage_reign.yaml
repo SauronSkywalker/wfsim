@@ -2,6 +2,7 @@ id: dual_toxocyst_carnage_reign
 name: Carnage Reign
 weapon: dual_toxocyst
 tier: 2
+position_in_tier: 1
 icon: DamagePerStatusOnEnemyWithEnergyPool(xWhite).png   # wiki File: name (Dual_Toxocyst_Incarnon_Genesis)
 description: "Increase Base Damage by +60.\n+33% Direct Damage per Status Type affecting the target."
 selection: choose_one

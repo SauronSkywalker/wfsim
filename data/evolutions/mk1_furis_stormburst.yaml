@@ -2,6 +2,7 @@ id: mk1_furis_stormburst
 name: Stormburst
 weapon: mk1_furis
 tier: 2
+position_in_tier: 2
 icon: DamageAndOnHittingEnemyAffectedByElectricity(xWhite).png
 description: "Increase Base Damage by +34.\nOn hitting an enemy affected by Electricity: +0.4 Multishot for 2s. Stacks up to 3x."
 # see notes: genesis_family_s_furis

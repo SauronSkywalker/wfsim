@@ -2,6 +2,7 @@ id: boar_evo1_incarnon_form
 name: Incarnon Form
 weapon: boar
 tier: 1
+position_in_tier: 1
 # The wiki file is the BARE name, not the "IncarnonForm…" pattern the Torid
 # and Dual Toxocyst use — Boar/Boar Prime/Dera all share `ShortRangeBeams`,
 # which is why this weapon needs no icon of its own.

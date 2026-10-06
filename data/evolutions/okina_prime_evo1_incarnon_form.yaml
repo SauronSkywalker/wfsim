@@ -2,6 +2,7 @@ id: okina_prime_evo1_incarnon_form
 name: Incarnon Form
 weapon: okina_prime
 tier: 1
+position_in_tier: 1
 icon: OkinaGhosts(xWhite).png
 description: "Reach 6x Combo and then Heavy Attack to activate Incarnon Form for 180 seconds. Kills generate spectral daggers that target enemies, applying max Cold Status stacks. +100% Melee Damage, +20% Sprint Speed, +20% to Parkour Velocity."
 # A MELEE INCARNON IS NOT A FORM: it changes numbers on the seven ways the

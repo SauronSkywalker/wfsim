@@ -6,6 +6,9 @@ pub(super) struct EvoFile {
     pub(super) name: String,
     pub(super) weapon: String,
     pub(super) tier: u32,
+    /// 1-based place among this tier's options, in the order the wiki's
+    /// Evolutions table lists them. Position 1 is what an unstated tier holds.
+    pub(super) position_in_tier: u32,
     /// Wiki `File:` name for the evolution's icon.
     #[serde(default)]
     pub(super) icon: Option<String>,

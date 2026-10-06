@@ -177,36 +177,16 @@ fn build_body_parts(spec: &EnemySpec, headshot_pct: f64) -> Vec<BodyPart> {
     out
 }
 
-/// The evolutions of `ids` that the weapon can actually REACH, in order.
-///
-/// The tiers are a LADDER: tier N is installed only after tier N-1, so a set
-/// that skips one does not describe a weapon anyone can hold. Everything from
-/// the first gap upward is dropped. The UI locks the rows, but it cannot be
-/// the only place the rule holds — a preset saved before it existed, or a
-/// hand-built request, still carries the gap, and the engine would price it.
-pub(crate) fn ladder_prefix(ids: Vec<String>) -> Vec<String> {
-    let tier_of = |id: &String| wfsim_engine::data::evolutions::get(id).map(|e| e.tier);
-    let mut tiers: Vec<u32> = ids.iter().filter_map(tier_of).collect();
-    tiers.sort_unstable();
-    let reach = tiers
-        .iter()
-        .enumerate()
-        .take_while(|(i, t)| **t == *i as u32 + 1)
-        .count() as u32;
-    ids.into_iter()
-        .filter(|id| wfsim_engine::data::evolutions::get(id).is_some_and(|e| e.tier <= reach))
-        .collect()
-}
-
-/// THE EVOLUTIONS ARE EXACTLY THE LIST: no ladder trims it and no form implies
-/// its unlock. The Shapley analysis's subsets are built this way.
+/// THE EVOLUTIONS ARE EXACTLY THE LIST: no tier is filled with its default.
+/// The Shapley analysis's subsets are built this way.
 fn evolutions_as_given(v: &Value) -> bool {
     v.get("evolutions_as_given").and_then(Value::as_bool).unwrap_or(false)
 }
 
-/// The chosen evolution set: `evolutions` (an array of data ids; ABSENT
-/// entries = empty tier — nothing installed) wins; a legacy `evo2` string
-/// (short names accepted) maps to the historical default trio.
+/// The chosen evolution set: `evolutions` (an array of data ids; a tier it
+/// does not name holds that tier's default, `evolutions::complete`) wins; a
+/// legacy `evo2` string (short names accepted) maps to the historical default
+/// trio.
 /// The evolutions this run installs — always filtered to the ones that BELONG
 /// to this weapon.
 ///
@@ -218,18 +198,19 @@ fn evolutions_as_given(v: &Value) -> bool {
 /// by the builder's "⇤ import". Both are dropped here rather than refused: a
 /// build is still a legal build without another weapon's perks.
 ///
-/// `evolutions_as_given: true` SKIPS THE LADDER, and only the Shapley analysis
-/// sends it (docs/SHAPLEY.md): taking tier 2 out must take out tier 2's perk,
-/// not tiers 3 and 4 with it. No build, share link or board row carries it.
+/// `evolutions_as_given: true` SKIPS THE DEFAULTS, and only the Shapley
+/// analysis sends it (docs/SHAPLEY.md): taking tier 2 out must take out tier
+/// 2's perk, not put its first option back. No build, share link or board row
+/// carries it.
 pub(crate) fn chosen_evolutions(v: &Value, info: &WeaponInfo) -> Result<Vec<String>, String> {
-    let ladder = !evolutions_as_given(v);
+    let as_given = evolutions_as_given(v);
     let mine = |ids: Vec<String>| -> Vec<String> {
         let group = evo_group(info);
         let ids: Vec<String> = ids
             .into_iter()
             .filter(|id| wfsim_engine::data::evolutions::get(id).is_some_and(|e| e.weapon == group))
             .collect();
-        if ladder { ladder_prefix(ids) } else { ids }
+        if as_given { ids } else { wfsim_engine::data::evolutions::complete(group, &ids) }
     };
     if let Some(arr) = v.get("evolutions").and_then(|x| x.as_array()) {
         let ids: Vec<String> = arr
@@ -246,9 +227,8 @@ pub(crate) fn chosen_evolutions(v: &Value, info: &WeaponInfo) -> Result<Vec<Stri
         return Ok(mine(ids));
     }
     // No `evolutions` key: the historical default build, which is Dual
-    // Toxocyst's. `mine` reduces it to nothing on every other weapon — an
-    // omitted key means "unstated", and the honest reading of unstated is a
-    // weapon with no evolutions installed, not another weapon's.
+    // Toxocyst's. On every other weapon `mine` drops it to the weapon's own
+    // defaults, never another weapon's perks.
     let evo2 = match get_str(v, "evo2", "dual_toxocyst_fevered_frenzy") {
         "carnage" | "dual_toxocyst_carnage_reign" => "dual_toxocyst_carnage_reign",
         _ => "dual_toxocyst_fevered_frenzy",
@@ -288,7 +268,7 @@ pub(crate) struct Fight {
     pub(crate) denied_buff_triggers: Vec<String>,
     /// Both actors and how long they are at it.
     pub(crate) arena: wfsim_engine::arena::Arena,
-    /// After the ladder is applied AND the form's own unlock is implied.
+    /// Every tier filled (`chosen_evolutions`).
     pub(crate) evos: Vec<String>,
     /// THE FORM A CYCLE FILLS ITS GAUGE IN, `None` when a single form is fired
     /// throughout. Not the weapon's default: there is one cycle per form it can
@@ -897,28 +877,7 @@ fn played_mode(v: &Value, info: &'static WeaponInfo) -> Result<PlayedMode, Value
         Ok(e) => e,
         Err(e) => return Err(err_json(e)),
     };
-    // ASKING FOR A FORM IMPLIES THE EVOLUTION THAT IS THAT FORM.
-    //
-    // Falling back to "base" when the tier-1 unlock is not among the chosen
-    // evolutions makes the form control lie: with no evolutions picked — the
-    // state the page STARTS in — all three options produce the base form's
-    // number and nothing says why.
-    //
-    // Implying it is the honest model, not a shortcut. Tier 1 is
-    // `selection: fixed` on every Incarnon ladder: it is not a choice, it is
-    // what installing the Genesis grants. And it carries no stat of its own —
-    // `UnlocksForm` applies nothing, because the form it unlocks is a separate
-    // weapon entry with its own numbers. So the form and the evolution were two
-    // controls for ONE fact, and this is which of them decides.
     let unlock = form_unlock_evo(info);
-    let mut evos = evos;
-    if form != "base" && !evolutions_as_given(v) {
-        if let Some(u) = unlock {
-            if !evos.iter().any(|e| e == u) {
-                evos.push(u.to_string());
-            }
-        }
-    }
     // ---- WHICH FORM (or the two-form CYCLE) this run simulates -------------
     // A cycle is a MODE over two forms, not a form, and it exists only where a
     // form must be TRANSFORMED into. Requiring that is a fix, not a tidy-up:
@@ -943,7 +902,7 @@ fn played_mode(v: &Value, info: &'static WeaponInfo) -> Result<PlayedMode, Value
     // `form: gauge_cycle` has always meant.
     // NO UNLOCK, NO FORM TO TRANSFORM INTO — so no cycle, and the list the
     // fight runs has no transmute in it. Only an `evolutions_as_given` request
-    // gets here without one; everything else had it implied above.
+    // gets here without one; everything else installs every tier.
     let unlocked = unlock.is_none_or(|u| evos.iter().any(|e| e == u));
     let cycle_from = ((form == "gauge_cycle" || form == "incarnon_cycle")
         && info.has_cycle

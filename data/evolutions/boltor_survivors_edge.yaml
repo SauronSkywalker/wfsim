@@ -2,6 +2,7 @@ id: boltor_survivors_edge
 name: Survivor's Edge
 weapon: boltor
 tier: 4
+position_in_tier: 2
 icon: XCritChanceYStatChance(xWhite).png
 description: "Increase Base Critical Chance by +8%. Increase Base Status Chance by +8%."
 # see notes: genesis_family_s_boltor

@@ -169,9 +169,10 @@ const build = await evaluate(`(async () => {
   const tiers = weaponEvos();
   out.hasEvos = tiers.length > 1;
   if (out.hasEvos) {
-    out.evoLocked = await window.wfsim.do("builder.evolution.set", { tier: 2, evolution: tiers[1].options[0].id });
-    out.evo = await window.wfsim.do("builder.evolution.set", { tier: 1, evolution: tiers[0].options[0].id });
-    out.evoSeen = window.wfsim.observe().build.evolutions[1] === tiers[0].options[0].id;
+    out.evoFull = tiers.every((t) => window.wfsim.observe().build.evolutions[t.tier] === t.options[0].id);
+    const last = tiers[1].options[tiers[1].options.length - 1].id;
+    out.evo = await window.wfsim.do("builder.evolution.set", { tier: 2, evolution: last });
+    out.evoSeen = window.wfsim.observe().build.evolutions[2] === last;
   }
   await window.wfsim.do("builder.mods.clear", {});
   return out;
@@ -186,8 +187,7 @@ check("a mod seats at the rank asked for", build.rank.ok === true && build.rankS
 check("capacity is observed", !!build.capacity && typeof build.capacity.used === "number" && build.capacity.max > 0,
   JSON.stringify(build.capacity));
 if (build.hasEvos) {
-  check("a tier past the open one is refused", build.evoLocked.ok === false && build.evoLocked.reason === "tier_locked",
-    JSON.stringify(build.evoLocked));
+  check("every tier arrives holding its first option", build.evoFull === true);
   check("an evolution installs and is observed", build.evo.ok === true && build.evoSeen === true, JSON.stringify(build.evo).slice(0, 200));
 }
 if (loop.official) {

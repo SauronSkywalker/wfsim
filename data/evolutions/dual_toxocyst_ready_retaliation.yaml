@@ -2,6 +2,7 @@ id: dual_toxocyst_ready_retaliation
 name: Ready Retaliation
 weapon: dual_toxocyst
 tier: 3
+position_in_tier: 1
 icon: IncarnonReloadSpeed(xWhite).png   # wiki File: name (Dual_Toxocyst_Incarnon_Genesis)
 description: "On Reload from Empty: +100% Reload Speed."
 selection: choose_one

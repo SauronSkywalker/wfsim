@@ -2,6 +2,7 @@ id: okina_swordsmans_celerity
 name: Swordsman's Celerity
 weapon: okina
 tier: 3
+position_in_tier: 3
 icon: MovementSpeedWhileEquipped(xWhite).png
 description: "+30% Movement Speed"
 selection: choose_one

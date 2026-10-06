@@ -2,6 +2,7 @@ id: paris_prime_elemental_balance
 name: Elemental Balance
 weapon: paris_prime
 tier: 4
+position_in_tier: 2
 icon: HighStatus.png
 description: "Increase Base Status Chance by +60%."
 # see notes: genesis_family_s_adapter

@@ -1,10 +1,8 @@
-// THE GAIN SCAN OBEYS THE TIER LADDER.
+// THE GAIN SCAN SWAPS ONE TIER.
 //
-// Tier N of an evolution set is choosable only once N-1 is filled — a tier-2
-// perk with no tier 1 is not a weaker build, it is not a build. The builder
-// greys those rows out, and the quick-calc gain scan must not measure them
-// anyway — that ranks evolutions nobody can click, on builds that cannot
-// exist.
+// Every tier is always installed — a finished Genesis cannot be emptied — so
+// an evolution candidate is the same build with ONE tier's perk replaced, and
+// a weapon opened fresh holds each tier's first option.
 //
 //   node scripts/check_gain_axes.mjs
 //
@@ -18,27 +16,20 @@ const r = await evaluate(`(async () => {
   const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   localStorage.clear();
   history.pushState({},'','/weapons/Torid'); route(); await sleep(3000);
-  const ids = async () => (await gainCandidates({kind:'evo',idx:0})).map(c=>c.id);
-  const none = await ids();
-  evoSel = {1:'torid_evo1_incarnon_form'}; const one = await ids();
-  evoSel = {1:'torid_evo1_incarnon_form',2:'torid_final_fusillade'}; const two = await ids();
-  evoSel = {1:'torid_evo1_incarnon_form',2:'torid_final_fusillade',3:'torid_extended_volley'}; const three = await ids();
-  const swap = (await gainCandidates({kind:'evo',idx:0})).find(c=>c.id==='torid_plentiful_mayhem');
-  return { none, one, two, three, swap: swap && swap.payload.evolutions };
+  const held = { ...evoSel };
+  const cands = await gainCandidates({kind:'evo',idx:0});
+  const swap = cands.find(c=>c.id==='torid_plentiful_mayhem');
+  return { held, ids: cands.map(c=>c.id), swap: swap && swap.payload.evolutions };
 })()`);
 
-const t3 = ['torid_extended_volley','torid_renewed_horror','torid_swift_deliverance'];
-const t4 = ['torid_commodores_fortune','torid_elemental_balance','torid_survivors_edge'];
-check("with nothing chosen, only tier 1 is offered",
-  r.none.length === 1 && r.none[0] === 'torid_evo1_incarnon_form', r.none.join(","));
-check("tier 1 chosen opens tier 2, and no further",
-  r.one.length === 2 && !r.one.some((x) => t3.includes(x) || t4.includes(x)), r.one.join(","));
-check("tier 2 chosen opens tier 3, its own tier still swappable",
-  r.two.includes('torid_plentiful_mayhem') && t3.every((x) => r.two.includes(x)) &&
-  !r.two.some((x) => t4.includes(x)), r.two.join(","));
-check("tier 3 chosen opens tier 4", t4.every((x) => r.three.includes(x)), r.three.join(","));
+const defaults = ['torid_evo1_incarnon_form','torid_final_fusillade','torid_swift_deliverance','torid_commodores_fortune'];
+const others = ['torid_plentiful_mayhem','torid_renewed_horror','torid_extended_volley','torid_survivors_edge','torid_elemental_balance'];
+check("a weapon opens holding each tier's first option",
+  JSON.stringify(Object.values(r.held)) === JSON.stringify(defaults), JSON.stringify(r.held));
+check("every other option of every tier is a candidate, and no installed one",
+  others.every((x) => r.ids.includes(x)) && !r.ids.some((x) => defaults.includes(x)), r.ids.join(","));
 check("a swap replaces ONE tier and leaves the rest alone",
-  JSON.stringify(r.swap) === JSON.stringify(['torid_evo1_incarnon_form','torid_plentiful_mayhem','torid_extended_volley']),
+  JSON.stringify(r.swap) === JSON.stringify(['torid_evo1_incarnon_form','torid_plentiful_mayhem','torid_swift_deliverance','torid_commodores_fortune']),
   JSON.stringify(r.swap));
 
 // THE MODE AXIS IS THE CHEAPEST ONE, and this is why: a form carries no mod
@@ -46,8 +37,8 @@ check("a swap replaces ONE tier and leaves the rest alone",
 // exactly where it is and the candidate is ONE request field. A payload that
 // grew a second field would be a build the reader did not ask for.
 //
-// Its one exclusion is the ladder's own: a mode a mod has taken off the weapon
-// is still listed and still not measured.
+// Its one exclusion: a mode a mod has taken off the weapon is still listed
+// and still not measured.
 const m = await evaluate(`(async () => {
   const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   history.pushState({},'','/weapons/Torid'); route(); await sleep(3000);
@@ -99,4 +90,4 @@ check("from base, with nothing blocking it, a cycle IS measured",
 check("a mod that takes the Incarnon form off leaves no cycle to measure",
   !m.blocked.some((x) => m.cycles.includes(x)), m.blocked.join(","));
 
-await app.finish("the gain scan obeys the ladder");
+await app.finish("the gain scan swaps one tier");

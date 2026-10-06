@@ -2,6 +2,7 @@ id: laetum_devouring_attrition
 name: Devouring Attrition
 weapon: laetum
 tier: 5
+position_in_tier: 1
 icon: EvolutionNon-Critical.png
 description: "50% chance to deal +2000% damage on non-critical hits."
 selection: choose_one

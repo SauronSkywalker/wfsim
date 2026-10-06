@@ -10,6 +10,22 @@ mapping, each `<X> Incarnon Genesis` page for the gauge and the evolutions, and
 Perk "already carried" means a `data/evolutions/*.yaml` in this repo already
 carries that name.
 
+## Every tier is installed
+
+A finished Genesis cannot be emptied, so no build has an empty evolution tier.
+A tier a build does not name holds its FIRST option, and first is the game's
+order: `position_in_tier` in each `data/evolutions/*.yaml`, transcribed from
+the row order of the wiki's Evolutions table (1 = the default). The engine
+sorts the pool by it and refuses a tier whose positions do not run 1..n.
+`evolutions::complete` is the one fill rule; the server applies it to every
+request (`chosen_evolutions`, the optimizer's variant table) and the page
+mirrors it (`defaultEvolutions`). Only the Shapley analysis sends a list as
+given. Old share links and presets carrying an empty tier read it as that
+tier's default; the wire keeps its `--`.
+
+A mod that needs the same trigger on every firing mode (the Cannonades) is
+therefore never equippable on an Incarnon weapon: tier 1 is always there.
+
 ## What the set actually is
 
 - **31 Genesis adapters** — 15 primary, 16 secondary — plus **4 natural

@@ -365,7 +365,7 @@ impl QuickCtx<'_> {
         out
     }
 
-    /// The evolution tiers the scope ranges over, in ladder order.
+    /// The evolution tiers the scope ranges over, in tier order.
     fn evo_tiers(&self) -> Vec<usize> {
         let mut t: Vec<usize> = self
             .evo_sets

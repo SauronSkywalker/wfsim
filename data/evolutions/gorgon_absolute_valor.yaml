@@ -2,6 +2,7 @@ id: gorgon_absolute_valor
 name: Absolute Valor
 weapon: gorgon
 tier: 4
+position_in_tier: 3
 icon: HighCrit.png
 description: "Increase Base Critical Chance by +14%."
 # see notes: genesis_family_s_adapter

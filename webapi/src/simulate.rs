@@ -2034,7 +2034,7 @@ mod form_tests {
     }
 
     #[test]
-    fn an_evolution_tier_needs_the_one_below_it() {
+    fn an_unstated_tier_holds_its_first_option() {
         let with = |evos: Value| {
             let p = panel_json(&json!({ "weapon": "torid", "evolutions": evos }));
             // Crit chance rides the projectile, so it is a row of the "direct
@@ -2049,15 +2049,14 @@ mod form_tests {
                 .expect("a formatted crit chance")
                 .to_string()
         };
-        let bare = with(json!([]));
-        assert_eq!(bare, "15.0%", "the Torid's unmodded crit chance");
-        assert_eq!(with(json!(["torid_commodores_fortune"])), bare, "tier 4 alone paid out");
+        let complete = |ids: &[&str]| json!(wfsim_engine::data::evolutions::complete("torid", ids));
+        assert_eq!(with(json!([])), with(complete(&[])), "nothing named is every default");
         assert_eq!(
-            with(json!(["torid_evo1_incarnon_form", "torid_commodores_fortune"])),
-            bare,
-            "tier 4 paid out over a gap at tiers 2-3"
+            with(json!(["torid_commodores_fortune"])),
+            with(complete(&["torid_commodores_fortune"])),
+            "tier 4 named, tiers 1-3 their defaults"
         );
-        // Order in the array is the client's, not the ladder's — the whole
+        // Order in the array is the client's, not the tiers' — the whole
         // chain counts however it arrives.
         let full = json!([
             "torid_commodores_fortune", "torid_extended_volley",
@@ -2117,17 +2116,19 @@ mod valence_formation_blocks_attrition {
         out.get("dps").and_then(serde_json::Value::as_f64).expect("dps")
     }
 
-    /// The ladder up to tier 5 — a tier-5 perk with no tier 4 is dropped by the
-    /// evolution ladder and would make both arms of this test read "no effect".
-    const LADDER: [&str; 4] = [
+    /// Tiers 1-4, and at tier 5 a perk the fight cannot feel (Reaper's
+    /// Plenty buys ammo against an infinite reserve) — an unstated tier 5
+    /// would hold its default, Devouring Attrition, which pays out.
+    const LADDER: [&str; 5] = [
         "laetum_evo1_incarnon_form",
         "laetum_marksmans_hand",
         "laetum_feather_of_justice",
         "laetum_caput_mortuum",
+        "laetum_reapers_plenty",
     ];
 
     fn with_perk() -> Vec<&'static str> {
-        let mut v = LADDER.to_vec();
+        let mut v = LADDER[..4].to_vec();
         v.push("laetum_overwhelming_attrition");
         v
     }

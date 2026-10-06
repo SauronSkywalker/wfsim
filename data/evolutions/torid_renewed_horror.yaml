@@ -2,6 +2,7 @@ id: torid_renewed_horror
 name: Renewed Horror
 weapon: torid
 tier: 3
+position_in_tier: 2
 icon: IncarnonReloadSpeed(xWhite).png
 description: "On Reload from Empty: Lingering damage field duration doubles on first shot."
 selection: choose_one

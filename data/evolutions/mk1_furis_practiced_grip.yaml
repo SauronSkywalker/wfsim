@@ -2,6 +2,7 @@ id: mk1_furis_practiced_grip
 name: Practiced Grip
 weapon: mk1_furis
 tier: 3
+position_in_tier: 1
 icon: MoreAccuracy(xWhite).png
 description: "Increase Accuracy by +50%."
 # see notes: genesis_family_s_furis

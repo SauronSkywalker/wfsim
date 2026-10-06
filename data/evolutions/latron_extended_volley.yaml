@@ -2,6 +2,7 @@ id: latron_extended_volley
 name: Extended Volley
 weapon: latron
 tier: 3
+position_in_tier: 2
 icon: IncarnonClipSize.png
 description: "Increase Base Magazine Capacity by +15."
 # see notes: genesis_family_s_latron

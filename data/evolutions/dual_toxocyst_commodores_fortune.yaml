@@ -2,6 +2,7 @@ id: dual_toxocyst_commodores_fortune
 name: Commodore's Fortune
 weapon: dual_toxocyst
 tier: 4
+position_in_tier: 1
 icon: HighCrit(xWhite).png   # wiki File: name (Dual_Toxocyst_Incarnon_Genesis)
 description: "Increase Base Critical Chance by +20%."
 selection: choose_one

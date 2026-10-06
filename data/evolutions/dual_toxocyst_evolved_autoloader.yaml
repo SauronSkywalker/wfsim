@@ -2,6 +2,7 @@ id: dual_toxocyst_evolved_autoloader
 name: Evolved Autoloader
 weapon: dual_toxocyst
 tier: 3
+position_in_tier: 2
 icon: IncarnonReloadSpeed(xWhite).png   # wiki File: name (Dual_Toxocyst_Incarnon_Genesis)
 description: "+50% Magazine Reloaded/s when holstered."
 selection: choose_one

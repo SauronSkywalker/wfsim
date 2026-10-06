@@ -916,7 +916,6 @@ ui:
   "Swap": 更换
   "Remove": 移除
   "options": 选项
-  "add evolution": 添加进化
   "add {pool} arcane": 添加{pool}赋能
   "added on top and NOT combined with the weapon's own elements": 直接加在最终属性之上，不与武器自身的元素合成
   "aim": "瞄准"
@@ -1054,7 +1053,6 @@ ui:
   "in the current fight": 当前这场战斗用的就是它
   "in this build": 仅当前配装
   inactive: 未在场
-  "install the previous tier first": 需要先安装上一层
   "It gets nothing from reload-triggered mods such as Spring-Loaded Chamber (wiki), because a battery never reloads.": "它吃不到装填触发类 MOD（例如 Spring-Loaded Chamber）（wiki），因为电池从不装填。"
   "It uses no ammo pickups and has a reserve of zero (module); reserves are infinite here, so the limit it is built around does not apply.": "它不使用弹药拾取，备弹为零（模块）；这里备弹无限，所以它围绕的那个限制不适用。"
   "It uses ammo only when dealing damage (wiki); reserves are infinite here, so this changes nothing.": "它只在造成伤害时消耗弹药（wiki）；这里备弹无限，所以没有影响。"

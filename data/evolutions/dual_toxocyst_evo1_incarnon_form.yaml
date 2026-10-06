@@ -3,6 +3,7 @@ name: Incarnon Form
 # Evolutions ARE perks.
 weapon: dual_toxocyst
 tier: 1
+position_in_tier: 1
 icon: IncarnonFormRicochetOnHittingEnemies(xWhite).png   # wiki File: name (Dual_Toxocyst_Incarnon_Genesis)
 description: "Weakpoint hits charge Incarnon Transmutation; Alt Fire transmutes.\nGain an Auto Fire mode and Ricochet (1 nearby enemy within 5m)."
 selection: fixed                # tier 1 has no choice - installing grants it

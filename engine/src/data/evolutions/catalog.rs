@@ -7,6 +7,8 @@ pub struct EvolutionDef {
     pub name: String,
     pub weapon: String,
     pub tier: u32,
+    /// 1-based, the wiki's order within the tier; 1 is the tier's default.
+    pub position_in_tier: u32,
     /// Wiki `File:` name for the evolution's icon.
     pub icon: Option<String>,
     /// Verbatim effect text — what the cards display (like mods/arcanes).
@@ -179,6 +181,7 @@ pub fn pool() -> &'static Vec<EvolutionDef> {
                 name: ef.name,
                 weapon: ef.weapon,
                 tier: ef.tier,
+                position_in_tier: ef.position_in_tier,
                 icon: ef.icon,
                 description: ef.description.unwrap_or_default(),
                 currently_broken: ef.currently_broken,
@@ -194,6 +197,18 @@ pub fn pool() -> &'static Vec<EvolutionDef> {
                 misprints,
                 effects,
             });
+        }
+        // The pool is in the game's order, so `options(..)[0]` is the default.
+        out.sort_by(|a, b| (&a.weapon, a.tier, a.position_in_tier).cmp(&(&b.weapon, b.tier, b.position_in_tier)));
+        for w in out.chunk_by(|a, b| a.weapon == b.weapon && a.tier == b.tier) {
+            let positions: Vec<u32> = w.iter().map(|e| e.position_in_tier).collect();
+            assert!(
+                positions.iter().copied().eq(1..=w.len() as u32),
+                "{} tier {}: position_in_tier must run 1..={}, got {positions:?}",
+                w[0].weapon,
+                w[0].tier,
+                w.len()
+            );
         }
         out
     })
@@ -230,7 +245,8 @@ pub fn get(id: &str) -> Option<&'static EvolutionDef> {
     pool().iter().find(|e| e.id == id)
 }
 
-/// A weapon's choosable options at a tier (the web picker's rows).
+/// A weapon's choosable options at a tier (the web picker's rows), in the
+/// game's order: the first is the tier's default.
 pub fn options(weapon: &str, tier: u32) -> Vec<&'static EvolutionDef> {
     pool()
         .iter()
@@ -248,4 +264,21 @@ pub fn tier_count(weapon: &str) -> u32 {
         .map(|e| e.tier)
         .max()
         .unwrap_or(0)
+}
+
+/// EVERY TIER INSTALLED: `ids`' pick where it names one, the tier's first
+/// option where it does not, in tier order. A finished Genesis cannot be
+/// emptied, so a tier left out of a build is a tier holding its default — not
+/// a weapon nobody can hold. `ids` of another weapon, or a second pick at one
+/// tier, are dropped.
+pub fn complete<S: AsRef<str>>(weapon: &str, ids: &[S]) -> Vec<String> {
+    (1..=tier_count(weapon))
+        .filter_map(|tier| {
+            let opts = options(weapon, tier);
+            ids.iter()
+                .find_map(|id| opts.iter().find(|o| o.id == id.as_ref()))
+                .or(opts.first())
+                .map(|o| o.id.clone())
+        })
+        .collect()
 }

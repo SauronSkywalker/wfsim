@@ -2,6 +2,7 @@ id: okina_prime_alchemy_of_war
 name: Alchemy of War
 weapon: okina_prime
 tier: 4
+position_in_tier: 2
 icon: HighStatus(xWhite).png
 description: "Increase Base Status Chance by +12%.\n+25% Status Duration"
 selection: choose_one

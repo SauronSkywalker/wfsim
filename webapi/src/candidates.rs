@@ -75,7 +75,9 @@ fn parse(v: &Value) -> Result<Build<'_>, Value> {
                 .and_then(|e| e.get(t.to_string()))
                 .and_then(Value::as_str)
                 .filter(|s| !s.is_empty())
-                .map(str::to_string);
+                .map(str::to_string)
+                // An unstated tier holds its default (`evolutions::complete`).
+                .or_else(|| wfsim_engine::data::evolutions::options(evo_group(info), t).first().map(|o| o.id.clone()));
             (t, id)
         })
         .collect();
@@ -203,18 +205,9 @@ fn arcanes(b: &Build, idx: usize) -> Vec<Value> {
 fn evolutions(b: &Build) -> Vec<Value> {
     let group = evo_group(b.info);
     let forbids = evo_forbids(b.info);
-    // The ladder: tier N opens once N-1 is filled.
-    let mut open_to = 0;
-    for (t, id) in &b.evo {
-        if id.is_none() {
-            break;
-        }
-        open_to = *t;
-    }
-    let open_to = open_to + 1;
     let equipped: Vec<&str> = b.slots.iter().flatten().map(|s| card_of(s)).collect();
     let mut out = Vec::new();
-    for (t, chosen) in b.evo.iter().filter(|(t, _)| *t <= open_to) {
+    for (t, chosen) in &b.evo {
         for o in wfsim_engine::data::evolutions::options(group, *t) {
             if chosen.as_deref() == Some(o.id.as_str()) {
                 continue;

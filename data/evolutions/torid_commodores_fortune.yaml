@@ -2,6 +2,7 @@ id: torid_commodores_fortune
 name: Commodore's Fortune
 weapon: torid
 tier: 4
+position_in_tier: 1
 icon: HighCrit(xWhite).png
 description: "Increase Base Critical Chance by +20%."
 selection: choose_one

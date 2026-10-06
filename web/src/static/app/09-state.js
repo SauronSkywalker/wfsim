@@ -34,11 +34,9 @@ const asArcaneList = (v, n) => {
   while (a.length < n) a.push(undefined);
   return a.slice(0, n);
 };
-// Per-tier evolution selection {tier: id|null}; null = EMPTY (nothing
-// installed at that tier). Tier 1 is the Incarnon Form unlock: empty there
-// means no transformation, so the panel falls back to the base form.
-// Overwritten by META.defaults on init.
-let evoSel = { 1: null, 2: null, 3: null, 4: null };
+// Per-tier evolution selection {tier: id}, every tier filled
+// (`defaultEvolutions`): a finished Genesis has no empty tier.
+let evoSel = {};
 // HOW THIS BUILD IS PLAYED — part of the BUILD, not of the fight.
 //
 // "Torid, played through its cycle" is the thing a board ranks, and the entry

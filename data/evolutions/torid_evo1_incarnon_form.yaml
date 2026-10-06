@@ -2,6 +2,7 @@ id: torid_evo1_incarnon_form
 name: Incarnon Form
 weapon: torid
 tier: 1
+position_in_tier: 1
 icon: IncarnonFormLongRangeBeam(xWhite).png
 description: "Direct shots charge Incarnon Transmutation; Alt Fire transmutes.\nFire a long-range Toxin beam."
 selection: fixed                # tier 1 has no choice

@@ -2,6 +2,7 @@ id: torid_swift_deliverance
 name: Swift Deliverance
 weapon: torid
 tier: 3
+position_in_tier: 1
 icon: IncarnonProjectileSpeed(xWhite).png
 description: "+50% Projectile Speed"
 selection: choose_one

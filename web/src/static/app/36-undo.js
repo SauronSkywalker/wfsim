@@ -467,7 +467,7 @@ function restoreState(st, weapon) {
     slots[i].pol = s.pol ?? null;
     slots[i].rank = s.rank ?? null;
   });
-  evoSel = { 1: null, 2: null, 3: null, 4: null, ...(st.evoSel || {}) };
+  evoSel = defaultEvolutions(w, st.evoSel);
   // ONTO A DEFAULT, never onto whatever the last build was playing. A preset
   // written before this field existed is played the way the arsenal plays it,
   // which is exactly what the board's own migration does with a mode-less

@@ -2,6 +2,7 @@ id: okina_synergist_surety
 name: Synergist Surety
 weapon: okina
 tier: 2
+position_in_tier: 2
 icon: OnCriticalHitGainXStatusDamage(xWhite).png
 description: "Increase Base Damage by +60.\nOn Critical Hit: +8% Status Damage for 10s. Stacks up to 5x."
 # THIS WEAPON'S COLUMN; the Okina Prime's differs on both lines.

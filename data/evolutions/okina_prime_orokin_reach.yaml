@@ -2,6 +2,7 @@ id: okina_prime_orokin_reach
 name: Orokin Reach
 weapon: okina_prime
 tier: 3
+position_in_tier: 1
 icon: MoreRange(xWhite).png
 description: "+1 Range"
 selection: choose_one

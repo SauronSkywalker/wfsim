@@ -2,6 +2,7 @@ id: dual_toxocyst_marksmans_hand
 name: Marksman's Hand
 weapon: dual_toxocyst
 tier: 3
+position_in_tier: 3
 icon: LessRecoil(xWhite).png   # wiki File: name (Dual_Toxocyst_Incarnon_Genesis)
 description: "-50% Weapon Recoil."
 selection: choose_one

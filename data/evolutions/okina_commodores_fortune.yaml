@@ -2,6 +2,7 @@ id: okina_commodores_fortune
 name: Commodore's Fortune
 weapon: okina
 tier: 4
+position_in_tier: 1
 icon: HighCrit(xWhite).png
 description: "Increase Base Critical Chance by +12%."
 selection: choose_one

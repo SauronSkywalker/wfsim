@@ -2,6 +2,7 @@ id: mk1_furis_prelude_of_might
 name: Prelude of Might
 weapon: mk1_furis
 tier: 4
+position_in_tier: 2
 icon: CritDamageWhenCritChanceIsBelowX(xWhite).png
 description: "With Critical Chance below 40%: Increase Critical Damage Multiplier by +3x."
 # see notes: genesis_family_s_furis

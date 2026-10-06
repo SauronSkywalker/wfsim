@@ -2,6 +2,7 @@ id: boar_prime_survivors_edge
 name: Survivor's Edge
 weapon: boar_prime
 tier: 4
+position_in_tier: 3
 icon: XCritChanceYStatChance.png
 description: "Increase Base Critical Chance by +10%.
 Increase Base Status Chance by +6% per projectile.

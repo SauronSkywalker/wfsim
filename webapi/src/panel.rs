@@ -2173,7 +2173,10 @@ mod a_passive_names_itself {
     #[test]
     fn a_weapon_with_a_buff_card_has_a_passive_line() {
         for s in wfsim_engine::data::weapons::roster() {
-            let panel = super::panel_json(&json!({ "weapon": s.id, "mods": [] }));
+            // The weapon alone: an evolution's card is named by the evolution.
+            let panel = super::panel_json(&json!({
+                "weapon": s.id, "mods": [], "evolutions": [], "evolutions_as_given": true,
+            }));
             let cards: Vec<&str> = panel["buffs"]
                 .as_array()
                 .map(|a| {

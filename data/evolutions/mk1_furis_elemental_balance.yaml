@@ -2,6 +2,7 @@ id: mk1_furis_elemental_balance
 name: Elemental Balance
 weapon: mk1_furis
 tier: 4
+position_in_tier: 3
 icon: HighStatus(xWhite).png
 description: "Increase Base Status Chance by +39%."
 # see notes: genesis_family_s_furis

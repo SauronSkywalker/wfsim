@@ -2,6 +2,7 @@ id: burston_extended_volley
 name: Extended Volley
 weapon: burston
 tier: 3
+position_in_tier: 1
 icon: IncarnonClipSize.png
 description: "Increase Base Magazine Capacity by +21."
 # see notes: genesis_family_s_burston

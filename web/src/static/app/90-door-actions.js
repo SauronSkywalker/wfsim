@@ -976,13 +976,12 @@ const AGENT_ACTIONS = [
   {
     id: "builder.evolutions.list",
     query: true,
-    what: "List this weapon's Incarnon evolution tiers, their options, and which tiers are open.",
+    what: "List this weapon's Incarnon evolution tiers, their options, and which one each tier holds.",
     anchor: "#evo-rows",
     needs_weapon: true,
     args: {},
     run() {
       return {
-        open_to: evoOpenTo(),
         tiers: weaponEvos().map((t) => ({
           tier: t.tier, installed: evoSel[t.tier] || null,
           options: (t.options || []).map((x) => ({ id: x.id, name: x.name, lines: evoLines(x),
@@ -1129,24 +1128,21 @@ const AGENT_ACTIONS = [
   {
     id: "builder.evolution.set",
     writes: "build",
-    what: "Install an Incarnon evolution in a tier, or empty it with evolution=null (which empties every tier after it). Tier N opens only once tier N-1 is filled.",
+    what: "Install an Incarnon evolution in a tier. Every tier always holds one, so this swaps it.",
     anchor: "#evo-rows",
     needs_weapon: true,
     args: {
       tier: { kind: "number", required: true, min: 1, max: 4, what: "evolution tier" },
-      evolution: { kind: "string", required: true, nullable: true, what: "evolution id, or null" },
+      evolution: { kind: "string", required: true, what: "evolution id" },
     },
     run({ tier, evolution }) {
       const t = weaponEvos().find((x) => x.tier === tier);
       if (!t) return agentNo("no_such_tier", { argument: "tier", alternatives: weaponEvos().map((x) => x.tier) });
-      if (evolution !== null) {
-        if (tier > evoOpenTo()) return agentNo("tier_locked", { argument: "tier", open_to: evoOpenTo() });
-        if (!(t.options || []).some((x) => x.id === evolution)) {
-          return agentNo("bad_argument", { argument: "evolution", alternatives: (t.options || []).map((x) => x.id) });
-        }
+      if (!(t.options || []).some((x) => x.id === evolution)) {
+        return agentNo("bad_argument", { argument: "evolution", alternatives: (t.options || []).map((x) => x.id) });
       }
       pickEvolution(tier, evolution);
-      return { text: evolution ? `installed ${evolution}` : `emptied tier ${tier}` };
+      return { text: `installed ${evolution}` };
     },
   },
   {

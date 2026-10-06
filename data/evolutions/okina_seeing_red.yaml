@@ -2,6 +2,7 @@ id: okina_seeing_red
 name: Seeing Red
 weapon: okina
 tier: 2
+position_in_tier: 1
 icon: 5AdditionalCombosOnTargetsWithBleed(xWhite).png
 description: "Increase Base Damage by +60.\n5 additional Combos on targets affected by Slash Status"
 # THIS WEAPON'S COLUMN; the Okina Prime's differs on both lines.

@@ -2,6 +2,7 @@ id: boar_practiced_grip
 name: Practiced Grip
 weapon: boar
 tier: 3
+position_in_tier: 3
 icon: MoreAccuracy.png
 description: "Increase Accuracy by +50%."
 # see notes: genesis_family_s_boar

@@ -196,6 +196,7 @@ fn a_broken_evolution_changes_nothing_whatever_it_grants() {
         name: "Synthetic".into(),
         weapon: "torid".into(),
         tier: 9,
+        position_in_tier: 1,
         icon: None,
         description: String::new(),
         currently_broken: broken,
@@ -422,4 +423,25 @@ fn an_evolutions_handling_stats_reach_the_panel() {
         "boar_prime", true, &["boar_prime_mercenary_chamber"],
     );
     assert_eq!(base.ammo_reserve, 195.0);
+}
+
+/// The wiki's row order, including the one row it prints without bold
+/// (Burston's Ready Retaliation), and an unstated tier holding position 1.
+#[test]
+fn every_tier_is_filled_with_the_games_first_option() {
+    let ids = |v: Vec<&EvolutionDef>| v.iter().map(|e| e.id.clone()).collect::<Vec<_>>();
+    assert_eq!(
+        ids(options("burston", 3)),
+        ["burston_extended_volley", "burston_ready_retaliation", "burston_kinetic_battle"]
+    );
+    assert_eq!(
+        complete("burston", &["burston_kinetic_battle"]),
+        [
+            "burston_evo1_incarnon_form",
+            "burston_forceful_finality",
+            "burston_kinetic_battle",
+            "burston_reavers_rapture",
+        ]
+    );
+    assert!(complete::<&str>("lanka", &[]).is_empty(), "no Genesis, no tiers");
 }

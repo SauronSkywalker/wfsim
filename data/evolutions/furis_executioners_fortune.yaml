@@ -2,6 +2,7 @@ id: furis_executioners_fortune
 name: Executioner's Fortune
 weapon: furis
 tier: 3
+position_in_tier: 3
 icon: ChanceToReplenishMagOnHeadshot(xWhite).png
 description: "On Headshot: 10% chance for Instant Reload."
 # see notes: genesis_family_s_furis

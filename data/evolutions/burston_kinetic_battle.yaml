@@ -2,6 +2,7 @@ id: burston_kinetic_battle
 name: Kinetic Battle
 weapon: burston
 tier: 3
+position_in_tier: 3
 icon: LessRecoil.png
 description: "-50% Weapon Recoil."
 # see notes: genesis_family_s_burston

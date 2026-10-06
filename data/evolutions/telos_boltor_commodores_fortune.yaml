@@ -2,6 +2,7 @@ id: telos_boltor_commodores_fortune
 name: Commodore's Fortune
 weapon: telos_boltor
 tier: 4
+position_in_tier: 3
 icon: HighCrit(xWhite).png
 description: "Increase Base Critical Chance by +6%."
 # see notes: genesis_family_s_boltor

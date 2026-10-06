@@ -395,17 +395,17 @@ compare a search against an exhausted space. A scope is a MARK MAP per axis —
 
 - **Every axis is N slots and a range.** Mods are 8 slots, `build_min` to
   `build_size` (0–8); every other axis is one slot, 0–0, 0–1 or 1–1. The empty
-  choice is a mark like any other: `none` on the exilus slot and an evolution
-  tier, `none:<pool>` on an arcane seat. Nothing marked is 0–0, a mark is 1–1,
-  so no scope grows by default; an arcane seat is never empty beside a marked
-  candidate (`an_arcane_seat_marked_none_is_not_a_default`).
+  choice is a mark like any other: `none` on the exilus slot, `none:<pool>` on
+  an arcane seat. Nothing marked is 0–0, a mark is 1–1, so no scope grows by
+  default; an arcane seat is never empty beside a marked candidate
+  (`an_arcane_seat_marked_none_is_not_a_default`). An EVOLUTION TIER is never
+  empty: unmarked, it holds its default (`evolutions::complete`).
 - **The floor is derived first.** Every required mod, plus one pooled mod when
   anything is pooled; `build_min` below that is raised to it
   (`min_slots = derived_min.max(build_min)`). A ceiling of 0 outranks the
   derived floor — the bare weapon with the marks kept — and an empty scope is
   the bare weapon (`an_empty_scope_searches_the_bare_weapon`).
-- **A pin settles its slot**; a 0–0 evolution tier keeps its marks and does not
-  open the tier above.
+- **A pin settles its slot.**
 - **The variant table is `modes × evo_sets × valences`**, so pooling a second
   mode doubles the space.
 
