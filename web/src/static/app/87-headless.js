@@ -595,8 +595,8 @@ const HEADLESS_QUERIES = [
       riven: { kind: "string", what: "\"without\" (default), \"with\" or \"any\"", enum: () => ["without", "with", "any"] },
       mode: { kind: "string", what: "only this mode id" },
       limit: { kind: "number", min: 1, max: 20, what: "rows per group, default 3" },
-      distinct: { kind: "boolean", what: "one row per score: a tie shows its first build, and `limit` counts scores" },
-      pooled: { kind: "boolean", what: "rank a ruler's modes together: `rank` is the place across every mode" },
+      distinct: { kind: "boolean", what: "one row per score; `limit` counts scores" },
+      pooled: { kind: "boolean", what: "rank a ruler's modes together" },
     },
     async run({ weapon, riven = "without", mode: m, limit = 3, distinct = false, pooled = false }, host) {
       const w = headlessWeapon(host, weapon);
@@ -671,15 +671,15 @@ const HEADLESS_QUERIES = [
   },
   {
     id: "builder.rivens.read",
-    what: "The Riven Analyst: every riven the board has measured for a weapon, each as its best build's score against the board's #1 riven-free build under the same ruler and mode — what that riven is worth. Global and published; a riven nobody has submitted is not on it.",
+    what: "The Riven Analyst: each riven the board measured for a weapon, its best score against the #1 riven-free build of the same ruler and mode — what the riven is worth. Only submitted rivens appear.",
     anchor: "#riven-analyst",
     args: {
       weapon: HEADLESS_WEAPON_ARG,
       ruler: { kind: "string", what: "only this benchmark id" },
       mode: { kind: "string", what: "only this mode id" },
-      bonuses: { kind: "array", what: "riven stat ids every riven shown has among its bonuses" },
-      malus: { kind: "string", what: "a riven stat id the malus must be, \"any\" for some malus, \"none\" for none" },
-      pooled: { kind: "boolean", what: "a ruler's modes as one ranking: each riven at its best mode, against the best riven-free build of any mode" },
+      bonuses: { kind: "array", what: "stat ids each riven has as bonuses" },
+      malus: { kind: "string", what: "the malus: a stat id, \"any\" or \"none\"" },
+      pooled: { kind: "boolean", what: "a ruler's modes as one ranking" },
     },
     async run({ weapon, ruler, mode: m, bonuses = [], malus = null, pooled = false }, host) {
       const w = headlessWeapon(host, weapon);
