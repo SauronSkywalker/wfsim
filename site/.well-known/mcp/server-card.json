@@ -70,6 +70,10 @@
           "distinct": {
             "type": "boolean",
             "description": "one row per score: a tie shows its first build, and `limit` counts scores"
+          },
+          "pooled": {
+            "type": "boolean",
+            "description": "rank a ruler's modes together: `rank` is the place across every mode"
           }
         },
         "required": []
@@ -119,6 +123,10 @@
           "malus": {
             "type": "string",
             "description": "a riven stat id the malus must be, \"any\" for some malus, \"none\" for none"
+          },
+          "pooled": {
+            "type": "boolean",
+            "description": "a ruler's modes as one ranking: each riven at its best mode, against the best riven-free build of any mode"
           }
         },
         "required": []
