@@ -95,7 +95,7 @@
     {
       "id": "builder.rivens.read",
       "name": "builder_rivens_read",
-      "description": "The Riven Analyst: every riven the board has measured for a weapon, each as its best build's score against the board's #1 riven-free build under the same ruler and mode — what that riven is worth. Global and published; a riven nobody has submitted is not on it. Send a data part {\"skill\": \"builder.rivens.read\", \"args\": {...}}; args: {\"weapon\":{\"type\":\"string\",\"description\":\"weapon id; on the page, the one open when omitted\"},\"ruler\":{\"type\":\"string\",\"description\":\"only this benchmark id\"},\"mode\":{\"type\":\"string\",\"description\":\"only this mode id\"}}.",
+      "description": "The Riven Analyst: every riven the board has measured for a weapon, each as its best build's score against the board's #1 riven-free build under the same ruler and mode — what that riven is worth. Global and published; a riven nobody has submitted is not on it. Send a data part {\"skill\": \"builder.rivens.read\", \"args\": {...}}; args: {\"weapon\":{\"type\":\"string\",\"description\":\"weapon id; on the page, the one open when omitted\"},\"ruler\":{\"type\":\"string\",\"description\":\"only this benchmark id\"},\"mode\":{\"type\":\"string\",\"description\":\"only this mode id\"},\"bonuses\":{\"type\":\"array\",\"description\":\"riven stat ids every riven shown has among its bonuses\",\"items\":{\"type\":\"object\"}},\"malus\":{\"type\":\"string\",\"description\":\"a riven stat id the malus must be, \\\"any\\\" for some malus, \\\"none\\\" for none\"}}.",
       "tags": [
         "warframe",
         "builder",

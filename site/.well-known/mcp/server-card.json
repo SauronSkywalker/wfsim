@@ -104,6 +104,17 @@
           "mode": {
             "type": "string",
             "description": "only this mode id"
+          },
+          "bonuses": {
+            "type": "array",
+            "description": "riven stat ids every riven shown has among its bonuses",
+            "items": {
+              "type": "object"
+            }
+          },
+          "malus": {
+            "type": "string",
+            "description": "a riven stat id the malus must be, \"any\" for some malus, \"none\" for none"
           }
         },
         "required": []
