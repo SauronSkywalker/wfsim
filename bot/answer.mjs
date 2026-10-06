@@ -7,7 +7,10 @@
 
 const MAX_SHOWN = 10;
 const SITE = "https://wfsim.app";
-const squash = (s) => String(s || "").toLowerCase().replace(/\s+/g, "");
+const squash = (s) => String(s || "").normalize("NFKC").toLowerCase().replace(/\s+/g, "");
+/// A WEAPON'S NAME as people type it: no spaces, hyphens or dots, any width —
+/// "mk-1盗贼" and "MK1 盗贼" are both MK1-盗贼.
+const nameFold = (s) => squash(s).replace(/[-_.·・'’]/g, "");
 
 export function makeAnswer({ run, meta, zh, headless }) {
   const t = (s, p = {}) => Object.entries(p).reduce((x, [k, v]) => x.split(`{${k}}`).join(String(v)),
@@ -18,7 +21,7 @@ export function makeAnswer({ run, meta, zh, headless }) {
   const evoName = (id) => (zh.evolutions && zh.evolutions[id]) || id;
   // EVERY NAME A WEAPON GOES BY, longest first, so "Boar Prime" wins over "Boar".
   const weaponNames = (meta.weapons || []).flatMap((w) => [w.id, w.name, w.name_en, zh.weapons && zh.weapons[w.id]]
-    .filter(Boolean).map((n) => ({ w, n: squash(n) }))).sort((a, b) => b.n.length - a.n.length);
+    .filter(Boolean).map((n) => ({ w, n: nameFold(n) }))).sort((a, b) => b.n.length - a.n.length);
   const rulerShort = (b) => t(b.name).split(" · ")[0];
   const statNames = (cls) => headless.rivenStatNames((meta.riven_stats || {})[cls] || [], [zh]);
   const statZh = (cls, id) => {
@@ -45,9 +48,14 @@ export function makeAnswer({ run, meta, zh, headless }) {
   }
   /// The weapon the words start with, and what is left after it.
   function weaponOf(rest) {
-    const q = squash(rest);
+    const q = nameFold(rest);
     const hit = weaponNames.find((x) => x.n && q.startsWith(x.n));
-    return hit ? { w: hit.w, left: q.slice(hit.n.length) } : null;
+    if (!hit) return null;
+    // WHAT FOLLOWS THE NAME keeps its signs ("-变焦" is a malus): walk the words
+    // until as much of them as the name has been consumed.
+    let i = 0;
+    while (i < rest.length && nameFold(rest.slice(0, i)).length < hit.n.length) i += 1;
+    return { w: hit.w, left: squash(rest.slice(i)) };
   }
 
   /// THE RULER NAMED in what is left, by its name in either language, and the
