@@ -4,13 +4,13 @@ Chinese name: 战争之剑 Prime
 
 Heavy Blade · Melee · Mastery Rank 15. 270 base damage (impact 194.4, puncture 32.4, slash 43.2), 26% crit chance, 3.2x crit multiplier, 32% status chance.
 
-## Best riven-free build on the WFSim board, as of 2026-10-05
+## Best riven-free build on the WFSim board, as of 2026-10-06
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy | 2.7167 | Volcanic Edge, Lasting Sting, Sacrificial Steel, Condition Overload, Primed Fury, Amalgam Organ Shatter, Corrupt Charge, Magnetic Rush, Dreamer's Wrath, Melee Exposure |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy | 2.2733 | Volcanic Edge, Lasting Sting, Sacrificial Steel, Condition Overload, Primed Fury, Amalgam Organ Shatter, Corrupt Charge, Magnetic Rush, Dreamer's Wrath, Melee Exposure |
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy | 5.9651 | Volcanic Edge, Sacrificial Steel, Condition Overload, Primed Fury, Galvanized Reflex, Amalgam Organ Shatter, Corrupt Charge, Magnetic Rush, Dreamer's Wrath, Melee Exposure |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | heavy | 0.2756 | Volcanic Edge, Lasting Sting, Sacrificial Steel, Condition Overload, Primed Fury, Amalgam Organ Shatter, Corrupt Charge, Magnetic Rush, Dreamer's Wrath, Melee Exposure |
 

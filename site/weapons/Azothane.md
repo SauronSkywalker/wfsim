@@ -4,14 +4,14 @@ Chinese name: 溶灵尊
 
 Two Handed Nikana · Melee · Mastery Rank 0. 170 base damage (impact 51, puncture 34, slash 85), 34% crit chance, 3x crit multiplier, 22% status chance.
 
-## Best riven-free build on the WFSim board, as of 2026-10-05
+## Best riven-free build on the WFSim board, as of 2026-10-06
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy | 6.3485 | Volcanic Edge, Sacrificial Steel, Condition Overload, Primed Fury, Galvanized Reflex, Amalgam Organ Shatter, Focus Radon, Magnetic Rush, Dreamer's Wrath, Melee Exposure |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy | 14.1654 | Volcanic Edge, Sacrificial Steel, Condition Overload, Galvanized Reflex, Amalgam Organ Shatter, Berserker Fury, Focus Radon, Magnetic Rush, Dreamer's Wrath, Melee Exposure |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy | 13.3135 | Volcanic Edge, Sacrificial Steel, Condition Overload, Galvanized Reflex, Amalgam Organ Shatter, Killing Blow, Focus Radon, Magnetic Rush, Dreamer's Wrath, Melee Exposure |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | heavy | 0.3767 | Volcanic Edge, Sacrificial Steel, Condition Overload, Primed Fury, Galvanized Reflex, Amalgam Organ Shatter, Corrupt Charge, Focus Radon, Dreamer's Wrath, Melee Exposure |
 
 ## Not modelled here

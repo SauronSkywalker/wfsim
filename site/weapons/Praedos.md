@@ -4,14 +4,14 @@ Chinese name: 双雄
 
 Tonfa · Melee · Mastery Rank 14. 200 base damage (impact 20, puncture 20, slash 160), 20% crit chance, 2x crit multiplier, 20% status chance.
 
-## Best riven-free build on the WFSim board, as of 2026-10-05
+## Best riven-free build on the WFSim board, as of 2026-10-06
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 11.2962 | Primed Fever Strike, Vicious Frost, Condition Overload, Blood Rush, Primed Fury, Galvanized Steel, Weeping Wounds, Magnetic Rush, Sovereign Outcast, Discipline's Merit, Melee Exposure |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | block forward | 1199.2206 | Vicious Frost, Virulent Scourge, Shocking Touch, Blood Rush, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Weeping Wounds, Gemini Cross, Dreamer's Wrath, Melee Influence |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 672.8752 | Shocking Touch, Voltaic Strike, Blood Rush, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Gladiator Might, Weeping Wounds, Sovereign Outcast, Dreamer's Wrath, Melee Influence |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.6718 | Primed Fever Strike, Vicious Frost, Condition Overload, Blood Rush, Primed Fury, Organ Shatter, Weeping Wounds, Magnetic Rush, Sovereign Outcast, Dreamer's Wrath, Melee Exposure |
 
 ## Not modelled here

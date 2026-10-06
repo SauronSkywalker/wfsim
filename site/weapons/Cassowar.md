@@ -4,14 +4,14 @@ Chinese name: 鹤鸵长戟
 
 Polearm · Melee · Mastery Rank 5. 188 base damage (impact 41.36, puncture 63.92, slash 82.72), 6% crit chance, 1.4x crit multiplier, 28% status chance.
 
-## Best riven-free build on the WFSim board, as of 2026-10-05
+## Best riven-free build on the WFSim board, as of 2026-10-06
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.0628 | Vicious Frost, Virulent Scourge, Shocking Touch, Condition Overload, Primed Fury, Primed Reach, Galvanized Elementalist, Magnetic Rush, Shimmering Blight, Condition's Perfection, Melee Influence |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 74.2738 | Vicious Frost, Virulent Scourge, Shocking Touch, Condition Overload, Primed Fury, Primed Reach, Galvanized Elementalist, Magnetic Rush, Shimmering Blight, Condition's Perfection, Melee Influence |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | slide | 53.1813 | Vicious Frost, Virulent Scourge, Shocking Touch, Condition Overload, Primed Fury, Primed Reach, Galvanized Elementalist, Magnetic Rush, Shimmering Blight, Condition's Perfection, Melee Influence |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.03621 | Vicious Frost, Virulent Scourge, Shocking Touch, Condition Overload, Primed Fury, Primed Reach, Galvanized Elementalist, Magnetic Rush, Shimmering Blight, Condition's Perfection, Melee Influence |
 
 ## Not modelled here

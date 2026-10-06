@@ -4,14 +4,14 @@ Chinese name: 暗黑分合剑
 
 Heavy Blade · Melee · Mastery Rank 5. 230 base damage (puncture 78, radiation 100, slash 52), 15% crit chance, 2x crit multiplier, 25% status chance.
 
-## Best riven-free build on the WFSim board, as of 2026-10-05
+## Best riven-free build on the WFSim board, as of 2026-10-06
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
 | Ruler | Fight | Mode | Score | Build |
 | --- | --- | --- | ---: | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | forward | 0.4270 | Shocking Touch, Blood Rush, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Galvanized Steel, Quickening, Weeping Wounds, Rending Crane, Discipline's Merit, Melee Influence |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | block forward | 141.1921 | Shocking Touch, Blood Rush, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Galvanized Steel, Quickening, Weeping Wounds, Rending Crane, Discipline's Merit, Melee Influence |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | forward | 134.6992 | Shocking Touch, Blood Rush, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Galvanized Steel, Quickening, Weeping Wounds, Rending Crane, Discipline's Merit, Melee Influence |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | forward | 0.02202 | Shocking Touch, Blood Rush, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Galvanized Steel, Quickening, Weeping Wounds, Rending Crane, Discipline's Merit, Melee Influence |
 
 ## Not modelled here
