@@ -2,7 +2,7 @@
   "serverInfo": {
     "name": "wfsim",
     "title": "WFSim",
-    "version": "f1bfc19b9e01"
+    "version": "d003ca04ad98"
   },
   "description": "WFSim is a Warframe weapon calculator. It builds a loadout, simulates the fight against a named enemy, and searches for the best mods. Every formula cites its source, and every golden test is calibrated against a real in-game run. A board score belongs to its ruler, the named benchmark fight: compare scores only under one ruler, quote the ruler with the number, and give the reader the row's link, which opens the build in the calculator.",
   "transport": {
@@ -69,11 +69,11 @@
           },
           "distinct": {
             "type": "boolean",
-            "description": "one row per score: a tie shows its first build, and `limit` counts scores"
+            "description": "one row per score; `limit` counts scores"
           },
           "pooled": {
             "type": "boolean",
-            "description": "rank a ruler's modes together: `rank` is the place across every mode"
+            "description": "rank a ruler's modes together"
           }
         },
         "required": []
@@ -97,7 +97,7 @@
     {
       "name": "builder_rivens_read",
       "title": "builder.rivens.read",
-      "description": "The Riven Analyst: every riven the board has measured for a weapon, each as its best build's score against the board's #1 riven-free build under the same ruler and mode — what that riven is worth. Global and published; a riven nobody has submitted is not on it.",
+      "description": "The Riven Analyst: each riven the board measured for a weapon, its best score against the #1 riven-free build of the same ruler and mode — what the riven is worth. Only submitted rivens appear.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -115,18 +115,18 @@
           },
           "bonuses": {
             "type": "array",
-            "description": "riven stat ids every riven shown has among its bonuses",
+            "description": "stat ids each riven has as bonuses",
             "items": {
               "type": "object"
             }
           },
           "malus": {
             "type": "string",
-            "description": "a riven stat id the malus must be, \"any\" for some malus, \"none\" for none"
+            "description": "the malus: a stat id, \"any\" or \"none\""
           },
           "pooled": {
             "type": "boolean",
-            "description": "a ruler's modes as one ranking: each riven at its best mode, against the best riven-free build of any mode"
+            "description": "a ruler's modes as one ranking"
           }
         },
         "required": []
