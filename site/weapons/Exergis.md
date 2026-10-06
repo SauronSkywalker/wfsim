@@ -13,7 +13,7 @@ Each row is measured on its own, and says when and by which WFSim commit; the ga
 | Ruler | Fight | Mode | Score | Build | Measured |
 | --- | --- | --- | ---: | --- | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 16.1005 | Primed Chilling Grasp, Toxic Barrage, Scattering Inferno, Galvanized Hell, Primed Point Blank, Galvanized Savvy, Primed Tactical Pump, Magnetic Strafe, Galvanized Acceleration, Primary Crux | 2026-09-29 10:07 UTC · a96c10c3c2 |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 48.4514 | Primed Chilling Grasp, Toxic Barrage, Scattering Inferno, Galvanized Hell, Primed Point Blank, Galvanized Savvy, Primed Tactical Pump, Semi-Shotgun Cannonade, Galvanized Acceleration, Primary Crux | 2026-09-29 13:00 UTC · 601279c5f9 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 48.4514 | Primed Chilling Grasp, Toxic Barrage, Scattering Inferno, Galvanized Hell, Primed Point Blank, Galvanized Savvy, Primed Tactical Pump, Semi-Shotgun Cannonade, Galvanized Acceleration, Primary Crux | 2026-10-06 05:58 UTC · 2a93152888 |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.9012 | Primed Chilling Grasp, Toxic Barrage, Scattering Inferno, Galvanized Hell, Primed Point Blank, Galvanized Savvy, Primed Tactical Pump, Semi-Shotgun Cannonade, Galvanized Acceleration, Primary Crux | 2026-09-29 12:52 UTC · 601279c5f9 |
 
 ## In WFSim

@@ -13,7 +13,7 @@ Each row is measured on its own, and says when and by which WFSim commit; the ga
 | Ruler | Fight | Mode | Score | Build | Measured |
 | --- | --- | --- | ---: | --- | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 4.1316 | Malignant Force, Rime Rounds, Hellfire, Primary Acuity, Rifle Elementalist, Semi-Rifle Cannonade, Vital Sense, Deadly Sequence, Primary Crux | 2026-09-26 16:09 UTC · 37f43e2d09 |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 20.3454 | Malignant Force, Rime Rounds, Hellfire, Primary Acuity, Rifle Elementalist, Semi-Rifle Cannonade, Vital Sense, Deadly Sequence, Primary Crux | 2026-09-27 15:40 UTC · 560f91f3d9 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 20.3454 | Malignant Force, Rime Rounds, Hellfire, Primary Acuity, Rifle Elementalist, Semi-Rifle Cannonade, Vital Sense, Deadly Sequence, Primary Crux | 2026-10-06 07:51 UTC · 7a445cac9c |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.2868 | Malignant Force, Rime Rounds, Hellfire, Primary Acuity, Rifle Elementalist, Semi-Rifle Cannonade, Vital Sense, Deadly Sequence, Primary Crux | 2026-09-26 15:45 UTC · 37f43e2d09 |
 
 ## In WFSim

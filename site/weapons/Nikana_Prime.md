@@ -13,7 +13,7 @@ Each row is measured on its own, and says when and by which WFSim commit; the ga
 | Ruler | Fight | Mode | Score | Build | Measured |
 | --- | --- | --- | ---: | --- | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 9.2900 | Condition Overload, Blood Rush, Primed Fury, Primed Reach, Galvanized Steel, Gladiator Might, Weeping Wounds, Magnetic Rush, Blind Justice, Dreamer's Wrath, Melee Exposure | 2026-10-05 14:26 UTC · 4d57cccc45 |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | slide | 982.1164 | Shocking Touch, Condition Overload, Blood Rush, Primed Fury, Primed Reach, Galvanized Steel, Gladiator Might, Weeping Wounds, Blind Justice, Dreamer's Wrath, Melee Influence | 2026-10-02 20:07 UTC · aecc2363ea |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 130.2344 | Shocking Touch, Condition Overload, Blood Rush, Primed Fury, Primed Reach, Galvanized Elementalist, Galvanized Steel, Weeping Wounds, Blind Justice, Dreamer's Wrath, Melee Influence | 2026-10-05 15:55 UTC · 4d57cccc45 |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.6711 | Condition Overload, Blood Rush, Primed Fury, Primed Reach, Galvanized Steel, Gladiator Might, Weeping Wounds, Magnetic Rush, Blind Justice, Dreamer's Wrath, Melee Exposure | 2026-10-05 14:00 UTC · 4d57cccc45 |
 
 ## Not modelled here

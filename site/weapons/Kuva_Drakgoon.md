@@ -13,7 +13,7 @@ Each row is measured on its own, and says when and by which WFSim commit; the ga
 | Ruler | Fight | Mode | Score | Build | Measured |
 | --- | --- | --- | ---: | --- | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.6169 | Incendiary Coat, Blaze, Galvanized Hell, Primed Point Blank, Primed Ravage, Critical Deceleration, Shotgun Barrage, Magnetic Strafe, Primary Crux | 2026-10-03 20:03 UTC · ea8f24ebe2 |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 20.8138 | Incendiary Coat, Blaze, Galvanized Hell, Primed Point Blank, Primed Ravage, Critical Deceleration, Shotgun Barrage, Magnetic Strafe, Primary Crux | 2026-10-03 19:53 UTC · ea8f24ebe2 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 20.8138 | Incendiary Coat, Blaze, Galvanized Hell, Primed Point Blank, Primed Ravage, Critical Deceleration, Shotgun Barrage, Magnetic Strafe, Primary Crux | 2026-10-06 07:11 UTC · 47e30f0f40 |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.5659 | Incendiary Coat, Blaze, Galvanized Hell, Primed Point Blank, Primed Ravage, Critical Deceleration, Shotgun Barrage, Magnetic Strafe, Primary Crux | 2026-10-03 19:38 UTC · ea8f24ebe2 |
 
 ## Not modelled here

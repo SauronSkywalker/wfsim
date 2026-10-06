@@ -13,7 +13,7 @@ Each row is measured on its own, and says when and by which WFSim commit; the ga
 | Ruler | Fight | Mode | Score | Build | Measured |
 | --- | --- | --- | ---: | --- | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 4.8037 | Hellfire, Thermite Rounds, Heavy Caliber, Primary Acuity, Critical Delay, Hammer Shot, Semi-Rifle Cannonade, Vital Sense, Primary Compression | 2026-09-29 13:19 UTC · 601279c5f9 |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 18.3559 | Hellfire, Thermite Rounds, Heavy Caliber, Primary Acuity, Critical Delay, Hammer Shot, Semi-Rifle Cannonade, Vital Sense, Primary Compression | 2026-09-29 13:05 UTC · 601279c5f9 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 18.3559 | Hellfire, Thermite Rounds, Heavy Caliber, Primary Acuity, Critical Delay, Hammer Shot, Semi-Rifle Cannonade, Vital Sense, Primary Compression | 2026-10-06 07:12 UTC · 47e30f0f40 |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | alternate | 0.7584 | Hellfire, Thermite Rounds, Heavy Caliber, Primary Acuity, Critical Delay, Hammer Shot, Semi-Rifle Cannonade, Vital Sense, Primary Compression | 2026-09-29 12:55 UTC · 601279c5f9 |
 
 ## Not modelled here

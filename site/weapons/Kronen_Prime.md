@@ -13,7 +13,7 @@ Each row is measured on its own, and says when and by which WFSim commit; the ga
 | Ruler | Fight | Mode | Score | Build | Measured |
 | --- | --- | --- | ---: | --- | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.0294 | Condition Overload, Blood Rush, Primed Fury, Primed Reach, Galvanized Steel, Amalgam Organ Shatter, Gladiator Might, Magnetic Rush, Sovereign Outcast, Discipline's Merit, Melee Exposure | 2026-10-05 15:13 UTC · 4d57cccc45 |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 140.7578 | Shocking Touch, Condition Overload, Blood Rush, Primed Fury, Primed Reach, Galvanized Elementalist, Galvanized Steel, Organ Shatter, Sovereign Outcast, Discipline's Merit, Melee Influence | 2026-10-05 10:01 UTC · f863b1b71f |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | slide | 48.2479 | Shocking Touch, Condition Overload, Blood Rush, Primed Fury, Primed Reach, Galvanized Elementalist, Galvanized Steel, Organ Shatter, Sovereign Outcast, Discipline's Merit, Melee Influence | 2026-10-06 05:46 UTC · 2a93152888 |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.3941 | Sacrificial Steel, Condition Overload, Blood Rush, Primed Fury, Primed Reach, Amalgam Organ Shatter, Gladiator Might, Magnetic Rush, Sovereign Outcast, Discipline's Merit, Melee Exposure | 2026-10-05 14:58 UTC · 4d57cccc45 |
 
 ## Not modelled here

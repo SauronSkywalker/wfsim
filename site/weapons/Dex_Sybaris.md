@@ -13,7 +13,7 @@ Each row is measured on its own, and says when and by which WFSim commit; the ga
 | Ruler | Fight | Mode | Score | Build | Measured |
 | --- | --- | --- | ---: | --- | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 9.2711 | High Voltage, Malignant Force, Hellfire, Galvanized Chamber, Galvanized Aptitude, Galvanized Scope, Critical Delay, Vital Sense, Stabilizer, Primary Deadhead | 2026-09-30 18:06 UTC · 1d3b5bc87a |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 13.0578 | High Voltage, Malignant Force, Hellfire, Galvanized Chamber, Galvanized Aptitude, Galvanized Scope, Critical Delay, Vital Sense, Stabilizer, Primary Deadhead | 2026-09-30 17:58 UTC · 1d3b5bc87a |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 13.0578 | High Voltage, Malignant Force, Hellfire, Galvanized Chamber, Galvanized Aptitude, Galvanized Scope, Critical Delay, Vital Sense, Stabilizer, Primary Deadhead | 2026-10-06 08:06 UTC · 7a445cac9c |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 0.4378 | High Voltage, Malignant Force, Hellfire, Galvanized Chamber, Galvanized Aptitude, Galvanized Scope, Critical Delay, Vital Sense, Stabilizer, Primary Deadhead | 2026-09-30 17:44 UTC · 1d3b5bc87a |
 
 ## In WFSim

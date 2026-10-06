@@ -13,7 +13,7 @@ Each row is measured on its own, and says when and by which WFSim commit; the ga
 | Ruler | Fight | Mode | Score | Build | Measured |
 | --- | --- | --- | ---: | --- | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 29.8007 | Primed Cryo Rounds, Malignant Force, Primary Acuity, Galvanized Aptitude, Hammer Shot, Vile Acceleration, Vital Sense, Magnetic Capacity, Vigilante Supplies, Primary Deadhead | 2026-09-28 17:27 UTC · ede2eb7f5f |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 117.9179 | Primed Cryo Rounds, Malignant Force, Hellfire, Primary Acuity, Primed Shred, Galvanized Aptitude, Vile Acceleration, Vital Sense, Primary Deadhead | 2026-10-02 19:07 UTC · aecc2363ea |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 122.6489 | Primed Cryo Rounds, Malignant Force, Hellfire, Primary Acuity, Primed Shred, Galvanized Aptitude, Vile Acceleration, Vital Sense, Primary Deadhead | 2026-10-06 07:03 UTC · 47e30f0f40 |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 5.3293 | Primed Cryo Rounds, Malignant Force, Hellfire, Primary Acuity, Serration, Galvanized Aptitude, Vile Acceleration, Vital Sense, Primary Deadhead | 2026-10-02 18:55 UTC · aecc2363ea |
 
 ## In WFSim

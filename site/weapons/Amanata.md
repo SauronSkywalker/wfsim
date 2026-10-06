@@ -13,7 +13,7 @@ Each row is measured on its own, and says when and by which WFSim commit; the ga
 | Ruler | Fight | Mode | Score | Build | Measured |
 | --- | --- | --- | ---: | --- | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.1794 | Shocking Touch, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Galvanized Steel, Berserker Fury, Organ Shatter, Weeping Wounds, Bleeding Willow, Dreamer's Wrath, Melee Influence | 2026-10-05 15:22 UTC · 4d57cccc45 |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | block forward | 11.5033 | Shocking Touch, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Galvanized Steel, Berserker Fury, Organ Shatter, Weeping Wounds, Bleeding Willow, Dreamer's Wrath, Melee Influence | 2026-10-03 09:52 UTC · 063d2e4572 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 7.3023 | Shocking Touch, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Galvanized Steel, Berserker Fury, Organ Shatter, Weeping Wounds, Bleeding Willow, Dreamer's Wrath, Melee Influence | 2026-10-06 04:55 UTC · 2a93152888 |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | block forward | 0.004057 | Healing Return, Blood Rush, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Galvanized Steel, Spring-Loaded Blade, Weeping Wounds, Bleeding Willow, Discipline's Merit, Melee Influence | 2026-10-05 14:00 UTC · 4d57cccc45 |
 
 ## Not modelled here

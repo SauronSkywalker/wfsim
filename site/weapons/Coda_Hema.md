@@ -13,7 +13,7 @@ Each row is measured on its own, and says when and by which WFSim commit; the ga
 | Ruler | Fight | Mode | Score | Build | Measured |
 | --- | --- | --- | ---: | --- | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 18.6193 | Hellfire, Heavy Caliber, Primary Acuity, Serration, Galvanized Aptitude, Vile Acceleration, Vital Sense, Magnetic Capacity, Primary Crux | 2026-09-25 17:37 UTC · a717ec54cc |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 60.8726 | Stormbringer, Primary Acuity, Primed Shred, Serration, Galvanized Aptitude, Bladed Rounds, Rifle Elementalist, Vital Sense, Primary Crux | 2026-09-27 14:05 UTC · e57e9893f3 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 60.8726 | Stormbringer, Primary Acuity, Primed Shred, Serration, Galvanized Aptitude, Bladed Rounds, Rifle Elementalist, Vital Sense, Primary Crux | 2026-10-06 04:57 UTC · 2a93152888 |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.7248 | Hellfire, Heavy Caliber, Primary Acuity, Serration, Galvanized Aptitude, Vile Acceleration, Vital Sense, Magnetic Capacity, Primary Crux | 2026-09-25 17:11 UTC · a717ec54cc |
 
 ## Not modelled here
