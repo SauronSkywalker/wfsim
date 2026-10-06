@@ -133,7 +133,8 @@ pub struct LocaleSpec {
     #[serde(default)]
     pub riven_words: BTreeMap<String, Vec<String>>,
     /// A riven query's grammar, keyed `malus` (the next stat is the malus),
-    /// `any_malus` and `no_malus` (a card with some malus / none).
+    /// `any_malus` and `no_malus` (a card with some malus / none), and
+    /// `with_riven` (a build query asking for builds that carry one).
     #[serde(default)]
     pub riven_query_words: BTreeMap<String, Vec<String>>,
 }
@@ -241,8 +242,8 @@ mod tests {
             }
             for key in spec.riven_query_words.keys() {
                 assert!(
-                    ["malus", "any_malus", "no_malus"].contains(&key.as_str()),
-                    "{code}: riven_query_words has '{key}'; the query reads malus, any_malus and no_malus"
+                    ["malus", "any_malus", "no_malus", "with_riven"].contains(&key.as_str()),
+                    "{code}: riven_query_words has '{key}'; the queries read malus, any_malus, no_malus and with_riven"
                 );
             }
         }

@@ -51,7 +51,7 @@ export function makeAnswer({ run, meta, zh, headless }) {
   const help = () => [
     t("I am Nona, WFSim's assistant. Send zk or pz… not that I was waiting for you. (⁄ ⁄•⁄ω⁄•⁄ ⁄)"),
     t("zk weapon [stats] [count]: the rivens the board has measured for this weapon, against its best build without one."),
-    t("pz weapon [ruler] [count]: the best builds the board has measured for this weapon."),
+    t("pz weapon [ruler] [riven] [count]: the best builds the board has measured for this weapon; add riven for builds that carry one."),
     t("For example: {a}, or {b}", { a: "zk 托里德 双暴 负任意 5", b: "pz 托里德 爆破使 3" }),
   ].join("\n");
   const NO_WEAPON = "Which weapon? Put its name after the command, like {e}. (・_・;)";
@@ -62,21 +62,26 @@ export function makeAnswer({ run, meta, zh, headless }) {
     if (!rest) return t(NO_WEAPON, { e: "pz 托里德 3" });
     const hit = weaponOf(rest);
     if (!hit) return t(NOT_FOUND);
+    // "紫卡" anywhere after the weapon asks for riven builds; what is left names the ruler.
+    const rivenWords = ((zh.riven_query_words || {}).with_riven || []).map(squash).sort((a, b) => b.length - a.length);
+    const said = rivenWords.find((x) => x && hit.left.includes(x));
+    const left = said ? hit.left.replace(said, "") : hit.left;
     const benches = meta.benchmarks || [];
-    const ruler = benches.find((b) => hit.left && (squash(rulerShort(b)) === hit.left || squash(b.name.split(" · ")[0]) === hit.left))
+    const ruler = benches.find((b) => left && (squash(rulerShort(b)) === left || squash(b.name.split(" · ")[0]) === left))
       || benches.find((b) => b.primary) || benches[0];
-    const r = await run("builder.board.read", { weapon: hit.w.id, riven: "without", limit: n || 3, distinct: true, pooled: true });
+    const r = await run("builder.board.read", { weapon: hit.w.id, riven: said ? "with" : "without", limit: n || 3, distinct: true, pooled: true });
     if (r.ok === false) return t(NOT_MEASURED);
     const rows = r.rows.filter((x) => x.ruler_id === ruler.id);
     if (!rows.length) return t(NOT_MEASURED);
     const shown = rows.length;
-    const card = `${SITE}${headless.headlessWeaponPath(meta.weapons || [], hit.w.id)}/card?kind=pz&ruler=${encodeURIComponent(ruler.id)}&n=${shown}`;
+    const card = `${SITE}${headless.headlessWeaponPath(meta.weapons || [], hit.w.id)}/card?kind=pz&ruler=${encodeURIComponent(ruler.id)}&n=${shown}${said ? "&rv=1" : ""}`;
     const text = [`${weaponName(hit.w)} · ${rulerShort(ruler)}`]
-      .concat(rows.map((x) => `#${x.rank} ${x.score}  ${(x.build ? x.build.mods : []).map(modName).join("、")}${
+      .concat(rows.map((x) => `#${x.rank} ${x.score}  ${(x.build ? x.build.mods.map(modName) : x.mods).join("、")}${
         x.build && x.build.arcane.length ? ` | ${t("Arcane")}: ${x.build.arcane.map(arcaneName).join("、")}` : ""}${
         x.build && x.build.evolutions.length ? ` | ${t("Evolutions")}: ${x.build.evolutions.map(evoName).join("、")}` : ""}`))
       .join("\n");
-    return { line: t("The top {n} builds of {w} under {ruler}. (￣ー￣)ゞ", { w: weaponName(hit.w), ruler: rulerShort(ruler), n: shown }), card, text };
+    return { line: t(said ? "The top {n} riven builds of {w} under {ruler}. (￣ー￣)ゞ" : "The top {n} builds of {w} under {ruler}. (￣ー￣)ゞ",
+      { w: weaponName(hit.w), ruler: rulerShort(ruler), n: shown }), card, text };
   }
 
   async function zk(rest, n) {

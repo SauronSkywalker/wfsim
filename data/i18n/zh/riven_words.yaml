@@ -45,3 +45,4 @@ riven_query_words:
   malus: [负, "-"]
   any_malus: [负任意, 任意负, 负随便, 随便负, 负随意, 任意负面]
   no_malus: [无负, 不带负, 没负, 零负, 无负面]
+  with_riven: [紫卡, 带紫卡, 裂罅, 带裂罅, 带卡, riven]

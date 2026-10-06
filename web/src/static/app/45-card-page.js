@@ -1,7 +1,7 @@
 // ---- The long image: a weapon's answer laid out to be sent as one picture ----
 //
 // docs/AGENT.md §"The QQ bot". `/weapons/<Name>/card?kind=pz|zk&ruler=&n=`,
-// a zk narrowed by `&has=<stat ids>&malus=<id|any|none>`, draws the bots' reply image from the page's own components — the simulator's
+// a zk narrowed by `&has=<stat ids>&malus=<id|any|none>`, a pz of riven builds by `&rv=1`, draws the bots' reply image from the page's own components — the simulator's
 // build card and the board's published numbers — so a chat image and the site
 // are one design. Every mode of the ruler is one ranking (`pooledRanking`). Phone width, the light theme, nothing else on the page;
 // `body[data-card-ready]` is set once every number in it has arrived, which is
@@ -32,7 +32,8 @@ function cardParams() {
   const p = new URLSearchParams(location.search);
   const n = Math.max(1, Math.min(CARD_MAX, Math.round(Number(p.get("n"))) || 3));
   return { kind: p.get("kind") === "zk" ? "zk" : "pz", ruler: p.get("ruler") || "", n,
-    riven: { bonuses: (p.get("has") || "").split(",").filter(Boolean), malus: p.get("malus") || null } };
+    riven: { bonuses: (p.get("has") || "").split(",").filter(Boolean), malus: p.get("malus") || null },
+    withRiven: p.get("rv") === "1" };
 }
 
 const cardShown = (r) => String(r.shown != null ? r.shown : (r.score || 0).toFixed(4));
@@ -48,7 +49,7 @@ async function renderCardPage(w, ask) {
   const box = $("card-page");
   if (!box || !w) return;
   document.body.removeAttribute("data-card-ready");
-  const { kind, ruler: want, n, riven: rivenAsk } = ask;
+  const { kind, ruler: want, n, riven: rivenAsk, withRiven } = ask;
   const rows = BOARD[w.id] || [];
   const benches = META.benchmarks || [];
   const bench = benches.find((b) => b.id === want) || benches.find((b) => b.primary) || benches[0];
@@ -59,11 +60,11 @@ async function renderCardPage(w, ask) {
   // values arrive into the elements already there, so nothing may sit between.
   let title = "", link = "", body = () => "";
   if (kind === "pz") {
-    const ranked = pooledRanking(rankBoard(rows.filter((r) => r.benchmark === ruler && !r.riven), [ruler], w.modes));
+    const ranked = pooledRanking(rankBoard(rows.filter((r) => r.benchmark === ruler && !r.riven === !withRiven), [ruler], w.modes));
     const shown = distinctTop(ranked, n, () => "", (x) => cardShown(x.row));
     const mode = (shown[0] || {}).mode;
-    title = trF("{w} · top {n} builds", { w: w.name, n: shown.length });
-    link = `${LIVE_ORIGIN}${weaponPath(w.id)}?bench=${encodeURIComponent(ruler)}&mode=${encodeURIComponent(mode || "base")}&riven=0`;
+    title = trF(withRiven ? "{w} · top {n} riven builds" : "{w} · top {n} builds", { w: w.name, n: shown.length });
+    link = `${LIVE_ORIGIN}${weaponPath(w.id)}?bench=${encodeURIComponent(ruler)}&mode=${encodeURIComponent(mode || "base")}&riven=${withRiven ? 1 : 0}`;
     body = () => shown.map((x) => cardBox(`<b class="lc-rank">#${x.rank}</b><b class="lc-score">${escHtml(cardShown(x.row))}</b><span class="sb-empty">${escHtml(metric)}</span>${cardRecord(x.row)}`,
       cardOfState(boardRowState(w, x.row), w))).join("");
   } else {
