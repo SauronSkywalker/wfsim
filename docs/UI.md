@@ -721,6 +721,19 @@ gesture is the browser's it is gone. The answer is a MODE the reader turns on
 so a `pointer: coarse` query is the wrong test). `touch-action` follows it:
 `pan-y` off, `none` on. A mouse is unaffected.
 
+## A section wider than the screen
+
+**A SECTION'S BODY SCROLLS SIDEWAYS; IT IS NEVER CLIPPED.** `.block` rounds its
+corners with `overflow:clip`, and its `.bb` scrolls on x — so a row that does
+not fit a phone is reachable rather than cut off at the edge with nothing to
+say it continues. A phone's own scrollbar is an overlay that is invisible until
+touched, so `05-hscroll.js` gives every overflowing body a bar of its own:
+pinned to the bottom of the screen while the section is on it, a thumb to
+drag, a tap on the track to jump, and ‹ › to step. It appears only while the
+body is wider than its box. THE BAR IS THE BACKSTOP, NOT THE LAYOUT: a section
+that a phone reader uses gets a narrow layout of its own (the riven editor's
+stat rows go to three lines under 720px), and `check_mobile` measures that.
+
 ## Every enemy has a name, and the page can ask about one
 
 **EVERY ENEMY HAS A NAME, AND THE PAGE CAN ASK ABOUT ONE.** `fight::Body` is

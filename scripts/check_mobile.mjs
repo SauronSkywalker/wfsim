@@ -135,6 +135,17 @@ for (const [label, w, h, mobile] of SCREENS) {
   // empty mod grid and every opening threw on a null - which reads exactly
   // like the bug it is here to catch. A block that depends on where the last
   // one left the page is a block that reports the wrong thing.
+  // ---- THE RIVEN EDITOR, WITH A CARD OPEN ------------------------------
+  //
+  // A stat row is seven columns on a desktop, and on a phone its value box -
+  // the one thing typed into - sat past the screen edge inside a section that
+  // clips. Open a card, measure every control in the row against the screen.
+  history.pushState({}, '', '/weapons/Acceltra_Prime/rivens'); route(); await sleep(2600);
+  const rvId = newRiven(); await sleep(1600);
+  out.rivenRows = document.querySelectorAll('#riven-stats .rv-row').length;
+  out.rivenRight = Math.round(widest('#riven-stats .rv-row > *'));
+  deleteRiven(rvId); await sleep(600);
+
   history.pushState({}, '', '/weapons/Ocucor'); route(); await sleep(2600);
   const pool2 = (META.weapons.find(x => x.id === 'ocucor') || {}).mods || [];
   for (let i = 0; i < 8 && i < pool2.length; i++) slots[i] = { mod: pool2[i], pol: null, rank: null };
@@ -307,6 +318,8 @@ for (const [label, w, h, mobile] of SCREENS) {
   // because it IS a geometry question: the number exists only because two
   // columns leave the reading order ambiguous, and it is asserted at every
   // width because the wrapping is what changes between them.
+  check(`${tag} a riven's stat rows keep every control on screen`,
+    r.rivenRows > 0 && r.rivenRight <= r.vw + 0.5, `${r.rivenRows} rows, right edge ${r.rivenRight} of ${r.vw}`);
   check(`${tag} every slot is numbered, 1..8 in reading order`,
     r.slotNos === "1,2,3,4,5,6,7,8", r.slotNos);
 }

@@ -1797,6 +1797,8 @@ ui:
   "not read": "没认出"
   "close": "关闭"
   "open in Builder": "在配装器中打开"
+  "scroll left": "向左滚动"
+  "scroll right": "向右滚动"
   "With this riven": "带这张裂罅"
   "every riven the board has measured, against its best riven-free build": "榜单测过的每张裂罅，对比不带裂罅的最佳配装"
   "No riven build of this weapon has been measured yet.": "这把武器还没有测过带裂罅的配装。"
