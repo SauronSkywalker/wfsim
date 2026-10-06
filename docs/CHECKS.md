@@ -63,8 +63,10 @@ again, and each channel's bot sees only its own.
 
 Riven appraisal's page (`81-appraisal.js`) against a stand-in for its door, in
 minutes because it runs a real search: the link lands on the weapon's
-optimizer under the appraisal's ruler, the one start holds only the asker's
-riven with its rolls, pinned; the search starts with no click; the winner goes
+optimizer under the appraisal's ruler with the preset's four starts — the
+asker's riven, pinned, beside each element's 60/60 card — answering one build
+at ten fights a candidate; the search starts with no click; the reader's own
+presets, rivens and checkpoint are left exactly as they were; the winner goes
 back as a build carrying that riven's shape and the typed name and no score;
 and the finalists reach the board even with uploading switched off.
 

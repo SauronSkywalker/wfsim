@@ -353,8 +353,12 @@ question (docs/BOARD.md §"The Riven Analyst").
    (`worker/appraise.js`): weapon, ruler, the card's rolls, and the channel's
    own note of where to answer, which nothing else reads.
 2. `/appraise/<code>` opens that weapon's optimizer under the official ruler
-   with the riven pinned in its one start and searches at once
-   (`81-appraisal.js`). Every finalist goes to the board unasked; the winner
+   with the appraisal's own search PRESET and searches at once
+   (`81-appraisal.js`): `data/search/appraisal.yaml` — four starts, the riven
+   pinned beside each primary element's 60/60 card the weapon takes, one build
+   answered, ten fights a candidate. The search is told nothing else, and the
+   tab's storage lives in memory, so the reader's own builds, rivens and
+   optimizer are untouched. Every finalist goes to the board unasked; the winner
    goes back to the appraisal as a BUILD with an optional name to thank —
    never a score.
 3. The channel's bot claims what came back (`/api/appraise/claim`), replays the

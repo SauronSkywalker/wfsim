@@ -1,11 +1,12 @@
 // ---- Riven appraisal: a chat's riven, searched in the reader's own browser ----
 //
 // docs/AGENT.md §"Riven appraisal". `/appraise/<code>` opens the weapon's
-// OPTIMIZER with the asker's riven pinned in its one start, under the official
-// ruler, and starts the search at once — the page's own search, nothing beside
-// it. When it finishes the winner goes back to the appraisal and every finalist
-// to the board (the search ran, so they are submitted without asking). The page
-// sends a BUILD and never a number: the chat's bot replays it before it says one.
+// OPTIMIZER under the official ruler with the appraisal's own search preset
+// (`data/search/appraisal.yaml`, served as `META.appraisal_search`) and starts
+// it at once. The tab keeps nothing: its storage lives in memory, so none of it
+// reaches the reader's own builds, rivens or optimizer. When it finishes the
+// winner goes back to the appraisal and every finalist to the board; the page
+// sends a BUILD and never a number — the chat's bot replays it before it says one.
 
 /// The appraisal open on this page: `{ code, job, phase, first }`, or null.
 let appraisal = null;
@@ -13,9 +14,27 @@ const APPRAISAL_NAME = "wfsim-appraisal-name";
 
 const appraisalActive = () => !!(appraisal && appraisal.job);
 
+/// THIS TAB KEEPS NOTHING: from here on its `localStorage` is a copy in memory,
+/// read through to the real one for what it has not written. The appraisal's
+/// riven, ruler and search live and die with the tab; the name to thank is the
+/// one thing kept, so the next appraisal can offer it.
+function isolateAppraisalStorage() {
+  if (isolateAppraisalStorage.done) return;
+  isolateAppraisalStorage.done = true;
+  const real = { get: Storage.prototype.getItem, set: Storage.prototype.setItem, del: Storage.prototype.removeItem };
+  const mem = new Map();
+  const ours = (st) => { try { return st === window.localStorage; } catch (_) { return false; } };
+  Storage.prototype.getItem = function (k) { return ours(this) && mem.has(k) ? mem.get(k) : real.get.call(this, k); };
+  Storage.prototype.setItem = function (k, v) {
+    if (ours(this) && k !== APPRAISAL_NAME) mem.set(k, String(v)); else real.set.call(this, k, v);
+  };
+  Storage.prototype.removeItem = function (k) { if (ours(this)) mem.set(k, null); else real.del.call(this, k); };
+}
+
 /// THE LINK, ANSWERED: read the appraisal, put the address on its weapon's
 /// optimizer, draw that page, then set it up and start.
 async function openAppraisal(code) {
+  isolateAppraisalStorage();
   let job = null;
   try {
     const r = await fetch(`/api/appraise/${encodeURIComponent(code)}`);
@@ -45,17 +64,24 @@ async function openAppraisal(code) {
   }
 }
 
-/// THE SEARCH'S SCOPE: the official ruler, the riven as the asker's card reads,
-/// and one start holding only that riven, pinned — the rest is the search's.
+/// THE SEARCH, as its preset states it: the official ruler, the riven as the
+/// asker's card reads, and one start per preset row — the riven, pinned, beside
+/// the row's 60/60 card this weapon can equip — answering with the preset's
+/// count at its runs a candidate.
 async function setUpAppraisal(w, job) {
   await agentDo("shell.preset.open", { bar: "scenario", preset: job.ruler });
   const rv = job.riven || {};
   const id = newRiven({ bonuses: (rv.bonuses || []).map((b) => ({ id: b.id, roll: b.roll })),
     malus: rv.malus ? { id: rv.malus.id, roll: rv.malus.roll } : null,
     rank: rv.rank != null ? rv.rank : rivenRules().max_rank, polarity: rv.polarity || "madurai" });
-  opt.starts = [{ build: stateFromBuild({ mods: [RIVEN_PREFIX + id] }, w.id), fixed: ["mods:0"] }];
+  const preset = META.appraisal_search || { starts: [[]], finalists: 1, candidate_runs: 10 };
+  const fits = new Set(buildPool().map((m) => m.id));
+  const seed = (row) => row.find((card) => fits.has(card));
+  // A ROW THE WEAPON TAKES NONE OF leaves the riven alone, and one such start is enough.
+  const rows = [...new Set(preset.starts.map((row) => JSON.stringify([RIVEN_PREFIX + id, seed(row)].filter(Boolean))))];
+  opt.starts = rows.map((r) => ({ build: stateFromBuild({ mods: JSON.parse(r) }, w.id), fixed: ["mods:0"] }));
   renderOptStarts();
-  updateOptEstimate();
+  setOptSizes({ finalists: preset.finalists, candidate_runs: preset.candidate_runs });
 }
 
 /// THE SEARCH HAS ANSWERED: its winner goes back to the appraisal, with the

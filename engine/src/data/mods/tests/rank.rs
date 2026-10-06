@@ -58,3 +58,29 @@ fn with_ranks_adds_the_variant_beside_its_card() {
     let base = pool.iter().find(|m| m.id == "hunter_track").unwrap();
     assert_eq!(base.family, Some("hunter_track"));
 }
+
+/// THE APPRAISAL'S STARTS ARE ONE ELEMENT A ROW, 60/60: every card is real, carries
+/// one primary element and status chance, a row is one element, and the four rows
+/// are four elements — so each start is the riven beside a different element.
+#[test]
+fn the_appraisal_starts_are_each_one_elements_dual_cards() {
+    use crate::model::ModEffect;
+    let p = appraisal_search();
+    assert_eq!(p.starts.len(), 4, "one start per primary element");
+    assert!(p.finalists >= 1 && [1, 10].contains(&p.candidate_runs), "{p:?}");
+    let mut seen = Vec::new();
+    for row in &p.starts {
+        let mut row_element = None;
+        for id in row {
+            let m = at_rank(&format!("{id}@0")).unwrap_or_else(|| panic!("{id} is not a card with ranks"));
+            let elements: Vec<_> = m.effects.iter()
+                .filter_map(|e| match e { ModEffect::Element(t, _) => Some(*t), _ => None }).collect();
+            assert_eq!(elements.len(), 1, "{id} carries one element");
+            assert!(m.effects.iter().any(|e| matches!(e, ModEffect::StatusChance(_))), "{id} carries status chance");
+            assert!(row_element.is_none_or(|x| x == elements[0]), "{id} is not its row's element");
+            row_element = Some(elements[0]);
+        }
+        assert!(!seen.contains(&row_element), "two rows are one element");
+        seen.push(row_element);
+    }
+}

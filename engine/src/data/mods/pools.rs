@@ -120,6 +120,24 @@ pub fn every_rank() -> &'static EveryRank {
     })
 }
 
+/// THE RIVEN APPRAISAL'S SEARCH PRESET — `data/search/appraisal.yaml`: how many
+/// builds it answers with, the runs a candidate, and its starts, each a row of
+/// one element's 60/60 card per mod class.
+#[derive(Debug, Clone, Default, Deserialize, serde::Serialize)]
+pub struct AppraisalSearch {
+    pub finalists: u32,
+    pub candidate_runs: u32,
+    pub starts: Vec<Vec<String>>,
+}
+
+pub fn appraisal_search() -> &'static AppraisalSearch {
+    static PRESET: OnceLock<AppraisalSearch> = OnceLock::new();
+    PRESET.get_or_init(|| {
+        let text = crate::data::file("search/appraisal.yaml").expect("search/appraisal.yaml");
+        serde_norway::from_str(text).expect("parse search/appraisal.yaml")
+    })
+}
+
 /// [`pool_for_weapon`], plus the lower ranks `ids` name — the pool a build
 /// written as a mod list resolves against.
 pub fn pool_naming<S: AsRef<str>>(weapon_id: &str, ids: &[S]) -> Vec<ModDef> {

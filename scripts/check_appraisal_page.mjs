@@ -38,15 +38,25 @@ check("the appraisal's picture draws the asker's card with its numbers and rolls
   && chips.every((t) => /\d/.test(t) && /×\d\.\d\d/.test(t)) && chips.some((t) => /×1\.05/.test(t)), JSON.stringify(chips));
 check("…its code, and a QR code to the appraisal", (await evaluate(`document.querySelector("#card-page").textContent`)).includes("TEST7")
   && await evaluate(`!!document.querySelector("#card-page .lc-qr svg")`));
+// WHAT THE READER ALREADY HAS: their presets, rivens and search checkpoint,
+// which an appraisal opened in this browser must leave exactly as they were.
+const OWN = `JSON.stringify(Object.keys(localStorage).filter((k) => /presets|riven|ckpt/i.test(k)).sort()
+  .map((k) => [k, localStorage.getItem(k)]))`;
+const before = await evaluate(OWN);
 await app.load("/appraise/TEST7", 9000);
 
 check("the link lands on its weapon's optimizer", (await evaluate("location.pathname")).toLowerCase() === "/weapons/torid/optimizer",
   await evaluate("location.pathname"));
 check("…under the appraisal's ruler", await evaluate(`(scenarioNamed(activeScenario) || {}).builtin === "standard_single_target"`));
-const start = JSON.parse(await evaluate(`JSON.stringify({ n: opt.starts.length, slots: startPayload(opt.starts[0]).slots, fixed: opt.starts[0].fixed })`));
-check("…with one start holding only the riven, pinned", start.n === 1 && start.slots.filter(Boolean).length === 1
-  && String(start.slots[0]).startsWith("riven:") && start.fixed.includes("mods:0"), JSON.stringify(start));
-const card = JSON.parse(await evaluate(`JSON.stringify((loadPresetList(RIVENS).find((p) => "riven:" + p.id === startPayload(opt.starts[0]).slots[0]) || {}).state || {})`));
+const starts = JSON.parse(await evaluate(`JSON.stringify(opt.starts.map((s) => ({ slots: startPayload(s).slots.filter(Boolean), fixed: s.fixed })))`));
+const preset = JSON.parse(await evaluate("JSON.stringify(META.appraisal_search)"));
+check("…with the preset's four starts: the riven, pinned, beside each element's 60/60 card", starts.length === 4
+  && starts.every((s, i) => s.slots.length === 2 && String(s.slots[0]).startsWith("riven:") && s.fixed.includes("mods:0")
+    && preset.starts[i].includes(s.slots[1]))
+  && JSON.stringify(starts.map((s) => s.slots[1])) === JSON.stringify(["thermite_rounds", "rime_rounds", "high_voltage", "malignant_force"]), JSON.stringify(starts));
+check("…answering with one build, ten fights a candidate", await evaluate("optRun.finalists === 1 && optRun.candidate_runs === 10"));
+const start = { slots: starts[0].slots };
+const card = JSON.parse(await evaluate(`JSON.stringify((loadPresetList(RIVENS).find((p) => "riven:" + p.id === ${JSON.stringify(start.slots[0])}) || {}).state || {})`));
 check("…and that riven is the asker's card, rolls and all", (card.bonuses || []).map((b) => `${b.id}@${b.roll}`).join(",") === "critical_damage@1.1,multishot@1.05"
   && card.malus && card.malus.id === "zoom" && card.malus.roll === 0.9, JSON.stringify(card));
 check("the search started without a click", await evaluate("optJobId != null || !!optLast"));
@@ -70,6 +80,8 @@ if (sent) {
   const board = JSON.parse(await evaluate("JSON.stringify(window.__sent.board)"));
   check("the finalists go to the board even with the board switched off here", board.length > 0, String(board.length));
   check("the banner thanks the reader", /thank|谢谢/i.test(await evaluate(`($("appraisal-banner") || {}).textContent || ""`)));
+  await app.load("/weapons/Torid/optimizer", 6000);
+  check("the reader's own presets, rivens and checkpoint are as they were", (await evaluate(OWN)) === before);
 
   // THE ANSWER'S PICTURE: that build replayed with the asker's rolls, judged,
   // scored and set against the board — what the bot reads and sends.
