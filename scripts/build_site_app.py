@@ -5,7 +5,7 @@ Steps:
   1. cargo build --release -p wfsim-wasm --target wasm32-unknown-unknown
   2. wasm-bindgen --target no-modules  ->  site/app/pkg/
   3. wasm-opt -Oz (if available; optional)
-  4. copy web/src/static/{index.html,style.css,worker.js,logo.svg,pol/} -> site/,
+  4. copy web/src/static/{index.html,style.css,worker.js,logo.svg,nona.svg,pol/} -> site/,
      and app.js joined from web/src/static/app/*.js
   5. inject <script>window.WFSIM_WASM = true;</script> into the copied
      index.html — that flag flips app.js's api() from fetch to worker RPC.
@@ -302,6 +302,8 @@ EDGE_HEADERS = """\
 /pol/*
   Cache-Control: public, max-age=604800
 /logo.svg
+  Cache-Control: public, max-age=604800
+/nona.svg
   Cache-Control: public, max-age=604800
 /pkg/*
   Cache-Control: public, max-age=31536000, immutable
@@ -2167,7 +2169,7 @@ def main() -> None:
     release = release_id()
 
     (APP / "app.js").write_bytes(app_source().encode("utf-8"))
-    for name in ("style.css", "worker.js", "logo.svg"):
+    for name in ("style.css", "worker.js", "logo.svg", "nona.svg"):
         shutil.copy2(STATIC / name, APP / name)
     shutil.copytree(STATIC / "pol", APP / "pol", dirs_exist_ok=True)
 

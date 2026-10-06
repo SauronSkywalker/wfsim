@@ -20,7 +20,7 @@ There are three, and **a file may not travel in a plane that is not its own.**
 | plane | what | changes | signed | may lag |
 | --- | --- | --- | --- | --- |
 | **release** | `index.html`, `app.js`, `style.css`, `worker.js`, `pkg/` | on a code change | **yes** — it is code | **no**: two channels on different releases give different answers |
-| **assets** | `img/`, `pol/`, `logo.svg` | rarely, and only by addition | no — the hash is the check | yes: an asset is present and correct, or absent |
+| **assets** | `img/`, `pol/`, `logo.svg`, `nona.svg` | rarely, and only by addition | no — the hash is the check | yes: an asset is present and correct, or absent |
 | **data** | the board | every hour | no — it is reproducible | yes, briefly, and visibly |
 
 The cost of ignoring this is not theoretical. `site/board/` is 4.8 MB and is

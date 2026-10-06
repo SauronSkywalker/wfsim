@@ -27,6 +27,7 @@ const INDEX_HTML: &str = include_str!("static/index.html");
 include!(concat!(env!("OUT_DIR"), "/app_js.rs"));
 const STYLE_CSS: &str = include_str!("static/style.css");
 const LOGO_SVG: &str = include_str!("static/logo.svg");
+const NONA_SVG: &str = include_str!("static/nona.svg");
 
 /// NONA'S MODULES, served at `/nona/<path>`. Every file under `static/nona/` is
 /// listed here and in no other way; `check_nona_boundary` fails on one missing.
@@ -326,6 +327,7 @@ fn handle(mut stream: TcpStream) -> std::io::Result<()> {
         ),
         ("GET", "/style.css") => respond(&mut stream, "200 OK", "text/css; charset=utf-8", STYLE_CSS.as_bytes()),
         ("GET", "/logo.svg") => respond(&mut stream, "200 OK", "image/svg+xml", LOGO_SVG.as_bytes()),
+        ("GET", "/nona.svg") => respond(&mut stream, "200 OK", "image/svg+xml", NONA_SVG.as_bytes()),
         ("POST", "/api/optimize") => respond_json(&mut stream, &optimize_start(&body)),
         ("POST", "/api/optimize/status") => respond_json(&mut stream, &optimize_status(&body)),
         ("POST", "/api/optimize/cancel") => respond_json(&mut stream, &optimize_cancel(&body)),

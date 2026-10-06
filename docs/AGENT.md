@@ -335,6 +335,9 @@ It serves nothing inbound, so it needs no ICP filing. Secrets: the worker holds
 AppSecret (for its access token) and the same relay token.
 `scripts/check_qq.mjs` holds the door to QQ's published signing example.
 
+HER FACE IS `web/src/static/nona.svg`, the one the site's Nona wears; the QQ
+avatar is that file rendered to a PNG and uploaded on QQ's console by hand.
+
 ## Machine-readable
 
 An agent that fetches the site rather than driving the page reads what

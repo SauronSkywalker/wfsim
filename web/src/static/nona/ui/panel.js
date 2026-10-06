@@ -21,7 +21,8 @@ export function mountPanel(door, agent) {
   const fab = document.createElement("button");
   fab.id = "nona-fab";
   fab.className = "nona-fab";
-  fab.textContent = name;
+  // HER FACE, the same picture the chat bot wears (`/nona.svg`).
+  fab.innerHTML = `<img class="nona-face" src="/nona.svg" alt=""><span>${esc(name)}</span>`;
   fab.title = name;
   const panel = document.createElement("aside");
   panel.id = "nona";
@@ -29,6 +30,7 @@ export function mountPanel(door, agent) {
   panel.hidden = true;
   panel.innerHTML = `
     <div class="nona-head">
+      <img class="nona-face" src="/nona.svg" alt="">
       <span class="nona-name">${esc(name)}</span>
       <button class="ghost-btn small" id="nona-new">${esc(tr("New chat"))}</button>
       <button class="ghost-btn small" id="nona-gear">${esc(tr("Settings"))}</button>

@@ -3034,6 +3034,9 @@ iframe.wld-frame{width:100%;height:480px;border:1px solid var(--line);border-rad
 .nona{position:fixed;top:0;right:0;bottom:0;z-index:61;width:min(400px,100vw);display:flex;flex-direction:column;background:var(--surface);border-left:1px solid var(--line);box-shadow:-6px 0 18px rgba(0,0,0,.12);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 .nona-head{display:flex;align-items:center;gap:6px;padding:10px 12px;border-bottom:1px solid var(--line)}
 .nona-name{font-weight:700;font-size:15px;margin-right:auto}
+.nona-face{width:30px;height:30px;border-radius:50%;flex:0 0 auto;display:block}
+.nona-fab{display:flex;align-items:center;gap:8px;padding-left:6px}
+.nona-fab .nona-face{width:32px;height:32px;pointer-events:none;-webkit-user-drag:none}
 .nona-chat{flex:1;display:flex;flex-direction:column;min-height:0}
 .nona-log{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
 .nona-msg{font-size:13px;line-height:1.5;max-width:92%;word-wrap:break-word}
