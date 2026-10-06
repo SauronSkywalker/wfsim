@@ -145,6 +145,9 @@ async function renderCardPage(w, ask) {
   const cards = body();
   // THE SITE'S OWN WORDMARK, as the topbar draws it: the brand is WFSim, and
   // Nona speaks in the line the bot sends with the image, not on it.
+  // THE CODE IS THE POINT of an appraisal's first picture — people long-press it
+  // on a phone — so there, and only there, it is drawn large.
+  box.classList.toggle("lc-way-in", kind === "appraise" && !verdict);
   box.innerHTML = `<header class="lc-top"><span class="brand">WF<span>Sim</span></span><span class="sb-empty">wfsim.app</span></header>
     <h1 class="lc-title">${escHtml(title)}</h1>
     <div class="sb-empty lc-sub">${escHtml([bench ? tr(bench.name) : "", updated ? trF("updated {t}", { t: updated }) : ""]

@@ -3304,3 +3304,4 @@ iframe.wld-frame{width:100%;height:480px;border:1px solid var(--line);border-rad
 .appraisal-n{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;color:var(--text-2)}
 .appraisal-n input{flex:1 1 160px;max-width:240px}
 .lc-note{margin:10px 0 2px;font-size:14px;line-height:1.5}
+.lc-way-in .lc-qr svg{width:168px;height:168px}
