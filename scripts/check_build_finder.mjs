@@ -209,6 +209,25 @@ const r = await evaluate(`(async () => {
     break;
   }
 
+  // MODE HAS AN "ALL": every mode of the ruler in one list, by score, and each
+  // row names its mode, because its rank is still that mode's own.
+  await open('Aeolak');
+  const allSeg = box().querySelector('[data-fseg="mo"][data-v="*"]');
+  out.allSeg = !!allSeg;
+  if (allSeg) {
+    allSeg.click(); await sleep(300);
+    const more = () => box().querySelector('[data-fmore]');
+    while (more()) { more().click(); await sleep(150); }
+    const rows = listed().map(byId);
+    const sc = (p) => (p.board || {}).score || 0;
+    const want = builtinBuilds().filter((p) => p.benchmark === finder.b);
+    out.allCount = rows.length + '/' + want.length;
+    out.allModes = new Set(rows.map((p) => p.mode)).size;
+    out.allSorted = rows.every((p, i) => i === 0 || sc(rows[i - 1]) >= sc(p));
+    out.allNamed = [...box().querySelectorAll('tr.fr')].every((tr, i) =>
+      tr.querySelector('.fd-sd').textContent.includes(rows[i].modeName));
+  }
+
   // Left SHUT, for the cross-weapon half below — which needs a real page load,
   // not this one's navigation: the section element survives a route() with its
   // class on it, so nothing there can tell a stored answer from a kept one.
@@ -246,6 +265,11 @@ check(`"I don't have it" on ${r.noHave || "a piece"} lists only builds without i
 check(`requiring ${r.token} lists only builds carrying it`, r.reqAll && r.reqChip);
 check("...excluding it lists none that do", r.excNone && r.excChip);
 check("...and a third click clears the condition", r.cleared);
+check("Mode offers All when a ruler holds more than one mode", r.allSeg === true);
+check("...listing every mode's builds in one list, best first",
+  r.allSeg && r.allCount.split('/')[0] === r.allCount.split('/')[1] && r.allModes > 1 && r.allSorted,
+  `${r.allCount} rows, ${r.allModes} modes, sorted ${r.allSorted}`);
+check("...each row naming its mode", r.allNamed === true);
 check("Open makes the build current", r.opened === true);
 check("...and puts it in the build bar, read-only and selected", r.inBar && r.chipSel);
 check("...and the finder says it is already there", /\bin\b/.test(r.finderSays), r.finderSays);

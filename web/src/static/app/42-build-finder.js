@@ -48,6 +48,9 @@ function resolveBoardActive(last) {
 /// the rest is one click away rather than a page of scrolling.
 const FINDER_FIRST = 5;
 const FINDER_STEP = 20;
+/// The Mode segment's "All": every mode of the ruler in one list, best first.
+/// A row's rank is still its own mode's, so in this scope each row names it.
+const FINDER_EVERY_MODE = "*";
 const finder = {
   weapon: null, b: null, mo: null, rv: "all",
   req: new Set(), exc: new Set(),
@@ -133,17 +136,17 @@ function renderBuildFinder() {
   }
   // A SCOPE THE BOARD NO LONGER HOLDS falls back to what it does hold.
   if (!all.some((p) => p.benchmark === finder.b)) finder.b = all[0].benchmark;
-  if (!all.some((p) => p.benchmark === finder.b && p.mode === finder.mo)) {
-    finder.mo = all.find((p) => p.benchmark === finder.b).mode;
-  }
-  const inScope = (p) => p.benchmark === finder.b && p.mode === finder.mo
+  const inMo = (p) => p.benchmark === finder.b && (finder.mo === FINDER_EVERY_MODE || p.mode === finder.mo);
+  if (!all.some(inMo)) finder.mo = all.find((p) => p.benchmark === finder.b).mode;
+  const everyMode = finder.mo === FINDER_EVERY_MODE;
+  const inScope = (p) => inMo(p)
     && (finder.rv === "all" || (finder.rv === "riven") === !!p.riven);
   const toks = new Map(all.map((p) => [p, finderTokens(p)]));
   const passes = (p) => [...finder.req].every((t) => toks.get(p).includes(t))
     && ![...finder.exc].some((t) => toks.get(p).includes(t));
   const score = (p) => (p.board || {}).score || 0;
   const list = all.filter((p) => inScope(p) && passes(p)).sort((a, b) => score(b) - score(a) || a.rank - b.rank);
-  const scopeTotal = all.filter((p) => p.benchmark === finder.b && p.mode === finder.mo).length;
+  const scopeTotal = all.filter(inMo).length;
   const updated = measuredText(boardMeasuredAt(all.filter((p) => p.benchmark === finder.b).map((p) => p.board)));
   const benchOf = (id) => (META.benchmarks || []).find((b) => b.id === id) || { name: id };
   const unit = rulerUnit(tr(benchOf(finder.b).name));
@@ -238,7 +241,7 @@ function renderBuildFinder() {
     }).join("");
     if (x.riven) {
       const carriers = list.filter((p) => p.riven).length;
-      const alt = all.filter((p) => p.benchmark === finder.b && p.mode === finder.mo && !p.riven && passes(p))
+      const alt = all.filter((p) => inMo(p) && !p.riven && passes(p))
         .sort((a, b) => score(b) - score(a))[0] || null;
       body += `<div class="fd-why-g">${escHtml(tr("Riven"))}</div>` +
         row(`${tr("Riven")} ${rivenStats(x.board.riven || {})}`, null, carriers, alt, `data-fnoriven="1"`);
@@ -270,7 +273,8 @@ function renderBuildFinder() {
       const g = ref && ref !== p ? gap(p, ref) : null;
       return `<tr class="fr${finder.open === presetId(p) ? " x" : ""}${ref === p ? " ref" : ""}" data-frow="${escHtml(presetId(p))}">` +
         `<td><div class="fd-sv"><span class="fd-rank">#${p.rank}</span><b>${escHtml(shown(p))}</b></div>` +
-        `<div class="fd-sd">${ref === p ? escHtml(tr("reference")) : g != null ? `<span class="${sgn(g)}">${escHtml(pct(g))}</span>` : escHtml(unit)}</div>` +
+        `<div class="fd-sd">${ref === p ? escHtml(tr("reference")) : g != null ? `<span class="${sgn(g)}">${escHtml(pct(g))}</span>` : escHtml(unit)}` +
+        `${everyMode ? ` · ${escHtml(p.modeName || "")}` : ""}</div>` +
         `<div class="fd-sbar"><i style="width:${(score(p) / maxScore * 100).toFixed(1)}%"></i></div></td>` +
         `<td>${card(p, ref && ref !== p ? ref : null)}</td><td>${openBtn(p)}</td></tr>` +
         (finder.open === presetId(p) ? detail(p) : "");
@@ -320,7 +324,7 @@ function renderBuildFinder() {
   const segBtn = (key, v, text, n, hint) => `<button type="button" data-fseg="${key}" data-v="${escHtml(v)}" class="${finder[key] === v ? "on" : ""}"${n ? "" : " disabled"}${hint ? ` title="${escHtml(hint)}"` : ""}>${escHtml(text)}<em>${n}</em></button>`;
   const rulers = [...new Set(all.map((p) => p.benchmark))];
   const modes = [...new Set(all.filter((p) => p.benchmark === finder.b).map((p) => p.mode))];
-  const inMode = all.filter((p) => p.benchmark === finder.b && p.mode === finder.mo);
+  const inMode = all.filter(inMo);
 
   box.innerHTML =
     `<div class="fd-head fold-h">${title}<small class="fd-count">${escHtml(trF("{n} of {m} builds", { n: list.length, m: scopeTotal })
@@ -330,7 +334,8 @@ function renderBuildFinder() {
       const name = tr(benchOf(id).name);
       return segBtn("b", id, rulerShort(name), all.filter((p) => p.benchmark === id).length, name);
     }).join("")}</div>` +
-    `<div class="fd-seg"><span>${escHtml(tr("Mode"))}</span>${modes.map((m) => segBtn("mo", m,
+    `<div class="fd-seg"><span>${escHtml(tr("Mode"))}</span>${modes.length > 1
+      ? segBtn("mo", FINDER_EVERY_MODE, tr("All"), all.filter((p) => p.benchmark === finder.b).length) : ""}${modes.map((m) => segBtn("mo", m,
       (all.find((p) => p.benchmark === finder.b && p.mode === m) || {}).modeName || m,
       all.filter((p) => p.benchmark === finder.b && p.mode === m).length)).join("")}</div>` +
     `<div class="fd-seg"><span>${escHtml(tr("Riven"))}</span>` +

@@ -392,7 +392,9 @@ box, the build finder (`renderBuildFinder`), answers "what do I equip" first
 and "why" on request. It is the board's builds as a LIST, best first, scoped by
 ruler, mode and riven and filtered by what a build CONTAINS — a mod, an arcane,
 an evolution, a part, an element, a riven stat, each "must have" or "I don't
-have". It lists the top five of a scope until asked for more (twenty at a
+have". Mode has an "All" when the ruler holds more than one: every mode in one
+list by score, each row naming its mode beside a rank that is still its own
+mode's. It lists the top five of a scope until asked for more (twenty at a
 time, folded back in one click). It holds a query and never a selection. "Open"
 puts the build in the build bar as a read-only chip and makes it current; THE
 BAR IS THE ONE PLACE THAT SAYS WHICH BUILD IS OPEN — its selected chip names the
