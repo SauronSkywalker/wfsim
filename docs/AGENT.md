@@ -342,6 +342,28 @@ and `mcp/headless.js` to the server, restarts it and checks the engine it holds
 HER FACE IS `web/src/static/nona.svg`, the one the site's Nona wears; the QQ
 avatar is that file rendered to a PNG and uploaded on QQ's console by hand.
 
+## Riven appraisal
+
+A reader's OWN riven is answered by the optimizer, run in the browser of whoever
+opens the link — never by re-scoring known builds, which is the board's
+question (docs/BOARD.md §"The Riven Analyst").
+
+1. A chat's bot reads the card (`fx` in Chinese chats), checks it with the
+   engine's own riven rules and opens an appraisal at `/api/appraise/new`
+   (`worker/appraise.js`): weapon, ruler, the card's rolls, and the channel's
+   own note of where to answer, which nothing else reads.
+2. `/appraise/<code>` opens that weapon's optimizer under the official ruler
+   with the riven pinned in its one start and searches at once
+   (`81-appraisal.js`). Every finalist goes to the board unasked; the winner
+   goes back to the appraisal as a BUILD with an optional name to thank —
+   never a score.
+3. The channel's bot claims what came back (`/api/appraise/claim`), replays the
+   build itself with the card's real rolls, and the first build it accepts
+   wins once; later ones are kept on the board and not announced.
+
+The page and the door are channel-blind: a Discord bot claims `channel:
+"discord"` the way the QQ bot claims `"qq"`.
+
 ## Machine-readable
 
 An agent that fetches the site rather than driving the page reads what

@@ -59,6 +59,15 @@ five an hour, every build handed back is kept with its thanks stripped of
 links, the first build the bot accepts wins once, a told appraisal is not told
 again, and each channel's bot sees only its own.
 
+## `check_appraisal_page`
+
+Riven appraisal's page (`81-appraisal.js`) against a stand-in for its door, in
+minutes because it runs a real search: the link lands on the weapon's
+optimizer under the appraisal's ruler, the one start holds only the asker's
+riven with its rolls, pinned; the search starts with no click; the winner goes
+back as a build carrying that riven's shape and the typed name and no score;
+and the finalists reach the board even with uploading switched off.
+
 ## `check_agent_door`
 
 `window.wfsim` is one door, and an action is something a

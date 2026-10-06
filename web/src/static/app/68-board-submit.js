@@ -57,11 +57,14 @@ const setBoardConsent = (v) => {
 /// it validates `id` and `ids` and has no game data to check anything richer
 /// against. Spellings are per-protocol and always have been; what is shared is
 /// the AXIS, which both fields name.
-function boardRivenShape() {
-  const slot = mainSlots().find((s) => isRivenId(s.mod));
-  if (!slot) return { riven_pos: [], riven_neg: "" };
+///
+/// `rivenMod` names WHICH riven — a search result carries its own, which need not
+/// be the one in the builder; without it, the builder's main slots are read.
+function boardRivenShape(rivenMod) {
+  const mod = rivenMod || (mainSlots().find((s) => isRivenId(s.mod)) || {}).mod;
+  if (!mod) return { riven_pos: [], riven_neg: "" };
   const st = (loadPresetList(RIVENS).find(
-    (p) => RIVEN_PREFIX + p.id === slot.mod) || {}).state || {};
+    (p) => RIVEN_PREFIX + p.id === mod) || {}).state || {};
   const ids = (xs) => (xs || []).map((x) => x && x.id).filter(Boolean);
   return {
     // SORTED, because a riven's stats do not combine with each other — two
@@ -217,8 +220,9 @@ function boardPayloadFromResult(res) {
         .map((m) => (isRivenId(m) ? BOARD_RIVEN_SLOT : m));
       return st && !out.includes(st) ? out.concat([st]) : out;
     })(),
-    riven_pos: boardRivenShape().riven_pos,
-    riven_neg: boardRivenShape().riven_neg,
+    // THE RESULT'S OWN RIVEN, not the builder's: the search may have been
+    // handed a different card than the one the builder holds, or none.
+    ...boardRivenShape((res.mods || []).find(isRivenId) || "-"),
     evolutions: (res.evolutions || []).slice(),
     arcanes: arcs,
     valence: res.valence || valence.element,
@@ -248,7 +252,9 @@ async function offerOptBoardSubmit(r) {
   if (!box) return;
   const rows = (r.results || []).filter((x) => x && (x.mods || []).length);
   if (!rows.length) return;
-  if (boardConsent() !== "yes") {
+  // AN APPRAISAL'S SEARCH IS SUBMITTED WITHOUT ASKING: the reader opened a
+  // link whose whole purpose is to put this riven's best build on the board.
+  if (boardConsent() !== "yes" && !appraisalActive()) {
     box.innerHTML = `<span class="ob-off">${escHtml(
       tr("board upload is off, so these were not sent"))}</span>`;
     return;

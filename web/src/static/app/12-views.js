@@ -42,6 +42,9 @@ async function route() {
   // AN EXTENSION'S PAGES ARE ROUTES TOO, so nothing is routed before it mounts.
   if (!extSettled) await extReady;
   leaveStartEdit();
+  // A RIVEN APPRAISAL'S LINK (81-appraisal.js) becomes its weapon's optimizer.
+  const appraiseCode = location.pathname.match(/^\/appraise\/([A-Za-z0-9]{3,12})\/?$/);
+  if (appraiseCode) { await openAppraisal(appraiseCode[1]); return; }
   // A SHARED LINK is answered before anything else on the page is drawn for
   // it, and the query is stripped afterwards so a refresh does not import the
   // same build a second time. `?b=` only ever ADDS — see importShare.

@@ -254,6 +254,8 @@ async function pollOptimize() {
       // …AND EVERY FINALIST GOES TO THE BOARD. After the results are drawn, so
       // a slow door never delays the answer the reader asked for.
       offerOptBoardSubmit(st.result);
+      // …AND AN APPRAISAL'S WINNER back to the chat that asked (81-appraisal.js).
+      if (st.phase === "done") appraisalAnswered(st.result);
       // A cancel is not necessarily the end of the search — the run stopped,
       // but its resume point is still on disk. Offer it under the results.
       if (st.phase === "cancelled") appendResumeOffer();

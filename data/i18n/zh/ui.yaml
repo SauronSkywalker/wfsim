@@ -1759,6 +1759,17 @@ ui:
   # "+150% Critical Chance" reads the same on a riven as on Point Strike.
   "Rivens": 裂罅
   "Riven Analyst": "裂罅分析"
+  "Riven appraisal": "裂罅评估"
+  "Setting up the search…": "正在准备搜索……"
+  "Someone asked Nona about this riven in a chat. Your browser is finding its best build — a minute or a few. When it finishes, the build goes back to the chat and onto the board.": "有人在聊天群里请九九评估这张裂罅。你的浏览器正在为它找最佳配装，大约一到几分钟。算完后配装会发回群里，并收进榜单。"
+  "Sending the build back…": "正在把配装发回去……"
+  "Done — Nona will post the result in the chat. Thank you!": "算好了，九九会把结果发到群里。谢谢你！"
+  "Someone finished first; your build still went onto the board. Thank you!": "有人先算完了，你的配装也已经收进榜单。谢谢你！"
+  "This riven has already been appraised. Thank you for coming!": "这张裂罅已经评估过了。谢谢你来帮忙！"
+  "The appraisal could not finish": "评估没能完成"
+  "the search ranked nothing": "搜索没有得出任何配装"
+  "Your name, to be thanked in the chat (optional)": "留个名字，九九会在群里谢谢你（可不填）"
+  "This riven appraisal could not be found — it may have expired.": "找不到这次裂罅评估，可能已经过期了。"
   "{w} · top {n} builds": "{w} · 榜单前 {n} 配装"
   "{w} · Riven Analyst": "{w} · 裂罅分析"
   "I am Nona, WFSim's assistant. Send zk or pz… not that I was waiting for you. (⁄ ⁄•⁄ω⁄•⁄ ⁄)": "我是九九，WF模拟的助手。发 zk 或 pz 就行……才不是在等你呢。(⁄ ⁄•⁄ω⁄•⁄ ⁄)"
