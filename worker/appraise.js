@@ -83,8 +83,14 @@ async function read(request, env, code) {
   const a = await env.LIBRARY.prepare("SELECT * FROM appraisals WHERE code = ?").bind(code).first();
   if (!a || a.at < Date.now() - KEEP_MS) return json({ ok: false, error: "no such appraisal" }, 404);
   const won = a.winner && await env.LIBRARY.prepare("SELECT thanks FROM appraisal_results WHERE id = ?").bind(a.winner).first();
+  // ONE BUILD HANDED BACK, by its id — what the bot's replay reads. A build is
+  // board material and public; whose browser found it is not said.
+  const rid = Number(new URL(request.url).searchParams.get("result"));
+  const res = Number.isInteger(rid) && rid > 0
+    && await env.LIBRARY.prepare("SELECT id, build, thanks FROM appraisal_results WHERE id = ? AND code = ?").bind(rid, code).first();
   return json({ ok: true, code, weapon: a.weapon, ruler: a.ruler, riven: JSON.parse(a.riven), at: a.at,
-    done: !!a.done_at, ...(won ? { thanked: won.thanks } : {}) });
+    done: !!a.done_at, ...(won ? { thanked: won.thanks } : {}),
+    ...(res ? { result: { id: res.id, build: JSON.parse(res.build), thanks: res.thanks } } : {}) });
 }
 
 /// A BUILD HANDED BACK: `{ build, thanks }`, a board record and an optional name.

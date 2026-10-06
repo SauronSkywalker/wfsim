@@ -200,9 +200,23 @@ export function makeAnswer({ run, meta, zh, headless, host }) {
 
   /// `{ text }`, or `{ line, card, text }` — the long image at `card` with
   /// `line` under it, and `text` the answer in words if the image cannot be made.
-  return async function answer(text, ctx) {
+  async function answer(text, ctx) {
     const p = parse(text);
     const r = p.cmd === "zk" ? await zk(p.rest) : p.cmd === "pz" ? await pz(p.rest) : p.cmd === "fx" ? await fx(p.rest, ctx) : help();
     return typeof r === "string" ? { text: r } : r;
+  }
+  /// WHAT NONA SAYS WITH AN APPRAISAL'S ANSWER: the replayed number, its gain on
+  /// the board's riven-free leader, and thanks; `late` when it arrives on someone
+  /// else's message after the asker's own window closed.
+  answer.told = (item, late) => {
+    const w = (meta.weapons || []).find((x) => x.id === item.weapon) || { id: item.weapon, name: item.weapon };
+    const v = item.verdict || {};
+    const gain = typeof v.gain === "number" ? `${v.gain >= 0 ? "+" : "−"}${Math.abs(v.gain * 100).toFixed(1)}%` : "—";
+    const said = t("{w} with this riven: {shown}, {gain} against the best build without one. Thanks to {who} for searching it! (⁄ ⁄•⁄ω⁄•⁄ ⁄)",
+      { w: weaponName(w), shown: v.shown || "—", gain, who: item.thanks || t("a kind someone in the chat") });
+    return late ? `${t("The appraisal from earlier is in.")} ${said}` : said;
   };
+  /// The long image of an appraisal's answer — the page that replays it.
+  answer.answerCard = (item, resultId) => `${SITE}${headless.headlessWeaponPath(meta.weapons || [], item.weapon)}/card?kind=appraise&code=${item.code}&result=${resultId}`;
+  return answer;
 }

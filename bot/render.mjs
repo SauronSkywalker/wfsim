@@ -42,6 +42,13 @@ async function page() {
 
 /// The card at `url` as a PNG buffer in the page's language `lang`, or an Error.
 export async function renderCard(url, lang = "zh") {
+  return (await renderCardWith(url, { lang })).png;
+}
+
+/// …and what the page says about it: `{ png, verdict }`, the verdict an
+/// appraisal's answer writes to `body[data-verdict]` once its replay has run.
+/// `wait` is how long a card may take — a replay is a whole official fight.
+export async function renderCardWith(url, { lang = "zh", wait = READY_MS } = {}) {
   const p = await page();
   try {
     await p.send("Emulation.setDeviceMetricsOverride", { width: 760, height: 1200, deviceScaleFactor: 1.5, mobile: false });
@@ -54,7 +61,7 @@ export async function renderCard(url, lang = "zh") {
     await p.send("Page.addScriptToEvaluateOnNewDocument", { source: `try { localStorage.setItem("wfsim-lang", ${JSON.stringify(lang)}); } catch (_) {}` });
     await p.send("Page.navigate", { url });
     const ask = async (expr) => ((await p.send("Runtime.evaluate", { expression: expr, returnByValue: true })).result || {}).result?.value;
-    const until = Date.now() + READY_MS;
+    const until = Date.now() + wait;
     while (!(await ask(`document.body && document.body.dataset.cardReady === "1"`))) {
       if (Date.now() > until) throw new Error(`card not ready: ${url}`);
       await sleep(250);
@@ -62,7 +69,8 @@ export async function renderCard(url, lang = "zh") {
     const r = await ask(`(() => { const b = document.getElementById("card-page").getBoundingClientRect(); return { x: b.left, y: b.top + scrollY, w: b.width, h: b.height }; })()`);
     const shot = await p.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: true,
       clip: { x: r.x, y: r.y, width: r.w, height: r.h, scale: 1 } });
-    return Buffer.from(shot.result.data, "base64");
+    const verdict = await ask(`document.body.dataset.verdict || ""`);
+    return { png: Buffer.from(shot.result.data, "base64"), verdict: verdict ? JSON.parse(verdict) : null };
   } finally {
     await p.close();
   }

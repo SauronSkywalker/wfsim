@@ -18,6 +18,7 @@ const STUB = `(() => {
     const u = String(url);
     const ok = (b) => new Response(JSON.stringify(b), { status: 200, headers: { "content-type": "application/json" } });
     if (/\\/api\\/appraise\\/TEST7\\/result$/i.test(u)) { window.__sent.results.push(JSON.parse(init.body)); return ok({ ok: true, first: true }); }
+    if (/\\/api\\/appraise\\/TEST7\\?result=1$/i.test(u)) return ok({ ...job, result: { id: 1, build: JSON.parse(localStorage.getItem("__build") || "{}"), thanks: "Kai" } });
     if (/\\/api\\/appraise\\/TEST7$/i.test(u)) return ok(job);
     if (/\\/api\\/board\\/submit$/.test(u)) { window.__sent.board.push(JSON.parse(init.body)); return ok({ ok: true }); }
     return real(url, init);
@@ -69,5 +70,17 @@ if (sent) {
   const board = JSON.parse(await evaluate("JSON.stringify(window.__sent.board)"));
   check("the finalists go to the board even with the board switched off here", board.length > 0, String(board.length));
   check("the banner thanks the reader", /thank|谢谢/i.test(await evaluate(`($("appraisal-banner") || {}).textContent || ""`)));
+
+  // THE ANSWER'S PICTURE: that build replayed with the asker's rolls, judged,
+  // scored and set against the board — what the bot reads and sends.
+  await evaluate(`localStorage.setItem("__build", ${JSON.stringify(JSON.stringify(r.build))})`);
+  await app.load("/weapons/Torid/card?kind=appraise&code=TEST7&result=1", 6000);
+  for (let i = 0; i < 240 && !(await evaluate(`document.body.dataset.cardReady === "1"`)); i++) await sleep(500);
+  const v = JSON.parse(await evaluate(`document.body.dataset.verdict || "null"`) || "null");
+  check("the answer's picture replays the build and says it is legal", v && v.ok === true, JSON.stringify(v));
+  check("…with a score in the ruler's metric and its gain over the board's riven-free leader",
+    v && v.score > 0 && typeof v.gain === "number" && v.top != null, JSON.stringify(v));
+  check("…and where the card stands among the board's rivens", v && v.of > 0 && v.rank >= 1 && v.rank <= v.of + 1, JSON.stringify(v));
+  check("…thanking who searched it", (await evaluate(`document.querySelector("#card-page").textContent`)).includes("Kai"));
 }
 await finish("an appraisal link searches at once and hands back a build");

@@ -28,7 +28,7 @@ const LIBRARY = { prepare: (sql) => stmt(sql), batch: async (ss) => Promise.all(
 const env = { BOT_RELAY_TOKEN: "relay", LIBRARY };
 const call = async (method, path, body, headers = {}) => {
   const r = await appraiseRoute(new Request(`https://x${path}`, { method, headers,
-    ...(body === undefined ? {} : { body: typeof body === "string" ? body : JSON.stringify(body) }) }), env, path);
+    ...(body === undefined ? {} : { body: typeof body === "string" ? body : JSON.stringify(body) }) }), env, path.split("?")[0]);
   return { status: r.status, body: await r.json() };
 };
 const bot = { authorization: "Bearer relay" };
@@ -73,6 +73,10 @@ check("…once: a later acceptance changes nothing", row.winner === r2, JSON.str
 check("…and a told appraisal is not handed out to tell again", c4.tell.length === 0 && row.told_at > 0);
 const late = await call("POST", `/api/appraise/${code}/result`, { build, thanks: "C" });
 check("a build handed back after the win is still kept, and told it was not first", late.body.ok && late.body.first === false);
+const one = await call("GET", `/api/appraise/${code}?result=${r2}`);
+check("one handed-back build reads by its id, with whom to thank", one.body.result && one.body.result.id === r2
+  && one.body.result.build.mods[0] === "hornet_strike" && one.body.result.thanks === "B");
+check("…and only under its own appraisal", !(await call("GET", `/api/appraise/${opened.code}?result=999`)).body.result);
 const done = await call("GET", `/api/appraise/${code}`);
 check("the page then reads it done, and whom it thanked", done.body.done === true && done.body.thanked === "B");
 
