@@ -50,11 +50,23 @@ export function makeAnswer({ run, meta, zh, headless }) {
     return hit ? { w: hit.w, left: q.slice(hit.n.length) } : null;
   }
 
+  /// THE RULER NAMED in what is left, by its name in either language, and the
+  /// words around it; `ruler` is null when none is named.
+  const benches = meta.benchmarks || [];
+  function rulerIn(left) {
+    const names = benches.flatMap((b) => [squash(rulerShort(b)), squash(b.name.split(" · ")[0])].map((n) => ({ b, n })))
+      .filter((x) => x.n).sort((a, z) => z.n.length - a.n.length);
+    const hit = names.find((x) => left.includes(x.n));
+    return hit ? { ruler: hit.b, left: left.replace(hit.n, "") } : { ruler: null, left };
+  }
+  const defaultRuler = () => benches.find((b) => b.primary) || benches[0];
+  const rulerList = () => benches.map(rulerShort).join("、");
+
   const help = () => [
     t("I am Nona, WFSim's assistant. Send zk or pz… not that I was waiting for you. (⁄ ⁄•⁄ω⁄•⁄ ⁄)"),
-    t("zk weapon [stats] [count]: the rivens the board has measured for this weapon, against its best build without one."),
+    t("zk weapon [ruler] [stats] [count]: the rivens the board has measured for this weapon, against its best build without one."),
     t("pz weapon [ruler] [riven] [count]: the best builds the board has measured for this weapon; add riven for builds that carry one."),
-    t("For example: {a}, or {b}", { a: "zk 托里德 双暴 负任意 5", b: "pz 托里德 爆破使 3" }),
+    t("For example: {a}, or {b}", { a: "zk 托里德 双暴 负任意 5", b: "pz 托里德 爆破使 紫卡 3" }),
   ].join("\n");
   const NO_WEAPON = "Which weapon? Put its name after the command, like {e}. (・_・;)";
   const NOT_FOUND = "No weapon by that name. Check it again — Chinese or English both work. (＞﹏＜)";
@@ -68,10 +80,10 @@ export function makeAnswer({ run, meta, zh, headless }) {
     // "紫卡" anywhere after the weapon asks for riven builds; what is left names the ruler.
     const rivenWords = ((zh.riven_query_words || {}).with_riven || []).map(squash).sort((a, b) => b.length - a.length);
     const said = rivenWords.find((x) => x && afterCount.includes(x));
-    const left = said ? afterCount.replace(said, "") : afterCount;
-    const benches = meta.benchmarks || [];
-    const ruler = benches.find((b) => left && (squash(rulerShort(b)) === left || squash(b.name.split(" · ")[0]) === left))
-      || benches.find((b) => b.primary) || benches[0];
+    const named = rulerIn(said ? afterCount.replace(said, "") : afterCount);
+    // A WORD THAT IS NOT A RULER IS SAID, never quietly read as the default one.
+    if (named.left) return t("I could not read “{word}”… The rulers are {list}; add riven for builds with one. (・_・;)", { word: named.left, list: rulerList() });
+    const ruler = named.ruler || defaultRuler();
     const r = await run("builder.board.read", { weapon: hit.w.id, riven: said ? "with" : "without", limit: n || 3, distinct: true, pooled: true });
     if (r.ok === false) return t(NOT_MEASURED);
     const rows = r.rows.filter((x) => x.ruler_id === ruler.id);
@@ -93,9 +105,11 @@ export function makeAnswer({ run, meta, zh, headless }) {
     if (!hit) return t(NOT_FOUND);
     const { n, left: afterCount } = countOf(hit.left);
     const cls = hit.w.riven_class;
-    const ask = headless.rivenQuery((meta.riven_stats || {})[cls] || [], [zh], afterCount);
+    const named = rulerIn(afterCount);
+    const ask = headless.rivenQuery((meta.riven_stats || {})[cls] || [], [zh], named.left);
     if (ask.unread.length) return t("I could not read “{word}”… Write a stat as the card does, or as short as 双暴, 暴伤 or 负任意. (・_・;)", { word: ask.unread[0] });
-    const r = await run("builder.rivens.read", { weapon: hit.w.id, bonuses: ask.bonuses, malus: ask.malus, pooled: true });
+    const r = await run("builder.rivens.read", { weapon: hit.w.id, bonuses: ask.bonuses, malus: ask.malus, pooled: true,
+      ...(named.ruler ? { ruler: named.ruler.id } : {}) });
     if (r.ok === false || !r.groups.length) return t(NOT_MEASURED);
     const g = r.groups.find((x) => x.rivens.length);
     if (!g) return t("No riven on the board has these stats yet. (￣^￣)");
@@ -109,7 +123,8 @@ export function makeAnswer({ run, meta, zh, headless }) {
     const text = [`${weaponName(hit.w)} · ${t(g.ruler).split(" · ")[0]}`,
       `${t("The board's best riven-free build")}: ${g.riven_free ? g.riven_free.score : "—"}`]
       .concat(top.map(line)).join("\n");
-    return { line: t("These are {w}'s rivens, against the best build without one. I ran every one. (*/ω＼*)", { w: weaponName(hit.w) }), card, text };
+    return { line: t("These are {w}'s rivens under {ruler}, against the best build without one. I ran every one. (*/ω＼*)",
+      { w: weaponName(hit.w), ruler: t(g.ruler).split(" · ")[0] }), card, text };
   }
 
   /// `{ text }`, or `{ line, card, text }` — the long image at `card` with
