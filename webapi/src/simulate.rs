@@ -2277,3 +2277,46 @@ mod wide_beam {
         assert_eq!(hit(json!(["seeker"])), vec![0.0, 1.0], "1 m in, 2 m out");
     }
 }
+
+#[cfg(test)]
+mod every_incarnon_weapon_on_its_defaults {
+    use serde_json::json;
+
+    /// EVERY INCARNON WEAPON, EVERY MODE, NOTHING NAMED: each tier holds its
+    /// default and the fight runs. A refusal the weapon gives with no
+    /// evolutions at all (a stanceless melee combo) is not this test's.
+    #[test]
+    fn every_incarnon_weapon_plays_every_mode_on_its_defaults() {
+        let mut bad = Vec::new();
+        for s in wfsim_engine::data::weapons::roster() {
+            let Some(info) = crate::registry::weapons().iter().find(|w| w.id == s.id) else { continue };
+            let tiers = wfsim_engine::data::evolutions::tier_count(crate::registry::evo_group(info)) as usize;
+            if tiers == 0 {
+                continue;
+            }
+            let evos = crate::fight::chosen_evolutions(&json!({ "evolutions": [] }), info).unwrap();
+            if evos.len() != tiers {
+                bad.push(format!("{}: {} of {tiers} tiers", s.id, evos.len()));
+            }
+            for m in wfsim_engine::data::weapons::play_modes(&s.id) {
+                let run = |extra: serde_json::Value| {
+                    let mut req = json!({
+                        "weapon": s.id, "mode": m.id, "mods": [], "duration": 4.0, "runs": 1, "seed": 1,
+                    });
+                    req.as_object_mut().unwrap().extend(extra.as_object().unwrap().clone());
+                    super::simulate_json(&req)
+                };
+                let r = run(json!({}));
+                if r["ok"] == json!(true) {
+                    if r["dps"].as_f64().is_none_or(|d| d <= 0.0) {
+                        bad.push(format!("{} {}: dps {}", s.id, m.id, r["dps"]));
+                    }
+                } else if run(json!({ "evolutions": [], "evolutions_as_given": true }))["error"] != r["error"] {
+                    bad.push(format!("{} {}: {}", s.id, m.id, r["error"]));
+                }
+            }
+        }
+        assert!(bad.is_empty(), "{}", bad.join("
+"));
+    }
+}

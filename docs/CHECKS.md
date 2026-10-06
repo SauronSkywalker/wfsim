@@ -232,16 +232,16 @@ go untested.
 ## `check_equip_rules`
 
 What a mod's CARD says the weapon may do, in both
-directions. An equip rule is asked of EVERY firing mode and installing a form
-ADDS one. The engine decides (`pool_for_build`), `/api/meta` states the
-consequence per evolution (`evo_forbids`), and the page acts on it: the picker
-stops offering it, installing the form unequips it and says so, the Form
-control greys the options with the reason on screen without moving the
-scenario's own selection, and the sim refuses the pair. It covers the LOCK the
+directions. An equip rule is asked of EVERY firing mode, and an Incarnon
+weapon always has its form installed. The engine decides (`pool_for_build`),
+`/api/meta` states the consequence per evolution (`evo_forbids`), and the page
+acts on it: the picker never offers a Cannonade on Dual Toxocyst and does on
+Magnus, and a saved build still carrying the pair greys the Incarnon modes
+with the reason on screen and is refused by the sim. It covers the LOCK the
 same families carry ("set to its default ignoring other bonuses, even negative
-effects"): the panel pins the stat and NAMES what pinned it, and a buff whose
-only grant is that stat is not offered — a lock reaches evolutions, arcanes
-and passives, not just mods (MEASUREMENTS M30).
+effects"), on Magnus: the panel pins the stat and NAMES what pinned it. That a
+lock also removes a live buff is the engine's
+(`a_multishot_lock_removes_a_live_multishot_buff_too`, MEASUREMENTS M30).
 
 ## `check_board_link`
 

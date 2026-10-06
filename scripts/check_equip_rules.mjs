@@ -3,21 +3,19 @@
 // Two claims, one pair of mod families (the Cannonades and the Acuity twins),
 // both about a weapon the game will not let you build or a number it will not
 // let you move. "Weapons with an Incarnon mode must have Semi-Auto trigger type
-// for both firing modes in order to equip this mod" — and Dual Toxocyst wears
-// it until tier 1 goes in.
+// for both firing modes in order to equip this mod" — and every Incarnon tier
+// is always installed, so Dual Toxocyst never wears it.
 //
 // The engine decides (`pool_for_build`) and the page is TOLD the consequence
 // (`evo_forbids`); this asserts the page acts on it, on SCREEN:
 //
-//   · the picker stops offering the mod once the form is installed, and offers
-//     it again when the form comes back off
-//   · installing the form UNEQUIPS it and says so
-//   · the Form control greys the Incarnon options while the mod is worn, with
-//     the reason on screen, without moving the scenario's own selection
-//   · and the sim refuses the pair through the shipping wasm
+//   · the picker never offers the mod on Dual Toxocyst, and does on a plain
+//     semi-auto pistol (Magnus)
+//   · a saved build that still carries the pair greys the Incarnon modes with
+//     the reason on screen, and the sim refuses it through the shipping wasm
 //
-// Then the LOCK: "set weapon's Fire Rate to its default ignoring other
-// bonuses", so the panel pins the stat and NAMES what pinned it.
+// Then the LOCK, on Magnus: "set weapon's Fire Rate to its default ignoring
+// other bonuses", so the panel pins the stat and NAMES what pinned it.
 import { openApp } from "./cdp.mjs";
 
 // ENGLISH, so the assertions below read the strings the repo's source is
@@ -27,7 +25,6 @@ const { evaluate, check } = app;
 await app.load("/weapons/Dual_Toxocyst", 12000);
 
 const MOD = "semi_pistol_cannonade";
-const EVO1 = "dual_toxocyst_evo1_incarnon_form";
 
 const r = await evaluate(`(async () => {
   const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -42,17 +39,16 @@ const r = await evaluate(`(async () => {
     closePopovers();
     return ids;
   };
-  // A TIER IS A DROPDOWN, so installing and removing a perk is
-  // the control own path rather than a click on a tile, and pickEvolution is
-  // that path — the one the onPick handler calls.
-  const evoTierOf = (id) => (weaponEvos().find(t => (t.options || []).some(o => o.id === id)) || {}).tier;
 
-  out.bare = (await offered()).includes('${MOD}');
+  out.incarnonOffered = (await offered()).includes('${MOD}');
+  await go('/weapons/Magnus');
+  out.plainOffered = (await offered()).includes('${MOD}');
 
-  // Equip it through the picker, the way a visitor does.
-  const slot = document.querySelector('#mod-slots .slot.empty');
-  slot.click(); await sleep(600);
-  document.querySelector('#mod-menu .opt[data-id="${MOD}"]').click(); await sleep(600);
+  // A SAVED BUILD THAT STILL CARRIES THE PAIR — written before every tier was
+  // installed. It is restored as it is and refused out loud, never repriced.
+  await go('/weapons/Dual_Toxocyst');
+  restoreState({ weapon: 'dual_toxocyst', slots: [{ mod: '${MOD}' }], evoSel: {} });
+  await sleep(900);
   out.equipped = slots.some(s => s.mod === '${MOD}');
 
   // THE MODE CONTROL, and it is in the BUILDER. How a weapon is played is part
@@ -109,6 +105,8 @@ const r = await evaluate(`(async () => {
   // ...and NOW the click test, because it moves the build out of the blocked
   // mode and the two claims above only exist while it is in it.
   await go('/weapons/Dual_Toxocyst');
+  restoreState({ weapon: 'dual_toxocyst', slots: [{ mod: '${MOD}' }], evoSel: {} });
+  await sleep(900);
   const trigger2 = document.querySelector('#mode-row [data-dd]');
   if (trigger2) trigger2.click();
   await sleep(800);
@@ -131,19 +129,11 @@ const r = await evaluate(`(async () => {
   out.clickTook = mode !== before ? mode : null;
   closePopovers();
 
-  // Installing the form takes the mod off, out loud.
-  await go('/weapons/Dual_Toxocyst');
-  pickEvolution(evoTierOf('${EVO1}'), '${EVO1}'); await sleep(900);
-  out.evicted = !slots.some(s => s.mod === '${MOD}');
-  out.said = (document.getElementById('toast') || {}).textContent || '';
-  out.installedOffered = (await offered()).includes('${MOD}');
-
-  // Taking the form back off gives it back — this excludes, it does not delete.
-  pickEvolution(evoTierOf('${EVO1}'), null); await sleep(900);
-  out.backOffered = (await offered()).includes('${MOD}');
-
-  // ---- THE LOCK. Re-equip it and read the panel: Fire Rate must sit at the
-  // weapon's own value and say what pinned it there.
+  // ---- THE LOCK, on a pistol that can wear the mod.
+  await go('/weapons/Magnus');
+  slots.forEach(s => { s.mod = null; s.rank = null; }); renderMods(); await sleep(600);
+  // Equip it and read the panel: Fire Rate must sit at the weapon's own value
+  // and say what pinned it there.
   const slot2 = document.querySelector('#mod-slots .slot.empty');
   slot2.click(); await sleep(600);
   document.querySelector('#mod-menu .opt[data-id="${MOD}"]').click(); await sleep(2500);
@@ -182,15 +172,12 @@ const r = await evaluate(`(async () => {
   out.msDead = msRow
     ? [...msRow.querySelectorAll('.ssrc')].map(e => e.classList.contains('sdead')) : [];
   out.msBucket = !!(msRow && msRow.querySelector('.sbucket'));
-  // Frenzy is Dual Toxocyst's fire-rate passive, so under the lock it has
-  // nothing to grant and no card to configure.
-  await go('/weapons/Dual_Toxocyst/simulator');
-  out.buffs = (document.getElementById('sim-buffs') || {}).textContent || '';
   return out;
 })()`);
 
-check("a bare Dual Toxocyst is offered the Cannonade", r.bare === true);
-check("it equips", r.equipped === true);
+check("Dual Toxocyst, every tier installed, is never offered the Cannonade", r.incarnonOffered === false);
+check("a plain semi-auto pistol is", r.plainOffered === true);
+check("a saved build carrying the pair is restored as it is", r.equipped === true);
 check("the cycle is greyed while it is worn",
   r.formOff.includes("cycle"), JSON.stringify(r.formOff));
 check("the base form stays available", r.formOn.includes("base"), JSON.stringify(r.formOn));
@@ -203,10 +190,6 @@ check("...and a greyed option cannot be clicked into the build",
 check("...each saying why", /trigger on every firing mode/.test(r.offText), JSON.stringify(r.offText.slice(0, 120)));
 check("the reason is on screen", /firing mode/.test(r.why), JSON.stringify(r.why));
 check("the sim refuses the pair", /firing mode/.test(r.simSaid), JSON.stringify(r.simSaid));
-check("installing the form unequips it", r.evicted === true);
-check("...and says so", /firing mode/.test(r.said), JSON.stringify(r.said));
-check("the picker stops offering it", r.installedOffered === false);
-check("removing the form offers it again", r.backOffered === true);
 check("the panel pins Fire Rate at the weapon's default",
   /locked at the weapon's default by/.test(r.frRow) && /Semi-Pistol Cannonade/.test(r.frRow),
   JSON.stringify(r.frRow));
@@ -235,7 +218,4 @@ check("Multishot locks the same way, naming what pinned it",
 check("...with both ignored mods marked, and no arithmetic drawn",
   r.msDead.length === 2 && r.msDead.every(Boolean) && r.msBucket === false,
   `${JSON.stringify(r.msDead)} bucket ${r.msBucket}`);
-check("...and Frenzy is not offered as a buff to configure",
-  !/Frenzy/i.test(r.buffs), JSON.stringify(r.buffs.slice(0, 200)));
-
 await app.finish("a card's equip rule reaches the screen, both ways");
