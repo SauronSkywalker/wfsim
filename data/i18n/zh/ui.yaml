@@ -1774,6 +1774,7 @@ ui:
   "Measured": "测量记录"
   "These are {w}'s rivens, against the best build without one. I ran every one. (*/ω＼*)": "这是{w}的裂罅，和不带裂罅的第一名作对比。九九每张都跑过了。(*/ω＼*)"
   "I could not read “{word}”… Write a stat as the card does, or as short as 双暴, 暴伤 or 负任意. (・_・;)": "「{word}」九九没认出来……词条请照卡上的写，或者用双暴、暴伤、负任意这样的简称。(・_・;)"
+  "Which weapon? Put its name after the command, like {e}. (・_・;)": "要查哪把武器？指令后面跟上武器名，比如 {e}。(・_・;)"
   "No riven on the board has these stats yet. (￣^￣)": "榜单上还没有带这些词条的裂罅。(￣^￣)"
   "No weapon by that name. Check it again — Chinese or English both work. (＞﹏＜)": "没找到这把武器。名字再确认一下，中英文都行。(＞﹏＜)"
   "Nobody has measured this one yet. Measure a build on wfsim.app… then I will remember it. (´；ω；`)": "这把还没人测过。去 wfsim.app 测一套吧……测完九九就记住了。(´；ω；`)"

@@ -34,7 +34,9 @@ export function makeAnswer({ run, meta, zh, headless }) {
     const m = s.match(/^(zk|pz|帮助|help|\?|？)\s*/i);
     const cmd = m ? m[1].toLowerCase() : "";
     if (m) s = s.slice(m[0].length);
-    const num = s.match(/(?:^|\s)(\d{1,2})\s*$/);
+    // A COUNT AT THE END, spaced or not ("爆破使3"); never the tail of a longer number.
+    let num = s.match(/(\d{1,2})\s*$/);
+    if (num && num.index > 0 && /\d/.test(s[num.index - 1])) num = null;
     const n = num ? Math.max(1, Math.min(MAX_SHOWN, Number(num[1]))) : null;
     if (num) s = s.slice(0, num.index);
     return { cmd: cmd === "zk" || cmd === "pz" ? cmd : cmd ? "help" : "", rest: s.trim(), n };
@@ -52,16 +54,18 @@ export function makeAnswer({ run, meta, zh, headless }) {
     t("pz weapon [ruler] [count]: the best builds the board has measured for this weapon."),
     t("For example: {a}, or {b}", { a: "zk 托里德 双暴 负任意 5", b: "pz 托里德 爆破使 3" }),
   ].join("\n");
+  const NO_WEAPON = "Which weapon? Put its name after the command, like {e}. (・_・;)";
   const NOT_FOUND = "No weapon by that name. Check it again — Chinese or English both work. (＞﹏＜)";
   const NOT_MEASURED = "Nobody has measured this one yet. Measure a build on wfsim.app… then I will remember it. (´；ω；`)";
 
   async function pz(rest, n) {
+    if (!rest) return t(NO_WEAPON, { e: "pz 托里德 3" });
     const hit = weaponOf(rest);
     if (!hit) return t(NOT_FOUND);
     const benches = meta.benchmarks || [];
     const ruler = benches.find((b) => hit.left && (squash(rulerShort(b)) === hit.left || squash(b.name.split(" · ")[0]) === hit.left))
       || benches.find((b) => b.primary) || benches[0];
-    const r = await run("builder.board.read", { weapon: hit.w.id, riven: "without", limit: n || 1, distinct: true, pooled: true });
+    const r = await run("builder.board.read", { weapon: hit.w.id, riven: "without", limit: n || 3, distinct: true, pooled: true });
     if (r.ok === false) return t(NOT_MEASURED);
     const rows = r.rows.filter((x) => x.ruler_id === ruler.id);
     if (!rows.length) return t(NOT_MEASURED);
@@ -76,6 +80,7 @@ export function makeAnswer({ run, meta, zh, headless }) {
   }
 
   async function zk(rest, n) {
+    if (!rest) return t(NO_WEAPON, { e: "zk 托里德 双暴" });
     const hit = weaponOf(rest);
     if (!hit) return t(NOT_FOUND);
     const cls = hit.w.riven_class;
