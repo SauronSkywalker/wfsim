@@ -1098,6 +1098,21 @@ label.check input{width:auto}
 .rv-ocr-foot{display:flex;align-items:center;gap:10px;padding:10px 12px;border-top:1px solid var(--line);font-size:13px}
 .rv-ocr-foot .rv-ocr-give{display:flex;flex-direction:row;gap:8px;align-items:flex-start;flex:1;color:var(--text-2);margin:0}
 .rv-ocr-give input{margin-top:2px}
+/* THE LONG IMAGE: the page and nothing else, phone width. */
+.card-page{display:none}
+body.on-card > *:not(#card-page){display:none!important}
+body.on-card #card-page{display:block;width:720px;margin:0 auto;padding:22px 24px 26px;background:var(--bg);color:var(--text)}
+.lc-top{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:18px}
+.lc-top .sb-empty{margin-left:auto}
+.lc-title{font-size:22px;margin:4px 0 2px}
+.lc-sub{margin-bottom:14px}
+.lc-box{margin:0 0 12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.lc-head{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
+.lc-rank,.lc-score,.lc-gain{font-size:19px}
+.lc-gain{color:var(--good-text)}
+.lc-foot{display:flex;align-items:center;gap:16px;margin-top:18px;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--panel2)}
+.lc-qr svg{display:block;width:112px;height:112px}
+.lc-slogan{font-size:20px}
 .ra-builds{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:14px}
 .ra-build{border:1px solid var(--line);border-radius:10px;padding:10px 12px}
 .ra-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
