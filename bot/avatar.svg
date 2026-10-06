@@ -3,8 +3,8 @@
   <circle cx="256" cy="256" r="248" fill="#ffffff"/>
   <g clip-path="url(#disc)" stroke="#0b0b0b" stroke-width="11" stroke-linecap="round" stroke-linejoin="round">
     <g transform="translate(256 262) scale(0.86) translate(-256 -258)">
-    <path fill="#f1dfb5" d="M110 198 C56 180 16 226 18 296 C20 352 36 392 58 414 C56 374 54 330 62 294 C70 258 88 232 112 222 Z"/>
-    <path fill="#f1dfb5" d="M402 198 C456 180 496 226 494 296 C492 352 476 392 454 414 C456 374 458 330 450 294 C442 258 424 232 400 222 Z"/>
+    <path fill="#f1dfb5" d="M110 198 C56 180 16 226 18 296 C20 352 36 392 58 414 C64 384 80 352 100 330 C112 317 112 260 112 222 Z"/>
+    <path fill="#f1dfb5" d="M402 198 C456 180 496 226 494 296 C492 352 476 392 454 414 C448 384 432 352 412 330 C400 317 400 260 400 222 Z"/>
     <!-- the head, wide and round -->
     <ellipse cx="256" cy="262" rx="176" ry="156" fill="#ffffff"/>
     
@@ -16,10 +16,8 @@
       <path d="M268 38 C270 64 262 88 256 116" />
     </g>
     <path fill="#f1dfb5" d="M86 296 C70 150 160 98 256 98 C352 98 442 150 426 296
-      C416 268 404 246 392 226 Q366 252 330 240 Q314 210 300 196 Q284 236 240 242 Q222 212 212 196
-      Q190 244 142 234 Q118 252 106 286 Q100 330 112 366 Q92 340 86 296 Z"/>
-    <path fill="#f1dfb5" d="M98 250 C82 300 88 346 112 372 Q122 340 126 310 Q130 284 138 262 Z"/>
-    <path fill="#f1dfb5" d="M414 250 C430 300 424 346 400 372 Q390 340 386 310 Q382 284 374 262 Z"/>
+      C424 330 416 360 400 372 C384 330 382 270 372 240 Q322 244 300 196 Q284 236 240 242 Q222 212 212 196
+      Q190 244 140 240 C130 270 128 330 112 372 C96 360 88 330 86 296 Z"/>
     
     <g stroke="none"><ellipse cx="196" cy="300" rx="21" ry="27" fill="#0b0b0b"/><ellipse cx="316" cy="300" rx="21" ry="27" fill="#0b0b0b"/>
       <circle cx="203" cy="289" r="8" fill="#fff"/><g stroke="#0b0b0b" stroke-width="1.6" stroke-linecap="round" fill="none"><path d="M203 281v5M203 292v5M195 289h5M206 289h5"/></g><circle cx="323" cy="289" r="8" fill="#fff"/><g stroke="#0b0b0b" stroke-width="1.6" stroke-linecap="round" fill="none"><path d="M323 281v5M323 292v5M315 289h5M326 289h5"/></g></g>
