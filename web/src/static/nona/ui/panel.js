@@ -172,7 +172,7 @@ export function mountPanel(door, agent) {
       const concise = !!store.settings().concise;
       fillSettings(() => {
         const now = !!store.settings().concise;
-        if (now !== concise && door.usage) door.usage.count("nona.concise", agent.persona, now ? 1 : 0);
+        if (now !== concise && door.usage) door.usage.count("nona.concise", "", now ? 1 : 0);
         show("chat"); $("nona-input").focus();
       });
     }
@@ -207,7 +207,7 @@ export function mountPanel(door, agent) {
     // a conversation that was then replaced.
     if (!agent.conv) { agent.open(null); agent.refreshList(); }
     const s = store.settings();
-    if (door.usage) door.usage.count("nona.open", agent.persona, s.key ? 1 : 0);
+    if (door.usage) door.usage.count("nona.open", "", s.key ? 1 : 0);
     show(s.key ? "chat" : "settings");
     if (s.key) $("nona-input").focus();
   });

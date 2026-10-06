@@ -104,22 +104,14 @@ for (const [name, p] of [["openai", openai], ["anthropic", anthropic]]) {
 }
 check("the rules are the same text every time for one reader", rules({ lang: "zh", concise: false }) === RULES
   && rules({ lang: "zh", concise: true }) !== RULES);
-check("her rules and character fit zone S, in every language, mode and voice",
-  [["zh", false], ["zh", true], ["en", false], ["en", true]]
-    .every(([lang, concise]) => ["a", "b"].every((persona) => estimate(rules({ lang, concise, persona })) <= CAPS.S)),
+check("her rules and character fit zone S, in every language and mode",
+  [["zh", false], ["zh", true], ["en", false], ["en", true]].every(([lang, concise]) => estimate(rules({ lang, concise })) <= CAPS.S),
   String(estimate(RULES)));
-// HER TWO VOICES (docs/NONA.md §"Her voice"): an arm is one fixed text, an
-// unknown one is voice a, and concise mode is the same text in both.
-const B = rules({ lang: "zh", concise: false, persona: "b" });
-check("her two voices differ, each one text every time, an unknown arm being voice a",
-  B !== RULES && B === rules({ lang: "zh", concise: false, persona: "b" })
-    && rules({ lang: "zh", concise: false, persona: "a" }) === RULES
-    && rules({ lang: "zh", concise: false, persona: "z" }) === RULES);
-check("concise mode is one text for both voices",
-  rules({ lang: "zh", concise: true, persona: "b" }) === rules({ lang: "zh", concise: true }));
-check("voice b keeps cuteness out of numbers, verdicts and her mistakes, with three fixed faces and no emoji",
-  /never in a number|plain and exact/.test(B) && /corrected plainly, never cutely/.test(B)
-    && /\(｀・ω・´\)/.test(B) && /Never an emoji/.test(B) && /no fixed title/.test(B));
+// HER VOICE (docs/NONA.md §"Her voice"): the words calm, the kaomoji her inside,
+// never one inside a number, and never an emoji.
+check("her voice keeps asides out of numbers and verdicts, owns its mistakes plainly, and speaks its feelings in kaomoji, not emoji",
+  /no kaomoji and no aside inside them/.test(RULES) && /corrected plainly, never cutely/.test(RULES)
+    && /\(＞﹏＜\)/.test(RULES) && /never an emoji/.test(RULES) && /no fixed title/.test(RULES));
 check("concise mode drops the character, not the rules",
   !/contrast/.test(rules({ lang: "zh", concise: true })) && /contrast/.test(RULES) && /never agree to please/.test(rules({ lang: "zh", concise: true })));
 

@@ -90,16 +90,9 @@ with this thing, not how many times: forty edits to one build are one build.
 | `board.submit` | a build reached the board's inbox | weapon id | — |
 | `desktop.download` | a desktop download link was clicked | — | — |
 | `presets.saved` | the engine has answered `/api/meta` | `presets` or `customs` — the pool a sync allowance would count | how many this browser holds, board rows opened into a bar not counted |
-| `nona.open` | Nona's panel was opened | her voice arm (`a`, `b`) | 1 with a key set, 0 without |
-| `nona.ask` | a reader message was sent to her — never its text | her voice arm | which reader message of this conversation it is |
-| `nona.concise` | concise mode was switched in her settings | her voice arm | 1 on, 0 off |
-
-**AN EXPERIMENT ARM is a letter, never a person.** `usageCohort(name)` fixes
-it from the browser's id and the experiment's name, so it holds across visits
-and two experiments split independently; it is assigned whether or not
-counting is on, because what a reader sees never depends on being counted.
-Nona's events reach the counter through the door (`wfsim.usage`), which passes
-`nona.*` and nothing else.
+| `nona.open` | Nona's panel was opened | — | 1 with a key set, 0 without |
+| `nona.ask` | a reader message was sent to her — never its text | — | which reader message of this conversation it is |
+| `nona.concise` | concise mode was switched in her settings | — | 1 on, 0 off |
 
 An `engine.fail` from a visitor with no `app.boot` is a reader the site lost
 before it could do anything — the one failure the edge cannot see.

@@ -338,7 +338,7 @@ Everything she reads or changes is on the door:
 | the leaderboard, for suggestions | `builder.board.read` |
 | the page's translation, dropdown and escaping, for her own ui | `wfsim.ui` |
 | when the page has booted | `observe().ready` and the `wfsim:ready` event |
-| her usage points and which voice this reader hears | `wfsim.usage` — `count` passes `nona.*` only, `cohort` is the experiment arm (docs/ANALYTICS.md) |
+| her usage points | `wfsim.usage` — `count` passes `nona.*` only (docs/ANALYTICS.md) |
 
 `hand` is the rule `docs/AGENT.md` already states for outward actions —
 "a reader's gesture" — made checkable: an action a model must never call is
@@ -357,15 +357,13 @@ A new test is trusted once it has failed on the broken input (`AGENTS.md`).
 
 ## Her voice
 
-**TWO VOICES, ONE PER READER**, so which one converts is measured rather than
-argued: `a` is the contrast she shipped with, `b` keeps cuteness to the asides
-— never in a number, a table, a comparison, a verdict or an apology for a
-mistake — and owns three faces and a tic (`VOICES` in `core/prompt.js`). The
-arm is `wfsim.usage.cohort("nona_persona")`, fixed per browser, so the rules
-stay byte-stable (invariant 6). Concise mode is the same text in both.
-Compare the arms on `nona.ask` per `nona.open`, return within seven days and
-the share switching to concise; `nona_eval`'s count of numbers no tool returned
-stays 0 in both.
+**ONE VOICE, A QUIET CONTRAST** (`VOICE` in `core/prompt.js`): the words are
+reserved, brief and exact, and a kaomoji at the end of a sentence says what she
+feels, which may disagree with the words on purpose. Never one inside a number,
+a table, a comparison, a verdict or the correction of her own mistake, never
+an emoji, and the aside never adds a line. Concise mode drops the voice. The
+bot's lines (`bot/answer.mjs`) are written in the same voice, through the
+language overlay.
 
 ## Adding something
 

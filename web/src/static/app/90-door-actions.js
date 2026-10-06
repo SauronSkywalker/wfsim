@@ -1248,7 +1248,6 @@ window.wfsim = {
   // `nona.*` events, through the page's own counter and its rules.
   usage: {
     count: (event, subject, n) => trackNona(event, subject, n),
-    cohort: (name) => usageCohort(name),
   },
   get actions() {
     return AGENT_ACTIONS.map((a) => ({ id: a.id, what: a.what, anchor: a.anchor, query: !!a.query,
