@@ -417,7 +417,7 @@ function renderBenchBoard() {
   const head = (rows) => `<div class="bench-meta">${escHtml(
       tr("{n} of {t} entries measured · ranked by {m}")
         .replace("{n}", rows.filter((r) => r.row).length).replace("{t}", rows.length).replace("{m}", metric))}${
-      benchPendingNote(cur)}</div>`;
+      benchPendingNote(cur)}</div><p class="bench-note">${escHtml(measuredNote())}</p>`;
   const lists = [];
   const list = (rows) => {
     lists.push(rows);
@@ -504,7 +504,7 @@ const benchRowHtml = (cur, { w, mode, row }, i) => `
             : ""}</span>
         <span class="bscore">${row
           ? escHtml(row.shown != null ? String(row.shown) : row.score.toFixed(4))
-            + (row.measured_at ? `<small class="bwhen">${escHtml(measuredText(row.measured_at))}</small>` : "")
+            + (measuredRecordHtml(row, false, false) ? `<small class="bwhen" title="${escHtml(measuredNote())}">${measuredRecordHtml(row, false, false)}</small>` : "")
           : `<span class="bnone">${escHtml(tr("not measured"))}</span>`}</span>
       </a>`;
 

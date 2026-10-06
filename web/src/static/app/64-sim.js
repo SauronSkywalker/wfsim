@@ -12,8 +12,12 @@ function renderSimBuild() {
   const sub = $("sim-build-sub");
   // The LABEL, never the id: an official build's id carries its ruler and rank
   // (`standard_single_target#cycle#1`) and is not a thing to show anyone.
-  const activeLabel = presetLabel(buildNamed(activePreset));
-  if (sub) sub.textContent = activeLabel ? `${tr("testing build")}: ${activeLabel}` : "";
+  const named = buildNamed(activePreset);
+  const activeLabel = presetLabel(named);
+  // A BOARD BUILD SAYS WHEN AND BY WHICH VERSION IT WAS MEASURED, here too.
+  const rec = named && named.board ? measuredRecordHtml(named.board) : "";
+  if (sub) sub.innerHTML = activeLabel ? `${escHtml(tr("testing build"))}: ${escHtml(activeLabel)}${
+    rec ? ` <span class="fd-when" title="${escHtml(measuredNote())}">· ${rec}</span>` : ""}` : "";
   const w = weaponInfo($("weapon").value);
   box.innerHTML = cardOfState(snapshotState(), w)
     + aplHtml(w) + `<div class="sb-wielder"></div><div class="sb-frame"></div><a class="ghost-btn small sb-edit" href="${weaponPath($("weapon").value)}">${tr("edit in Builder")}</a>`;

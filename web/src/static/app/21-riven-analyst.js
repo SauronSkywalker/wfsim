@@ -26,7 +26,9 @@ const raRolls = (rv) => {
 
 /// A BOARD ROW AS THE SIMULATOR DRAWS A BUILD, and the way into the Builder.
 function raBuild(w, x, head) {
-  return `<div class="ra-build"><div class="sb-h">${escHtml(head)} · <b>${escHtml(raShown(x.row))}</b></div>`
+  const rec = measuredRecordHtml(x.row);
+  return `<div class="ra-build"><div class="sb-h">${escHtml(head)} · <b>${escHtml(raShown(x.row))}</b>${
+    rec ? ` <span class="fd-when" title="${escHtml(measuredNote())}">${rec}</span>` : ""}</div>`
     + cardOfState(boardRowState(w, x.row), w)
     + `<a class="ghost-btn small sb-edit" href="${weaponPath(w.id)}" data-ra-open="${escHtml(x.key)}">${
       escHtml(tr("open in Builder"))}</a></div>`;
@@ -62,11 +64,12 @@ function renderRivenAnalyst() {
   const tables = mine.map((g) => {
     const rows = g.rivens.map((x) => `<tr class="wb-row${x === pick ? " sel" : ""}" data-ra="${escHtml(x.key)}">`
       + `<td>${escHtml(raRolls(x.row.riven))}</td><td class="wb-score">${escHtml(raShown(x.row))}</td>`
-      + `<td class="wb-score">${x.gain == null ? "—" : escHtml(gainPct(x.gain))}</td></tr>`).join("");
+      + `<td class="wb-score">${x.gain == null ? "—" : escHtml(gainPct(x.gain))}</td>`
+      + `<td class="wb-when">${measuredRecordHtml(x.row, false, false)}</td></tr>`).join("");
     return `<p class="wb-ceiling">${escHtml(modeLabel(w, g.mode))} · ${escHtml(tr("The board's best riven-free build"))}: <b>${
       g.top ? escHtml(raShown(g.top.row)) : "—"}</b></p>`
       + `<table class="wb-tab"><thead><tr><th>${escHtml(tr("Riven"))}</th><th>${escHtml(tr("Score"))}</th>`
-      + `<th>${escHtml(tr("vs the best riven-free build"))}</th></tr></thead><tbody>${rows}</tbody></table>`;
+      + `<th>${escHtml(tr("vs the best riven-free build"))}</th><th>${escHtml(tr("Record"))}</th></tr></thead><tbody>${rows}</tbody></table>`;
   }).join("");
   const builds = [pick && raBuild(w, pick, tr("With this riven")),
     group && group.top && raBuild(w, group.top, tr("The board's best riven-free build"))].filter(Boolean).join("");

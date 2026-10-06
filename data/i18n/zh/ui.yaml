@@ -1770,6 +1770,8 @@ ui:
   "measured {t}": "测于 {t}"
   "version": "版本"
   "Record": "记录"
+  "Every build shows when it was measured and by which version of WFSim. The game and WFSim both change, so an older record may be behind.": "每个配装都标明了测量时间和 WF模拟 版本。游戏和 WF模拟 都在更新，较早的记录可能已经落后。"
+  "Measured": "测量记录"
   "These are {w}'s rivens, against the best build without one. I ran every one. (*/ω＼*)": "这是{w}的裂罅，和不带裂罅的第一名作对比。九九每张都跑过了。(*/ω＼*)"
   "I could not read “{word}”… Write a stat as the card does, or as short as 双暴, 暴伤 or 负任意. (・_・;)": "「{word}」九九没认出来……词条请照卡上的写，或者用双暴、暴伤、负任意这样的简称。(・_・;)"
   "No riven on the board has these stats yet. (￣^￣)": "榜单上还没有带这些词条的裂罅。(￣^￣)"

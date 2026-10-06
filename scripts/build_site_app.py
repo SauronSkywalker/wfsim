@@ -1011,6 +1011,15 @@ def caveats_of(spec: dict, reasons: dict) -> list[str]:
     return out
 
 
+def measured_record(row) -> str:
+    """When and by which version a row was measured — `2026-10-06 00:52 UTC ·
+    4f892ee6e4` — or "" where the row says neither. UTC because a static page
+    has no reader's clock; the app redraws it in theirs."""
+    at = row.get("measured_at") or ""
+    at = at.replace("T", " ").replace("Z", " UTC") if at else ""
+    return " · ".join(x for x in (at.strip(), row.get("measured_by") or "") if x)
+
+
 def brief_block(board_rows, caveats) -> str:
     """THE WEAPON'S OWN CONTENT, as data rather than as sentences.
 
@@ -1057,15 +1066,15 @@ def brief_block(board_rows, caveats) -> str:
         if board_asof():
             cap += ", as of " + board_asof()
         body = ""
-        for ruler, fight, mode, score, gear in board_rows:
+        for ruler, fight, mode, score, gear, measured in board_rows:
             body += ("          <tr><td>" + e(ruler) + "</td><td>" + e(fight) + "</td><td>"
                      + e(mode) + '</td><td class="w-num">' + e(score) + "</td><td>"
-                     + e(gear) + "</td></tr>\n")
+                     + e(gear) + '</td><td class="w-when">' + e(measured) + "</td></tr>\n")
         answers = (
             '      <table class="w-tab w-answers">\n'
             "        <caption>" + e(cap) + "</caption>\n"
             "        <thead><tr><th>Ruler</th><th>Fight</th><th>Mode</th>"
-            "<th>Score</th><th>Build</th></tr></thead>\n"
+            "<th>Score</th><th>Build</th><th>Measured</th></tr></thead>\n"
             "        <tbody>\n" + body + "        </tbody>\n      </table>\n"
         )
     # NOTHING IS SAID WHERE THERE IS NOTHING TO SAY. The slot carries what this
@@ -1350,7 +1359,8 @@ def prerender(flagged: str) -> None:
                 gear.append(names_of.get(row["exilus"], row["exilus"]))
             gear += [names_of.get(a, a) for a in (row.get("arcanes") or ())]
             board_rows.append((ruler, fight, row.get("mode", "base").replace("_", " "),
-                               row.get("shown") or f"{row['score']:.4g}", ", ".join(gear)))
+                               row.get("shown") or f"{row['score']:.4g}", ", ".join(gear),
+                               measured_record(row)))
         caveats = caveats_of(spec, REASONS)
         seo = brief_block(board_rows, caveats)
         out = APP / wiki_path(spec).lstrip("/") / "index.html"
@@ -1569,7 +1579,9 @@ def weapon_md(spec, name, cn, facts, stats, board_rows, caveats) -> str:
         out += f", as of {board_asof()}\n\n" if board_asof() else "\n\n"
         out += ("A score belongs to its ruler: compare it only with scores under "
                 "the same ruler.\n\n")
-        out += "| Ruler | Fight | Mode | Score | Build |\n| --- | --- | --- | ---: | --- |\n"
+        out += ("Each row is measured on its own, and says when and by which WFSim commit; "
+                "the game and WFSim both change, so an older row may be behind.\n\n")
+        out += "| Ruler | Fight | Mode | Score | Build | Measured |\n| --- | --- | --- | ---: | --- | --- |\n"
         for row in board_rows:
             out += "| " + " | ".join(md_cell(c) for c in row) + " |\n"
         out += "\n"

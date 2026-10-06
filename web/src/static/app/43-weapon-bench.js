@@ -116,7 +116,7 @@ function renderWeaponDoc() {
       + `<td>${escHtml(modeLabel(w, c.mode))}</td>`
       + `<td class="w-num">${escHtml(String(
         c.best.shown != null ? c.best.shown : c.best.score.toFixed(4)))}</td>`
-      + `<td>${escHtml(gear)}</td></tr>`;
+      + `<td>${escHtml(gear)}</td><td class="w-when">${measuredRecordHtml(c.best, true, false)}</td></tr>`;
   }).join("");
   // THE SAME SHAPE THE PRERENDER WROTE, down to the `shut` and the header: the
   // two write one block, and a reader who changes weapon must not find the
@@ -139,7 +139,7 @@ function renderWeaponDoc() {
       ? `<table class="w-tab w-answers"><caption>${escHtml(tr("The best riven-free build"))}`
         + `</caption><thead><tr><th>${escHtml(tr("Ruler"))}</th><th>${escHtml(tr("Fight"))}</th>`
         + `<th>${escHtml(tr("Mode"))}</th><th>${escHtml(tr("Score"))}</th>`
-        + `<th>${escHtml(tr("Build"))}</th></tr></thead><tbody>${rows}</tbody></table>`
+        + `<th>${escHtml(tr("Build"))}</th><th>${escHtml(tr("Measured"))}</th></tr></thead><tbody>${rows}</tbody></table>`
       : "")
     + (gaps.length
       ? `<div class="w-notes">${cells.length
@@ -185,7 +185,8 @@ function renderWeaponBench() {
       + `<td>${escHtml(nameOf(c.benchmark))}</td>`
       + `<td class="wb-mode">${escHtml(modeLabel(w, c.mode))}</td>`
       + `<td class="wb-score">${escHtml(String(c.best.shown != null ? c.best.shown : c.best.score.toFixed(4)))}</td>`
-      + `<td class="wb-rank">${r ? `${r.rank} / ${r.total}` : "—"}</td></tr>`;
+      + `<td class="wb-rank">${r ? `${r.rank} / ${r.total}` : "—"}</td>`
+      + `<td class="wb-when">${measuredRecordHtml(c.best, false, false)}</td></tr>`;
   }).join("");
   // THE SAME LOOKUPS EVERY OTHER SURFACE USES. A card named here and named
   // differently in the build finder would be two names for one id.
@@ -199,15 +200,17 @@ function renderWeaponBench() {
   // roll nobody else has, so the build a reader can actually copy leads.
   const ceil = pick.riven
     ? `<p class="wb-ceiling">${escHtml(tr("With a riven"))}: <b>${
-      escHtml(String(pick.riven.shown != null ? pick.riven.shown : pick.riven.score.toFixed(4)))}</b></p>`
+      escHtml(String(pick.riven.shown != null ? pick.riven.shown : pick.riven.score.toFixed(4)))}</b>${
+      measuredRecordHtml(pick.riven) ? ` <span class="fd-when">${measuredRecordHtml(pick.riven)}</span>` : ""}</p>`
     : "";
   box.innerHTML = `<table class="wb-tab"><thead><tr>`
     + `<th>${escHtml(tr("Ruler"))}</th><th>${escHtml(tr("Mode"))}</th>`
-    + `<th>${escHtml(tr("Score"))}</th><th>${escHtml(tr("Board rank"))}</th>`
+    + `<th>${escHtml(tr("Score"))}</th><th>${escHtml(tr("Board rank"))}</th><th>${escHtml(tr("Record"))}</th>`
     + `</tr></thead><tbody>${rows}</tbody></table>`
     + `<div class="wb-detail"><p class="wb-terms">${escHtml(tr(
       ((META.benchmarks || []).find((x) => x.id === pick.benchmark) || {}).name || pick.benchmark))}</p>`
-    + `<div class="wb-cards">${gear}${evos}</div>${ceil}</div>`;
+    + `<div class="wb-cards">${gear}${evos}</div>${measuredRecordHtml(pick.best)
+      ? `<p class="fd-when" title="${escHtml(measuredNote())}">${measuredRecordHtml(pick.best)}</p>` : ""}${ceil}</div>`;
   box.querySelectorAll(".wb-row").forEach((tr_) => {
     tr_.addEventListener("click", () => {
       wbenchPick = tr_.dataset.cell;

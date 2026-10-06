@@ -623,6 +623,7 @@ const HEADLESS_QUERIES = [
           return {
             key, rank, ruler: bench ? host.tr(bench.name) : r.benchmark, ruler_id: r.benchmark,
             mode, riven: rv, score: String(r.shown != null ? r.shown : (r.score || 0).toFixed(4)),
+            ...(r.measured_at ? { measured_at: r.measured_at } : {}), ...(r.measured_by ? { measured_by: r.measured_by } : {}),
             mods: (r.mods || []).filter((x) => x && x !== BOARD_RIVEN_SLOT).map(name),
             ...(r.exilus && r.exilus !== "none" ? { exilus: name(r.exilus) } : {}),
             ...((r.arcanes || []).some((x) => x && x !== "none")
@@ -710,6 +711,8 @@ const HEADLESS_QUERIES = [
               bonuses: x.row.riven.bonuses.map(stat), malus: x.row.riven.malus ? stat(x.row.riven.malus) : null,
               stat_ids: { bonuses: x.row.riven.bonuses, malus: x.row.riven.malus || null },
               score: shown(x.row), gain: x.gain, mods: mods(x.row), link: link(x.row, true),
+              ...(x.row.measured_at ? { measured_at: x.row.measured_at } : {}),
+              ...(x.row.measured_by ? { measured_by: x.row.measured_by } : {}),
             })),
           })),
       };

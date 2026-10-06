@@ -13,15 +13,19 @@ const WFSIM_COMMIT = "https://github.com/magenie33/wfsim/commit/";
 /// A BUILD'S OWN RECORD: when it was measured and by which version of WFSim.
 /// Each build carries its own — a weapon's builds are measured at different
 /// times by different versions, and a rescore replaces them one by one.
-function measuredRecordHtml(row, link = true) {
+function measuredRecordHtml(row, link = true, words = true) {
   const r = row || {};
+  const at = r.measured_at ? measuredText(r.measured_at) : "";
   return [
-    r.measured_at ? escHtml(trF("measured {t}", { t: measuredText(r.measured_at) })) : "",
-    r.measured_by ? `${escHtml(tr("version"))} ${link
+    at ? escHtml(words ? trF("measured {t}", { t: at }) : at) : "",
+    r.measured_by ? `${words ? escHtml(tr("version")) + " " : ""}${link
       ? `<a href="${WFSIM_COMMIT}${escHtml(r.measured_by)}" target="_blank" rel="noopener">${escHtml(r.measured_by)}</a>`
       : escHtml(r.measured_by)}` : "",
   ].filter(Boolean).join(" · ");
 }
+
+/// …SAID ONCE BESIDE A LIST OF THEM, so nobody reads an old record as today's.
+function measuredNote() { return tr("Every build shows when it was measured and by which version of WFSim. The game and WFSim both change, so an older record may be behind."); }
 
 /// What the address asks for, clamped to what a card shows.
 function cardParams() {

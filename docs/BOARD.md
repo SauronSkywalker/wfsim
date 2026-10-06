@@ -1060,8 +1060,12 @@ where the fact has none. One commit names every input of the number — engine,
 data and the ruler's terms — so it is the version to cite, whatever the game has
 done since. It is per BUILD, not per weapon or board: a weapon's builds are
 measured at different times by different versions and a rescore replaces them
-one by one. A build card shows its own record (build finder, long image); a
-weapon's "updated" time is its newest row under that ruler.
+one by one. EVERY SURFACE THAT SHOWS A BOARD BUILD SHOWS ITS RECORD — the
+board, the build finder, the weapon's measured-builds table and tab, the Riven
+Analyst, the simulator's build under test, the long image, the prerendered page
+and its markdown, and the headless rows — with one line beside a list saying an
+older record may be behind (`measuredRecordHtml`, `measuredNote`). A weapon's
+"updated" time is its newest row under that ruler.
 
 **A SHORT LIST RANKS EVERY MODE TOGETHER AND COUNTS SCORES, NOT ROWS** (the
 long image, the bots): it answers "the best ways to play this weapon", so a
