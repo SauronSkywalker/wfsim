@@ -305,6 +305,7 @@ mod entry_line_tests {
                 rolls: vec![1.1],
             }),
             measured_at: String::new(),
+            measured_by: String::new(),
         }
     }
 

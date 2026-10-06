@@ -244,6 +244,7 @@ mod tests {
                             cost_seconds: *c,
                             started_at: String::new(),
                             finished_at: String::new(),
+                            measured_by: String::new(),
                         },
                     )
                 })

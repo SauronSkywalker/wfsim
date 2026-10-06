@@ -79,6 +79,11 @@ pub(crate) struct Row {
     /// table's own clock. Published to the minute, so a reader sees how old a
     /// row is rather than how old the board is.
     pub(crate) measured_at: String,
+    /// …AND WHICH COMMIT MEASURED IT: engine, data and the ruler's terms are all
+    /// compiled from the repo, so one hash names every input of the number.
+    /// Each build carries its own, because a weapon's rows are measured at
+    /// different times by different builds, and a rescore replaces them row by row.
+    pub(crate) measured_by: String,
 }
 
 /// A row's riven: the SHAPE it states, and the ROLLS this engine found best for
@@ -118,6 +123,12 @@ pub(crate) fn published(raw: &RawValue) -> Option<Published<'_>> {
 /// still an ISO time a browser parses.
 pub(crate) fn measured_minute(at: &str) -> Option<String> {
     (at.len() >= 16 && at.as_bytes()[10] == b'T').then(|| format!("{}Z", &at[..16]))
+}
+
+/// A commit hash shortened to ten characters, which GitHub resolves; anything
+/// that is not a hash is no version to cite and is omitted.
+pub(crate) fn measured_commit(sha: &str) -> Option<String> {
+    (sha.len() >= 7 && sha.bytes().all(|b| b.is_ascii_hexdigit())).then(|| sha[..sha.len().min(10)].to_string())
 }
 
 /// ONE ROW AS THE PAGE RECEIVES IT — `site/board/<weapon>.json`'s shape, in one
@@ -170,6 +181,11 @@ pub(crate) fn page_row(bench_id: &str, r: &Row) -> Value {
     if let Some(at) = measured_minute(&r.measured_at) {
         if let Some(o) = row.as_object_mut() {
             o.insert("measured_at".into(), json!(at));
+        }
+    }
+    if let Some(by) = measured_commit(&r.measured_by) {
+        if let Some(o) = row.as_object_mut() {
+            o.insert("measured_by".into(), json!(by));
         }
     }
     // …AND THE PARTS. The builder reads `row.grip` / `row.loader` to open a
@@ -474,17 +490,20 @@ mod page_row_tests {
             loader: String::new(),
             riven,
             measured_at: "2026-10-05T13:52:07Z".into(),
+            measured_by: "4f892ee6e4c1a2b3c4d5e6f708192a3b4c5d6e7f".into(),
         }
     }
 
-    /// **A ROW SAYS WHEN IT WAS MEASURED**, to the minute, and a row with no
-    /// clock says nothing rather than a time nobody recorded.
+    /// **A ROW SAYS WHEN AND BY WHICH COMMIT IT WAS MEASURED**, and a row
+    /// without either says nothing rather than a value nobody recorded.
     #[test]
     fn a_row_carries_its_minute_and_a_clockless_row_omits_it() {
         let v = page_row("standard_single_target", &row(None));
         assert_eq!(v["measured_at"], json!("2026-10-05T13:52Z"), "{v}");
-        let none = Row { measured_at: String::new(), ..row(None) };
-        assert!(page_row("standard_single_target", &none).get("measured_at").is_none());
+        assert_eq!(v["measured_by"], json!("4f892ee6e4"), "{v}");
+        let none = Row { measured_at: String::new(), measured_by: "migrated".into(), ..row(None) };
+        let v = page_row("standard_single_target", &none);
+        assert!(v.get("measured_at").is_none() && v.get("measured_by").is_none(), "{v}");
     }
 
     /// **THE RIVEN REACHES THE PAGE**, which is the whole of what went wrong.

@@ -63,6 +63,9 @@ pub(crate) struct Fact {
     /// contains, and what the packing needs is the runs.
     pub(crate) started_at: String,
     pub(crate) finished_at: String,
+    /// THE COMMIT THAT MEASURED IT, as read back from the database; a row this
+    /// run measures is written with the log's own (`FactLog::measured_by`).
+    pub(crate) measured_by: String,
 }
 
 /// WHAT THE DATABASE HOLDS FOR ONE RULER: the last measurement of each row.
@@ -217,6 +220,11 @@ pub(crate) fn load_facts(spec: Option<String>, bench_id: &str) -> Facts {
                 .to_string(),
             finished_at: v
                 .get("finished_at")
+                .and_then(Value::as_str)
+                .unwrap_or_default()
+                .to_string(),
+            measured_by: v
+                .get("measured_by")
                 .and_then(Value::as_str)
                 .unwrap_or_default()
                 .to_string(),
@@ -406,6 +414,7 @@ mod tests {
             cost_seconds: 3.0,
             started_at: "T0".into(),
             finished_at: "T1".into(),
+            measured_by: String::new(),
         };
         log.write("standard_multi_target", "kpm", "orthos_prime|mods#heavy_slam", &at());
         log.write(
@@ -449,6 +458,7 @@ mod tests {
                 cost_seconds: 1.0,
                     started_at: "T0".into(),
                 finished_at: "T1".into(),
+                measured_by: String::new(),
             },
         );
     }

@@ -192,7 +192,8 @@ function renderBuildFinder() {
         : null,
       evolutions: w.uses_evo2 ? marked(evoChipsOf(r.evolutions || [])) : null,
       valence: r.valence ? `${DT(r.valence)} +${Math.round(((valenceSpec(w.id) || {}).max || 0) * 1000) / 10}%` : null,
-    }) + `</div>`;
+    }) + (measuredRecordHtml(r) ? `<span class="sb-h">${escHtml(tr("Record"))}</span><span class="fd-when">${measuredRecordHtml(r)}</span>` : "")
+      + `</div>`;
   };
   const inBar = new Set(openedPublished(buildBarCfg()).map(presetId));
   const openBtn = (p) => inBar.has(presetId(p))

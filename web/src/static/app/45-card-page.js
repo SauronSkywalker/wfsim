@@ -8,6 +8,20 @@
 // when a screenshot may be taken. The footer's code opens the page it is about.
 
 const CARD_MAX = 10;
+const WFSIM_COMMIT = "https://github.com/magenie33/wfsim/commit/";
+
+/// A BUILD'S OWN RECORD: when it was measured and by which version of WFSim.
+/// Each build carries its own — a weapon's builds are measured at different
+/// times by different versions, and a rescore replaces them one by one.
+function measuredRecordHtml(row, link = true) {
+  const r = row || {};
+  return [
+    r.measured_at ? escHtml(trF("measured {t}", { t: measuredText(r.measured_at) })) : "",
+    r.measured_by ? `${escHtml(tr("version"))} ${link
+      ? `<a href="${WFSIM_COMMIT}${escHtml(r.measured_by)}" target="_blank" rel="noopener">${escHtml(r.measured_by)}</a>`
+      : escHtml(r.measured_by)}` : "",
+  ].filter(Boolean).join(" · ");
+}
 
 /// What the address asks for, clamped to what a card shows.
 function cardParams() {
@@ -18,6 +32,10 @@ function cardParams() {
 }
 
 const cardShown = (r) => String(r.shown != null ? r.shown : (r.score || 0).toFixed(4));
+const cardRecord = (row) => {
+  const t = measuredRecordHtml(row, false);
+  return t ? `<span class="lc-when">${t}</span>` : "";
+};
 const cardBox = (head, body) => `<section class="lc-box"><div class="lc-head">${head}</div>${body}</section>`;
 
 /// `ask` is `cardParams()` read BEFORE the weapon opened: opening one restores
@@ -42,17 +60,17 @@ async function renderCardPage(w, ask) {
     const mode = (shown[0] || {}).mode;
     title = trF("{w} · top {n} builds", { w: w.name, n: shown.length });
     link = `${LIVE_ORIGIN}${weaponPath(w.id)}?bench=${encodeURIComponent(ruler)}&mode=${encodeURIComponent(mode || "base")}&riven=0`;
-    body = () => shown.map((x) => cardBox(`<b class="lc-rank">#${x.rank}</b><b class="lc-score">${escHtml(cardShown(x.row))}</b><span class="sb-empty">${escHtml(metric)}</span>`,
+    body = () => shown.map((x) => cardBox(`<b class="lc-rank">#${x.rank}</b><b class="lc-score">${escHtml(cardShown(x.row))}</b><span class="sb-empty">${escHtml(metric)}</span>${cardRecord(x.row)}`,
       cardOfState(boardRowState(w, x.row), w))).join("");
   } else {
     const g = pooledRivens(META, w, rows, ruler);
     title = trF("{w} · Riven Analyst", { w: w.name });
     link = `${LIVE_ORIGIN}${weaponPath(w.id)}/riven-analyst`;
-    body = () => !g.rivens.length ? "" : (g.top ? cardBox(`<span class="sb-h">${escHtml(tr("The board's best riven-free build"))}</span><b class="lc-score">${escHtml(cardShown(g.top.row))}</b>`,
+    body = () => !g.rivens.length ? "" : (g.top ? cardBox(`<span class="sb-h">${escHtml(tr("The board's best riven-free build"))}</span><b class="lc-score">${escHtml(cardShown(g.top.row))}</b>${cardRecord(g.top.row)}`,
       cardOfState(boardRowState(w, g.top.row), w)) : "")
       + distinctTop(g.rivens.filter((x) => rivenMatches(x.row.riven, rivenAsk)).map((x, i) => ({ ...x, rank: i + 1 })), n, () => "",
         (x) => cardShown(x.row)).map((x) => cardBox(`<b class="lc-rank">#${x.rank}</b><b class="lc-score">${escHtml(cardShown(x.row))}</b>${
-        x.gain == null ? "" : `<b class="lc-gain">${pct(x.gain)}</b>`}`, cardOfState(boardRowState(w, x.row), w))).join("");
+        x.gain == null ? "" : `<b class="lc-gain">${pct(x.gain)}</b>`}${cardRecord(x.row)}`, cardOfState(boardRowState(w, x.row), w))).join("");
   }
   const updated = measuredText(boardMeasuredAt(rows.filter((r) => r.benchmark === ruler)));
   const qr = await api("/api/qr", { text: link });

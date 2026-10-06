@@ -510,10 +510,10 @@ pub fn run() {
                 malus: shape.malus.clone(),
                 rolls: card_of(&v, shape),
             });
-            let (score, measured_at) = match current {
+            let (score, measured_at, measured_by) = match current {
                 Some(f) => {
                     reused += 1;
-                    (f.score, f.finished_at.clone())
+                    (f.score, f.finished_at.clone(), f.measured_by.clone())
                 }
                 None => {
                     // A ROW WITH NO FACT IS NOT ON THIS BOARD. `--project`
@@ -723,6 +723,7 @@ pub fn run() {
                             cost_seconds: began.elapsed().as_secs_f64(),
                             started_at: began_at,
                             finished_at: at.clone(),
+                            measured_by: String::new(),
                         },
                     );
                     // THIRTY SECONDS is a row worth naming: the median row is under
@@ -739,7 +740,7 @@ pub fn run() {
                             v.arcanes.len(),
                         );
                     }
-                    (s, at)
+                    (s, at, log.measured_by.clone())
                 }
             };
             let exilus_for_row = v.exilus.clone().unwrap_or_default();
@@ -757,6 +758,7 @@ pub fn run() {
                 loader: v.assembly.as_ref().map(|a| a.loader.clone()).unwrap_or_default(),
                 riven: row_riven,
                 measured_at,
+                measured_by,
             });
         }
     }
