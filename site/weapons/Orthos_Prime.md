@@ -13,7 +13,7 @@ Each row is measured on its own, and says when and by which WFSim commit; the ga
 | Ruler | Fight | Mode | Score | Build | Measured |
 | --- | --- | --- | ---: | --- | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 4.0503 | Shocking Touch, Blood Rush, Primed Fury, Primed Pressure Point, Primed Reach, Melee Elementalist, Organ Shatter, Weeping Wounds, Shimmering Blight, Dreamer's Wrath, Melee Influence | 2026-10-05 15:22 UTC · 4d57cccc45 |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 274.1448 | Shocking Touch, Blood Rush, Primed Fury, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Galvanized Steel, Weeping Wounds, Shimmering Blight, Discipline's Merit, Melee Influence | 2026-10-01 09:52 UTC · 22fa259f2d |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 285.9478 | Shocking Touch, Blood Rush, Primed Fury, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Galvanized Steel, Weeping Wounds, Shimmering Blight, Discipline's Merit, Melee Influence | 2026-10-06 08:58 UTC · 92ec4b1a70 |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.2884 | Shocking Touch, Blood Rush, Primed Fury, Primed Pressure Point, Primed Reach, Melee Elementalist, Organ Shatter, Weeping Wounds, Shimmering Blight, Dreamer's Wrath, Melee Influence | 2026-10-05 14:57 UTC · 4d57cccc45 |
 
 ## Not modelled here

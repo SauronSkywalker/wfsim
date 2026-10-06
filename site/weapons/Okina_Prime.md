@@ -13,7 +13,7 @@ Each row is measured on its own, and says when and by which WFSim commit; the ga
 | Ruler | Fight | Mode | Score | Build | Measured |
 | --- | --- | --- | ---: | --- | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 3.4010 | Shocking Touch, Voltaic Strike, Blood Rush, Primed Fury, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Weeping Wounds, Spinning Needle, Dreamer's Wrath, Melee Influence | 2026-10-05 15:20 UTC · 4d57cccc45 |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | block | 819.0016 | Shocking Touch, Voltaic Strike, Blood Rush, Primed Fury, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Weeping Wounds, Spinning Needle, Dreamer's Wrath, Melee Influence | 2026-09-29 13:55 UTC · 601279c5f9 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | forward | 308.3752 | Shocking Touch, Voltaic Strike, Blood Rush, Primed Fury, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Weeping Wounds, Spinning Needle, Dreamer's Wrath, Melee Influence | 2026-10-06 08:56 UTC · 92ec4b1a70 |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.2662 | Vicious Frost, Virulent Scourge, Shocking Touch, Condition Overload, Primed Fury, Primed Pressure Point, Galvanized Elementalist, Weeping Wounds, Spinning Needle, Dreamer's Wrath, Melee Influence | 2026-10-05 14:00 UTC · 4d57cccc45 |
 
 ## Not modelled here

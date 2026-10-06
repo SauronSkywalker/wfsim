@@ -13,7 +13,7 @@ Each row is measured on its own, and says when and by which WFSim commit; the ga
 | Ruler | Fight | Mode | Score | Build | Measured |
 | --- | --- | --- | ---: | --- | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.08132 | Virulent Scourge, Voltaic Strike, Condition Overload, Blood Rush, Primed Reach, Galvanized Elementalist, Galvanized Steel, Weeping Wounds, Swooping Falcon, Melee Influence | 2026-10-05 15:23 UTC · 4d57cccc45 |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.08129 | Virulent Scourge, Voltaic Strike, Condition Overload, Blood Rush, Primed Reach, Galvanized Elementalist, Galvanized Steel, Weeping Wounds, Swooping Falcon, Melee Influence | 2026-09-30 18:54 UTC · 9a7edd3d88 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.08129 | Virulent Scourge, Voltaic Strike, Condition Overload, Blood Rush, Primed Reach, Galvanized Elementalist, Galvanized Steel, Weeping Wounds, Swooping Falcon, Melee Influence | 2026-10-06 09:04 UTC · 92ec4b1a70 |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.007758 | Virulent Scourge, Voltaic Strike, Condition Overload, Blood Rush, Primed Reach, Galvanized Elementalist, Galvanized Steel, Weeping Wounds, Swooping Falcon, Melee Influence | 2026-10-05 14:58 UTC · 4d57cccc45 |
 
 ## Not modelled here

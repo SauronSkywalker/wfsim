@@ -13,7 +13,7 @@ Each row is measured on its own, and says when and by which WFSim commit; the ga
 | Ruler | Fight | Mode | Score | Build | Measured |
 | --- | --- | --- | ---: | --- | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 26.2647 | Primed Cryo Rounds, Malignant Force, Thermite Rounds, Galvanized Chamber, Vile Acceleration, Vital Sense, Hata-Satya, Magnetic Capacity, Primary Deadhead | 2026-10-05 06:12 UTC · dccca205c1 |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 114.4563 | Primed Cryo Rounds, Malignant Force, Thermite Rounds, Galvanized Chamber, Primed Shred, Vital Sense, Hata-Satya, Magnetic Capacity, Primary Deadhead | 2026-09-27 15:51 UTC · 560f91f3d9 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 114.4563 | Primed Cryo Rounds, Malignant Force, Thermite Rounds, Galvanized Chamber, Primed Shred, Vital Sense, Hata-Satya, Magnetic Capacity, Primary Deadhead | 2026-10-06 08:50 UTC · 92ec4b1a70 |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 4.2971 | Primed Cryo Rounds, Malignant Force, Hellfire, Primary Acuity, Galvanized Aptitude, Vile Acceleration, Vital Sense, Hata-Satya, Primary Deadhead | 2026-09-26 17:36 UTC · bb1dcb69b7 |
 
 ## Not modelled here

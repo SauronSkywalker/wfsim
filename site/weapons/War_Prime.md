@@ -13,7 +13,7 @@ Each row is measured on its own, and says when and by which WFSim commit; the ga
 | Ruler | Fight | Mode | Score | Build | Measured |
 | --- | --- | --- | ---: | --- | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy | 2.2733 | Volcanic Edge, Lasting Sting, Sacrificial Steel, Condition Overload, Primed Fury, Amalgam Organ Shatter, Corrupt Charge, Magnetic Rush, Dreamer's Wrath, Melee Exposure | 2026-10-05 16:16 UTC · 4d57cccc45 |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy | 5.7025 | Volcanic Edge, Sacrificial Steel, Condition Overload, Primed Fury, Galvanized Reflex, Amalgam Organ Shatter, Magnetic Rush, Melee Prowess, Dreamer's Wrath, Melee Exposure | 2026-10-04 14:44 UTC · b2e56376e6 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy | 3.4290 | Volcanic Edge, Sacrificial Steel, Condition Overload, Primed Pressure Point, Galvanized Reflex, Amalgam Organ Shatter, Corrupt Charge, Magnetic Rush, Dreamer's Wrath, Melee Exposure | 2026-10-06 01:18 UTC · 4f892ee6e4 |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | heavy | 0.2756 | Volcanic Edge, Lasting Sting, Sacrificial Steel, Condition Overload, Primed Fury, Amalgam Organ Shatter, Corrupt Charge, Magnetic Rush, Dreamer's Wrath, Melee Exposure | 2026-10-05 15:48 UTC · 4d57cccc45 |
 
 ## Not modelled here
