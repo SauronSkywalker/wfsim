@@ -3,8 +3,8 @@
   <circle cx="256" cy="256" r="248" fill="#ffffff"/>
   <g clip-path="url(#disc)" stroke="#0b0b0b" stroke-width="11" stroke-linecap="round" stroke-linejoin="round">
     <g transform="translate(256 262) scale(0.86) translate(-256 -258)">
-    <path fill="#f1dfb5" d="M112 200 C54 178 8 222 10 296 C12 352 30 392 56 416 C46 382 40 342 40 300 C40 262 70 236 112 222 Z"/>
-    <path fill="#f1dfb5" d="M400 200 C458 178 504 222 502 296 C500 352 482 392 456 416 C466 382 472 342 472 300 C472 262 442 236 400 222 Z"/>
+    <path fill="#f1dfb5" d="M110 198 C56 180 16 226 18 296 C20 352 36 392 58 414 C56 374 54 330 62 294 C70 258 88 232 112 222 Z"/>
+    <path fill="#f1dfb5" d="M402 198 C456 180 496 226 494 296 C492 352 476 392 454 414 C456 374 458 330 450 294 C442 258 424 232 400 222 Z"/>
     <!-- the head, wide and round -->
     <ellipse cx="256" cy="262" rx="176" ry="156" fill="#ffffff"/>
     
