@@ -556,7 +556,9 @@ reference, every other row then reads against it, an opened row lists what it
 has that the reference does not, and the reference is taken back as it was
 given. "Open" makes the build current AND puts it in the build bar as a
 read-only chip, and the finder then says it is already there. It folds like
-every box and ships SHUT: opening it is what gets stored, the stored answer
+every box, ships SHUT above a build of the reader's own on the weapon and
+OPEN with none — a first build made there does not shut it — and the reader's
+answer is what gets stored, the stored answer
 carries to the next weapon in both directions, a redraw keeps it, a click in
 its search box does not fold it, and the jump menu lists it by name.
 

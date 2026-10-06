@@ -122,9 +122,14 @@ function renderBuildFinder() {
     // board's leader, which is where the rows arrive first.
     const act = all.find((p) => presetId(p) === activePreset) || all[0];
     Object.assign(finder, { weapon: w.id, b: act ? act.benchmark : null, mo: act ? act.mode : null,
-      rv: "all", req: new Set(), exc: new Set(), open: null, ref: null, shown: FINDER_FIRST, hi: 0 });
+      rv: "all", req: new Set(), exc: new Set(), open: null, ref: null, shown: FINDER_FIRST, hi: 0,
+      ships_open: !loadPresetList(BUILDS).length });
   }
   box.hidden = false;
+  // IT SHIPS SHUT ABOVE A BUILD YOU CAME TO EDIT. With none of your own on this
+  // weapon there is nothing to edit, so it ships open — decided on arriving at
+  // the weapon, so a first edit does not shut it under the reader.
+  box.classList.toggle("shut", folded("build-finder", !finder.ships_open));
   // THE HEAD IS THE FOLD'S HEADING (`wireFolds`), redrawn with every render, so
   // it is rewired after each one; shut, the finder is its title line.
   const title = `<h2 class="fd-title">${escHtml(tr("Build finder"))}</h2>`;

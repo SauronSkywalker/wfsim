@@ -401,7 +401,8 @@ puts the build in the build bar as a read-only chip and makes it current; THE
 BAR IS THE ONE PLACE THAT SAYS WHICH BUILD IS OPEN — its selected chip names the
 build and a lock marks a board row, so nothing else on the page repeats it.
 BUILDER ONLY: the simulator keeps the build bar and has no finder. It folds like
-every box on the page, to its title and count, and it SHIPS SHUT
+every box on the page, to its title and count, and it SHIPS SHUT above a
+build of the reader's own on that weapon — with none there, it ships open
 (§"Every box folds").
 
 **NOTHING IN IT IS A THRESHOLD SOMEBODY CHOSE.** Every number it shows is a
@@ -678,7 +679,10 @@ blocks anywhere.
 markup is the default `folded()` falls back to while `wfsim-folds` holds no
 entry for that box; the stored answer outranks it forever after, "open"
 included. The build finder is the one that ships shut — it is a page of table
-above the build you came to edit.
+above the build you came to edit. With no build of your own on the weapon
+there is nothing to edit and the finder is the answer, so it ships open;
+which one is decided on arriving at the weapon, so a first edit does not shut
+it under the reader (`ships_open`).
 
 **THE BODY IS EVERY CHILD BUT THE HEADING** (`.fold.sect.shut > :not(.fold-h)`)
 rather than a `.fold-b` the markup has to remember to wrap. A section that

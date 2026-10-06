@@ -26,7 +26,7 @@
 // inside the two halves.
 import { openApp } from "./cdp.mjs";
 
-const app = await openApp({ boot: 13000 });
+const app = await openApp({ boot: 13000, base: process.env.WFSIM_BASE });
 const { evaluate, check, finish, send, sleep } = app;
 
 // A REAL POINTER, not a synthetic event: `PointerEvent` from the page cannot

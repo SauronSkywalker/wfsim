@@ -13,7 +13,7 @@
 // Exits non-zero on the first failure.
 import { openApp } from "./cdp.mjs";
 
-const app = await openApp({ boot: 12000 });
+const app = await openApp({ boot: 12000, base: process.env.WFSIM_BASE });
 const { evaluate, check } = app;
 
 const r = await evaluate(`(async () => {
@@ -37,14 +37,14 @@ const r = await evaluate(`(async () => {
   out.landingActive = activePreset;
   out.landingSel = !!selChip();
 
-  // IT FOLDS LIKE EVERY BOX, AND IT SHIPS SHUT. The state is the reader's and
-  // outlives the weapon; a click in the search box is the search box's.
-  // Asked of the computed layout, not the class.
+  // IT FOLDS LIKE EVERY BOX, AND WITH NO BUILD OF YOUR OWN HERE IT SHIPS
+  // OPEN. The state is the reader's and outlives the weapon; a click in the
+  // search box is the search box's. Asked of the computed layout, not the class.
   const seen = (el) => !!el && el.offsetParent !== null;
   const head = () => box().querySelector(':scope > .fd-head');
-  out.foldDefault = box().classList.contains('shut') && !seen(box().querySelector('.fd-main'))
-    && seen(box().querySelector('.fd-title'));
+  out.foldDefault = !box().classList.contains('shut') && seen(box().querySelector('.fd-main'));
   out.foldUnstored = JSON.parse(localStorage.getItem('wfsim-folds') || '{}')['build-finder'] == null;
+  head().querySelector('.fd-title').click(); await sleep(150);
   head().querySelector('.fd-title').click(); await sleep(150);
   out.foldOpened = !box().classList.contains('shut') && seen(box().querySelector('.fd-main'));
   out.foldStored = JSON.parse(localStorage.getItem('wfsim-folds') || '{}')['build-finder'] === false;
@@ -240,9 +240,9 @@ const r = await evaluate(`(async () => {
 check("the weapon under test actually has board rows", r.rows > 0, `${r.rows} rows — is this running against site/?`);
 check("the finder is drawn in the builder", r.drawn === true);
 check("...a click in its search box does not fold it", r.searchKept === true);
-check("...shut until the reader opens it, with nothing stored yet",
-  r.foldDefault && r.foldUnstored, `shut ${r.foldDefault}, unstored ${r.foldUnstored}`);
-check("...and opening it is what gets stored", r.foldOpened && r.foldStored,
+check("...open with no build of the reader's own on the weapon, with nothing stored yet",
+  r.foldDefault && r.foldUnstored, `open ${r.foldDefault}, unstored ${r.foldUnstored}`);
+check("...and shutting then opening it is what gets stored", r.foldOpened && r.foldStored,
   `opened ${r.foldOpened}, stored ${r.foldStored}`);
 check("...it stays as it is, caret and all, when it redraws", r.foldRedrawn === true);
 check("...the jump menu lists it by name", /Build finder|配装查找器/.test(r.jumpName), JSON.stringify(r.jumpName));
@@ -313,5 +313,32 @@ check("shut on one weapon is shut on the next, loaded cold",
 const openElsewhere = await carried("/weapons/Torid");
 check("...and opening it there opens it on a third weapon too",
   openElsewhere.shut === false && openElsewhere.stored === false, JSON.stringify(openElsewhere));
+
+
+// ---- WHAT IT SHIPS AS, BEFORE THE READER ANSWERS -------------------------
+// Shut above a build of the reader's own on the weapon, open with none; decided
+// on arriving at the weapon, so a first edit does not shut it.
+const unanswered = (own) => evaluate(`(() => {
+  const f = JSON.parse(localStorage.getItem('wfsim-folds') || '{}');
+  delete f['build-finder'];
+  localStorage.setItem('wfsim-folds', JSON.stringify(f));
+  localStorage.setItem('wfsim-presets-builder-builds', JSON.stringify(${own} ? [{ id: 'own1', scope: 'torid', name: 'mine', savedAt: 1,
+    state: buildState('torid', { evoSel: {}, arcane: ['none'], arcaneRank: [null], slots: [{ mod: 'serration', rank: 0 }],
+      mode: null, valence: null, assembly: null, wielder: null }) }] : []));
+  return true;
+})()`);
+await unanswered(true);
+const withOwn = await carried("/weapons/Torid");
+check("with a build of the reader's own on the weapon, it ships shut",
+  withOwn.shut === true && withOwn.stored === undefined, JSON.stringify(withOwn));
+await unanswered(false);
+const firstEdit = await carried("/weapons/Torid", `
+  localStorage.setItem('wfsim-presets-builder-builds', JSON.stringify([{ id: 'own2', scope: 'torid', name: 'preset 1', savedAt: 2,
+    state: buildState('torid', { evoSel: {}, arcane: ['none'], arcaneRank: [null], slots: [{ mod: 'serration', rank: 0 }],
+      mode: null, valence: null, assembly: null, wielder: null }) }]));
+  renderPresetBar(); await sleep(200);
+  seen.afterEdit = box.classList.contains('shut');`);
+check("with none, it ships open, and a first build there does not shut it",
+  firstEdit.shut === false && firstEdit.afterEdit === false && firstEdit.stored === undefined, JSON.stringify(firstEdit));
 
 await app.finish("the finder finds, the bar holds");
