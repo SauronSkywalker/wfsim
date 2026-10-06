@@ -8,11 +8,13 @@ Archgun · Archgun · Mastery Rank 2. 500 base damage (impact 100, puncture 50, 
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 8.9982 | Primed Polar Magazine, Primed Venomous Clip, Primed Combustion Rounds, Primed Dual Rounds, Primed Rubedo-Lined Barrel, Primed Deadly Efficiency, Critical Focus, Primed Ammo Chain, Primary Crux, Secondary Enervate |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 47.3987 | Primed Polar Magazine, Primed Venomous Clip, Primed Combustion Rounds, Primed Dual Rounds, Primed Rubedo-Lined Barrel, Critical Focus, Primed Ammo Chain, Magnetized Cycle, Primary Crux, Secondary Fortifier |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 2.0112 | Primed Polar Magazine, Primed Venomous Clip, Primed Combustion Rounds, Primed Dual Rounds, Primed Rubedo-Lined Barrel, Primed Deadly Efficiency, Critical Focus, Primed Ammo Chain, Primary Crux, Secondary Enervate |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 8.9982 | Primed Polar Magazine, Primed Venomous Clip, Primed Combustion Rounds, Primed Dual Rounds, Primed Rubedo-Lined Barrel, Primed Deadly Efficiency, Critical Focus, Primed Ammo Chain, Primary Crux, Secondary Enervate | 2026-09-18 16:51 UTC · 197735d21a |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 47.3987 | Primed Polar Magazine, Primed Venomous Clip, Primed Combustion Rounds, Primed Dual Rounds, Primed Rubedo-Lined Barrel, Critical Focus, Primed Ammo Chain, Magnetized Cycle, Primary Crux, Secondary Fortifier | 2026-10-05 18:00 UTC · 40071ee3b3 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 2.0112 | Primed Polar Magazine, Primed Venomous Clip, Primed Combustion Rounds, Primed Dual Rounds, Primed Rubedo-Lined Barrel, Primed Deadly Efficiency, Critical Focus, Primed Ammo Chain, Primary Crux, Secondary Enervate | 2026-09-18 17:01 UTC · 197735d21a |
 
 ## Not modelled here
 

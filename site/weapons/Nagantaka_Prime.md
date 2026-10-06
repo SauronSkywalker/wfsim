@@ -8,11 +8,13 @@ Crossbow · Primary · Mastery Rank 12. 173 base damage (impact 1.7, puncture 15
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 5.3591 | Malignant Force, Rime Rounds, Stormbringer, Primary Acuity, Primed Shred, Galvanized Aptitude, Galvanized Scope, Vital Sense, Primary Crux |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 38.4763 | Malignant Force, Rime Rounds, Stormbringer, Primary Acuity, Primed Shred, Galvanized Aptitude, Galvanized Scope, Vital Sense, Primary Crux |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | alternate | 0.3796 | Malignant Force, Rime Rounds, Stormbringer, Primary Acuity, Primed Shred, Galvanized Aptitude, Galvanized Scope, Vital Sense, Primary Crux |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 5.3591 | Malignant Force, Rime Rounds, Stormbringer, Primary Acuity, Primed Shred, Galvanized Aptitude, Galvanized Scope, Vital Sense, Primary Crux | 2026-09-19 19:52 UTC · ee334217a3 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 38.4763 | Malignant Force, Rime Rounds, Stormbringer, Primary Acuity, Primed Shred, Galvanized Aptitude, Galvanized Scope, Vital Sense, Primary Crux | 2026-09-27 15:44 UTC · 560f91f3d9 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | alternate | 0.3796 | Malignant Force, Rime Rounds, Stormbringer, Primary Acuity, Primed Shred, Galvanized Aptitude, Galvanized Scope, Vital Sense, Primary Crux | 2026-09-19 20:49 UTC · ee334217a3 |
 
 ## Not modelled here
 

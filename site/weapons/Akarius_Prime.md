@@ -8,11 +8,13 @@ Pistol · Secondary · Mastery Rank 14. 68 base damage (impact 68), 18% crit cha
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 13.2577 | Ice Storm, Pistol Pestilence, Scorch, Galvanized Diffusion, Hornet Strike, Galvanized Shot, Pistol Elementalist, Magnetic Might, Secondary Fortifier |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 76.1920 | Ice Storm, Pistol Pestilence, Scorch, Galvanized Diffusion, Hornet Strike, Galvanized Shot, Pistol Elementalist, Magnetic Might, Secondary Fortifier |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.3451 | Frostbite, Pistol Pestilence, Primed Heated Charge, Scorch, Galvanized Diffusion, Hornet Strike, Primed Expel Grineer, Pistol Elementalist, Primed Pistol Ammo Mutation, Cascadia Flare |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 13.2577 | Ice Storm, Pistol Pestilence, Scorch, Galvanized Diffusion, Hornet Strike, Galvanized Shot, Pistol Elementalist, Magnetic Might, Secondary Fortifier | 2026-10-01 05:09 UTC · 94f02ac4e3 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 76.1920 | Ice Storm, Pistol Pestilence, Scorch, Galvanized Diffusion, Hornet Strike, Galvanized Shot, Pistol Elementalist, Magnetic Might, Secondary Fortifier | 2026-10-01 04:55 UTC · 94f02ac4e3 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.3451 | Frostbite, Pistol Pestilence, Primed Heated Charge, Scorch, Galvanized Diffusion, Hornet Strike, Primed Expel Grineer, Pistol Elementalist, Primed Pistol Ammo Mutation, Cascadia Flare | 2026-09-29 10:45 UTC · 9b0496567c |
 
 ## Not modelled here
 

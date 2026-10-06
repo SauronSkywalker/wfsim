@@ -8,11 +8,13 @@ Launcher · Primary · Mastery Rank 16. 100 base damage (impact 100), 28% crit c
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 7.7471 | Primed Cryo Rounds, Malignant Force, Galvanized Chamber, Heavy Caliber, Galvanized Aptitude, Galvanized Scope, Vile Acceleration, Magnetic Capacity, Vigilante Supplies, Primary Compression |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 7.7471 | Primed Cryo Rounds, Malignant Force, Galvanized Chamber, Heavy Caliber, Galvanized Aptitude, Galvanized Scope, Vile Acceleration, Magnetic Capacity, Vigilante Supplies, Primary Compression |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.4246 | Primed Cryo Rounds, Malignant Force, Galvanized Chamber, Heavy Caliber, Galvanized Aptitude, Critical Delay, Vile Acceleration, Vital Sense, Vigilante Supplies, Primary Compression |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 7.7471 | Primed Cryo Rounds, Malignant Force, Galvanized Chamber, Heavy Caliber, Galvanized Aptitude, Galvanized Scope, Vile Acceleration, Magnetic Capacity, Vigilante Supplies, Primary Compression | 2026-10-05 08:22 UTC · 58033b199a |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 7.7471 | Primed Cryo Rounds, Malignant Force, Galvanized Chamber, Heavy Caliber, Galvanized Aptitude, Galvanized Scope, Vile Acceleration, Magnetic Capacity, Vigilante Supplies, Primary Compression | 2026-10-05 15:58 UTC · 4d57cccc45 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.4246 | Primed Cryo Rounds, Malignant Force, Galvanized Chamber, Heavy Caliber, Galvanized Aptitude, Critical Delay, Vile Acceleration, Vital Sense, Vigilante Supplies, Primary Compression | 2026-10-05 08:03 UTC · 58033b199a |
 
 ## Not modelled here
 

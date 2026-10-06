@@ -8,11 +8,13 @@ Dual Daggers · Melee · Mastery Rank 12. 184 base damage (impact 9.2, puncture 
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 3.4010 | Shocking Touch, Voltaic Strike, Blood Rush, Primed Fury, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Weeping Wounds, Spinning Needle, Dreamer's Wrath, Melee Influence |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | block | 819.0016 | Shocking Touch, Voltaic Strike, Blood Rush, Primed Fury, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Weeping Wounds, Spinning Needle, Dreamer's Wrath, Melee Influence |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.2662 | Vicious Frost, Virulent Scourge, Shocking Touch, Condition Overload, Primed Fury, Primed Pressure Point, Galvanized Elementalist, Weeping Wounds, Spinning Needle, Dreamer's Wrath, Melee Influence |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 3.4010 | Shocking Touch, Voltaic Strike, Blood Rush, Primed Fury, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Weeping Wounds, Spinning Needle, Dreamer's Wrath, Melee Influence | 2026-10-05 15:20 UTC · 4d57cccc45 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | block | 819.0016 | Shocking Touch, Voltaic Strike, Blood Rush, Primed Fury, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Weeping Wounds, Spinning Needle, Dreamer's Wrath, Melee Influence | 2026-09-29 13:55 UTC · 601279c5f9 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.2662 | Vicious Frost, Virulent Scourge, Shocking Touch, Condition Overload, Primed Fury, Primed Pressure Point, Galvanized Elementalist, Weeping Wounds, Spinning Needle, Dreamer's Wrath, Melee Influence | 2026-10-05 14:00 UTC · 4d57cccc45 |
 
 ## Not modelled here
 

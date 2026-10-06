@@ -8,11 +8,13 @@ Sentinel Weapon · Sentinel · Mastery Rank 0. 32 base damage (cold 32), 14% cri
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.1376 | Malignant Force, Rime Rounds, Hellfire, Thermite Rounds, Heavy Caliber, Split Chamber, Rifle Elementalist, Magnetic Capacity |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 4.4565 | Malignant Force, Rime Rounds, Hellfire, Heavy Caliber, Primed Shred, Split Chamber, Rifle Elementalist, Magnetic Capacity |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.1902 | Malignant Force, Rime Rounds, Hellfire, Thermite Rounds, Split Chamber, Serration, Rifle Elementalist, Vile Acceleration |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.1376 | Malignant Force, Rime Rounds, Hellfire, Thermite Rounds, Heavy Caliber, Split Chamber, Rifle Elementalist, Magnetic Capacity | 2026-10-03 18:54 UTC · ea8f24ebe2 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 4.4565 | Malignant Force, Rime Rounds, Hellfire, Heavy Caliber, Primed Shred, Split Chamber, Rifle Elementalist, Magnetic Capacity | 2026-10-05 23:48 UTC · 40071ee3b3 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.1902 | Malignant Force, Rime Rounds, Hellfire, Thermite Rounds, Split Chamber, Serration, Rifle Elementalist, Vile Acceleration | 2026-10-03 18:30 UTC · ea8f24ebe2 |
 
 ## Not modelled here
 

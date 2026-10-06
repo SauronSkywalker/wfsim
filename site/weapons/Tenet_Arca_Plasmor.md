@@ -8,11 +8,13 @@ Shotgun · Primary · Mastery Rank 16. 760 base damage (radiation 760), 22% crit
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 3.6033 | Primed Chilling Grasp, Toxic Barrage, Galvanized Hell, Magnetic Welt, Primed Point Blank, Galvanized Savvy, Shotgun Barrage, Shotgun Elementalist, Galvanized Acceleration, Shotgun Vendetta |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 16.6358 | Frigid Blast, Toxic Barrage, Incendiary Coat, Blaze, Galvanized Hell, Primed Point Blank, Galvanized Savvy, Shotgun Barrage, Galvanized Acceleration, Primary Crux |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.4173 | Frigid Blast, Toxic Barrage, Incendiary Coat, Blaze, Galvanized Hell, Primed Point Blank, Galvanized Savvy, Shotgun Barrage, Galvanized Acceleration, Primary Crux |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 3.6033 | Primed Chilling Grasp, Toxic Barrage, Galvanized Hell, Magnetic Welt, Primed Point Blank, Galvanized Savvy, Shotgun Barrage, Shotgun Elementalist, Galvanized Acceleration, Shotgun Vendetta | 2026-09-29 21:47 UTC · 92c94eb9a6 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 16.6358 | Frigid Blast, Toxic Barrage, Incendiary Coat, Blaze, Galvanized Hell, Primed Point Blank, Galvanized Savvy, Shotgun Barrage, Galvanized Acceleration, Primary Crux | 2026-10-05 19:16 UTC · 40071ee3b3 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.4173 | Frigid Blast, Toxic Barrage, Incendiary Coat, Blaze, Galvanized Hell, Primed Point Blank, Galvanized Savvy, Shotgun Barrage, Galvanized Acceleration, Primary Crux | 2026-09-29 09:46 UTC · a96c10c3c2 |
 
 ## Not modelled here
 

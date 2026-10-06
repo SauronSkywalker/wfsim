@@ -8,11 +8,13 @@ Rifle · Primary · Mastery Rank 12. 46 base damage (impact 13.8, puncture 13.8,
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 54.3687 | Primed Cryo Rounds, Infected Clip, Primary Acuity, Serration, Galvanized Scope, Bladed Rounds, Vile Acceleration, Vital Sense, Vigilante Supplies, Primary Deadhead |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 416.0512 | Rime Rounds, Primary Acuity, Primed Shred, Serration, Galvanized Scope, Hammer Shot, Rifle Elementalist, Vital Sense, Vigilante Supplies, Primary Deadhead |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 9.3476 | Primed Cryo Rounds, Infected Clip, Primary Acuity, Primed Bane of Grineer, Serration, Galvanized Scope, Vital Sense, Gilded Truth, Vigilante Supplies, Primary Deadhead |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 54.3687 | Primed Cryo Rounds, Infected Clip, Primary Acuity, Serration, Galvanized Scope, Bladed Rounds, Vile Acceleration, Vital Sense, Vigilante Supplies, Primary Deadhead | 2026-10-05 17:08 UTC · 052c2ed8c6 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 416.0512 | Rime Rounds, Primary Acuity, Primed Shred, Serration, Galvanized Scope, Hammer Shot, Rifle Elementalist, Vital Sense, Vigilante Supplies, Primary Deadhead | 2026-10-05 15:04 UTC · 4d57cccc45 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 9.3476 | Primed Cryo Rounds, Infected Clip, Primary Acuity, Primed Bane of Grineer, Serration, Galvanized Scope, Vital Sense, Gilded Truth, Vigilante Supplies, Primary Deadhead | 2026-10-05 16:50 UTC · 052c2ed8c6 |
 
 ## In WFSim
 

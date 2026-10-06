@@ -8,11 +8,13 @@ Pistol · Secondary · Mastery Rank 8. 68 base damage (impact 68), 6% crit chanc
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.9559 | Ice Storm, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Hornet Strike, Primed Target Cracker, Pistol Elementalist, Magnetic Might, Trick Mag, Secondary Enervate |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 32.6169 | Ice Storm, Pistol Pestilence, Primed Heated Charge, Primed Fulmination, Galvanized Diffusion, Hornet Strike, Galvanized Shot, Magnetic Might, Secondary Enervate |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.6828 | Ice Storm, Pistol Pestilence, Primed Heated Charge, Scorch, Primed Fulmination, Galvanized Diffusion, Lethal Torrent, Pistol Elementalist, Cascadia Flare |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.9559 | Ice Storm, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Hornet Strike, Primed Target Cracker, Pistol Elementalist, Magnetic Might, Trick Mag, Secondary Enervate | 2026-09-29 17:01 UTC · 33e2ff32ed |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 32.6169 | Ice Storm, Pistol Pestilence, Primed Heated Charge, Primed Fulmination, Galvanized Diffusion, Hornet Strike, Galvanized Shot, Magnetic Might, Secondary Enervate | 2026-10-06 03:58 UTC · 38faffec31 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.6828 | Ice Storm, Pistol Pestilence, Primed Heated Charge, Scorch, Primed Fulmination, Galvanized Diffusion, Lethal Torrent, Pistol Elementalist, Cascadia Flare | 2026-10-01 13:45 UTC · 42dc456c21 |
 
 ## Not modelled here
 

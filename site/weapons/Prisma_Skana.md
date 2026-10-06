@@ -8,11 +8,13 @@ Sword · Melee · Mastery Rank 8. 170 base damage (impact 25.5, puncture 25.5, s
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.08132 | Virulent Scourge, Voltaic Strike, Condition Overload, Blood Rush, Primed Reach, Galvanized Elementalist, Galvanized Steel, Weeping Wounds, Swooping Falcon, Melee Influence |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.08129 | Virulent Scourge, Voltaic Strike, Condition Overload, Blood Rush, Primed Reach, Galvanized Elementalist, Galvanized Steel, Weeping Wounds, Swooping Falcon, Melee Influence |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.007758 | Virulent Scourge, Voltaic Strike, Condition Overload, Blood Rush, Primed Reach, Galvanized Elementalist, Galvanized Steel, Weeping Wounds, Swooping Falcon, Melee Influence |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.08132 | Virulent Scourge, Voltaic Strike, Condition Overload, Blood Rush, Primed Reach, Galvanized Elementalist, Galvanized Steel, Weeping Wounds, Swooping Falcon, Melee Influence | 2026-10-05 15:23 UTC · 4d57cccc45 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.08129 | Virulent Scourge, Voltaic Strike, Condition Overload, Blood Rush, Primed Reach, Galvanized Elementalist, Galvanized Steel, Weeping Wounds, Swooping Falcon, Melee Influence | 2026-09-30 18:54 UTC · 9a7edd3d88 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.007758 | Virulent Scourge, Voltaic Strike, Condition Overload, Blood Rush, Primed Reach, Galvanized Elementalist, Galvanized Steel, Weeping Wounds, Swooping Falcon, Melee Influence | 2026-10-05 14:58 UTC · 4d57cccc45 |
 
 ## Not modelled here
 

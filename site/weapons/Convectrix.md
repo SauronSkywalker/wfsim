@@ -8,11 +8,13 @@ Shotgun · Primary · Mastery Rank 7. 12 base damage x2 multishot (impact 1.2, p
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 8.5114 | Frigid Blast, Toxic Barrage, Scattering Inferno, Galvanized Hell, Primed Point Blank, Primed Ravage, Galvanized Savvy, Magnetic Strafe, Primary Crux |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 17.0555 | Frigid Blast, Toxic Barrage, Scattering Inferno, Galvanized Hell, Primed Point Blank, Primed Ravage, Galvanized Savvy, Magnetic Strafe, Primary Crux |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.1468 | Frigid Blast, Toxic Barrage, Incendiary Coat, Galvanized Hell, Primed Point Blank, Primed Ravage, Galvanized Savvy, Critical Deceleration, Primary Crux |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 8.5114 | Frigid Blast, Toxic Barrage, Scattering Inferno, Galvanized Hell, Primed Point Blank, Primed Ravage, Galvanized Savvy, Magnetic Strafe, Primary Crux | 2026-09-28 07:17 UTC · ac82189886 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 17.0555 | Frigid Blast, Toxic Barrage, Scattering Inferno, Galvanized Hell, Primed Point Blank, Primed Ravage, Galvanized Savvy, Magnetic Strafe, Primary Crux | 2026-10-05 15:13 UTC · 4d57cccc45 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.1468 | Frigid Blast, Toxic Barrage, Incendiary Coat, Galvanized Hell, Primed Point Blank, Primed Ravage, Galvanized Savvy, Critical Deceleration, Primary Crux | 2026-10-04 14:29 UTC · b2e56376e6 |
 
 ## Not modelled here
 

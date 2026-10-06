@@ -8,11 +8,13 @@ Shotgun · Primary · Mastery Rank 14. 54 base damage x12 multishot (impact 24.3
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 24.4055 | Primed Chilling Grasp, Toxic Barrage, Blaze, Galvanized Hell, Primed Ravage, Galvanized Savvy, Critical Deceleration, Magnetic Strafe, Primary Crux |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 50.5128 | Frigid Blast, Toxic Barrage, Primed Charged Shell, Galvanized Hell, Primed Point Blank, Primed Ravage, Critical Deceleration, Semi-Shotgun Cannonade, Primary Crux |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 3.7781 | Primed Chilling Grasp, Toxic Barrage, Incendiary Coat, Galvanized Hell, Primed Cleanse Grineer, Primed Ravage, Critical Deceleration, Semi-Shotgun Cannonade, Primary Compression |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 24.4055 | Primed Chilling Grasp, Toxic Barrage, Blaze, Galvanized Hell, Primed Ravage, Galvanized Savvy, Critical Deceleration, Magnetic Strafe, Primary Crux | 2026-10-04 18:49 UTC · b327923410 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 50.5128 | Frigid Blast, Toxic Barrage, Primed Charged Shell, Galvanized Hell, Primed Point Blank, Primed Ravage, Critical Deceleration, Semi-Shotgun Cannonade, Primary Crux | 2026-10-05 19:20 UTC · 40071ee3b3 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 3.7781 | Primed Chilling Grasp, Toxic Barrage, Incendiary Coat, Galvanized Hell, Primed Cleanse Grineer, Primed Ravage, Critical Deceleration, Semi-Shotgun Cannonade, Primary Compression | 2026-10-04 18:32 UTC · b327923410 |
 
 ## Not modelled here
 

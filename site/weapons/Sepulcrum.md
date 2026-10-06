@@ -8,11 +8,13 @@ Pistol · Secondary · Mastery Rank 14. 48 base damage (impact 9.6, puncture 26.
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 12.1843 | Frostbite, Pistol Pestilence, Pistol Acuity, Hornet Strike, Primed Target Cracker, Galvanized Shot, Anemic Agility, Magnetic Might, Primed Steady Hands, Secondary Deadhead |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 13.1566 | Frostbite, Pistol Pestilence, Pistol Acuity, Hornet Strike, Primed Target Cracker, Galvanized Shot, Anemic Agility, Magnetic Might, Primed Steady Hands, Secondary Deadhead |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | alternate | 0.9559 | Frostbite, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Primed Target Cracker, Galvanized Shot, Primed Pistol Gambit, Lethal Torrent, Cascadia Flare |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 12.1843 | Frostbite, Pistol Pestilence, Pistol Acuity, Hornet Strike, Primed Target Cracker, Galvanized Shot, Anemic Agility, Magnetic Might, Primed Steady Hands, Secondary Deadhead | 2026-10-01 03:21 UTC · 365a0d50af |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 13.1566 | Frostbite, Pistol Pestilence, Pistol Acuity, Hornet Strike, Primed Target Cracker, Galvanized Shot, Anemic Agility, Magnetic Might, Primed Steady Hands, Secondary Deadhead | 2026-10-01 03:16 UTC · 365a0d50af |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | alternate | 0.9559 | Frostbite, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Primed Target Cracker, Galvanized Shot, Primed Pistol Gambit, Lethal Torrent, Cascadia Flare | 2026-09-29 10:48 UTC · 9b0496567c |
 
 ## Not modelled here
 

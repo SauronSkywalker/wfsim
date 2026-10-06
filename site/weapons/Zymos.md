@@ -8,11 +8,13 @@ Pistol · Secondary · Mastery Rank 11. 23 base damage (impact 9.2, puncture 13.
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.0869 | Frostbite, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Hornet Strike, Lethal Torrent, Pistol Elementalist, Magnetic Might, Primed Steady Hands, Secondary Enervate |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.0889 | Frostbite, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Hornet Strike, Lethal Torrent, Pistol Elementalist, Magnetic Might, Primed Steady Hands, Secondary Enervate |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.1570 | Frostbite, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Hornet Strike, Lethal Torrent, Pistol Elementalist, Magnetic Might, Primed Steady Hands, Secondary Enervate |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.0869 | Frostbite, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Hornet Strike, Lethal Torrent, Pistol Elementalist, Magnetic Might, Primed Steady Hands, Secondary Enervate | 2026-09-30 19:56 UTC · 9a7edd3d88 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.0889 | Frostbite, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Hornet Strike, Lethal Torrent, Pistol Elementalist, Magnetic Might, Primed Steady Hands, Secondary Enervate | 2026-10-05 16:55 UTC · 052c2ed8c6 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.1570 | Frostbite, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Hornet Strike, Lethal Torrent, Pistol Elementalist, Magnetic Might, Primed Steady Hands, Secondary Enervate | 2026-09-30 19:39 UTC · 9a7edd3d88 |
 
 ## Not modelled here
 

@@ -8,11 +8,13 @@ Rifle · Primary · Mastery Rank 16. 200 base damage (impact 20, puncture 140, s
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 6.0406 | Malignant Force, Rime Rounds, Thermite Rounds, Galvanized Chamber, Galvanized Aptitude, Critical Delay, Vile Acceleration, Vital Sense, Primary Compression |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 31.3508 | Primed Cryo Rounds, Malignant Force, Galvanized Chamber, Primed Shred, Galvanized Aptitude, Galvanized Scope, Hammer Shot, Vital Sense, Primary Deadhead |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.0205 | Malignant Force, Rime Rounds, Thermite Rounds, Galvanized Chamber, Galvanized Aptitude, Critical Delay, Vile Acceleration, Vital Sense, Primary Compression |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 6.0406 | Malignant Force, Rime Rounds, Thermite Rounds, Galvanized Chamber, Galvanized Aptitude, Critical Delay, Vile Acceleration, Vital Sense, Primary Compression | 2026-09-29 13:12 UTC · 601279c5f9 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 31.3508 | Primed Cryo Rounds, Malignant Force, Galvanized Chamber, Primed Shred, Galvanized Aptitude, Galvanized Scope, Hammer Shot, Vital Sense, Primary Deadhead | 2026-09-29 12:05 UTC · 4507901cf6 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.0205 | Malignant Force, Rime Rounds, Thermite Rounds, Galvanized Chamber, Galvanized Aptitude, Critical Delay, Vile Acceleration, Vital Sense, Primary Compression | 2026-09-29 12:53 UTC · 601279c5f9 |
 
 ## Not modelled here
 

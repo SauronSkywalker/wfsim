@@ -8,11 +8,13 @@ Rifle · Primary · Mastery Rank 4. 35 base damage (impact 12.25, puncture 1.75,
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 29.8007 | Primed Cryo Rounds, Malignant Force, Primary Acuity, Galvanized Aptitude, Hammer Shot, Vile Acceleration, Vital Sense, Magnetic Capacity, Vigilante Supplies, Primary Deadhead |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 117.9179 | Primed Cryo Rounds, Malignant Force, Hellfire, Primary Acuity, Primed Shred, Galvanized Aptitude, Vile Acceleration, Vital Sense, Primary Deadhead |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 5.3293 | Primed Cryo Rounds, Malignant Force, Hellfire, Primary Acuity, Serration, Galvanized Aptitude, Vile Acceleration, Vital Sense, Primary Deadhead |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 29.8007 | Primed Cryo Rounds, Malignant Force, Primary Acuity, Galvanized Aptitude, Hammer Shot, Vile Acceleration, Vital Sense, Magnetic Capacity, Vigilante Supplies, Primary Deadhead | 2026-09-28 17:27 UTC · ede2eb7f5f |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 117.9179 | Primed Cryo Rounds, Malignant Force, Hellfire, Primary Acuity, Primed Shred, Galvanized Aptitude, Vile Acceleration, Vital Sense, Primary Deadhead | 2026-10-02 19:07 UTC · aecc2363ea |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 5.3293 | Primed Cryo Rounds, Malignant Force, Hellfire, Primary Acuity, Serration, Galvanized Aptitude, Vile Acceleration, Vital Sense, Primary Deadhead | 2026-10-02 18:55 UTC · aecc2363ea |
 
 ## In WFSim
 

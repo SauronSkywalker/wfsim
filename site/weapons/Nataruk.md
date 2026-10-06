@@ -6,11 +6,13 @@ Bow · Primary · Mastery Rank 0. 900 base damage (puncture 648, slash 252), 60%
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 11.6208 | Hellfire, Heavy Caliber, Primary Acuity, Serration, Galvanized Aptitude, Vile Acceleration, Vital Sense, Magnetic Capacity, Primary Crux |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 36.8218 | Hellfire, Heavy Caliber, Primary Acuity, Primed Shred, Serration, Galvanized Aptitude, Vital Sense, Radiated Reload, Terminal Velocity, Primary Crux |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | alternate | 2.0074 | Hellfire, Thermite Rounds, Heavy Caliber, Split Flights, Hammer Shot, Point Strike, Rifle Elementalist, Vital Sense, Vigilante Supplies, Primary Crux |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 11.6208 | Hellfire, Heavy Caliber, Primary Acuity, Serration, Galvanized Aptitude, Vile Acceleration, Vital Sense, Magnetic Capacity, Primary Crux | 2026-09-16 18:07 UTC · 79415eb9ba |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 36.8218 | Hellfire, Heavy Caliber, Primary Acuity, Primed Shred, Serration, Galvanized Aptitude, Vital Sense, Radiated Reload, Terminal Velocity, Primary Crux | 2026-10-05 14:03 UTC · 4d57cccc45 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | alternate | 2.0074 | Hellfire, Thermite Rounds, Heavy Caliber, Split Flights, Hammer Shot, Point Strike, Rifle Elementalist, Vital Sense, Vigilante Supplies, Primary Crux | 2026-10-01 19:42 UTC · 4066e4f54c |
 
 ## Not modelled here
 

@@ -8,11 +8,13 @@ Nikana · Melee · Mastery Rank 8. 188 base damage (impact 9.4, puncture 18.8, s
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | slide | 0.2738 | Primed Fever Strike, Condition Overload, Blood Rush, Primed Smite Corpus, Amalgam Organ Shatter, Melee Elementalist, Weeping Wounds, Discipline's Merit, Melee Crescendo |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | slide | 0.2738 | Primed Fever Strike, Condition Overload, Blood Rush, Primed Smite Corpus, Amalgam Organ Shatter, Melee Elementalist, Weeping Wounds, Discipline's Merit, Melee Crescendo |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | slide | 0.03194 | Condition Overload, Blood Rush, Primed Smite Corpus, Primed Smite Grineer, Amalgam Organ Shatter, Melee Elementalist, Weeping Wounds, Discipline's Merit, Melee Crescendo |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | slide | 0.2738 | Primed Fever Strike, Condition Overload, Blood Rush, Primed Smite Corpus, Amalgam Organ Shatter, Melee Elementalist, Weeping Wounds, Discipline's Merit, Melee Crescendo | 2026-10-05 14:18 UTC · 4d57cccc45 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | slide | 0.2738 | Primed Fever Strike, Condition Overload, Blood Rush, Primed Smite Corpus, Amalgam Organ Shatter, Melee Elementalist, Weeping Wounds, Discipline's Merit, Melee Crescendo | 2026-10-05 15:00 UTC · 4d57cccc45 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | slide | 0.03194 | Condition Overload, Blood Rush, Primed Smite Corpus, Primed Smite Grineer, Amalgam Organ Shatter, Melee Elementalist, Weeping Wounds, Discipline's Merit, Melee Crescendo | 2026-10-05 14:00 UTC · 4d57cccc45 |
 
 ## Not modelled here
 

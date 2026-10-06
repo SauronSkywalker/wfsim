@@ -8,11 +8,13 @@ Pistol · Secondary · Mastery Rank 17. 56 base damage (corrosive 56), 11% crit 
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 58.9202 | Frostbite, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Galvanized Shot, Lethal Torrent, Pistol Elementalist, Critical Mutation, Secondary Enervate |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 116.0020 | Frostbite, Pistol Pestilence, Primed Convulsion, Seeker, Galvanized Diffusion, Hornet Strike, Primed Target Cracker, Galvanized Shot, Secondary Enervate |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 10.1587 | Frostbite, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Hornet Strike, Primed Target Cracker, Lethal Torrent, Pistol Elementalist, Secondary Enervate |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 58.9202 | Frostbite, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Galvanized Shot, Lethal Torrent, Pistol Elementalist, Critical Mutation, Secondary Enervate | 2026-09-30 13:22 UTC · a7974198e2 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 116.0020 | Frostbite, Pistol Pestilence, Primed Convulsion, Seeker, Galvanized Diffusion, Hornet Strike, Primed Target Cracker, Galvanized Shot, Secondary Enervate | 2026-09-27 13:43 UTC · e57e9893f3 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 10.1587 | Frostbite, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Hornet Strike, Primed Target Cracker, Lethal Torrent, Pistol Elementalist, Secondary Enervate | 2026-09-29 10:44 UTC · 9b0496567c |
 
 ## Not modelled here
 

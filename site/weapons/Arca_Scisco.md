@@ -8,11 +8,13 @@ Pistol · Secondary · Mastery Rank 10. 60 base damage (puncture 36, slash 24), 
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.2467 | Primed Convulsion, Jolt, Galvanized Diffusion, Primed Target Cracker, Galvanized Crosshairs, Galvanized Shot, Pistol Elementalist, Magnetic Might, Secondary Deadhead |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.2467 | Primed Convulsion, Jolt, Galvanized Diffusion, Primed Target Cracker, Galvanized Crosshairs, Galvanized Shot, Pistol Elementalist, Magnetic Might, Secondary Deadhead |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.004296 | Primed Convulsion, Jolt, Galvanized Diffusion, Primed Target Cracker, Galvanized Crosshairs, Galvanized Shot, Pistol Elementalist, Magnetic Might, Secondary Deadhead |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.2467 | Primed Convulsion, Jolt, Galvanized Diffusion, Primed Target Cracker, Galvanized Crosshairs, Galvanized Shot, Pistol Elementalist, Magnetic Might, Secondary Deadhead | 2026-10-04 14:43 UTC · b2e56376e6 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.2467 | Primed Convulsion, Jolt, Galvanized Diffusion, Primed Target Cracker, Galvanized Crosshairs, Galvanized Shot, Pistol Elementalist, Magnetic Might, Secondary Deadhead | 2026-10-05 19:01 UTC · 40071ee3b3 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.004296 | Primed Convulsion, Jolt, Galvanized Diffusion, Primed Target Cracker, Galvanized Crosshairs, Galvanized Shot, Pistol Elementalist, Magnetic Might, Secondary Deadhead | 2026-10-04 14:30 UTC · b2e56376e6 |
 
 ## Not modelled here
 

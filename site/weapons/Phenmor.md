@@ -8,11 +8,13 @@ Rifle · Primary · Mastery Rank 14. 140 base damage (puncture 42, slash 98), 20
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 37.6344 | Primed Cryo Rounds, Malignant Force, Hellfire, Galvanized Chamber, Galvanized Aptitude, Speed Trigger, Vile Acceleration, Magnetic Capacity, Primary Deadhead |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 182.2817 | Primed Cryo Rounds, Infected Clip, Hellfire, Galvanized Chamber, Primed Shred, Galvanized Aptitude, Vile Acceleration, Magnetic Capacity, Primary Deadhead |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 3.3347 | Infected Clip, Stormbringer, High Voltage, Galvanized Chamber, Serration, Galvanized Aptitude, Rifle Elementalist, Vile Acceleration, Primary Debilitate |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 37.6344 | Primed Cryo Rounds, Malignant Force, Hellfire, Galvanized Chamber, Galvanized Aptitude, Speed Trigger, Vile Acceleration, Magnetic Capacity, Primary Deadhead | 2026-10-04 20:05 UTC · b327923410 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 182.2817 | Primed Cryo Rounds, Infected Clip, Hellfire, Galvanized Chamber, Primed Shred, Galvanized Aptitude, Vile Acceleration, Magnetic Capacity, Primary Deadhead | 2026-10-05 23:48 UTC · 40071ee3b3 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 3.3347 | Infected Clip, Stormbringer, High Voltage, Galvanized Chamber, Serration, Galvanized Aptitude, Rifle Elementalist, Vile Acceleration, Primary Debilitate | 2026-10-04 20:04 UTC · b327923410 |
 
 ## In WFSim
 

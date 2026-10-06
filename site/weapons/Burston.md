@@ -8,11 +8,13 @@ Rifle · Primary · Mastery Rank 0. 30 base damage (impact 10, puncture 10, slas
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 46.7058 | Primed Cryo Rounds, Malignant Force, Primary Acuity, Serration, Galvanized Scope, Bladed Rounds, Vile Acceleration, Vital Sense, Primary Deadhead |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 46.7058 | Primed Cryo Rounds, Malignant Force, Primary Acuity, Serration, Galvanized Scope, Bladed Rounds, Vile Acceleration, Vital Sense, Primary Deadhead |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 6.5636 | Primed Cryo Rounds, Malignant Force, Primary Acuity, Serration, Galvanized Scope, Bladed Rounds, Vile Acceleration, Vital Sense, Primary Deadhead |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 46.7058 | Primed Cryo Rounds, Malignant Force, Primary Acuity, Serration, Galvanized Scope, Bladed Rounds, Vile Acceleration, Vital Sense, Primary Deadhead | 2026-09-19 19:48 UTC · ee334217a3 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 46.7058 | Primed Cryo Rounds, Malignant Force, Primary Acuity, Serration, Galvanized Scope, Bladed Rounds, Vile Acceleration, Vital Sense, Primary Deadhead | 2026-10-06 03:55 UTC · 38faffec31 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 6.5636 | Primed Cryo Rounds, Malignant Force, Primary Acuity, Serration, Galvanized Scope, Bladed Rounds, Vile Acceleration, Vital Sense, Primary Deadhead | 2026-09-17 17:06 UTC · 53bd9fe654 |
 
 ## In WFSim
 

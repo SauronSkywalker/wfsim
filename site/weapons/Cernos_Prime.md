@@ -8,11 +8,13 @@ Bow · Primary · Mastery Rank 12. 184 base damage x3 multishot (impact 165.6, p
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.1704 | Malignant Force, Rime Rounds, Split Flights, Serration, Galvanized Scope, Hunter Munitions, Rifle Elementalist, Vital Sense, Vigilante Supplies, Longbow Sharpshot |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 19.4726 | Malignant Force, Rime Rounds, Split Flights, Serration, Galvanized Scope, Hunter Munitions, Rifle Elementalist, Vital Sense, Vigilante Supplies, Longbow Sharpshot |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.6322 | Malignant Force, Rime Rounds, Split Flights, Serration, Galvanized Scope, Hunter Munitions, Rifle Elementalist, Vital Sense, Vigilante Supplies, Longbow Sharpshot |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.1704 | Malignant Force, Rime Rounds, Split Flights, Serration, Galvanized Scope, Hunter Munitions, Rifle Elementalist, Vital Sense, Vigilante Supplies, Longbow Sharpshot | 2026-10-05 17:32 UTC · 052c2ed8c6 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 19.4726 | Malignant Force, Rime Rounds, Split Flights, Serration, Galvanized Scope, Hunter Munitions, Rifle Elementalist, Vital Sense, Vigilante Supplies, Longbow Sharpshot | 2026-10-05 14:59 UTC · 4d57cccc45 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.6322 | Malignant Force, Rime Rounds, Split Flights, Serration, Galvanized Scope, Hunter Munitions, Rifle Elementalist, Vital Sense, Vigilante Supplies, Longbow Sharpshot | 2026-10-05 17:04 UTC · 052c2ed8c6 |
 
 ## In WFSim
 

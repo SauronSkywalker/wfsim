@@ -8,11 +8,13 @@ Rifle · Primary · Mastery Rank 11. 23 base damage (impact 17.25, puncture 3.45
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 7.4342 | Hellfire, Heavy Caliber, Primary Acuity, Galvanized Aptitude, Rifle Elementalist, Vile Acceleration, Vital Sense, Magnetic Capacity, Vigilante Supplies, Primary Crux |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 33.6784 | Rime Rounds, Galvanized Chamber, Heavy Caliber, Primed Firestorm, Critical Delay, Rifle Elementalist, Vile Acceleration, Vital Sense, Vigilante Supplies, Primary Crux |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.9257 | Hellfire, Thermite Rounds, Heavy Caliber, Primary Acuity, Rifle Elementalist, Vile Acceleration, Vital Sense, Magnetic Capacity, Vigilante Supplies, Primary Crux |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 7.4342 | Hellfire, Heavy Caliber, Primary Acuity, Galvanized Aptitude, Rifle Elementalist, Vile Acceleration, Vital Sense, Magnetic Capacity, Vigilante Supplies, Primary Crux | 2026-09-28 07:20 UTC · ac82189886 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 33.6784 | Rime Rounds, Galvanized Chamber, Heavy Caliber, Primed Firestorm, Critical Delay, Rifle Elementalist, Vile Acceleration, Vital Sense, Vigilante Supplies, Primary Crux | 2026-09-28 07:24 UTC · ac82189886 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.9257 | Hellfire, Thermite Rounds, Heavy Caliber, Primary Acuity, Rifle Elementalist, Vile Acceleration, Vital Sense, Magnetic Capacity, Vigilante Supplies, Primary Crux | 2026-09-28 07:12 UTC · ac82189886 |
 
 ## Not modelled here
 

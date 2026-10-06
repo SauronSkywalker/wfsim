@@ -8,11 +8,13 @@ Sniper · Primary · Mastery Rank 7. 273 base damage (impact 245.7, puncture 27.
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.6238 | Primed Cryo Rounds, Primary Acuity, Primed Bane of Grineer, Galvanized Aptitude, Critical Delay, Meticulous Aim, Vital Sense, Lasting Purity, Primary Deadhead |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 2.6647 | Primed Cryo Rounds, Primary Acuity, Primed Bane of Grineer, Galvanized Aptitude, Critical Delay, Meticulous Aim, Vital Sense, Lasting Purity, Primary Deadhead |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.05359 | Primed Cryo Rounds, Primary Acuity, Primed Bane of Grineer, Galvanized Aptitude, Critical Delay, Meticulous Aim, Vital Sense, Lasting Purity, Primary Deadhead |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 0.6238 | Primed Cryo Rounds, Primary Acuity, Primed Bane of Grineer, Galvanized Aptitude, Critical Delay, Meticulous Aim, Vital Sense, Lasting Purity, Primary Deadhead | 2026-09-30 11:56 UTC · c6fd954f86 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 2.6647 | Primed Cryo Rounds, Primary Acuity, Primed Bane of Grineer, Galvanized Aptitude, Critical Delay, Meticulous Aim, Vital Sense, Lasting Purity, Primary Deadhead | 2026-10-05 19:11 UTC · 40071ee3b3 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.05359 | Primed Cryo Rounds, Primary Acuity, Primed Bane of Grineer, Galvanized Aptitude, Critical Delay, Meticulous Aim, Vital Sense, Lasting Purity, Primary Deadhead | 2026-09-30 11:38 UTC · c6fd954f86 |
 
 ## Not modelled here
 

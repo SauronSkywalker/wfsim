@@ -8,11 +8,13 @@ Rifle · Primary · Mastery Rank 10. 22 base damage (electricity 22), 32% crit c
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.6854 | High Voltage, Malignant Force, Hellfire, Galvanized Chamber, Heavy Caliber, Critical Delay, Vile Acceleration, Vital Sense, Primary Crux |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 2.8833 | High Voltage, Malignant Force, Hellfire, Galvanized Chamber, Heavy Caliber, Critical Delay, Vile Acceleration, Vital Sense, Primary Crux |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.3809 | High Voltage, Malignant Force, Hellfire, Galvanized Chamber, Heavy Caliber, Critical Delay, Vile Acceleration, Vital Sense, Primary Crux |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.6854 | High Voltage, Malignant Force, Hellfire, Galvanized Chamber, Heavy Caliber, Critical Delay, Vile Acceleration, Vital Sense, Primary Crux | 2026-10-03 19:12 UTC · ea8f24ebe2 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 2.8833 | High Voltage, Malignant Force, Hellfire, Galvanized Chamber, Heavy Caliber, Critical Delay, Vile Acceleration, Vital Sense, Primary Crux | 2026-10-05 13:50 UTC · cce3134488 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.3809 | High Voltage, Malignant Force, Hellfire, Galvanized Chamber, Heavy Caliber, Critical Delay, Vile Acceleration, Vital Sense, Primary Crux | 2026-10-03 18:49 UTC · ea8f24ebe2 |
 
 ## Not modelled here
 

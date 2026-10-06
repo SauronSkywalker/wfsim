@@ -8,11 +8,13 @@ Pistol · Secondary · Mastery Rank 4. 200 base damage (blast 200), 16% crit cha
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 22.2867 | Frostbite, Pistol Pestilence, Pistol Acuity, Primed Target Cracker, Galvanized Shot, Anemic Agility, Accelerated Isotope, Magnetic Might, Primed Steady Hands, Cascadia Flare |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 22.2867 | Frostbite, Pistol Pestilence, Pistol Acuity, Primed Target Cracker, Galvanized Shot, Anemic Agility, Accelerated Isotope, Magnetic Might, Primed Steady Hands, Cascadia Flare |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 2.4172 | Frostbite, Pistol Pestilence, Primed Heated Charge, Pistol Acuity, Primed Target Cracker, Galvanized Shot, Anemic Agility, Magnetic Might, Primed Steady Hands, Cascadia Flare |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 22.2867 | Frostbite, Pistol Pestilence, Pistol Acuity, Primed Target Cracker, Galvanized Shot, Anemic Agility, Accelerated Isotope, Magnetic Might, Primed Steady Hands, Cascadia Flare | 2026-09-29 17:09 UTC · 33e2ff32ed |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 22.2867 | Frostbite, Pistol Pestilence, Pistol Acuity, Primed Target Cracker, Galvanized Shot, Anemic Agility, Accelerated Isotope, Magnetic Might, Primed Steady Hands, Cascadia Flare | 2026-10-05 19:09 UTC · 40071ee3b3 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 2.4172 | Frostbite, Pistol Pestilence, Primed Heated Charge, Pistol Acuity, Primed Target Cracker, Galvanized Shot, Anemic Agility, Magnetic Might, Primed Steady Hands, Cascadia Flare | 2026-09-29 17:43 UTC · 84e57716af |
 
 ## Not modelled here
 

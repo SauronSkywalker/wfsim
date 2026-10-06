@@ -8,11 +8,13 @@ Pistol · Secondary · Mastery Rank 14. 152 base damage x4 multishot (impact 7.6
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate cycle | 63.4737 | Primed Convulsion, Pistol Pestilence, Galvanized Diffusion, Primed Target Cracker, Galvanized Crosshairs, Galvanized Shot, Lethal Torrent, Magnetic Might, Lethal Momentum, Secondary Deadhead |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate cycle | 301.5450 | Primed Convulsion, Pistol Pestilence, Galvanized Diffusion, Primed Target Cracker, Galvanized Crosshairs, Galvanized Shot, Lethal Torrent, Magnetic Might, Lethal Momentum, Secondary Deadhead |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | alternate cycle | 11.5146 | Pathogen Rounds, Frostbite, Primed Heated Charge, Galvanized Diffusion, Galvanized Crosshairs, Galvanized Shot, Lethal Torrent, Magnetic Might, Cascadia Flare |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate cycle | 63.4737 | Primed Convulsion, Pistol Pestilence, Galvanized Diffusion, Primed Target Cracker, Galvanized Crosshairs, Galvanized Shot, Lethal Torrent, Magnetic Might, Lethal Momentum, Secondary Deadhead | 2026-09-29 17:07 UTC · 33e2ff32ed |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate cycle | 301.5450 | Primed Convulsion, Pistol Pestilence, Galvanized Diffusion, Primed Target Cracker, Galvanized Crosshairs, Galvanized Shot, Lethal Torrent, Magnetic Might, Lethal Momentum, Secondary Deadhead | 2026-10-05 15:54 UTC · 4d57cccc45 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | alternate cycle | 11.5146 | Pathogen Rounds, Frostbite, Primed Heated Charge, Galvanized Diffusion, Galvanized Crosshairs, Galvanized Shot, Lethal Torrent, Magnetic Might, Cascadia Flare | 2026-09-29 16:45 UTC · 33e2ff32ed |
 
 ## Not modelled here
 

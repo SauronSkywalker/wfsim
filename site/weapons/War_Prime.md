@@ -8,11 +8,13 @@ Heavy Blade · Melee · Mastery Rank 15. 270 base damage (impact 194.4, puncture
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy | 2.2733 | Volcanic Edge, Lasting Sting, Sacrificial Steel, Condition Overload, Primed Fury, Amalgam Organ Shatter, Corrupt Charge, Magnetic Rush, Dreamer's Wrath, Melee Exposure |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy | 5.9651 | Volcanic Edge, Sacrificial Steel, Condition Overload, Primed Fury, Galvanized Reflex, Amalgam Organ Shatter, Corrupt Charge, Magnetic Rush, Dreamer's Wrath, Melee Exposure |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | heavy | 0.2756 | Volcanic Edge, Lasting Sting, Sacrificial Steel, Condition Overload, Primed Fury, Amalgam Organ Shatter, Corrupt Charge, Magnetic Rush, Dreamer's Wrath, Melee Exposure |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy | 2.2733 | Volcanic Edge, Lasting Sting, Sacrificial Steel, Condition Overload, Primed Fury, Amalgam Organ Shatter, Corrupt Charge, Magnetic Rush, Dreamer's Wrath, Melee Exposure | 2026-10-05 16:16 UTC · 4d57cccc45 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy | 5.9651 | Volcanic Edge, Sacrificial Steel, Condition Overload, Primed Fury, Galvanized Reflex, Amalgam Organ Shatter, Corrupt Charge, Magnetic Rush, Dreamer's Wrath, Melee Exposure | 2026-10-04 14:39 UTC · b2e56376e6 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | heavy | 0.2756 | Volcanic Edge, Lasting Sting, Sacrificial Steel, Condition Overload, Primed Fury, Amalgam Organ Shatter, Corrupt Charge, Magnetic Rush, Dreamer's Wrath, Melee Exposure | 2026-10-05 15:48 UTC · 4d57cccc45 |
 
 ## Not modelled here
 

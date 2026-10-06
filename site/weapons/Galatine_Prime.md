@@ -8,11 +8,13 @@ Heavy Blade · Melee · Mastery Rank 13. 280 base damage (impact 7, puncture 7, 
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | block forward | 0.2630 | Blood Rush, Primed Pressure Point, Galvanized Reflex, Galvanized Steel, Amalgam Organ Shatter, Melee Elementalist, Seismic Wave, Corrupt Charge, Cleaving Whirlwind, Melee Exposure |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | block forward | 0.2628 | Blood Rush, Primed Pressure Point, Galvanized Elementalist, Galvanized Reflex, Galvanized Steel, Amalgam Organ Shatter, Seismic Wave, Corrupt Charge, Cleaving Whirlwind, Melee Exposure |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | block forward | 0.02188 | Blood Rush, Primed Pressure Point, Galvanized Reflex, Galvanized Steel, Amalgam Organ Shatter, Melee Elementalist, Seismic Wave, Corrupt Charge, Cleaving Whirlwind, Melee Exposure |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | block forward | 0.2630 | Blood Rush, Primed Pressure Point, Galvanized Reflex, Galvanized Steel, Amalgam Organ Shatter, Melee Elementalist, Seismic Wave, Corrupt Charge, Cleaving Whirlwind, Melee Exposure | 2026-10-05 15:22 UTC · 4d57cccc45 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | block forward | 0.2628 | Blood Rush, Primed Pressure Point, Galvanized Elementalist, Galvanized Reflex, Galvanized Steel, Amalgam Organ Shatter, Seismic Wave, Corrupt Charge, Cleaving Whirlwind, Melee Exposure | 2026-10-05 14:02 UTC · 4d57cccc45 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | block forward | 0.02188 | Blood Rush, Primed Pressure Point, Galvanized Reflex, Galvanized Steel, Amalgam Organ Shatter, Melee Elementalist, Seismic Wave, Corrupt Charge, Cleaving Whirlwind, Melee Exposure | 2026-10-05 14:57 UTC · 4d57cccc45 |
 
 ## Not modelled here
 

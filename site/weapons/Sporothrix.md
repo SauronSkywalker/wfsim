@@ -8,11 +8,13 @@ Sniper · Primary · Mastery Rank 13. 371 base damage (impact 100.17, puncture 1
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 20.8187 | Thermite Rounds, Galvanized Chamber, Heavy Caliber, Galvanized Aptitude, Vile Acceleration, Vital Sense, Magnetic Capacity, Radiated Reload, Primary Crux |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 20.8187 | Thermite Rounds, Galvanized Chamber, Heavy Caliber, Galvanized Aptitude, Vile Acceleration, Vital Sense, Magnetic Capacity, Radiated Reload, Primary Crux |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.2877 | Thermite Rounds, Galvanized Chamber, Heavy Caliber, Galvanized Aptitude, Vile Acceleration, Vital Sense, Magnetic Capacity, Radiated Reload, Primary Crux |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 20.8187 | Thermite Rounds, Galvanized Chamber, Heavy Caliber, Galvanized Aptitude, Vile Acceleration, Vital Sense, Magnetic Capacity, Radiated Reload, Primary Crux | 2026-09-16 23:49 UTC · 79415eb9ba |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 20.8187 | Thermite Rounds, Galvanized Chamber, Heavy Caliber, Galvanized Aptitude, Vile Acceleration, Vital Sense, Magnetic Capacity, Radiated Reload, Primary Crux | 2026-09-27 15:48 UTC · 560f91f3d9 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.2877 | Thermite Rounds, Galvanized Chamber, Heavy Caliber, Galvanized Aptitude, Vile Acceleration, Vital Sense, Magnetic Capacity, Radiated Reload, Primary Crux | 2026-09-16 23:59 UTC · 79415eb9ba |
 
 ## Not modelled here
 

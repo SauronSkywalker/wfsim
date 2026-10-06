@@ -8,11 +8,13 @@ Pistol · Secondary · Mastery Rank 15. 43 base damage (impact 32.25, puncture 5
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 14.1379 | Frostbite, Pistol Pestilence, Scorch, Galvanized Diffusion, Hornet Strike, Lethal Torrent, Pistol Elementalist, Magnetic Might, Secondary Fortifier |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 14.1379 | Frostbite, Pistol Pestilence, Scorch, Galvanized Diffusion, Hornet Strike, Lethal Torrent, Pistol Elementalist, Magnetic Might, Secondary Fortifier |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | alternate | 0.7221 | Frostbite, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Hornet Strike, Lethal Torrent, Pistol Elementalist, Magnetic Might, Secondary Fortifier |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 14.1379 | Frostbite, Pistol Pestilence, Scorch, Galvanized Diffusion, Hornet Strike, Lethal Torrent, Pistol Elementalist, Magnetic Might, Secondary Fortifier | 2026-10-01 18:15 UTC · 4066e4f54c |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 14.1379 | Frostbite, Pistol Pestilence, Scorch, Galvanized Diffusion, Hornet Strike, Lethal Torrent, Pistol Elementalist, Magnetic Might, Secondary Fortifier | 2026-10-01 18:05 UTC · 4066e4f54c |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | alternate | 0.7221 | Frostbite, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Hornet Strike, Lethal Torrent, Pistol Elementalist, Magnetic Might, Secondary Fortifier | 2026-10-01 16:43 UTC · f3c861741a |
 
 ## Not modelled here
 

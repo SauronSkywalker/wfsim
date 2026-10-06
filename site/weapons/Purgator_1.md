@@ -8,11 +8,13 @@ Launcher · Primary · Mastery Rank 14. 781 base damage (impact 351.45, puncture
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 7.4020 | Primed Cryo Rounds, Malignant Force, Thermite Rounds, Primary Acuity, Internal Bleeding, Serration, Semi-Rifle Cannonade, Vital Sense, Vigilante Supplies, Primary Deadhead |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 26.5917 | Primed Cryo Rounds, Malignant Force, Thermite Rounds, Primary Acuity, Internal Bleeding, Serration, Semi-Rifle Cannonade, Vital Sense, Vigilante Supplies, Primary Deadhead |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.7981 | Primed Cryo Rounds, Malignant Force, Thermite Rounds, Primary Acuity, Internal Bleeding, Serration, Semi-Rifle Cannonade, Vital Sense, Vigilante Supplies, Primary Deadhead |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 7.4020 | Primed Cryo Rounds, Malignant Force, Thermite Rounds, Primary Acuity, Internal Bleeding, Serration, Semi-Rifle Cannonade, Vital Sense, Vigilante Supplies, Primary Deadhead | 2026-09-24 17:04 UTC · 3f43d5e11c |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 26.5917 | Primed Cryo Rounds, Malignant Force, Thermite Rounds, Primary Acuity, Internal Bleeding, Serration, Semi-Rifle Cannonade, Vital Sense, Vigilante Supplies, Primary Deadhead | 2026-10-05 13:48 UTC · cce3134488 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.7981 | Primed Cryo Rounds, Malignant Force, Thermite Rounds, Primary Acuity, Internal Bleeding, Serration, Semi-Rifle Cannonade, Vital Sense, Vigilante Supplies, Primary Deadhead | 2026-09-24 16:39 UTC · 3f43d5e11c |
 
 ## Not modelled here
 

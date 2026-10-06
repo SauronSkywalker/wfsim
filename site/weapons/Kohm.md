@@ -8,11 +8,13 @@ Shotgun · Primary · Mastery Rank 5. 30 base damage x12 multishot (impact 6, pu
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 7.8124 | Primed Chilling Grasp, Contagious Spread, Incendiary Coat, Galvanized Hell, Primed Point Blank, Primed Ravage, Galvanized Savvy, Shotgun Barrage, Shotgun Vendetta |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 31.9757 | Primed Chilling Grasp, Contagious Spread, Incendiary Coat, Galvanized Hell, Primed Point Blank, Primed Ravage, Galvanized Savvy, Shotgun Barrage, Shotgun Vendetta |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.5159 | Frigid Blast, Toxic Barrage, Incendiary Coat, Galvanized Hell, Primed Point Blank, Primed Ravage, Galvanized Savvy, Shotgun Barrage, Primary Deadhead |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 7.8124 | Primed Chilling Grasp, Contagious Spread, Incendiary Coat, Galvanized Hell, Primed Point Blank, Primed Ravage, Galvanized Savvy, Shotgun Barrage, Shotgun Vendetta | 2026-09-20 01:24 UTC · f5f68ebf6a |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 31.9757 | Primed Chilling Grasp, Contagious Spread, Incendiary Coat, Galvanized Hell, Primed Point Blank, Primed Ravage, Galvanized Savvy, Shotgun Barrage, Shotgun Vendetta | 2026-09-27 16:02 UTC · 560f91f3d9 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.5159 | Frigid Blast, Toxic Barrage, Incendiary Coat, Galvanized Hell, Primed Point Blank, Primed Ravage, Galvanized Savvy, Shotgun Barrage, Primary Deadhead | 2026-09-20 01:25 UTC · f5f68ebf6a |
 
 ## Not modelled here
 

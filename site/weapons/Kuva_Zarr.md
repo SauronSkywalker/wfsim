@@ -8,11 +8,13 @@ Launcher · Primary · Mastery Rank 15. 50 base damage (impact 50), 25% crit cha
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 11.3616 | Hellfire, Primary Acuity, Galvanized Aptitude, Bladed Rounds, Semi-Rifle Cannonade, Vital Sense, Magnetic Capacity, Radiated Reload, Vigilante Supplies, Primary Crux |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 53.4179 | Hellfire, Primary Acuity, Galvanized Aptitude, Bladed Rounds, Semi-Rifle Cannonade, Vital Sense, Magnetic Capacity, Radiated Reload, Vigilante Supplies, Primary Crux |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | alternate | 0.9918 | Hellfire, Wildfire, Primary Acuity, Galvanized Aptitude, Bladed Rounds, Semi-Rifle Cannonade, Vital Sense, Radiated Reload, Vigilante Supplies, Primary Crux |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 11.3616 | Hellfire, Primary Acuity, Galvanized Aptitude, Bladed Rounds, Semi-Rifle Cannonade, Vital Sense, Magnetic Capacity, Radiated Reload, Vigilante Supplies, Primary Crux | 2026-09-29 13:18 UTC · 601279c5f9 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 53.4179 | Hellfire, Primary Acuity, Galvanized Aptitude, Bladed Rounds, Semi-Rifle Cannonade, Vital Sense, Magnetic Capacity, Radiated Reload, Vigilante Supplies, Primary Crux | 2026-09-29 13:05 UTC · 601279c5f9 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | alternate | 0.9918 | Hellfire, Wildfire, Primary Acuity, Galvanized Aptitude, Bladed Rounds, Semi-Rifle Cannonade, Vital Sense, Radiated Reload, Vigilante Supplies, Primary Crux | 2026-09-29 12:55 UTC · 601279c5f9 |
 
 ## Not modelled here
 

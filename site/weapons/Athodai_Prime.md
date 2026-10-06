@@ -8,11 +8,13 @@ Pistol · Secondary · Mastery Rank 14. 80 base damage (heat 56, puncture 24), 4
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.8890 | Frostbite, Pistol Pestilence, Pistol Acuity, Hornet Strike, Primed Target Cracker, Galvanized Shot, Anemic Agility, Magnetic Might, Secondary Deadhead |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 21.2606 | Ice Storm, Pistol Pestilence, Galvanized Diffusion, Primed Target Cracker, Galvanized Shot, Lethal Torrent, Creeping Bullseye, Magnetic Might, Pistol Ammo Mutation, Secondary Merciless |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.5032 | Frostbite, Pistol Pestilence, Primed Heated Charge, Pistol Acuity, Hornet Strike, Primed Target Cracker, Anemic Agility, Magnetic Might, Secondary Deadhead |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.8890 | Frostbite, Pistol Pestilence, Pistol Acuity, Hornet Strike, Primed Target Cracker, Galvanized Shot, Anemic Agility, Magnetic Might, Secondary Deadhead | 2026-10-04 18:23 UTC · b327923410 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | alternate | 21.2606 | Ice Storm, Pistol Pestilence, Galvanized Diffusion, Primed Target Cracker, Galvanized Shot, Lethal Torrent, Creeping Bullseye, Magnetic Might, Pistol Ammo Mutation, Secondary Merciless | 2026-10-06 03:12 UTC · 38faffec31 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.5032 | Frostbite, Pistol Pestilence, Primed Heated Charge, Pistol Acuity, Hornet Strike, Primed Target Cracker, Anemic Agility, Magnetic Might, Secondary Deadhead | 2026-10-04 17:59 UTC · b327923410 |
 
 ## Not modelled here
 

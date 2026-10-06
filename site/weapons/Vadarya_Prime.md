@@ -8,11 +8,13 @@ Sniper · Primary · Mastery Rank 15. 400 base damage (electricity 400), 40% cri
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 9.3797 | Primed Cryo Rounds, Malignant Force, Heavy Caliber, Primary Acuity, Serration, Hunter Munitions, Vile Acceleration, Vital Sense, Primary Deadhead |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 61.5161 | Primed Cryo Rounds, Malignant Force, Galvanized Chamber, Primed Shred, Serration, Galvanized Scope, Vile Acceleration, Vital Sense, Vigilante Supplies, Primary Deadhead |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.5657 | Primed Cryo Rounds, Malignant Force, Heavy Caliber, Primary Acuity, Serration, Hunter Munitions, Vile Acceleration, Vital Sense, Primary Deadhead |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 9.3797 | Primed Cryo Rounds, Malignant Force, Heavy Caliber, Primary Acuity, Serration, Hunter Munitions, Vile Acceleration, Vital Sense, Primary Deadhead | 2026-10-03 18:58 UTC · ea8f24ebe2 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 61.5161 | Primed Cryo Rounds, Malignant Force, Galvanized Chamber, Primed Shred, Serration, Galvanized Scope, Vile Acceleration, Vital Sense, Vigilante Supplies, Primary Deadhead | 2026-10-06 01:19 UTC · 4f892ee6e4 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.5657 | Primed Cryo Rounds, Malignant Force, Heavy Caliber, Primary Acuity, Serration, Hunter Munitions, Vile Acceleration, Vital Sense, Primary Deadhead | 2026-10-03 18:51 UTC · ea8f24ebe2 |
 
 ## Not modelled here
 

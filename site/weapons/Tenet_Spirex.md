@@ -8,11 +8,13 @@ Pistol · Secondary · Mastery Rank 14. 120 base damage (heat 60, impact 40, pun
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.1930 | Primed Convulsion, Pistol Pestilence, Galvanized Diffusion, Hornet Strike, Primed Target Cracker, Lethal Torrent, Creeping Bullseye, Semi-Pistol Cannonade, Secondary Merciless |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.1930 | Primed Convulsion, Pistol Pestilence, Galvanized Diffusion, Hornet Strike, Primed Target Cracker, Lethal Torrent, Creeping Bullseye, Semi-Pistol Cannonade, Secondary Merciless |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.2077 | Primed Convulsion, Pistol Pestilence, Galvanized Diffusion, Hornet Strike, Primed Target Cracker, Lethal Torrent, Creeping Bullseye, Semi-Pistol Cannonade, Secondary Merciless |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.1930 | Primed Convulsion, Pistol Pestilence, Galvanized Diffusion, Hornet Strike, Primed Target Cracker, Lethal Torrent, Creeping Bullseye, Semi-Pistol Cannonade, Secondary Merciless | 2026-09-30 18:04 UTC · 1d3b5bc87a |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.1930 | Primed Convulsion, Pistol Pestilence, Galvanized Diffusion, Hornet Strike, Primed Target Cracker, Lethal Torrent, Creeping Bullseye, Semi-Pistol Cannonade, Secondary Merciless | 2026-09-30 17:51 UTC · 1d3b5bc87a |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.2077 | Primed Convulsion, Pistol Pestilence, Galvanized Diffusion, Hornet Strike, Primed Target Cracker, Lethal Torrent, Creeping Bullseye, Semi-Pistol Cannonade, Secondary Merciless | 2026-09-30 17:41 UTC · 1d3b5bc87a |
 
 ## Not modelled here
 

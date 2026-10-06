@@ -8,11 +8,13 @@ Tonfa · Melee · Mastery Rank 14. 200 base damage (impact 20, puncture 20, slas
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 11.2962 | Primed Fever Strike, Vicious Frost, Condition Overload, Blood Rush, Primed Fury, Galvanized Steel, Weeping Wounds, Magnetic Rush, Sovereign Outcast, Discipline's Merit, Melee Exposure |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 672.8752 | Shocking Touch, Voltaic Strike, Blood Rush, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Gladiator Might, Weeping Wounds, Sovereign Outcast, Dreamer's Wrath, Melee Influence |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.6718 | Primed Fever Strike, Vicious Frost, Condition Overload, Blood Rush, Primed Fury, Organ Shatter, Weeping Wounds, Magnetic Rush, Sovereign Outcast, Dreamer's Wrath, Melee Exposure |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 11.2962 | Primed Fever Strike, Vicious Frost, Condition Overload, Blood Rush, Primed Fury, Galvanized Steel, Weeping Wounds, Magnetic Rush, Sovereign Outcast, Discipline's Merit, Melee Exposure | 2026-10-05 14:26 UTC · 4d57cccc45 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 672.8752 | Shocking Touch, Voltaic Strike, Blood Rush, Primed Pressure Point, Primed Reach, Galvanized Elementalist, Gladiator Might, Weeping Wounds, Sovereign Outcast, Dreamer's Wrath, Melee Influence | 2026-10-03 19:46 UTC · ea8f24ebe2 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.6718 | Primed Fever Strike, Vicious Frost, Condition Overload, Blood Rush, Primed Fury, Organ Shatter, Weeping Wounds, Magnetic Rush, Sovereign Outcast, Dreamer's Wrath, Melee Exposure | 2026-10-05 14:02 UTC · 4d57cccc45 |
 
 ## Not modelled here
 

@@ -8,11 +8,13 @@ Rifle · Primary · Mastery Rank 11. 187 base damage (impact 74.8, puncture 18.7
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 4.1316 | Malignant Force, Rime Rounds, Hellfire, Primary Acuity, Rifle Elementalist, Semi-Rifle Cannonade, Vital Sense, Deadly Sequence, Primary Crux |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 20.3454 | Malignant Force, Rime Rounds, Hellfire, Primary Acuity, Rifle Elementalist, Semi-Rifle Cannonade, Vital Sense, Deadly Sequence, Primary Crux |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.2868 | Malignant Force, Rime Rounds, Hellfire, Primary Acuity, Rifle Elementalist, Semi-Rifle Cannonade, Vital Sense, Deadly Sequence, Primary Crux |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 4.1316 | Malignant Force, Rime Rounds, Hellfire, Primary Acuity, Rifle Elementalist, Semi-Rifle Cannonade, Vital Sense, Deadly Sequence, Primary Crux | 2026-09-26 16:09 UTC · 37f43e2d09 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 20.3454 | Malignant Force, Rime Rounds, Hellfire, Primary Acuity, Rifle Elementalist, Semi-Rifle Cannonade, Vital Sense, Deadly Sequence, Primary Crux | 2026-09-27 15:40 UTC · 560f91f3d9 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.2868 | Malignant Force, Rime Rounds, Hellfire, Primary Acuity, Rifle Elementalist, Semi-Rifle Cannonade, Vital Sense, Deadly Sequence, Primary Crux | 2026-09-26 15:45 UTC · 37f43e2d09 |
 
 ## In WFSim
 

@@ -8,11 +8,13 @@ Hammer · Melee · Mastery Rank 1. 210 base damage (impact 168, puncture 31.5, s
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | forward | 2.6427 | Primed Fever Strike, Voltaic Strike, Blood Rush, Primed Pressure Point, Galvanized Steel, Dreamer's Wrath, Gladiator Might, Organ Shatter, Shattering Storm, Melee Exposure |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 11.5114 | Primed Fever Strike, Blood Rush, Primed Pressure Point, Galvanized Reflex, Galvanized Steel, Killing Blow, Seismic Wave, Corrupt Charge, Shattering Storm, Dreamer's Wrath, Melee Exposure |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | forward | 0.2406 | Primed Fever Strike, Voltaic Strike, Blood Rush, Primed Pressure Point, Galvanized Steel, Dreamer's Wrath, Gladiator Might, Organ Shatter, Shattering Storm, Melee Exposure |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | forward | 2.6427 | Primed Fever Strike, Voltaic Strike, Blood Rush, Primed Pressure Point, Galvanized Steel, Dreamer's Wrath, Gladiator Might, Organ Shatter, Shattering Storm, Melee Exposure | 2026-10-05 14:14 UTC · 4d57cccc45 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 11.5114 | Primed Fever Strike, Blood Rush, Primed Pressure Point, Galvanized Reflex, Galvanized Steel, Killing Blow, Seismic Wave, Corrupt Charge, Shattering Storm, Dreamer's Wrath, Melee Exposure | 2026-09-30 10:49 UTC · ee2205416b |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | forward | 0.2406 | Primed Fever Strike, Voltaic Strike, Blood Rush, Primed Pressure Point, Galvanized Steel, Dreamer's Wrath, Gladiator Might, Organ Shatter, Shattering Storm, Melee Exposure | 2026-10-05 14:00 UTC · 4d57cccc45 |
 
 ## Not modelled here
 

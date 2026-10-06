@@ -8,11 +8,13 @@ Hammer · Melee · Mastery Rank 8. 240 base damage (impact 192, puncture 36, sla
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy | 0.9016 | Volcanic Edge, Sacrificial Pressure, Sacrificial Steel, Galvanized Reflex, Amalgam Organ Shatter, Killing Blow, Seismic Wave, Corrupt Charge, Shattering Storm, Melee Exposure |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy slam | 12.0244 | Volcanic Edge, Sacrificial Pressure, Sacrificial Steel, Galvanized Reflex, Killing Blow, Organ Shatter, Seismic Wave, Corrupt Charge, Shattering Storm, Melee Exposure |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | heavy | 0.08047 | Volcanic Edge, Sacrificial Pressure, Sacrificial Steel, Galvanized Reflex, Amalgam Organ Shatter, Killing Blow, Seismic Wave, Corrupt Charge, Shattering Storm, Melee Exposure |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy | 0.9016 | Volcanic Edge, Sacrificial Pressure, Sacrificial Steel, Galvanized Reflex, Amalgam Organ Shatter, Killing Blow, Seismic Wave, Corrupt Charge, Shattering Storm, Melee Exposure | 2026-10-05 14:26 UTC · 4d57cccc45 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | heavy slam | 12.0244 | Volcanic Edge, Sacrificial Pressure, Sacrificial Steel, Galvanized Reflex, Killing Blow, Organ Shatter, Seismic Wave, Corrupt Charge, Shattering Storm, Melee Exposure | 2026-10-05 19:05 UTC · 40071ee3b3 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | heavy | 0.08047 | Volcanic Edge, Sacrificial Pressure, Sacrificial Steel, Galvanized Reflex, Amalgam Organ Shatter, Killing Blow, Seismic Wave, Corrupt Charge, Shattering Storm, Melee Exposure | 2026-10-05 14:23 UTC · 4d57cccc45 |
 
 ## Not modelled here
 

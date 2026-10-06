@@ -8,11 +8,13 @@ Bow · Primary · Mastery Rank 15. 279 base damage (impact 103.23, puncture 30.6
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.2348 | Primed Cryo Rounds, Amalgam Serration, Heavy Caliber, Primary Acuity, Primed Shred, Internal Bleeding, Galvanized Aptitude, Vital Sense, Primary Compression |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.2348 | Primed Cryo Rounds, Amalgam Serration, Heavy Caliber, Primary Acuity, Primed Shred, Internal Bleeding, Galvanized Aptitude, Vital Sense, Primary Compression |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.08653 | Primed Cryo Rounds, Amalgam Serration, Heavy Caliber, Primary Acuity, Primed Shred, Internal Bleeding, Galvanized Aptitude, Vital Sense, Primary Compression |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.2348 | Primed Cryo Rounds, Amalgam Serration, Heavy Caliber, Primary Acuity, Primed Shred, Internal Bleeding, Galvanized Aptitude, Vital Sense, Primary Compression | 2026-09-26 18:01 UTC · bb1dcb69b7 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 1.2348 | Primed Cryo Rounds, Amalgam Serration, Heavy Caliber, Primary Acuity, Primed Shred, Internal Bleeding, Galvanized Aptitude, Vital Sense, Primary Compression | 2026-09-27 15:47 UTC · 560f91f3d9 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.08653 | Primed Cryo Rounds, Amalgam Serration, Heavy Caliber, Primary Acuity, Primed Shred, Internal Bleeding, Galvanized Aptitude, Vital Sense, Primary Compression | 2026-09-26 15:45 UTC · 37f43e2d09 |
 
 ## Not modelled here
 

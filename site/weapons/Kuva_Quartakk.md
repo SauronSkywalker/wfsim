@@ -8,11 +8,13 @@ Rifle · Primary · Mastery Rank 13. 54 base damage (impact 19.98, puncture 15.6
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.5137 | High Voltage, Malignant Force, Primed Cryo Rounds, Galvanized Chamber, Serration, Galvanized Aptitude, Critical Delay, Hammer Shot, Primed Stabilizer, Primary Frostbite |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 22.0527 | Stormbringer, Primary Acuity, Primed Shred, Galvanized Aptitude, Galvanized Scope, Bladed Rounds, Rifle Elementalist, Vital Sense, Primary Crux |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.1266 | Stormbringer, Malignant Force, Primed Cryo Rounds, Galvanized Chamber, Serration, Galvanized Aptitude, Critical Delay, Hammer Shot, Primed Stabilizer, Primary Frostbite |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.5137 | High Voltage, Malignant Force, Primed Cryo Rounds, Galvanized Chamber, Serration, Galvanized Aptitude, Critical Delay, Hammer Shot, Primed Stabilizer, Primary Frostbite | 2026-09-25 18:13 UTC · fb4962d039 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 22.0527 | Stormbringer, Primary Acuity, Primed Shred, Galvanized Aptitude, Galvanized Scope, Bladed Rounds, Rifle Elementalist, Vital Sense, Primary Crux | 2026-09-27 15:39 UTC · 560f91f3d9 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.1266 | Stormbringer, Malignant Force, Primed Cryo Rounds, Galvanized Chamber, Serration, Galvanized Aptitude, Critical Delay, Hammer Shot, Primed Stabilizer, Primary Frostbite | 2026-09-25 18:51 UTC · b98b3d4563 |
 
 ## Not modelled here
 

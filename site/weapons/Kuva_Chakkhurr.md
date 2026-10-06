@@ -8,11 +8,13 @@ Rifle · Primary · Mastery Rank 15. 260 base damage (impact 260), 50% crit chan
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
-| Ruler | Fight | Mode | Score | Build |
-| --- | --- | --- | ---: | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 10.8574 | Hellfire, Thermite Rounds, Heavy Caliber, Primary Acuity, Critical Delay, Hammer Shot, Semi-Rifle Cannonade, Vital Sense, Vigilante Supplies, Primary Compression |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 10.8574 | Hellfire, Thermite Rounds, Heavy Caliber, Primary Acuity, Critical Delay, Hammer Shot, Semi-Rifle Cannonade, Vital Sense, Vigilante Supplies, Primary Compression |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.6689 | Hellfire, Thermite Rounds, Heavy Caliber, Primary Acuity, Critical Delay, Hammer Shot, Semi-Rifle Cannonade, Vital Sense, Vigilante Supplies, Primary Compression |
+Each row is measured on its own, and says when and by which WFSim commit; the game and WFSim both change, so an older row may be behind.
+
+| Ruler | Fight | Mode | Score | Build | Measured |
+| --- | --- | --- | ---: | --- | --- |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 10.8574 | Hellfire, Thermite Rounds, Heavy Caliber, Primary Acuity, Critical Delay, Hammer Shot, Semi-Rifle Cannonade, Vital Sense, Vigilante Supplies, Primary Compression | 2026-09-29 12:13 UTC · 4507901cf6 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 10.8574 | Hellfire, Thermite Rounds, Heavy Caliber, Primary Acuity, Critical Delay, Hammer Shot, Semi-Rifle Cannonade, Vital Sense, Vigilante Supplies, Primary Compression | 2026-10-06 03:48 UTC · 38faffec31 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.6689 | Hellfire, Thermite Rounds, Heavy Caliber, Primary Acuity, Critical Delay, Hammer Shot, Semi-Rifle Cannonade, Vital Sense, Vigilante Supplies, Primary Compression | 2026-09-29 11:50 UTC · 4507901cf6 |
 
 ## Not modelled here
 
