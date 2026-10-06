@@ -28,18 +28,20 @@ export function makeAnswer({ run, meta, zh, headless }) {
     return (n && n.names[1]) || headless.rivenStatNameEn(s);
   };
 
-  /// `zk 托里德 5` → { cmd: "zk", rest: "托里德", n: 5 }.
+  /// `zk 托里德 5` → { cmd: "zk", rest: "托里德 5" }.
   function parse(text) {
     let s = String(text || "").replace(/<@!?[^>]*>/g, " ").trim();
     const m = s.match(/^(zk|pz|帮助|help|\?|？)\s*/i);
     const cmd = m ? m[1].toLowerCase() : "";
     if (m) s = s.slice(m[0].length);
-    // A COUNT AT THE END, spaced or not ("爆破使3"); never the tail of a longer number.
-    let num = s.match(/(\d{1,2})\s*$/);
-    if (num && num.index > 0 && /\d/.test(s[num.index - 1])) num = null;
-    const n = num ? Math.max(1, Math.min(MAX_SHOWN, Number(num[1]))) : null;
-    if (num) s = s.slice(0, num.index);
-    return { cmd: cmd === "zk" || cmd === "pz" ? cmd : cmd ? "help" : "", rest: s.trim(), n };
+    return { cmd: cmd === "zk" || cmd === "pz" ? cmd : cmd ? "help" : "", rest: s.trim() };
+  }
+  /// THE COUNT, read AFTER the weapon: "夜语者77" is a weapon and "77" in it is not
+  /// a count. Whatever number ends what is left, spaced or not, held to 1–10.
+  function countOf(left) {
+    const num = left.match(/(\d+)$/);
+    if (!num) return { n: null, left };
+    return { n: Math.max(1, Math.min(MAX_SHOWN, Number(num[1]))), left: left.slice(0, num.index) };
   }
   /// The weapon the words start with, and what is left after it.
   function weaponOf(rest) {
@@ -58,14 +60,15 @@ export function makeAnswer({ run, meta, zh, headless }) {
   const NOT_FOUND = "No weapon by that name. Check it again — Chinese or English both work. (＞﹏＜)";
   const NOT_MEASURED = "Nobody has measured this one yet. Measure a build on wfsim.app… then I will remember it. (´；ω；`)";
 
-  async function pz(rest, n) {
+  async function pz(rest) {
     if (!rest) return t(NO_WEAPON, { e: "pz 托里德 3" });
     const hit = weaponOf(rest);
     if (!hit) return t(NOT_FOUND);
+    const { n, left: afterCount } = countOf(hit.left);
     // "紫卡" anywhere after the weapon asks for riven builds; what is left names the ruler.
     const rivenWords = ((zh.riven_query_words || {}).with_riven || []).map(squash).sort((a, b) => b.length - a.length);
-    const said = rivenWords.find((x) => x && hit.left.includes(x));
-    const left = said ? hit.left.replace(said, "") : hit.left;
+    const said = rivenWords.find((x) => x && afterCount.includes(x));
+    const left = said ? afterCount.replace(said, "") : afterCount;
     const benches = meta.benchmarks || [];
     const ruler = benches.find((b) => left && (squash(rulerShort(b)) === left || squash(b.name.split(" · ")[0]) === left))
       || benches.find((b) => b.primary) || benches[0];
@@ -84,12 +87,13 @@ export function makeAnswer({ run, meta, zh, headless }) {
       { w: weaponName(hit.w), ruler: rulerShort(ruler), n: shown }), card, text };
   }
 
-  async function zk(rest, n) {
+  async function zk(rest) {
     if (!rest) return t(NO_WEAPON, { e: "zk 托里德 双暴" });
     const hit = weaponOf(rest);
     if (!hit) return t(NOT_FOUND);
+    const { n, left: afterCount } = countOf(hit.left);
     const cls = hit.w.riven_class;
-    const ask = headless.rivenQuery((meta.riven_stats || {})[cls] || [], [zh], hit.left);
+    const ask = headless.rivenQuery((meta.riven_stats || {})[cls] || [], [zh], afterCount);
     if (ask.unread.length) return t("I could not read “{word}”… Write a stat as the card does, or as short as 双暴, 暴伤 or 负任意. (・_・;)", { word: ask.unread[0] });
     const r = await run("builder.rivens.read", { weapon: hit.w.id, bonuses: ask.bonuses, malus: ask.malus, pooled: true });
     if (r.ok === false || !r.groups.length) return t(NOT_MEASURED);
@@ -112,7 +116,7 @@ export function makeAnswer({ run, meta, zh, headless }) {
   /// `line` under it, and `text` the answer in words if the image cannot be made.
   return async function answer(text) {
     const p = parse(text);
-    const r = p.cmd === "zk" ? await zk(p.rest, p.n) : p.cmd === "pz" ? await pz(p.rest, p.n) : help();
+    const r = p.cmd === "zk" ? await zk(p.rest) : p.cmd === "pz" ? await pz(p.rest) : help();
     return typeof r === "string" ? { text: r } : r;
   };
 }
