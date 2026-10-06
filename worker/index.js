@@ -647,6 +647,24 @@ function markdownTwin(path) {
   return m ? `/weapons/${m[1]}.md` : null;
 }
 
+/// The page a twin is the twin of, or null — the inverse of `markdownTwin`.
+function twinOf(path) {
+  if (path === "/index.md") return "/";
+  if (path === "/weapons.md") return "/weapons";
+  const m = path.match(/^\/weapons\/([^/.]+)\.md$/);
+  return m ? `/weapons/${m[1]}` : null;
+}
+
+/// A twin fetched by its own address names its page as canonical: without it
+/// a search engine finds two copies of every weapon and picks neither.
+async function twinFile(request, env, page) {
+  const md = await env.ASSETS.fetch(request);
+  if (!md.ok || (md.headers.get("content-type") || "").includes("text/html")) return md;
+  const headers = new Headers(md.headers);
+  headers.set("link", `<https://wfsim.app${page}>; rel="canonical"`);
+  return new Response(md.body, { status: md.status, headers });
+}
+
 /// Whether the client ranks markdown at least as high as html (RFC 9110 q).
 function prefersMarkdown(request) {
   const q = {};
@@ -702,6 +720,8 @@ export default {
     const path = new URL(request.url).pathname;
     const twin = markdownTwin(path);
     if (twin) return agentPage(request, env, twin);
+    const page = twinOf(path);
+    if (page) return twinFile(request, env, page);
     // THE AGENT DOCUMENTS AND ENDPOINTS, drawn by the worker from one set of
     // constants (worker/agents.js) rather than served as files.
     const agent = await agentRoute(request, env, path);

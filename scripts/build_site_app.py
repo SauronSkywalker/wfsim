@@ -35,6 +35,8 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+from urllib.parse import quote
+from xml.etree import ElementTree as xml_tree
 
 import yaml
 
@@ -187,9 +189,16 @@ def url_slug(spec: dict) -> str:
     return g if _slug_owner().get(g) == spec["id"] else spec["id"]
 
 
+def url_path(path: str) -> str:
+    """A path as a URL states it. `Ack_&_Brunt` is a legal file name and not a
+    legal sitemap `<loc>`, and the host 307s the raw `&` to `%26`, so a page
+    whose canonical kept it named a redirect."""
+    return quote(path, safe="/")
+
+
 def wiki_path(spec: dict) -> str:
-    """The URL a weapon lives at."""
-    return "/weapons/" + url_slug(spec)
+    """The URL a weapon lives at, percent-encoded — `url_slug` is its file."""
+    return url_path("/weapons/" + url_slug(spec))
 
 
 # The app's dark palette (style.css `prefers-color-scheme: dark`), so a card
@@ -1347,9 +1356,9 @@ def prerender(flagged: str) -> None:
             f"{name}{f' ({cn})' if cn else ''} — {facts}. {stats}."
             + (answer or " Build it, simulate the fight, and optimize the mods.")
         )
-        card = f"/og/{url_slug(spec)}.png"
-        drew = og_card(APP / card.lstrip("/"), name, cn, facts, stats)
-        og_img = SITE + card if drew else f"{SITE}/logo.svg"
+        card = f"og/{url_slug(spec)}.png"
+        drew = og_card(APP / card, name, cn, facts, stats)
+        og_img = SITE + url_path("/" + card) if drew else f"{SITE}/logo.svg"
         url = SITE + wiki_path(spec)
 
         names_of = gear_names()
@@ -1365,11 +1374,11 @@ def prerender(flagged: str) -> None:
                                measured_record(row)))
         caveats = caveats_of(spec, REASONS)
         seo = brief_block(board_rows, caveats)
-        out = APP / wiki_path(spec).lstrip("/") / "index.html"
+        out = APP / "weapons" / url_slug(spec) / "index.html"
         out.parent.mkdir(parents=True, exist_ok=True)
         page = shell(flagged, title, desc, url, og_img, seo, "w-name", name, cn)
         past_the_scanner(lambda: put(out, page))
-        put(APP / (wiki_path(spec).lstrip("/") + ".md"),
+        put(APP / "weapons" / (url_slug(spec) + ".md"),
             weapon_md(spec, name, cn, facts, stats, board_rows, caveats))
 
     # /weapons — THE ADDRESS OF THE ROSTER, and the only page that links to it.
@@ -1471,10 +1480,11 @@ def prerender(flagged: str) -> None:
     for f in sorted((ROOT / "data" / "warframes").glob("*.yaml"), key=last):
         spec = yload(f.read_text(encoding="utf-8"))
         name = spec["name"]
-        path = "/warframes/" + wiki_slug(name)
+        file = "warframes/" + wiki_slug(name)
+        path = url_path("/" + file)
         desc = (f"{name} — Warframe build: mods, aura, exilus, arcanes, archon shards "
                 "and a Helminth infusion, with the stats and abilities they resolve to.")
-        out = APP / path.lstrip("/") / "index.html"
+        out = APP / file / "index.html"
         out.parent.mkdir(parents=True, exist_ok=True)
         put(out, shell(flagged, f"{name} — Warframe build | WFSim", desc, SITE + path,
                        f"{SITE}/logo.svg", f"    <p>{html_mod.escape(desc)}</p>\n",
@@ -1487,10 +1497,11 @@ def prerender(flagged: str) -> None:
     for f in sorted((ROOT / "data" / "companions").glob("*.yaml"), key=last):
         spec = yload(f.read_text(encoding="utf-8"))
         name = spec["name"]
-        path = "/companions/" + wiki_slug(name)
+        file = "companions/" + wiki_slug(name)
+        path = url_path("/" + file)
         desc = (f"{name} — the companion that carries a robotic weapon: its stat floor and the "
                 "Warframe that owns it, whose aura and archon shards the weapon takes.")
-        out = APP / path.lstrip("/") / "index.html"
+        out = APP / file / "index.html"
         out.parent.mkdir(parents=True, exist_ok=True)
         put(out, shell(flagged, f"{name} — companion | WFSim", desc, SITE + path,
                        f"{SITE}/logo.svg", f"    <p>{html_mod.escape(desc)}</p>\n",
@@ -1501,13 +1512,14 @@ def prerender(flagged: str) -> None:
             + [f"{SITE}/{path}" for path, *_ in shell_pages]
             + [SITE + wiki_path(s) for s in roster()]
             + frame_urls + companion_urls)
-    put(
-        APP / "sitemap.xml",
-        '<?xml version="1.0" encoding="UTF-8"?>\n'
-        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-        + "".join(f"  <url><loc>{u}</loc></url>\n" for u in urls)
-        + "</urlset>\n",
-    )
+    sitemap = ('<?xml version="1.0" encoding="UTF-8"?>\n'
+               '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+               + "".join(f"  <url><loc>{html_mod.escape(u)}</loc></url>\n" for u in urls)
+               + "</urlset>\n")
+    # A SITEMAP THAT DOES NOT PARSE IS REJECTED WHOLE, and only Search Console
+    # says so: one raw `&` in one weapon's name dropped every row of it.
+    xml_tree.fromstring(sitemap.encode("utf-8"))
+    put(APP / "sitemap.xml", sitemap)
     # Without this file the SPA fallback answered /robots.txt with HTML and a
     # 200, which is a soft 404 for every crawler that asks.
     put(APP / "robots.txt", robots_txt())

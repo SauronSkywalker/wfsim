@@ -42,8 +42,10 @@
     // home page's HTML; the worker serves the weapon's own page for it.
     // …AND A SHORT LINK'S CARD, drawn by the worker rather than stored.
     // …AND EVERY PAGE WITH A MARKDOWN TWIN, which the worker serves to
-    // `Accept: text/markdown`, and `.well-known/`, which is a document or a 404.
+    // `Accept: text/markdown`, AND THE TWIN ITSELF, which names its page as
+    // canonical — and `.well-known/`, which is a document or a 404.
     "run_worker_first": ["/api/*", "/asset/*", "/pkg/*", "/", "/weapons", "/weapons/*",
+                         "/index.md", "/weapons.md",
                          "/.well-known/*", "/og/s/*", "/auth.md", "/privacy", "/terms", "/refunds"]
   },
   // THE CARD'S FONTS ride in the bundle as bytes: a worker has no system fonts.
