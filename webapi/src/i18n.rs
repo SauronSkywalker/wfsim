@@ -43,6 +43,8 @@ pub fn i18n_json() -> Value {
                 // Evolutions carry no ranks, so one string each — and no
                 // export to generate them from (data/i18n/zh/evolutions.yaml).
                 "evolution_descriptions": l.evolution_descriptions,
+                "riven_words": l.riven_words,
+                "riven_query_words": l.riven_query_words,
             }),
         );
     }

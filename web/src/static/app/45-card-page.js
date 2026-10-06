@@ -1,7 +1,7 @@
 // ---- The long image: a weapon's answer laid out to be sent as one picture ----
 //
-// docs/AGENT.md §"The QQ bot". `/weapons/<Name>/card?kind=pz|zk&ruler=&mode=&n=`
-// draws the bots' reply image from the page's own components — the simulator's
+// docs/AGENT.md §"The QQ bot". `/weapons/<Name>/card?kind=pz|zk&ruler=&mode=&n=`,
+// a zk narrowed by `&has=<stat ids>&malus=<id|any|none>`, draws the bots' reply image from the page's own components — the simulator's
 // build card and the board's published numbers — so a chat image and the site
 // are one design. Phone width, the light theme, nothing else on the page;
 // `body[data-card-ready]` is set once every number in it has arrived, which is
@@ -13,7 +13,8 @@ const CARD_MAX = 10;
 function cardParams() {
   const p = new URLSearchParams(location.search);
   const n = Math.max(1, Math.min(CARD_MAX, Math.round(Number(p.get("n"))) || 3));
-  return { kind: p.get("kind") === "zk" ? "zk" : "pz", ruler: p.get("ruler") || "", mode: p.get("mode") || "", n };
+  return { kind: p.get("kind") === "zk" ? "zk" : "pz", ruler: p.get("ruler") || "", mode: p.get("mode") || "", n,
+    riven: { bonuses: (p.get("has") || "").split(",").filter(Boolean), malus: p.get("malus") || null } };
 }
 
 const cardShown = (r) => String(r.shown != null ? r.shown : (r.score || 0).toFixed(4));
@@ -25,7 +26,7 @@ async function renderCardPage(w, ask) {
   const box = $("card-page");
   if (!box || !w) return;
   document.body.removeAttribute("data-card-ready");
-  const { kind, ruler: want, mode: wantMode, n } = ask;
+  const { kind, ruler: want, mode: wantMode, n, riven: rivenAsk } = ask;
   const rows = BOARD[w.id] || [];
   const benches = META.benchmarks || [];
   const bench = benches.find((b) => b.id === want) || benches.find((b) => b.primary) || benches[0];
@@ -49,7 +50,7 @@ async function renderCardPage(w, ask) {
     link = `${LIVE_ORIGIN}${weaponPath(w.id)}/riven-analyst`;
     body = () => !g ? "" : (g.top ? cardBox(`<span class="sb-h">${escHtml(tr("The board's best riven-free build"))}</span><b class="lc-score">${escHtml(cardShown(g.top.row))}</b>`,
       cardOfState(boardRowState(w, g.top.row), w)) : "")
-      + g.rivens.slice(0, n).map((x, i) => cardBox(`<b class="lc-rank">#${i + 1}</b><b class="lc-score">${escHtml(cardShown(x.row))}</b>${
+      + g.rivens.filter((x) => rivenMatches(x.row.riven, rivenAsk)).slice(0, n).map((x, i) => cardBox(`<b class="lc-rank">#${i + 1}</b><b class="lc-score">${escHtml(cardShown(x.row))}</b>${
         x.gain == null ? "" : `<b class="lc-gain">${pct(x.gain)}</b>`}`, cardOfState(boardRowState(w, x.row), w))).join("");
   }
   const qr = await api("/api/qr", { text: link });

@@ -127,6 +127,15 @@ pub struct LocaleSpec {
     /// a whole sentence or clean English, never a half-swapped one.
     #[serde(default)]
     pub evolution_descriptions: BTreeMap<String, String>,
+    /// WORDS A READER TYPES for riven stats, never shown: a word → the stat ids
+    /// it means, those in the weapon's pool taken ("双暴" is both crit stats).
+    /// A stat's own card name needs no entry; read by a riven query.
+    #[serde(default)]
+    pub riven_words: BTreeMap<String, Vec<String>>,
+    /// A riven query's grammar, keyed `malus` (the next stat is the malus),
+    /// `any_malus` and `no_malus` (a card with some malus / none).
+    #[serde(default)]
+    pub riven_query_words: BTreeMap<String, Vec<String>>,
 }
 
 impl LocaleSpec {
@@ -175,6 +184,8 @@ impl LocaleSpec {
         maps(&mut self.evolution_descriptions, other.evolution_descriptions, path, "evolution_descriptions");
         lists(&mut self.mod_descriptions, other.mod_descriptions, path, "mod_descriptions");
         lists(&mut self.arcane_descriptions, other.arcane_descriptions, path, "arcane_descriptions");
+        lists(&mut self.riven_words, other.riven_words, path, "riven_words");
+        lists(&mut self.riven_query_words, other.riven_query_words, path, "riven_query_words");
         // ORDERED and therefore appended, not merged by key. Files are
         // embedded in path order (engine/build.rs sorts), so the result is
         // deterministic — but a locale that splits its phrase table across
@@ -211,6 +222,31 @@ pub fn locales() -> &'static [(String, LocaleSpec)] {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// A RIVEN WORD NAMES REAL STATS: an id no pool holds would make a query
+    /// silently match nothing, and a grammar key the query does not read is a
+    /// word that does nothing.
+    #[test]
+    fn riven_words_name_stats_a_pool_holds() {
+        let ids: std::collections::BTreeSet<String> = crate::data::mods::classes()
+            .into_iter()
+            .flat_map(|c| crate::build::rivens::pool(c).iter().map(|s| s.id.clone()))
+            .collect();
+        for (code, spec) in locales() {
+            for (word, want) in &spec.riven_words {
+                assert!(!want.is_empty(), "{code}: riven word '{word}' names no stat");
+                for id in want {
+                    assert!(ids.contains(id), "{code}: riven word '{word}' names '{id}', which no riven pool holds");
+                }
+            }
+            for key in spec.riven_query_words.keys() {
+                assert!(
+                    ["malus", "any_malus", "no_malus"].contains(&key.as_str()),
+                    "{code}: riven_query_words has '{key}'; the query reads malus, any_malus and no_malus"
+                );
+            }
+        }
+    }
 
     /// EVERY ADMISSION IS TRANSLATED, in every locale — and a REASON is
     /// translated ONCE rather than once per set of numbers.

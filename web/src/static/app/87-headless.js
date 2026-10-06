@@ -437,6 +437,49 @@ function rivenFromOcr(pool, locales, lines) {
   };
 }
 
+// ---- asking for a riven in words ---------------------------------------------
+//
+// `双暴 负任意`: the stats a card must have and what its malus may be, read
+// greedily, longest word first, against the same names a screenshot is read
+// by plus each locale's `riven_words` (what players type) and
+// `riven_query_words` (the grammar). Only stats of the weapon's pool count.
+
+/// Folded like a card's line, with `-` kept for a malus.
+const rivenQueryFold = (x) => String(x || "").normalize("NFKC").toLowerCase()
+  .replace(/[−–]/g, "-").replace(/[^\p{L}-]/gu, "");
+
+/// `{ bonuses: [ids], malus: id | "any" | "none" | null, unread }`.
+function rivenQuery(pool, locales, text) {
+  const inPool = (ids) => ids.filter((id) => pool.some((s) => s.id === id));
+  const words = [];
+  for (const { stat, names } of rivenStatNames(pool, locales)) for (const n of names) words.push({ w: n, ids: [stat.id] });
+  for (const l of locales || []) {
+    for (const [w, ids] of Object.entries(l.riven_words || {})) words.push({ w: rivenQueryFold(w), ids: inPool(ids) });
+    for (const [role, ws] of Object.entries(l.riven_query_words || {})) for (const w of ws) words.push({ w: rivenQueryFold(w), role });
+  }
+  words.sort((a, b) => b.w.length - a.w.length);
+  const q = rivenQueryFold(text);
+  const out = { bonuses: [], malus: null, unread: [] };
+  let next = "bonus";
+  for (let i = 0; i < q.length;) {
+    const hit = words.find((x) => x.w && q.startsWith(x.w, i));
+    if (!hit) { out.unread.push(q[i]); i += 1; continue; }
+    i += hit.w.length;
+    if (hit.role === "malus") { next = "malus"; continue; }
+    if (hit.role) { out.malus = hit.role === "any_malus" ? "any" : "none"; continue; }
+    if (!hit.ids.length) { out.unread.push(hit.w); continue; }
+    if (next === "malus") out.malus = hit.ids[0];
+    else for (const id of hit.ids) if (!out.bonuses.includes(id)) out.bonuses.push(id);
+    next = "bonus";
+  }
+  out.unread = out.unread.join("") ? [out.unread.join("")] : [];
+  return out;
+}
+
+/// Whether a riven `{ bonuses, malus }` of ids answers a query's ask.
+const rivenMatches = (r, ask) => (ask.bonuses || []).every((id) => r.bonuses.includes(id))
+  && (!ask.malus || (ask.malus === "any" ? !!r.malus : ask.malus === "none" ? !r.malus : r.malus === ask.malus));
+
 /// THE ANALYSIS of `w`'s board rows: one group per ruler and mode that has a
 /// riven row, best riven row first. `gain` is null where no riven-free row
 /// stands to be compared against.
@@ -561,8 +604,10 @@ const HEADLESS_QUERIES = [
       weapon: HEADLESS_WEAPON_ARG,
       ruler: { kind: "string", what: "only this benchmark id" },
       mode: { kind: "string", what: "only this mode id" },
+      bonuses: { kind: "array", what: "riven stat ids every riven shown has among its bonuses" },
+      malus: { kind: "string", what: "a riven stat id the malus must be, \"any\" for some malus, \"none\" for none" },
     },
-    async run({ weapon, ruler, mode: m }, host) {
+    async run({ weapon, ruler, mode: m, bonuses = [], malus = null }, host) {
       const w = headlessWeapon(host, weapon);
       if (w.ok === false) return w;
       const rows = await host.board(w.id);
@@ -583,7 +628,7 @@ const HEADLESS_QUERIES = [
             ruler: host.tr((benches.find((b) => b.id === g.ruler_id) || { name: g.ruler_id }).name),
             ruler_id: g.ruler_id, mode: g.mode,
             riven_free: g.top ? { score: shown(g.top.row), mods: mods(g.top.row), link: link(g.top.row, false) } : null,
-            rivens: g.rivens.map((x) => ({
+            rivens: g.rivens.filter((x) => rivenMatches(x.row.riven, { bonuses, malus })).map((x) => ({
               bonuses: x.row.riven.bonuses.map(stat), malus: x.row.riven.malus ? stat(x.row.riven.malus) : null,
               stat_ids: { bonuses: x.row.riven.bonuses, malus: x.row.riven.malus || null },
               score: shown(x.row), gain: x.gain, mods: mods(x.row), link: link(x.row, true),

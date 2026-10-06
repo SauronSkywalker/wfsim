@@ -2,7 +2,8 @@
 // A CHAT MESSAGE IN, A REPLY OUT — docs/AGENT.md §"The QQ bot". Commands are
 // `zk` (rivens) and `pz` (builds), a trailing number is how many to show. Every
 // number comes from the headless table; this only reads the words and lays the
-// answer out, in the language overlay's words (`ui` keyed by English).
+// answer out, in the language overlay's words (`ui` keyed by English) and in
+// Nona's voice (docs/NONA.md §"Her voice"): the line calm, the kaomoji her.
 
 const MAX_SHOWN = 10;
 const SITE = "https://wfsim.app";
@@ -46,22 +47,24 @@ export function makeAnswer({ run, meta, zh, headless }) {
   }
 
   const help = () => [
-    t("WFSim Nona — commands"),
-    `zk ${t("weapon")} [N]  ${t("the rivens the board has measured for it, against its best riven-free build")}`,
-    `pz ${t("weapon")} [${t("ruler")}] [N]  ${t("its best measured builds")}`,
-    `${t("e.g.")} zk 托里德 5 · pz 托里德 爆破使 3`,
+    t("I am Nona, WFSim's assistant. Send zk or pz… not that I was waiting for you. (⁄ ⁄•⁄ω⁄•⁄ ⁄)"),
+    t("zk weapon [stats] [count]: the rivens the board has measured for this weapon, against its best build without one."),
+    t("pz weapon [ruler] [count]: the best builds the board has measured for this weapon."),
+    t("For example: {a}, or {b}", { a: "zk 托里德 双暴 负任意 5", b: "pz 托里德 爆破使 3" }),
   ].join("\n");
+  const NOT_FOUND = "No weapon by that name. Check it again — Chinese or English both work. (＞﹏＜)";
+  const NOT_MEASURED = "Nobody has measured this one yet. Measure a build on wfsim.app… then I will remember it. (´；ω；`)";
 
   async function pz(rest, n) {
     const hit = weaponOf(rest);
-    if (!hit) return t("No weapon by that name.");
+    if (!hit) return t(NOT_FOUND);
     const benches = meta.benchmarks || [];
     const ruler = benches.find((b) => hit.left && (squash(rulerShort(b)) === hit.left || squash(b.name.split(" · ")[0]) === hit.left))
       || benches.find((b) => b.primary) || benches[0];
     const r = await run("builder.board.read", { weapon: hit.w.id, riven: "without", limit: n || 1 });
-    if (r.ok === false) return t("Nothing measured for this weapon yet.");
+    if (r.ok === false) return t(NOT_MEASURED);
     const rows = r.rows.filter((x) => x.ruler_id === ruler.id);
-    if (!rows.length) return t("Nothing measured for this weapon under this ruler yet.");
+    if (!rows.length) return t(NOT_MEASURED);
     const mode = rows[0].mode;
     const shown = rows.filter((x) => x.mode === mode).length;
     const card = `${SITE}${headless.headlessWeaponPath(meta.weapons || [], hit.w.id)}/card?kind=pz&ruler=${encodeURIComponent(ruler.id)}&mode=${encodeURIComponent(mode)}&n=${shown}`;
@@ -70,24 +73,29 @@ export function makeAnswer({ run, meta, zh, headless }) {
         x.build && x.build.arcane.length ? ` | ${t("Arcane")}: ${x.build.arcane.map(arcaneName).join("、")}` : ""}${
         x.build && x.build.evolutions.length ? ` | ${t("Evolutions")}: ${x.build.evolutions.map(evoName).join("、")}` : ""}`))
       .join("\n");
-    return { line: `${weaponName(hit.w)} · ${rulerShort(ruler)}`, card, text };
+    return { line: t("The top {n} builds of {w} under {ruler}, all measured. (￣ー￣)ゞ", { w: weaponName(hit.w), ruler: rulerShort(ruler), n: shown }), card, text };
   }
 
   async function zk(rest, n) {
     const hit = weaponOf(rest);
-    if (!hit) return t("No weapon by that name.");
-    const r = await run("builder.rivens.read", { weapon: hit.w.id });
-    if (r.ok === false || !r.groups.length) return t("No riven of this weapon has been measured yet.");
-    const g = r.groups[0];
+    if (!hit) return t(NOT_FOUND);
     const cls = hit.w.riven_class;
+    const ask = headless.rivenQuery((meta.riven_stats || {})[cls] || [], [zh], hit.left);
+    if (ask.unread.length) return t("I could not read “{word}”… Write a stat as the card does, or as short as 双暴, 暴伤 or 负任意. (・_・;)", { word: ask.unread[0] });
+    const r = await run("builder.rivens.read", { weapon: hit.w.id, bonuses: ask.bonuses, malus: ask.malus });
+    if (r.ok === false || !r.groups.length) return t(NOT_MEASURED);
+    const g = r.groups.find((x) => x.rivens.length);
+    if (!g) return t("No riven on the board has these stats yet. (￣^￣)");
     const shown = Math.min(n || 3, g.rivens.length);
-    const card = `${SITE}${headless.headlessWeaponPath(meta.weapons || [], hit.w.id)}/card?kind=zk&ruler=${encodeURIComponent(g.ruler_id)}&mode=${encodeURIComponent(g.mode)}&n=${shown}`;
+    const card = `${SITE}${headless.headlessWeaponPath(meta.weapons || [], hit.w.id)}/card?kind=zk&ruler=${encodeURIComponent(g.ruler_id)}&mode=${encodeURIComponent(g.mode)}&n=${shown}`
+      + (ask.bonuses.length ? `&has=${ask.bonuses.map(encodeURIComponent).join(",")}` : "")
+      + (ask.malus ? `&malus=${encodeURIComponent(ask.malus)}` : "");
     const line = (x, i) => `${i + 1}. ${x.stat_ids.bonuses.map((id) => "+" + statZh(cls, id)).join(" ")}${
       x.stat_ids.malus ? " −" + statZh(cls, x.stat_ids.malus) : ""}  ${x.score}${x.gain == null ? "" : `（${x.gain >= 0 ? "+" : "−"}${Math.abs(x.gain * 100).toFixed(1)}%）`}`;
     const text = [`${weaponName(hit.w)} · ${t(g.ruler).split(" · ")[0]}`,
       `${t("The board's best riven-free build")}: ${g.riven_free ? g.riven_free.score : "—"}`]
       .concat(g.rivens.slice(0, shown).map(line)).join("\n");
-    return { line: `${weaponName(hit.w)} · ${t(g.ruler).split(" · ")[0]} · ${t("Riven Analyst")}`, card, text };
+    return { line: t("These are {w}'s rivens, against the best build without one. I ran every one. (*/ω＼*)", { w: weaponName(hit.w) }), card, text };
   }
 
   /// `{ text }`, or `{ line, card, text }` — the long image at `card` with

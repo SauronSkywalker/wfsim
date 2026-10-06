@@ -1,0 +1,47 @@
+# 简体中文 — the words players TYPE for riven stats (hand-written, input only).
+#
+# Nothing here is ever shown: a riven query (`zk 托里德 双暴 负任意`) reads
+# these beside each stat's own card name, which needs no entry. A word maps to
+# every stat id it can mean; a weapon's pool keeps the ones it holds, so 攻速
+# is Attack Speed on a melee and Fire Rate on a gun. Every id must be a riven
+# stat (engine::data::i18n tests).
+
+riven_words:
+  双暴: [critical_chance, critical_damage]
+  暴击: [critical_chance]
+  暴率: [critical_chance]
+  爆率: [critical_chance]
+  暴伤: [critical_damage]
+  爆伤: [critical_damage]
+  多重: [multishot]
+  基伤: [damage, melee_damage]
+  伤害: [damage, melee_damage]
+  触发: [status_chance]
+  触发率: [status_chance]
+  异常: [status_chance]
+  触发时间: [status_duration]
+  射速: [fire_rate, attack_speed]
+  攻速: [fire_rate, attack_speed]
+  毒: [toxin]
+  火: [heat]
+  冰: [cold]
+  电: [electricity]
+  切割: [slash]
+  穿刺: [puncture]
+  冲击: [impact]
+  穿透: [punch_through]
+  弹匣: [magazine_capacity]
+  弹夹: [magazine_capacity]
+  装填: [reload_speed]
+  后坐: [weapon_recoil]
+  范围: [range]
+  滑暴: [critical_chance_for_slide_attack]
+  对g: [damage_to_grineer]
+  对c: [damage_to_corpus]
+  对i: [damage_to_infested]
+  对o: [damage_to_orokin]
+
+riven_query_words:
+  malus: [负, "-"]
+  any_malus: [负任意, 任意负, 负随便, 随便负, 负随意, 任意负面]
+  no_malus: [无负, 不带负, 没负, 零负, 无负面]
