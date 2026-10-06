@@ -14,9 +14,11 @@ const env = Object.fromEntries(readFileSync(ENV_FILE, "utf8").split(/\r?\n/)
   .filter((l) => l.includes("=") && !l.startsWith("#")).map((l) => [l.slice(0, l.indexOf("=")).trim(), l.slice(l.indexOf("=") + 1).trim()]));
 const API = env.QQ_API || "https://api.sgroup.qq.com";
 const IDLE_MS = 1000;
-/// QQ's passive reply window is five minutes from the message; an answer is
-/// sent inside it with this much to spare, or held for the room's next message.
-const REPLY_WINDOW_MS = 270_000;
+/// QQ's passive reply window, from the message: five minutes in a group, an hour
+/// in a private chat (bot.q.qq.com, 消息收发概述), each kept with time to spare.
+/// Past it the answer goes as an active message, and only if that fails does it
+/// wait for the room's next message.
+const REPLY_WINDOW_MS = { group: 270_000, private: 3_480_000 };
 /// How long an appraisal's answer may take to draw: a replay is a whole fight.
 const REPLAY_MS = 300_000;
 
@@ -120,16 +122,18 @@ async function appraisalTick() {
   }
   for (const t of tell) {
     if ([...held.values()].flat().some((x) => x.code === t.code)) continue;
-    if (Date.now() - Number(t.chat.msg_at || 0) < REPLY_WINDOW_MS) {
-      try {
-        await tellAppraisal(t, chatPathOf(t.chat), { msg_id: t.chat.msg_id, msg_seq: 2 }, false);
-        told.push(t.code);
-        continue;
-      } catch (e) {
-        console.error(`tell ${t.code}: ${e && e.message || e}`);
-      }
+    const open = Date.now() - Number(t.chat.msg_at || 0) < REPLY_WINDOW_MS[t.chat.group_openid ? "group" : "private"];
+    try {
+      // INSIDE THE WINDOW, a reply to the asker's message; past it, an active
+      // message to the same chat — no message to reply to, and none needed.
+      await tellAppraisal(t, chatPathOf(t.chat), open ? { msg_id: t.chat.msg_id, msg_seq: 2 } : {}, false);
+      told.push(t.code);
+      continue;
+    } catch (e) {
+      console.error(`tell ${t.code}${open ? "" : " (active)"}: ${e && e.message || e}`);
     }
-    // TOO LATE FOR THE ASKER'S OWN MESSAGE: it rides on the room's next one.
+    // NEITHER WENT (the chat turned active messages off, say): it rides on the
+    // room's next message.
     const k = roomOf(t.chat);
     held.set(k, (held.get(k) || []).concat([t]));
   }

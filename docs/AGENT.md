@@ -359,7 +359,10 @@ question (docs/BOARD.md §"The Riven Analyst").
    never a score.
 3. The channel's bot claims what came back (`/api/appraise/claim`), replays the
    build itself with the card's real rolls, and the first build it accepts
-   wins once; later ones are kept on the board and not announced.
+   wins once; later ones are kept on the board and not announced. It is told
+   as a reply to the asker's message inside QQ's passive window (five minutes
+   in a group, an hour in a private chat), past it as an active message, and
+   only if that fails on the room's next message.
 
 The page and the door are channel-blind: a Discord bot claims `channel:
 "discord"` the way the QQ bot claims `"qq"`.
