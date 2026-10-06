@@ -437,6 +437,39 @@ function rivenFromOcr(pool, locales, lines) {
   };
 }
 
+// ---- every mode as one ranking --------------------------------------------------
+
+/// A RULER'S MODES RANKED TOGETHER, with and without a riven apart: a short list
+/// (the long image, the bots) answers "the best ways to play this weapon",
+/// whichever mode that is. Takes `rankBoard`'s entries, keeps their keys, and
+/// re-ranks each (ruler, riven) by score; the board itself ranks per mode.
+function pooledRanking(ranked) {
+  const by = new Map();
+  for (const x of ranked) {
+    const g = `${x.row.benchmark}#${x.riven}`;
+    if (!by.has(g)) by.set(g, []);
+    by.get(g).push(x);
+  }
+  return [...by.values()].flatMap((list) => list.slice()
+    .sort((a, b) => (b.row.score || 0) - (a.row.score || 0)).map((x, i) => ({ ...x, rank: i + 1 })));
+}
+
+/// …AND ITS RIVENS: one row per riven shape, at the mode it scores best in,
+/// against the best riven-free row of any mode — `{ ruler_id, top, rivens }`.
+function pooledRivens(meta, w, rows, ruler) {
+  const ranked = pooledRanking(rankBoard(rows.filter((r) => r.benchmark === ruler), [ruler], w.modes));
+  const top = ranked.find((x) => !x.riven) || null;
+  const seen = new Set();
+  const rivens = ranked.filter((x) => {
+    if (!x.riven) return false;
+    const k = JSON.stringify([x.row.riven.bonuses.slice().sort(), x.row.riven.malus || ""]);
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  }).map((x) => ({ ...x, gain: top ? x.row.score / top.row.score - 1 : null }));
+  return { ruler_id: ruler, top, rivens };
+}
+
 // ---- the top N, one per score ------------------------------------------------
 
 /// THE FIRST `n` SCORES of each ranking, one row each: rows that tie are one
@@ -563,8 +596,9 @@ const HEADLESS_QUERIES = [
       mode: { kind: "string", what: "only this mode id" },
       limit: { kind: "number", min: 1, max: 20, what: "rows per group, default 3" },
       distinct: { kind: "boolean", what: "one row per score: a tie shows its first build, and `limit` counts scores" },
+      pooled: { kind: "boolean", what: "rank a ruler's modes together: `rank` is the place across every mode" },
     },
-    async run({ weapon, riven = "without", mode: m, limit = 3, distinct = false }, host) {
+    async run({ weapon, riven = "without", mode: m, limit = 3, distinct = false, pooled = false }, host) {
       const w = headlessWeapon(host, weapon);
       if (w.ok === false) return w;
       const rows = await host.board(w.id);
@@ -573,10 +607,12 @@ const HEADLESS_QUERIES = [
       const name = headlessNameOf(host.meta());
       const evos = (w.evolutions || []).flatMap((t) => t.options || []);
       const evo = (id) => (evos.find((x) => x.id === id) || { name: id }).name;
-      const scoped = rankBoard(rows, benches.map((b) => b.id), w.modes)
+      const ranked = rankBoard(rows, benches.map((b) => b.id), w.modes);
+      const scoped = (pooled ? pooledRanking(ranked) : ranked)
         .filter((x) => (riven === "any" || x.riven === (riven === "with")) && (!m || x.mode === m));
       const picked = distinct
-        ? distinctTop(scoped, limit, (x) => `${x.row.benchmark}#${x.mode}#${x.riven}`, (x) => String(x.row.shown != null ? x.row.shown : x.row.score))
+        ? distinctTop(scoped, limit, (x) => `${x.row.benchmark}#${pooled ? "" : x.mode}#${x.riven}`,
+          (x) => String(x.row.shown != null ? x.row.shown : x.row.score))
         : scoped.filter((x) => x.rank <= limit);
       return {
         weapon: w.id,
@@ -642,8 +678,9 @@ const HEADLESS_QUERIES = [
       mode: { kind: "string", what: "only this mode id" },
       bonuses: { kind: "array", what: "riven stat ids every riven shown has among its bonuses" },
       malus: { kind: "string", what: "a riven stat id the malus must be, \"any\" for some malus, \"none\" for none" },
+      pooled: { kind: "boolean", what: "a ruler's modes as one ranking: each riven at its best mode, against the best riven-free build of any mode" },
     },
-    async run({ weapon, ruler, mode: m, bonuses = [], malus = null }, host) {
+    async run({ weapon, ruler, mode: m, bonuses = [], malus = null, pooled = false }, host) {
       const w = headlessWeapon(host, weapon);
       if (w.ok === false) return w;
       const rows = await host.board(w.id);
@@ -659,13 +696,15 @@ const HEADLESS_QUERIES = [
       const mods = (r) => (r.mods || []).filter((x) => x && x !== BOARD_RIVEN_SLOT).map(name);
       return {
         weapon: w.id,
-        groups: rivenGroups(meta, w, rows).filter((g) => (!ruler || g.ruler_id === ruler) && (!m || g.mode === m))
+        groups: (pooled
+          ? benches.map((b) => ({ ...pooledRivens(meta, w, rows, b.id), mode: null })).filter((g) => g.rivens.length)
+          : rivenGroups(meta, w, rows)).filter((g) => (!ruler || g.ruler_id === ruler) && (!m || !g.mode || g.mode === m))
           .map((g) => ({
             ruler: host.tr((benches.find((b) => b.id === g.ruler_id) || { name: g.ruler_id }).name),
             ruler_id: g.ruler_id, mode: g.mode,
             riven_free: g.top ? { score: shown(g.top.row), mods: mods(g.top.row), link: link(g.top.row, false) } : null,
             rivens: g.rivens.filter((x) => rivenMatches(x.row.riven, { bonuses, malus })).map((x, i) => ({
-              rank: i + 1,
+              rank: i + 1, mode: x.row.mode || "base",
               bonuses: x.row.riven.bonuses.map(stat), malus: x.row.riven.malus ? stat(x.row.riven.malus) : null,
               stat_ids: { bonuses: x.row.riven.bonuses, malus: x.row.riven.malus || null },
               score: shown(x.row), gain: x.gain, mods: mods(x.row), link: link(x.row, true),

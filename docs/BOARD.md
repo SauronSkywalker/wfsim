@@ -1058,9 +1058,12 @@ to the minute (UTC, ISO), omitted on a row with no clock. A weapon's "updated"
 time is its newest row under that ruler, shown in the reader's clock — on the
 board beside each leader, in the build finder and on the long image.
 
-**A TOP N COUNTS SCORES, NOT ROWS** wherever a short list is drawn (the long
-image, the bots): builds that tie are one answer, so the first of a tie is
-shown and the next row is the next score (`distinctTop`).
+**A SHORT LIST RANKS EVERY MODE TOGETHER AND COUNTS SCORES, NOT ROWS** (the
+long image, the bots): it answers "the best ways to play this weapon", so a
+ruler's modes are one ranking (`pooledRanking`; a riven at its best mode,
+against the best riven-free build of any mode), and builds that tie are one
+answer — the first of a tie is shown and the next row is the next score
+(`distinctTop`). The board and the build finder still rank per mode.
 
 A GROUP IS ONE WEAPON, IN ONE MODE, UNDER ONE RULER, and riven builds are a
 group of their own. A riven build and a plain one compete with each other for

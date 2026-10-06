@@ -61,15 +61,14 @@ export function makeAnswer({ run, meta, zh, headless }) {
     const benches = meta.benchmarks || [];
     const ruler = benches.find((b) => hit.left && (squash(rulerShort(b)) === hit.left || squash(b.name.split(" · ")[0]) === hit.left))
       || benches.find((b) => b.primary) || benches[0];
-    const r = await run("builder.board.read", { weapon: hit.w.id, riven: "without", limit: n || 1, distinct: true });
+    const r = await run("builder.board.read", { weapon: hit.w.id, riven: "without", limit: n || 1, distinct: true, pooled: true });
     if (r.ok === false) return t(NOT_MEASURED);
     const rows = r.rows.filter((x) => x.ruler_id === ruler.id);
     if (!rows.length) return t(NOT_MEASURED);
-    const mode = rows[0].mode;
-    const shown = rows.filter((x) => x.mode === mode).length;
-    const card = `${SITE}${headless.headlessWeaponPath(meta.weapons || [], hit.w.id)}/card?kind=pz&ruler=${encodeURIComponent(ruler.id)}&mode=${encodeURIComponent(mode)}&n=${shown}`;
+    const shown = rows.length;
+    const card = `${SITE}${headless.headlessWeaponPath(meta.weapons || [], hit.w.id)}/card?kind=pz&ruler=${encodeURIComponent(ruler.id)}&n=${shown}`;
     const text = [`${weaponName(hit.w)} · ${rulerShort(ruler)}`]
-      .concat(rows.filter((x) => x.mode === mode).map((x) => `#${x.rank} ${x.score}  ${(x.build ? x.build.mods : []).map(modName).join("、")}${
+      .concat(rows.map((x) => `#${x.rank} ${x.score}  ${(x.build ? x.build.mods : []).map(modName).join("、")}${
         x.build && x.build.arcane.length ? ` | ${t("Arcane")}: ${x.build.arcane.map(arcaneName).join("、")}` : ""}${
         x.build && x.build.evolutions.length ? ` | ${t("Evolutions")}: ${x.build.evolutions.map(evoName).join("、")}` : ""}`))
       .join("\n");
@@ -82,13 +81,13 @@ export function makeAnswer({ run, meta, zh, headless }) {
     const cls = hit.w.riven_class;
     const ask = headless.rivenQuery((meta.riven_stats || {})[cls] || [], [zh], hit.left);
     if (ask.unread.length) return t("I could not read “{word}”… Write a stat as the card does, or as short as 双暴, 暴伤 or 负任意. (・_・;)", { word: ask.unread[0] });
-    const r = await run("builder.rivens.read", { weapon: hit.w.id, bonuses: ask.bonuses, malus: ask.malus });
+    const r = await run("builder.rivens.read", { weapon: hit.w.id, bonuses: ask.bonuses, malus: ask.malus, pooled: true });
     if (r.ok === false || !r.groups.length) return t(NOT_MEASURED);
     const g = r.groups.find((x) => x.rivens.length);
     if (!g) return t("No riven on the board has these stats yet. (￣^￣)");
     const top = headless.distinctTop(g.rivens, n || 3, () => "", (x) => x.score);
     const shown = top.length;
-    const card = `${SITE}${headless.headlessWeaponPath(meta.weapons || [], hit.w.id)}/card?kind=zk&ruler=${encodeURIComponent(g.ruler_id)}&mode=${encodeURIComponent(g.mode)}&n=${shown}`
+    const card = `${SITE}${headless.headlessWeaponPath(meta.weapons || [], hit.w.id)}/card?kind=zk&ruler=${encodeURIComponent(g.ruler_id)}&n=${shown}`
       + (ask.bonuses.length ? `&has=${ask.bonuses.map(encodeURIComponent).join(",")}` : "")
       + (ask.malus ? `&malus=${encodeURIComponent(ask.malus)}` : "");
     const line = (x) => `#${x.rank} ${x.stat_ids.bonuses.map((id) => "+" + statZh(cls, id)).join(" ")}${
