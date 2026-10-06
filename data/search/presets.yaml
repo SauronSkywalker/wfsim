@@ -1,0 +1,27 @@
+# THE BUILT-IN SEARCH PRESETS — read-only, like the official rulers in the
+# scenario bar: nothing stores them and nothing edits them; ⧉ copies one into
+# a search of your own. The search knows nothing of them; this is all it is given.
+#
+# `element_starts`: one start per primary element, its 60/60 card (element plus
+# status chance) for every mod class — a start takes the card the weapon equips.
+# A preset with `riven` also puts the asker's riven, pinned, in every start; one
+# not `listed` is applied by its own page (`riven_appraisal`, docs/AGENT.md
+# §"Riven appraisal") and never shown in the search bar.
+element_starts:
+  - [thermite_rounds, scattering_inferno, scorch, volcanic_edge, magma_chamber]
+  - [rime_rounds, frigid_blast, frostbite, vicious_frost, hypothermic_shell]
+  - [high_voltage, shell_shock, jolt, voltaic_strike, charged_bullets]
+  - [malignant_force, toxic_barrage, pistol_pestilence, virulent_scourge, contamination_casing]
+presets:
+  - id: four_elements
+    name: Four elements (60/60)
+    listed: true
+    riven: false
+    finalists: 10
+    candidate_runs: 10
+  - id: riven_appraisal
+    name: Riven appraisal
+    listed: false
+    riven: true
+    finalists: 1
+    candidate_runs: 10

@@ -60,7 +60,8 @@ const r = await evaluate(`(async () => {
   updateOptEstimate(); await sleep(1200);
   const opened = ${counts};
 
-  // …CHANGING THE SEARCH IS: a second start added.
+  // …CHANGING THE SEARCH IS: the built-in copied, a second start added.
+  copyActivePreset(optBarCfg()); await sleep(300);
   opt.starts.push(blankStart());
   updateOptEstimate(); await sleep(1200);
   const scoped = Object.assign(${counts}, { active: nameOf('optimizer', activeOptPreset) });
@@ -117,7 +118,7 @@ check("browsing three more weapons creates nothing", r.browsed.builds === 0,
 check("opening the optimizer creates nothing", r.opened.searches === 0,
   `${r.opened.searches} searches from a render`);
 check("...but changing the scope creates exactly one", r.scoped.searches === 1
-  && r.scoped.active === "preset 1", `${r.scoped.searches} · active="${r.scoped.active}"`);
+  && /copy$/.test(r.scoped.active), `${r.scoped.searches} · active="${r.scoped.active}"`);
 
 check("the first build edit creates exactly one build", r.edited.builds === 1
   && r.edited.active === "preset 1", `${r.edited.builds} · active="${r.edited.active}"`);

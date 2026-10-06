@@ -49,12 +49,13 @@ check("the link lands on its weapon's optimizer", (await evaluate("location.path
   await evaluate("location.pathname"));
 check("…under the appraisal's ruler", await evaluate(`(scenarioNamed(activeScenario) || {}).builtin === "standard_single_target"`));
 const starts = JSON.parse(await evaluate(`JSON.stringify(opt.starts.map((s) => ({ slots: startPayload(s).slots.filter(Boolean), fixed: s.fixed })))`));
-const preset = JSON.parse(await evaluate("JSON.stringify(META.appraisal_search)"));
+const preset = { starts: JSON.parse(await evaluate("JSON.stringify(META.search_presets.element_starts)")) };
 check("…with the preset's four starts: the riven, pinned, beside each element's 60/60 card", starts.length === 4
   && starts.every((s, i) => s.slots.length === 2 && String(s.slots[0]).startsWith("riven:") && s.fixed.includes("mods:0")
     && preset.starts[i].includes(s.slots[1]))
   && JSON.stringify(starts.map((s) => s.slots[1])) === JSON.stringify(["thermite_rounds", "rime_rounds", "high_voltage", "malignant_force"]), JSON.stringify(starts));
 check("…answering with one build, ten fights a candidate", await evaluate("optRun.finalists === 1 && optRun.candidate_runs === 10"));
+check("…opened as a read-only built-in, its starts locked", await evaluate(`activeOptPreset === "search:riven_appraisal" && !$("opt-builtin").hidden`));
 const start = { slots: starts[0].slots };
 const card = JSON.parse(await evaluate(`JSON.stringify((loadPresetList(RIVENS).find((p) => "riven:" + p.id === ${JSON.stringify(start.slots[0])}) || {}).state || {})`));
 check("…and that riven is the asker's card, rolls and all", (card.bonuses || []).map((b) => `${b.id}@${b.roll}`).join(",") === "critical_damage@1.1,multishot@1.05"

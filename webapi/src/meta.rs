@@ -1192,8 +1192,9 @@ pub fn meta_json() -> Value {
         // The cards the quick calc tries at every rank unless the page's own
         // list says otherwise, and the spelling a lower rank travels in.
         "every_rank": wfsim_engine::data::mods::every_rank(),
-        // The riven appraisal's search, a preset the appraisal page applies.
-        "appraisal_search": wfsim_engine::data::mods::appraisal_search(),
+        // The built-in search presets: the search bar's read-only ones and the
+        // riven appraisal's.
+        "search_presets": wfsim_engine::data::mods::search_presets(),
         "rank_mark": wfsim_engine::data::mods::RANK_MARK.to_string(),
         "build_axes": wfsim_engine::board::builds::BUILD_AXES.iter().map(|a| json!({
             "id": a.id,

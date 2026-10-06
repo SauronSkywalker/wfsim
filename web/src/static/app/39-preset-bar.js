@@ -338,9 +338,12 @@ function renderPresetBarIn(bar, cfg) {
     // from — one answer, not two. A CUSTOM keeps `null`, which is how its
     // editor knows to stand down.
     cfg.store(ps2);
-    cfg.setActive(ps2.length ? presetId(ps2[0]) : "");
+    // …AND A COLLECTION THAT PUBLISHES ITS DEFAULT goes back to it (`fallback`:
+    // the first official ruler, the first built-in search), as unpinning does.
+    const next = ps2[0] || (cfg.fallback ? cfg.fallback() : null);
+    cfg.setActive(next ? presetId(next) : "");
     whileApplying(() => cfg.apply(
-      ps2.length ? ps2[0].state : (cfg.optional || !cfg.blank ? null : cfg.blank())));
+      next ? next.state : (cfg.optional || !cfg.blank ? null : cfg.blank())));
     // A DELETE IS NOT AN EDIT, and the state it leaves behind is the pristine
     // one — recorded here so the re-render this very handler causes cannot
     // create the row that was just removed.

@@ -59,17 +59,17 @@ fn with_ranks_adds_the_variant_beside_its_card() {
     assert_eq!(base.family, Some("hunter_track"));
 }
 
-/// THE APPRAISAL'S STARTS ARE ONE ELEMENT A ROW, 60/60: every card is real, carries
-/// one primary element and status chance, a row is one element, and the four rows
-/// are four elements — so each start is the riven beside a different element.
+/// THE BUILT-IN SEARCHES' ELEMENT STARTS ARE ONE ELEMENT A ROW, 60/60: every card
+/// is real, carries one primary element and status chance, a row is one element,
+/// and the four rows are four elements. Every preset has an id, a name and run
+/// terms the run bar can hold, and the search bar lists at least one.
 #[test]
-fn the_appraisal_starts_are_each_one_elements_dual_cards() {
+fn the_built_in_searches_start_from_each_elements_dual_cards() {
     use crate::model::ModEffect;
-    let p = appraisal_search();
-    assert_eq!(p.starts.len(), 4, "one start per primary element");
-    assert!(p.finalists >= 1 && [1, 10].contains(&p.candidate_runs), "{p:?}");
+    let p = search_presets();
+    assert_eq!(p.element_starts.len(), 4, "one start per primary element");
     let mut seen = Vec::new();
-    for row in &p.starts {
+    for row in &p.element_starts {
         let mut row_element = None;
         for id in row {
             let m = at_rank(&format!("{id}@0")).unwrap_or_else(|| panic!("{id} is not a card with ranks"));
@@ -82,5 +82,10 @@ fn the_appraisal_starts_are_each_one_elements_dual_cards() {
         }
         assert!(!seen.contains(&row_element), "two rows are one element");
         seen.push(row_element);
+    }
+    assert!(p.presets.iter().any(|x| x.listed), "the search bar lists one");
+    for x in &p.presets {
+        assert!(!x.id.is_empty() && !x.name.is_empty(), "{x:?}");
+        assert!((1..=100).contains(&x.finalists) && [1, 10].contains(&x.candidate_runs), "{x:?}");
     }
 }

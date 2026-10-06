@@ -29,7 +29,8 @@ const r = await app.evaluate(`(async () => {
   // A start from a different build: just Hellfire.
   history.pushState({}, '', '/weapons/Verglas_Prime/optimizer'); route(); await sleep(1500);
   renderOpt(); await sleep(300);
-  // A new search opens with a blank start; this walks one start of its own.
+  // The built-in search is read-only: this walks one start of a copy of its own.
+  copyActivePreset(optBarCfg()); await sleep(300);
   opt.starts = [];
   addStart(stateFromBuild({ mods: ['hellfire'] }, 'verglas_prime'));
   out.startsAfterAdd = opt.starts.length;

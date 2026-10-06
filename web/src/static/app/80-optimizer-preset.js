@@ -15,15 +15,70 @@ let activeOptPreset = null;
 const loadOptPresets = () => loadPresetList(OPT_DOMAIN);
 const storeOptPresets = (ps) => storePresetList(OPT_DOMAIN, ps);
 
+// ---- the built-in searches -------------------------------------------------
+//
+// `data/search/presets.yaml`, served as `META.search_presets`: read-only like the
+// official rulers in the scenario bar — never stored, never edited; ⧉ copies one
+// into a search of your own. Owning none, the search is the first one listed.
+
+/// A built-in search's starts on weapon `wId`: one per element row, holding the
+/// row's 60/60 card the weapon equips — and, for a riven preset, `rivenMod`
+/// beside it, pinned. A row the weapon takes none of adds nothing new.
+function builtinSearchStarts(wId, rivenMod) {
+  const fits = new Set(buildPool().map((m) => m.id));
+  const rows = ((META.search_presets || {}).element_starts || [])
+    .map((row) => [rivenMod, row.find((c) => fits.has(c))].filter(Boolean)).filter((mods) => mods.length);
+  const unique = [...new Set(rows.map((r) => JSON.stringify(r)))].map((r) => JSON.parse(r));
+  const starts = unique.map((mods) => ({ build: stateFromBuild({ mods }, wId), fixed: rivenMod ? ["mods:0"] : [] }));
+  return starts.length ? starts : [blankStart()];
+}
+/// A built-in search as a whole search state, on the open weapon.
+const builtinSearchState = (p, rivenMod) => ({ starts: builtinSearchStarts($("weapon").value, rivenMod),
+  limits: normalizeLimits(null), candidate_runs: p.candidate_runs, finalists: p.finalists });
+/// The search bar's built-in entries: the listed ones, and the riven appraisal's
+/// own while an appraisal is open on this page (81-appraisal.js).
+const builtinSearches = () => ((META.search_presets || {}).presets || [])
+  .filter((p) => p.listed || (p.riven && appraisalActive() && appraisal.rivenMod))
+  .map((p) => ({ name: tr(p.name), builtin: "search:" + p.id, savedAt: 0,
+    state: builtinSearchState(p, p.riven ? appraisal.rivenMod : null) }));
+const builtinSearchActive = () => String(activeOptPreset || "").startsWith("search:");
+
+/// A BUILT-IN SEARCH, ON SCREEN: the starts, the limits and the run terms go
+/// inert and a note says why and offers the copy. Only the visible half — a
+/// built-in is never stored, so the auto-save has nothing to write it into.
+function lockBuiltinSearch() {
+  const on = builtinSearchActive();
+  ["opt-starts", "opt-limits", "opt-finalists", "opt-cand-runs"].map((id) => $(id)).filter(Boolean).forEach((b) => {
+    b.classList.toggle("locked", on);
+    const els = b.matches("input,select,button,textarea") ? [b] : [...b.querySelectorAll("input,select,button,textarea")];
+    els.forEach((el) => {
+      if (on) {
+        if (!el.disabled) { el.disabled = true; el.dataset.builtinLock = "1"; }
+      } else if (el.dataset.builtinLock) {
+        el.disabled = false;
+        delete el.dataset.builtinLock;
+      }
+    });
+  });
+  const note = $("opt-builtin");
+  if (!note) return;
+  note.hidden = !on;
+  if (on) {
+    note.innerHTML = `<b>${escHtml(tr("Built-in search"))}</b> — ${escHtml(tr("the same on every weapon. It cannot be edited."))}`
+      + ` <button class="ghost-btn small" id="opt-builtin-copy">⧉ ${escHtml(tr("edit a copy of this search"))}</button>`;
+    $("opt-builtin-copy").onclick = () => copyActivePreset(optBarCfg());
+  }
+}
+
 // Called from renderOpt's seed block (page load AND weapon switch): the active
-// preset, when there is one, replaces the blank start.
+// preset — your own, else the first built-in — replaces the blank start.
 function bootstrapOptPresets() {
   // NOTHING IS AUTO-CREATED here either — see `initPresets`. A search that has
   // never been run is not a search you own, and the scope controls are already
   // a complete live state without one (`OPT_RUN_DEFAULTS` plus one blank start).
   const ps = loadOptPresets();
   const want = activeOptPreset || localStorage.getItem(presetActiveKey(OPT_DOMAIN));
-  const cur = presetFind(ps, want) || ps[0] || null;
+  const cur = presetFind(ps.concat(builtinSearches()), want) || ps[0] || builtinSearches()[0] || null;
   activeOptPreset = cur ? presetId(cur) : "";
   localStorage.setItem(presetActiveKey(OPT_DOMAIN), activeOptPreset);
   if (cur) applyOptState(cur.state);
@@ -85,7 +140,7 @@ function renderOptPresetBars() {
 /// The search bar's document model — what the bar and the agent door both
 /// pick, start and copy.
 function optBarCfg() {
-  return {
+  const cfg = {
     domain: OPT_DOMAIN,
     label: tr("Searches"),
     noun: "search",
@@ -98,8 +153,23 @@ function optBarCfg() {
     apply: (st) => applyOptPreset(st || {}),
     blank: blankOpt,
     isBlank: (st) => sameState(st, blankOpt()),
-    rerender: renderOptPresetBars,
+    // THE BUILT-IN SEARCHES, read-only, as the scenario bar's rulers are.
+    published: builtinSearches,
+    pins: { key: () => "wfsim-opened-searches", ref: (p) => ({ id: p.builtin }), same: (a, b) => a.id === b.id },
+    roGroup: tr("Built-in searches · read-only"),
+    openable: builtinSearches,
+    openLabel: tr("built-in search"),
+    openHint: tr("searches every reader has, the same on every weapon"),
+    readonly: (p) => !!p.builtin,
+    roTitle: () => tr("a built-in search — copy it to edit"),
+    unpin: (id) => unpinPublished(cfg, id),
+    // Owning nothing, the search is the first built-in: there is no blank to show.
+    fallback: () => builtinSearches()[0] || null,
+    pinned: true,
+    // …and a switch to or from one relocks the controls.
+    rerender: () => { renderOptPresetBars(); lockBuiltinSearch(); },
   };
+  return cfg;
 }
 
 /// The search's run settings, from the run bar or the agent door.
@@ -133,6 +203,7 @@ function updateOptEstimate() {
   }
   // Never re-enable while a background job is still running.
   $("run-opt").disabled = optJobId != null || !!blocked;
+  lockBuiltinSearch();
   // Every search mutation funnels through here — AUTO-SAVE into the active
   // preset (debounced), same contract as the build bar.
   optSaveTimer = deferSave("search", () => {

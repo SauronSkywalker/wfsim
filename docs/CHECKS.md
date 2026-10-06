@@ -644,6 +644,15 @@ finishes reports `exhaustive`, one the budget cuts reports its COVERAGE and
 does not pretend, and the WORKER FLEET covers more ground than one worker
 would.
 
+## `check_search_presets`
+
+The built-in searches (`data/search/presets.yaml`): a reader who owns no
+search has the first one — four starts, each the open weapon's 60/60 card of
+one element, at its stated run terms — with its controls inert and its note
+shown but the run button live; an edit that reaches it anyway is not stored;
+⧉ makes an editable copy, deleting that copy brings the built-in back, and a
+shotgun's starts are the shotgun's cards.
+
 ## `check_ime_keys`
 
 Every keydown handler that reads Enter or Escape asks whether an input method

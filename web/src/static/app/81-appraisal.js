@@ -1,9 +1,9 @@
 // ---- Riven appraisal: a chat's riven, searched in the reader's own browser ----
 //
 // docs/AGENT.md §"Riven appraisal". `/appraise/<code>` opens the weapon's
-// OPTIMIZER under the official ruler with the appraisal's own search preset
-// (`data/search/appraisal.yaml`, served as `META.appraisal_search`) and starts
-// it at once. The tab keeps nothing: its storage lives in memory, so none of it
+// OPTIMIZER under the official ruler with the appraisal's own built-in search
+// (`riven_appraisal` in `data/search/presets.yaml`, read-only like every
+// built-in) and starts it at once. The tab keeps nothing: its storage lives in memory, so none of it
 // reaches the reader's own builds, rivens or optimizer. When it finishes the
 // winner goes back to the appraisal and every finalist to the board; the page
 // sends a BUILD and never a number — the chat's bot replays it before it says one.
@@ -74,14 +74,11 @@ async function setUpAppraisal(w, job) {
   const id = newRiven({ bonuses: (rv.bonuses || []).map((b) => ({ id: b.id, roll: b.roll })),
     malus: rv.malus ? { id: rv.malus.id, roll: rv.malus.roll } : null,
     rank: rv.rank != null ? rv.rank : rivenRules().max_rank, polarity: rv.polarity || "madurai" });
-  const preset = META.appraisal_search || { starts: [[]], finalists: 1, candidate_runs: 10 };
-  const fits = new Set(buildPool().map((m) => m.id));
-  const seed = (row) => row.find((card) => fits.has(card));
-  // A ROW THE WEAPON TAKES NONE OF leaves the riven alone, and one such start is enough.
-  const rows = [...new Set(preset.starts.map((row) => JSON.stringify([RIVEN_PREFIX + id, seed(row)].filter(Boolean))))];
-  opt.starts = rows.map((r) => ({ build: stateFromBuild({ mods: JSON.parse(r) }, w.id), fixed: ["mods:0"] }));
-  renderOptStarts();
-  setOptSizes({ finalists: preset.finalists, candidate_runs: preset.candidate_runs });
+  // THE APPRAISAL'S OWN BUILT-IN SEARCH, opened like any other: read-only, so
+  // the starts the asker's riven rides in cannot be taken out from under it.
+  appraisal.rivenMod = RIVEN_PREFIX + id;
+  const own = ((META.search_presets || {}).presets || []).find((p) => p.riven);
+  if (own) pickPreset(optBarCfg(), "search:" + own.id);
 }
 
 /// THE SEARCH HAS ANSWERED: its winner goes back to the appraisal, with the

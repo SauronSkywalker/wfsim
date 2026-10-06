@@ -575,6 +575,13 @@ default one per element — never by trying every pair: with every card a
 candidate, a pair move is C(8,2)·85² ≈ 200,000 builds a round, hours in a
 browser.
 
+
+**THE BUILT-IN SEARCHES** are `data/search/presets.yaml`, read-only like the
+official rulers: never stored, never edited, ⧉ copies one into a search of your
+own (`80-optimizer-preset.js`). Owning no search, a reader has the first listed
+one — four starts, one per primary element, each its 60/60 card the weapon
+equips. The search is handed their starts like any other; nothing in it knows
+a preset exists.
 ## The quick descent — the quick calc, repeated
 
 The page's search (`"strategy": "quick"`): from each start, run the QUICK CALC

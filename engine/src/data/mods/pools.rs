@@ -120,21 +120,31 @@ pub fn every_rank() -> &'static EveryRank {
     })
 }
 
-/// THE RIVEN APPRAISAL'S SEARCH PRESET — `data/search/appraisal.yaml`: how many
-/// builds it answers with, the runs a candidate, and its starts, each a row of
-/// one element's 60/60 card per mod class.
+/// THE BUILT-IN SEARCH PRESETS — `data/search/presets.yaml`: the element starts
+/// every one is built from, and each preset's terms.
 #[derive(Debug, Clone, Default, Deserialize, serde::Serialize)]
-pub struct AppraisalSearch {
-    pub finalists: u32,
-    pub candidate_runs: u32,
-    pub starts: Vec<Vec<String>>,
+pub struct SearchPresets {
+    pub element_starts: Vec<Vec<String>>,
+    pub presets: Vec<SearchPreset>,
 }
 
-pub fn appraisal_search() -> &'static AppraisalSearch {
-    static PRESET: OnceLock<AppraisalSearch> = OnceLock::new();
-    PRESET.get_or_init(|| {
-        let text = crate::data::file("search/appraisal.yaml").expect("search/appraisal.yaml");
-        serde_norway::from_str(text).expect("parse search/appraisal.yaml")
+/// One built-in search: listed in the bar or applied by its own page, with or
+/// without the asker's riven in every start, and its run terms.
+#[derive(Debug, Clone, Default, Deserialize, serde::Serialize)]
+pub struct SearchPreset {
+    pub id: String,
+    pub name: String,
+    pub listed: bool,
+    pub riven: bool,
+    pub finalists: u32,
+    pub candidate_runs: u32,
+}
+
+pub fn search_presets() -> &'static SearchPresets {
+    static PRESETS: OnceLock<SearchPresets> = OnceLock::new();
+    PRESETS.get_or_init(|| {
+        let text = crate::data::file("search/presets.yaml").expect("search/presets.yaml");
+        serde_norway::from_str(text).expect("parse search/presets.yaml")
     })
 }
 
