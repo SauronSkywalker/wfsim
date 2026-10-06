@@ -85,6 +85,7 @@ with this thing, not how many times: forty edits to one build are one build.
 | `optimizer.start` | a search began, or resumed | weapon id | — |
 | `optimizer.run` | a search finished (not cancelled) | weapon id | seconds |
 | `share.create` | a build left the page | weapon id | how, the first way per load: 1 link, 2 text, 3 share sheet |
+| `share.entry` | a build left the page | where the panel was opened: `bar` (the build bar's button), `finder` (a board build in the finder), `optimizer` (a search's finalist), `simulator` (the result) | — |
 | `share.open` | a shared build landed in a reader's app | weapon id | — |
 | `board.open` | a board build was opened into the builder | weapon id | — |
 | `board.submit` | a build reached the board's inbox | weapon id | — |

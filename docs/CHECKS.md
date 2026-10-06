@@ -833,6 +833,16 @@ offered the download in the corner and on /download; the current shell is
 offered nothing and /download says there is nothing to install; a notice
 closed stays closed.
 
+## `check_share_entries`
+
+A share beside a build is the one panel, for that build: the build bar's
+button, an opened finder row, the simulator's result and a search's finalist
+each open it in view and are told apart as `share.entry`. A finder row is made
+the open build first; a finalist is not — opening a build resets the search —
+so its panel sits under its row, its link decodes to that finalist's mods,
+nothing is saved, the search's results stay, and the reader's result and the
+card, both drawn from the open build, are not offered.
+
 ## `check_share_card`
 
 Every builder step has a card block, the card's blocks come in the order the

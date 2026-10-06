@@ -395,6 +395,8 @@ body.on-wbench [data-module="builder"]{display:none}
 .fd-open{height:25px;padding:0 10px;border-radius:7px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;font:inherit;font-size:12px;white-space:nowrap}
 .fd-open:hover{background:color-mix(in srgb,var(--accent) 10%,transparent)}
 .fd-open.in{border-color:var(--line);color:var(--muted)}
+.fd-share{height:25px;padding:0 10px;margin-left:6px;border-radius:7px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer;font:inherit;font-size:12px;white-space:nowrap}
+.fd-share:hover{border-color:var(--accent);color:var(--accent)}
 .fd-main tr.fdet td{background:var(--panel3);padding:10px 12px 12px}
 
 .fd-dt{font-size:11px;color:var(--muted);margin:9px 0 4px;font-weight:600}

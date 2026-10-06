@@ -460,7 +460,7 @@
          way out beside it. docs/ANALYTICS.md is the whole of it. -->
     <section class="sup-usage" id="usage">
       <h2 data-i18n>What is counted</h2>
-      <p><span data-i18n>WFSim counts what gets used — which pages open, whether a build was computed, a simulation or a search started and finished, whether Nona was opened, asked something or set to concise mode (never what was asked), whether the page itself failed (the kind of failure and where in WFSim's own code, never its text), a board build opened, a link shared, how many presets and customs are saved — under a random id this browser keeps. The count records no IP address and sets no cookie, and the id is not linked to anything that identifies you. With Global Privacy Control or Do Not Track on, nothing is sent. Per weapon, how many people ran a simulation or a search each day is added up and shown on the home page as its popularity ranking — totals only.</span></p>
+      <p><span data-i18n>WFSim counts what gets used — which pages open, whether a build was computed, a simulation or a search started and finished, whether Nona was opened, asked something or set to concise mode (never what was asked), whether the page itself failed (the kind of failure and where in WFSim's own code, never its text), a board build opened, a link shared and from which part of the page, how many presets and customs are saved — under a random id this browser keeps. The count records no IP address and sets no cookie, and the id is not linked to anything that identifies you. With Global Privacy Control or Do Not Track on, nothing is sent. Per weapon, how many people ran a simulation or a search each day is added up and shown on the home page as its popularity ranking — totals only.</span></p>
       <p><span data-i18n>This browser's id:</span> <code id="usage-id">—</code> <button id="usage-off" class="cu-btn" type="button"></button></p>
       <p><span data-i18n>A riven appraisal link, opened from a chat with Nona, runs the search in your browser and sends its builds to the board without asking — that is what the link is for. The appraisal keeps the build it found and, only if you type one, a name, which Nona posts in the chat to thank you; both are deleted a day later.</span></p>
     </section>
@@ -779,7 +779,7 @@
     <!-- Block: Result (SIMULATOR tab) — its own container, separate from
          the settings above; hidden until the active preset has a result. -->
     <section class="block" data-module="simulator" id="sim-results-block" hidden>
-      <div class="bh"><span class="n">Σ</span><h2 data-i18n>Result</h2><span class="sub" id="sim-results-sub"></span></div>
+      <div class="bh"><span class="n">Σ</span><h2 data-i18n>Result</h2><span class="sub" id="sim-results-sub"></span><button class="ghost-btn small sim-share" id="sim-share" type="button" data-i18n>share</button></div>
       <div class="bb"><div class="sim-viewing" id="sim-viewing" hidden></div><div id="sim-results"></div><div id="sim-history"></div></div>
     </section>
 

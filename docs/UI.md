@@ -546,6 +546,17 @@ build decoded from the link's own code, named in the sharer's language, for a
 chat that shows a link as a bare string; and the system share sheet where the
 browser has one (`navigator.share`). `share.create`'s `n` records the first way used per page load.
 
+**THE PANEL IS ONE, AND IT OPENS WHERE A BUILD IS FOUND.** Besides the build
+bar's own button, a share sits beside a build wherever one is arrived at — an
+opened finder row, a search's finalist, the simulator's result — and opens the
+same panel (`openBuildShare`); a second panel would be a second answer to what
+a link carries. A board row or the result is made the open build first, so the
+bar names what leaves. A FINALIST IS NOT OPENED — opening any build resets the
+search — so the panel opens under its row and encodes that row's build
+(`sharePayload(build)`), without the reader's result and the card, which are
+both drawn from the open build and would describe another. `share.entry`
+records which of them was used.
+
 ## The share card
 
 **THE CARD IS THE BUILDER'S STEPS, IN THE BUILDER'S ORDER.** "…as a card" in

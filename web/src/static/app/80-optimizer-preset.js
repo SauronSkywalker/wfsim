@@ -528,6 +528,7 @@ function renderOptResults(r) {
         <span style="flex-grow:1"></span>
         <button class="ghost-btn small opt-add" title="${escHtml(tr("save as a new build"))}" data-r='${JSON.stringify(res).replace(/'/g, "&#39;")}'>+ add</button>
         <button class="ghost-btn small opt-restart" data-rank="${res.rank}">${escHtml(tr("use as a new start"))}</button>
+        ${SHARE_ENABLED ? `<button class="ghost-btn small opt-share" data-rank="${res.rank}">${escHtml(tr("share"))}</button>` : ""}
       </div>
       <div class="opt-lanes">${res.near ? near(res) : `${escHtml(tr("from"))} ${lanes(res)}`}</div>
       <div class="opt-card" data-rank="${res.rank}"></div>
@@ -546,6 +547,11 @@ function renderOptResults(r) {
   $("opt-results").querySelectorAll(".opt-restart").forEach((el) => el.addEventListener("click", async () => {
     addStart(await resultToState(byRank.get(Number(el.dataset.rank))));
     el.textContent = "✓ " + tr("start") + " " + opt.starts.length; el.disabled = true;
+  }));
+  // A FINALIST IS SHARED WITHOUT BEING OPENED — opening a build resets the
+  // search — so the panel opens under its row, for that row's build.
+  $("opt-results").querySelectorAll(".opt-share").forEach((el) => el.addEventListener("click", async () => {
+    openBuildShare("optimizer", el.closest(".opt-row"), { state: await resultToState(byRank.get(Number(el.dataset.rank))) });
   }));
   // THE SIMULATOR'S CARD, once each row's build is planned.
   $("opt-results").querySelectorAll(".opt-card").forEach(async (el) => {

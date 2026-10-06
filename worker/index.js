@@ -584,7 +584,7 @@ export const USAGE_EVENTS = [
   "builder.weapon", "builder.warframe", "builder.operator", "builder.riven",
   "builder.companion", "builder.enemy",
   "simulator.start", "simulator.run", "optimizer.start", "optimizer.run",
-  "share.create", "share.open", "board.open", "board.submit", "desktop.download",
+  "share.create", "share.entry", "share.open", "board.open", "board.submit", "desktop.download",
   "presets.saved",
   "nona.open", "nona.ask", "nona.concise",
 ];

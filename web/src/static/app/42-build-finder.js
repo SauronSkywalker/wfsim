@@ -263,7 +263,7 @@ function renderBuildFinder() {
       `${escHtml(rulerShort(tr(benchOf(p.benchmark).name)))} · ${escHtml(p.modeName || "")}</div></div>` +
       `<div class="fd-ans-score"><b>${escHtml(shown(p))}</b>${unit ? `<small>${escHtml(unit)}</small>` : ""}</div>` +
       `<button type="button" class="fd-refbtn${isRef ? " on" : ""}" data-fref="${escHtml(presetId(p))}">${escHtml(tr(isRef ? "Stop comparing" : "Compare others with this"))}</button>` +
-      `${openBtn(p)}</div>` +
+      `${openBtn(p)}${SHARE_ENABLED ? `<button type="button" class="fd-share" data-fshare="${escHtml(presetId(p))}">${escHtml(tr("share"))}</button>` : ""}</div>` +
       card(p, null, true) +
       (ref && !isRef ? `<div class="fd-dt">${escHtml(trF("Against the reference, #{r}", { r: ref.rank }))} · <b class="${sgn(gap(p, ref))}">${escHtml(pct(gap(p, ref)))}</b></div>` +
         `<div class="fd-diff">${diffHtml(p, ref)}</div>` : "") +
@@ -441,6 +441,16 @@ function renderBuildFinder() {
       rememberPublished(buildBarCfg(), p);
       if (presetId(p) === activePreset) return renderPresetBar();
       return pickPreset(buildBarCfg(), presetId(p));
+    }
+    // SHARE IS OPEN, THEN THE BAR'S PANEL: what leaves is the open build.
+    if ((el = g("[data-fshare]"))) {
+      e.stopPropagation();
+      const p = byId(el.dataset.fshare);
+      if (!p) return;
+      rememberPublished(buildBarCfg(), p);
+      if (presetId(p) === activePreset) renderPresetBar();
+      else pickPreset(buildBarCfg(), presetId(p));
+      return openBuildShare("finder");
     }
     if (g("tr.fdet")) return;
     if ((el = g("tr.fr[data-frow]"))) { finder.open = finder.open === el.dataset.frow ? null : el.dataset.frow; return rerender(); }

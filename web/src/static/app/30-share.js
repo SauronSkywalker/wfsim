@@ -104,8 +104,10 @@ const SHARE_AXES = ["mods", "evolutions", "arcanes", "arcane_ranks", "mode",
 /// would have to bring the linked Warframe build with it, and links do not yet.
 const SHARE_EXCLUDED_AXES = ["wielder"];
 
-function sharePayload() {
-  const st = snapshotState();
+/// `build`, when given, is `{ state }` — a build that is not the open one (a
+/// search's finalist), shared without opening it: opening resets the search.
+function sharePayload(build) {
+  const st = build ? build.state : snapshotState();
   const p = loadPresetList(BUILDS).find((x) => presetId(x) === activePreset);
   const pre = evoPrefix();
 
@@ -135,7 +137,7 @@ function sharePayload() {
 
   const tiers = weaponEvos();
   const evos = tiers.map((x) => {
-    const id = evoSel[x.tier];
+    const id = (build ? st.evoSel || {} : evoSel)[x.tier];
     return id ? (pre && id.startsWith(pre) ? id.slice(pre.length) : id) : "";
   });
   while (evos.length && !evos[evos.length - 1]) evos.pop();
@@ -238,7 +240,7 @@ function sharePayload() {
   // link, `importShare` names an unnamed build anyway, and `build 1` was the
   // more expensive of the two: its SPACE is outside the compact form's
   // alphabet, so every ordinary link paid 2.5x for a name nobody chose.
-  const nm = officialBuildActive() || isGeneratedName(activePreset)
+  const nm = build || officialBuildActive() || isGeneratedName(activePreset)
     ? 0 : activePreset;
 
   const out = [2, st.weapon, nm, slots9, arcs, evos, rivens, 0, 0, md, val, asm];
@@ -260,9 +262,9 @@ const SHARE_SHORT_HOSTS = LIVE_HOSTS;
 /// offline, on a shell with no network, or a store that is down. The long form
 /// opens exactly as it always has, so a failure here costs length and nothing
 /// else.
-async function shareUrl(claim, signer = null) {
+async function shareUrl(claim, signer = null, build = null) {
   const w = weaponInfo($("weapon").value);
-  const code = await shareCode();
+  const code = await shareCode(build);
   if (SHARE_SHORT_HOSTS.includes(location.hostname)) try {
     const ask = new AbortController();
     const timer = setTimeout(() => ask.abort(), 4000);
@@ -314,8 +316,8 @@ async function shortShareCode(id) {
 /// it was most of a link's length — a riven named in Chinese, a build called
 /// "… copy copy". The reader gets the riven's generated name and a build named
 /// for where it came from (`importShare`), which is all a name told them.
-async function shareCode() {
-  const payload = sharePayload();
+async function shareCode(build) {
+  const payload = sharePayload(build);
   payload[2] = 0;
   payload[6] = (payload[6] || []).map(([, ...rest]) => [boardRivenName({
     bonuses: (rest[3] || []).map(([x]) => x),
@@ -450,8 +452,8 @@ async function importShare(code) {
 /// string: a heading, then mods, riven, arcanes, evolutions. Read back out of
 /// the link's own code, so the text states what the link carries and nothing
 /// the link does not — named in the sharer's language, for the sharer's chat.
-async function shareText() {
-  const d = await decodeShare(await shareCode());
+async function shareText(build) {
+  const d = await decodeShare(await shareCode(build));
   const w = weaponInfo(d.w);
   const name = (x) => (x && x.name) || "";
   const mods = d.slots.map((s) => s.mod).filter((m) => m && !String(m).startsWith("~"))
@@ -504,15 +506,41 @@ async function shareMeasurement() {
 /// browser storage and may be lost.
 const SHARE_RESULT = "wfsim-share-result";
 
+/// WHERE ON THE PAGE THE PANEL WAS OPENED, as `share.entry`'s subject: the bar's
+/// own button, or a share beside a build somewhere else (`openBuildShare`).
+let shareFrom = "bar";
+
+/// A SHARE BESIDE A BUILD — a finder row, a search's finalist, a result — is the
+/// one panel, opened for that build. The caller makes it the open build first,
+/// so the bar names what is shared, and the panel opens under the bar — or,
+/// for a `build` that is not opened (a finalist), under `host`.
+function openBuildShare(from, host, build) {
+  const bar = $("preset-bar-builder-builds");
+  const at = host || bar;
+  if (!at) return;
+  if (host && !host.querySelector(":scope > .pshare")) host.insertAdjacentHTML("beforeend", `<div class="pshare" hidden></div>`);
+  const panel = at.querySelector(".pshare");
+  if (!panel) return;
+  panel.hidden = true;
+  openSharePanel(at, from, build);
+  at.scrollIntoView({ block: "nearest", behavior: "smooth" });
+}
+
+// THE RESULT'S SHARE: the simulated build is the open one already.
+document.addEventListener("click", (e) => { if (e.target.closest("#sim-share")) openBuildShare("simulator"); });
+
 // The share panel: the link, as a link, as text, or through the system's share
 // sheet — with the sharer's result beside it when they ask for that.
-async function openSharePanel(bar) {
+/// A `build` that is not the open one leaves without the result and the card:
+/// both are drawn from the open build, so they would describe another.
+async function openSharePanel(bar, from = "bar", build = null) {
   const panel = bar.querySelector(".pshare");
   if (!panel) return;
   if (!panel.hidden) { panel.hidden = true; return; }
   panel.hidden = false;
+  shareFrom = from;
   let withResult = false;
-  try { withResult = localStorage.getItem(SHARE_RESULT) === "1"; } catch (_) { /* off */ }
+  try { withResult = !build && localStorage.getItem(SHARE_RESULT) === "1"; } catch (_) { /* off */ }
   // A LINK AN EXTENSION CAN SIGN offers it here (`shareSigner`); one it signs
   // only for some readers is shown `locked`, greyed, with the extension's words
   // on whose it is — never a prompt. Otherwise the link is plain.
@@ -521,8 +549,8 @@ async function openSharePanel(bar) {
     if (withResult) panel.innerHTML = `<div class="sh-note">${escHtml(tr("simulating this build in the current scenario…"))}</div>`;
     const measured = withResult ? await shareMeasurement() : null;
     const signing = !!signer && !signer.locked && signer.on();
-    const bUrl = await shareUrl(measured && measured.claim, signing ? signer : null);
-    const lines = await shareText();
+    const bUrl = await shareUrl(measured && measured.claim, signing ? signer : null, build);
+    const lines = await shareText(build);
     const text = measured ? [lines[0], measured.line, ...lines.slice(1)] : lines;
     const native = typeof navigator.share === "function";
     panel.innerHTML =
@@ -531,9 +559,9 @@ async function openSharePanel(bar) {
       `<button class="cu-btn sh-text">${escHtml(tr("copy as text"))}</button>` +
       (native ? `<button class="cu-btn sh-native">${escHtml(tr("share…"))}</button>` : "") +
       `</div>` +
-      `<label class="sh-opt"><input type="checkbox" class="sh-result"${withResult ? " checked" : ""}> ` +
+      (build ? "" : `<label class="sh-opt"><input type="checkbox" class="sh-result"${withResult ? " checked" : ""}> ` +
       `${escHtml(tr("include my result in this scenario"))}` +
-      (measured ? ` <b>${escHtml(measured.line)}</b>` : "") + `</label>` +
+      (measured ? ` <b>${escHtml(measured.line)}</b>` : "") + `</label>`) +
       (signer ? (signer.locked
         ? `<label class="sh-opt sh-locked"><input type="checkbox" class="sh-sign" disabled> ${signer.option}</label>`
         : `<label class="sh-opt"><input type="checkbox" class="sh-sign"${signing ? " checked" : ""}> ${signer.option}</label>`) : "") +
@@ -541,7 +569,7 @@ async function openSharePanel(bar) {
         ? "the link still opens the build alone; your result travels beside it, shown as yours"
         : "the build and its rivens, and nothing else: no fight, no measurement, so opening it leaves the reader's own scenario untouched"))}`
         + (signing ? ` ${signer.note}` : "") + `</div>` +
-      (SHARE_CARD_ENABLED
+      (SHARE_CARD_ENABLED && !build
         ? `<div class="sh-more"><button class="cu-btn sh-full">${escHtml(tr("…as a card →"))}</button></div>`
         : "");
     const bBox = panel.querySelector(".sh-url");
@@ -549,17 +577,20 @@ async function openSharePanel(bar) {
     // `n` says HOW it left: 1 the link, 2 as text, 3 through the system's share sheet.
     panel.querySelector(".sh-copy").onclick = async () => {
       track("share.create", $("weapon").value, 1);
+      track("share.entry", shareFrom);
       try { await navigator.clipboard.writeText(bUrl); presetToast(tr("link copied")); }
       catch (_) { bBox.select(); presetToast(tr("press Ctrl+C to copy the selected link")); }
     };
     panel.querySelector(".sh-text").onclick = async () => {
       track("share.create", $("weapon").value, 2);
+      track("share.entry", shareFrom);
       try { await navigator.clipboard.writeText(`${text.join("\n")}\n${bUrl}`); presetToast(tr("text copied")); }
       catch (_) { bBox.select(); presetToast(tr("press Ctrl+C to copy the selected link")); }
     };
     const nat = panel.querySelector(".sh-native");
     if (nat) nat.onclick = async () => {
       track("share.create", $("weapon").value, 3);
+      track("share.entry", shareFrom);
       // A CANCELLED SHEET REJECTS, and a reader closing it is not an error.
       try { await navigator.share({ title: text[0], text: text.slice(1).join("\n"), url: bUrl }); } catch (_) { /* closed */ }
     };
@@ -568,7 +599,8 @@ async function openSharePanel(bar) {
       signer.set(e.target.checked);
       draw();
     };
-    panel.querySelector(".sh-result").onchange = (e) => {
+    const resultBox = panel.querySelector(".sh-result");
+    if (resultBox) resultBox.onchange = (e) => {
       withResult = e.target.checked;
       try { localStorage.setItem(SHARE_RESULT, withResult ? "1" : "0"); } catch (_) { /* this page only */ }
       draw();
