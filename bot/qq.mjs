@@ -62,6 +62,18 @@ async function send(row, ans) {
   await qq(`${chat}/messages`, { ...reply, msg_type: 0, content: ans.text });
 }
 
+/// A RIVEN APPRAISAL, opened for the message that asked: the chat to answer is
+/// kept with it, and only this bot reads that back (worker/appraise.js).
+async function openAppraisal(row, ask) {
+  const d = row.body;
+  const group = row.kind === "GROUP_AT_MESSAGE_CREATE";
+  const r = await fetch(`${SITE}/api/appraise/new`, { method: "POST", headers: { "content-type": "application/json",
+    authorization: `Bearer ${env.BOT_RELAY_TOKEN}` }, body: JSON.stringify({ ...ask, channel: "qq",
+    chat: { kind: row.kind, msg_id: d.id, msg_at: row.at, ...(group ? { group_openid: d.group_openid } : { user_openid: d.author.user_openid }) },
+    asker: (d.author && (d.author.member_openid || d.author.user_openid)) || "unknown", room: group ? d.group_openid : "" }) });
+  return r.json().catch(() => ({ ok: false, error: String(r.status) }));
+}
+
 async function claim(done) {
   const r = await fetch(`${SITE}/api/qq/claim`, { method: "POST", headers: { "content-type": "application/json",
     authorization: `Bearer ${env.BOT_RELAY_TOKEN}` }, body: JSON.stringify({ done }) });
@@ -82,7 +94,7 @@ for (;;) {
   }
   for (const row of rows) {
     try {
-      await send(row, await answer(row.body.content));
+      await send(row, await answer(row.body.content, { openAppraisal: (ask) => openAppraisal(row, ask) }));
     } catch (e) {
       console.error(`answer ${row.id}: ${e && e.stack || e}`);
     }

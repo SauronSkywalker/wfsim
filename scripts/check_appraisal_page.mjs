@@ -28,6 +28,15 @@ const STUB = `(() => {
 const app = await openApp({ boot: 13000, base: process.env.WFSIM_BASE });
 const { evaluate, check, finish } = app;
 await app.send("Page.addScriptToEvaluateOnNewDocument", { source: STUB });
+
+// THE PICTURE THE BOT SENDS FIRST: the asker's card, its code, and the way in.
+await app.load("/weapons/Torid/card?kind=appraise&code=TEST7", 6000);
+for (let i = 0; i < 40 && !(await evaluate(`document.body.dataset.cardReady === "1"`)); i++) await sleep(500);
+const chips = await evaluate(`[...document.querySelectorAll("#card-page [data-riven-card] .sb-chip")].map((c) => c.textContent)`);
+check("the appraisal's picture draws the asker's card with its numbers and rolls", chips.length === 3
+  && chips.every((t) => /\d/.test(t) && /×\d\.\d\d/.test(t)) && chips.some((t) => /×1\.05/.test(t)), JSON.stringify(chips));
+check("…its code, and a QR code to the appraisal", (await evaluate(`document.querySelector("#card-page").textContent`)).includes("TEST7")
+  && await evaluate(`!!document.querySelector("#card-page .lc-qr svg")`));
 await app.load("/appraise/TEST7", 9000);
 
 check("the link lands on its weapon's optimizer", (await evaluate("location.pathname")).toLowerCase() === "/weapons/torid/optimizer",

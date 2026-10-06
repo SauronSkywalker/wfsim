@@ -31,7 +31,8 @@ function measuredNote() { return tr("Every build shows when it was measured and 
 function cardParams() {
   const p = new URLSearchParams(location.search);
   const n = Math.max(1, Math.min(CARD_MAX, Math.round(Number(p.get("n"))) || 3));
-  return { kind: p.get("kind") === "zk" ? "zk" : "pz", ruler: p.get("ruler") || "", n,
+  const kind = ["zk", "appraise"].includes(p.get("kind")) ? p.get("kind") : "pz";
+  return { kind, ruler: p.get("ruler") || "", n, code: (p.get("code") || "").toUpperCase(),
     riven: { bonuses: (p.get("has") || "").split(",").filter(Boolean), malus: p.get("malus") || null },
     withRiven: p.get("rv") === "1" };
 }
@@ -49,7 +50,11 @@ async function renderCardPage(w, ask) {
   const box = $("card-page");
   if (!box || !w) return;
   document.body.removeAttribute("data-card-ready");
-  const { kind, ruler: want, n, riven: rivenAsk, withRiven } = ask;
+  const { kind, n, riven: rivenAsk, withRiven, code } = ask;
+  // AN APPRAISAL NAMES ITS OWN RULER (81-appraisal.js), read from its door.
+  const job = kind === "appraise" ? await fetch(`/api/appraise/${encodeURIComponent(code)}`)
+    .then((r) => (r.ok ? r.json() : null)).catch(() => null) : null;
+  const want = job ? job.ruler : ask.ruler;
   const rows = BOARD[w.id] || [];
   const benches = META.benchmarks || [];
   const bench = benches.find((b) => b.id === want) || benches.find((b) => b.primary) || benches[0];
@@ -59,7 +64,15 @@ async function renderCardPage(w, ask) {
   // THE CARDS ARE DRAWN ONLY WHEN THEY GO STRAIGHT ONTO THE PAGE: a riven's
   // values arrive into the elements already there, so nothing may sit between.
   let title = "", link = "", body = () => "";
-  if (kind === "pz") {
+  if (kind === "appraise") {
+    // THE ASKER'S CARD AND THE WAY IN: whoever scans the code searches it.
+    title = trF("{w} · Riven appraisal", { w: w.name });
+    link = `${LIVE_ORIGIN}/appraise/${code}`;
+    body = () => !job ? "" : cardBox(`<span class="sb-h">${escHtml(tr("Appraisal code"))}</span><b class="lc-score">${escHtml(code)}</b>`,
+      rivenSpecCardHtml(w, { name: "", spec: { ...job.riven, polarity: job.riven.polarity || "madurai" } })
+      + `<p class="lc-note">${escHtml(tr("Scan the code below: your own browser searches this riven's best build, and Nona posts the result in the chat."))}</p>`
+      + `<p class="sb-empty">${escHtml(link.replace(/^https?:\/\//, ""))}</p>`);
+  } else if (kind === "pz") {
     const ranked = pooledRanking(rankBoard(rows.filter((r) => r.benchmark === ruler && !r.riven === !withRiven), [ruler], w.modes));
     const shown = distinctTop(ranked, n, () => "", (x) => cardShown(x.row));
     const mode = (shown[0] || {}).mode;
@@ -77,7 +90,7 @@ async function renderCardPage(w, ask) {
         (x) => cardShown(x.row)).map((x) => cardBox(`<b class="lc-rank">#${x.rank}</b><b class="lc-score">${escHtml(cardShown(x.row))}</b>${
         x.gain == null ? "" : `<b class="lc-gain">${pct(x.gain)}</b>`}${cardRecord(x.row)}`, cardOfState(boardRowState(w, x.row), w))).join("");
   }
-  const updated = measuredText(boardMeasuredAt(rows.filter((r) => r.benchmark === ruler)));
+  const updated = kind === "appraise" ? "" : measuredText(boardMeasuredAt(rows.filter((r) => r.benchmark === ruler)));
   const qr = await api("/api/qr", { text: link });
   const cards = body();
   // THE SITE'S OWN WORDMARK, as the topbar draws it: the brand is WFSim, and

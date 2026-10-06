@@ -186,7 +186,10 @@ const rivenCardChips = (stats) => stats.map((x) => `<span class="sb-chip${x.valu
 /// each stat with its roll; the answer then fills every card on the page that
 /// shows this riven, whoever drew it.
 function rivenCardHtml(w, id) {
-  const r = id && rivenSpecFor(id);
+  return rivenSpecCardHtml(w, id && rivenSpecFor(id));
+}
+/// …and a riven that is no saved card, given as `{ name, spec }` (an appraisal's).
+function rivenSpecCardHtml(w, r) {
   if (!r) return "";
   const key = JSON.stringify([w.id, r.spec]);
   let got = rivenCardStats.get(key);

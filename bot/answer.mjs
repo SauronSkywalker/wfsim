@@ -12,7 +12,7 @@ const squash = (s) => String(s || "").normalize("NFKC").toLowerCase().replace(/\
 /// "mk-1盗贼" and "MK1 盗贼" are both MK1-盗贼.
 const nameFold = (s) => squash(s).replace(/[-_.·・'’]/g, "");
 
-export function makeAnswer({ run, meta, zh, headless }) {
+export function makeAnswer({ run, meta, zh, headless, host }) {
   const t = (s, p = {}) => Object.entries(p).reduce((x, [k, v]) => x.split(`{${k}}`).join(String(v)),
     (zh.ui && zh.ui[s]) || s);
   const weaponName = (w) => (zh.weapons && zh.weapons[w.id]) || w.name;
@@ -34,10 +34,10 @@ export function makeAnswer({ run, meta, zh, headless }) {
   /// `zk 托里德 5` → { cmd: "zk", rest: "托里德 5" }.
   function parse(text) {
     let s = String(text || "").replace(/<@!?[^>]*>/g, " ").trim();
-    const m = s.match(/^(zk|pz|帮助|help|\?|？)\s*/i);
+    const m = s.match(/^(zk|pz|fx|帮助|help|\?|？)\s*/i);
     const cmd = m ? m[1].toLowerCase() : "";
     if (m) s = s.slice(m[0].length);
-    return { cmd: cmd === "zk" || cmd === "pz" ? cmd : cmd ? "help" : "", rest: s.trim() };
+    return { cmd: ["zk", "pz", "fx"].includes(cmd) ? cmd : cmd ? "help" : "", rest: s.trim() };
   }
   /// THE COUNT, read AFTER the weapon: "夜语者77" is a weapon and "77" in it is not
   /// a count. Whatever number ends what is left, spaced or not, held to 1–10.
@@ -74,8 +74,10 @@ export function makeAnswer({ run, meta, zh, headless }) {
     t("I am Nona, WFSim's assistant. Send zk or pz… not that I was waiting for you. (⁄ ⁄•⁄ω⁄•⁄ ⁄)"),
     t("zk weapon [ruler] [stats] [count]: the rivens the board has measured for this weapon, against its best build without one."),
     t("pz weapon [ruler] [riven] [count]: the best builds the board has measured for this weapon; add riven for builds that carry one."),
+    t("fx weapon [ruler] each stat with its number: appraise your own riven — whoever opens the link searches its best build on their own computer."),
     t("For example: {a}, or {b}", { a: "zk 托里德 双暴 负任意 5", b: "pz 托里德 爆破使 紫卡 3" }),
   ].join("\n");
+  const UNREAD = "I could not read “{word}”… Write a stat as the card does, or as short as 双暴, 暴伤 or 负任意. (・_・;)";
   const NO_WEAPON = "Which weapon? Put its name after the command, like {e}. (・_・;)";
   const NOT_FOUND = "No weapon by that name. Check it again — Chinese or English both work. (＞﹏＜)";
   const NOT_MEASURED = "Nobody has measured this one yet. Measure a build on wfsim.app… then I will remember it. (´；ω；`)";
@@ -115,7 +117,7 @@ export function makeAnswer({ run, meta, zh, headless }) {
     const cls = hit.w.riven_class;
     const named = rulerIn(afterCount);
     const ask = headless.rivenQuery((meta.riven_stats || {})[cls] || [], [zh], named.left);
-    if (ask.unread.length) return t("I could not read “{word}”… Write a stat as the card does, or as short as 双暴, 暴伤 or 负任意. (・_・;)", { word: ask.unread[0] });
+    if (ask.unread.length) return t(UNREAD, { word: ask.unread[0] });
     const r = await run("builder.rivens.read", { weapon: hit.w.id, bonuses: ask.bonuses, malus: ask.malus, pooled: true,
       ...(named.ruler ? { ruler: named.ruler.id } : {}) });
     if (r.ok === false || !r.groups.length) return t(NOT_MEASURED);
@@ -135,11 +137,72 @@ export function makeAnswer({ run, meta, zh, headless }) {
       { w: weaponName(hit.w), ruler: t(g.ruler).split(" · ")[0] }), card, text };
   }
 
+  /// FX: THE ASKER'S OWN RIVEN, appraised by whoever opens its link — docs/AGENT.md
+  /// §"Riven appraisal". Each stat is a word and the number on the card; the
+  /// roll is that number over the engine's own value at roll 1, and a number the
+  /// card could not show at this weapon's disposition is refused, not clamped.
+  async function fx(rest, ctx) {
+    const example = "fx 托里德 暴伤160.9 多重120.7 腐蚀120.7 负弹匣43.9";
+    if (!rest) return t(NO_WEAPON, { e: example });
+    const hit = weaponOf(rest);
+    if (!hit) return t(NOT_FOUND);
+    const named = rulerIn(hit.left);
+    const ruler = named.ruler || defaultRuler();
+    const cls = hit.w.riven_class;
+    const pool = (meta.riven_stats || {})[cls] || [];
+    const pairs = [...named.left.matchAll(/([^\d.+%]+?)\+?(-?\d+(?:\.\d+)?)%?/g)].map((x) => ({ word: x[1], value: Math.abs(Number(x[2])) }));
+    const tail = named.left.replace(/([^\d.+%]+?)\+?(-?\d+(?:\.\d+)?)%?/g, "");
+    if (!pairs.length || tail) return t("Each stat needs the number on the card, like {e}. (・_・;)", { e: example });
+    const bonuses = [], maluses = [];
+    for (const p of pairs) {
+      const q = headless.rivenQuery(pool, [zh], p.word);
+      if (q.unread.length) return t(UNREAD, { word: q.unread[0] });
+      if (q.malus && q.malus !== "any" && q.malus !== "none" && !q.bonuses.length) maluses.push({ id: q.malus, value: p.value, word: p.word });
+      else if (q.bonuses.length === 1 && !q.malus) bonuses.push({ id: q.bonuses[0], value: p.value, word: p.word });
+      else return t("“{word}” names more than one stat; give each its own number. (・_・;)", { word: p.word });
+    }
+    if (bonuses.length < 2 || bonuses.length > 3 || maluses.length > 1) return t("A riven has two or three positive stats and at most one negative. (・_・;)");
+    const rank = (meta.riven_rules || {}).max_rank ?? 8;
+    const base = await host.api("/api/riven", { weapon: hit.w.id, rank, polarity: "madurai",
+      bonuses: bonuses.map((b) => ({ id: b.id, roll: 1 })), malus: maluses[0] ? { id: maluses[0].id, roll: 1 } : null });
+    if (!base || base.ok === false) return t(NOT_FOUND);
+    if ((base.illegal || []).length) return t("This riven is not a legal one: {why} (＞﹏＜)", { why: base.illegal.join("; ") });
+    const slots = bonuses.map((b, i) => ({ ...b, slot: String(i) })).concat(maluses.map((m) => ({ ...m, slot: "malus" })));
+    const rolled = [];
+    for (const sl of slots) {
+      const st = (base.stats || []).find((x) => x.slot === sl.slot);
+      const one = st ? Math.abs(Number(st.shown)) : 0;
+      if (!one) return t(UNREAD, { word: sl.word });
+      // THE CARD ROUNDS TO ITS OWN DECIMALS, so a number at the edge of the band
+      // may read a hair past it.
+      const slack = 0.5 * 10 ** -(st.decimals ?? 1) / one + 1e-9;
+      const roll = sl.value / one;
+      if (roll < 0.9 - slack || roll > 1.1 + slack) {
+        const show = (x) => Math.abs(Number(x)).toFixed(st.decimals ?? 1);
+        const [lo, hi] = [show(st.min), show(st.max)].sort((a, b) => a - b);
+        return t("{stat} {value} is outside this weapon's range ({lo}–{hi}); the card may be from before a disposition change. (￣^￣)",
+          { stat: statZh(cls, sl.id), value: sl.value, lo, hi });
+      }
+      rolled.push({ id: sl.id, roll: Math.round(Math.min(1.1, Math.max(0.9, roll)) * 1000) / 1000, malus: sl.slot === "malus" });
+    }
+    const riven = { bonuses: rolled.filter((x) => !x.malus).map(({ id, roll }) => ({ id, roll })),
+      malus: rolled.filter((x) => x.malus).map(({ id, roll }) => ({ id, roll }))[0] || null, rank };
+    const opened = ctx && ctx.openAppraisal ? await ctx.openAppraisal({ weapon: hit.w.id, ruler: ruler.id, riven }) : null;
+    if (!opened || !opened.code) {
+      return t(opened && /limit/.test(opened.error || "") ? "Nona is still busy with your earlier ones. Try again in a while. (´；ω；`)"
+        : "Nona could not open the appraisal just now. Try again in a moment. (＞﹏＜)");
+    }
+    const card = `${SITE}${headless.headlessWeaponPath(meta.weapons || [], hit.w.id)}/card?kind=appraise&code=${opened.code}`;
+    const line = rolled.map((x) => `${x.malus ? "−" : "+"}${statZh(cls, x.id)} ×${x.roll.toFixed(2)}`).join(" ");
+    return { line: t("Nona read it. Scan the code in the picture to search with your own computer — appraisal {code}. (๑•̀ㅂ•́)و✧", { code: opened.code }),
+      card, text: `${weaponName(hit.w)} · ${rulerShort(ruler)} · ${line}\n${SITE}/appraise/${opened.code}` };
+  }
+
   /// `{ text }`, or `{ line, card, text }` — the long image at `card` with
   /// `line` under it, and `text` the answer in words if the image cannot be made.
-  return async function answer(text) {
+  return async function answer(text, ctx) {
     const p = parse(text);
-    const r = p.cmd === "zk" ? await zk(p.rest) : p.cmd === "pz" ? await pz(p.rest) : help();
+    const r = p.cmd === "zk" ? await zk(p.rest) : p.cmd === "pz" ? await pz(p.rest) : p.cmd === "fx" ? await fx(p.rest, ctx) : help();
     return typeof r === "string" ? { text: r } : r;
   };
 }
