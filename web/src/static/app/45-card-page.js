@@ -51,6 +51,9 @@ async function appraisalReplay(w, job) {
   const rv = job.riven || {};
   const id = newRiven({ bonuses: rv.bonuses || [], malus: rv.malus || null,
     rank: rv.rank != null ? rv.rank : rivenRules().max_rank, polarity: rv.polarity || "madurai" });
+  // NAMELESS, so the card reads "Riven" the way a board row's does, not a
+  // name this page made up.
+  storePresetList(RIVENS, loadPresetList(RIVENS).map((p) => (p.id === id ? { ...p, name: "" } : p)));
   const state = boardRowState(w, { ...build, mods: (build.mods || []).map((m) => (m === BOARD_RIVEN_SLOT ? RIVEN_PREFIX + id : m)) });
   const r = await simulateFleet({ ...tennoPayload(), ...seatPayload(state), rivens: rivenPayload(), ...theFight() });
   if (!r || r.ok === false) return { ok: false, reason: (r && r.error) || tr("the replay did not run") };
@@ -105,9 +108,7 @@ async function renderCardPage(w, ask) {
     const who = job.result.thanks || tr("a kind someone in the chat");
     body = () => !verdict.ok ? `<p class="sim-empty">${escHtml(verdict.reason || "")}</p>`
       : cardBox(`<b class="lc-score">${escHtml(verdict.shown)}</b><span class="sb-empty">${escHtml(metric)}</span>${
-        verdict.gain == null ? "" : `<b class="lc-gain">${pct(verdict.gain)}</b>`}`,
-        rivenSpecCardHtml(w, { name: "", spec: { ...job.riven, polarity: job.riven.polarity || "madurai" } })
-        + cardOfState(verdict.state, w))
+        verdict.gain == null ? "" : `<b class="lc-gain">${pct(verdict.gain)}</b>`}`, cardOfState(verdict.state, w))
       + cardBox(`<span class="sb-h">${escHtml(tr("Against the board"))}</span>`,
         `<p class="lc-note">${escHtml(verdict.top == null ? tr("The board has no riven-free build of this weapon yet.")
           : trF("The board's best riven-free build: {s}", { s: verdict.top }))}</p>`
