@@ -810,7 +810,9 @@ build on screen reaches the screen. The cloud on a chip keeps an entry on one
 browser and tells the others to keep theirs; with "upload new items" off a new
 entry stays here; the allowance the server states is kept to, and an item the
 server refuses stays here. A riven's row in its list carries the cloud too, and
-a click switches it without opening the riven.
+a click switches it without opening the riven. Signed out, the cloud is a link to
+sign in that comes back to the page and picks no entry; with no way to sign
+in, no chip carries one.
 
 ## `check_desktop_shell_notice`
 

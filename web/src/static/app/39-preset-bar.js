@@ -33,9 +33,15 @@ const presetId = (p) => (p || {}).builtin || (p || {}).id || "";
 const presetLabel = (p) => (p || {}).name || "";
 /// THE CLOUD ON A CHIP, while the account syncs: filled, the entry is on every
 /// browser signed in to it; hollow, on this one only. A click switches it.
+/// Signed out where accounts exist, it is the hollow cloud as a link to sign
+/// in: the feature shown where it would be used, never a prompt.
 const CLOUD_SVG = `<svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M7 18h10a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.1 9.2 4.5 4.5 0 0 0 7 18z"/></svg>`;
 function cloudMark(domain, p) {
-  if (typeof accountState === "undefined" || !accountState.account || !p.id) return "";
+  if (typeof accountState === "undefined" || !p.id) return "";
+  if (!accountState.account) return accountState.providers.length
+    ? `<a class="pop pcloud" href="/login?return=${encodeURIComponent(location.pathname + location.search)}" title="${escHtml(tr(
+      "on this browser only - sign in to sync it to every browser you use"))}">${CLOUD_SVG}</a>`
+    : "";
   if (syncStatus.state === "not_included" || syncStatus.state === "other") return "";
   const on = isCloudSynced(p);
   return `<button class="pop pcloud ${on ? "on" : ""}" data-cloud="${escHtml(p.id)}" aria-pressed="${on}" title="${escHtml(tr(on
@@ -252,8 +258,8 @@ function renderPresetBarIn(bar, cfg) {
     if (nf) { nf.focus(); nf.setSelectionRange(nf.value.length, nf.value.length); }
   });
   bar.querySelectorAll(".pchip:not(.add)").forEach((c) =>
-    c.addEventListener("click", () => pickPreset(cfg, c.dataset.name)));
-  bar.querySelectorAll(".pcloud").forEach((b) => b.addEventListener("click", (e) => {
+    c.addEventListener("click", (e) => { if (!e.target.closest("a.pcloud")) pickPreset(cfg, c.dataset.name); }));
+  bar.querySelectorAll(".pcloud[data-cloud]").forEach((b) => b.addEventListener("click", (e) => {
     e.stopPropagation();
     if (setCloudSync(presetListKey(cfg.domain), b.dataset.cloud, !b.classList.contains("on"))) cfg.rerender();
   }));

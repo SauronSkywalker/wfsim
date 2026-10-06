@@ -99,9 +99,19 @@ function loadAccount() {
   accountLoading = (async () => {
     if (!extSettled) await extReady;
     const r = await accountCall("GET", "/api/account");
+    const was = `${!!accountState.account}:${accountState.providers.length > 0}`;
     accountState = r && r.ok
       ? { providers: r.providers || [], account: r.account, loaded: true }
       : { providers: [], account: null, loaded: true };
+    // THE CLOUD ON A CHIP is drawn from who is signed in, so a bar on screen
+    // drawn before this answer is drawn again. Only one on screen: a bar whose
+    // page is not open has nothing to draw from.
+    if (META && was !== `${!!accountState.account}:${accountState.providers.length > 0}`) {
+      for (const { domain } of COLLECTIONS) {
+        const doc = presetDoc(domain), el = $(domain === RIVENS ? "riven-all" : "preset-bar-" + domain);
+        if (doc && el && el.offsetParent) doc.rerender();
+      }
+    }
     const at = authKindOf(location.pathname);
     // EVERY SETTINGS PAGE ASKS EVERY EXTENSION PAGE: the navigation shows a
     // page only once it says it is available.

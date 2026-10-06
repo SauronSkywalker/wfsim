@@ -516,13 +516,14 @@ function renderRivenAll() {
       }).join("")
     : `<div class="sim-empty">${escHtml(tr("no rivens for this weapon yet"))}</div>`;
   // THE CLOUD SWITCHES SYNC, the same as on the bar's chip, and opens nothing.
-  box.querySelectorAll(".pcloud").forEach((b) => b.addEventListener("click", (e) => {
+  box.querySelectorAll(".pcloud[data-cloud]").forEach((b) => b.addEventListener("click", (e) => {
     e.stopPropagation();
     if (setCloudSync(presetListKey(RIVENS), b.dataset.cloud, !b.classList.contains("on"))) renderRivens();
   }));
   // Clicking one opens it, the same as clicking its chip in the bar.
   // Clicking a card OPENS it — the list is the folder, this is the file.
-  box.querySelectorAll("[data-open]").forEach((el) => el.onclick = () => {
+  box.querySelectorAll("[data-open]").forEach((el) => el.onclick = (e) => {
+    if (e.target.closest("a.pcloud")) return;
     const p = loadPresetList(RIVENS).find((x) => x.id === el.dataset.open);
     if (!p) return;
     activeRiven = p.id;

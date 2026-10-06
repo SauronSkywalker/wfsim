@@ -307,6 +307,7 @@ stays the working copy: signed out, or without the feature, nothing runs.
 | a browser that synced with another account merges nothing until the reader asks on `/account` | `other`, `syncAdopt` |
 | undo steps over a list that changed underneath them are dropped | `syncShow` |
 | an entry with `cloud_sync: false` stays on this browser; the cloud on its chip — and on a riven's row in its list — switches it | `isCloudSynced`, `cloudMark` |
+| signed out where accounts exist, the cloud is hollow and links to sign in, coming back to the page; a click on it picks no entry | `cloudMark` |
 | taking one off the account sends `{ id, cloud_sync: false }` and nothing else; another browser keeps its copy and stops syncing it | `syncRound`, `syncApply` |
 | a new entry is synced unless "upload new items" (this browser's `wfsim-sync-auto`) is off | `syncRound` |
 | the server states what the account may hold per pool (`allowance`); past it a new entry stays here and turning one on is refused | `syncAllowance`, `setCloudSync` |
@@ -620,7 +621,9 @@ checkable today — the three modules, the measurements, the licence.
 
 THE APP NEVER ASKS. No result, limit, banner or mail points the reader
 anywhere they did not go looking. A reader at the sync allowance is told the
-limit and offered Export.
+limit and offered Export. A feature may be SHOWN where it would be used: signed
+out, a saved entry's cloud is hollow and links to sign in — the control itself,
+never a line, a count or a reminder beside it.
 
 WHAT THE READER HAS RUN NEVER LEAVES THE BROWSER. `wfsim-use` is two integers
 written by `runSim` and read by `/support` alone; the page says so where it

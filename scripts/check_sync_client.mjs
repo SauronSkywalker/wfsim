@@ -7,7 +7,8 @@
 /// first sync is a union, two entries sharing a name both survive under it, an
 /// edit and a deletion reach the other browser, the measured result never travels, another account's entries are
 /// not merged without a word, an account without the feature pushes nothing,
-/// and a remote edit to the build on screen reaches the screen.
+/// a remote edit to the build on screen reaches the screen, and signed out the
+/// cloud is a link to sign in.
 import { openApp } from "./cdp.mjs";
 
 const app = await openApp({ boot: 12000, base: process.env.WFSIM_BASE });
@@ -26,8 +27,8 @@ const r = await evaluate(`(async () => {
   window.fetch = async (url, o = {}) => {
     const path = String(url);
     const reply = (j, status = 200) => new Response(JSON.stringify(j), { status, headers: { 'content-type': 'application/json' } });
-    if (path === '/api/account') return reply({ ok: true, providers: ['email'],
-      account: { id: who, created_at: '', identities: [{ provider: 'email', label: who + '@x' }] } });
+    if (path === '/api/account') return reply({ ok: true, providers: who === 'none' ? [] : ['email'],
+      account: who === null || who === 'none' ? null : { id: who, created_at: '', identities: [{ provider: 'email', label: who + '@x' }] } });
     if (path !== '/api/cloud/sync') return realFetch(url, o);
     calls++;
     if (who === 'acc3') return reply({ ok: false, reason: 'not_included' }, 403);
@@ -253,6 +254,20 @@ const r = await evaluate(`(async () => {
   await signIn('acc3');
   out.notIncluded = syncStatus.state;
   out.acc3Calls = calls - before;
+  // SIGNED OUT, the cloud is a link to sign in that picks no entry; with no
+  // way to sign in, there is no cloud.
+  who = null; await loadAccount();
+  const out1 = document.querySelector('#preset-bar-builder-builds a.pcloud');
+  out.signedOut = [!!out1, out1 ? out1.getAttribute('href') : null,
+    document.querySelectorAll('#preset-bar-builder-builds .pcloud[data-cloud]').length];
+  const pickedBefore = activePreset;
+  const other = document.querySelector('#preset-bar-builder-builds .pchip:not(.sel) a.pcloud');
+  if (other) other.click();
+  await sleep(600);
+  out.signedOutPicks = [!!other, activePreset === pickedBefore, location.pathname];
+  history.pushState({}, '', '/weapons/Torid'); route(); await sleep(1400);
+  who = 'none'; await loadAccount();
+  out.noAccounts = document.querySelectorAll('#preset-bar-builder-builds .pcloud').length;
   window.fetch = realFetch;
   return out;
 })()`);
@@ -295,5 +310,10 @@ check("another account's entries are not merged without a word",
 check("...until the reader adds them", r.acc2After > 0, r.acc2After);
 check("an account without the feature says so, and pushes nothing more",
   r.notIncluded === "not_included" && r.acc3Calls === 1, ok([r.notIncluded, r.acc3Calls]));
+
+check("signed out, a chip's cloud is a link to sign in that comes back here",
+  r.signedOut[0] && r.signedOut[1] === "/login?return=" + encodeURIComponent("/weapons/Torid") && r.signedOut[2] === 0, ok(r.signedOut));
+check("...and a click on it opens sign-in, picking no entry", ok(r.signedOutPicks) === ok([true, true, "/login"]), ok(r.signedOutPicks));
+check("with no way to sign in, no chip carries a cloud", r.noAccounts === 0, r.noAccounts);
 
 await app.finish("two browsers of one account end on the same entries");
