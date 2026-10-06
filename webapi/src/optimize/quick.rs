@@ -1041,9 +1041,9 @@ pub(crate) fn whole_scope(v: &Value) -> Option<Value> {
             .filter(|o| !no_evos.contains(&o.id))
             .map(|o| json!(o.id))
             .collect();
-        if !ids.is_empty() {
-            evolutions.insert(t.to_string(), json!(ids));
-        }
+        // Sent even when empty: a tier with every option excluded is refused
+        // by `parse_optimize`, never quietly given its default.
+        evolutions.insert(t.to_string(), json!(ids));
     }
     let modes: serde_json::Map<String, Value> = wfsim_engine::data::weapons::play_modes(&info.id)
         .iter()

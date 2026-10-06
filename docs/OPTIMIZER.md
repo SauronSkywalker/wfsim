@@ -399,7 +399,9 @@ compare a search against an exhausted space. A scope is a MARK MAP per axis —
   an arcane seat. Nothing marked is 0–0, a mark is 1–1, so no scope grows by
   default; an arcane seat is never empty beside a marked candidate
   (`an_arcane_seat_marked_none_is_not_a_default`). An EVOLUTION TIER is never
-  empty: unmarked, it holds its default (`evolutions::complete`).
+  empty: unmarked, it holds its default (`evolutions::complete`); named with no
+  option left in it — every option excluded — the request is refused, and the
+  page's limits keep a tier's last option.
 - **The floor is derived first.** Every required mod, plus one pooled mod when
   anything is pooled; `build_min` below that is raised to it
   (`min_slots = derived_min.max(build_min)`). A ceiling of 0 outranks the

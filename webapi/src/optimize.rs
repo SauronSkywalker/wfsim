@@ -610,11 +610,17 @@ pub fn parse_optimize(v: &Value) -> Result<OptimizePlan, Value> {
     let mut evo_sets: Vec<Vec<String>> = vec![Vec::new()];
     let evo_tiers = wfsim_engine::data::evolutions::tier_count(evo_group);
     for tier in 1u32..=evo_tiers {
-        let picks: Vec<String> = evo_req
-            .and_then(|o| o.get(&tier.to_string()))
-            .and_then(|a| a.as_array())
+        let marked = evo_req.and_then(|o| o.get(&tier.to_string())).and_then(|a| a.as_array());
+        let picks: Vec<String> = marked
             .map(|a| a.iter().filter_map(|x| x.as_str()).filter(|s| *s != "none").map(String::from).collect())
             .unwrap_or_default();
+        // A TIER NAMED WITH NOTHING LEFT IN IT is every option excluded, and a
+        // tier cannot be empty — so it is refused, not given its default.
+        if marked.is_some() && picks.is_empty() {
+            return Err(err_json(format!(
+                "every evolution of tier {tier} is excluded, and a tier is never empty — keep at least one"
+            )));
+        }
         let mut next = Vec::new();
         for base in &evo_sets {
             for pick in picks.iter().map(Some).chain(picks.is_empty().then_some(None)) {
@@ -2392,8 +2398,16 @@ mod optimizer_evolution_tests {
     #[test]
     fn every_searched_set_installs_every_tier() {
         let defaults = wfsim_engine::data::evolutions::complete::<&str>("torid", &[]);
-        assert_eq!(sets(json!({})), vec![defaults.clone()]);
-        assert_eq!(sets(json!({ "2": ["none"] })), vec![defaults], "no empty tier to ask for");
+        assert_eq!(sets(json!({})), vec![defaults]);
+        // Every option of a tier excluded is refused, never filled behind the
+        // reader's back with the option they excluded.
+        for gone in [json!({ "2": [] }), json!({ "2": ["none"] })] {
+            let r = parse_optimize(&json!({
+                "weapon": "torid", "size": 1, "mods": { "serration": "search" }, "evolutions": gone,
+            }));
+            let err = r.err().map(|e| e.to_string()).unwrap_or_default();
+            assert!(err.contains("tier 2") && err.contains("excluded"), "{gone}: {err}");
+        }
 
         let two = sets(json!({ "2": ["torid_final_fusillade", "torid_survivors_edge"] }));
         assert_eq!(two.len(), 2, "{two:?}");

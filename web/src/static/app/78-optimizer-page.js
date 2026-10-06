@@ -172,13 +172,16 @@ function renderOptLimits() {
 }
 
 /// Exclude an option or take it back. An axis that would be left with nothing
-/// — the last mode, the last element — keeps it.
+/// — the last mode, the last element, an evolution tier's last option — keeps
+/// it: the server refuses an empty tier rather than install its default.
 function toggleLimit(axis, id) {
   const list = opt.limits.exclude[axis];
   if (list.includes(id)) opt.limits.exclude[axis] = list.filter((x) => x !== id);
   else {
     const w = weaponInfo($("weapon").value) || {};
-    const all = axis === "modes" ? (w.modes || []) : axis === "valence" ? ((valenceSpec(w.id) || {}).elements || []) : null;
+    const tier = axis === "evolutions" ? weaponEvos(w.id).find((t) => t.options.some((o) => o.id === id)) : null;
+    const all = axis === "modes" ? (w.modes || []) : axis === "valence" ? ((valenceSpec(w.id) || {}).elements || [])
+      : tier ? tier.options.map((o) => o.id) : null;
     if (all && all.filter((x) => !list.includes(x)).length <= 1) return;
     opt.limits.exclude[axis] = [...list, id];
   }
