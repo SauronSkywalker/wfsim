@@ -50,10 +50,14 @@ async function qq(method, path, body) {
   return text ? JSON.parse(text) : {};
 }
 
-const listed = await qq("GET", "/v2/panels").catch(() => ({}));
-const mine = (listed.panels || listed.data || listed || []).filter?.((p) => String((p.panel || p).remark || p.remark || "").startsWith(MARK)) || [];
-for (const p of mine) await qq("DELETE", `/v2/panels/${p.panel_id || p.id}`).catch(() => {});
+// ONE SCENE AT A TIME: the list is asked per scene (`scope`), and only the
+// panels this script made are replaced.
 for (const scope of ["group", "c2c"]) {
+  const listed = await qq("GET", `/v2/panels?scope=${scope}`).catch(() => ({}));
+  const all = Array.isArray(listed) ? listed : listed.records || listed.panels || [];
+  for (const p of all.filter((x) => String((x.panel || x).remark || "").startsWith(MARK))) {
+    await qq("DELETE", `/v2/panels/${p.panel_id || p.id}`).catch(() => {});
+  }
   await qq("POST", "/v2/panels", { scope, target_type: "all", panel: { items: COMMANDS, remark: `${MARK} ${scope}` } });
 }
 await qq("PUT", "/v2/menu", { menu: { items: MENU } });
