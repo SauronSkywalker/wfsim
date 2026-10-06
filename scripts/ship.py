@@ -8,15 +8,17 @@ a week of pushes reached the web and none of them reached an installed client.
 
 So there is ONE command. It builds `site/`, rebuilds the payload that declares
 what the client gets, commits, pushes, publishes the channel, deploys the MCP
-server (`mcp/`, which bundles the same engine) — and then
-VERIFIES, by fetching the manifest it just published and hashing every file it
-names against `site/`. A mirror that is only promised drifts; this one is read
-back, and the MCP server is asked which engine it runs.
+server (`mcp/`, which bundles the same engine) and the QQ bot (`ship_bot.py`,
+the same engine again) — and then VERIFIES, by fetching the manifest it just
+published and hashing every file it names against `site/`. A mirror that is only
+promised drifts; this one is read back, and the MCP server and the bot are each
+asked which engine they run.
 
     python scripts/ship.py              # build, commit, push, publish, verify
     python scripts/ship.py --dry-run    # every build, neither publish
     python scripts/ship.py --verify     # only: do the two agree right now?
     python scripts/ship.py --no-push    # publish the channel, leave git alone
+    python scripts/ship.py --no-bot     # everything but the QQ bot, said out loud
 
 A DIRTY TREE IS REFUSED, because what ships would then be in no commit and no
 later checkout could reproduce it. `--dirty` says so out loud.
@@ -62,7 +64,7 @@ def git(*a: str) -> str:
     ).stdout.strip()
 
 
-def verify() -> int:
+def verify(bot: bool = True) -> int:
     """Hash every file the LIVE manifest names against `site/`.
 
     The manifest is fetched rather than read off disk: what a client sees is
@@ -84,7 +86,13 @@ def verify() -> int:
             print(f"  {p}")
         return 1
     print("mirror ok — every file the channel names is the file site/ holds")
-    return verify_mcp()
+    if verify_mcp():
+        return 1
+    if not bot:
+        print("bot not checked (--no-bot)")
+        return 0
+    import ship_bot  # noqa: E402
+    return ship_bot.verify()
 
 
 def verify_mcp() -> int:
@@ -117,10 +125,11 @@ def main() -> None:
     ap.add_argument("--verify", action="store_true")
     ap.add_argument("--no-push", action="store_true")
     ap.add_argument("--dirty", action="store_true")
+    ap.add_argument("--no-bot", action="store_true")
     args = ap.parse_args()
 
     if args.verify:
-        sys.exit(verify())
+        sys.exit(verify(bot=not args.no_bot))
 
     # `site/` is a build product and is expected to differ; anything else means
     # the tree holds work that no commit records.
@@ -185,7 +194,11 @@ def main() -> None:
     # THE MCP SERVER AFTER THE PUSH, from the same tree: its engine is the one
     # just published, and a server deployed ahead of the site answers with it.
     run(shutil.which("npx") or "npx", "wrangler", "deploy", "-c", str(ROOT / "mcp" / "wrangler.jsonc"))
-    sys.exit(verify())
+    # …AND THE BOT, the same engine on a server nothing else deploys to.
+    if not args.no_bot:
+        import ship_bot  # noqa: E402
+        ship_bot.deploy()
+    sys.exit(verify(bot=not args.no_bot))
 
 
 if __name__ == "__main__":

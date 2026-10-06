@@ -335,6 +335,10 @@ It serves nothing inbound, so it needs no ICP filing. Secrets: the worker holds
 AppSecret (for its access token) and the same relay token.
 `scripts/check_qq.mjs` holds the door to QQ's published signing example.
 
+THE BOT SHIPS WITH THE SITE: `ship.py` copies `bot/`, `mcp/engine.js`, its wasm
+and `mcp/headless.js` to the server, restarts it and checks the engine it holds
+(`scripts/ship_bot.py`; the server and its key are `private/qq/bot.json`).
+
 HER FACE IS `web/src/static/nona.svg`, the one the site's Nona wears; the QQ
 avatar is that file rendered to a PNG and uploaded on QQ's console by hand.
 
