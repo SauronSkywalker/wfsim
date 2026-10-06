@@ -14,5 +14,5 @@ Sword And Shield · Melee · Mastery Rank 14. 300 base damage (impact 210, punct
 
 ## In WFSim
 
-- Build, simulate and optimize it: https://wfsim.app/weapons/Cobra_&_Crane_Prime
+- Build, simulate and optimize it: https://wfsim.app/weapons/Cobra_%26_Crane_Prime
 - Every published board row, as JSON: https://wfsim.app/board/cobra_and_crane_prime.json

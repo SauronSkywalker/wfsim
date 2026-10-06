@@ -33,14 +33,14 @@ Each links to its page as markdown; drop `.md` for the calculator.
 
 ## Melee (225)
 
-- [Ack & Brunt](https://wfsim.app/weapons/Ack_&_Brunt.md): Sword And Shield · Melee · Mastery Rank 3
+- [Ack & Brunt](https://wfsim.app/weapons/Ack_%26_Brunt.md): Sword And Shield · Melee · Mastery Rank 3
 - [Amanata](https://wfsim.app/weapons/Amanata.md): Polearm · Melee · Mastery Rank 2
 - [Amphis](https://wfsim.app/weapons/Amphis.md): Staff · Melee · Mastery Rank 5
 - [Anku](https://wfsim.app/weapons/Anku.md): Scythe · Melee · Mastery Rank 3
 - [Ankyros](https://wfsim.app/weapons/Ankyros.md): Fist · Melee · Mastery Rank 2
 - [Ankyros Prime](https://wfsim.app/weapons/Ankyros_Prime.md): Fist · Melee · Mastery Rank 8
 - [Arca Titron](https://wfsim.app/weapons/Arca_Titron.md): Hammer · Melee · Mastery Rank 10
-- [Argo & Vel](https://wfsim.app/weapons/Argo_&_Vel.md): Sword And Shield · Melee · Mastery Rank 0
+- [Argo & Vel](https://wfsim.app/weapons/Argo_%26_Vel.md): Sword And Shield · Melee · Mastery Rank 0
 - [Arum Spinosa](https://wfsim.app/weapons/Arum_Spinosa.md): Warfan · Melee · Mastery Rank 11
 - [Atterax](https://wfsim.app/weapons/Atterax.md): Whip · Melee · Mastery Rank 5
 - [Azothane](https://wfsim.app/weapons/Azothane.md): Two Handed Nikana · Melee · Mastery Rank 0
@@ -55,8 +55,8 @@ Each links to its page as markdown; drop `.md` for the calculator.
 - [Ceramic Dagger](https://wfsim.app/weapons/Ceramic_Dagger.md): Dagger · Melee · Mastery Rank 3
 - [Cerata](https://wfsim.app/weapons/Cerata.md): Glaive · Melee · Mastery Rank 7
 - [Ceti Lacera](https://wfsim.app/weapons/Ceti_Lacera.md): Blade And Whip · Melee · Mastery Rank 12
-- [Cobra & Crane](https://wfsim.app/weapons/Cobra_&_Crane.md): Sword And Shield · Melee · Mastery Rank 10
-- [Cobra & Crane Prime](https://wfsim.app/weapons/Cobra_&_Crane_Prime.md): Sword And Shield · Melee · Mastery Rank 14
+- [Cobra & Crane](https://wfsim.app/weapons/Cobra_%26_Crane.md): Sword And Shield · Melee · Mastery Rank 10
+- [Cobra & Crane Prime](https://wfsim.app/weapons/Cobra_%26_Crane_Prime.md): Sword And Shield · Melee · Mastery Rank 14
 - [Coda Caustacyst](https://wfsim.app/weapons/Coda_Caustacyst.md): Scythe · Melee · Mastery Rank 17
 - [Coda Hirudo](https://wfsim.app/weapons/Coda_Hirudo.md): Sparring · Melee · Mastery Rank 17
 - [Coda Mire](https://wfsim.app/weapons/Coda_Mire.md): Sword · Melee · Mastery Rank 17
@@ -211,20 +211,20 @@ Each links to its page as markdown; drop `.md` for the calculator.
 - [Shaku](https://wfsim.app/weapons/Shaku.md): Nunchaku · Melee · Mastery Rank 10
 - [Sheev](https://wfsim.app/weapons/Sheev.md): Dagger · Melee · Mastery Rank 5
 - [Sibear](https://wfsim.app/weapons/Sibear.md): Hammer · Melee · Mastery Rank 6
-- [Sigma & Octantis](https://wfsim.app/weapons/Sigma_&_Octantis.md): Sword And Shield · Melee · Mastery Rank 10
-- [Silva & Aegis](https://wfsim.app/weapons/Silva_&_Aegis.md): Sword And Shield · Melee · Mastery Rank 0
-- [Silva & Aegis Prime](https://wfsim.app/weapons/Silva_&_Aegis_Prime.md): Sword And Shield · Melee · Mastery Rank 12
+- [Sigma & Octantis](https://wfsim.app/weapons/Sigma_%26_Octantis.md): Sword And Shield · Melee · Mastery Rank 10
+- [Silva & Aegis](https://wfsim.app/weapons/Silva_%26_Aegis.md): Sword And Shield · Melee · Mastery Rank 0
+- [Silva & Aegis Prime](https://wfsim.app/weapons/Silva_%26_Aegis_Prime.md): Sword And Shield · Melee · Mastery Rank 12
 - [Skana](https://wfsim.app/weapons/Skana.md): Sword · Melee · Mastery Rank 0
 - [Skana Prime](https://wfsim.app/weapons/Skana_Prime.md): Sword · Melee · Mastery Rank 12
 - [Skiajati](https://wfsim.app/weapons/Skiajati.md): Nikana · Melee · Mastery Rank 11
 - [Slaytra](https://wfsim.app/weapons/Slaytra.md): Machete · Melee · Mastery Rank 13
 - [Spinnerex](https://wfsim.app/weapons/Spinnerex.md): Whip · Melee · Mastery Rank 12
 - [Stropha](https://wfsim.app/weapons/Stropha.md): Gunblade · Melee · Mastery Rank 10
-- [Sun & Moon](https://wfsim.app/weapons/Sun_&_Moon.md): Dual Nikanas · Melee · Mastery Rank 0
+- [Sun & Moon](https://wfsim.app/weapons/Sun_%26_Moon.md): Dual Nikanas · Melee · Mastery Rank 0
 - [Syam](https://wfsim.app/weapons/Syam.md): Nikana · Melee · Mastery Rank 0
 - [Sydon](https://wfsim.app/weapons/Sydon.md): Polearm · Melee · Mastery Rank 5
 - [Synoid Heliocor](https://wfsim.app/weapons/Synoid_Heliocor.md): Hammer · Melee · Mastery Rank 11
-- [Tak & Lug](https://wfsim.app/weapons/Tak_&_Lug.md): Sword And Shield · Melee · Mastery Rank 9
+- [Tak & Lug](https://wfsim.app/weapons/Tak_%26_Lug.md): Sword And Shield · Melee · Mastery Rank 9
 - [Tatsu](https://wfsim.app/weapons/Tatsu.md): Two Handed Nikana · Melee · Mastery Rank 7
 - [Tatsu Prime](https://wfsim.app/weapons/Tatsu_Prime.md): Two Handed Nikana · Melee · Mastery Rank 14
 - [Tekko](https://wfsim.app/weapons/Tekko.md): Fist · Melee · Mastery Rank 6

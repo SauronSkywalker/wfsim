@@ -15,5 +15,5 @@ Sword And Shield · Melee · Mastery Rank 10. 174 base damage (impact 38.28, pun
 
 ## In WFSim
 
-- Build, simulate and optimize it: https://wfsim.app/weapons/Sigma_&_Octantis
+- Build, simulate and optimize it: https://wfsim.app/weapons/Sigma_%26_Octantis
 - Every published board row, as JSON: https://wfsim.app/board/sigma_and_octantis.json
