@@ -231,3 +231,35 @@ CREATE TABLE IF NOT EXISTS bot_inbox (
   claimed_at INTEGER,
   done_at    INTEGER
 );
+
+-- RIVEN APPRAISAL (worker/appraise.js, docs/AGENT.md §"Riven appraisal"). One row
+-- per appraisal a chat's bot opened; `chat` is that channel's own record of
+-- where to answer and nothing else reads it. `winner` is the first handed-back
+-- build the bot accepted. Both tables are emptied a day after a row arrived.
+-- Added to a live database with these statements alone.
+CREATE TABLE IF NOT EXISTS appraisals (
+  code     TEXT PRIMARY KEY,
+  channel  TEXT NOT NULL,
+  chat     TEXT NOT NULL,
+  asker    TEXT NOT NULL,
+  room     TEXT NOT NULL,
+  weapon   TEXT NOT NULL,
+  ruler    TEXT NOT NULL,
+  riven    TEXT NOT NULL,
+  at       INTEGER NOT NULL,
+  winner   INTEGER,
+  done_at  INTEGER,
+  told_at  INTEGER
+);
+CREATE INDEX IF NOT EXISTS appraisals_by_asker ON appraisals (channel, asker, at);
+CREATE TABLE IF NOT EXISTS appraisal_results (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  code       TEXT NOT NULL,
+  build      TEXT NOT NULL,
+  thanks     TEXT NOT NULL DEFAULT '',
+  at         INTEGER NOT NULL,
+  claimed_at INTEGER,
+  checked_at INTEGER,
+  verdict    TEXT
+);
+CREATE INDEX IF NOT EXISTS appraisal_results_by_code ON appraisal_results (code);

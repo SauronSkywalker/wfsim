@@ -28,6 +28,7 @@ import { EXT_DOCUMENTS, extDocument } from "./ext_documents.js";
 import { ocrSample } from "./ocr_samples.js";
 import { popularity } from "./popularity.js";
 import { qqRoute } from "./qq.js";
+import { appraiseRoute } from "./appraise.js";
 
 const MAX_BYTES = 4096;        // a build is a few hundred bytes; this is slack
 // AN OUTER BOUND, NOT THE RULE — see below. It is `MAIN_SLOTS + 1`: eight main
@@ -759,6 +760,7 @@ export default {
         { status: res.status, headers });
     }
     if (path === "/api/qq" || path.startsWith("/api/qq/")) return qqRoute(request, env, path);
+    if (path.startsWith("/api/appraise/")) return appraiseRoute(request, env, path);
     if (path === "/api/ocr/sample") return ocrSample(request, env);
     if (path === "/api/popularity") return popularity(request, env, ctx);
     if (path === "/api/board/pending") {

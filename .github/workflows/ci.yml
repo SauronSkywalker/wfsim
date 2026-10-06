@@ -110,6 +110,11 @@ jobs:
         run: node scripts/check_bot_auth.mjs
       - name: The browser's agent gets the door's table
         run: node scripts/check_webmcp.mjs
+      # THE BOTS' DOORS hold only what the platform signed, and answer once.
+      - name: The QQ door keeps signed messages and hands each out once
+        run: node scripts/check_qq.mjs
+      - name: A riven appraisal is asked once and answered once
+        run: node scripts/check_appraise.mjs
       # A BOX THAT REDRAWS UNDER A COMPOSITION takes no Chinese at all, while
       # Latin typing looks fine.
       - name: Every search box takes a Chinese input method

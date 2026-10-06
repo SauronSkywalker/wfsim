@@ -51,6 +51,14 @@ The QQ door (`worker/qq.js`) with no network: the address check signs QQ's
 published example, a signed event is kept and a changed one refused, and the
 bot server's pull hands each message out once until it is answered.
 
+## `check_appraise`
+
+Riven appraisal's door (`worker/appraise.js`) with no network: only a bot opens
+one, the page reads it without the chat it came from, an asker opens at most
+five an hour, every build handed back is kept with its thanks stripped of
+links, the first build the bot accepts wins once, a told appraisal is not told
+again, and each channel's bot sees only its own.
+
 ## `check_agent_door`
 
 `window.wfsim` is one door, and an action is something a
