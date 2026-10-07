@@ -1117,9 +1117,11 @@ fn a_corner_names_the_default_it_waits_on() {
 /// mod slots and nothing else, and a ninth card scored on it is a build the
 /// game cannot hold.
 #[test]
-fn a_companion_weapon_has_no_exilus_slot() {
+fn an_arch_gun_or_a_companion_weapon_has_no_exilus_slot() {
     let with = |weapon: &str| validate_with(weapon, &[], &[], &[], "", None, Some("aerial_ace"), None);
-    let err = with("artax").expect_err("the Artax has no exilus slot");
-    assert!(err.contains("no exilus slot"), "{err}");
+    for weapon in ["artax", "fluctus"] {
+        let err = with(weapon).expect_err("no exilus slot");
+        assert!(err.contains("no exilus slot"), "{weapon}: {err}");
+    }
     assert!(with("braton_prime").is_ok(), "a rifle's exilus slot takes an exilus mod");
 }

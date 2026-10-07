@@ -11,7 +11,7 @@ max_rank: 5
 # Slash. A wrong `true` puts a damage mod in a free slot, so the asymmetry
 # decides it. The module's flag is otherwise perfect (153/153 against our
 # verified rifle and pistol pools), which is why this is recorded rather than
-# assumed — an in-game Arch-Gun exilus slot settles it in one look.
+# assumed. An Arch-Gun has no exilus slot, so no fight reads it.
 exilus: false
 internal_name: /Lotus/Upgrades/Mods/Archwing/Rifle/ArchwingDualStatSlashStatusMod
 description: "+X% Slash"

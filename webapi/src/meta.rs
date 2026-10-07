@@ -473,6 +473,8 @@ pub fn meta_json() -> Value {
                     .map(|s| s.class.clone())
                     .unwrap_or_default(),
                 "sentinel": w.sentinel,
+                // An Arch-Gun has none either, so `sentinel` cannot answer it.
+                "has_exilus_slot": wfsim_engine::data::weapons::has_exilus_slot(&w.id),
                 // AN EXALTED WEAPON IS RANKED APART, and the page needs to know
                 // which ones without a second list: its numbers are its
                 // Warframe's ability's, so it is not a like term with a gun

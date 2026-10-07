@@ -473,6 +473,9 @@ pub fn parse_optimize(v: &Value) -> Result<OptimizePlan, Value> {
     ex_fixed.sort();
     ex_fixed.dedup();
     ex_search.retain(|s| !ex_fixed.contains(s));
+    if !wfsim_engine::data::weapons::has_exilus_slot(&info.id) && ex_fixed.iter().chain(ex_search.iter()).any(|id| id != "none") {
+        return Err(err_json(format!("{} has no exilus slot", info.id)));
+    }
     // "none" is a first-class option id: pool it to keep "leave empty" among
     // the searched options, req it to pin the slot empty.
     for id in ex_fixed
@@ -486,9 +489,6 @@ pub fn parse_optimize(v: &Value) -> Result<OptimizePlan, Value> {
         if !m.exilus {
             return Err(err_json(format!("{id} is not exilus-eligible")));
         }
-    }
-    if info.sentinel && ex_fixed.iter().chain(ex_search.iter()).any(|id| id != "none") {
-        return Err(err_json(format!("{} has no exilus slot", info.id)));
     }
     if ex_fixed.len() > 1 {
         return Err(err_json(format!(
@@ -2293,17 +2293,19 @@ mod exilus_slot_tests {
     /// A WEAPON WITH NO EXILUS SLOT IS NEVER SEARCHED ONE: the quick calc's
     /// whole scope leaves it empty, and a scope naming an exilus card is refused.
     #[test]
-    fn a_companion_weapon_is_searched_without_an_exilus() {
+    fn an_arch_gun_or_a_companion_weapon_is_searched_without_an_exilus() {
         let scope = |weapon: &str| quick::whole_scope(&json!({ "weapon": weapon, "strategy": "quick" })).unwrap();
-        assert_eq!(scope("artax")["exilus"], json!({ "none": "fixed" }));
         assert!(scope("braton_prime")["exilus"].as_object().unwrap().len() > 1, "a rifle's exilus is searched");
-        let err = parse_optimize(&json!({
-            "weapon": "artax", "build_size": 1,
-            "mods": { "serration": "search" }, "exilus": { "aerial_ace": "search" },
-        }))
-        .err()
-        .expect("an exilus card on the Artax is refused");
-        assert!(err.to_string().contains("no exilus slot"), "{err}");
+        for (weapon, a_mod) in [("artax", "serration"), ("fluctus", "rubedo_lined_barrel")] {
+            assert_eq!(scope(weapon)["exilus"], json!({ "none": "fixed" }), "{weapon}");
+            let err = parse_optimize(&json!({
+                "weapon": weapon, "build_size": 1,
+                "mods": { a_mod: "search" }, "exilus": { "aerial_ace": "search" },
+            }))
+            .err()
+            .expect("an exilus card is refused");
+            assert!(err.to_string().contains("no exilus slot"), "{weapon}: {err}");
+        }
     }
 }
 

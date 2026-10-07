@@ -249,8 +249,8 @@ pub fn validate_with(
     // enforces here that a main slot does not.
     let exilus_id = match exilus.filter(|x| !x.is_empty()) {
         None => None,
-        // A COMPANION WEAPON HAS EIGHT SLOTS AND NO EXILUS.
-        Some(_) if spec.class.contains("sentinel") => {
+        // AN ARCH-GUN OR A COMPANION WEAPON HAS EIGHT SLOTS AND NO EXILUS.
+        Some(_) if !crate::data::weapons::has_exilus_slot(&spec.id) => {
             return Err(format!("{} has no exilus slot", spec.name));
         }
         Some(id) => {

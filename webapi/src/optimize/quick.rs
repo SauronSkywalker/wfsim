@@ -1013,8 +1013,10 @@ pub(crate) fn whole_scope(v: &Value) -> Option<Value> {
         }
     }
     // The exilus left empty: its one option is the empty slot — and on a
-    // companion weapon, which has none, the only one there is.
-    if limits.get("exilus").and_then(Value::as_bool) == Some(false) || info.sentinel {
+    // weapon that has none (an Arch-Gun, a companion's), the only one there is.
+    if limits.get("exilus").and_then(Value::as_bool) == Some(false)
+        || !wfsim_engine::data::weapons::has_exilus_slot(&info.id)
+    {
         exilus = serde_json::Map::from_iter([("none".to_string(), json!("fixed"))]);
     }
     let seat_filled = |i: usize| -> bool {

@@ -446,7 +446,7 @@ const pickupFields = (state) => {
 
 function weaponAxes(weaponId) {
   const w = weaponInfo(weaponId || $("weapon").value) || {};
-  const exilus = w.sentinel ? [] : exilusPool();
+  const exilus = w.has_exilus_slot === false ? [] : exilusPool();
   return {
     mods: poolWithRivens(),
     exilus,
