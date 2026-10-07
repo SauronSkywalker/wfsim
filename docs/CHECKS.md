@@ -295,6 +295,14 @@ with nothing to admit shows no banner — runs in BOTH languages, and walks the
 BOARD, where weapons are compared and a weapon with unmodelled parts must not
 look like one without them.
 
+## `check_fixed_tier`
+
+A tier with one option (every Genesis's tier 1) is installed and never
+offered: the builder draws it with no ⋯ and a click opens nothing, the
+optimizer's limits do not list it, and the Shapley analysis has no part for
+it while installing it in every subset, so the full subset is the build on
+screen.
+
 ## `check_wf_buffs`
 
 A Warframe ability buff is the FIGHT's and reaches the

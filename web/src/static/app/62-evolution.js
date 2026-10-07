@@ -1,10 +1,9 @@
 // ---- Evolution ----
 // Every tier (EVO I–IV) renders its options as CARDS — icon, name, and the
-// verbatim effect text, like the mod/arcane cards — PLUS an explicit None
-// card (nothing installed). Wiki-flagged broken evolutions carry a red
-// BROKEN badge, and selecting one shows a red note: the engine really
-// computes them as NO EFFECT. Deselecting tier 1 (the Incarnon Form
-// unlock) drops the weapon to its base form.
+// verbatim effect text, like the mod/arcane cards. No tier is ever empty, and
+// a tier with one option (the form) is a card with nothing to pick. Wiki-flagged
+// broken evolutions carry a red BROKEN badge, and selecting one shows a red
+// note: the engine really computes them as NO EFFECT.
 // Evolution tiers are per weapon, not a fixed four: Zariman weapons run
 // I-V (Laetum), Incarnon Genesis adapters I-IV. Build the numeral instead
 // of indexing a table that stops at IV.
@@ -616,6 +615,7 @@ function renderEvo() {
       // NO REMOVE: a finished Genesis has no empty tier, the same shape as a
       // part or an element.
       removable: false,
+      fixed: evoFixed(t),
       items: t.options.map((x) => ({
         key: x.id,
         value: x.id,

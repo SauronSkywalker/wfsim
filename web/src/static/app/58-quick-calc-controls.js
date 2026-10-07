@@ -48,7 +48,7 @@ function rankedSlot(id, cfg) {
     <span class="axl">${escHtml(cfg.label)}</span>
     ${icon}<div class="info"><div class="mn">${card.href ? wl(card.name, card.href) : escHtml(card.name)}${
       card.chips || ""}</div><div class="ed">${lines}</div>${card.notes || ""}</div>
-    <button class="dots" title="${escHtml(tr("options"))}">⋯</button>
+    ${cfg.fixed ? "" : `<button class="dots" title="${escHtml(tr("options"))}">⋯</button>`}
   </div>`;
 }
 
@@ -98,7 +98,8 @@ function bindRankedSlots(box, cfgs) {
   box.querySelectorAll(".slot.axis").forEach((el) => {
     const id = el.dataset.slot;
     const cfg = cfgs[id];
-    if (!cfg || cfg.locked) return;
+    // A FIXED slot has nothing to pick: no ⋯, and a click opens no list of one.
+    if (!cfg || cfg.locked || cfg.fixed) return;
     const dots = el.querySelector(".dots");
     if (dots) {
       // THE MENU HANGS OFF THE ⋯, NOT OFF THE CARD. `place` puts a popover's

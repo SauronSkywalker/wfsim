@@ -132,8 +132,9 @@ function renderOptLimits() {
       + `<div class="combo-menu opt-limit-list">${arcs.map((a) => arcaneRow(a, { attrs: `data-axis="arcanes"`,
         cls: isOut("arcanes", a.id) ? "cur opt-out" : "", chips: isOut("arcanes", a.id) ? outChip() : "" })).join("")}</div>`;
   }
-  if (AX.evolutions.length) {
-    html += limitHead("evo-block", "Evolution") + AX.evolutions.map((t) =>
+  const tiers = AX.evolutions.filter((t) => !evoFixed(t));
+  if (tiers.length) {
+    html += limitHead("evo-block", "Evolution") + tiers.map((t) =>
       `<div class="opt-limit-tier">${escHtml(tr("tier {n}").replace("{n}", t.tier))}</div><div class="combo-menu opt-limit-list">${
         t.options.map((o) => plainRow("evolutions", o.id, o.name)).join("")}</div>`).join("");
   }

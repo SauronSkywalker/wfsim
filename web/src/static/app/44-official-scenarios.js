@@ -107,6 +107,9 @@ const weaponExists = (id) => !!id && META.weapons.some((w) => w.id === id);
 /// not it is the bug of the day.
 const weaponEvos = (weaponId) =>
   (weaponInfo(weaponId || $("weapon").value) || {}).evolutions || [];
+/// A TIER WITH ONE OPTION IS NOT A CHOICE — every Genesis's tier 1, the form. It
+/// is always installed, so nothing offers to swap, exclude or switch it off.
+const evoFixed = (t) => (t.options || []).length < 2;
 // EVERY TIER INSTALLED, onto THIS weapon's options: a finished Genesis cannot
 // be emptied, so a tier `sel` does not name — or names another weapon's perk
 // for — holds its first option, which is the game's order

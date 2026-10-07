@@ -23,6 +23,12 @@ mirrors it (`defaultEvolutions`). Only the Shapley analysis sends a list as
 given. Old share links and presets carrying an empty tier read it as that
 tier's default; the wire keeps its `--`.
 
+A tier with ONE option (tier 1, the form) is therefore no choice, and nothing
+offers it as one (`evoFixed`): the builder draws it with nothing to pick, the
+optimizer's limits leave it out, and the Shapley analysis installs it in every
+subset rather than making it a part. The server needs no rule: a one-option
+tier is a factor of 1 in the search's product and has no other option to scan.
+
 A mod that needs the same trigger on every firing mode (the Cannonades) is
 therefore never equippable on an Incarnon weapon: tier 1 is always there.
 
