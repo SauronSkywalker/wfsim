@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // THE SERVER'S SIDE OF COMPUTE ORDERS — docs/BOARD.md §"Compute orders". Run
-// by `live_board.sh` every cycle.
+// by `live_board.sh`: `rank` every cycle, `settle` in a loop beside it.
 //
 //   node live_orders.mjs rank <work-dir>               fresh results: top ten → server, the rest → open
 //   node live_orders.mjs settle <work-dir> <bin-dir>   top-ten, disputed and spot-checked orders, fought here

@@ -663,10 +663,11 @@ row at a time, so the board's growth is more orders, never a heavier client.
   there, and delete its queue row; one agreement in twenty is a `spot` the
   server recomputes. A difference is a `dispute`. The answer never says which.
 - **Settling.** `live_orders.mjs settle` fights every `arbiter`, `dispute` and
-  `spot` order with the scorer itself and ships the fact. A client the server
-  disproves — the first result, the second, or both — is refused: what it
-  agreed to is withdrawn and opened again, what it measured first is measured
-  again. Only for an order of the engine the server runs.
+  `spot` order with the scorer itself and ships the fact, in a loop beside the
+  live cycle so a heavy row never holds intake, ranking or the site's board. A
+  client the server disproves — the first result, the second, or both — is
+  refused: what it agreed to is withdrawn and opened again, what it measured
+  first is measured again. Only for an order of the engine the server runs.
 - **Nobody online** costs nothing. `scores.yml` reads the queue with
   `HOLD_SECONDS=7200`: a row whose order opened in the last two hours is the
   clients'; an older one it measures as it always has.

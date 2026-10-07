@@ -8,9 +8,9 @@
 # the library, every row it owes into the queue and opened as a compute order
 # (`ship_queue.sh`) — the rows `scores` gained are read, and the boards move:
 # `verified/`, `scores` alone, pushed to R2 for the site; `board/`, with every
-# client result not yet a fact, for the owner and the bot. Then the server's own
-# orders are ranked and settled (`live_orders.mjs`). docs/BOARD.md §"Compute
-# orders", §"The live board".
+# client result not yet a fact, for the owner and the bot. New first results are
+# ranked each cycle; the server's own orders settle in a loop beside it
+# (`live_orders.mjs`). docs/BOARD.md §"Compute orders", §"The live board".
 #
 # Needs CF_ACCOUNT, CF_TOKEN (D1) and CF_D1_DATABASE, and BOARD_PUSH_TOKEN.
 set -euo pipefail
@@ -144,6 +144,21 @@ read_unverified() {
   mv unverified.next unverified.ndjson
 }
 
+# THE SERVER'S OWN FIGHTS RUN BESIDE THE CYCLE, NEVER IN IT: a heavy row is
+# minutes even here, and in line it held intake, ranking and the site's board
+# for as long. A one-cycle check run by hand settles in line instead.
+settle_loop() {
+  while true; do
+    node "$HERE/live_orders.mjs" settle "$WORK" "$BIN" || echo "live: settling failed; it asks again" >&2
+    sleep 10
+  done
+}
+if [ "${ONCE:-}" != 1 ]; then
+  settle_loop &
+  settler=$!
+  trap 'kill "$settler" 2>/dev/null' EXIT
+fi
+
 last_refresh=0
 while true; do
   whole=0
@@ -169,6 +184,12 @@ while true; do
     fi
   fi
   read_unverified || echo "live: the open orders could not be read" >&2
+  # RANKED BEFORE THE PROJECTIONS, against the site's board as last pushed —
+  # what a top ten is a top ten of — so a first result is open to a second
+  # client within a cycle of landing, however long this cycle's projections take.
+  if [ -d verified ]; then
+    node "$HERE/live_orders.mjs" rank "$WORK" || echo "live: ranking failed; the next cycle asks again" >&2
+  fi
   if [ -s library.json ] && { [ "$whole" = 1 ] || [ "$facts_moved" = 1 ] || [ -s touched-ids.txt ] \
        || [ ! -d verified ] || [ ! -d board ]; }; then
     library_live
@@ -194,12 +215,10 @@ while true; do
   if [ -f verified/meta.json ]; then
     node "$HERE/live_publish.mjs" push "$WORK" verified || echo "live: the push did not land; the next cycle sends it" >&2
   fi
-  # RANKED AGAINST THE SITE'S BOARD, which is what a top ten is a top ten of.
-  if [ -d verified ]; then
-    node "$HERE/live_orders.mjs" rank "$WORK" || echo "live: ranking failed; the next cycle asks again" >&2
-  fi
-  node "$HERE/live_orders.mjs" settle "$WORK" "$BIN" || echo "live: settling failed; the next cycle asks again" >&2
   # ONE CYCLE AND OUT, for a check run by hand.
-  [ "${ONCE:-}" = 1 ] && break
+  if [ "${ONCE:-}" = 1 ]; then
+    node "$HERE/live_orders.mjs" settle "$WORK" "$BIN" || echo "live: settling failed" >&2
+    break
+  fi
   sleep "$POLL_SECONDS"
 done
