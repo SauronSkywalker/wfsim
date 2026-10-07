@@ -655,14 +655,17 @@ row at a time, so the board's growth is more orders, never a heavier client.
   (the scorer's `scored_build` and `row_requests`, a riven's rolls included),
   folds it with `/api/board/fold` and ends it with `/api/board/score`
   (`69-board-work.js`) — `a_compute_order_is_the_scorers_row` holds the path.
-- **Two results.** The first makes the order `fresh`; the server ranks it
-  (`live_orders.mjs rank`) and it becomes `open`: only a DIFFERENT client of the
-  same `ENGINE_ID` is handed it. `TOP` there is 0 — THE SERVER ONLY BACKS THE
-  CLIENTS UP; raised, an order in its group's top `TOP` becomes `arbiter`, the
-  server's alone. Equal bits —
-  score and metric — put it in `scores` as `verified:<engine>` unless a fact is
-  there, and delete its queue row; one agreement in twenty is a `spot` the
-  server recomputes. A difference is a `dispute`. The answer never says which.
+- **`CLIENTS_PER_FACT` results** (`worker/verify.js`, 2). The first makes the
+  order `fresh`; the server ranks it (`live_orders.mjs rank`) and it becomes
+  `open`: only a client of the same `ENGINE_ID` that has not measured it is
+  handed it. `TOP` there is 0 — THE SERVER ONLY BACKS THE CLIENTS UP; raised, an
+  order in its group's top `TOP` becomes `arbiter`, the server's alone. When
+  `CLIENTS_PER_FACT` clients sent equal bits — score and metric — it goes into
+  `scores` as `verified:<engine>` unless a fact is there, stamped when the last
+  of them answered, and its queue row is deleted; at 1 the first result is the
+  fact. `clients` names every one of them, in order. One fact in twenty is a
+  `spot` the server recomputes. A difference is a `dispute`. The answer never
+  says which.
 - **Settling.** `live_orders.mjs settle` fights every `arbiter`, `dispute` and
   `spot` order with the scorer itself and ships the fact, in a loop beside the
   live cycle so a heavy row never holds intake, ranking or the site's board. A

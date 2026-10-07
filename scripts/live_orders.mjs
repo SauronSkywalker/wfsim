@@ -41,6 +41,8 @@ const lines = (p) => (existsSync(p) ? readFileSync(p, "utf8").split("\n").filter
 const key = (f) => `${f.identity}|${f.ruler}|${f.mode}`;
 const where = "WHERE identity = ? AND ruler = ? AND mode = ?";
 const keyOf = (o) => [o.identity, o.ruler, o.mode];
+/// EVERY CLIENT THAT MEASURED AN ORDER, in the order their results came.
+const clientsOf = (o) => (o.clients || [o.produced_by, o.verifier].filter(Boolean).join(",")).split(",").filter(Boolean);
 
 /// WHERE A RESULT STANDS among the verified rows of its group on the site's
 /// board — one ruler, one mode, riven or not, the grouping the page draws.
@@ -94,12 +96,16 @@ function fight(o) {
 async function ban(id) {
   if (!id) return;
   await d1("UPDATE verifiers SET banned = 1 WHERE id = ?", [id]);
-  const agreed = await d1("SELECT identity, ruler, mode FROM orders WHERE verifier = ? AND state IN ('verified', 'spot')", [id]);
-  for (const o of agreed) {
-    await d1(`DELETE FROM scores ${where} AND measured_by LIKE 'verified:%'`, keyOf(o));
-    await d1(`UPDATE orders SET state = 'open', verifier = NULL ${where}`, keyOf(o));
+  const named = await d1(`SELECT identity, ruler, mode, state, produced_by, clients FROM orders
+                          WHERE (',' || clients || ',') LIKE ? AND produced_by != ? AND state IN ('verified', 'spot', 'open')`,
+  [`%,${id},%`, id]);
+  const agreed = named.filter((o) => o.state !== "open");
+  for (const o of named) {
+    const rest = clientsOf(o).filter((c) => c !== id).join(",");
+    if (o.state !== "open") await d1(`DELETE FROM scores ${where} AND measured_by LIKE 'verified:%'`, keyOf(o));
+    await d1(`UPDATE orders SET state = 'open', verifier = NULL, clients = ? ${where}`, [rest, ...keyOf(o)]);
   }
-  await d1(`UPDATE orders SET state = 'todo', engine = '', score = NULL, metric = NULL, produced_by = NULL
+  await d1(`UPDATE orders SET state = 'todo', engine = '', score = NULL, metric = NULL, produced_by = NULL, clients = ''
             WHERE produced_by = ? AND state IN ('fresh', 'open', 'arbiter', 'dispute')`, [id]);
   console.error(`orders: refused client ${id.slice(0, 6)}…, ${agreed.length} agreement(s) withdrawn`);
 }
@@ -113,18 +119,20 @@ async function settle() {
                          (SELECT 1 FROM queue q WHERE q.build_id = orders.identity AND q.ruler = orders.ruler
                           AND q.mode = orders.mode) RETURNING identity`);
   if (gone.length) console.error(`orders: settled ${gone.length} top-ten order(s) the scorer already measured`);
-  const todo = await d1(`SELECT identity, ruler, mode, record, score, engine, state, produced_by, verifier, disputed
+  const todo = await d1(`SELECT identity, ruler, mode, record, score, engine, state, produced_by, verifier, disputed, clients
                          FROM orders WHERE state IN ('arbiter', 'dispute', 'spot') ORDER BY state LIMIT ?`, [SETTLE_PER_CYCLE]);
   for (const o of todo) {
     let truth = null;
     try { truth = fight(o); } catch (e) { console.error(`orders: ${o.identity.slice(0, 8)} did not fight — ${e.message}`); }
     if (truth === null) continue;
-    // WHOEVER THE SERVER DISAGREES WITH WAS WRONG: the first result, the
-    // second, or both when they agreed on a wrong number.
+    // WHOEVER THE SERVER DISAGREES WITH WAS WRONG: every client that sent the
+    // order's number, the one that disputed it, or all of them. A dispute's
+    // client is the last to have answered.
     if (o.engine === engine) {
-      if (truth !== o.score) await ban(o.produced_by);
-      if (o.state === "dispute" && truth !== o.disputed) await ban(o.verifier);
-      if (o.state === "spot" && truth !== o.score) await ban(o.verifier);
+      const ids = clientsOf(o);
+      const disputer = o.state === "dispute" ? ids.pop() : null;
+      if (truth !== o.score) for (const id of ids) await ban(id);
+      if (disputer && truth !== o.disputed) await ban(disputer);
     }
     const state = truth === o.score ? "verified" : "rejected";
     await d1(`UPDATE orders SET state = ? ${where}`, [state, ...keyOf(o)]);

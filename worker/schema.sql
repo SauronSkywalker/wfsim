@@ -198,6 +198,10 @@ CREATE INDEX IF NOT EXISTS queue_row ON queue (build_id, ruler, mode);
 -- is what keeps one lease a few rows read however long the book grows. `engine`
 -- is the first result's `ENGINE_ID`, and only that engine verifies it. `at` is
 -- when the order was opened, in ms: the scorer leaves a young one to clients.
+-- `clients` is every client that measured it, comma-separated, in the order
+-- their results came (`produced_by` first, `verifier` last). Added to the live
+-- table with:
+--   ALTER TABLE orders ADD COLUMN clients TEXT NOT NULL DEFAULT '';
 CREATE TABLE IF NOT EXISTS orders (
   identity    TEXT NOT NULL,
   ruler       TEXT NOT NULL,
@@ -215,6 +219,7 @@ CREATE TABLE IF NOT EXISTS orders (
   verifier    TEXT,
   disputed    REAL,
   at          INTEGER NOT NULL,
+  clients     TEXT NOT NULL DEFAULT '',
   PRIMARY KEY (identity, ruler, mode)
 );
 

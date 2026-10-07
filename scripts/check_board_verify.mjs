@@ -1,7 +1,8 @@
 // COMPUTE ORDERS' DOOR (worker/verify.js), with no network: an order is handed
 // out as a build and never a number; its first result waits for the server's
-// rank; a second must come from another client of the same engine; equal bits
-// make a fact and settle the queue row, anything else is a dispute, and the
+// rank; each further one must come from another client of the same engine;
+// CLIENTS_PER_FACT equal results make a fact naming every client and settle the
+// queue row, anything else is a dispute, and the
 // answer never says which; a row nobody owes, a top-ten row, a live lease and a
 // banned client get nothing.
 //   node scripts/check_board_verify.mjs
@@ -123,5 +124,28 @@ check("a malformed id is refused", (await verifyRoute(new Request("https://x/api
   { method: "POST", body: JSON.stringify({ verifier: "x", engine: "e1" }) }), env, "/api/board/work")).status === 400);
 check("a lease is held for longer than the slowest row", LEASE_MS >= 20 * 60_000);
 
-console.log(failures ? `\n${failures} failed` : "\nan order reaches the board when two clients measured the same bits");
+check("a fact names every client that measured it, first to last", row("one").clients === `${A},${B}`, row("one").clients);
+
+// CLIENTS_PER_FACT: how many different clients must send the same bits.
+const callWith = async (n, path, body) => (await verifyRoute(new Request(`https://x${path}`,
+  { method: "POST", body: JSON.stringify(body) }), { ...env, CLIENTS_PER_FACT: n }, path)).json();
+const workWith = (n, v) => callWith(n, "/api/board/work", { verifier: v, engine: "e1", protocol: PROTOCOL });
+const answerWith = (n, w, v) => callWith(n, "/api/board/verify", { lease: w.lease, verifier: v, engine: "e1", score: SCORE, metric: "kpm" });
+const K = "k".repeat(24), L = "l".repeat(24), M = "m".repeat(24), N = "n".repeat(24);
+
+db.prepare("UPDATE orders SET state = 'settled'").run();  // the orders above are not these checks
+order("solo");
+only("solo");
+await answerWith(1, await workWith(1, K).then((r) => r.work), K);
+check("with one client a fact, the first result is the fact", fact("solo") && row("solo").clients === K && row("solo").state === "verified");
+
+order("trio", "open", { score: SCORE, metric: "kpm", engine: "e1", produced_by: L, clients: L });
+only("trio");
+await answerWith(3, (await workWith(3, M)).work, M);
+check("with three, a second agreement is not yet a fact", !fact("trio") && row("trio").state === "open" && row("trio").clients === `${L},${M}`);
+check("...and the order goes to neither client again", (await workWith(3, L)).work === null && (await workWith(3, M)).work === null);
+await answerWith(3, (await workWith(3, N)).work, N);
+check("...the third makes it", fact("trio") && row("trio").clients === `${L},${M},${N}` && row("trio").verifier === N);
+
+console.log(failures ? `\n${failures} failed` : "\nan order reaches the board when CLIENTS_PER_FACT clients measured the same bits");
 process.exitCode = failures ? 1 : 0;
