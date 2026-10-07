@@ -119,9 +119,13 @@ def deploy_live(t: dict) -> None:
     app = re.search(r'/asset/(app\.[0-9a-f]+\.js)', (ROOT / "site" / "index.html").read_text(encoding="utf-8")).group(1)
     engine = re.search(r'const ENGINE_ID = "([^"]+)"', (ROOT / "site" / "asset" / app).read_text(encoding="utf-8")).group(1)
     (out / "ENGINE").write_bytes(f"{engine}\n".encode())
-    run(["ssh", *o, host, f"mkdir -p {root}/bin {root}/scripts {root}/live"])
+    run(["ssh", *o, host, f"mkdir -p {root}/bin {root}/scripts {root}/live {root}/bin/incoming"])
+    # INTO A SPARE DIRECTORY, THEN RENAMED: the live board may be running the
+    # binary this replaces, and a running file cannot be written over — but it
+    # can be renamed over, which also never leaves half a binary in place.
     run(["scp", "-q", *o, str(out / "wfsim-intake"), str(out / "wfsim-board"),
-         str(out / "VERSION"), str(out / "ENGINE"), f"{host}:{root}/bin/"])
+         str(out / "VERSION"), str(out / "ENGINE"), f"{host}:{root}/bin/incoming/"])
+    run(["ssh", *o, host, f"chmod +x {root}/bin/incoming/wfsim-*; mv -f {root}/bin/incoming/* {root}/bin/"])
     run(["scp", "-q", *o, *LIVE_SCRIPTS, str(rulers), f"{host}:{root}/scripts/"])
     # RESTARTED ONLY ONCE INSTALLED: the unit and its read token are put on the
     # server by hand (`deploy/wfsim-live.service`), and until then there is
