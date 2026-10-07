@@ -78,6 +78,11 @@ notes:
     good one) and flips positive in the malus slot; this one is negative
     because it IS the malus, and flipping it would print a negative slot that
     reads as a gift.
+  battery_restated_on_every_form: |
+    THE AMMO SYSTEM IS THE WEAPON'S, so every form that draws on the battery
+    carries it. `battery:` is not in `data::weapons::INHERITED` (it is not a
+    scalar a form can partially take), so a form that leaves it out silently
+    reloads like a magazine and never refills between shots.
   blazing_barrel_two_clauses: |
     BLAZING BARREL. Two clauses on the card and ONE mechanic: the stack cap
     belongs to the grant above it, and the bulk intake filed it as an effect of

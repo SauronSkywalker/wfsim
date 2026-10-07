@@ -9,6 +9,12 @@ transform_group: fulmin
 
 introduced: "25.0"
 
+# see notes: battery_restated_on_every_form
+battery:
+  regen_per_second: 30.0
+  delay_empty_seconds: 1.0
+  delay_partial_seconds: 1.0
+
 # see notes: condition_overload_catalog_names
 #
 #   Fulmin | Semi-Mode | Projectile | 500 | 500 | 100% | Multiplying

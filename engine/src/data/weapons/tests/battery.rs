@@ -25,3 +25,24 @@ fn a_battery_reload_is_the_empty_delay_plus_the_refill() {
     }
     assert!(checked >= 10, "only {checked} batteries were read");
 }
+
+/// A FORM OF A BATTERY WEAPON CARRIES THE BATTERY, because `battery:` is not
+/// inherited and a form without one reloads like a magazine — no refill
+/// between shots, and nothing reads wrong on the page. The one exception
+/// states its whole wait itself: the Tenet Plinx's charged slug spends the
+/// magazine and waits the page's 2.5 s, which a battery would count twice.
+#[test]
+fn a_form_of_a_battery_weapon_carries_the_battery() {
+    const STATES_ITS_OWN_WAIT: &[&str] = &["tenet_plinx_charged"];
+    let mut checked = 0;
+    for s in all() {
+        let Some(parent) = s.inherits.as_deref() else { continue };
+        let Some(p) = spec(parent) else { continue };
+        if p.battery.is_none() || STATES_ITS_OWN_WAIT.contains(&s.id.as_str()) {
+            continue;
+        }
+        assert!(s.battery.is_some(), "{}: a form of {parent} draws on its battery", s.id);
+        checked += 1;
+    }
+    assert!(checked >= 5, "only {checked} battery forms were read");
+}

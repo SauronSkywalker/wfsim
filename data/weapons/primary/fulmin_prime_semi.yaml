@@ -8,6 +8,12 @@ transform_group: fulmin_prime
 
 introduced: "33.6"
 
+# see notes: battery_restated_on_every_form
+battery:
+  regen_per_second: 40.0
+  delay_empty_seconds: 0.7
+  delay_partial_seconds: 0.7
+
 # CARRIED FROM `fulmin_semi` — see notes: co_carried_from_the_family
 co_behavior: independent
 
