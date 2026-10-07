@@ -245,8 +245,11 @@ const r = await evaluate(`(async () => {
   await signIn('acc2');
   out.otherStatus = syncStatus.state;
   out.acc2Before = srv.acc2.size;
+  out.otherCounts = syncedCounts();
+  out.otherListed = cloudItems().filter((x) => x.state === "synced").length;
   await syncAdopt();
   out.acc2After = srv.acc2.size;
+  out.adoptedCounts = syncedCounts();
 
   // AN ACCOUNT WITHOUT THE FEATURE pushes nothing, and says so.
   localStorage.removeItem('wfsim-sync');
@@ -307,7 +310,9 @@ check("two browsers that change one entry keep both: the account's version as th
 check("...and the copy syncs as an entry of its own", r.copySynced === true);
 check("another account's entries are not merged without a word",
   r.otherStatus === "other" && r.acc2Before === 0, ok([r.otherStatus, r.acc2Before]));
-check("...until the reader adds them", r.acc2After > 0, r.acc2After);
+check("...nor counted as that account's: it holds none of them yet",
+  r.otherCounts.presets === 0 && r.otherCounts.customs === 0 && r.otherListed === 0, ok([r.otherCounts, r.otherListed]));
+check("...until the reader adds them", r.acc2After > 0 && r.adoptedCounts.presets > 0, ok([r.acc2After, r.adoptedCounts]));
 check("an account without the feature says so, and pushes nothing more",
   r.notIncluded === "not_included" && r.acc3Calls === 1, ok([r.notIncluded, r.acc3Calls]));
 

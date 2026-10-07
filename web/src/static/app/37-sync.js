@@ -31,9 +31,12 @@ const setSyncAuto = (on) => { try { localStorage.setItem(SYNC_AUTO_KEY, on ? "1"
 /// it and stops asking past it.
 let syncAllowance = null;
 const syncPool = (list) => (list.startsWith("wfsim-customs-") ? "customs" : "presets");
-/// How many of this browser's entries each pool syncs.
+/// How many of this browser's entries each pool syncs. None while they are
+/// another account's (`other`): this account holds none of them until asked,
+/// and a count of them read as this account's allowance taken.
 function syncedCounts() {
   const out = { presets: 0, customs: 0 };
+  if (syncStatus.state === "other") return out;
   for (const { list, p } of syncLocal().values()) if (isCloudSynced(p)) out[syncPool(list)]++;
   return out;
 }

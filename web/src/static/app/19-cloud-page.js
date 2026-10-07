@@ -63,12 +63,14 @@ const CLOUD_KIND = { "builder-builds": "Builds", "simulator-scenarios": "Scenari
 /// Every item this browser holds, as the page lists it.
 function cloudItems() {
   const rejected = new Map(((syncStatus && syncStatus.unsynced) || []).map((u) => [u.id, u.reason]));
+  // ANOTHER ACCOUNT'S ITEMS are on this browser only, as far as this account knows.
+  const mine = syncStatus.state !== "other";
   const out = [];
   for (const [id, { list, p }] of syncLocal()) {
     const domain = list.replace(/^wfsim-(presets|customs)-/, "");
     const reason = rejected.get(id);
     out.push({ id, list, domain, p, owner: cloudOwner(domain, p.scope), link: cloudLink(domain, p),
-      state: reason ? "rejected" : isCloudSynced(p) ? "synced" : "local", reason });
+      state: reason ? "rejected" : mine && isCloudSynced(p) ? "synced" : "local", reason });
   }
   return out;
 }

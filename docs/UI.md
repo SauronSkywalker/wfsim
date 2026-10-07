@@ -304,7 +304,7 @@ stays the working copy: signed out, or without the feature, nothing runs.
 | an entry edited while the round ran keeps the edit; the next round pushes it | `syncApply` |
 | two entries may share a name, so nothing is renamed on the way in | `syncApply` |
 | the page re-applies an entry on screen that changed, for every collection `COLLECTIONS` names | `syncShow` |
-| a browser that synced with another account merges nothing until the reader asks on `/account` | `other`, `syncAdopt` |
+| a browser that synced with another account merges nothing until the reader asks on `/account`, and counts none of it as this account's | `other`, `syncAdopt`, `syncedCounts` |
 | undo steps over a list that changed underneath them are dropped | `syncShow` |
 | an entry with `cloud_sync: false` stays on this browser; the cloud on its chip — and on a riven's row in its list — switches it | `isCloudSynced`, `cloudMark` |
 | signed out where accounts exist, the cloud is hollow and links to sign in, coming back to the page; a click on it picks no entry | `cloudMark` |
