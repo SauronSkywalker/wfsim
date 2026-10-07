@@ -18,7 +18,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const TOP = 10;
-const RANK_PER_CYCLE = 200;
+const RANK_PER_CYCLE = 2000;
 const SETTLE_PER_CYCLE = 3;
 const HERE = dirname(fileURLToPath(import.meta.url));
 const [mode, work, arg] = process.argv.slice(2);
@@ -52,15 +52,22 @@ function rank(o) {
   return 1 + group.filter((r) => r.score > o.score).length;
 }
 
+// AS MANY ORDERS A STATEMENT AS D1'S HUNDRED BOUND PARAMETERS ALLOW: one call
+// an order took a minute a few hundred, while the first results waited.
+const KEYS_PER_STATEMENT = Math.floor((100 - 1) / 3);
+
 async function rankFresh() {
   const fresh = await d1("SELECT identity, ruler, mode, record, score FROM orders WHERE state = 'fresh' LIMIT ?", [RANK_PER_CYCLE]);
-  let top = 0;
-  for (const o of fresh) {
-    const state = rank(o) <= TOP ? "arbiter" : "open";
-    if (state === "arbiter") top += 1;
-    await d1(`UPDATE orders SET state = ? ${where} AND state = 'fresh'`, [state, ...keyOf(o)]);
+  const to = { arbiter: [], open: [] };
+  for (const o of fresh) to[rank(o) <= TOP ? "arbiter" : "open"].push(o);
+  for (const [state, list] of Object.entries(to)) {
+    for (let i = 0; i < list.length; i += KEYS_PER_STATEMENT) {
+      const part = list.slice(i, i + KEYS_PER_STATEMENT);
+      await d1(`UPDATE orders SET state = ? WHERE (identity, ruler, mode) IN (VALUES ${part.map(() => "(?, ?, ?)").join(", ")})
+                AND state = 'fresh'`, [state, ...part.flatMap(keyOf)]);
+    }
   }
-  if (fresh.length) console.error(`orders: ranked ${fresh.length}, ${top} in a top ten`);
+  if (fresh.length) console.error(`orders: ranked ${fresh.length}, ${to.arbiter.length} in a top ten`);
 }
 
 /// THE SCORER'S OWN NUMBER for one order, and the fact shipped to `scores`.
