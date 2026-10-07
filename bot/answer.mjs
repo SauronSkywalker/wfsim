@@ -31,10 +31,11 @@ export function makeAnswer({ run, meta, zh, headless, host }) {
     return (n && n.names[1]) || headless.rivenStatNameEn(s);
   };
 
-  /// `zk 托里德 5` → { cmd: "zk", rest: "托里德 5" }.
+  /// `zk 托里德 5` → { cmd: "zk", rest: "托里德 5" }. A COMMAND PANEL sends it
+  /// as `/zk`, so a leading slash, either width, is the same command.
   function parse(text) {
     let s = String(text || "").replace(/<@!?[^>]*>/g, " ").trim();
-    const m = s.match(/^(zk|pz|fx|帮助|help|\?|？)\s*/i);
+    const m = s.match(/^[/／]?\s*(zk|pz|fx|帮助|help|\?|？)\s*/i);
     const cmd = m ? m[1].toLowerCase() : "";
     if (m) s = s.slice(m[0].length);
     return { cmd: ["zk", "pz", "fx"].includes(cmd) ? cmd : cmd ? "help" : "", rest: s.trim() };
