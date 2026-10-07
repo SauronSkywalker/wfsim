@@ -143,6 +143,10 @@
                all, which is how they went undiscovered. -->
           <a class="tnav" data-nav="home" href="/weapons" data-i18n>Weapons</a>
           <a class="tnav" data-nav="benchmark" href="/benchmark" data-i18n>Benchmark</a>
+          <!-- THE BADGE counts reminders that fired and have not been read
+               (`27-utility.js`); the label is the link's first text node, so
+               `data-i18n` translates it and leaves the badge alone. -->
+          <a class="tnav" data-nav="utility" href="/utility/fissures" data-i18n>Utility<span id="utility-badge" class="tbadge" hidden></span></a>
         </nav>
         <span id="trail" class="trail" hidden></span>
         <div class="tblinks">
@@ -327,6 +331,21 @@
          (15-home-hot.js). Hidden where /api/popularity is not offered. -->
     <section id="home-hot" class="wgroup" hidden></section>
     <div id="home-sections"></div>
+  </main>
+
+  <!-- UTILITY — the game's live state, and reminders on it. A page of the
+       SHELL like /benchmark: it belongs to no weapon, and nothing on it feeds
+       the builder, the simulator or the optimizer (docs/UI.md §"Utility").
+       One tab per kind it lists, plus the reader's reminders. -->
+  <main id="utility-page" class="home-page" hidden>
+    <h1 id="h-utility" class="home-h">Void Fissures</h1>
+    <nav id="utility-tabs" class="module-tabs"></nav>
+    <section id="utility-fissures">
+      <div id="fissure-filters"></div>
+      <div id="fissure-list"></div>
+      <p class="bench-note" data-i18n>Read from DE's world state each minute. China's own servers are not covered.</p>
+    </section>
+    <section id="utility-reminders" hidden></section>
   </main>
 
   <!-- THE BOARD — what is strong under a given ruler, and what nobody has

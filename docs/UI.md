@@ -986,8 +986,8 @@ scan state that list reads, mounted in all five places a scan ranks something.
 
 ## A page that is not a module is a shell page
 
-**A PAGE THAT IS NOT A MODULE IS A SHELL PAGE** — /support, /benchmark and
-/download. It belongs to no weapon, so it sits beside the home grid rather
+**A PAGE THAT IS NOT A MODULE IS A SHELL PAGE** — /support, /benchmark,
+/utility and /download. It belongs to no weapon, so it sits beside the home grid rather
 than under `/weapons/<name>`, and it is not a fourth MODULE: it produces
 nothing the three consume. /download is the offer for the Windows client, and
 it is a PAGE rather than a button because what a downloader asks is a page —
@@ -1003,6 +1003,25 @@ already using the site and will go looking. `check_downloads` asserts the home
 page offers nothing on every user agent it drives, and that /download is the
 one surface telling a Mac, Linux or phone reader it will not run there. See
 `docs/DESKTOP.md`.
+
+## Utility
+
+**/UTILITY IS THE GAME'S LIVE STATE AND THE READER'S REMINDERS ON IT**, and
+none of it feeds the builder, the simulator or the optimizer (`docs/CORE.md`
+§4). One tab per kind the worker lists, then Reminders.
+
+| rule | where it is held |
+| --- | --- |
+| everything listed is an item `{kind, id, attributes, names, started_at_ms, ends_at_ms}`; a new kind is a parser in the worker and a tab registered in `UTILITY_KINDS` | `worker/world.js` `KINDS`, `27-utility.js` |
+| the feed is the live site's, from every origin, asked each minute while a Utility page shows and every two minutes elsewhere while a reminder waits | `worldLoad`, `utilityClock` |
+| Void Fissures shows one of the game's three lists at a time — star chart, Steel Path, Void Storms — by relic era, then by time left | `41-fissures.js` |
+| a reminder is a kind and some attributes; it matches an item of that kind holding every one | `reminderMatches` |
+| the bell on a row makes one, holding that row's list, era and mission until the reader changes the chips | `FISSURE_REMINDER_DEFAULT` |
+| what a new reminder already matches is seen, so it fires for what opens later | `reminderAdd` |
+| reminders live in this browser and fire while the site is open there, on any page: once per item, said on the page, counted on the Utility link until Reminders is opened | `reminderCheck`, `reminderRead` |
+| a system notification as well only when the reader turns it on, which is when the browser asks, and only for a tab in the background | `reminderSystemOn` |
+
+Where the names come from: `docs/DATA_SOURCES.md` §"The world state".
 
 ## The page is three modules, plus editors
 

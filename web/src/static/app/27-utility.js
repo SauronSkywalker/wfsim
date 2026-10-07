@@ -1,0 +1,287 @@
+// ---- UTILITY ----------------------------------------------------------------
+//
+// The game's live state and the reader's reminders on it — docs/UI.md
+// §"Utility". Nothing here feeds the builder, the simulator or the optimizer.
+// A kind the worker lists (worker/world.js) has a tab of its own and registers
+// itself in `UTILITY_KINDS`; this file is what every kind shares: the feed, the
+// clock, the reminders and their tab.
+
+/// THE TABS, in order: each kind's list, then the reminders. `[path, title]`.
+const UTILITY_TABS = [["fissures", "Void Fissures"], ["reminders", "Reminders"]];
+const utilityTitle = (tab) => (UTILITY_TABS.find(([t]) => t === tab) || UTILITY_TABS[0])[1];
+/// EACH KIND, by the worker's `kind`: `{ tab, render(), describe(item),
+/// nameOf(key, names, value), attributes: [[key, label]] }` — `attributes` are
+/// what a reminder may hold, in the order its editor offers them.
+const UTILITY_KINDS = {};
+let utilityTab = null;
+
+/// A NAME FROM THE WORKER is `{en, zh}`; a missing one is the id it names.
+const worldName = (n, id) => (n && (n[LANG] || n.en)) || id || "";
+
+/// TIME LEFT, as h:mm:ss — the same in every language.
+function utilityLeft(ms) {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60;
+  return `${h}:${String(m).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+}
+
+function showUtility(tab) {
+  utilityTab = tab;
+  $("h-utility").textContent = tr(utilityTitle(tab));
+  for (const [t] of UTILITY_TABS) $(`utility-${t}`).hidden = t !== tab;
+  if (tab === "reminders") { reminderRead(); if ($("reminder-note")) $("reminder-note").remove(); }
+  renderUtility();
+  if (Date.now() - worldAt >= WORLD_ON_PAGE_MS) worldLoad().then(renderUtility);
+  utilityClock();
+}
+
+function renderUtility() {
+  const unread = reminderHits().filter((h) => !h.read).length;
+  const badge = $("utility-badge");
+  if (badge) { badge.hidden = !unread; badge.textContent = unread ? String(unread) : ""; }
+  if (!utilityTab || $("utility-page").hidden) return;
+  $("utility-tabs").innerHTML = UTILITY_TABS.map(([t, title]) => `<a class="mtab${t === utilityTab ? " sel" : ""}" href="/utility/${t}">${
+    escHtml(tr(title))}${t === "reminders" && unread ? ` <span class="tbadge">${unread}</span>` : ""}</a>`).join("");
+  if (utilityTab === "reminders") renderReminders();
+  else Object.values(UTILITY_KINDS).forEach((k) => { if (k.tab === utilityTab) k.render(); });
+}
+
+/// THE STATE WHERE THE PAGE CANNOT SHOW IT: still loading, or unreachable.
+/// Null when there is a world to draw.
+function worldWaitHtml() {
+  if (world) return null;
+  return worldFailed
+    ? `<div class="sim-empty">${escHtml(tr("The world state could not be reached."))} <button type="button" class="ghost-btn small" data-world-retry>${escHtml(tr("Retry"))}</button></div>`
+    : `<div class="sim-empty">${escHtml(tr("Loading…"))}</div>`;
+}
+document.addEventListener("click", (e) => {
+  if (e.target.closest("[data-world-retry]")) { worldFailed = false; renderUtility(); worldLoad().then(renderUtility); }
+});
+
+// ---- THE FEED ---------------------------------------------------------------
+
+/// THE WORLD AS THE WORKER LAST ANSWERED — `{read_at_ms, items}` — or null.
+let world = null;
+let worldAsk = null;
+let worldFailed = false;
+let worldAt = 0;
+/// Asked each minute while a Utility page is open — DE refreshes its file each
+/// minute — and every two minutes elsewhere while a reminder waits, since what
+/// it waits for stays open for most of an hour.
+const WORLD_ON_PAGE_MS = 60_000;
+const WORLD_ELSEWHERE_MS = 120_000;
+
+/// THE LIVE SITE, from a dev server and the desktop client too: the worker is
+/// the only reader of DE's file and answers any origin.
+function worldLoad() {
+  if (worldAsk) return worldAsk;
+  worldAsk = (async () => {
+    try {
+      const r = await fetch(`${LIVE_ORIGIN}/api/world`, { cache: "no-cache" });
+      const j = await r.json();
+      if (!j.ok) throw new Error(j.error);
+      world = j;
+      worldFailed = false;
+    } catch (_) {
+      worldFailed = true;
+    } finally {
+      worldAt = Date.now();
+      worldAsk = null;
+    }
+    reminderCheck();
+  })();
+  return worldAsk;
+}
+/// What is open now, of one kind; null before the first answer.
+const worldOf = (kind) => world && world.items.filter((x) => x.kind === kind && x.ends_at_ms > Date.now());
+
+/// ONE CLOCK: each second the countdowns on screen move and an ended row
+/// leaves; the feed is asked again when it is due. It stops when there is
+/// neither a Utility page on screen nor a reminder to watch for.
+let utilityTimer = null;
+function utilityClock() {
+  if (utilityTimer) return;
+  utilityTimer = setInterval(() => {
+    const onPage = !$("utility-page").hidden;
+    if (!onPage && !reminders().length) { clearInterval(utilityTimer); utilityTimer = null; return; }
+    if (!worldAsk && Date.now() - worldAt >= (onPage ? WORLD_ON_PAGE_MS : WORLD_ELSEWHERE_MS)) worldLoad().then(renderUtility);
+    if (!onPage) return;
+    const now = Date.now();
+    let ended = false;
+    $("utility-page").querySelectorAll("[data-ends]").forEach((el) => {
+      const left = Number(el.dataset.ends) - now;
+      if (left <= 0) ended = true;
+      el.textContent = utilityLeft(left);
+    });
+    if (ended) renderUtility();
+  }, 1000);
+}
+
+// ---- REMINDERS --------------------------------------------------------------
+//
+// KEPT IN THIS BROWSER, and fired while the site is open in it, on any page.
+// A reminder is `{id, kind, attributes, names, made_at_ms}` and matches an item
+// of its kind whose attributes hold every one it states (`reminderMatches`).
+
+const REMINDERS_KEY = "wfsim-reminders";
+/// Items a reminder already fired for (id → its end), so one fires once.
+const REMINDERS_SEEN_KEY = "wfsim-reminders-seen";
+/// What fired, newest first: `{id, reminder, kind, attributes, names, ends_at_ms, at_ms, read}`.
+const REMINDERS_HITS_KEY = "wfsim-reminders-hits";
+const REMINDERS_HITS_MAX = 30;
+/// 1 when the reader asked for a system notification as well.
+const REMINDERS_SYSTEM_KEY = "wfsim-reminders-system";
+
+function storedJson(key, empty) {
+  try { const v = JSON.parse(localStorage.getItem(key)); return v == null ? empty : v; } catch (_) { return empty; }
+}
+function storeJson(key, v) {
+  try { localStorage.setItem(key, JSON.stringify(v)); } catch (_) { /* this page only */ }
+}
+const reminders = () => { const v = storedJson(REMINDERS_KEY, []); return Array.isArray(v) ? v : []; };
+const reminderHits = () => { const v = storedJson(REMINDERS_HITS_KEY, []); return Array.isArray(v) ? v : []; };
+const reminderMatches = (r, item) => item.kind === r.kind
+  && Object.entries(r.attributes || {}).every(([k, v]) => item.attributes[k] === v);
+
+/// A NEW REMINDER, and what it already matches counts as seen: the reader is
+/// looking at it, so it is not news.
+function reminderAdd(kind, attributes, names) {
+  const r = { id: Math.random().toString(36).slice(2, 12), kind, attributes, names, made_at_ms: Date.now() };
+  storeJson(REMINDERS_KEY, [...reminders(), r]);
+  const seen = storedJson(REMINDERS_SEEN_KEY, {});
+  for (const item of (world ? world.items : [])) if (reminderMatches(r, item)) seen[item.id] = item.ends_at_ms;
+  storeJson(REMINDERS_SEEN_KEY, seen);
+  utilityClock();
+  return r;
+}
+function reminderRemove(id) {
+  storeJson(REMINDERS_KEY, reminders().filter((r) => r.id !== id));
+}
+
+/// ON EVERY ROUTE: a reader with a reminder has the clock running, and a first
+/// answer asked for, whichever page they are on.
+function reminderWatch() {
+  renderUtility();
+  if (!reminders().length) return;
+  utilityClock();
+  if (!world && !worldAsk && !worldAt) worldLoad().then(renderUtility);
+}
+
+/// WHAT FIRED SINCE THE LAST ANSWER: each open item a reminder matches and has
+/// not fired for. It is said on the page, counted on the Utility link, and — if
+/// the reader asked and the tab is in the background — in a system notification.
+function reminderCheck() {
+  if (!world) return;
+  const rs = reminders();
+  const now = Date.now();
+  const seen = Object.fromEntries(Object.entries(storedJson(REMINDERS_SEEN_KEY, {})).filter(([, end]) => end > now));
+  const fresh = [];
+  for (const item of world.items) {
+    if (item.ends_at_ms <= now || seen[item.id]) continue;
+    const r = rs.find((x) => reminderMatches(x, item));
+    if (!r) continue;
+    seen[item.id] = item.ends_at_ms;
+    fresh.push({ id: item.id, reminder: r.id, kind: item.kind, attributes: item.attributes, names: item.names, ends_at_ms: item.ends_at_ms, at_ms: now, read: false });
+  }
+  storeJson(REMINDERS_SEEN_KEY, seen);
+  if (!fresh.length) return;
+  storeJson(REMINDERS_HITS_KEY, [...fresh, ...reminderHits()].slice(0, REMINDERS_HITS_MAX));
+  const said = fresh.map(reminderSay);
+  if (utilityTab === "reminders" && !$("utility-page").hidden) reminderRead();
+  else reminderNotice(said.length === 1 ? said[0] : trF("{n} reminders fired", { n: said.length }));
+  if (reminderSystemOn() && document.hidden) {
+    for (const [i, text] of said.entries()) {
+      try {
+        const n = new Notification("WFSim", { body: text, tag: fresh[i].id });
+        n.onclick = () => { window.focus(); nav("/utility/reminders"); n.close(); };
+      } catch (_) { /* the browser refused; the page already said it */ }
+    }
+  }
+  renderUtility();
+}
+/// SAID AT THE TOP OF WHATEVER PAGE IS OPEN, until clicked away or followed.
+function reminderNotice(text) {
+  let el = $("reminder-note");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "reminder-note";
+    el.className = "page-note rem-note";
+    el.addEventListener("click", (e) => { if (!e.target.closest("a")) el.remove(); });
+    document.body.appendChild(el);
+  }
+  el.innerHTML = `${escHtml(text)}<a href="/utility/reminders">${escHtml(tr("View"))}</a>`;
+  el.querySelector("a").onclick = () => setTimeout(() => el.remove(), 0);
+}
+/// ONE FIRED ITEM IN A SENTENCE: what it is, and how long it stays open.
+const reminderSay = (h) => trF("{what} is open — {left} left", {
+  what: (UTILITY_KINDS[h.kind] || { describe: () => h.kind }).describe(h),
+  left: utilityLeft(h.ends_at_ms - Date.now()) });
+function reminderRead() {
+  const hs = reminderHits();
+  if (hs.some((h) => !h.read)) storeJson(REMINDERS_HITS_KEY, hs.map((h) => ({ ...h, read: true })));
+}
+
+const reminderSystemOn = () => typeof Notification === "function"
+  && Notification.permission === "granted" && storedJson(REMINDERS_SYSTEM_KEY, 0) === 1;
+
+/// A REMINDER IN WORDS: each attribute it holds, by name. The names were
+/// copied from the item it was made from; an item on screen now that carries
+/// the same attribute names it instead, so a corrected name reaches it.
+function reminderLabel(r) {
+  const kind = UTILITY_KINDS[r.kind];
+  if (!kind) return r.kind;
+  const live = worldOf(r.kind) || [];
+  return kind.attributes.filter(([k]) => k in (r.attributes || {})).map(([k]) => {
+    const v = r.attributes[k];
+    const now = live.find((x) => x.attributes[k] === v);
+    return kind.nameOf(k, now ? now.names : r.names, v);
+  }).join(" · ");
+}
+
+function renderReminders() {
+  const box = $("utility-reminders");
+  if (!box) return;
+  const rs = reminders();
+  const hits = reminderHits();
+  const now = Date.now();
+  const canSystem = typeof Notification === "function";
+  const system = !canSystem ? ""
+    : Notification.permission === "denied"
+      ? `<p class="bench-note">${escHtml(tr("This browser blocks notifications from this site; reminders show on the page only."))}</p>`
+      : `<div class="slotf-row">${filterChip(tr("Also as a system notification when this tab is in the background"),
+          reminderSystemOn(), `data-rsystem="1"`)}</div>`;
+  box.innerHTML = `<p class="bench-note rem-lead">${escHtml(tr("Reminders live in this browser and fire while WFSim is open in it, on any page."))}</p>
+    ${system}
+    <h3 class="wgroup-h">${escHtml(tr("Your reminders"))}</h3>
+    ${rs.length ? `<div class="bench-rows">${rs.map((r) => `
+      <div class="brow frow">
+        <span class="ftier">${escHtml(UTILITY_KINDS[r.kind] ? tr(utilityTitle(UTILITY_KINDS[r.kind].tab)) : r.kind)}</span>
+        <span class="bname">${escHtml(reminderLabel(r))}
+          <span class="fnode">${escHtml(trF("{n} open now", { n: (worldOf(r.kind) || []).filter((x) => reminderMatches(r, x)).length }))}</span></span>
+        <button type="button" class="ghost-btn small" data-rdel="${escHtml(r.id)}">${escHtml(tr("Delete"))}</button>
+      </div>`).join("")}</div>`
+      : `<div class="sim-empty">${escHtml(tr("No reminders yet. On a list, the bell on a row makes one like it."))}</div>`}
+    <h3 class="wgroup-h">${escHtml(tr("Recently fired"))}</h3>
+    ${hits.length ? `<div class="bench-rows">${hits.map((h) => `
+      <div class="brow frow${h.ends_at_ms <= now ? " none" : ""}">
+        <span class="bname">${escHtml((UTILITY_KINDS[h.kind] || { describe: () => h.kind }).describe(h))}
+          <span class="fnode">${escHtml(new Date(h.at_ms).toLocaleString(LANG === "zh" ? "zh-CN" : "en-GB", { dateStyle: "short", timeStyle: "short" }))}</span></span>
+        ${h.ends_at_ms > now ? `<span class="bscore" data-ends="${h.ends_at_ms}">${utilityLeft(h.ends_at_ms - now)}</span>`
+          : `<span class="bnone">${escHtml(tr("ended"))}</span>`}
+      </div>`).join("")}</div>`
+      : `<div class="sim-empty">${escHtml(tr("Nothing has fired yet."))}</div>`}`;
+  box.querySelectorAll("[data-rdel]").forEach((el) => {
+    el.onclick = () => { reminderRemove(el.dataset.rdel); renderUtility(); };
+  });
+  const sys = box.querySelector("[data-rsystem]");
+  if (sys) sys.onclick = async () => {
+    if (reminderSystemOn()) storeJson(REMINDERS_SYSTEM_KEY, 0);
+    else {
+      // THE BROWSER ASKS, on the reader's own click — its permission prompt,
+      // never one of ours.
+      const p = Notification.permission === "granted" ? "granted" : await Notification.requestPermission();
+      storeJson(REMINDERS_SYSTEM_KEY, p === "granted" ? 1 : 0);
+    }
+    renderUtility();
+  };
+}

@@ -176,6 +176,11 @@ crate and nothing else would notice one.
 - **`board/`** is build identity (`board::builds`) and the rulers
   (`board::benchmarks`).
 
+**UTILITY IS NOT A FOURTH VERB.** The game's live state and the reader's
+reminders on it (`/utility`, docs/UI.md §"Utility") are read and named in the
+worker (`worker/world.js`), never in `engine/`, and nothing there reaches a
+build, a fight or a search.
+
 A directory module is split by the question each file answers (`resolve`,
 `panel`, `parse`, `apply`, `describe`, …) with its tests under `tests/`; its
 `mod.rs` re-exports the public items, so a caller names `data::weapons::spec`

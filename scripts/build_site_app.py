@@ -861,7 +861,7 @@ def guard_board_files() -> None:
 # answers every route, so all five ship in every page and exactly one of them is
 # the heading of the page being served. `w-name` is the weapon route's, empty in
 # the shell and filled by `app.js` on boot.
-ROUTE_H1 = ("h-home", "h-download", "h-benchmark", "h-support", "w-name", "wf-name", "op-name")
+ROUTE_H1 = ("h-home", "h-download", "h-benchmark", "h-utility", "h-support", "w-name", "wf-name", "op-name")
 
 
 def one_h1(page: str, keep: str | None, text: str | None = None) -> str:
@@ -1446,6 +1446,12 @@ def prerender(flagged: str) -> None:
             "WFSim as a Windows app: the same calculator and the same engine as "
             "the site, on your own machine. It opens instantly, works offline and "
             "updates itself. Free and open source, AGPL-3.0.",
+        ),
+        (
+            "utility/fissures", "Void Fissures — live, with Steel Path and Void Storms | WFSim", "h-utility", "Utility",
+            "Every Void Fissure open in Warframe now: the star chart, the Steel Path and "
+            "Railjack's Void Storms, with each one's mission, node and time left, and "
+            "reminders when the one you want opens.",
         ),
         (
             "operator", "Operator — Focus school for a Warframe build | WFSim", "op-name", "Operator",

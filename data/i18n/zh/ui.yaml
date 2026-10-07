@@ -380,6 +380,32 @@ ui:
   "Benchmarks · read-only": "基准场景 · 只读"
   "benchmark": 基准场景
   "Benchmark": 基准榜
+  # UTILITY. Game terms are DE's own Chinese (dict.zh.json):
+  # Void Fissure 虚空裂缝, Railjack 航道星舰.
+  "Utility": 工具
+  "Void Fissures": 虚空裂缝
+  "Reminders": 提醒
+  "Normal": 普通
+  "Railjack": 航道星舰
+  "The world state could not be reached.": 世界状态加载失败。
+  "No fissure matches these filters.": 没有符合筛选条件的虚空裂缝。
+  "Read from DE's world state each minute. China's own servers are not covered.": 每分钟从 DE 的世界状态读取一次，不含国服。
+  "Remind me of fissures like this": 有类似的裂缝时提醒我
+  "A reminder matches this fissure": 已有提醒匹配这个裂缝
+  "Remind me when a fissure opens with": 出现以下条件的裂缝时提醒我
+  "Save reminder": 保存提醒
+  "Reminder saved": 提醒已保存
+  "{what} is open — {left} left": "{what} 已开启，剩余 {left}"
+  "{n} reminders fired": "{n} 条提醒已触发"
+  "This browser blocks notifications from this site; reminders show on the page only.": 这个浏览器屏蔽了本站的通知，提醒只会显示在页面上。
+  "Also as a system notification when this tab is in the background": 标签页在后台时也发系统通知
+  "Reminders live in this browser and fire while WFSim is open in it, on any page.": 提醒保存在这个浏览器里，只要在这个浏览器里开着 WF模拟（任何页面都行）就会触发。
+  "Your reminders": 我的提醒
+  "{n} open now": "当前开启 {n} 个"
+  "No reminders yet. On a list, the bell on a row makes one like it.": 还没有提醒。在列表里点某一行的铃铛，就能按它建一条提醒。
+  "Recently fired": 最近触发
+  "ended": 已结束
+  "Nothing has fired yet.": 还没有触发过提醒。
   "Biggest hit": 单发最高
   "Biotic Rounds, the AX-52-exclusive mod — a weapon-exclusive card outside the pools this roster loads": "「Biotic Rounds」，AX-52 的专属 MOD——这是一张武器专属卡，不在本武器库载入的卡池里"
   "Blast Radius": 爆炸半径

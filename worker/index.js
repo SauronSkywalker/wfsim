@@ -28,6 +28,7 @@ import { EXT_DOCUMENTS, extDocument } from "./ext_documents.js";
 import { ocrSample } from "./ocr_samples.js";
 import { popularity } from "./popularity.js";
 import { qqRoute } from "./qq.js";
+import { worldRoute } from "./world.js";
 import { appraiseRoute } from "./appraise.js";
 import { verifyRoute } from "./verify.js";
 import { liveKey, serveLive, pushLive } from "./live_board.js";
@@ -782,6 +783,7 @@ export default {
         { status: res.status, headers });
     }
     if (path === "/api/qq" || path.startsWith("/api/qq/")) return qqRoute(request, env, path);
+    if (path === "/api/world") return worldRoute(request, env, ctx, path);
     if (path.startsWith("/api/appraise/")) return appraiseRoute(request, env, path);
     if (path === "/api/board/work" || path === "/api/board/verify") return verifyRoute(request, env, path);
     if (path.startsWith("/api/board/live/")) return pushLive(request, env, path.slice("/api/board/live/".length));

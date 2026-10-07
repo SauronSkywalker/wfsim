@@ -86,6 +86,12 @@ async function route() {
   const support = /^\/support\/?$/.test(location.pathname);
   const bench = /^\/benchmark\/?$/.test(location.pathname);
   const dl = /^\/download\/?$/.test(location.pathname);
+  // `/utility/<tab>` — the game's live state and the reader's reminders on it.
+  // Bare `/utility` is its first tab.
+  const utilRoute = location.pathname.match(/^\/utility(?:\/([a-z]+))?\/?$/);
+  const util = utilRoute && UTILITY_TABS.some(([t]) => t === (utilRoute[1] || UTILITY_TABS[0][0]))
+    ? (utilRoute[1] || UTILITY_TABS[0][0]) : null;
+  if (util && !utilRoute[1]) history.replaceState(history.state, "", `/utility/${util}`);
   // `/login`, `/signup`, `/reset`, `/account` — the account's pages, which
   // belong to no weapon (`17-account.js`) — and any page an extension mounts.
   const authKind = authKindOf(location.pathname);
@@ -102,7 +108,7 @@ async function route() {
   const compSlug = compRoute && decodeURIComponent(compRoute[1]).trim().toLowerCase().replace(/[\s-]+/g, "_");
   const compHit = compSlug && compHosts().find((c) =>
     c.id === compSlug || c.name.toLowerCase().replace(/[\s-]+/g, "_") === compSlug) || null;
-  const m = (support || bench || dl || wfHit || opRoute || compHit || authKind) ? null : location.pathname.match(/^\/weapons\/([^/]+?)(\/simulator|\/optimizer|\/rivens|\/riven-analyst|\/enemies|\/benchmark|\/card)?\/?$/);
+  const m = (support || bench || dl || util || wfHit || opRoute || compHit || authKind) ? null : location.pathname.match(/^\/weapons\/([^/]+?)(\/simulator|\/optimizer|\/rivens|\/riven-analyst|\/enemies|\/benchmark|\/card)?\/?$/);
   // A hand-typed URL is not the canonical slug. Fold case and treat spaces
   // (and their %20) as underscores, so "/weapons/Dual Toxocyst" reaches the
   // same weapon as "/weapons/Dual_Toxocyst" instead of silently falling back
@@ -123,7 +129,7 @@ async function route() {
   if (gen !== routeGen) return;
   // WHICH PAGE, as a kind and never an address: one point per kind per load.
   track("app.view", w ? `weapon_${mod || "builder"}` : support ? "support" : bench ? "benchmark"
-    : dl ? "download" : wfHit ? "warframe" : opRoute ? "operator"
+    : dl ? "download" : util ? `utility_${util}` : wfHit ? "warframe" : opRoute ? "operator"
     : compHit ? "companion" : authKind ? authView(authKind) : "home");
   // WHICH WAY IN, where the link that led here names it (`?from=`): said once,
   // then taken off the address so a copied link does not carry it on.
@@ -134,7 +140,7 @@ async function route() {
     u.searchParams.delete("from");
     history.replaceState(history.state, "", u.pathname + u.search + u.hash);
   }
-  document.body.classList.toggle("on-home", !w && !support && !bench && !dl && !wfHit && !opRoute && !compHit && !authKind);
+  document.body.classList.toggle("on-home", !w && !support && !bench && !dl && !util && !wfHit && !opRoute && !compHit && !authKind);
   document.body.classList.toggle("on-auth", !!authKind);
   $("auth-page").hidden = !authKind;
   document.body.classList.toggle("on-warframe", !!wfHit);
@@ -169,13 +175,14 @@ async function route() {
     const ask = ensurePageBodies(away);
     if (ask) ask.then(() => route());
   }
-  $("home-page").hidden = !!w || support || bench || dl || !!wfHit || opRoute || !!compHit || !!authKind;
+  $("home-page").hidden = !!w || support || bench || dl || util || !!wfHit || opRoute || !!compHit || !!authKind;
   $("support-page").hidden = !support;
   $("bench-page").hidden = !bench;
   $("download-page").hidden = !dl;
+  $("utility-page").hidden = !util;
   // The nav says where you are. `data-nav` rather than a path compare: the
   // roster lives at "/" and a path compare there matches every page.
-  const here = bench ? "benchmark" : (!w && !support && !dl && !wfHit && !opRoute && !compHit && !authKind) ? "home" : "";
+  const here = bench ? "benchmark" : util ? "utility" : (!w && !support && !dl && !wfHit && !opRoute && !compHit && !authKind) ? "home" : "";
   document.querySelectorAll(".tnav").forEach((a) => {
     a.classList.toggle("sel", a.dataset.nav === here);
   });
@@ -190,11 +197,14 @@ async function route() {
     : support ? `${tr("Support")} — WFSim`
     : dl ? `${tr("WFSim for Windows")} — WFSim`
     : bench ? `${tr("Benchmark")} — WFSim`
+    : util ? `${tr(utilityTitle(util))} — WFSim`
     : wfHit ? `${wfHit.name} — WFSim`
     : compHit ? `${compHit.name} — WFSim`
     : opRoute ? `${tr("Operator")} — WFSim`
     : w ? `${w.name}${modTitle} — WFSim` : "WFSim — Warframe Calculator";
   trailPush();
+  // A REMINDER IS WATCHED FROM EVERY PAGE, not only from /utility.
+  reminderWatch();
   // The top bar's "Sign in" carries this page as where to come back to.
   renderAccountEntry();
   if (wfHit) {
@@ -212,6 +222,8 @@ async function route() {
     renderSupport();
   } else if (dl) {
     renderDownloadPage();
+  } else if (util) {
+    showUtility(util);
   } else if (bench) {
     // THE ONLY SURFACE THAT RANKS ACROSS WEAPONS, and therefore the only one
     // that needs every weapon's rows. It draws first with whatever is in hand

@@ -603,8 +603,21 @@ as a replacement for either of ours.
 
 The rest of Tenno Hub's list is worldstate and market data (`api.warframestat.us`,
 `api.warframe.market`, `oracle.browse.wf/worldState.json`, `browse.wf/arbys.txt`),
-which is live-service state — nothing this project models. **One exception since
+which is live-service state — nothing the calculator models. The Utility page
+reads DE's own file instead (below). **One exception since
 2026-08-08**, and it is not price data: see below.
+
+### THE WORLD STATE is DE's file, named from DE's dictionaries
+
+`/utility` reads `api.warframe.com/cdn/worldState.php` through the worker
+(`worker/world.js`) — never warframestat.us, which is WFCD. The file names a
+fissure only by ids (`SolNode232`, `MT_VOID_CASCADE`, `VoidT6`), so
+`scripts/world_names.py` writes `worker/world_names.json` from
+`browse.wf/warframe-public-export-plus` — `ExportRegions.json` joined to DE's
+`dict.en.json` and `dict.zh.json` by the dictionary key. It is the one place
+Railjack nodes and mission names are exported. Rerun it when DE adds nodes; until
+then a new node shows its id. The China servers keep a world state of their own,
+and its source is unknown, so the page does not cover them.
 
 ### RIVEN POOLS: the only source is other people's cards
 
