@@ -96,16 +96,18 @@ function fight(o) {
 async function ban(id) {
   if (!id) return;
   await d1("UPDATE verifiers SET banned = 1 WHERE id = ?", [id]);
-  const named = await d1(`SELECT identity, ruler, mode, state, produced_by, clients FROM orders
+  const named = await d1(`SELECT identity, ruler, mode, state, produced_by, verifier, clients, clients_compute_ms FROM orders
                           WHERE (',' || clients || ',') LIKE ? AND produced_by != ? AND state IN ('verified', 'spot', 'open')`,
   [`%,${id},%`, id]);
   const agreed = named.filter((o) => o.state !== "open");
   for (const o of named) {
-    const rest = clientsOf(o).filter((c) => c !== id).join(",");
+    const ms = (o.clients_compute_ms || "").split(",");
+    const kept = clientsOf(o).map((c, i) => [c, ms[i] || ""]).filter(([c]) => c !== id);
     if (o.state !== "open") await d1(`DELETE FROM scores ${where} AND measured_by LIKE 'verified:%'`, keyOf(o));
-    await d1(`UPDATE orders SET state = 'open', verifier = NULL, clients = ? ${where}`, [rest, ...keyOf(o)]);
+    await d1(`UPDATE orders SET state = 'open', verifier = NULL, clients = ?, clients_compute_ms = ? ${where}`,
+      [kept.map(([c]) => c).join(","), kept.map(([, m]) => m).join(","), ...keyOf(o)]);
   }
-  await d1(`UPDATE orders SET state = 'todo', engine = '', score = NULL, metric = NULL, produced_by = NULL, clients = ''
+  await d1(`UPDATE orders SET state = 'todo', engine = '', score = NULL, metric = NULL, produced_by = NULL, clients = '', clients_compute_ms = ''
             WHERE produced_by = ? AND state IN ('fresh', 'open', 'arbiter', 'dispute')`, [id]);
   console.error(`orders: refused client ${id.slice(0, 6)}…, ${agreed.length} agreement(s) withdrawn`);
 }

@@ -199,9 +199,11 @@ CREATE INDEX IF NOT EXISTS queue_row ON queue (build_id, ruler, mode);
 -- is the first result's `ENGINE_ID`, and only that engine verifies it. `at` is
 -- when the order was opened, in ms: the scorer leaves a young one to clients.
 -- `clients` is every client that measured it, comma-separated, in the order
--- their results came (`produced_by` first, `verifier` last). Added to the live
--- table with:
+-- their results came (`produced_by` first, `verifier` last), and
+-- `clients_compute_ms` what each one's fight took on its machine, in the same
+-- order ("" where a client did not say). Added to the live table with:
 --   ALTER TABLE orders ADD COLUMN clients TEXT NOT NULL DEFAULT '';
+--   ALTER TABLE orders ADD COLUMN clients_compute_ms TEXT NOT NULL DEFAULT '';
 CREATE TABLE IF NOT EXISTS orders (
   identity    TEXT NOT NULL,
   ruler       TEXT NOT NULL,
@@ -220,6 +222,7 @@ CREATE TABLE IF NOT EXISTS orders (
   disputed    REAL,
   at          INTEGER NOT NULL,
   clients     TEXT NOT NULL DEFAULT '',
+  clients_compute_ms TEXT NOT NULL DEFAULT '',
   PRIMARY KEY (identity, ruler, mode)
 );
 
@@ -231,11 +234,15 @@ CREATE INDEX IF NOT EXISTS orders_verifier ON orders (verifier);
 -- A VERIFYING CLIENT, by the random id its browser made for itself — joined to
 -- no account and to no submission, and sent with verification alone. Kept so a
 -- client caught once can be refused and everything it agreed to re-checked.
+-- `compute_ms` is the time its fights took on its machine, summed. Added to the
+-- live table with:
+--   ALTER TABLE verifiers ADD COLUMN compute_ms INTEGER NOT NULL DEFAULT 0;
 CREATE TABLE IF NOT EXISTS verifiers (
   id     TEXT PRIMARY KEY,
   agreed INTEGER NOT NULL DEFAULT 0,
   banned INTEGER NOT NULL DEFAULT 0,
-  seen   TEXT NOT NULL
+  seen   TEXT NOT NULL,
+  compute_ms INTEGER NOT NULL DEFAULT 0
 );
 
 -- SHORT SHARE LINKS: `/weapons/<weapon>/s/<id>` names a stored share code.

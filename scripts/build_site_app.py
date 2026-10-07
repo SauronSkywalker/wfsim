@@ -2302,9 +2302,11 @@ def main() -> None:
 
     # WHAT THIS RELEASE IS, served beside the files it names. A mirror is asked
     # this file and nothing else to answer "are you current" — see
-    # `scripts/check_mirrors.py`.
+    # `scripts/check_mirrors.py` — and the board's worker reads `engine` from it
+    # to hand compute orders to this engine alone (worker/verify.js).
     (APP / "release.json").write_text(
-        json.dumps({"release": release, "commit": build_sha(), "wasm": pkg["digest"]},
+        json.dumps({"release": release, "commit": build_sha(), "wasm": pkg["digest"],
+                    "engine": engine_id()},
                    separators=(",", ":"), sort_keys=True),
         encoding="utf-8", newline="\n")
 

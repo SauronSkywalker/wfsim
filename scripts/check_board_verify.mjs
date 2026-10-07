@@ -4,7 +4,8 @@
 // CLIENTS_PER_FACT equal results make a fact naming every client and settle the
 // queue row, anything else is a dispute, and the
 // answer never says which; a row nobody owes, a top-ten row, a live lease and a
-// banned client get nothing.
+// banned client get nothing; only the engine `release.json` names works, and
+// what each fight cost its client is kept beside it.
 //   node scripts/check_board_verify.mjs
 import { verifyRoute, LEASE_MS, PROTOCOL } from "../worker/verify.js";
 import { DatabaseSync } from "node:sqlite";
@@ -25,11 +26,12 @@ const stmt = (sql, args = []) => ({
   run: async () => ({ meta: { changes: Number(db.prepare(sql).run(...args).changes) } }),
   each: async () => (/^\s*select/i.test(sql) ? { results: db.prepare(sql).all(...args) } : { meta: { changes: Number(db.prepare(sql).run(...args).changes) } }),
 });
-const env = { LIBRARY: { prepare: (sql) => stmt(sql), batch: async (ss) => Promise.all(ss.map((x) => x.each())) } };
-const call = async (path, body) => {
-  const r = await verifyRoute(new Request(`https://x${path}`, { method: "POST", body: JSON.stringify(body) }), env, path);
-  return r.json();
-};
+/// THE SITE'S `release.json`, naming the engine it serves.
+const site = (engine) => ({ fetch: async () => new Response(JSON.stringify({ engine })) });
+const env = { LIBRARY: { prepare: (sql) => stmt(sql), batch: async (ss) => Promise.all(ss.map((x) => x.each())) }, ASSETS: site("e1") };
+const callIn = async (e, path, body) =>
+  (await verifyRoute(new Request(`https://x${path}`, { method: "POST", body: JSON.stringify(body) }), e, path)).json();
+const call = (path, body) => callIn(env, path, body);
 const order = (identity, state = "todo", extra = {}) => {
   db.prepare(`INSERT INTO orders (identity, ruler, mode, record, state, slot, at) VALUES (?, 'standard_single_target', 'base', ?, ?, ?, 0)`)
     .run(identity, JSON.stringify({ weapon: "braton_prime", mods: ["serration"] }), state, Math.floor(Math.random() * 1e9));
@@ -41,7 +43,8 @@ const row = (identity) => db.prepare("SELECT * FROM orders WHERE identity = ?").
 const fact = (identity) => db.prepare("SELECT * FROM scores WHERE identity = ?").get(identity);
 const only = (identity) => db.prepare("UPDATE orders SET slot = CASE WHEN identity = ? THEN 1 ELSE slot END").run(identity);
 const work = (v, engine = "e1", protocol = PROTOCOL) => call("/api/board/work", { verifier: v, engine, protocol });
-const answer = (w, v, score, metric = "kpm", engine = "e1") => call("/api/board/verify", { lease: w.lease, verifier: v, engine, score, metric });
+const answer = (w, v, score, metric = "kpm", engine = "e1", compute_ms = 1000) =>
+  call("/api/board/verify", { lease: w.lease, verifier: v, engine, score, metric, compute_ms });
 const A = "a".repeat(24), B = "b".repeat(24), C = "c".repeat(24), D = "d".repeat(24);
 const SCORE = 1.1070976928071055;
 Math.random = () => 0.5;  // no spot check unless a test asks for one
@@ -146,6 +149,29 @@ check("with three, a second agreement is not yet a fact", !fact("trio") && row("
 check("...and the order goes to neither client again", (await workWith(3, L)).work === null && (await workWith(3, M)).work === null);
 await answerWith(3, (await workWith(3, N)).work, N);
 check("...the third makes it", fact("trio") && row("trio").clients === `${L},${M},${N}` && row("trio").verifier === N);
+
+// THE ENGINE LOCK, and what a fight cost.
+db.prepare("UPDATE orders SET state = 'settled'").run();
+order("lock");
+only("lock");
+const P = "p".repeat(24), Q = "q".repeat(24);
+check("a tab of an engine the site does not serve is handed nothing", (await work("o".repeat(24), "e0")).work === null);
+const blind = { ...env, ASSETS: { fetch: async () => new Response("missing", { status: 404 }) } };
+check("...and nobody is while the served engine cannot be read",
+  (await callIn(blind, "/api/board/work", { verifier: P, engine: "e1", protocol: PROTOCOL })).work === null);
+await answer((await work(P)).work, P, SCORE, "kpm", "e0");
+check("an answer from another engine is dropped, and the order handed out again",
+  row("lock").state === "todo" && row("lock").lease === null && row("lock").score === null);
+await answer((await work(P)).work, P, SCORE, "kpm", "e1", 4321);
+check("what the fight cost is kept beside the client that fought it",
+  row("lock").clients_compute_ms === "4321"
+  && db.prepare("SELECT compute_ms FROM verifiers WHERE id = ?").get(P).compute_ms === 4321);
+check("...and both agreeing clients' costs are kept on a fact, in order", row("one").clients_compute_ms === "1000,1000",
+  row("one").clients_compute_ms);
+db.prepare("UPDATE orders SET state = 'open' WHERE identity = 'lock'").run();
+await callIn({ ...env, ASSETS: site("e9") }, "/api/board/work", { verifier: Q, engine: "e9", protocol: PROTOCOL });
+check("once the site serves a new engine, an open result of the old one is opened again from nothing",
+  row("lock").state === "todo" && row("lock").clients === "" && row("lock").score === null && row("lock").engine === "");
 
 console.log(failures ? `\n${failures} failed` : "\nan order reaches the board when CLIENTS_PER_FACT clients measured the same bits");
 process.exitCode = failures ? 1 : 0;

@@ -17,13 +17,15 @@
 const PIECE_MS = 250;
 const onPhone = () => !!(window.matchMedia && matchMedia("(pointer: coarse)").matches);
 
-/// ONE ROW, MEASURED: its runs folded in pieces, then scored. `null` when the
-/// engine refused or `live()` went false between pieces.
+/// ONE ROW, MEASURED: its runs folded in pieces, then scored, with what the
+/// pieces took in ms (`compute_ms`) — the waits between them are the reader's.
+/// `null` when the engine refused or `live()` went false between pieces.
 async function measureRow(request, ruler, live) {
   const runs = Number(request.runs) || 0;
   let acc = null;
   let from = 0;
   let count = 1;
+  let spent = 0;
   while (from < runs) {
     await yieldToForeground();
     if (!live()) return null;
@@ -36,10 +38,13 @@ async function measureRow(request, ruler, live) {
     // THE NEXT PIECE IS SIZED FROM THIS ONE, so a crowd fight and a single
     // target both come out at about a quarter second a call.
     const ms = Math.max(1, performance.now() - began);
+    spent += ms;
     count = Math.max(1, Math.min(1000, Math.round((n * PIECE_MS) / ms)));
   }
+  const began = performance.now();
   const s = await api("/api/board/score", { ruler, request, acc });
-  return s && s.ok && Number.isFinite(s.score) ? s : null;
+  spent += performance.now() - began;
+  return s && s.ok && Number.isFinite(s.score) ? { ...s, compute_ms: Math.round(spent) } : null;
 }
 
 /// WHO IS WORKING: a random id this browser makes for itself, joined to no
@@ -96,7 +101,7 @@ async function workOnce() {
   const s = await measureRow(order.request, w.ruler, boardVerifyOn);
   if (!s) return true;
   const sent = await postBoardWork("/api/board/verify",
-    { lease: w.lease, verifier: id, engine: ENGINE_ID, score: s.score, metric: s.metric });
+    { lease: w.lease, verifier: id, engine: ENGINE_ID, score: s.score, metric: s.metric, compute_ms: s.compute_ms });
   if (!sent) return true;
   try { localStorage.setItem(VERIFIED_KEY, String(boardVerifiedCount() + 1)); } catch (_) { /* private mode */ }
   renderBoardConsent();

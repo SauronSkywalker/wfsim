@@ -7,8 +7,12 @@
 // `CLIENTS_PER_FACT` equal results make a fact in `scores`. Nothing here
 // computes a number.
 //
-//   POST /api/board/work    { verifier, engine, protocol }              → { work: { lease, record, ruler, mode } | null }
-//   POST /api/board/verify  { lease, verifier, engine, score, metric }  → { ok }
+//   POST /api/board/work    { verifier, engine, protocol }                          → { work: { lease, record, ruler, mode } | null }
+//   POST /api/board/verify  { lease, verifier, engine, score, metric, compute_ms }  → { ok }
+//
+// ONLY THE ENGINE THE SITE SERVES WORKS (`site/release.json`): an order exists
+// because the code that scores it is the current code, and a tab left open on
+// an older one would answer it with the old arithmetic.
 
 /// A browser fights a crowd row in minutes; a lease outlives the slowest.
 export const LEASE_MS = 30 * 60_000;
@@ -32,19 +36,54 @@ const LEASE_ID = /^[a-f0-9]{32}$/;
 const METRIC_ID = /^[a-z_]{1,24}$/;
 
 const needed = (env) => env.CLIENTS_PER_FACT ?? CLIENTS_PER_FACT;
-/// EVERY CLIENT THAT MEASURED AN ORDER, in the order their results came.
+/// EVERY CLIENT THAT MEASURED AN ORDER, in the order their results came, and
+/// beside it what each one's fight cost it, in ms ("" where a client did not say).
 const clientsOf = (o) => (o.clients || o.produced_by || "").split(",").filter(Boolean);
+const computeOf = (o) => {
+  const ms = (o.clients_compute_ms || "").split(",");
+  return clientsOf(o).map((_, i) => ms[i] || "");
+};
 
 const json = (body, status = 200) => new Response(JSON.stringify(body), {
   status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
 const day = () => new Date().toISOString().slice(0, 10);
 const stamp = () => new Date().toISOString().slice(0, 19) + "Z";
+const done = "lease = NULL, lease_until = NULL, leased_to = NULL";
 
 async function read(request) {
   if (request.method !== "POST") return { err: json({ ok: false, error: "POST only" }, 405) };
   const raw = await request.text();
   if (raw.length > 2048) return { err: json({ ok: false, error: "payload too large" }, 400) };
   try { return { b: JSON.parse(raw) }; } catch { return { err: json({ ok: false, error: "not json" }, 400) }; }
+}
+
+/// THE ENGINE THE SITE SERVES, read once per isolate — a deploy is a new
+/// isolate, so it cannot change under one. `null` when it cannot be read, and
+/// then nobody works: an order answered by an unknown engine proves nothing.
+const served = new WeakMap();
+async function servedEngine(env) {
+  if (!env.ASSETS) return null;
+  if (served.has(env.ASSETS)) return served.get(env.ASSETS);
+  let engine = null;
+  try {
+    const r = await env.ASSETS.fetch(new Request("https://wfsim.app/release.json"));
+    const e = r.ok ? (await r.json()).engine : null;
+    if (typeof e === "string" && ENGINE_ID.test(e)) engine = e;
+  } catch { /* unread: nobody works until it is */ }
+  if (engine) served.set(env.ASSETS, engine);
+  return engine;
+}
+
+/// A RESULT OF AN OLDER ENGINE IS NO RESULT, so an order holding one is opened
+/// again from nothing — once per engine an isolate sees, since no older engine
+/// can answer after that.
+const retired = new Set();
+async function retire(db, engine) {
+  if (retired.has(engine)) return;
+  await db.prepare(`UPDATE orders SET state = 'todo', engine = '', score = NULL, metric = NULL, produced_by = NULL,
+                    verifier = NULL, clients = '', clients_compute_ms = '', ${done}
+                    WHERE state IN ('fresh', 'open') AND engine != ?`).bind(engine).run();
+  retired.add(engine);
 }
 
 /// THE CLIENT, remembered by the id it made and nothing else — written once,
@@ -87,14 +126,17 @@ async function work(request, env) {
   if (err) return err;
   if (!VERIFIER_ID.test(b.verifier || "") || !ENGINE_ID.test(b.engine || "")) return json({ ok: false, error: "bad request" }, 400);
   if (b.protocol !== PROTOCOL) return json({ ok: true, work: null });
+  const engine = await servedEngine(env);
+  if (!engine || b.engine !== engine) return json({ ok: true, work: null });
   const db = env.LIBRARY, now = Date.now();
+  await retire(db, engine);
   if (!(await admit(db, b.verifier))) return json({ ok: true, work: null });
   // ONE AT A TIME: a client holding a live lease gets nothing more.
   const held = await db.prepare("SELECT 1 AS x FROM orders WHERE leased_to = ? AND lease_until > ? LIMIT 1")
     .bind(b.verifier, now).first();
   if (held) return json({ ok: true, work: null });
   const pool = [
-    ...(await candidates(db, "open", b.engine, now, 4)).filter((o) => !clientsOf(o).includes(b.verifier)).map((o) => ({ ...o, state: "open" })),
+    ...(await candidates(db, "open", engine, now, 4)).filter((o) => !clientsOf(o).includes(b.verifier)).map((o) => ({ ...o, state: "open" })),
     ...(await candidates(db, "todo", "", now, 4)).map((o) => ({ ...o, state: "todo" })),
   ];
   for (const o of pool) {
@@ -130,51 +172,71 @@ async function verify(request, env) {
     return json({ ok: false, error: "bad request" }, 400);
   }
   const db = env.LIBRARY, now = Date.now();
+  // WHAT THE FIGHT COST THE CLIENT, as it says — a statistic about the clients'
+  // machines and never a number anything is ranked or scheduled by.
+  const ms = Number.isInteger(b.compute_ms) && b.compute_ms >= 0 && b.compute_ms <= LEASE_MS ? b.compute_ms : null;
+  const engine = await servedEngine(env);
+  if (!engine || b.engine !== engine) {
+    await db.prepare(`UPDATE orders SET ${done} WHERE lease = ? AND leased_to = ?`).bind(b.lease, b.verifier).run();
+    return json({ ok: true });
+  }
   const o = await db.prepare(
-    `SELECT identity, ruler, mode, state, engine, score, metric, produced_by, clients FROM orders
+    `SELECT identity, ruler, mode, state, engine, score, metric, produced_by, clients, clients_compute_ms FROM orders
       WHERE lease = ? AND leased_to = ? AND lease_until >= ?`).bind(b.lease, b.verifier, now).first();
   if (!o) return json({ ok: true });
   const key = [o.identity, o.ruler, o.mode];
-  const done = "lease = NULL, lease_until = NULL, leased_to = NULL";
+  const spent = db.prepare("UPDATE verifiers SET compute_ms = compute_ms + ? WHERE id = ?").bind(ms || 0, b.verifier);
   if (o.state === "todo") {
     if (needed(env) <= 1) {
-      await fact(db, key, { ...o, score: b.score, metric: b.metric, engine: b.engine, produced_by: b.verifier }, [b.verifier], b.verifier);
+      await fact(db, key, { ...o, score: b.score, metric: b.metric, engine: b.engine, produced_by: b.verifier },
+        [b.verifier], [String(ms ?? "")], b.verifier, spent);
       return json({ ok: true });
     }
     // THE FIRST RESULT, which the server ranks before anyone may agree with it.
-    await db.prepare(`UPDATE orders SET state = 'fresh', score = ?, metric = ?, engine = ?, produced_by = ?, clients = ?, ${done}
-                      WHERE identity = ? AND ruler = ? AND mode = ? AND state = 'todo'`)
-      .bind(b.score, b.metric, b.engine, b.verifier, b.verifier, ...key).run();
+    await db.batch([
+      db.prepare(`UPDATE orders SET state = 'fresh', score = ?, metric = ?, engine = ?, produced_by = ?, clients = ?,
+                  clients_compute_ms = ?, ${done} WHERE identity = ? AND ruler = ? AND mode = ? AND state = 'todo'`)
+        .bind(b.score, b.metric, b.engine, b.verifier, b.verifier, String(ms ?? ""), ...key),
+      spent,
+    ]);
     return json({ ok: true });
   }
   if (o.state !== "open") return json({ ok: true });
   const clients = [...clientsOf(o), b.verifier];
+  const compute = [...computeOf(o), String(ms ?? "")];
   if (b.engine !== o.engine || b.score !== o.score || b.metric !== o.metric) {
-    await db.prepare(`UPDATE orders SET state = 'dispute', verifier = ?, disputed = ?, clients = ?, ${done}
-                      WHERE identity = ? AND ruler = ? AND mode = ?`).bind(b.verifier, b.score, clients.join(","), ...key).run();
+    await db.batch([
+      db.prepare(`UPDATE orders SET state = 'dispute', verifier = ?, disputed = ?, clients = ?, clients_compute_ms = ?, ${done}
+                  WHERE identity = ? AND ruler = ? AND mode = ?`)
+        .bind(b.verifier, b.score, clients.join(","), compute.join(","), ...key),
+      spent,
+    ]);
     return json({ ok: true });
   }
   if (clients.length < needed(env)) {
     await db.batch([
-      db.prepare(`UPDATE orders SET clients = ?, ${done} WHERE identity = ? AND ruler = ? AND mode = ?`)
-        .bind(clients.join(","), ...key),
+      db.prepare(`UPDATE orders SET clients = ?, clients_compute_ms = ?, ${done} WHERE identity = ? AND ruler = ? AND mode = ?`)
+        .bind(clients.join(","), compute.join(","), ...key),
       db.prepare("UPDATE verifiers SET agreed = agreed + 1 WHERE id = ?").bind(b.verifier),
+      spent,
     ]);
     return json({ ok: true });
   }
-  await fact(db, key, o, clients, b.verifier);
+  await fact(db, key, o, clients, compute, b.verifier, spent);
   return json({ ok: true });
 }
 
 /// THE RESULT `clients` MEASURED, made a fact — stamped when the last of them
-/// answered, which is when it was verified.
-async function fact(db, key, o, clients, last) {
+/// answered, which is when it was verified. Its `cost_seconds` stays 0: the
+/// scorer plans its shards from that column in ITS runners' seconds, and a
+/// browser's are another machine's (`clients_compute_ms` keeps them).
+async function fact(db, key, o, clients, compute, last, spent) {
   const state = Math.random() < SPOT_SHARE ? "spot" : "verified";
   const at = stamp();
   await db.batch([
     db.prepare(`UPDATE orders SET state = ?, score = ?, metric = ?, engine = ?, produced_by = ?, verifier = ?, clients = ?,
-                lease = NULL, lease_until = NULL, leased_to = NULL WHERE identity = ? AND ruler = ? AND mode = ?`)
-      .bind(state, o.score, o.metric, o.engine, o.produced_by, last, clients.join(","), ...key),
+                clients_compute_ms = ?, ${done} WHERE identity = ? AND ruler = ? AND mode = ?`)
+      .bind(state, o.score, o.metric, o.engine, o.produced_by, last, clients.join(","), compute.join(","), ...key),
     // A FACT THE SCORER ALREADY HOLDS STANDS: the clients fill a row nobody
     // measured, and never replace one somebody did.
     db.prepare(
@@ -183,6 +245,7 @@ async function fact(db, key, o, clients, last) {
     // …AND THE ROW IS NO LONGER OWED, the same delete `ship_facts.sh` makes.
     db.prepare("DELETE FROM queue WHERE build_id = ? AND ruler = ? AND mode = ?").bind(...key),
     db.prepare("UPDATE verifiers SET agreed = agreed + 1 WHERE id = ?").bind(last),
+    spent,
   ]);
 }
 
