@@ -268,7 +268,9 @@ pub fn board_rows_json(v: &Value) -> Value {
             Err(e) => refused.push(json!({ "ruler": bench.id, "reason": e })),
         }
     }
-    json!({ "ok": true, "rows": rows, "refused": refused })
+    // THE CANONICAL RECORD TRAVELS BACK: it is what a verifier is handed, so a
+    // client that produced it can tell its own claim from another's.
+    json!({ "ok": true, "record": canon, "rows": rows, "refused": refused })
 }
 
 /// `/api/board/fold` — `{request, from, count, acc?}` → `{acc}`. The page

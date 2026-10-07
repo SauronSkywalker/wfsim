@@ -29,6 +29,7 @@ import { ocrSample } from "./ocr_samples.js";
 import { popularity } from "./popularity.js";
 import { qqRoute } from "./qq.js";
 import { appraiseRoute } from "./appraise.js";
+import { verifyRoute } from "./verify.js";
 
 const MAX_BYTES = 8192;        // a build and its produced scores; this is slack
 // AN OUTER BOUND, NOT THE RULE — see below. It is `MAIN_SLOTS + 1`: eight main
@@ -802,6 +803,7 @@ export default {
     }
     if (path === "/api/qq" || path.startsWith("/api/qq/")) return qqRoute(request, env, path);
     if (path.startsWith("/api/appraise/")) return appraiseRoute(request, env, path);
+    if (path === "/api/board/work" || path === "/api/board/verify") return verifyRoute(request, env, path);
     if (path === "/api/ocr/sample") return ocrSample(request, env);
     if (path === "/api/popularity") return popularity(request, env, ctx);
     if (path === "/api/board/pending") {

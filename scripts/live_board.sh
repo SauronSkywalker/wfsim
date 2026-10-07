@@ -22,7 +22,7 @@ POLL_SECONDS="${POLL_SECONDS:-20}"
 REFRESH_SECONDS="${REFRESH_SECONDS:-3600}"
 mkdir -p "$WORK"
 cd "$WORK"
-touch seen.txt produced.ndjson new-builds.ndjson
+touch seen.txt produced.ndjson new-builds.ndjson produced-new.ndjson
 
 d1() {
   curl -s --connect-timeout 15 --max-time 120 -o d1.json -w '%{http_code}' -X POST \
@@ -103,13 +103,20 @@ while true; do
     fi
   fi
   if poll_inbox; then
-    "$BIN/wfsim-intake" --produced produced-new.ndjson < inbox-new.ndjson >> new-builds.ndjson 2>> intake.log
-    cat produced-new.ndjson >> produced.ndjson
+    "$BIN/wfsim-intake" --produced produced-pass.ndjson < inbox-new.ndjson >> new-builds.ndjson 2>> intake.log
+    cat produced-pass.ndjson >> produced.ndjson
+    cat produced-pass.ndjson >> produced-new.ndjson
     moved=1
   fi
   if { [ "$moved" = 1 ] || [ ! -d board ]; } && [ -s library.json ]; then
     project || echo "live: the projection failed; the last board stands" >&2
   fi
+  # CLAIMS ARE FILED AFTER THE PROJECTION, which is what ranks them, and the
+  # server's own rows are settled every cycle — `live_claims.mjs`.
+  if [ -s produced-new.ndjson ] && [ -d board ]; then
+    node "$HERE/live_claims.mjs" file "$WORK" && : > produced-new.ndjson
+  fi
+  node "$HERE/live_claims.mjs" settle "$WORK" "$BIN" || echo "live: settling failed; the next cycle asks again" >&2
   # ONE CYCLE AND OUT, for a check run by hand.
   [ "${ONCE:-}" = 1 ] && break
   sleep "$POLL_SECONDS"

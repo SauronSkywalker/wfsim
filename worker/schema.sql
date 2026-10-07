@@ -182,6 +182,48 @@ CREATE TABLE IF NOT EXISTS queue (
 -- run asks of this table.
 CREATE INDEX IF NOT EXISTS queue_batch ON queue (batch);
 
+-- WHAT A SUBMITTER'S MACHINE MEASURED, WAITING FOR A SECOND ONE TO AGREE —
+-- docs/BOARD.md §"Cross-verification". Filed by the live board on the bot
+-- server, keyed by the build intake derived; a row reaches `scores` only when
+-- an independent client produced the same bits, or the server did.
+--
+-- `record` is the canonical build, which is what a verifier fights, and never
+-- `score`: a lease hands out the build, not the number to agree with.
+-- `state`: open, leased, verified, spot (verified, to be recomputed by the
+-- server), arbiter (top ten of its group, the server's alone), dispute,
+-- rejected. `at` is the DAY, as everywhere a submission is concerned.
+CREATE TABLE IF NOT EXISTS claims (
+  identity    TEXT NOT NULL,
+  ruler       TEXT NOT NULL,
+  mode        TEXT NOT NULL,
+  record      TEXT NOT NULL,
+  metric      TEXT NOT NULL,
+  score       REAL NOT NULL,
+  engine      TEXT NOT NULL,
+  state       TEXT NOT NULL,
+  lease       TEXT,
+  lease_until INTEGER,
+  leased_to   TEXT,
+  verifier    TEXT,
+  disputed    REAL,
+  at          TEXT NOT NULL,
+  PRIMARY KEY (identity, ruler, mode)
+);
+
+CREATE INDEX IF NOT EXISTS claims_state ON claims (state, engine);
+CREATE INDEX IF NOT EXISTS claims_lease ON claims (lease);
+CREATE INDEX IF NOT EXISTS claims_verifier ON claims (verifier);
+
+-- A VERIFYING CLIENT, by the random id its browser made for itself — joined to
+-- no account and to no submission, and sent with verification alone. Kept so a
+-- client caught once can be refused and everything it agreed to re-checked.
+CREATE TABLE IF NOT EXISTS verifiers (
+  id     TEXT PRIMARY KEY,
+  agreed INTEGER NOT NULL DEFAULT 0,
+  banned INTEGER NOT NULL DEFAULT 0,
+  seen   TEXT NOT NULL
+);
+
 -- SHORT SHARE LINKS: `/weapons/<weapon>/s/<id>` names a stored share code.
 -- `id` is a hash of (weapon, code) computed by the worker, so a row never
 -- changes, the same build is one row, and no client chooses an id. `at` is the

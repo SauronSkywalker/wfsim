@@ -632,6 +632,35 @@ QQ bot reads. A claim projects as `unverified`; a fact replaces it on the next
 hourly read of `scores`. It writes nothing to the database, so `scores`, the
 public board and `publish.yml` are untouched by it.
 
+## Cross-verification
+
+**A CLIENT'S NUMBER BECOMES A FACT WHEN A SECOND, INDEPENDENT CLIENT PRODUCES
+THE SAME BITS.** The engine is deterministic across every target, so agreement
+is equality and a difference is proof that one side is wrong.
+
+- **Filing.** The live board files each producer claim in `claims` (D1),
+  keyed by the build intake derived, with its canonical record. A claim in its
+  group's TOP TEN on the live board is `arbiter`: the server's alone.
+- **Leasing.** `/api/board/work` (`worker/verify.js`) hands a client one claim
+  of its own release, chosen at random, with the BUILD and never the number;
+  one lease a client, thirty minutes long. A browser skips a build it produced.
+- **Agreeing.** `/api/board/verify` compares bits. Equal: the row enters
+  `scores` as `verified:<release>` unless a fact is already there, its queue row
+  is deleted, and one agreement in twenty is a `spot` the server recomputes.
+  Different: a `dispute`. The answer never says which.
+- **Settling.** `scripts/live_claims.mjs settle` fights every `arbiter`,
+  `dispute` and `spot` row with the scorer itself and ships the fact. A
+  verifier the server disproves — a dispute it lost, or a spot check it agreed
+  to wrongly — is refused, and every row it agreed to is withdrawn and opened
+  again; only for a claim of the release the server runs.
+- **Nobody online** costs nothing: an unverified row is still owed, and
+  `scores.yml` measures it as it always has.
+
+**THE VERIFIER IS AN ANONYMOUS ID** its browser made for itself
+(`69-board-produce.js`), joined to no account and to no submission, kept in
+`verifiers` so a refusal has something to hold. Verifying is ON by default and
+switched beside the board's own consent; a phone never verifies.
+
 ## Consent
 
 Asked ONCE, inline, the first time a run finishes — never on load, never as a
@@ -2017,15 +2046,15 @@ already per row. 13.6% of commits.
   behind a service would trade the thing that makes it good for a slow path and
   a second thing that can fail.
 - **The store keeps nothing about submitters.** No IP, no token, no time finer
-  than the day. Any service this moves to inherits that, and a queue or a
-  database that would record more is the wrong service.
+  than the day. A verifying client's anonymous id is the one exception, and it
+  is never joined to a submission (§"Cross-verification").
 - **The library is the only irreplaceable thing.** Boards are derived, the site
   is generated, the code is in git. Anything that could truncate it needs a
   tripwire before it needs a backup.
 - **A client's number never becomes a score on its own.** The producer's
-  figure reaches the owner's live board, marked `unverified`, and never the
-  `scores` table or a public board. Every published row is reproducible from
-  the repo by anyone.
+  figure reaches the owner's live board, marked `unverified`; it enters
+  `scores` only when a second client produced the same bits or the server did
+  (§"Cross-verification"). Every published row is reproducible from the repo.
 - **No work is enqueued anywhere.** What is outstanding is derived from the
   facts that exist, so there is no second copy of it to fall out of step with
   the first — §"The queue is a query".

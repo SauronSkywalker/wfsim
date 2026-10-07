@@ -190,6 +190,14 @@ in any one axis are two records. A producer's scores (`produced`, `engine`) are 
 bit beside the build, and anything but a list of (ruler, mode, score) is
 refused whole.
 
+## `check_board_verify`
+
+Plain node against `worker/schema.sql` on node's sqlite. A lease hands out a
+build and never its number, to a client of the claim's release, one at a time;
+equal bits make a `verified:` fact and delete the queue row, a difference makes
+a dispute and the answer is the same either way; a scored row, a top-ten row
+and a banned client get nothing; an expired lease goes to the next client.
+
 ## `check_folds`
 
 Every block and every section on a weapon page folds, and the jump menu is READ

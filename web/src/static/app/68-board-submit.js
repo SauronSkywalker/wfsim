@@ -710,8 +710,10 @@ function renderBoardConsent() {
       ` ${escHtml(tr("A submitted build appears on the board at the next hourly re-score."))}` +
       ` ${escHtml(boardCutNote())}` +
       floorNote +
-      ` <button class="ghost-btn small" id="board-no">${escHtml(tr("don't submit"))}</button>`;
+      ` <button class="ghost-btn small" id="board-no">${escHtml(tr("don't submit"))}</button>` +
+      boardVerifyHtml();
     $("board-no").onclick = () => setBoardConsent("no");
+    wireBoardVerify();
     return;
   }
   // WHEN, not just whether. A submission is stored the moment it is sent and
@@ -733,8 +735,10 @@ function renderBoardConsent() {
     // has turned submission off is not waiting for a row to appear.
     (c === "yes" ? ` <span class="board-state">${escHtml(boardCutNote())}</span>` : "") +
     floorNote + ` ` +
-    `<button class="ghost-btn small" id="board-flip">${escHtml(c === "yes" ? tr("stop submitting") : tr("start submitting"))}</button>`;
+    `<button class="ghost-btn small" id="board-flip">${escHtml(c === "yes" ? tr("stop submitting") : tr("start submitting"))}</button>` +
+    boardVerifyHtml();
   $("board-flip").onclick = () => setBoardConsent(c === "yes" ? "no" : "yes");
+  wireBoardVerify();
 }
 
 // The official BUILD, on screen. Same contract as the scenario's lock, but the

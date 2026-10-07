@@ -73,7 +73,8 @@ def deploy() -> None:
     deploy_live(t)
 
 
-LIVE_SCRIPTS = ["scripts/live_board.sh", "scripts/fetch_library.sh", "scripts/fetch_facts.sh"]
+LIVE_SCRIPTS = ["scripts/live_board.sh", "scripts/live_claims.mjs", "scripts/fetch_library.sh",
+                "scripts/fetch_facts.sh", "scripts/ship_facts.sh"]
 
 
 def toolchain() -> str:
@@ -111,8 +112,15 @@ def deploy_live(t: dict) -> None:
     rulers = out / "rulers.txt"
     names = sorted(p.stem for p in (ROOT / "data" / "benchmarks").glob("*.yaml"))
     rulers.write_bytes("".join(f"{n}\n" for n in names).encode("utf-8"))
+    # WHICH COMMIT MEASURED A FACT THE SERVER SHIPS, and which release it runs —
+    # a claim of another release is a different engine and settles nothing.
+    (out / "VERSION").write_bytes((run(["git", "rev-parse", "HEAD"]).strip() + "\n").encode())
+    app = re.search(r'/asset/(app\.[0-9a-f]+\.js)', (ROOT / "site" / "index.html").read_text(encoding="utf-8")).group(1)
+    release = re.search(r'const RELEASE_ID = "([^"]+)"', (ROOT / "site" / "asset" / app).read_text(encoding="utf-8")).group(1)
+    (out / "RELEASE").write_bytes(f"{release}\n".encode())
     run(["ssh", *o, host, f"mkdir -p {root}/bin {root}/scripts {root}/live"])
-    run(["scp", "-q", *o, str(out / "wfsim-intake"), str(out / "wfsim-board"), f"{host}:{root}/bin/"])
+    run(["scp", "-q", *o, str(out / "wfsim-intake"), str(out / "wfsim-board"),
+         str(out / "VERSION"), str(out / "RELEASE"), f"{host}:{root}/bin/"])
     run(["scp", "-q", *o, *LIVE_SCRIPTS, str(rulers), f"{host}:{root}/scripts/"])
     # RESTARTED ONLY ONCE INSTALLED: the unit and its read token are put on the
     # server by hand (`deploy/wfsim-live.service`), and until then there is

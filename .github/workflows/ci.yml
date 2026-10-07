@@ -115,6 +115,8 @@ jobs:
         run: node scripts/check_qq.mjs
       - name: A riven appraisal is asked once and answered once
         run: node scripts/check_appraise.mjs
+      - name: A client's number reaches the board only when a second one agrees
+        run: node scripts/check_board_verify.mjs
       # A BOX THAT REDRAWS UNDER A COMPOSITION takes no Chinese at all, while
       # Latin typing looks fine.
       - name: Every search box takes a Chinese input method

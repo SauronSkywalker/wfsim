@@ -169,6 +169,9 @@ change that page in the commit that changes what is kept.
 - An email address never travels in a URL and is never logged. The mail
   service's own delivery log holds the recipient for up to 30 days; its message
   preview stays off, so no code is retained there.
+- A browser that checks other players' scores keeps a random id it made and
+  sends it with each check (`verifiers`, docs/BOARD.md §"Cross-verification");
+  it is never joined to an account or a submission.
 - **An account is never joined to the usage count or to a board submission.**
   Both pages promise that nothing about the reader travels with them, and the
   session cookie reaching those endpoints is never read by them.
