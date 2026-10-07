@@ -94,6 +94,10 @@ pub fn combo_needs_a_stance(weapon: &str, form: crate::model::FormKind) -> bool 
         && matches!(form, F::Neutral | F::Forward | F::Block | F::BlockForward)
 }
 
+/// The board's refusal of a melee row with an empty stance slot.
+pub const STANCE_REQUIRED: &str =
+    "no stance in the slot, and a board row on a melee weapon carries one — equip a stance";
+
 /// The refusal a stanceless ground combo gets, in one wording for every caller.
 pub const STANCELESS_COMBO: &str =
     "no stance in the slot: stanceless combos are not modelled yet — equip a stance, or play heavy attacks, slide attacks or heavy slams";

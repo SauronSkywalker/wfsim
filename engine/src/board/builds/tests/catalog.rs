@@ -969,11 +969,11 @@ fn a_full_adversary_build_is_admissible() {
 /// THE BOARD'S ENTRY STANDARD, STATED AS A TABLE.
 ///
 /// Eight main slots FULL, every arcane seat and every evolution tier FULL,
-/// and the two slots the game itself makes optional — the stance and the
-/// exilus — optional here too. A ruler may still narrow it; this is the
-/// shape a ruler that wants a complete build is asking for.
+/// a STANCE on a melee weapon whose pool offers one, and the exilus optional.
+/// A ruler may still narrow it; this is the shape a ruler that wants a
+/// complete build is asking for.
 ///
-/// THE FOURTH ROW IS WHY THIS EXISTS. A full melee build carries all three
+/// THE SECOND ROW IS WHY THIS EXISTS. A full melee build carries all three
 /// — eight mains, a stance and an exilus — and that is TEN mods against the
 /// nine slots the capacity planner counts, because the stance was priced
 /// among them while also handing its capacity back. The board refused
@@ -998,12 +998,10 @@ fn the_entry_standard_takes_a_full_build_with_or_without_the_optional_slots() {
     let arc = || s(&["melee_influence"]);
     let stance = || s(&[&MAINS[..], &["sovereign_outcast"]].concat());
 
-    // THE FOUR SHAPES THAT ARE A COMPLETE BUILD.
+    // THE SHAPES THAT ARE A COMPLETE BUILD.
     for (what, mods, ex) in [
-        ("eight mains", s(&MAINS), None),
-        ("…and a stance", stance(), None),
-        ("…and an exilus", s(&MAINS), Some("conditions_perfection")),
-        ("…and both", stance(), Some("conditions_perfection")),
+        ("eight mains and a stance", stance(), None),
+        ("…and an exilus", stance(), Some("conditions_perfection")),
         // AN EXILUS-ELIGIBLE MOD IN A MAIN SLOT IS A MAIN MOD. What is
         // optional is the SLOT, not the mod: the game lets one of these sit
         // anywhere, and a build that spends a main slot on it has eight
@@ -1011,17 +1009,21 @@ fn the_entry_standard_takes_a_full_build_with_or_without_the_optional_slots() {
         ("…with an exilus-eligible mod among the mains",
          s(&["primed_pressure_point", "sacrificial_steel", "organ_shatter",
              "primed_reach", "primed_fever_strike", "north_wind",
-             "shocking_touch", "conditions_perfection"]), None),
+             "shocking_touch", "conditions_perfection", "sovereign_outcast"]), None),
     ] {
         assert!(go(mods, s(&EVOS), arc(), ex).is_ok(), "{what} is a complete build");
     }
 
     // …AND WHAT IS NOT COMPLETE IS REFUSED, each for its own reason.
-    let short = go(s(&MAINS[..7]), s(&EVOS), arc(), None).unwrap_err();
+    let short = go(s(&[&MAINS[..7], &["sovereign_outcast"]].concat()), s(&EVOS), arc(), None).unwrap_err();
     assert!(short.contains("main slots"), "seven mains: {short}");
-    let no_arc = go(s(&MAINS), s(&EVOS), vec![], None).unwrap_err();
+    for ex in [None, Some("conditions_perfection")] {
+        let bare = go(s(&MAINS), s(&EVOS), arc(), ex).unwrap_err();
+        assert!(bare.contains("no stance"), "no stance: {bare}");
+    }
+    let no_arc = go(stance(), s(&EVOS), vec![], None).unwrap_err();
     assert!(no_arc.contains("arcane"), "no arcane: {no_arc}");
-    let no_evo = go(s(&MAINS), s(&EVOS[..3]), arc(), None).unwrap_err();
+    let no_evo = go(stance(), s(&EVOS[..3]), arc(), None).unwrap_err();
     assert!(no_evo.contains("evolution"), "three tiers: {no_evo}");
 }
 
