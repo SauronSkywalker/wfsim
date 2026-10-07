@@ -3,10 +3,12 @@
 // DE's host refuses a request from a Cloudflare Worker (403 whatever it sends),
 // and a page cannot read it across origins, so the bot server relays it: each
 // minute it PUTs DE's file here, this turns each thing a page lists into one
-// ITEM, names it, and keeps the result in R2 for anyone to read.
+// ITEM, names it, and keeps the result in R2 for anyone to read. Arbitrations
+// are not in DE's file: they come from a schedule (`arbitrationsOf`).
 //
-//   GET /api/world                                   the items, as last relayed
+//   GET /api/world                                   the items, as last relayed, and the arbitration now
 //   GET /api/world/names                             every era and mission type, named
+//   GET /api/world/arbitrations                      the arbitrations of the coming days
 //   PUT /api/world   (bearer BOT_RELAY_TOKEN)         DE's worldState.php, as read
 import NAMES from "./world_names.json";
 
@@ -26,6 +28,7 @@ export async function worldRoute(request, env, ctx, path) {
   if (path === "/api/world/names") {
     return json({ ok: true, tiers: NAMES.tiers, missions: NAMES.missions }, 200, { "cache-control": "public, max-age=3600" });
   }
+  if (path === "/api/world/arbitrations") return arbitrationRoute(request, ctx, path);
   if (path !== "/api/world") return json({ ok: false, error: "not found" }, 404);
   if (request.method === "PUT") return worldRelay(request, env);
   if (request.method !== "GET") return json({ ok: false, error: "GET or PUT" }, 405);
@@ -35,8 +38,12 @@ export async function worldRoute(request, env, ctx, path) {
   if (hit) return hit;
   const obj = env.UPLOADS && await env.UPLOADS.get(KEY).catch(() => null);
   if (!obj) return json({ ok: false, error: "the world state has not been relayed yet" }, 503);
-  const res = new Response(obj.body, { headers: { "content-type": "application/json; charset=utf-8",
-    "cache-control": `public, max-age=${FRESH_S}`, ...OPEN } });
+  const relayed = await obj.json();
+  // AN UNREACHABLE SCHEDULE COSTS THE ARBITRATION, never the fissures.
+  const now = Date.now();
+  const arbitration = await arbitrationSchedule().then((s) => arbitrationsOf(s, now, now + 1)).catch(() => []);
+  const res = json({ ...relayed, items: [...relayed.items, ...arbitration] }, 200,
+    { "cache-control": `public, max-age=${FRESH_S}` });
   ctx.waitUntil(cache.put(key, res.clone()));
   return res;
 }
@@ -88,4 +95,82 @@ function fissuresOf(ws) {
         node: n.name || null, system: n.system || null },
       started_at_ms: f.started_at_ms, ends_at_ms: f.ends_at_ms };
   });
+}
+
+// ---- ARBITRATIONS -----------------------------------------------------------
+//
+// ONE NODE AN HOUR, on a rotation the game computes ahead; browse.wf publishes
+// it as `<unix seconds>,<node>` lines for years to come (docs/DATA_SOURCES.md
+// §"THE WORLD STATE"). An item is one hour of it, and an hour's mission type
+// and faction are its node's.
+
+const ARBITRATION_SCHEDULE = "https://browse.wf/arbys.txt";
+/// The file changes when the rotation does, which is rarely.
+const ARBITRATION_SCHEDULE_S = 6 * 3600;
+/// What `/api/world/arbitrations` lists ahead of the hour now.
+const ARBITRATION_AHEAD_MS = 14 * 24 * 3600 * 1000;
+
+let schedule = null;
+let scheduleAt = 0;
+/// THE SCHEDULE, `[[start_ms, node]]` in time order, read once per isolate.
+async function arbitrationSchedule() {
+  if (schedule && Date.now() - scheduleAt < ARBITRATION_SCHEDULE_S * 1000) return schedule;
+  const r = await fetch(ARBITRATION_SCHEDULE, { cf: { cacheTtl: ARBITRATION_SCHEDULE_S, cacheEverything: true } });
+  if (!r.ok) throw new Error(`arbitration schedule ${r.status}`);
+  schedule = parseArbitrations(await r.text());
+  scheduleAt = Date.now();
+  return schedule;
+}
+
+export const parseArbitrations = (text) => text.split("\n")
+  .map((l) => l.trim().split(","))
+  .filter(([t, node]) => node && Number(t) > 0)
+  .map(([t, node]) => [Number(t) * 1000, node])
+  .sort((a, b) => a[0] - b[0]);
+
+/// EVERY ARBITRATION OPEN AT SOME MOMENT OF `[from, to)`. An hour ends where the
+/// next begins.
+export function arbitrationsOf(sched, from, to) {
+  const out = [];
+  for (let i = 0; i < sched.length; i++) {
+    const [start, node] = sched[i];
+    const end = i + 1 < sched.length ? sched[i + 1][0] : start + 3600_000;
+    if (end <= from) continue;
+    if (start >= to) break;
+    const n = NAMES.nodes[node] || {};
+    out.push({ kind: "arbitration", id: `arbitration-${start}`,
+      attributes: { mission: n.type || null, faction: n.faction || null, node },
+      names: { mission: (n.type && NAMES.missions[n.type]) || n.mission || null,
+        faction: (n.faction && NAMES.factions[n.faction]) || null,
+        node: n.name || null, system: n.system || null },
+      started_at_ms: start, ends_at_ms: end });
+  }
+  return out;
+}
+
+/// THE COMING DAYS, for the arbitration page and a reminder's next time; and
+/// every mission type, faction and node the rest of the schedule holds, for a
+/// reminder made from nothing.
+async function arbitrationRoute(request, ctx, path) {
+  if (request.method !== "GET") return json({ ok: false, error: "GET only" }, 405);
+  const cache = caches.default;
+  const key = new Request(new URL(path, request.url).toString());
+  const hit = await cache.match(key);
+  if (hit) return hit;
+  let sched;
+  try { sched = await arbitrationSchedule(); } catch (e) {
+    return json({ ok: false, error: String(e && e.message || e) }, 502);
+  }
+  const now = Date.now();
+  const items = arbitrationsOf(sched, now, now + ARBITRATION_AHEAD_MS);
+  const choices = { mission: {}, faction: {}, node: {} };
+  for (const x of arbitrationsOf(sched, now, Infinity)) {
+    for (const k of ["mission", "faction", "node"]) {
+      const v = x.attributes[k];
+      if (v && !(v in choices[k])) choices[k][v] = k === "node" ? { name: x.names.node, system: x.names.system } : x.names[k];
+    }
+  }
+  const res = json({ ok: true, read_at_ms: now, items, choices }, 200, { "cache-control": "public, max-age=600" });
+  ctx.waitUntil(cache.put(key, res.clone()));
+  return res;
 }

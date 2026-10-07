@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""The names the fissure page reads, in English and Chinese: `worker/world_names.json`.
+"""The names the Utility pages read, in English and Chinese: `worker/world_names.json`.
 
 DE's world state names a fissure by ids — `SolNode717`, `MT_SURVIVAL`,
-`VoidT6` — and this table turns each into the words the game shows. Every
+`VoidT6` — and the arbitration schedule names a node; this table turns each
+into the words the game shows, and gives each node its mission type and
+faction. Every
 string is DE's own, transcribed from its localization dictionaries through
 `browse.wf/warframe-public-export-plus` (docs/DATA_SOURCES.md), joined by the
 dictionary key and never by name.
@@ -38,6 +40,19 @@ TIERS = {
     "VoidT4": "/Lotus/Language/Relics/Era_AXI",
     "VoidT5": "/Lotus/Language/Relics/Era_REQUIEM",
     "VoidT6": "/Lotus/Language/Relics/Era_OMNI",
+}
+
+# THE FACTIONS a node states (`ExportRegions` `faction`), each by the key the
+# game's own faction labels use. A faction missing here shows its id.
+FACTIONS = {
+    "FC_GRINEER": "/Lotus/Language/Game/Faction_GrineerUC",
+    "FC_CORPUS": "/Lotus/Language/Game/Faction_CorpusUC",
+    "FC_INFESTATION": "/Lotus/Language/Game/Faction_InfestationUC",
+    "FC_OROKIN": "/Lotus/Language/Game/Faction_OrokinUC",
+    "FC_SENTIENT": "/Lotus/Language/Game/Faction_SentientUC",
+    "FC_MITW": "/Lotus/Language/Game/Faction_MITW",
+    "FC_SCALDRA": "/Lotus/Language/1999/Faction_Scaldra",
+    "FC_TECHROT": "/Lotus/Language/1999/Faction_Techrot",
 }
 
 
@@ -76,20 +91,22 @@ def main() -> None:
         if not name:
             continue
         nodes[node] = {"name": name, "system": both(r.get("systemName", "")),
-                       "mission": both(r.get("missionName", ""), display)}
+                       "mission": both(r.get("missionName", ""), display),
+                       "type": r.get("missionType"), "faction": r.get("faction")}
         if r.get("missionType") and r.get("missionName"):
             by_type.setdefault(r["missionType"], Counter())[r["missionName"]] += 1
     # A FISSURE STATES ITS MISSION TYPE, which may not be its node's own, so the
     # type is named by the name DE gives most nodes of that type.
     missions = {t: both(c.most_common(1)[0][0], display) for t, c in sorted(by_type.items())}
     tiers = {t: both(k) for t, k in TIERS.items()}
-    missing = [t for t, v in tiers.items() if not v]
+    factions = {f: both(k, display) for f, k in FACTIONS.items()}
+    missing = [t for t, v in {**tiers, **factions}.items() if not v]
     if missing:
-        sys.exit(f"dictionary lost the relic era of {missing}")
-    OUT.write_text(json.dumps({"tiers": tiers, "missions": missions, "nodes": nodes},
+        sys.exit(f"dictionary lost the name of {missing}")
+    OUT.write_text(json.dumps({"tiers": tiers, "missions": missions, "factions": factions, "nodes": nodes},
                               ensure_ascii=False, separators=(",", ":")) + "\n",
                    encoding="utf-8", newline="\n")
-    print(f"{OUT.relative_to(ROOT)}: {len(nodes)} nodes, {len(missions)} mission types")
+    print(f"{OUT.relative_to(ROOT)}: {len(nodes)} nodes, {len(missions)} mission types, {len(factions)} factions")
 
 
 if __name__ == "__main__":

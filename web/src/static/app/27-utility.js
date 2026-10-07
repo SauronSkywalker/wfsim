@@ -7,12 +7,13 @@
 // clock, the reminders and their tab.
 
 /// THE TABS, in order: each kind's list, then the reminders. `[path, title]`.
-const UTILITY_TABS = [["fissures", "Void Fissures"], ["reminders", "Reminders"]];
+const UTILITY_TABS = [["fissures", "Void Fissures"], ["arbitrations", "Arbitrations"], ["reminders", "Reminders"]];
 const utilityTitle = (tab) => (UTILITY_TABS.find(([t]) => t === tab) || UTILITY_TABS[0])[1];
 /// EACH KIND, by the worker's `kind`: `{ tab, render(), describe(item),
-/// nameOf(key, names, value), attributes: [[key]], build(box) }` — `attributes`
-/// are what a reminder may hold, in the order its editor offers them, and
-/// `build` draws a reminder made from nothing into the Reminders tab.
+/// nameOf(key, names, value), attributes: [[key]], build(box), next(r) }` —
+/// `attributes` are what a reminder may hold, in the order its editor offers
+/// them; `build` draws a reminder made from nothing into the Reminders tab, and
+/// `next`, for a kind known ahead, says when a reminder fires next.
 const UTILITY_KINDS = {};
 let utilityTab = null;
 
@@ -27,6 +28,7 @@ function utilityLeft(ms) {
 }
 
 function showUtility(tab) {
+  if (tab !== utilityTab) reminderDraft = null;
   utilityTab = tab;
   $("h-utility").textContent = tr(utilityTitle(tab));
   for (const [t] of UTILITY_TABS) $(`utility-${t}`).hidden = t !== tab;
@@ -254,6 +256,84 @@ function reminderLabel(r) {
   }).join(" · ");
 }
 
+/// UNDER A REMINDER: how many it matches open now, or, for a kind known ahead
+/// and nothing open, when it fires next.
+function reminderStatus(r) {
+  const open = (worldOf(r.kind) || []).filter((x) => reminderMatches(r, x)).length;
+  const kind = UTILITY_KINDS[r.kind];
+  const next = !open && kind && kind.next ? kind.next(r) : null;
+  return next || trF("{n} open now", { n: open });
+}
+
+/// A MOMENT AHEAD, in the reader's own time zone: weekday, date and time.
+const utilityWhen = (ms) => new Date(ms).toLocaleString(LANG === "zh" ? "zh-CN" : "en-GB",
+  { weekday: "short", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" });
+
+// ---- A REMINDER FROM A ROW --------------------------------------------------
+//
+// THE BELL ON A ROW opens, under it, the reminder being made: what it will hold,
+// each a chip the reader turns off or on. One at a time, on any list; every
+// chip off is no reminder, so Save waits.
+
+/// `{kind, id, pick: Set}`, or null.
+let reminderDraft = null;
+const BELL_SVG = `<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>`;
+
+function reminderBellHtml(item) {
+  const on = reminders().some((r) => reminderMatches(r, item));
+  const open = reminderDraft && reminderDraft.id === item.id;
+  return `<button type="button" class="fbell${on ? " on" : ""}${open ? " open" : ""}" data-rbell="${escHtml(item.id)}"
+    title="${escHtml(tr(on ? "A reminder matches this" : "Remind me of ones like this"))}" aria-label="${
+    escHtml(tr("Remind me of ones like this"))}">${BELL_SVG}</button>`;
+}
+/// The editor, when this row's is open; `lead` says what it reminds of.
+function reminderDraftHtml(item, lead) {
+  if (!reminderDraft || reminderDraft.id !== item.id) return "";
+  const kind = UTILITY_KINDS[item.kind];
+  const chips = kind.attributes.filter(([k]) => item.attributes[k] != null).map(([k]) =>
+    filterChip(kind.nameOf(k, item.names, item.attributes[k]), reminderDraft.pick.has(k), `data-rpick="${k}"`)).join("");
+  return `<div class="frem">
+      <span class="slotf-lab">${escHtml(lead)}</span>
+      <div class="slotf-row">${chips}</div>
+      <div class="frem-act">
+        <button type="button" class="ghost-btn small" data-rsave${reminderDraft.pick.size ? "" : " disabled"}>${escHtml(tr("Save reminder"))}</button>
+        <button type="button" class="ghost-btn small" data-rcancel>${escHtml(tr("Cancel"))}</button>
+      </div>
+    </div>`;
+}
+/// THE BELLS AND THE EDITOR IN `box` answer clicks; `rows` are the items drawn,
+/// and a new draft holds the attributes in `defaults` the item has.
+function reminderDraftWire(box, rows, defaults) {
+  box.querySelectorAll("[data-rbell]").forEach((el) => {
+    el.onclick = () => {
+      const item = rows.find((x) => x.id === el.dataset.rbell);
+      reminderDraft = reminderDraft && reminderDraft.id === item.id ? null
+        : { kind: item.kind, id: item.id, pick: new Set(defaults.filter((k) => item.attributes[k] != null)) };
+      renderUtility();
+    };
+  });
+  const ed = box.querySelector(".frem");
+  const item = ed && rows.find((x) => reminderDraft && x.id === reminderDraft.id);
+  if (!item) return;
+  ed.querySelectorAll("[data-rpick]").forEach((el) => {
+    el.onclick = () => {
+      const k = el.dataset.rpick;
+      if (reminderDraft.pick.has(k)) reminderDraft.pick.delete(k); else reminderDraft.pick.add(k);
+      renderUtility();
+    };
+  });
+  ed.querySelector("[data-rsave]").onclick = () => {
+    if (!reminderDraft.pick.size) return;
+    reminderAdd(item.kind, Object.fromEntries([...reminderDraft.pick].map((k) => [k, item.attributes[k]])), item.names);
+    reminderDraft = null;
+    renderUtility();
+    presetToast(tr("Reminder saved"));
+  };
+  ed.querySelector("[data-rcancel]").onclick = () => { reminderDraft = null; renderUtility(); };
+}
+
+/// The kind the Reminders tab is building a reminder for.
+let reminderNewKind = null;
 function renderReminders() {
   const box = $("utility-reminders");
   if (!box) return;
@@ -275,7 +355,7 @@ function renderReminders() {
       <div class="brow frow">
         <span class="ftier">${escHtml(UTILITY_KINDS[r.kind] ? tr(utilityTitle(UTILITY_KINDS[r.kind].tab)) : r.kind)}</span>
         <span class="bname">${escHtml(reminderLabel(r))}
-          <span class="fnode">${escHtml(trF("{n} open now", { n: (worldOf(r.kind) || []).filter((x) => reminderMatches(r, x)).length }))}</span></span>
+          <span class="fnode">${escHtml(reminderStatus(r))}</span></span>
         <button type="button" class="ghost-btn small" data-rdel="${escHtml(r.id)}">${escHtml(tr("Delete"))}</button>
       </div>`).join("")}</div>`
       : `<div class="sim-empty">${escHtml(tr("No reminders yet. Make one above, or with the bell on a row of a list."))}</div>`}
@@ -291,9 +371,17 @@ function renderReminders() {
   box.querySelectorAll("[data-rdel]").forEach((el) => {
     el.onclick = () => { reminderRemove(el.dataset.rdel); renderUtility(); };
   });
-  // ONE BUILDER PER KIND, each the kind's own (`UTILITY_KINDS[kind].build`).
+  // ONE BUILDER AT A TIME, the picked kind's own (`UTILITY_KINDS[kind].build`).
+  const tabAt = (k) => UTILITY_TABS.findIndex(([t]) => t === k.tab);
+  const builders = Object.entries(UTILITY_KINDS).filter(([, k]) => k.build).sort(([, a], [, b]) => tabAt(a) - tabAt(b));
+  if (!builders.some(([id]) => id === reminderNewKind)) reminderNewKind = builders.length ? builders[0][0] : null;
   const fresh = $("reminder-new");
-  Object.values(UTILITY_KINDS).forEach((k) => { if (k.build) k.build(fresh); });
+  fresh.innerHTML = `<div class="slotf-row">${builders.map(([id, k]) =>
+    filterChip(tr(utilityTitle(k.tab)), id === reminderNewKind, `data-rkind="${id}"`)).join("")}</div><div></div>`;
+  fresh.querySelectorAll("[data-rkind]").forEach((el) => {
+    el.onclick = () => { reminderNewKind = el.dataset.rkind; renderUtility(); };
+  });
+  if (reminderNewKind) UTILITY_KINDS[reminderNewKind].build(fresh.lastElementChild);
   const sys = box.querySelector("[data-rsystem]");
   if (sys) sys.onclick = async () => {
     if (reminderSystemOn()) storeJson(REMINDERS_SYSTEM_KEY, 0);

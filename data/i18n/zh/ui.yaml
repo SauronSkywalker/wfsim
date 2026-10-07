@@ -381,7 +381,7 @@ ui:
   "benchmark": 基准场景
   "Benchmark": 基准榜
   # UTILITY. Game terms are DE's own Chinese (dict.zh.json):
-  # Void Fissure 虚空裂缝, Railjack 航道星舰.
+  # Void Fissure 虚空裂缝, Railjack 航道星舰, Arbitration 仲裁.
   "Utility": 工具
   "Void Fissures": 虚空裂缝
   "Reminders": 提醒
@@ -390,8 +390,8 @@ ui:
   "The world state could not be reached.": 世界状态加载失败。
   "No fissure matches these filters.": 没有符合筛选条件的虚空裂缝。
   "Read from DE's world state each minute. China's own servers are not covered.": 每分钟从 DE 的世界状态读取一次，不含国服。
-  "Remind me of fissures like this": 有类似的裂缝时提醒我
-  "A reminder matches this fissure": 已有提醒匹配这个裂缝
+  "Remind me of ones like this": 有类似的时提醒我
+  "A reminder matches this": 已有提醒匹配这一项
   "Remind me when a fissure opens with": 出现以下条件的裂缝时提醒我
   "Save reminder": 保存提醒
   "New reminder": 新建提醒
@@ -412,6 +412,19 @@ ui:
   "Recently fired": 最近触发
   "ended": 已结束
   "Nothing has fired yet.": 还没有触发过提醒。
+  "Arbitrations": 仲裁
+  "Arbitration": 仲裁
+  "Node": 节点
+  "Now": 当前
+  "in": 还有
+  "Time left": 剩余时间
+  "Starts in": 距离开始
+  "Next: {when}": "下一次：{when}"
+  "Not in the next 14 days": 未来 14 天内没有
+  "Remind me when an arbitration is": 仲裁符合以下条件时提醒我
+  "The arbitration schedule could not be reached.": 仲裁时间表加载失败。
+  "No arbitration in the next 14 days matches these filters.": 未来 14 天内没有符合筛选条件的仲裁。
+  "The schedule is computed ahead from the game's rotation and published by browse.wf; DE does not publish it. Times are in your time zone.": 时间表由 browse.wf 根据游戏的轮换规律提前推算并公布，DE 官方不公布。时间按你所在的时区显示。
   "Biggest hit": 单发最高
   "Biotic Rounds, the AX-52-exclusive mod — a weapon-exclusive card outside the pools this roster loads": "「Biotic Rounds」，AX-52 的专属 MOD——这是一张武器专属卡，不在本武器库载入的卡池里"
   "Blast Radius": 爆炸半径

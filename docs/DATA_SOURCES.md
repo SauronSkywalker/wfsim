@@ -621,6 +621,13 @@ Railjack nodes and mission names are exported. Rerun it when DE adds nodes; unti
 then a new node shows its id. The China servers keep a world state of their own,
 and its source is unknown, so the page does not cover them.
 
+**Arbitrations are not in DE's file.** The game computes the hourly rotation
+ahead, and `browse.wf/arbys.txt` publishes it as `<unix seconds>,<node>` lines
+years forward; the worker reads it (`worker/world.js` `arbitrationSchedule`) and
+gives each hour its node's mission type and faction from `ExportRegions.json`.
+It is the only source, so it is checked against the game: the hour shown must be
+the one the game's Navigation shows.
+
 ### RIVEN POOLS: the only source is other people's cards
 
 Which stats a weapon's riven can roll is DE's own per-weapon table. It is in no

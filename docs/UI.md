@@ -1015,9 +1015,11 @@ none of it feeds the builder, the simulator or the optimizer (`docs/CORE.md`
 | everything listed is an item `{kind, id, attributes, names, started_at_ms, ends_at_ms}`; a new kind is a parser in the worker and a tab registered in `UTILITY_KINDS` | `worker/world.js` `KINDS`, `27-utility.js` |
 | DE's file is relayed by the bot server each minute (DE refuses the worker) and served from R2; the feed is the live site's, from every origin, asked each minute while a Utility page shows and every two minutes elsewhere while a reminder waits | `worldLoad`, `utilityClock` |
 | Void Fissures shows one of the game's three lists at a time — star chart, Steel Path, Void Storms — by relic era, then by time left | `41-fissures.js` |
+| Arbitrations are in no DE file: the worker reads a schedule computed ahead, puts the hour open now in the feed, and serves the next fourteen days apart (`/api/world/arbitrations`), which the page lists by day, filtered by mission type and faction | `arbitrationsOf`, `41-arbitrations.js` |
 | a reminder is a kind and some attributes; it matches an item of that kind holding every one | `reminderMatches` |
-| the bell on a row makes one, holding that row's list, era and mission until the reader changes the chips | `FISSURE_REMINDER_DEFAULT` |
-| Reminders also makes one from nothing, for what is not open: each attribute Any until picked, from every era and mission type the worker names (`/api/world/names`) | `fissureBuild` |
+| the bell on a row makes one, holding the attributes the kind names (a fissure's list, era and mission; an arbitration's mission type and faction) until the reader changes the chips | `reminderDraft`, `*_REMINDER_DEFAULT` |
+| Reminders also makes one from nothing, for what is not open: one kind at a time, each attribute Any until picked, from every value the worker names | `fissureBuild`, `arbitrationBuild` |
+| a reminder for a kind known ahead says when it fires next instead of how many are open | `reminderStatus`, `arbitrationNext` |
 | what a new reminder already matches is seen, so it fires for what opens later | `reminderAdd` |
 | reminders live in this browser and fire while the site is open there, on any page: once per item, said on the page, counted on the Utility link until Reminders is opened | `reminderCheck`, `reminderRead` |
 | a system notification as well only when the reader turns it on, which is when the browser asks, and only for a tab in the background | `reminderSystemOn` |

@@ -1454,6 +1454,12 @@ def prerender(flagged: str) -> None:
             "reminders when the one you want opens.",
         ),
         (
+            "utility/arbitrations", "Arbitrations — this hour and the next two weeks | WFSim", "h-utility", "Utility",
+            "Warframe's Arbitration this hour and every hour of the next fourteen days: "
+            "mission, node and faction, filtered to the ones you play, with reminders "
+            "when the one you want opens.",
+        ),
+        (
             "operator", "Operator — Focus school for a Warframe build | WFSim", "op-name", "Operator",
             "The Operator a Warframe build refers to: the active Focus school, and which "
             "of its nodes that need an Operator action to count as running. Every node "
