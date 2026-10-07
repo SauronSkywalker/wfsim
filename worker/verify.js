@@ -6,7 +6,7 @@
 // deterministic on every target (docs/WASM.md) — and equal bits make a fact in
 // `scores`. Nothing here computes a number.
 //
-//   POST /api/board/work    { verifier, engine }                        → { work: { lease, record, ruler, mode } | null }
+//   POST /api/board/work    { verifier, engine, protocol }              → { work: { lease, record, ruler, mode } | null }
 //   POST /api/board/verify  { lease, verifier, engine, score, metric }  → { ok }
 
 /// A browser fights a crowd row in minutes; a lease outlives the slowest.
@@ -16,6 +16,10 @@ export const LEASE_MS = 30 * 60_000;
 export const SPOT_SHARE = 0.05;
 /// The range an order's `slot` is drawn from (`ship_queue.sh`).
 const SLOT_SPAN = 2147483647;
+/// WHAT A PAGE THAT CAN FILL AN ORDER SENDS. A tab opened before orders existed
+/// asks too, takes an order, and answers in a shape this refuses — holding the
+/// order for a lease's length — so a page that does not say this gets nothing.
+export const PROTOCOL = 2;
 
 const VERIFIER_ID = /^[a-z0-9]{16,40}$/;
 const ENGINE_ID = /^[A-Za-z0-9._-]{1,40}$/;
@@ -73,6 +77,7 @@ async function work(request, env) {
   const { b, err } = await read(request);
   if (err) return err;
   if (!VERIFIER_ID.test(b.verifier || "") || !ENGINE_ID.test(b.engine || "")) return json({ ok: false, error: "bad request" }, 400);
+  if (b.protocol !== PROTOCOL) return json({ ok: true, work: null });
   const db = env.LIBRARY, now = Date.now();
   if (!(await admit(db, b.verifier))) return json({ ok: true, work: null });
   // ONE AT A TIME: a client holding a live lease gets nothing more.

@@ -5,7 +5,7 @@
 // answer never says which; a row nobody owes, a top-ten row, a live lease and a
 // banned client get nothing.
 //   node scripts/check_board_verify.mjs
-import { verifyRoute, LEASE_MS } from "../worker/verify.js";
+import { verifyRoute, LEASE_MS, PROTOCOL } from "../worker/verify.js";
 import { DatabaseSync } from "node:sqlite";
 import { readFileSync } from "node:fs";
 
@@ -39,13 +39,14 @@ const order = (identity, state = "todo", extra = {}) => {
 const row = (identity) => db.prepare("SELECT * FROM orders WHERE identity = ?").get(identity);
 const fact = (identity) => db.prepare("SELECT * FROM scores WHERE identity = ?").get(identity);
 const only = (identity) => db.prepare("UPDATE orders SET slot = CASE WHEN identity = ? THEN 1 ELSE slot END").run(identity);
-const work = (v, engine = "e1") => call("/api/board/work", { verifier: v, engine });
+const work = (v, engine = "e1", protocol = PROTOCOL) => call("/api/board/work", { verifier: v, engine, protocol });
 const answer = (w, v, score, metric = "kpm", engine = "e1") => call("/api/board/verify", { lease: w.lease, verifier: v, engine, score, metric });
 const A = "a".repeat(24), B = "b".repeat(24), C = "c".repeat(24), D = "d".repeat(24);
 const SCORE = 1.1070976928071055;
 Math.random = () => 0.5;  // no spot check unless a test asks for one
 
 order("one");
+check("a page that cannot fill an order is handed none", (await work(A, "e1", null)).work === null && row("one").lease === null);
 const first = await work(A);
 check("an order is handed out as its build", first.work && first.work.record.weapon === "braton_prime", JSON.stringify(first));
 check("...one lease at a time", (await work(A)).work === null);

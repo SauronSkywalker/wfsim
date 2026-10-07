@@ -88,7 +88,7 @@ async function workOnce() {
   if (!boardVerifyOn() || onPhone()) return false;
   const id = verifierId();
   if (!id) return false;
-  const ask = await postBoardWork("/api/board/work", { verifier: id, engine: ENGINE_ID });
+  const ask = await postBoardWork("/api/board/work", { verifier: id, engine: ENGINE_ID, protocol: 2 });
   const w = ask && ask.work;
   if (!w) return false;
   const order = await api("/api/board/order", { record: w.record, ruler: w.ruler, mode: w.mode });
