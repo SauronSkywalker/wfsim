@@ -104,6 +104,13 @@ async function ban(id) {
 
 async function settle() {
   const engine = existsSync(join(arg, "ENGINE")) ? readFileSync(join(arg, "ENGINE"), "utf8").trim() : "";
+  // A TOP-TEN ROW NOBODY OWES ANY MORE — the scorer measured it after the
+  // clients' hold — is settled unfought, as a lease settles one: fighting it
+  // again queued every new top-ten row behind a day of facts already banked.
+  const gone = await d1(`UPDATE orders SET state = 'settled' WHERE state = 'arbiter' AND NOT EXISTS
+                         (SELECT 1 FROM queue q WHERE q.build_id = orders.identity AND q.ruler = orders.ruler
+                          AND q.mode = orders.mode) RETURNING identity`);
+  if (gone.length) console.error(`orders: settled ${gone.length} top-ten order(s) the scorer already measured`);
   const todo = await d1(`SELECT identity, ruler, mode, record, score, engine, state, produced_by, verifier, disputed
                          FROM orders WHERE state IN ('arbiter', 'dispute', 'spot') ORDER BY state LIMIT ?`, [SETTLE_PER_CYCLE]);
   for (const o of todo) {

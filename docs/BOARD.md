@@ -668,6 +668,7 @@ row at a time, so the board's growth is more orders, never a heavier client.
   client the server disproves — the first result, the second, or both — is
   refused: what it agreed to is withdrawn and opened again, what it measured
   first is measured again. Only for an order of the engine the server runs.
+  A top-ten order the scorer already measured is settled unfought.
 - **Nobody online** costs nothing. `scores.yml` reads the queue with
   `HOLD_SECONDS=7200`: a row whose order opened in the last two hours is the
   clients'; an older one it measures as it always has.

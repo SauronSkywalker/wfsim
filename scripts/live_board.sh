@@ -138,9 +138,11 @@ project_private() {
 # WHICH BUILDS' CLIENT RESULTS CHANGED since the last read, into `touched-ids.txt`.
 read_unverified() {
   node "$HERE/live_orders.mjs" unverified "$WORK" unverified.next || return 1
-  jq -r '"\(.identity)|\(.ruler)|\(.mode)|\(.score)"' < unverified.ndjson | sort > unverified.was
-  jq -r '"\(.identity)|\(.ruler)|\(.mode)|\(.score)"' < unverified.next | sort > unverified.now
-  comm -3 unverified.was unverified.now | tr -d '\t' | cut -d'|' -f1 | sort -u >> touched-ids.txt
+  # ONE COLLATION FOR `sort` AND `comm`, BYTEWISE: under en_US.UTF-8 comm
+  # finds sort's own output out of order and may diff the wrong lines.
+  jq -r '"\(.identity)|\(.ruler)|\(.mode)|\(.score)"' < unverified.ndjson | LC_ALL=C sort > unverified.was
+  jq -r '"\(.identity)|\(.ruler)|\(.mode)|\(.score)"' < unverified.next | LC_ALL=C sort > unverified.now
+  LC_ALL=C comm -3 unverified.was unverified.now | tr -d '\t' | cut -d'|' -f1 | sort -u >> touched-ids.txt
   mv unverified.next unverified.ndjson
 }
 
