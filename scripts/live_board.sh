@@ -95,8 +95,7 @@ publish_verified() {
   mkdir -p pub/data
   [ -f pub/data/board_state.yaml ] || printf 'boards: {}\n' > pub/data/board_state.yaml
   project_into verified facts-known.ndjson pub || return 1
-  python3 "$HERE/board_meta.py" verified pub/data/board_state.yaml verified/meta.json >&2 || return 1
-  node "$HERE/live_publish.mjs" push "$WORK" verified
+  python3 "$HERE/board_meta.py" verified pub/data/board_state.yaml verified/meta.json >&2
 }
 
 # THE OWNER'S BOARD: the facts, and every claim no fact has answered yet.
@@ -140,6 +139,12 @@ while true; do
     library_live
     if [ "$facts_moved" = 1 ] || [ ! -d verified ]; then
       publish_verified || echo "live: the site's board did not publish; the last one stands" >&2
+    fi
+    # PUSHED EVERY CYCLE, and a file only when its bytes moved: a push the
+    # worker refused is sent again on the next one rather than waiting for R2
+    # to be asked by the next fact.
+    if [ -f verified/meta.json ]; then
+      node "$HERE/live_publish.mjs" push "$WORK" verified || echo "live: the push did not land; the next cycle sends it" >&2
     fi
     if [ "$facts_moved" = 1 ] || [ "$claims_moved" = 1 ] || [ ! -d board ]; then
       project_private || echo "live: the projection failed; the last board stands" >&2
