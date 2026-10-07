@@ -656,9 +656,10 @@ row at a time, so the board's growth is more orders, never a heavier client.
   folds it with `/api/board/fold` and ends it with `/api/board/score`
   (`69-board-work.js`) — `a_compute_order_is_the_scorers_row` holds the path.
 - **Two results.** The first makes the order `fresh`; the server ranks it
-  against the site's board (`live_orders.mjs rank`) and an order in its group's
-  TOP TEN becomes `arbiter`, the server's alone. Any other becomes `open`, and
-  only a DIFFERENT client of the same `ENGINE_ID` is handed it. Equal bits —
+  (`live_orders.mjs rank`) and it becomes `open`: only a DIFFERENT client of the
+  same `ENGINE_ID` is handed it. `TOP` there is 0 — THE SERVER ONLY BACKS THE
+  CLIENTS UP; raised, an order in its group's top `TOP` becomes `arbiter`, the
+  server's alone. Equal bits —
   score and metric — put it in `scores` as `verified:<engine>` unless a fact is
   there, and delete its queue row; one agreement in twenty is a `spot` the
   server recomputes. A difference is a `dispute`. The answer never says which.

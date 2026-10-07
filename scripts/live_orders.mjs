@@ -2,13 +2,15 @@
 // THE SERVER'S SIDE OF COMPUTE ORDERS — docs/BOARD.md §"Compute orders". Run
 // by `live_board.sh`: `rank` every cycle, `settle` in a loop beside it.
 //
-//   node live_orders.mjs rank <work-dir>               fresh results: top ten → server, the rest → open
-//   node live_orders.mjs settle <work-dir> <bin-dir>   top-ten, disputed and spot-checked orders, fought here
+//   node live_orders.mjs rank <work-dir>               fresh results: top TOP → server, the rest → open
+//   node live_orders.mjs settle <work-dir> <bin-dir>   top-TOP, disputed and spot-checked orders, fought here
 //   node live_orders.mjs unverified <work-dir> <out>   every result not yet a fact, as fact lines
 //
-// A RESULT IN ITS GROUP'S TOP TEN IS THE SERVER'S: a second client is the check
-// everywhere else, and a forged number at the top is the one that would be
-// read. `settle` fights with the scorer itself (`wfsim-board --queue-in`),
+// THE SERVER ONLY BACKS THE CLIENTS UP: `TOP` is 0, so every result waits for a
+// second client, and the server fights what they disagree on, the spot checks,
+// and — through `scores.yml` after the hold — what nobody took. Raising `TOP`
+// makes a result in its group's top TOP the server's alone.
+// `settle` fights with the scorer itself (`wfsim-board --queue-in`),
 // ships the fact through `ship_facts.sh`, and refuses whichever client its
 // number disproves — only when the order's engine is the one this server runs
 // (`bin/ENGINE`), since another engine proves nothing.
@@ -17,7 +19,7 @@ import { execFileSync } from "node:child_process";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const TOP = 10;
+const TOP = 0;
 const RANK_PER_CYCLE = 2000;
 const SETTLE_PER_CYCLE = 3;
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -59,7 +61,7 @@ const KEYS_PER_STATEMENT = Math.floor((100 - 1) / 3);
 async function rankFresh() {
   const fresh = await d1("SELECT identity, ruler, mode, record, score FROM orders WHERE state = 'fresh' LIMIT ?", [RANK_PER_CYCLE]);
   const to = { arbiter: [], open: [] };
-  for (const o of fresh) to[rank(o) <= TOP ? "arbiter" : "open"].push(o);
+  for (const o of fresh) to[TOP > 0 && rank(o) <= TOP ? "arbiter" : "open"].push(o);
   for (const [state, list] of Object.entries(to)) {
     for (let i = 0; i < list.length; i += KEYS_PER_STATEMENT) {
       const part = list.slice(i, i + KEYS_PER_STATEMENT);
@@ -67,7 +69,7 @@ async function rankFresh() {
                 AND state = 'fresh'`, [state, ...part.flatMap(keyOf)]);
     }
   }
-  if (fresh.length) console.error(`orders: ranked ${fresh.length}, ${to.arbiter.length} in a top ten`);
+  if (fresh.length) console.error(`orders: ranked ${fresh.length}, ${to.arbiter.length} kept for the server`);
 }
 
 /// THE SCORER'S OWN NUMBER for one order, and the fact shipped to `scores`.
