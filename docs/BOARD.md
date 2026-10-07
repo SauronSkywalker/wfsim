@@ -55,6 +55,32 @@ number**. Everything else follows from it:
   why serde_json runs with `float_roundtrip` and the scorer reads a score's
   literal (`exact_score`).
 
+## Who computes the board
+
+**EVERY NUMBER THE BOARD PUBLISHES IS A COMPUTE ORDER, FILLED BY THE COMMUNITY'S
+MACHINES FIRST AND THE OFFICIAL ONES SECOND.** Five rules, and everything below
+is how they are kept:
+
+1. **ONE WAY IN.** Anything that needs a score — a submission, a rescore after
+   the code moved, the nightly sweep, a new ruler — opens orders
+   (§"Compute orders"). Nothing computes a board number another way.
+2. **ONE WAY OUT.** An order becomes a fact in `scores` when `CLIENTS_PER_FACT`
+   clients sent the same bits; nothing short of that reaches the public board.
+3. **TWO KINDS OF COMPUTE, WITH FIXED JOBS.** The clients — browsers with the
+   site open — are the first choice for every order. The official machines (the
+   bot server, `scores.yml`) do three things only: the FALLBACK for an order
+   the clients did not finish in time, the VERDICT when clients disagree, and
+   the SPOT CHECK that keeps colluding clients a gamble.
+4. **THREE DIALS.** `CLIENTS_PER_FACT` (how many clients must agree),
+   `SPOT_SHARE` (how many facts the server recomputes anyway) and the hold
+   (`HOLD_SECONDS`, how long an order is the clients' before the fallback takes
+   it). Changing how the board runs is turning one of them.
+5. **ONE ENGINE.** A client works only while its page runs the engine the site
+   serves (`release.json`'s `engine`); a result of any other is no result.
+
+So the compute grows with the time people keep the site open, and the official
+compute is what the clients leave over.
+
 ## Four actions, and ONE SOURCE FOR EACH FACT
 
 **THE RULE THE WHOLE PIPELINE IS BUILT ON:**
@@ -650,11 +676,18 @@ row at a time, so the board's growth is more orders, never a heavier client.
   order — its library RECORD, a ruler and a mode, never a number — chosen from
   a random `slot` on an index, so a lease reads a few rows however long the
   book is. One lease a client, thirty minutes long; a row no longer owed is
-  settled where it is found.
+  settled where it is found. ONLY THE SERVED ENGINE LEASES: the worker reads
+  `engine` from the site's `release.json`, a page of any other gets no order and
+  its answers are dropped, and an order holding an older engine's result is
+  opened again from nothing.
 - **Fighting.** The client asks `/api/board/order` for the fight off the record
   (the scorer's `scored_build` and `row_requests`, a riven's rolls included),
   folds it with `/api/board/fold` and ends it with `/api/board/score`
   (`69-board-work.js`) — `a_compute_order_is_the_scorers_row` holds the path.
+  It sends what the pieces took (`compute_ms`): kept per order in
+  `clients_compute_ms`, beside `clients`, and summed per client in
+  `verifiers.compute_ms`. A fact's `cost_seconds` stays 0, since the scorer
+  sizes its shards from that column in its own runners' seconds.
 - **`CLIENTS_PER_FACT` results** (`worker/verify.js`, 2). The first makes the
   order `fresh`; the server ranks it (`live_orders.mjs rank`) and it becomes
   `open`: only a client of the same `ENGINE_ID` that has not measured it is
