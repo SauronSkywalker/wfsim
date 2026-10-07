@@ -1112,3 +1112,14 @@ fn a_corner_names_the_default_it_waits_on() {
     assert_ne!(build_id(&corner), build_id(&default), "two corners are two builds");
     assert_eq!(default_corner(&corner).as_deref(), Some(build_id(&default).as_str()));
 }
+
+/// A WEAPON WITH NO EXILUS SLOT IS REFUSED ONE: a companion weapon has eight
+/// mod slots and nothing else, and a ninth card scored on it is a build the
+/// game cannot hold.
+#[test]
+fn a_companion_weapon_has_no_exilus_slot() {
+    let with = |weapon: &str| validate_with(weapon, &[], &[], &[], "", None, Some("aerial_ace"), None);
+    let err = with("artax").expect_err("the Artax has no exilus slot");
+    assert!(err.contains("no exilus slot"), "{err}");
+    assert!(with("braton_prime").is_ok(), "a rifle's exilus slot takes an exilus mod");
+}

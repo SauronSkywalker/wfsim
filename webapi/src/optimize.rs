@@ -487,6 +487,9 @@ pub fn parse_optimize(v: &Value) -> Result<OptimizePlan, Value> {
             return Err(err_json(format!("{id} is not exilus-eligible")));
         }
     }
+    if info.sentinel && ex_fixed.iter().chain(ex_search.iter()).any(|id| id != "none") {
+        return Err(err_json(format!("{} has no exilus slot", info.id)));
+    }
     if ex_fixed.len() > 1 {
         return Err(err_json(format!(
             "only one exilus slot — {} cannot all be required",
@@ -2280,6 +2283,27 @@ mod quick_descent_tests {
             out["reference"]["answer_set"]
         );
         assert_eq!(s["recall"], json!(1.0), "the top ten are not the reference's: {s}");
+    }
+}
+
+#[cfg(test)]
+mod exilus_slot_tests {
+    use super::*;
+
+    /// A WEAPON WITH NO EXILUS SLOT IS NEVER SEARCHED ONE: the quick calc's
+    /// whole scope leaves it empty, and a scope naming an exilus card is refused.
+    #[test]
+    fn a_companion_weapon_is_searched_without_an_exilus() {
+        let scope = |weapon: &str| quick::whole_scope(&json!({ "weapon": weapon, "strategy": "quick" })).unwrap();
+        assert_eq!(scope("artax")["exilus"], json!({ "none": "fixed" }));
+        assert!(scope("braton_prime")["exilus"].as_object().unwrap().len() > 1, "a rifle's exilus is searched");
+        let err = parse_optimize(&json!({
+            "weapon": "artax", "build_size": 1,
+            "mods": { "serration": "search" }, "exilus": { "aerial_ace": "search" },
+        }))
+        .err()
+        .expect("an exilus card on the Artax is refused");
+        assert!(err.to_string().contains("no exilus slot"), "{err}");
     }
 }
 
