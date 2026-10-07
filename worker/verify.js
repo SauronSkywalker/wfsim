@@ -39,7 +39,7 @@ async function admit(db, id) {
   return v && !v.banned ? id : null;
 }
 
-/// ONE ROW TO FIGHT, chosen at random among those this client's release can
+/// ONE ROW TO FIGHT, chosen at random among those this client's engine can
 /// measure — never one the client picks, never one already settled, and never
 /// the number to agree with.
 async function work(request, env) {

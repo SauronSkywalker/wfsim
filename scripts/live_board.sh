@@ -59,22 +59,36 @@ refresh_store() {
   bash "$HERE/fetch_facts.sh" facts.fresh >&2 || return 1
   [ -s library.fresh ] && [ -s facts.fresh ] || return 1
   mv library.fresh library.json
+  # …AND WHICH BUILD IS WHICH WEAPON, which a subset pass is cut by.
+  mv library.fresh.ndjson library-ids.ndjson
   mv facts.fresh facts-known.ndjson
   # A BUILD THE HOURLY INTAKE HAS NOW STORED is in the library itself.
   : > new-builds.ndjson
 }
 
-# A PROJECTION, into a fresh directory swapped in whole, so a reader never sees
-# a board half written. Every ruler writes into the same directory: a weapon's
+# A PROJECTION, into a directory swapped in whole, so a reader never sees a
+# board half written. Every ruler writes into the same directory: a weapon's
 # file carries its rows under every ruler (`write_pages`). Run from `<cwd>`, so
 # a `data/board_state.yaml` there is the one `wfsim-board` stamps.
+#
+# WITH A SUBSET LIBRARY (`$4`) it starts from the board as it stands and
+# re-ranks only the weapons that library holds (`--subset`); the hourly read
+# still ranks everything, so nothing a subset missed outlives the hour.
 project_into() {
-  local out="$1" facts="$2" cwd="$3" r code
-  rm -rf "$out.next" && mkdir "$out.next"
+  local out="$1" facts="$2" cwd="$3" lib="library-live.json" flag="" r code
+  rm -rf "$out.next"
+  if [ -n "${4:-}" ] && [ -d "$out" ]; then
+    cp -a "$out" "$out.next" && rm -f "$out.next/meta.json"
+    lib="$4"
+    facts="$4.facts"
+    flag="--subset"
+  else
+    mkdir "$out.next"
+  fi
   for r in $(cat "$HERE/rulers.txt"); do
     code=0
-    (cd "$cwd" && "$BIN/wfsim-board" "$r" "$WORK/$out.next" --project --facts-in "$WORK/$facts" \
-      < "$WORK/library-live.json" > /dev/null 2>> "$WORK/project.log") || code=$?
+    (cd "$cwd" && "$BIN/wfsim-board" "$r" "$WORK/$out.next" --project $flag --facts-in "$WORK/$facts" \
+      < "$WORK/$lib" > /dev/null 2>> "$WORK/project.log") || code=$?
     if [ "$code" != "0" ] && [ "$code" != "2" ]; then
       echo "live: $r failed with $code" >&2
       return 1
@@ -89,36 +103,49 @@ library_live() {
   jq -s '.[0] + [.[1][] | .record]' library.json <(jq -s . new-builds.ndjson) > library-live.json
 }
 
+# THE BUILDS OF THE WEAPONS A LIST OF BUILD IDS TOUCHES, into `$2`, and their
+# facts out of `$3` into `$2.facts` — or a failure when the list names none.
+subset_of() {
+  node "$HERE/live_publish.mjs" subset "$WORK" "$1" "$2" "$3" >&2
+}
+
 # THE SITE'S BOARD: `scores` alone, stamped by `board_meta.py` and pushed to
-# R2, file by file as they move (`live_publish.mjs`).
+# R2, file by file as they move (`live_publish.mjs`). `$1` is a subset library.
 publish_verified() {
   mkdir -p pub/data
   [ -f pub/data/board_state.yaml ] || printf 'boards: {}\n' > pub/data/board_state.yaml
-  project_into verified facts-known.ndjson pub || return 1
+  project_into verified facts-known.ndjson pub "${1:-}" || return 1
   python3 "$HERE/board_meta.py" verified pub/data/board_state.yaml verified/meta.json >&2
 }
 
-# THE OWNER'S BOARD: the facts, and every claim no fact has answered yet.
-project_private() {
+# THE OWNER'S BOARD: the facts, and every claim no fact has answered yet —
+# `facts-live.ndjson`, which a subset pass also cuts its facts from.
+open_claims() {
   jq -r '"\(.identity)|\(.ruler)|\(.mode)"' < facts-known.ndjson | sort -u > known-keys.txt
   jq -n -c --rawfile known known-keys.txt \
     '($known | split("\n") | map({key: ., value: true}) | from_entries) as $s
      | inputs | select($s["\(.identity)|\(.ruler)|\(.mode)"] | not)' \
     < produced.ndjson > produced-open.ndjson
   cat facts-known.ndjson produced-open.ndjson > facts-live.ndjson
-  project_into board facts-live.ndjson . || return 1
+}
+
+project_private() {
+  [ -n "${1:-}" ] || open_claims
+  project_into board facts-live.ndjson . "${1:-}" || return 1
   echo "live: projected $(wc -l < produced-open.ndjson) client row(s) beside $(wc -l < facts-known.ndjson) fact(s)" >&2
 }
 
 last_refresh=0
 while true; do
+  whole=0
   facts_moved=0
   claims_moved=0
+  : > touched-ids.txt
   now=$(date +%s)
   if [ $((now - last_refresh)) -ge "$REFRESH_SECONDS" ] || [ ! -s library.json ]; then
     if refresh_store; then
       last_refresh=$now
-      facts_moved=1
+      whole=1
     else
       echo "live: the store could not be read; keeping the last copy" >&2
     fi
@@ -127,28 +154,42 @@ while true; do
   if [ -s facts-known.ndjson ]; then
     code=0
     node "$HERE/live_publish.mjs" delta "$WORK" || code=$?
-    [ "$code" = 0 ] && facts_moved=1
+    if [ "$code" = 0 ]; then
+      facts_moved=1
+      cat moved-ids.txt >> touched-ids.txt
+    fi
   fi
   if poll_inbox; then
     "$BIN/wfsim-intake" --produced produced-pass.ndjson < inbox-new.ndjson >> new-builds.ndjson 2>> intake.log
     cat produced-pass.ndjson >> produced.ndjson
     cat produced-pass.ndjson >> produced-new.ndjson
+    jq -r '.identity' < produced-pass.ndjson >> touched-ids.txt
     claims_moved=1
   fi
-  if [ -s library.json ]; then
+  if [ -s library.json ] && { [ "$whole" = 1 ] || [ "$facts_moved" = 1 ] || [ "$claims_moved" = 1 ] \
+       || [ ! -d verified ] || [ ! -d board ]; }; then
     library_live
-    if [ "$facts_moved" = 1 ] || [ ! -d verified ]; then
+    # WHOLE ON THE HOUR AND ON A FIRST START; otherwise only the weapons this
+    # cycle's facts touched.
+    if [ "$whole" = 1 ] || [ ! -d verified ]; then
       publish_verified || echo "live: the site's board did not publish; the last one stands" >&2
+    elif [ "$facts_moved" = 1 ] && subset_of moved-ids.txt verified-subset.json facts-known.ndjson; then
+      publish_verified verified-subset.json || echo "live: the site's board did not publish; the last one stands" >&2
     fi
-    # PUSHED EVERY CYCLE, and a file only when its bytes moved: a push the
-    # worker refused is sent again on the next one rather than waiting for R2
-    # to be asked by the next fact.
-    if [ -f verified/meta.json ]; then
-      node "$HERE/live_publish.mjs" push "$WORK" verified || echo "live: the push did not land; the next cycle sends it" >&2
-    fi
-    if [ "$facts_moved" = 1 ] || [ "$claims_moved" = 1 ] || [ ! -d board ]; then
+    if [ "$whole" = 1 ] || [ ! -d board ]; then
       project_private || echo "live: the projection failed; the last board stands" >&2
+    elif [ -s touched-ids.txt ]; then
+      open_claims
+      if subset_of touched-ids.txt private-subset.json facts-live.ndjson; then
+        project_private private-subset.json || echo "live: the projection failed; the last board stands" >&2
+      fi
     fi
+  fi
+  # PUSHED EVERY CYCLE, and a file only when its bytes moved: a push the
+  # worker refused is sent again on the next one rather than waiting for R2
+  # to be asked by the next fact.
+  if [ -f verified/meta.json ]; then
+    node "$HERE/live_publish.mjs" push "$WORK" verified || echo "live: the push did not land; the next cycle sends it" >&2
   fi
   # CLAIMS ARE FILED AFTER THE PROJECTION, which is what ranks them, and the
   # server's own rows are settled every cycle — `live_claims.mjs`.

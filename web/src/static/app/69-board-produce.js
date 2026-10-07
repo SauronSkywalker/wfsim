@@ -80,7 +80,7 @@ async function produceOne(payload) {
   await fetch("/api/board/submit", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ ...payload, produced, engine: RELEASE_ID }),
+    body: JSON.stringify({ ...payload, produced, engine: ENGINE_ID }),
   }).catch(() => {});
 }
 
@@ -146,7 +146,7 @@ async function verifyOnce() {
   const ask = await fetch("/api/board/work", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ verifier: id, engine: RELEASE_ID }),
+    body: JSON.stringify({ verifier: id, engine: ENGINE_ID }),
   }).then((r) => r.json()).catch(() => null);
   const w = ask && ask.work;
   if (!w || producedHashes().includes(recordHash(w.record))) return;

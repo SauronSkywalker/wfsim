@@ -10,7 +10,7 @@
 // be read. `settle` fights those, every dispute and every spot check with the
 // scorer itself (`wfsim-board --queue-in`), ships the fact through
 // `ship_facts.sh`, and refuses a verifier its number disproves — but only when
-// the claim's release is the one this server runs, since a different release
+// the claim's engine is the one this server runs (`ENGINE_ID`), since another
 // is a different engine and proves nothing.
 import { readFileSync, writeFileSync, existsSync, mkdirSync, rmSync } from "node:fs";
 import { execFileSync } from "node:child_process";
@@ -94,14 +94,14 @@ async function ban(id) {
 }
 
 async function settle() {
-  const release = existsSync(join(bin, "RELEASE")) ? readFileSync(join(bin, "RELEASE"), "utf8").trim() : "";
+  const engine = existsSync(join(bin, "ENGINE")) ? readFileSync(join(bin, "ENGINE"), "utf8").trim() : "";
   const todo = await d1(`SELECT identity, ruler, mode, record, score, engine, state, verifier, disputed FROM claims
                          WHERE state IN ('arbiter', 'dispute', 'spot') ORDER BY state LIMIT ?`, [SETTLE_PER_CYCLE]);
   for (const c of todo) {
     let truth = null;
     try { truth = fight(c); } catch (e) { console.error(`claims: ${c.identity.slice(0, 8)} did not fight — ${e.message}`); }
     if (truth === null) continue;
-    const ours = c.engine === release;
+    const ours = c.engine === engine;
     const state = truth === c.score ? "verified" : "rejected";
     // WHOEVER THE SERVER DISAGREES WITH WAS WRONG. A dispute names a verifier
     // who sent a different number; a spot check, one who agreed with a wrong one.

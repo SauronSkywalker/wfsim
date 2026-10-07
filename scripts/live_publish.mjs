@@ -2,8 +2,9 @@
 // THE LIVE BOARD'S TWO HOPS TO THE SITE — docs/BOARD.md §"The live board". Run
 // by `live_board.sh`.
 //
-//   node live_publish.mjs delta <work-dir>          verified facts since the last read
-//   node live_publish.mjs push <work-dir> <dir>     the files that moved, to R2
+//   node live_publish.mjs delta <work-dir>                verified facts since the last read
+//   node live_publish.mjs subset <work-dir> <ids> <out> <facts>   the weapons <ids> touch: library, facts
+//   node live_publish.mjs push <work-dir> <dir>           the files that moved, to R2
 //
 // `delta` folds into `facts-known.ndjson` every `scores` row finished in the
 // last two hours of what it has seen: a scorer ships a row minutes after it
@@ -46,15 +47,44 @@ async function delta() {
   // through JSON.stringify, and two spellings of one fact are not a change.
   const same = (a, b) => a && a.score === b.score && a.measured_by === b.measured_by && a.finished_at === b.finished_at;
   let moved = 0;
+  const movedIds = [];
   for (const r of rows) {
     const had = byKey.get(key(r));
-    if (!same(had && JSON.parse(had), r)) { byKey.set(key(r), JSON.stringify(r)); moved += 1; }
+    if (!same(had && JSON.parse(had), r)) { byKey.set(key(r), JSON.stringify(r)); moved += 1; movedIds.push(r.identity); }
     if (r.finished_at > seen) seen = r.finished_at;
   }
   writeFileSync(cursorPath, seen + "\n");
+  writeFileSync(join(work, "moved-ids.txt"), movedIds.map((id) => id + "\n").join(""));
   if (!moved) process.exit(3);
   writeFileSync(factsPath, [...byKey.values()].join("\n") + "\n");
   console.error(`live: ${moved} fact(s) moved since ${since}`);
+}
+
+/// THE BUILDS OF EVERY WEAPON A SET OF BUILD IDS TOUCHES — a weapon is ranked
+/// whole or not at all (`wfsim-board --subset`). Exit 3 when it names none.
+function subset(idsPath, out, factsIn) {
+  const lines = (p) => (existsSync(p) ? readFileSync(p, "utf8").split("\n").filter(Boolean) : []);
+  const want = new Set(lines(idsPath));
+  const weaponOf = new Map();
+  for (const l of lines(join(work, "library-ids.ndjson"))) {
+    const x = JSON.parse(l);
+    if (want.has(x.k)) weaponOf.set(x.k, x.v.weapon);
+  }
+  for (const l of lines(join(work, "new-builds.ndjson"))) {
+    const x = JSON.parse(l);
+    if (want.has(x.id)) weaponOf.set(x.id, x.record.weapon);
+  }
+  const weapons = new Set(weaponOf.values());
+  if (!weapons.size) process.exit(3);
+  const lib = JSON.parse(readFileSync(join(work, "library-live.json"), "utf8")).filter((r) => weapons.has(r.weapon));
+  writeFileSync(out, JSON.stringify(lib));
+  // …AND ONLY THOSE WEAPONS' FACTS: reading every row of `scores` three times
+  // is most of what a subset pass costs.
+  const ids = new Set();
+  for (const l of lines(join(work, "library-ids.ndjson"))) { const x = JSON.parse(l); if (weapons.has(x.v.weapon)) ids.add(x.k); }
+  for (const l of lines(join(work, "new-builds.ndjson"))) { const x = JSON.parse(l); if (weapons.has(x.record.weapon)) ids.add(x.id); }
+  writeFileSync(`${out}.facts`, lines(factsIn).filter((l) => ids.has(JSON.parse(l).identity)).map((l) => l + "\n").join(""));
+  console.error(`live: re-ranking ${weapons.size} weapon(s), ${lib.length} build(s)`);
 }
 
 async function push() {
@@ -86,4 +116,5 @@ async function push() {
 
 if (mode === "delta") await delta();
 else if (mode === "push") await push();
-else { console.error("usage: live_publish.mjs delta|push <work-dir> [dir]"); process.exit(2); }
+else if (mode === "subset") subset(dir, process.argv[5], process.argv[6]);
+else { console.error("usage: live_publish.mjs delta|subset|push <work-dir> ..."); process.exit(2); }

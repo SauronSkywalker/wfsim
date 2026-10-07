@@ -646,6 +646,11 @@ settling), ranks them with `wfsim-board --project`, stamps the result with
 there, cached thirty seconds — so the page, the desktop client, the bot and the
 MCP server all read it at the URLs they always had.
 
+**A CYCLE RE-RANKS THE WEAPONS IT MOVED** (`wfsim-board --subset`): the builds
+of every weapon whose facts or claims changed, against the board as it stands.
+Measured on the whole store, a subset pass writes exactly the files a whole pass
+does, in a quarter of the time; the hourly read still ranks everything.
+
 **UNVERIFIED NUMBERS NEVER REACH IT.** The owner's board beside it adds every
 open claim (§"The producer") and stays on the server.
 
@@ -663,17 +668,17 @@ is equality and a difference is proof that one side is wrong.
   keyed by the build intake derived, with its canonical record. A claim in its
   group's TOP TEN on the live board is `arbiter`: the server's alone.
 - **Leasing.** `/api/board/work` (`worker/verify.js`) hands a client one claim
-  of its own release, chosen at random, with the BUILD and never the number;
+  of its own engine (`ENGINE_ID`), chosen at random, with the BUILD and never the number;
   one lease a client, thirty minutes long. A browser skips a build it produced.
 - **Agreeing.** `/api/board/verify` compares bits. Equal: the row enters
-  `scores` as `verified:<release>` unless a fact is already there, its queue row
+  `scores` as `verified:<engine>` unless a fact is already there, its queue row
   is deleted, and one agreement in twenty is a `spot` the server recomputes.
   Different: a `dispute`. The answer never says which.
 - **Settling.** `scripts/live_claims.mjs settle` fights every `arbiter`,
   `dispute` and `spot` row with the scorer itself and ships the fact. A
   verifier the server disproves — a dispute it lost, or a spot check it agreed
   to wrongly — is refused, and every row it agreed to is withdrawn and opened
-  again; only for a claim of the release the server runs.
+  again; only for a claim of the engine the server runs.
 - **Nobody online** costs nothing: an unverified row is still owed, and
   `scores.yml` measures it as it always has.
 

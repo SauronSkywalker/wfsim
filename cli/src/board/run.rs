@@ -197,6 +197,15 @@ pub fn run() {
     let mut raw = String::new();
     std::io::stdin().read_to_string(&mut raw).expect("stdin");
     let subs: Vec<Value> = serde_json::from_str(&raw).unwrap_or_default();
+    // `--subset` SAYS THE LIBRARY IS SOME WEAPONS' BUILDS AND NOT ALL: the live
+    // board re-ranks the weapons a cycle moved and leaves the rest as written.
+    // A weapon is ranked whole or not at all — its entry line is its group's —
+    // so the subset is cut by weapon, never by build.
+    let covered: Option<std::collections::BTreeSet<String>> = has_flag("--subset").then(|| {
+        subs.iter()
+            .filter_map(|s| s.get("weapon").and_then(Value::as_str).map(String::from))
+            .collect()
+    });
 
     // The benchmark's scenario, as the wire shape `simulate_json` parses. It is
     // the SAME map the app sends, which is what stops the board and the page
@@ -724,7 +733,7 @@ pub fn run() {
     // this ruler's rows too, because a file written from an incomplete source is
     // a file missing whatever the source lacks.
     if let Some(dir) = std::env::args().nth(2).filter(|p| !p.starts_with("--")) {
-        write_pages(std::path::Path::new(&dir), &bench_id, &kept);
+        write_pages(std::path::Path::new(&dir), &bench_id, &kept, covered.as_ref());
     }
 
     // WHAT THE RUNTIME NEEDS, and only that.
@@ -733,7 +742,11 @@ pub fn run() {
     // that reason — so the page's few scalars per board come from a small
     // generated file that is. Merged rather than overwritten: this binary runs
     // once per benchmark.
-    record_state(&bench_id, seen, kept.len());
+    // A SUBSET COUNTS SOME WEAPONS, which is no board's count: the state is
+    // the last whole pass's.
+    if covered.is_none() {
+        record_state(&bench_id, seen, kept.len());
+    }
 }
 
 #[cfg(test)]

@@ -219,7 +219,16 @@ pub(crate) const INDEX_STEM: &str = "index";
 
 /// Write one file per weapon under `dir` — this ruler's rows from `kept`, every
 /// other live ruler's carried from the file already there — and the index.
-pub(crate) fn write_pages(dir: &std::path::Path, bench_id: &str, kept: &[Row]) {
+/// `covered` is the weapons this pass ranked when its library was a SUBSET
+/// (`--subset`): a weapon outside it keeps every row it has, this ruler's
+/// included, because this pass read none of its builds. `None` is the whole
+/// library, where a weapon with no row left has none.
+pub(crate) fn write_pages(
+    dir: &std::path::Path,
+    bench_id: &str,
+    kept: &[Row],
+    covered: Option<&std::collections::BTreeSet<String>>,
+) {
     if let Err(e) = std::fs::create_dir_all(dir) {
         panic!("{}: {e}", dir.display());
     }
@@ -254,10 +263,11 @@ pub(crate) fn write_pages(dir: &std::path::Path, bench_id: &str, kept: &[Row]) {
             // and `every_published_row_is_a_legal_build` would fail on
             // them with no pass able to clear it. Retiring a ruler is
             // deleting its file, and this is what makes that enough.
+            let untouched = covered.is_some_and(|c| !c.contains(weapon));
             let keep: Vec<Box<RawValue>> = rows
                 .into_iter()
                 .filter(|r| {
-                    carried(published(r).map(|p| p.benchmark), bench_id, &live_rulers)
+                    untouched || carried(published(r).map(|p| p.benchmark), bench_id, &live_rulers)
                 })
                 .collect();
             by_weapon.insert(weapon.to_string(), keep);
@@ -327,6 +337,38 @@ pub(crate) fn write_pages(dir: &std::path::Path, bench_id: &str, kept: &[Row]) {
 mod page_row_tests {
     use super::*;
     use crate::board::facts::exact_score;
+
+    /// **A SUBSET PASS LEAVES EVERY WEAPON IT DID NOT RANK AS IT WAS.**
+    ///
+    /// The live board re-ranks only the weapons a cycle moved (`--subset`). A
+    /// whole pass rewrites a ruler's rows everywhere, so the same pass handed a
+    /// subset would empty that ruler on every other weapon — the board would
+    /// lose a weapon's rows for want of a change to it.
+    #[test]
+    fn a_subset_pass_keeps_the_weapons_it_did_not_rank() {
+        let ruler = "standard_single_target";
+        let dir = std::env::temp_dir().join(format!("wfsim-subset-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(&dir).unwrap();
+        let at = |weapon: &str, score: f64| Row { weapon: weapon.into(), score, ..row(None) };
+        let seed = |weapon: &str, score: f64| {
+            let rows = vec![page_row(ruler, &at(weapon, score))];
+            std::fs::write(dir.join(format!("{weapon}.json")), serde_json::to_string(&rows).unwrap()).unwrap();
+        };
+        let scores = |weapon: &str| -> Vec<f64> {
+            let text = std::fs::read_to_string(dir.join(format!("{weapon}.json"))).unwrap();
+            serde_json::from_str::<Vec<Value>>(&text).unwrap().iter().filter_map(|r| r["score"].as_f64()).collect()
+        };
+        seed("braton", 1.0);
+        seed("torid", 2.0);
+        let only: std::collections::BTreeSet<String> = ["braton".to_string()].into();
+        write_pages(&dir, ruler, &[at("braton", 3.0)], Some(&only));
+        assert_eq!(scores("braton"), vec![3.0], "the ranked weapon is rewritten");
+        assert_eq!(scores("torid"), vec![2.0], "a weapon the subset did not name lost its rows");
+        write_pages(&dir, ruler, &[at("braton", 3.0)], None);
+        assert!(scores("torid").is_empty(), "a whole pass speaks for every weapon");
+        let _ = std::fs::remove_dir_all(&dir);
+    }
 
     /// **A RETIRED RULER'S ROWS LEAVE THE BOARD; A LIVE RULER'S ARE CARRIED.**
     ///
