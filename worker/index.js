@@ -30,6 +30,7 @@ import { popularity } from "./popularity.js";
 import { qqRoute } from "./qq.js";
 import { appraiseRoute } from "./appraise.js";
 import { verifyRoute } from "./verify.js";
+import { liveKey, serveLive, pushLive } from "./live_board.js";
 
 const MAX_BYTES = 8192;        // a build and its produced scores; this is slack
 // AN OUTER BOUND, NOT THE RULE — see below. It is `MAIN_SLOTS + 1`: eight main
@@ -804,6 +805,11 @@ export default {
     if (path === "/api/qq" || path.startsWith("/api/qq/")) return qqRoute(request, env, path);
     if (path.startsWith("/api/appraise/")) return appraiseRoute(request, env, path);
     if (path === "/api/board/work" || path === "/api/board/verify") return verifyRoute(request, env, path);
+    if (path.startsWith("/api/board/live/")) return pushLive(request, env, path.slice("/api/board/live/".length));
+    {
+      const key = liveKey(path);
+      if (key) return serveLive(request, env, ctx, key);
+    }
     if (path === "/api/ocr/sample") return ocrSample(request, env);
     if (path === "/api/popularity") return popularity(request, env, ctx);
     if (path === "/api/board/pending") {

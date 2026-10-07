@@ -150,7 +150,8 @@ back fails CI rather than being discovered in a published number.
 | what | where | who runs it |
 | --- | --- | --- |
 | the ruler | `data/benchmarks/*.yaml` | — |
-| the board | `site/board/<weapon>.json` | generated, committed, fetched at runtime |
+| the board the site reads | R2 `board/live/`, served at `/board/<weapon>.json` | `scripts/live_board.sh`, the moment `scores` moves |
+| the board's daily snapshot | `site/board/<weapon>.json` | `publish.yml`, committed, read by people |
 | ranked across weapons | `site/board/index.json` | derived from the files beside it |
 | which board this is | `site/board.meta.json` | a digest per published file |
 | consent + submit | `web/src/static/app/68-board-submit.js` (`offerBoardSubmit`) | the player's browser |
@@ -215,7 +216,8 @@ including the empty ones, because a 404 and an empty list are the same thing to
 | `queue.yml` | the clock, hourly at `:00` | what ARRIVED becomes a build; what has no score is asked for | one runner, minutes |
 | `queue.yml` | the clock, once at 16:00 UTC | …and the weapons that have gone LONGEST are asked for again | the same runner |
 | `scores.yml` | the clock, hourly at `:30` | what is asked for is MEASURED | as many shards as the work needs |
-| `publish.yml` | the clock, 00/04/08/12 UTC | `scores` is ranked and written to `site/board` | one runner, seconds |
+| `publish.yml` | the clock, once a day | `scores` is ranked into the `site/board` SNAPSHOT, which the site does not read | one runner, seconds |
+| `live_board.sh` | every 20 s, on the bot server | `scores` is ranked into the LIVE board in R2, which the site reads | two cores, about a minute when it moves |
 
 **EVERY ONE OF THEM IS ALSO A BUTTON, AND IT IS THE SAME RUN.** None takes an
 input, so a hand-started run and a scheduled one differ in nothing at all.
@@ -631,6 +633,25 @@ every claim no fact has answered, with `wfsim-board --project`, into a board the
 QQ bot reads. A claim projects as `unverified`; a fact replaces it on the next
 hourly read of `scores`. It writes nothing to the database, so `scores`, the
 public board and `publish.yml` are untouched by it.
+
+## The live board
+
+**WHAT THE SITE SHOWS IS `scores`, RANKED THE MOMENT IT MOVES.** Every 20 s
+`scripts/live_board.sh` on the bot server reads the rows `scores` gained
+(`live_publish.mjs delta` — a verification, the scorer, the server's own
+settling), ranks them with `wfsim-board --project`, stamps the result with
+`board_meta.py` and pushes the files that changed to R2 (`board/live/`) through
+`PUT /api/board/live/<file>` (bearer `BOARD_PUSH_TOKEN`), the stamp last.
+`worker/live_board.js` answers `/board/<file>` and `/board.meta.json` from
+there, cached thirty seconds — so the page, the desktop client, the bot and the
+MCP server all read it at the URLs they always had.
+
+**UNVERIFIED NUMBERS NEVER REACH IT.** The owner's board beside it adds every
+open claim (§"The producer") and stays on the server.
+
+**THE COMMITTED BOARD IS A SNAPSHOT.** `publish.yml` writes `site/board/` once a
+day for people and for the record; the worker reads it only until the first
+live stamp exists, and never again after.
 
 ## Cross-verification
 
@@ -2041,10 +2062,10 @@ already per row. 13.6% of commits.
 
 ### What must not change
 
-- **The board stays a static file on the CDN.** It is committed to the repo and
-  served from the edge, which is what makes it fast and unblockable. Moving it
-  behind a service would trade the thing that makes it good for a slow path and
-  a second thing that can fail.
+- **The site reads the live board, and only it.** The worker answers
+  `/board/*` from R2 (§"The live board"); the committed `site/board/` is a
+  daily snapshot for people and never a fallback, so a reader is never shown a
+  board older than `scores` says.
 - **The store keeps nothing about submitters.** No IP, no token, no time finer
   than the day. A verifying client's anonymous id is the one exception, and it
   is never joined to a submission (§"Cross-verification").

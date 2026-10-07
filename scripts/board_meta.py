@@ -22,6 +22,10 @@ That is also why there is no commit and no clock of this file's own: the only
 honest timestamps are the scorer's, and they are already in the yaml.
 
     python scripts/board_meta.py
+    python scripts/board_meta.py <board-dir> <state-yaml> <out>   # the live board's
+
+THE LIVE BOARD IS STAMPED BY THE SAME CODE (`scripts/live_board.sh`): a second
+stamp writer is a second answer to "which board is this".
 """
 import hashlib
 import json
@@ -106,10 +110,12 @@ def main() -> None:
     OUT.write_text(json.dumps(meta, separators=(",", ":"), sort_keys=True),
                    encoding="utf-8", newline="\n")
     print(f"board: stamp {meta['digest'][:12]} — {meta['rows']} rows in "
-          f"{meta['weapons']} file(s) -> {OUT.relative_to(ROOT)}")
+          f"{meta['weapons']} file(s) -> {OUT}")
 
 
 if __name__ == "__main__":
+    if len(sys.argv) == 4:
+        BOARD, STATE, OUT = (pathlib.Path(a).resolve() for a in sys.argv[1:])
     if not BOARD.is_dir():
         sys.exit(f"{BOARD} is missing — nothing to stamp")
     main()

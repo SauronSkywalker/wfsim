@@ -46,7 +46,8 @@
     // canonical — and `.well-known/`, which is a document or a 404.
     "run_worker_first": ["/api/*", "/asset/*", "/pkg/*", "/", "/weapons", "/weapons/*",
                          "/index.md", "/weapons.md",
-                         "/.well-known/*", "/og/s/*", "/auth.md", "/privacy", "/terms", "/refunds"]
+                         "/.well-known/*", "/og/s/*", "/auth.md", "/privacy", "/terms", "/refunds",
+                         "/board/*", "/board.meta.json"]
   },
   // THE CARD'S FONTS ride in the bundle as bytes: a worker has no system fonts.
   "rules": [{ "type": "Data", "globs": ["**/*.ttf"], "fallthrough": true }],

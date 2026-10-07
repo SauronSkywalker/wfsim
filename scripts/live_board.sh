@@ -1,18 +1,19 @@
 #!/usr/bin/env bash
-# THE OWNER'S LIVE BOARD — the scorer's facts plus what submitters' machines
-# measured, projected the moment a submission lands. Runs on the bot server
-# (`deploy/wfsim-live.service`); the public board is still `publish.yml`'s.
+# THE LIVE BOARDS — the site's, from `scores`, and the owner's, with what submitters' machines
+# measured beside it, projected the moment either moves. Runs on the bot server
+# (`deploy/wfsim-live.service`); `publish.yml` keeps a daily snapshot in git.
 #
 #   scripts/live_board.sh <work-dir> <bin-dir>
 #
-# NOTHING HERE WRITES TO THE DATABASE. It reads the inbox, the library and the
-# scores, and writes `<work-dir>/board/` only — docs/BOARD.md §"The producer".
+# It reads the inbox, the library and the scores; it files and settles claims
+# (`live_claims.mjs`) — docs/BOARD.md §"The producer", §"The live board".
 #
-# A CLIENT'S NUMBER NEVER BEATS A FACT. A produced line is projected only for a
-# (build, ruler, mode) the scores table has no row for; the facts are re-read
-# every hour, so a row the scorer measured replaces the client's on the next.
+# TWO BOARDS. `verified/` is `scores` alone, pushed to R2 for the site to read;
+# `board/` adds every claim no fact has answered, for the owner and the bot.
+# Verified facts are read every cycle (`live_publish.mjs delta`), so a row a
+# client or the scorer just settled moves both on the next one.
 #
-# Needs CF_ACCOUNT, CF_TOKEN (D1 read) and CF_D1_DATABASE in the environment.
+# Needs CF_ACCOUNT, CF_TOKEN (D1) and CF_D1_DATABASE, and BOARD_PUSH_TOKEN.
 set -euo pipefail
 
 WORK="${1:?usage: live_board.sh <work-dir> <bin-dir>}"
@@ -22,6 +23,7 @@ POLL_SECONDS="${POLL_SECONDS:-20}"
 REFRESH_SECONDS="${REFRESH_SECONDS:-3600}"
 mkdir -p "$WORK"
 cd "$WORK"
+WORK="$(pwd)"
 touch seen.txt produced.ndjson new-builds.ndjson produced-new.ndjson
 
 d1() {
@@ -62,54 +64,86 @@ refresh_store() {
   : > new-builds.ndjson
 }
 
-# THE PROJECTION, into a fresh directory swapped in whole, so a reader never
-# sees a board half written. Every ruler writes into the same directory: a
-# weapon's file carries its rows under every ruler (`write_pages`).
-project() {
+# A PROJECTION, into a fresh directory swapped in whole, so a reader never sees
+# a board half written. Every ruler writes into the same directory: a weapon's
+# file carries its rows under every ruler (`write_pages`). Run from `<cwd>`, so
+# a `data/board_state.yaml` there is the one `wfsim-board` stamps.
+project_into() {
+  local out="$1" facts="$2" cwd="$3" r code
+  rm -rf "$out.next" && mkdir "$out.next"
+  for r in $(cat "$HERE/rulers.txt"); do
+    code=0
+    (cd "$cwd" && "$BIN/wfsim-board" "$r" "$WORK/$out.next" --project --facts-in "$WORK/$facts" \
+      < "$WORK/library-live.json" > /dev/null 2>> "$WORK/project.log") || code=$?
+    if [ "$code" != "0" ] && [ "$code" != "2" ]; then
+      echo "live: $r failed with $code" >&2
+      return 1
+    fi
+  done
+  rm -rf "$out.old"
+  [ -d "$out" ] && mv "$out" "$out.old"
+  mv "$out.next" "$out"
+}
+
+library_live() {
   jq -s '.[0] + [.[1][] | .record]' library.json <(jq -s . new-builds.ndjson) > library-live.json
+}
+
+# THE SITE'S BOARD: `scores` alone, stamped by `board_meta.py` and pushed to
+# R2, file by file as they move (`live_publish.mjs`).
+publish_verified() {
+  mkdir -p pub/data
+  [ -f pub/data/board_state.yaml ] || printf 'boards: {}\n' > pub/data/board_state.yaml
+  project_into verified facts-known.ndjson pub || return 1
+  python3 "$HERE/board_meta.py" verified pub/data/board_state.yaml verified/meta.json >&2 || return 1
+  node "$HERE/live_publish.mjs" push "$WORK" verified
+}
+
+# THE OWNER'S BOARD: the facts, and every claim no fact has answered yet.
+project_private() {
   jq -r '"\(.identity)|\(.ruler)|\(.mode)"' < facts-known.ndjson | sort -u > known-keys.txt
   jq -n -c --rawfile known known-keys.txt \
     '($known | split("\n") | map({key: ., value: true}) | from_entries) as $s
      | inputs | select($s["\(.identity)|\(.ruler)|\(.mode)"] | not)' \
     < produced.ndjson > produced-open.ndjson
   cat facts-known.ndjson produced-open.ndjson > facts-live.ndjson
-  rm -rf board.next && mkdir board.next
-  local r code
-  for r in $(cat "$HERE/rulers.txt"); do
-    code=0
-    "$BIN/wfsim-board" "$r" board.next --project --facts-in facts-live.ndjson \
-      < library-live.json > /dev/null 2>> project.log || code=$?
-    if [ "$code" != "0" ] && [ "$code" != "2" ]; then
-      echo "live: $r failed with $code" >&2
-      return 1
-    fi
-  done
-  rm -rf board.old
-  [ -d board ] && mv board board.old
-  mv board.next board
+  project_into board facts-live.ndjson . || return 1
   echo "live: projected $(wc -l < produced-open.ndjson) client row(s) beside $(wc -l < facts-known.ndjson) fact(s)" >&2
 }
 
 last_refresh=0
 while true; do
-  moved=0
+  facts_moved=0
+  claims_moved=0
   now=$(date +%s)
   if [ $((now - last_refresh)) -ge "$REFRESH_SECONDS" ] || [ ! -s library.json ]; then
     if refresh_store; then
       last_refresh=$now
-      moved=1
+      facts_moved=1
     else
       echo "live: the store could not be read; keeping the last copy" >&2
     fi
+  fi
+  # WHAT WAS VERIFIED SINCE THE LAST READ, without waiting for the hourly one.
+  if [ -s facts-known.ndjson ]; then
+    code=0
+    node "$HERE/live_publish.mjs" delta "$WORK" || code=$?
+    [ "$code" = 0 ] && facts_moved=1
   fi
   if poll_inbox; then
     "$BIN/wfsim-intake" --produced produced-pass.ndjson < inbox-new.ndjson >> new-builds.ndjson 2>> intake.log
     cat produced-pass.ndjson >> produced.ndjson
     cat produced-pass.ndjson >> produced-new.ndjson
-    moved=1
+    claims_moved=1
   fi
-  if { [ "$moved" = 1 ] || [ ! -d board ]; } && [ -s library.json ]; then
-    project || echo "live: the projection failed; the last board stands" >&2
+  if [ -s library.json ]; then
+    library_live
+    if [ "$facts_moved" = 1 ] || [ ! -d verified ]; then
+      publish_verified || echo "live: the site's board did not publish; the last one stands" >&2
+    fi
+    if [ "$facts_moved" = 1 ] || [ "$claims_moved" = 1 ] || [ ! -d board ]; then
+      project_private || echo "live: the projection failed; the last board stands" >&2
+    fi
   fi
   # CLAIMS ARE FILED AFTER THE PROJECTION, which is what ranks them, and the
   # server's own rows are settled every cycle — `live_claims.mjs`.

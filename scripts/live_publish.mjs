@@ -1,0 +1,89 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// THE LIVE BOARD'S TWO HOPS TO THE SITE — docs/BOARD.md §"The live board". Run
+// by `live_board.sh`.
+//
+//   node live_publish.mjs delta <work-dir>          verified facts since the last read
+//   node live_publish.mjs push <work-dir> <dir>     the files that moved, to R2
+//
+// `delta` folds into `facts-known.ndjson` every `scores` row finished in the
+// last two hours of what it has seen: a scorer ships a row minutes after it
+// finishes, so a cursor on the clock alone would step over it. Exit 3 means
+// nothing moved. `push` sends a file only when its bytes differ from the last
+// push (`pushed.json`), through the worker's `/api/board/live/`.
+import { readFileSync, writeFileSync, existsSync, readdirSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { join } from "node:path";
+
+const OVERLAP_SECONDS = 2 * 3600;
+const SITE = process.env.WFSIM_SITE || "https://wfsim.app";
+const [mode, work, dir] = process.argv.slice(2);
+
+async function d1(sql, params = []) {
+  const { CF_ACCOUNT, CF_TOKEN, CF_D1_DATABASE } = process.env;
+  const r = await fetch(`https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT}/d1/database/${CF_D1_DATABASE}/query`, {
+    method: "POST",
+    headers: { authorization: `Bearer ${CF_TOKEN}`, "content-type": "application/json" },
+    body: JSON.stringify({ sql, params }),
+  });
+  const j = await r.json().catch(() => null);
+  if (!r.ok || !j || !j.success) throw new Error(`d1 ${r.status}: ${JSON.stringify(j && j.errors)}`);
+  return j.result[0].results;
+}
+
+const key = (f) => `${f.identity}|${f.ruler}|${f.mode}`;
+
+async function delta() {
+  const factsPath = join(work, "facts-known.ndjson");
+  const cursorPath = join(work, "facts-cursor.txt");
+  const lines = readFileSync(factsPath, "utf8").split("\n").filter(Boolean);
+  let seen = existsSync(cursorPath) ? readFileSync(cursorPath, "utf8").trim() : "";
+  if (!seen) for (const l of lines) { const f = JSON.parse(l); if (f.finished_at > seen) seen = f.finished_at; }
+  const since = new Date(Date.parse(seen || "1970-01-01T00:00:00Z") - OVERLAP_SECONDS * 1000).toISOString().slice(0, 19) + "Z";
+  const rows = await d1(`SELECT identity, ruler, mode, measured_by, score, cost_seconds, started_at, finished_at
+                         FROM scores WHERE finished_at > ? ORDER BY finished_at`, [since]);
+  const byKey = new Map(lines.map((l) => [key(JSON.parse(l)), l]));
+  // COMPARED AS VALUES: the hourly read writes its lines through jq and this
+  // through JSON.stringify, and two spellings of one fact are not a change.
+  const same = (a, b) => a && a.score === b.score && a.measured_by === b.measured_by && a.finished_at === b.finished_at;
+  let moved = 0;
+  for (const r of rows) {
+    const had = byKey.get(key(r));
+    if (!same(had && JSON.parse(had), r)) { byKey.set(key(r), JSON.stringify(r)); moved += 1; }
+    if (r.finished_at > seen) seen = r.finished_at;
+  }
+  writeFileSync(cursorPath, seen + "\n");
+  if (!moved) process.exit(3);
+  writeFileSync(factsPath, [...byKey.values()].join("\n") + "\n");
+  console.error(`live: ${moved} fact(s) moved since ${since}`);
+}
+
+async function push() {
+  const ledgerPath = join(work, "pushed.json");
+  const ledger = existsSync(ledgerPath) ? JSON.parse(readFileSync(ledgerPath, "utf8")) : {};
+  let sent = 0;
+  // THE STAMP GOES LAST, so a reader who sees a new `meta.json` finds every file
+  // it names already there — and the worker opens the live board only once one
+  // exists (`worker/live_board.js`).
+  const names = readdirSync(dir).filter((n) => n.endsWith(".json") && n !== "meta.json").sort();
+  for (const name of [...names, "meta.json"].filter((n) => existsSync(join(dir, n)))) {
+    const bytes = readFileSync(join(dir, name));
+    const sha = createHash("sha256").update(bytes).digest("hex");
+    if (ledger[name] === sha) continue;
+    const r = await fetch(`${SITE}/api/board/live/${name}`, {
+      method: "PUT",
+      headers: { authorization: `Bearer ${process.env.BOARD_PUSH_TOKEN}`, "content-type": "application/json" },
+      body: bytes,
+    });
+    if (!r.ok) throw new Error(`push ${name}: ${r.status} ${await r.text()}`);
+    ledger[name] = sha;
+    sent += 1;
+    // THE LEDGER IS WRITTEN PER FILE, so a push cut off halfway resumes where
+    // it stopped instead of sending the board again.
+    writeFileSync(ledgerPath, JSON.stringify(ledger));
+  }
+  console.error(`live: pushed ${sent} file(s)`);
+}
+
+if (mode === "delta") await delta();
+else if (mode === "push") await push();
+else { console.error("usage: live_publish.mjs delta|push <work-dir> [dir]"); process.exit(2); }
