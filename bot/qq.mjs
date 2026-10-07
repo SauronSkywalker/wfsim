@@ -8,6 +8,7 @@ import { readFileSync } from "node:fs";
 import { loadEngine, SITE } from "./engine.mjs";
 import { makeAnswer } from "./answer.mjs";
 import { renderCard, renderCardWith } from "./render.mjs";
+import { relayWorld } from "./world.mjs";
 
 const ENV_FILE = process.env.BOT_ENV || "/etc/wfsim-bot.env";
 const env = Object.fromEntries(readFileSync(ENV_FILE, "utf8").split(/\r?\n/)
@@ -166,6 +167,7 @@ async function claim(done) {
 
 const answer = makeAnswer(await loadEngine());
 console.log("wfsim-bot: up");
+relayWorld(env.BOT_RELAY_TOKEN);
 (async () => {
   for (;;) {
     try { await appraisalTick(); } catch (e) { console.error(String(e)); }

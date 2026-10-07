@@ -609,8 +609,10 @@ reads DE's own file instead (below). **One exception since
 
 ### THE WORLD STATE is DE's file, named from DE's dictionaries
 
-`/utility` reads `api.warframe.com/cdn/worldState.php` through the worker
-(`worker/world.js`) — never warframestat.us, which is WFCD. The file names a
+`/utility` reads `api.warframe.com/cdn/worldState.php` — never warframestat.us,
+which is WFCD. DE's host answers a Cloudflare Worker 403 whatever it sends, so
+the QQ bot's server relays the file each minute (`bot/world.mjs`) and the worker
+names and keeps it (`worker/world.js`). The file names a
 fissure only by ids (`SolNode232`, `MT_VOID_CASCADE`, `VoidT6`), so
 `scripts/world_names.py` writes `worker/world_names.json` from
 `browse.wf/warframe-public-export-plus` — `ExportRegions.json` joined to DE's

@@ -343,6 +343,10 @@ IT READS THE OWNER'S LIVE BOARD when the server keeps one (`WFSIM_LIVE_BOARD`,
 docs/BOARD.md §"The live board"), and the published board otherwise. `ship_bot.py`
 ships the live board's Linux binaries and scripts beside the bot.
 
+IT RELAYS DE'S WORLD STATE for the Utility pages, which DE's host refuses to
+the worker: each minute `bot/world.mjs` PUTs the file to `/api/world` with the
+same relay token (docs/UI.md §"Utility").
+
 HER FACE IS `web/src/static/nona.svg`, the one the site's Nona wears; the QQ
 avatar is that file rendered to a PNG and uploaded on QQ's console by hand.
 

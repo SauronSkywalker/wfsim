@@ -1013,7 +1013,7 @@ none of it feeds the builder, the simulator or the optimizer (`docs/CORE.md`
 | rule | where it is held |
 | --- | --- |
 | everything listed is an item `{kind, id, attributes, names, started_at_ms, ends_at_ms}`; a new kind is a parser in the worker and a tab registered in `UTILITY_KINDS` | `worker/world.js` `KINDS`, `27-utility.js` |
-| the feed is the live site's, from every origin, asked each minute while a Utility page shows and every two minutes elsewhere while a reminder waits | `worldLoad`, `utilityClock` |
+| DE's file is relayed by the bot server each minute (DE refuses the worker) and served from R2; the feed is the live site's, from every origin, asked each minute while a Utility page shows and every two minutes elsewhere while a reminder waits | `worldLoad`, `utilityClock` |
 | Void Fissures shows one of the game's three lists at a time — star chart, Steel Path, Void Storms — by relic era, then by time left | `41-fissures.js` |
 | a reminder is a kind and some attributes; it matches an item of that kind holding every one | `reminderMatches` |
 | the bell on a row makes one, holding that row's list, era and mission until the reader changes the chips | `FISSURE_REMINDER_DEFAULT` |

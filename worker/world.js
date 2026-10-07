@@ -1,13 +1,18 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// THE UTILITY PAGES' WORLD, read from DE's world state — docs/UI.md §"Utility".
-// DE's file sends no CORS header, so a page cannot read it; this reads it, turns
-// each thing a page lists into one ITEM, names it, and answers anyone: the data
-// is public.
+// THE UTILITY PAGES' WORLD, from DE's world state — docs/UI.md §"Utility".
+// DE's host refuses a request from a Cloudflare Worker (403 whatever it sends),
+// and a page cannot read it across origins, so the bot server relays it: each
+// minute it PUTs DE's file here, this turns each thing a page lists into one
+// ITEM, names it, and keeps the result in R2 for anyone to read.
+//
+//   GET /api/world                                   the items, as last relayed
+//   PUT /api/world   (bearer BOT_RELAY_TOKEN)         DE's worldState.php, as read
 import NAMES from "./world_names.json";
 
-const WORLD_STATE = "https://api.warframe.com/cdn/worldState.php";
-/// DE's own `Cache-Control: max-age=50`; nothing here is fresher than that.
-const FRESH_S = 60;
+const KEY = "world/items.json";
+/// The relay runs each minute; a reader is never more than this behind it.
+const FRESH_S = 30;
+const MAX_BYTES = 4 * 1024 * 1024;
 const OPEN = { "access-control-allow-origin": "*" };
 
 const json = (body, status = 200, extra = {}) => new Response(JSON.stringify(body), {
@@ -16,24 +21,33 @@ const msOf = (d) => Number(d && d.$date && d.$date.$numberLong) || 0;
 
 export async function worldRoute(request, env, ctx, path) {
   if (path !== "/api/world") return json({ ok: false, error: "not found" }, 404);
-  if (request.method !== "GET") return json({ ok: false, error: "GET only" }, 405);
+  if (request.method === "PUT") return worldRelay(request, env);
+  if (request.method !== "GET") return json({ ok: false, error: "GET or PUT" }, 405);
   const cache = caches.default;
   const key = new Request(new URL(path, request.url).toString());
   const hit = await cache.match(key);
   if (hit) return hit;
-  let ws;
-  try {
-    const r = await fetch(WORLD_STATE, { cf: { cacheTtl: FRESH_S, cacheEverything: true } });
-    if (!r.ok) throw new Error(`world state ${r.status}`);
-    ws = await r.json();
-  } catch (e) {
-    return json({ ok: false, error: String(e && e.message || e) }, 502);
-  }
-  const now = Date.now();
-  const res = json({ ok: true, read_at_ms: now, items: worldItems(ws, now) }, 200,
-    { "cache-control": `public, max-age=${FRESH_S}` });
+  const obj = env.UPLOADS && await env.UPLOADS.get(KEY).catch(() => null);
+  if (!obj) return json({ ok: false, error: "the world state has not been relayed yet" }, 503);
+  const res = new Response(obj.body, { headers: { "content-type": "application/json; charset=utf-8",
+    "cache-control": `public, max-age=${FRESH_S}`, ...OPEN } });
   ctx.waitUntil(cache.put(key, res.clone()));
   return res;
+}
+
+async function worldRelay(request, env) {
+  const auth = request.headers.get("authorization") || "";
+  if (!env.BOT_RELAY_TOKEN || auth !== `Bearer ${env.BOT_RELAY_TOKEN}`) return json({ ok: false, error: "unauthorized" }, 401);
+  const body = await request.text();
+  if (body.length > MAX_BYTES) return json({ ok: false, error: "too large" }, 413);
+  let ws;
+  try { ws = JSON.parse(body); } catch (_) { return json({ ok: false, error: "not json" }, 400); }
+  if (!ws || !Array.isArray(ws.ActiveMissions)) return json({ ok: false, error: "not a world state" }, 400);
+  const now = Date.now();
+  const items = worldItems(ws, now);
+  await env.UPLOADS.put(KEY, JSON.stringify({ ok: true, read_at_ms: now, items }),
+    { httpMetadata: { contentType: "application/json" } });
+  return json({ ok: true, items: items.length });
 }
 
 /// ONE SHAPE FOR EVERYTHING A UTILITY PAGE LISTS: `{kind, id, attributes,
