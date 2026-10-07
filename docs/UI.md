@@ -1017,6 +1017,7 @@ none of it feeds the builder, the simulator or the optimizer (`docs/CORE.md`
 | Void Fissures shows one of the game's three lists at a time — star chart, Steel Path, Void Storms — by relic era, then by time left | `41-fissures.js` |
 | a reminder is a kind and some attributes; it matches an item of that kind holding every one | `reminderMatches` |
 | the bell on a row makes one, holding that row's list, era and mission until the reader changes the chips | `FISSURE_REMINDER_DEFAULT` |
+| Reminders also makes one from nothing, for what is not open: each attribute Any until picked, from every era and mission type the worker names (`/api/world/names`) | `fissureBuild` |
 | what a new reminder already matches is seen, so it fires for what opens later | `reminderAdd` |
 | reminders live in this browser and fire while the site is open there, on any page: once per item, said on the page, counted on the Utility link until Reminders is opened | `reminderCheck`, `reminderRead` |
 | a system notification as well only when the reader turns it on, which is when the browser asks, and only for a tab in the background | `reminderSystemOn` |

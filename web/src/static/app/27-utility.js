@@ -10,8 +10,9 @@
 const UTILITY_TABS = [["fissures", "Void Fissures"], ["reminders", "Reminders"]];
 const utilityTitle = (tab) => (UTILITY_TABS.find(([t]) => t === tab) || UTILITY_TABS[0])[1];
 /// EACH KIND, by the worker's `kind`: `{ tab, render(), describe(item),
-/// nameOf(key, names, value), attributes: [[key, label]] }` — `attributes` are
-/// what a reminder may hold, in the order its editor offers them.
+/// nameOf(key, names, value), attributes: [[key]], build(box) }` — `attributes`
+/// are what a reminder may hold, in the order its editor offers them, and
+/// `build` draws a reminder made from nothing into the Reminders tab.
 const UTILITY_KINDS = {};
 let utilityTab = null;
 
@@ -94,6 +95,21 @@ function worldLoad() {
 }
 /// What is open now, of one kind; null before the first answer.
 const worldOf = (kind) => world && world.items.filter((x) => x.kind === kind && x.ends_at_ms > Date.now());
+
+/// EVERYTHING A REMINDER CAN NAME, open or not — `{tiers, missions}`, each id
+/// to `{en, zh}` — asked once, when a reminder is first built from nothing.
+let worldNames = null;
+let worldNamesAsk = null;
+let worldNamesFailed = false;
+function worldNamesLoad() {
+  if (worldNames || worldNamesAsk) return worldNamesAsk || Promise.resolve();
+  worldNamesFailed = false;
+  worldNamesAsk = fetch(`${LIVE_ORIGIN}/api/world/names`).then((r) => r.json())
+    .then((j) => { if (!j.ok) throw new Error(j.error); worldNames = j; })
+    .catch(() => { worldNamesFailed = true; })
+    .finally(() => { worldNamesAsk = null; });
+  return worldNamesAsk;
+}
 
 /// ONE CLOCK: each second the countdowns on screen move and an ended row
 /// leaves; the feed is asked again when it is due. It stops when there is
@@ -252,6 +268,8 @@ function renderReminders() {
           reminderSystemOn(), `data-rsystem="1"`)}</div>`;
   box.innerHTML = `<p class="bench-note rem-lead">${escHtml(tr("Reminders live in this browser and fire while WFSim is open in it, on any page."))}</p>
     ${system}
+    <h3 class="wgroup-h">${escHtml(tr("New reminder"))}</h3>
+    <div id="reminder-new"></div>
     <h3 class="wgroup-h">${escHtml(tr("Your reminders"))}</h3>
     ${rs.length ? `<div class="bench-rows">${rs.map((r) => `
       <div class="brow frow">
@@ -260,7 +278,7 @@ function renderReminders() {
           <span class="fnode">${escHtml(trF("{n} open now", { n: (worldOf(r.kind) || []).filter((x) => reminderMatches(r, x)).length }))}</span></span>
         <button type="button" class="ghost-btn small" data-rdel="${escHtml(r.id)}">${escHtml(tr("Delete"))}</button>
       </div>`).join("")}</div>`
-      : `<div class="sim-empty">${escHtml(tr("No reminders yet. On a list, the bell on a row makes one like it."))}</div>`}
+      : `<div class="sim-empty">${escHtml(tr("No reminders yet. Make one above, or with the bell on a row of a list."))}</div>`}
     <h3 class="wgroup-h">${escHtml(tr("Recently fired"))}</h3>
     ${hits.length ? `<div class="bench-rows">${hits.map((h) => `
       <div class="brow frow${h.ends_at_ms <= now ? " none" : ""}">
@@ -273,6 +291,9 @@ function renderReminders() {
   box.querySelectorAll("[data-rdel]").forEach((el) => {
     el.onclick = () => { reminderRemove(el.dataset.rdel); renderUtility(); };
   });
+  // ONE BUILDER PER KIND, each the kind's own (`UTILITY_KINDS[kind].build`).
+  const fresh = $("reminder-new");
+  Object.values(UTILITY_KINDS).forEach((k) => { if (k.build) k.build(fresh); });
   const sys = box.querySelector("[data-rsystem]");
   if (sys) sys.onclick = async () => {
     if (reminderSystemOn()) storeJson(REMINDERS_SYSTEM_KEY, 0);

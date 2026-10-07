@@ -394,6 +394,12 @@ ui:
   "A reminder matches this fissure": 已有提醒匹配这个裂缝
   "Remind me when a fissure opens with": 出现以下条件的裂缝时提醒我
   "Save reminder": 保存提醒
+  "New reminder": 新建提醒
+  "Any": 任意
+  "List": 列表
+  "Waiting for one that is not open? Make a reminder for it": 想等一个现在没开的？给它建一条提醒
+  "Relic era": 纪元
+  "Mission": 任务
   "Reminder saved": 提醒已保存
   "{what} is open — {left} left": "{what} 已开启，剩余 {left}"
   "{n} reminders fired": "{n} 条提醒已触发"
@@ -402,7 +408,7 @@ ui:
   "Reminders live in this browser and fire while WFSim is open in it, on any page.": 提醒保存在这个浏览器里，只要在这个浏览器里开着 WF模拟（任何页面都行）就会触发。
   "Your reminders": 我的提醒
   "{n} open now": "当前开启 {n} 个"
-  "No reminders yet. On a list, the bell on a row makes one like it.": 还没有提醒。在列表里点某一行的铃铛，就能按它建一条提醒。
+  "No reminders yet. Make one above, or with the bell on a row of a list.": 还没有提醒。在上面新建，或者点列表里某一行的铃铛。
   "Recently fired": 最近触发
   "ended": 已结束
   "Nothing has fired yet.": 还没有触发过提醒。

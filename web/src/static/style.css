@@ -2149,6 +2149,7 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
 .fbell.on{opacity:1;color:var(--accent)}
 .frem{margin:2px 0 8px 84px;padding:8px 10px;border:1px solid var(--line);border-radius:8px}
 .frem-act{display:flex;gap:6px;margin-top:6px}
+.frem.frem-new{margin-left:0}
 @media(max-width:520px){.frem{margin-left:0}}
 #utility-reminders .wgroup-h{margin-top:20px}
 /* UNREAD REMINDERS, on the Utility link and its Reminders tab. */

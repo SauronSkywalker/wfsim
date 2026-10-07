@@ -6,6 +6,7 @@
 // ITEM, names it, and keeps the result in R2 for anyone to read.
 //
 //   GET /api/world                                   the items, as last relayed
+//   GET /api/world/names                             every era and mission type, named
 //   PUT /api/world   (bearer BOT_RELAY_TOKEN)         DE's worldState.php, as read
 import NAMES from "./world_names.json";
 
@@ -20,6 +21,11 @@ const json = (body, status = 200, extra = {}) => new Response(JSON.stringify(bod
 const msOf = (d) => Number(d && d.$date && d.$date.$numberLong) || 0;
 
 export async function worldRoute(request, env, ctx, path) {
+  // WHAT A REMINDER CAN NAME BEFORE IT IS OPEN: the table the items are named
+  // from, without its nodes. It changes only with a deploy.
+  if (path === "/api/world/names") {
+    return json({ ok: true, tiers: NAMES.tiers, missions: NAMES.missions }, 200, { "cache-control": "public, max-age=3600" });
+  }
   if (path !== "/api/world") return json({ ok: false, error: "not found" }, 404);
   if (request.method === "PUT") return worldRelay(request, env);
   if (request.method !== "GET") return json({ ok: false, error: "GET or PUT" }, 405);
