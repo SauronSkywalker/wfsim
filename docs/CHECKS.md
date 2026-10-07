@@ -191,12 +191,13 @@ in any one axis are two records.
 ## `check_board_verify`
 
 Plain node against `worker/schema.sql` on node's sqlite. An order is handed out
-as a build and never a number; its first result waits for the server's rank; a
-second comes only from another client of the same engine; equal bits make a
-`verified:` fact and delete the queue row, a difference (score or metric) is a
-dispute and the answer is the same either way; a row nobody owes, a top-ten
-order, a live lease and a banned client get nothing; a client is written once
-a day.
+as a build and never a number; its first result waits for the server's rank;
+each further one comes only from a client of the same engine that has not
+measured it; `CLIENTS_PER_FACT` equal results (checked at 1, 2 and 3) make a
+`verified:` fact naming every client and delete the queue row, a difference
+(score or metric) is a dispute and the answer is the same either way; a row
+nobody owes, a server's order, a live lease and a banned client get nothing; a
+client is written once a day.
 
 ## `check_folds`
 
