@@ -4,7 +4,7 @@ Chinese name: 碎裂者 Prime
 
 Shotgun · Primary · Mastery Rank 14. 100 base damage (impact 100), 21% crit chance, 1.9x crit multiplier, 37% status chance.
 
-## Best riven-free build on the WFSim board, as of 2026-10-06
+## Best riven-free build on the WFSim board, as of 2026-10-07
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
@@ -12,9 +12,9 @@ Each row is measured on its own, and says when and by which WFSim commit; the ga
 
 | Ruler | Fight | Mode | Score | Build | Measured |
 | --- | --- | --- | ---: | --- | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.6927 | Primed Chilling Grasp, Contagious Spread, Blaze, Galvanized Hell, Galvanized Savvy, Shotgun Barrage, Shotgun Elementalist, Magnetic Strafe, Galvanized Acceleration, Primary Compression | 2026-09-29 17:08 UTC · 33e2ff32ed |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.6927 | Primed Chilling Grasp, Contagious Spread, Blaze, Galvanized Hell, Galvanized Savvy, Shotgun Barrage, Shotgun Elementalist, Magnetic Strafe, Galvanized Acceleration, Primary Compression | 2026-10-05 18:37 UTC · 40071ee3b3 |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.4886 | Incendiary Coat, Blaze, Scattering Inferno, Galvanized Hell, Primed Point Blank, Primed Ravage, Repeater Clip, Magnetic Strafe, Primed Counterbalance, Primary Crux | 2026-09-29 16:45 UTC · 33e2ff32ed |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.6927 | Primed Chilling Grasp, Contagious Spread, Blaze, Galvanized Hell, Galvanized Savvy, Shotgun Barrage, Shotgun Elementalist, Magnetic Strafe, Galvanized Acceleration, Primary Compression | 2026-10-06 17:10 UTC · 71f70c5e46 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.6927 | Primed Chilling Grasp, Contagious Spread, Blaze, Galvanized Hell, Galvanized Savvy, Shotgun Barrage, Shotgun Elementalist, Magnetic Strafe, Galvanized Acceleration, Primary Compression | 2026-10-06 17:30 UTC · 71f70c5e46 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.4886 | Incendiary Coat, Blaze, Scattering Inferno, Galvanized Hell, Primed Point Blank, Primed Ravage, Repeater Clip, Magnetic Strafe, Primed Counterbalance, Primary Crux | 2026-10-06 18:17 UTC · 6644c8b983 |
 
 ## Not modelled here
 

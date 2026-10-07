@@ -4,7 +4,7 @@ Chinese name: 伯斯顿 Prime
 
 Rifle · Primary · Mastery Rank 12. 46 base damage (impact 13.8, puncture 13.8, slash 18.4), 18% crit chance, 1.8x crit multiplier, 30% status chance.
 
-## Best riven-free build on the WFSim board, as of 2026-10-06
+## Best riven-free build on the WFSim board, as of 2026-10-07
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
@@ -12,9 +12,9 @@ Each row is measured on its own, and says when and by which WFSim commit; the ga
 
 | Ruler | Fight | Mode | Score | Build | Measured |
 | --- | --- | --- | ---: | --- | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 54.3687 | Primed Cryo Rounds, Infected Clip, Primary Acuity, Serration, Galvanized Scope, Bladed Rounds, Vile Acceleration, Vital Sense, Vigilante Supplies, Primary Deadhead | 2026-10-05 17:08 UTC · 052c2ed8c6 |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 416.0512 | Rime Rounds, Primary Acuity, Primed Shred, Serration, Galvanized Scope, Hammer Shot, Rifle Elementalist, Vital Sense, Vigilante Supplies, Primary Deadhead | 2026-10-06 09:48 UTC · 92ec4b1a70 |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 9.3476 | Primed Cryo Rounds, Infected Clip, Primary Acuity, Primed Bane of Grineer, Serration, Galvanized Scope, Vital Sense, Gilded Truth, Vigilante Supplies, Primary Deadhead | 2026-10-05 16:50 UTC · 052c2ed8c6 |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 54.3687 | Primed Cryo Rounds, Infected Clip, Primary Acuity, Serration, Galvanized Scope, Bladed Rounds, Vile Acceleration, Vital Sense, Vigilante Supplies, Primary Deadhead | 2026-10-06 17:09 UTC · 71f70c5e46 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 416.0512 | Rime Rounds, Primary Acuity, Primed Shred, Serration, Galvanized Scope, Hammer Shot, Rifle Elementalist, Vital Sense, Vigilante Supplies, Primary Deadhead | 2026-10-06 17:23 UTC · 71f70c5e46 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 9.3476 | Primed Cryo Rounds, Infected Clip, Primary Acuity, Primed Bane of Grineer, Serration, Galvanized Scope, Vital Sense, Gilded Truth, Vigilante Supplies, Primary Deadhead | 2026-10-06 17:53 UTC · 6644c8b983 |
 
 ## In WFSim
 
