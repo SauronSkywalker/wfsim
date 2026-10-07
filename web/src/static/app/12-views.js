@@ -125,6 +125,15 @@ async function route() {
   track("app.view", w ? `weapon_${mod || "builder"}` : support ? "support" : bench ? "benchmark"
     : dl ? "download" : wfHit ? "warframe" : opRoute ? "operator"
     : compHit ? "companion" : authKind ? authView(authKind) : "home");
+  // WHICH WAY IN, where the link that led here names it (`?from=`): said once,
+  // then taken off the address so a copied link does not carry it on.
+  const door = new URLSearchParams(location.search).get("from");
+  if (door !== null) {
+    if (/^[a-z_]{1,24}$/.test(door)) track("door.open", door);
+    const u = new URL(location.href);
+    u.searchParams.delete("from");
+    history.replaceState(history.state, "", u.pathname + u.search + u.hash);
+  }
   document.body.classList.toggle("on-home", !w && !support && !bench && !dl && !wfHit && !opRoute && !compHit && !authKind);
   document.body.classList.toggle("on-auth", !!authKind);
   $("auth-page").hidden = !authKind;

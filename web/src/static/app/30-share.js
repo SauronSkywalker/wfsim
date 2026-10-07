@@ -545,6 +545,8 @@ async function openSharePanel(bar, from = "bar", build = null) {
   // only for some readers is shown `locked`, greyed, with the extension's words
   // on whose it is — never a prompt. Otherwise the link is plain.
   const signer = await extHook("shareSigner");
+  // A GREYED OPTION IS A WAY IN, seen: counted against the ones taken (`door.open`).
+  if (signer && signer.locked) track("door.seen", "share");
   const draw = async () => {
     if (withResult) panel.innerHTML = `<div class="sh-note">${escHtml(tr("simulating this build in the current scenario…"))}</div>`;
     const measured = withResult ? await shareMeasurement() : null;

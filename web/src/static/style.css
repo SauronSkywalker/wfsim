@@ -497,7 +497,7 @@ body.on-wbench [data-module="builder"]{display:none}
 .topbar-inner .sup-link{width:auto;gap:6px;padding:0 10px;color:var(--gold);
   border-color:color-mix(in srgb,var(--gold) 42%,transparent)}
 .topbar-inner .sup-link:hover{background:color-mix(in srgb,var(--gold) 12%,transparent)}
-.topbar-inner .sup-link .tbl{display:inline;font-size:12px;font-weight:600}
+.topbar-inner .sup-link .tbl{display:inline;font-size:12px;font-weight:600;white-space:nowrap}
 .sup-link svg{display:block}
 /* MEASURED, not guessed: at 360px the bar wraps to two rows and the weapon
    search — the site's navigation — is down to 29px wide, so the support link
@@ -1873,6 +1873,10 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
   border:1px solid var(--line);background:var(--surface);color:var(--text);font-weight:600;font-size:13px;
   text-decoration:none;white-space:nowrap}
 .signin-btn:hover{border-color:var(--accent)}
+.topbar-page{display:inline-flex;align-items:center;height:28px;padding:0 10px;margin-right:4px;color:var(--text-2);
+  font-weight:600;font-size:13px;text-decoration:none;white-space:nowrap}
+.topbar-page:hover{color:var(--text)}
+@media (max-width:420px){.topbar-page{display:none}}
 .avatar{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;font-size:13px;
   display:inline-flex;align-items:center;justify-content:center;border:0;cursor:pointer;line-height:1;flex:none}
 .avatar-lg{width:44px;height:44px;font-size:18px;cursor:default}

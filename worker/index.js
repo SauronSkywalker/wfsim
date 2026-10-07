@@ -585,7 +585,7 @@ export const USAGE_EVENTS = [
   "builder.companion", "builder.enemy",
   "simulator.start", "simulator.run", "optimizer.start", "optimizer.run",
   "share.create", "share.entry", "share.open", "board.open", "board.submit", "desktop.download",
-  "presets.saved",
+  "presets.saved", "door.seen", "door.open",
   "nona.open", "nona.ask", "nona.concise",
 ];
 /// The wire's schema, written into every point so a later change stays readable.

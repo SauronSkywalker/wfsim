@@ -349,18 +349,21 @@ check("...and the sender's measurement did not land", bo.landedResult === false)
 const locked = await evaluate(`(async () => {
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   history.pushState({}, '', '/weapons/Torid'); route(); await sleep(1400);
-  const was = EXT.hooks.shareSigner;
+  const was = EXT.hooks.shareSigner, sent = [], realTrack = window.track;
+  window.track = (e, s) => { sent.push(e + ':' + s); };
   EXT.hooks.shareSigner = async () => ({ locked: true, option: 'sign it with my name · <a href="/membership">for Members</a>' });
   const bar = document.querySelector('#preset-bar-builder-builds');
   await openSharePanel(bar); await sleep(900);
   const box = bar.querySelector('.pshare .sh-sign');
   const label = box && box.closest('label');
   const out = { disabled: !!box && box.disabled, link: !!(label && label.querySelector('a[href="/membership"]')),
-    url: ((bar.querySelector('.pshare .sh-url') || {}).value) || '' };
+    url: ((bar.querySelector('.pshare .sh-url') || {}).value) || '', sent };
   EXT.hooks.shareSigner = was;
+  window.track = realTrack;
   return out;
 })()`);
 check("a signature only some readers get is drawn greyed, with its link, and the shared link stays plain",
   locked.disabled && locked.link && /\?b=/.test(locked.url) && !/\/s\//.test(locked.url), JSON.stringify(locked));
+check("...and drawing it is counted as a way in seen", locked.sent.includes("door.seen:share"), JSON.stringify(locked.sent));
 
 await app.finish("a shared link lands whole, on screen, first time");

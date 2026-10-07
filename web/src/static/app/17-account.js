@@ -164,10 +164,14 @@ function renderAccountEntry() {
           <span>@${escHtml(account.username || "")}</span></div></div>
         <a href="/account" role="menuitem">${aT("Account settings")}</a>
         <a href="/account/sync" role="menuitem">${aT("Cloud sync")}</a>
-        ${Object.values(EXT.pages).filter((p) => p.menu).map((p) => `<a href="${escHtml(p.path)}" role="menuitem">${aT(p.menu)}</a>`).join("")}
+        ${Object.values(EXT.pages).filter((p) => p.menu).map((p) => `<a href="${escHtml(p.path)}?from=menu" role="menuitem">${aT(p.menu)}</a>`).join("")}
         <hr><a href="#" role="menuitem" data-acct="logout">${aT("Sign out")}</a>
       </div>`
-    : `<a class="signin-btn" href="/login?return=${encodeURIComponent(authKindOf(location.pathname) ? "/" : here)}">${aT("Sign in")}</a>`;
+    // SIGNED OUT, an extension's page anyone may open stands beside "Sign in",
+    // a plain link at the bar's weight: the menu that names it is not there yet.
+    : `${Object.values(EXT.pages).filter((p) => p.menu && p.open).map((p) =>
+        `<a class="topbar-page" href="${escHtml(p.path)}?from=topbar">${aT(p.menu)}</a>`).join("")}`
+      + `<a class="signin-btn" href="/login?return=${encodeURIComponent(authKindOf(location.pathname) ? "/" : here)}">${aT("Sign in")}</a>`;
 }
 
 (function () {
