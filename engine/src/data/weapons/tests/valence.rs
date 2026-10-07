@@ -64,6 +64,14 @@ fn a_valence_bonus_is_base_damage_and_merges_with_the_element_it_matches() {
     let r = ogris.radial.as_ref().expect("the Kuva Ogris explodes");
     assert!((r.co_base_fraction() - 1.0).abs() < 1e-9, "{}", r.co_base_fraction());
 
+    // …AND ON THE BOMBLETS, both halves: the Kuva Zarr's 15 Impact contact
+    // and 50 Blast explosion are base damage like the shell's.
+    let mut zarr = WeaponBase::from_data("kuva_zarr", true, &[]);
+    apply_valence(&mut zarr, "kuva_zarr", "heat", 0.60);
+    let c = zarr.cluster.as_ref().expect("the Kuva Zarr releases bomblets");
+    assert!((c.contact.base_vector.get(DamageType::Heat) - 9.0).abs() < 1e-9);
+    assert!((c.blast.base_vector.get(DamageType::Heat) - 30.0).abs() < 1e-9);
+
     // …AND A WEAPON WITH NO SPEC CANNOT BE HANDED ONE.
     let mut torid = WeaponBase::from_data("torid", true, &[]);
     let before = torid.base_vector.total();

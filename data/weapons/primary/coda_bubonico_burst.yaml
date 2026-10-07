@@ -21,9 +21,8 @@ introduced: "42"
 # take), so it is restated rather than inherited; the values are the base
 # entry's and the comment there explains why empty is the FAST delay.
 #
-# The inherited `reload_seconds: 5.5` is the same fact from the other end —
-# 36 rounds at 9 a second is 4 s, plus the 1.5 s delay — so the two agree and
-# the block is what adds the PARTIAL case between bursts.
+# The inherited `reload_seconds` is the EMPTY case from the other end, and the
+# block is what adds the PARTIAL case between bursts.
 battery:
   regen_per_second: 9.0
   delay_empty_seconds: 0.1

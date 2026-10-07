@@ -88,6 +88,9 @@ attack:
     crit_multiplier: 2.0
     status_chance: 0.49
     stacking: stack
+    # "Each tick from the cloud has a forced Toxin status effect" (page), and
+    # the module's ForcedProcs on the Toxin Cloud.
+    forced_procs: [toxin]
 
   # see notes: primary_compression_published_table
   #

@@ -39,7 +39,9 @@ attack:
   shot_type: projectile
   projectile_speed_mps: 80
   fire_rate: 1
-  charge_seconds: 1.2
+  # The page gives it a "faster Charge Time" than the Lenz, so the module's
+  # 1.2 is the Lenz's copied over; the arsenal reads 0.80 s.
+  charge_seconds: 0.8
   multishot: 1.0
   ammo_cost: 1
   crit_chance: 0.5

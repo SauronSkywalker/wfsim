@@ -1,5 +1,6 @@
 use super::*;
 
+mod battery;
 mod burston_incarnon_radial;
 mod catalog;
 mod condition_overload_catalog;

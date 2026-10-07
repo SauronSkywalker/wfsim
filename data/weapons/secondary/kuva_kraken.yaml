@@ -49,7 +49,7 @@ attack:
   # THREE A PULL, and `fire_rate` counts PULLS.
   burst:
     count: 3
-    delay_seconds: 0.083     # module BurstDelay
+    delay_seconds: 0.03      # module BurstDelay
   shot_type: hit_scan
   fire_rate: 2.83
   multishot: 1.0

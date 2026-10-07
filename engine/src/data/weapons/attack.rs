@@ -513,7 +513,8 @@ pub struct LingeringSpec {
     /// Damage types this field's tick applies regardless of status chance —
     /// its OWN, exactly as [`RadialSpec::forced_procs`] is the explosion's.
     ///
-    /// A cloud declares none, which is why this defaults to empty. The
+    /// Most clouds declare none, which is why this defaults to empty; the
+    /// Mutalist Cernos's forces Toxin on every tick. The
     /// Grimoire's orb declares Electricity: measured, its pulses force it and
     /// its final explosion does not — one attack answering the question both
     /// ways, and the reason the two lists are separate rather than shared.

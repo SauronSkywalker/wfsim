@@ -35,12 +35,12 @@ reload_seconds: 2.7
 # see notes: condition_overload_no_row_2
 co_behavior: additive_with_base_damage
 
-# THE BATTERY — the ordinary Fulmin's, word for word: a 1 second delay, 30 ammo
-# a second, 2 seconds to refill a dry one excluding the delay.
+# THE BATTERY — "a 0.7 second delay … Then, regenerates 40 ammo per second"
+# (page; module ReloadDelay 0.7, ReloadRate 40). Not the ordinary Fulmin's.
 battery:
-  regen_per_second: 30.0
-  delay_empty_seconds: 1.0
-  delay_partial_seconds: 1.0
+  regen_per_second: 40.0
+  delay_empty_seconds: 0.7
+  delay_partial_seconds: 0.7
 
 attack:
   # see notes: cone_half_angle_from_2

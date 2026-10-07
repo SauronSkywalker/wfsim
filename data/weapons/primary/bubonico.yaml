@@ -34,7 +34,9 @@ ammo_type: primary
 ammo_max: 0
 ammo_pickup: 0
 magazine: 27
-reload_seconds: 4.5
+# THE EMPTY CASE, as on every battery: 0.1 s delay + 27/9 s refill. The
+# arsenal's 4.5 is the PARTIAL delay's sum, and an empty battery never waits it.
+reload_seconds: 3.1
 
 # THE BATTERY, and its two delays are the other way round from the Shedu's —
 # empty is the FAST case, exactly as on the Coda. The module gives the same

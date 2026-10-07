@@ -125,13 +125,23 @@ pub fn apply_valence(base: &mut WeaponBase, id: &str, element: &str, bonus: f64)
     // THE RADIAL TOO, on a weapon that has one: the bonus is base damage, and a
     // radial's base is base damage. The Kuva Bramma, Ogris, Tonkor and Zarr all
     // carry one.
-    if let Some(r) = base.radial.as_mut() {
+    // THE BOMBLETS TOO, both halves: they are the weapon's base damage in a
+    // smaller package. Left out, a Kuva Zarr's bomblets read the mod elements
+    // and not the Lich's.
+    let scale_part = |r: &mut crate::model::RadialBase| {
         let rt = r.base_vector.total();
         if rt > 0.0 {
             let radd = rt * fraction;
             r.base_vector = r.base_vector.with(ty, r.base_vector.get(ty) + radd);
             r.co_base *= 1.0 + fraction;
         }
+    };
+    if let Some(r) = base.radial.as_mut() {
+        scale_part(r);
+    }
+    if let Some(c) = base.cluster.as_mut() {
+        scale_part(&mut c.contact);
+        scale_part(&mut c.blast);
     }
     // …AND A LINGERING FIELD, on the same argument and still on no weapon in
     // this roster. A field a MOD grants is the case that is real today, and it

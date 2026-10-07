@@ -41,7 +41,9 @@ ammo_type: primary
 ammo_max: 0
 ammo_pickup: 0
 magazine: 36
-reload_seconds: 5.5
+# THE EMPTY CASE, as on every battery: 0.1 s delay + 36/9 s refill. The
+# arsenal's 5.5 is the PARTIAL delay's sum, and an empty battery never waits it.
+reload_seconds: 4.1
 
 # THE BATTERY, AND ITS TWO DELAYS ARE THE OTHER WAY ROUND FROM THE SHEDU'S —
 # "Has a 1.5 second delay after the weapon stops firing before regenerating
