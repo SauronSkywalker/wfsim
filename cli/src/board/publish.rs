@@ -448,6 +448,7 @@ mod page_row_tests {
     /// `validate_for_board_with` is the same check a submission faces, run here
     /// against what is already published.
     #[test]
+    #[ignore = "a fact about publish.yml's output: CI runs it as the published-board job"]
     fn every_published_row_is_a_legal_build() {
         let mut n = 0usize;
         for (weapon, rows) in published() {

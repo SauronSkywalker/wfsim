@@ -21,6 +21,22 @@ jobs:
       - name: Tests
         run: cargo test --workspace
 
+  # THE PUBLISHED SNAPSHOT IS A LEGAL BOARD — a fact about publish.yml's output,
+  # so it is a job of its own: inside `test` it stopped the one run that repairs
+  # it, since publish.yml waits for `test` and a tightened door leaves the
+  # snapshot holding rows the door now refuses.
+  published-board:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          # keep in sync with mise.toml
+          toolchain: "1.97.1"
+      - uses: Swatinem/rust-cache@v2
+      - name: Every published row is a legal build
+        run: cargo test -p wfsim-cli --lib every_published_row_is_a_legal_build -- --ignored
+
   # A commit names its author and no tool. Blobless, because only the messages
   # are read; the range is what this push or pull request adds.
   commits:
@@ -115,7 +131,7 @@ jobs:
         run: node scripts/check_qq.mjs
       - name: A riven appraisal is asked once and answered once
         run: node scripts/check_appraise.mjs
-      - name: A client's number reaches the board only when a second one agrees
+      - name: A client's number reaches the board only when CLIENTS_PER_FACT clients agree
         run: node scripts/check_board_verify.mjs
       - name: The site reads the live board, and the committed one only until it exists
         run: node scripts/check_board_live.mjs
