@@ -255,6 +255,8 @@ function fightCardHtml() {
   ];
   if (sim.invisible) play.push(chip(tr("invisible")));
   if (sim.airborne) play.push(chip(tr("airborne")));
+  if (sim.sliding) play.push(chip(tr("sliding")));
+  if (sim.aim_gliding) play.push(chip(tr("aim gliding")));
   if (!sim.infinite_ammo) play.push(chip(tr("ammo counts")));
   const squad = alsoActing().map((ref) => chip(weaponExists(ref.weapon) ? tf(weaponInfo(ref.weapon).name) : ref.weapon));
   const frame = (META.warframes || []).find((f) => f.id === sim.frame);
@@ -609,6 +611,8 @@ function renderScenarioFields(ids, opts = {}) {
       ${chargingHeadshotField(w, sim)}
       <label class="check" title="${escHtml(tr("the wielder's state: mods that only pay while Invisible (Spectral Serration) grant nothing when this is off"))}"><input type="checkbox" data-k="invisible"${sim.invisible ? " checked" : ""}> ${escHtml(tr("Invisible"))}</label>
       <label class="check" title="${escHtml(tr("the wielder's state: what a card means by \"while Airborne\""))}"><input type="checkbox" data-k="airborne"${sim.airborne ? " checked" : ""}> ${escHtml(tr("Airborne"))}</label>
+      <label class="check" title="${escHtml(tr("the wielder's state: what a card means by \"while Sliding\" — held for the whole engagement"))}"><input type="checkbox" data-k="sliding"${sim.sliding ? " checked" : ""}> ${escHtml(tr("Sliding"))}</label>
+      <label class="check" title="${escHtml(tr("the wielder's state: what a card means by \"while Aim Gliding\" — held for the whole engagement, and airborne too"))}"><input type="checkbox" data-k="aim_gliding"${sim.aim_gliding ? " checked" : ""}> ${escHtml(tr("Aim gliding"))}</label>
       <label class="check" title="${escHtml(tr("the wielder's state: what a card means by \"With Overshields\". Nothing here takes them away, so it is a declaration"))}"><input type="checkbox" data-k="overshields"${sim.overshields ? " checked" : ""}> ${escHtml(tr("Overshields"))}</label>
       <label class="check" title="${escHtml(tr("the wielder's state: what a card means by \"With Channeled Ability active\". The ability must DRAIN ENERGY over time — Desecrate, Haven and an empty Gloom do not count"))}"><input type="checkbox" data-k="channeling"${sim.channeling ? " checked" : ""}> ${escHtml(tr("Channeled ability"))}</label>
       <label class="check" title="${escHtml(tr("the wielder's state: what a card means by \"With Melee Weapon Equipped\". It means the weapon is DRAWN — a quick-melee swing out of a gun does not satisfy it. Every ruler runs it drawn"))}"><input type="checkbox" data-k="melee_equipped"${sim.melee_equipped !== false ? " checked" : ""}> ${escHtml(tr("Melee drawn"))}</label>

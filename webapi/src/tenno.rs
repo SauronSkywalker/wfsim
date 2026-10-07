@@ -109,6 +109,8 @@ pub(crate) fn tenno_from(v: &Value, info: &WeaponInfo) -> wfsim_engine::data::te
     t.state.aiming = info.sentinel || get_bool(v, "aiming", true);
     t.state.invisible = get_bool(v, "invisible", t.state.invisible);
     t.state.airborne = get_bool(v, "airborne", t.state.airborne);
+    t.state.sliding = get_bool(v, "sliding", t.state.sliding);
+    t.state.aim_gliding = get_bool(v, "aim_gliding", t.state.aim_gliding);
     // Haven Foray / Guardian's Might: "With Overshields". Nothing here takes
     // them away, so it is a declaration and not something the fight tracks.
     t.state.overshields = get_bool(v, "overshields", t.state.overshields);

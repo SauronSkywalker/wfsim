@@ -19,7 +19,7 @@ stats:
   - id: ammo_efficiency
     tag: WeaponAmmoEfficiency
     order: 25
-    base: 0.001
+    base: 0.0049999999
     prefix: "parci"
     suffix: "pia"
     text: "|val|% Ammo Efficiency"

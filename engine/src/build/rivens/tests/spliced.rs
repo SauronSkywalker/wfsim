@@ -15,16 +15,17 @@ fn stat(class: &str, id: &str) -> &'static RivenStat {
 }
 
 /// THE WIKI'S "Spliced Values" TABLE, which is DE's base x 90 like the rolled
-/// stats' column. The pistol's two weak-point rows are the odd ones out
-/// (90% against 225% and 247.5%) and are here for that reason.
+/// stats' column.
 #[test]
 fn the_wikis_spliced_column_agrees() {
     for (class, id, wiki) in [
         ("rifle", "weak_point_damage", 225.0),
         ("rifle", "weak_point_critical_chance", 247.5),
-        ("pistol", "weak_point_damage", 90.0),
-        ("pistol", "weak_point_critical_chance", 90.0),
-        ("rifle", "ammo_efficiency", 9.0),
+        ("pistol", "weak_point_damage", 225.0),
+        ("pistol", "weak_point_critical_chance", 247.5),
+        ("rifle", "ammo_efficiency", 45.0),
+        ("pistol", "ammo_efficiency", 45.0),
+        ("melee", "viral", 90.0),
         ("shotgun", "reload_while_holstered", 90.0),
         ("archgun", "viral", 90.0),
         ("rifle", "status_damage", 90.0),
@@ -39,11 +40,12 @@ fn the_wikis_spliced_column_agrees() {
     // Two that are not percentages: metres of reach-like angle, and x0.45.
     assert!((stat("melee", "parry_angle").base * 90.0 - 8.1).abs() < 1e-6);
     assert!((stat("rifle", "damage_to_scaldra").base * 90.0 - 0.45).abs() < 1e-6);
+    assert!((stat("melee", "damage_to_orokin").base * 90.0 - 0.45).abs() < 1e-6);
 }
 
 /// EIGHTEEN, split by class the way the export ships them: no Reload While
-/// Holstered on an Arch-Gun, and melee's four are its own plus the Status
-/// Damage the export does not carry yet (`gen_rivens.py`, `EXPORT_LAGS`).
+/// Holstered on an Arch-Gun, and melee's are the shared ten (combined
+/// elements, factions, Status Damage) plus its own four.
 #[test]
 fn each_class_carries_its_spliced_stats() {
     let n = |c: &str| pool(c).iter().filter(|x| x.spliced).count();
@@ -51,7 +53,7 @@ fn each_class_carries_its_spliced_stats() {
     assert_eq!(n("pistol"), 14);
     assert_eq!(n("shotgun"), 14);
     assert_eq!(n("archgun"), 13);
-    assert_eq!(n("melee"), 5);
+    assert_eq!(n("melee"), 14);
     for c in crate::data::mods::classes() {
         for s in pool(c).iter().filter(|x| x.spliced) {
             assert!(!s.malus, "{c}/{}: a spliced stat is always a bonus", s.id);
@@ -101,6 +103,6 @@ fn spliced_ammo_efficiency_reaches_the_panel() {
     let bare = resolve(&base, &[], StackPolicy::AssumedMax).ammo_efficiency;
     let with = resolve(&base, &[&riven], StackPolicy::AssumedMax).ammo_efficiency;
     assert_eq!(bare, 0.0);
-    // 0.001 x 90 x 0.99 (a plain 2-stat card) at disposition 1.0.
-    assert!((with - 0.0891).abs() < 1e-6, "{with}");
+    // 0.005 x 90 x 0.99 (a plain 2-stat card) at disposition 1.0.
+    assert!((with - 0.4455).abs() < 1e-6, "{with}");
 }

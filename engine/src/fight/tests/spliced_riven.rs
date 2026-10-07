@@ -33,14 +33,14 @@ fn a_spliced_ammo_efficiency_buys_shots_in_the_fight() {
         p
     };
     let (a, b) = (fight(&without), fight(&with));
-    // 0.001 x 90 x 0.99 (a plain two-stat card) at disposition 1.0.
-    assert!((b.arcane.ammo_efficiency - 0.0891).abs() < 1e-9, "{}", b.arcane.ammo_efficiency);
+    // 0.005 x 90 x 0.99 (a plain two-stat card) at disposition 1.0.
+    assert!((b.arcane.ammo_efficiency - 0.4455).abs() < 1e-6, "{}", b.arcane.ammo_efficiency);
     assert_eq!(a.arcane.ammo_efficiency, 0.0);
     let shots = |p: &FightParams| monte_carlo(p, 4, 3).mean_shots;
     let (plain, efficient) = (shots(&a), shots(&b));
     assert!((plain - a.magazine_size).abs() < 1e-9, "one magazine, {plain} shots");
-    // Each shot costs 1 - 0.0891, so the magazine buys that much more.
-    let want = (a.magazine_size / (1.0 - 0.0891)).ceil();
+    // Each shot costs 1 - 0.4455, so the magazine buys that much more.
+    let want = (a.magazine_size / (1.0 - b.arcane.ammo_efficiency)).ceil();
     assert!((efficient - want).abs() <= 1.0, "{efficient} shots, about {want} expected");
 }
 

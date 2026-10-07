@@ -48,8 +48,8 @@ const rivenStat = (id) => rivenPoolAll().find((s) => s.id === id);
 // `rivenStatNameEn` is the headless part's (87-headless.js), which a surface
 // with no page names stats with too.
 const rivenStatName = (s) => tf(rivenStatNameEn(s));
-// The disclaimer every spliced stat carries (see notes: spliced_riven_stat).
-const RIVEN_SPLICED_NOTE = "A spliced stat's value uses the formula every rolled stat uses, on DE's own base number, and no in-game card has been checked against it yet — the number on your card may differ.";
+// What a spliced stat is (see notes: spliced_riven_stat).
+const RIVEN_SPLICED_NOTE = "A Riven Splicer's stat, made out of two rolled ones: always a bonus, at most one a card";
 
 // The shape, in the notation everyone already uses: 2, 3, 2+1, 3+1 — the
 // count of bonuses, and a +1 for the malus. It leads because it is the
@@ -368,12 +368,9 @@ function renderRivenStats() {
       <span class="rv-unit" data-slot="${slot}"></span>
     </div>`;
   };
-  // A SPLICED STAT IS NOT MEASURED, and the card says so beside it.
-  const spliced = riven.bonuses.concat(riven.malus ? [riven.malus] : []).some((s) => (rivenStat(s.id) || {}).spliced);
   $("riven-stats").innerHTML =
     riven.bonuses.map((s, i) => row(String(i), s, false)).join("") +
-    (riven.malus ? row("malus", riven.malus, true) : "") +
-    (spliced ? `<div class="rv-disclaim"><b>${escHtml(tr("For reference only"))}</b> ${escHtml(tr(RIVEN_SPLICED_NOTE))}</div>` : "");
+    (riven.malus ? row("malus", riven.malus, true) : "");
 
   const at = (slot) => (slot === "malus" ? riven.malus : riven.bonuses[Number(slot)]);
   $("riven-stats").querySelectorAll(".rv-pick").forEach((el) =>
@@ -424,7 +421,7 @@ function openRivenPicker(anchor, slot) {
       .filter((x) => !f || `${rivenStatNameEn(x)} ${rivenStatName(x)}`.toLowerCase().includes(f))
       .map((x) => `<div class="opt ${x.id === at.id ? "search" : ""}" data-rvid="${x.id}">
         <div class="info"><div class="mn">${escHtml(rivenStatName(x))}</div>
-        <div class="me">${x.spliced ? `<div>${escHtml(tr("spliced — for reference only"))}</div>` : ""}${x.modeled ? "" : `<div>${escHtml(tr("not modeled — it rolls and it names the riven, but it adds no damage"))}</div>`}${
+        <div class="me">${x.spliced ? `<div>${escHtml(tr("spliced — at most one a card"))}</div>` : ""}${x.modeled ? "" : `<div>${escHtml(tr("not modeled — it rolls and it names the riven, but it adds no damage"))}</div>`}${
           unconfirmed.includes(x.id) ? `<div>${escHtml(tr("unconfirmed — no card of this riven family says whether it rolls"))}</div>` : ""}</div></div>
       </div>`).join("") || `<div class="opt dis">${escHtml(tr("no matching stat"))}</div>`;
     menu.querySelectorAll("[data-rvid]").forEach((el) => el.onclick = () => {

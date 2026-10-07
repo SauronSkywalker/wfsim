@@ -278,6 +278,8 @@ function renderResults(r, testedAt, build) {
       chip(`${tr("Headshots")} ${Math.round(sim.headshot_pct || 0)}%`),
       sim.invisible ? chip(tr("invisible")) : "",
       sim.airborne ? chip(tr("airborne")) : "",
+      sim.sliding ? chip(tr("sliding")) : "",
+      sim.aim_gliding ? chip(tr("aim gliding")) : "",
       sim.channeling ? chip(tr("channeling")) : "",
       sim.infinite_ammo ? chip(tr("ammo pickups keep coming")) : chip(tr("its own reserve, and no pickups")),
       chip(sim.melee_equipped ? tr("melee drawn") : tr("quick melee")),

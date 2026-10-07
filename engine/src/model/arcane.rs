@@ -91,7 +91,9 @@ pub enum ArcEffect {
     OverguardDamage(Scale),
     /// MELEE CAREEN — a damage MULTIPLIER on a target at ten Cold stacks.
     DamageVsFrozen(Scale),
-    AmmoEfficiency(Scale),
+    /// Paid while `when` holds of the fight's Tenno; ungated, only under
+    /// assumed-max.
+    AmmoEfficiency { scale: Scale, when: Option<crate::model::TennoCondition> },
     /// PRIMARY COMPRESSION, whose worth is a property of the WEAPON: it shrinks
     /// the explosion to a fifth while aiming and pays per metre given up. Both
     /// ramps are per METRE, so neither is a number until a radius is known —
@@ -178,10 +180,12 @@ pub enum ArcEffect {
 /// The fix is not "read this one string". It is that a condition the loader
 /// does not understand can no longer be dropped in silence: this returns
 /// `Unknown`, and a test walks the whole roster refusing one.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum ArcCondition {
     /// The body being hit is at N stacks of Radiation. SIMULATED.
     TargetRadiationStacks(u32),
+    /// A state the fight's Tenno DECLARES, asked of it under every policy.
+    Tenno(crate::model::TennoCondition),
     /// A Tenno or squad state this sim does not model. ASSUMED satisfied, and
     /// the arcane's own file says so.
     AssumedTennoState,

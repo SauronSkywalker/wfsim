@@ -320,9 +320,9 @@ impl ArcaneDef {
                 ArcEffect::OverguardDamage(sc) => {
                     fx.overguard_multiplier = 1.0 + sc.at(rank, self.max_rank);
                 }
-                ArcEffect::AmmoEfficiency(sc) => {
-                    if assumed {
-                        fx.ammo_efficiency += sc.at(rank, self.max_rank);
+                ArcEffect::AmmoEfficiency { scale, when } => {
+                    if when.map_or(assumed, |c| c.holds(tenno)) {
+                        fx.ammo_efficiency += scale.at(rank, self.max_rank);
                     }
                 }
                 // PER METRE, under BOTH policies. The arcane's own condition is
@@ -368,7 +368,7 @@ impl ArcaneDef {
                 | ArcEffect::RechargeableMagazine { scale }
                 | ArcEffect::FlatDamageOnStatus(scale)
                 | ArcEffect::EncumberChance(scale)
-                | ArcEffect::AmmoEfficiency(scale)
+                | ArcEffect::AmmoEfficiency { scale, .. }
                 | ArcEffect::CompressionDamage(scale)
                 | ArcEffect::CompressionAmmoEfficiency(scale)
                 | ArcEffect::PerAllyCritChance(scale)
@@ -604,9 +604,10 @@ impl ArcaneDef {
                     at(sc),
                     1.0 + at(sc)
                 )),
-                ArcEffect::AmmoEfficiency(sc) => out.push(format!(
-                    "{} ammo efficiency while sliding/aim gliding (Dual Pistols)",
-                    pct(at(sc))
+                ArcEffect::AmmoEfficiency { scale, when } => out.push(format!(
+                    "{} ammo efficiency{}",
+                    pct(at(scale)),
+                    when.map(|c| format!(" {}", c.describe())).unwrap_or_default()
                 )),
                 // Per METRE OF RADIUS LOST, and the card says so — the number a
                 // player can check against the panel is the weapon's, and the

@@ -145,7 +145,8 @@ function defaultScenario() {
     // fight this app has always run and what keeps every stored scenario
     // meaning what it meant. Drag the marker and it becomes a place of its own.
     aim_at: d.aim_at ? [...d.aim_at] : null,
-    invisible: !!d.invisible, airborne: !!d.airborne, overshields: !!d.overshields,
+    invisible: !!d.invisible, airborne: !!d.airborne, sliding: !!d.sliding, aim_gliding: !!d.aim_gliding,
+    overshields: !!d.overshields,
     channeling: !!d.channeling, melee_equipped: d.melee_equipped !== false,
     solo_weapon: !!d.solo_weapon,
     // KEPT WHOLE, unknown names included: an older page must not strip a
@@ -205,7 +206,7 @@ let sim = { enemy: "thrax_centurion", level: 9999, steel_path: true, eximus: nul
   // rulers pin. Dragged on the arena scene; see `mountArena`.
   player_at: [0, 0.5 - 0.5],
   target_at: [0, 0.5],
-  invisible: false, airborne: false, overshields: false, channeling: false,
+  invisible: false, airborne: false, sliding: false, aim_gliding: false, overshields: false, channeling: false,
   // DRAWN by default — what "With Melee Weapon Equipped" asks, and what every
   // ruler runs. Quick-melee is the OTHER answer and the reason it is a knob.
   melee_equipped: true,

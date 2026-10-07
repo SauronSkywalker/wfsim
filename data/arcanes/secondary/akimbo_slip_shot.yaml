@@ -8,13 +8,11 @@ description: "While sliding or aim gliding: Gain X% ammo efficiency with Dual Pi
 requires: dual_pistols   # effect inert on non-dual secondaries (calc layer)
 
 effects:
-  # Ammo economy only (chance not to consume ammo) - no DPS bucket; waits on
-  # the ammo-economy subsystem. Cannot go on exalted weapons.
+  # Divides what a shot costs the magazine, so it pays in reloads not taken.
+  # Cannot go on exalted weapons.
   - kind: ammo_efficiency
-    # NOT READ by `data::arcanes`: the loader takes `trigger`/`grants` and the
-    # per-rank values, never `condition`. So the buff resolves as if its gate were
-    # always satisfied — the house assumed-max reading, recorded here because
-    # it is optimistic, not neutral (data/README.md).
+    # The fight's DECLARED wielder state (the scenario's Sliding / Aim gliding
+    # ticks), asked under every policy: both off, the arcane pays nothing.
     condition: sliding_or_aim_gliding
     rank0: 0.15
     rankMax: 0.65

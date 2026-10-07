@@ -19,7 +19,7 @@ stats:
   - id: ammo_efficiency
     tag: WeaponAmmoEfficiency
     order: 26
-    base: 0.001
+    base: 0.0049999999
     prefix: "parci"
     suffix: "pia"
     text: "|val|% Ammo Efficiency"
@@ -274,8 +274,8 @@ stats:
     tag: WeaponMagazineReloadHolstered
     order: 27
     base: 0.0099999998
-    prefix: "parci"
-    suffix: "pia"
+    prefix: "auxi"
+    suffix: "rro"
     text: "|val|% Magazine Reloaded/s when Holstered"
     kind: unmodelled
     malus: false

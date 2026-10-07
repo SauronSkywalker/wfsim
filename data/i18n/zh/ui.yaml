@@ -1370,6 +1370,11 @@ ui:
   "Headshots": 爆头率
   "invisible": 隐身
   "airborne": 滞空
+  "Airborne": 滞空
+  "sliding": 滑行
+  "Sliding": 滑行
+  "aim gliding": 飞身瞄准
+  "Aim gliding": 飞身瞄准
   "channeling": 引导中
   "ammo pickups keep coming": 弹药持续补给
   "its own reserve, and no pickups": 只用自己的备弹，不补给
@@ -1663,6 +1668,8 @@ ui:
   "the wielder's state: what a card means by \"With Channeled Ability active\". The ability must DRAIN ENERGY over time — Desecrate, Haven and an empty Gloom do not count": 使用者状态：卡面上说的「引导类技能生效中」指的就是这个。技能必须是持续耗能的——亵渎、庇护所、以及周围没有敌人时的阴郁都不算
   "the wielder's state: what a card means by \"With Overshields\". Nothing here takes them away, so it is a declaration": 使用者状态：卡面上说的「拥有超量护盾时」指的就是这个。这里没有任何东西会打掉它，所以它是一个声明而不是战斗里的变量
   "the wielder's state: what a card means by \"while Airborne\"": 使用者状态：卡面上说的「滞空时」指的就是这个
+  "the wielder's state: what a card means by \"while Sliding\" — held for the whole engagement": 使用者状态：卡面上说的「滑行时」指的就是这个——整场战斗都保持
+  "the wielder's state: what a card means by \"while Aim Gliding\" — held for the whole engagement, and airborne too": 使用者状态：卡面上说的「飞身瞄准时」指的就是这个——整场战斗都保持，同时也算滞空
   "The ~0.5 s delay before the mode can lock on again after a burst is not modelled.": "连射后约 0.5 秒才能再次锁定，这段延迟未建模。"
   "these procs cannot land on this unit — the other damage types take over their share of the status roll": 这些异常打不到这个单位身上 —— 它们那份触发概率由其余伤害类型接管
   "these procs cannot land — the other types take over their share of the roll": 这些异常打不上去 —— 它们那份触发概率由其余属性接管
@@ -2032,9 +2039,8 @@ ui:
   "Malus": 减益
   # SPLICED: DE's Riven Splicer is 裂罅熔接器 and its description's verb is 拼接.
   "spliced": 拼接
-  "spliced — for reference only": "拼接词条 —— 仅供参考"
-  "For reference only": 仅供参考
-  "A spliced stat's value uses the formula every rolled stat uses, on DE's own base number, and no in-game card has been checked against it yet — the number on your card may differ.": "拼接词条的数值沿用普通词条的同一条公式、取 DE 自己的基础值，还没有和游戏里的实卡核对过——你卡上的数字可能不同。"
+  "spliced — at most one a card": "拼接词条 —— 每张卡最多一条"
+  "A Riven Splicer's stat, made out of two rolled ones: always a bonus, at most one a card": 由裂罅熔接器把两条词条拼接成的属性：永远是正面词条，每张卡最多一条
   "Rank": 等级
   "Polarity": 极性
   "capacity": 容量

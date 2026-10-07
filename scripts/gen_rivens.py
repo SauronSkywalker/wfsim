@@ -190,21 +190,24 @@ NEVER_BONUS = {
     "WeaponMeleeComboPointsOnHitMod",
 }
 
-# A STAT THE GAME ROLLS THAT THE EXPORT DOES NOT CARRY YET. The melee riven
-# rolls Status Damage in game and its `upgradeEntries` has no row for it, so
-# the gun pools' row stands in: same tag, same name fragments, base 0.01, which
-# is 90% at rank 8 and disposition 1.0. Used only while the export lacks the
-# tag — once DE ships the row, the export's own wins and this line is dead.
-EXPORT_LAGS = {
-    "melee": [
-        {
-            "tag": "WeaponStatusDamage",
-            "prefixTag": "plaga",
-            "suffixTag": "mna",
-            "upgradeValues": [{"value": 0.0099999998, "locTag": "|val|% Status Damage"}],
-        },
-    ],
+# A STAT THE GAME ROLLS THAT THE EXPORT DOES NOT CARRY YET: `upgradeEntries`
+# rows by class, used only while the export lacks the tag — once DE ships the
+# row, the export's own wins and the script says to delete the stand-in.
+EXPORT_LAGS = {}
+
+# THE WIKI'S AFFIXES WIN where the export's differ (MEASUREMENT > WIKI >
+# EXPORT). The export names these five `laci`/`nus` and `parci`/`pia`, which
+# are other stats' affixes; Riven_Mods §"Spliced Values" names them apart.
+WIKI_AFFIXES = {
+    "WeaponMeleeHeavyAttackChargeMod": ("veri", "lus"),
+    "WeaponMeleeHeavyAttackDamageMod": ("robi", "ndo"),
+    "WeaponMeleeSlamDamageMod": ("proxi", "lam"),
+    "WeaponMeleeParryAngleMod": ("defi", "so"),
+    "WeaponMagazineReloadHolstered": ("auxi", "rro"),
 }
+
+# …AND ITS BASES. Parry Angle: the wiki's 8.1 against the export's 0.81.
+WIKI_BASES = {"WeaponMeleeParryAngleMod": 0.09}
 
 
 def hole(text):
@@ -255,9 +258,10 @@ def main():
             tag = e["tag"]
             val = e["upgradeValues"][0]
             # `reverseValueSymbol` prints the number with its sign flipped:
-            # Ammo Efficiency's base is -0.001 and its card reads "+9%". The
+            # Ammo Efficiency's base is -0.005 and its card reads "+45%". The
             # stored base is what the card means, so the flip happens here.
             base = -val["value"] if val.get("reverseValueSymbol") and tag in SPLICED else val["value"]
+            base = WIKI_BASES.get(tag, base)
             kind, arg = CLASS_KIND.get((cls, tag)) or KIND.get(tag, (None, None))
             if kind is None:
                 unknown.append((cls, tag))
@@ -271,8 +275,8 @@ def main():
                     # between two stats that share a base value.
                     "order": order,
                     "base": base,
-                    "prefix": e.get("prefixTag", ""),
-                    "suffix": e.get("suffixTag", ""),
+                    "prefix": WIKI_AFFIXES.get(tag, (e.get("prefixTag", ""),))[0],
+                    "suffix": WIKI_AFFIXES[tag][1] if tag in WIKI_AFFIXES else e.get("suffixTag", ""),
                     "text": hole(val["locTag"]).strip(),
                     "kind": kind or "unmodelled",
                     "arg": arg,

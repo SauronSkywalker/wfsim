@@ -55,10 +55,10 @@ pub fn arc_condition(v: &Value) -> Option<ArcCondition> {
     let s = v.get("condition").and_then(Value::as_str)?;
     Some(match s {
         "target_has_10_radiation_stacks" => ArcCondition::TargetRadiationStacks(10),
-        // The three Tenno states, NAMED rather than matched by shape: a new one
-        // has to be added here, which is the whole mechanism.
-        "sliding_or_aim_gliding"
-        | "overshields"
+        "sliding_or_aim_gliding" => ArcCondition::Tenno(crate::model::TennoCondition::SlidingOrAimGliding),
+        // The Tenno states still ASSUMED, NAMED rather than matched by shape: a
+        // new one has to be added here, which is the whole mechanism.
+        "overshields"
         | "buffing_ally_warframes"
         // AIRBORNE, which is the same family: a state of the TENNO that this
         // arena does not model, so the house reading treats it as satisfied. It
@@ -197,7 +197,13 @@ pub(super) fn effect(v: &Value) -> Option<ArcEffect> {
         },
         "overguard_damage_bonus" => ArcEffect::OverguardDamage(scale(v)),
         "damage_vs_frozen" => ArcEffect::DamageVsFrozen(scale(v)),
-        "ammo_efficiency" => ArcEffect::AmmoEfficiency(scale(v)),
+        "ammo_efficiency" => ArcEffect::AmmoEfficiency {
+            scale: scale(v),
+            when: match arc_condition(v) {
+                Some(ArcCondition::Tenno(c)) => Some(c),
+                _ => None,
+            },
+        },
         "compression_damage" => ArcEffect::CompressionDamage(scale(v)),
         "compression_ammo_efficiency" => ArcEffect::CompressionAmmoEfficiency(scale(v)),
         "tenno_scaled" => ArcEffect::TennoScaled {

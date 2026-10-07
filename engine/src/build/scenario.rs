@@ -323,6 +323,8 @@ pub const SCENARIO_AXES: &[ScenarioAxis] = &[
     },
     ScenarioAxis { id: "invisible", kind: AxisKind::Flag, group: Group::Wielder, requires: FREE },
     ScenarioAxis { id: "airborne", kind: AxisKind::Flag, group: Group::Wielder, requires: FREE },
+    ScenarioAxis { id: "sliding", kind: AxisKind::Flag, group: Group::Wielder, requires: FREE },
+    ScenarioAxis { id: "aim_gliding", kind: AxisKind::Flag, group: Group::Wielder, requires: FREE },
     ScenarioAxis { id: "overshields", kind: AxisKind::Flag, group: Group::Wielder, requires: FREE },
     ScenarioAxis { id: "channeling", kind: AxisKind::Flag, group: Group::Wielder, requires: FREE },
     ScenarioAxis { id: "solo_weapon", kind: AxisKind::Flag, group: Group::Wielder, requires: FREE },

@@ -141,6 +141,8 @@ scenario:
   aiming: true
   invisible: false
   airborne: false
+  sliding: false
+  aim_gliding: false
   overshields: false
   channeling: false
   melee_equipped: true

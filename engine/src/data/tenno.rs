@@ -286,9 +286,16 @@ pub struct TennoState {
     /// Spectral Serration: "+330% Damage while Invisible".
     #[serde(default)]
     pub invisible: bool,
-    /// Aerial Ace and the Aero set: "while Airborne".
+    /// Aerial Ace and the Aero set: "while Airborne". An aim glide is airborne
+    /// too, so `TennoCondition::Airborne` also holds while `aim_gliding`.
     #[serde(default)]
     pub airborne: bool,
+    /// Akimbo Slip Shot: "While sliding or aim gliding". Declared for the
+    /// whole engagement — the arena has no movement to observe.
+    #[serde(default)]
+    pub sliding: bool,
+    #[serde(default)]
+    pub aim_gliding: bool,
     /// Haven Foray / Guardian's Might: *"With Overshields: Increase Base Damage
     /// by +Y"*. A STATE and not a stat — every frame can hold overshields and
     /// none has them by default, so it is not derivable from `frames.yaml` the
@@ -433,6 +440,8 @@ impl Default for TennoState {
             aiming: true,
             invisible: false,
             airborne: false,
+            sliding: false,
+            aim_gliding: false,
             overshields: false,
             channeling: false,
             // TRUE, because a melee build is played with the melee weapon out —
@@ -556,7 +565,8 @@ impl TennoCondition {
         match self {
             TennoCondition::Aiming => t.state.aiming,
             TennoCondition::Invisible => t.state.invisible,
-            TennoCondition::Airborne => t.state.airborne,
+            TennoCondition::Airborne => t.state.airborne || t.state.aim_gliding,
+            TennoCondition::SlidingOrAimGliding => t.state.sliding || t.state.aim_gliding,
             TennoCondition::SprintAtLeast(x) => t.sprint >= x,
             TennoCondition::ArmorOver(x) => t.armor > x,
             TennoCondition::MaxEnergyOver(x) => t.energy > x,

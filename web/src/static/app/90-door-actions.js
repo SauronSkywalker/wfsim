@@ -598,7 +598,7 @@ const AGENT_ACTIONS = [
   {
     id: "rivens.stats.list",
     query: true,
-    what: "List the stats a riven for this weapon can roll, which can be the malus, which are modelled, and which are spliced (at most one a card, value unmeasured).",
+    what: "List the stats a riven for this weapon can roll, which can be the malus, which are modelled, and which are spliced (at most one a card).",
     anchor: "#riven-stats, #riven-tools",
     needs_weapon: true,
     args: {},

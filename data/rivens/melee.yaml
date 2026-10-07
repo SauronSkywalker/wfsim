@@ -23,10 +23,6 @@ stats:
     prefix: "laci"
     suffix: "nus"
     text: "|val|% Additional Combo Count Chance"
-    # THE BONUS POLE of an axis whose malus pole is Chance to Gain Combo Count —
-    # and TWO MECHANICS, not one signed number. This adds to the chance pool with
-    # Quickening and True Punishment; the malus is a gate that never nets against
-    # it. See that entry (MEASUREMENTS M96, M97).
     kind: combo_count_chance
     malus: false
   - id: attack_speed
@@ -37,6 +33,17 @@ stats:
     suffix: "dra"
     text: "|val|% Attack Speed"
     kind: fire_rate_bonus
+  - id: blast
+    tag: WeaponBlastDamageMod
+    order: 32
+    base: 0.0099999998
+    prefix: "fraga"
+    suffix: "tus"
+    text: "|val|% Blast"
+    kind: combined_element_bonus
+    arg: blast
+    malus: false
+    spliced: true
   - id: chance_to_gain_combo_count
     tag: WeaponMeleeComboPointsOnHitMod
     order: 22
@@ -44,14 +51,6 @@ stats:
     prefix: ""
     suffix: ""
     text: "|val|% Chance to Gain Combo Count"
-    # ONE RIVEN AXIS, TWO MECHANICS — DO NOT MERGE THIS PAIR. On the card this is
-    # the malus pole of the axis whose bonus pole is Additional Combo Count
-    # Chance, and DE files them as two stats (WeaponMeleeComboPointsOnHitMod here,
-    # WeaponMeleeComboBonusOnHitMod there). In the fight they do NOT net: this is
-    # a GATE each base combo point survives with 1 + value, on top of whatever
-    # the chance pool gave it. -57.3% beside +120% on a 3-point hit read 0 to 6
-    # over 45 hits, mean 2.64 and never a 1; netted to +62.7% it could not go
-    # under 3 (MEASUREMENTS M97).
     kind: combo_gain_chance
     bonus: false
   - id: cold
@@ -72,6 +71,17 @@ stats:
     suffix: "nem"
     text: "|val|s Combo Duration"
     kind: melee_combo_duration_bonus
+  - id: corrosive
+    tag: WeaponCorrosiveDamageMod
+    order: 29
+    base: 0.0099999998
+    prefix: "cori"
+    suffix: "or"
+    text: "|val|% Corrosive"
+    kind: combined_element_bonus
+    arg: corrosive
+    malus: false
+    spliced: true
   - id: critical_chance
     tag: WeaponCritChanceMod
     order: 4
@@ -123,6 +133,39 @@ stats:
     text: "|val| Damage to Infested"
     kind: faction_damage_bonus
     arg: infested
+  - id: damage_to_orokin
+    tag: WeaponFactionDamageOrokin
+    order: 34
+    base: 0.0049999999
+    prefix: "effi"
+    suffix: "tas"
+    text: "|val| Damage to Orokin"
+    kind: faction_damage_bonus
+    arg: orokin
+    malus: false
+    spliced: true
+  - id: damage_to_scaldra
+    tag: WeaponFactionDamageScaldra
+    order: 36
+    base: 0.0049999999
+    prefix: "exsi"
+    suffix: "llo"
+    text: "|val| Damage to Scaldra"
+    kind: faction_damage_bonus
+    arg: scaldra
+    malus: false
+    spliced: true
+  - id: damage_to_techrot
+    tag: WeaponFactionDamageTechrot
+    order: 35
+    base: 0.0049999999
+    prefix: "muti"
+    suffix: "gia"
+    text: "|val| Damage to Techrot"
+    kind: faction_damage_bonus
+    arg: techrot
+    malus: false
+    spliced: true
   - id: electricity
     tag: WeaponElectricityDamageMod
     order: 6
@@ -141,6 +184,17 @@ stats:
     suffix: "cta"
     text: "|val|% Finisher Damage"
     kind: unmodelled
+  - id: gas
+    tag: WeaponGasDamageMod
+    order: 28
+    base: 0.0099999998
+    prefix: "cali"
+    suffix: "fel"
+    text: "|val|% Gas"
+    kind: combined_element_bonus
+    arg: gas
+    malus: false
+    spliced: true
   - id: heat
     tag: WeaponFireDamageMod
     order: 7
@@ -163,8 +217,8 @@ stats:
     tag: WeaponMeleeHeavyAttackChargeMod
     order: 25
     base: 0.0133
-    prefix: "laci"
-    suffix: "nus"
+    prefix: "veri"
+    suffix: "lus"
     text: "|val|% Heavy Attack Wind Up Speed"
     kind: heavy_windup_speed_bonus
     malus: false
@@ -186,6 +240,17 @@ stats:
     suffix: "um"
     text: "|val| Initial Combo"
     kind: initial_combo
+  - id: magnetic
+    tag: WeaponMagneticDamageMod
+    order: 33
+    base: 0.0099999998
+    prefix: "magni"
+    suffix: "bra"
+    text: "|val|% Magnetic"
+    kind: combined_element_bonus
+    arg: magnetic
+    malus: false
+    spliced: true
   - id: melee_damage
     tag: WeaponMeleeDamageMod
     order: 0
@@ -198,8 +263,8 @@ stats:
     tag: WeaponMeleeHeavyAttackDamageMod
     order: 24
     base: 0.0133
-    prefix: "laci"
-    suffix: "nus"
+    prefix: "robi"
+    suffix: "ndo"
     text: "|val|% Melee Damage on Heavy Attack"
     kind: heavy_attack_damage_bonus
     malus: false
@@ -207,9 +272,9 @@ stats:
   - id: parry_angle
     tag: WeaponMeleeParryAngleMod
     order: 26
-    base: 0.090000004
-    prefix: "laci"
-    suffix: "nus"
+    base: 0.09
+    prefix: "defi"
+    suffix: "so"
     text: "|val| Parry Angle"
     kind: unmodelled
     malus: false
@@ -223,6 +288,17 @@ stats:
     text: "|val|% Puncture"
     kind: physical_damage_bonus
     arg: puncture
+  - id: radiation
+    tag: WeaponRadiationDamageMod
+    order: 31
+    base: 0.0099999998
+    prefix: "radi"
+    suffix: "lo"
+    text: "|val|% Radiation"
+    kind: combined_element_bonus
+    arg: radiation
+    malus: false
+    spliced: true
   - id: range
     tag: WeaponMeleeRangeIncMod
     order: 18
@@ -235,8 +311,8 @@ stats:
     tag: WeaponMeleeSlamDamageMod
     order: 27
     base: 0.0133
-    prefix: "laci"
-    suffix: "nus"
+    prefix: "proxi"
+    suffix: "lam"
     text: "|val|% Slam Attack Damage"
     kind: slam_damage_bonus
     malus: false
@@ -260,7 +336,7 @@ stats:
     kind: status_chance_bonus
   - id: status_damage
     tag: WeaponStatusDamage
-    order: 28
+    order: 37
     base: 0.0099999998
     prefix: "plaga"
     suffix: "mna"
@@ -286,3 +362,14 @@ stats:
     kind: elemental_damage_bonus
     arg: toxin
     malus: false
+  - id: viral
+    tag: WeaponViralDamageMod
+    order: 30
+    base: 0.0099999998
+    prefix: "cari"
+    suffix: "sco"
+    text: "|val|% Viral"
+    kind: combined_element_bonus
+    arg: viral
+    malus: false
+    spliced: true

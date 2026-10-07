@@ -79,7 +79,7 @@ mod tests {
         let condition = |w: &str| {
             TennoCondition::from_id(w).is_some()
                 || w.starts_with("fire_rate_below_")
-                || ["sliding_or_aim_gliding", "buffing_ally_warframes", "target_has_10_radiation_stacks"].contains(&w)
+                || ["buffing_ally_warframes", "target_has_10_radiation_stacks"].contains(&w)
                 || BuffTrigger::from_id(w).is_some()
                 || ArcTrigger::from_id(w).is_some()
         };

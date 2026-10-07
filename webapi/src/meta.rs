@@ -1119,7 +1119,7 @@ pub fn meta_json() -> Value {
                                     wfsim_engine::build::rivens::Shown::Multiplier => "x",
                                     wfsim_engine::build::rivens::Shown::Number => "",
                                 },
-                                // A Riven Splicer's stat: one a card, and unmeasured.
+                                // A Riven Splicer's stat: at most one a card.
                                 "spliced": s.spliced,
                             }))
                             .collect::<Vec<_>>()),
@@ -1297,6 +1297,8 @@ pub fn meta_json() -> Value {
             "aiming": true,
             "invisible": false,
             "airborne": false,
+            "sliding": false,
+            "aim_gliding": false,
             "overshields": false,
             "channeling": false,
             "melee_equipped": true,

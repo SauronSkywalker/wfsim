@@ -90,6 +90,7 @@ pub enum TennoCondition {
     Aiming,
     Invisible,
     Airborne,
+    SlidingOrAimGliding,
     /// `sprint_speed >= x`
     SprintAtLeast(f64),
     /// `armor > x`
@@ -138,6 +139,7 @@ impl TennoCondition {
             "aiming" => C::Aiming,
             "invisible" => C::Invisible,
             "airborne" => C::Airborne,
+            "sliding_or_aim_gliding" => C::SlidingOrAimGliding,
             "overshields" => C::Overshields,
             "channeling" => C::Channeling,
             "melee_equipped" => C::MeleeEquipped,
@@ -153,6 +155,7 @@ impl TennoCondition {
             C::Aiming => "while aiming".to_string(),
             C::Invisible => "while Invisible".to_string(),
             C::Airborne => "while Airborne".to_string(),
+            C::SlidingOrAimGliding => "while Sliding or Aim Gliding".to_string(),
             C::SprintAtLeast(x) => format!("at sprint speed {x} or higher"),
             C::ArmorOver(x) => format!("with armor over {x}"),
             C::MaxEnergyOver(x) => format!("with max energy over {x}"),

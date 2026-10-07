@@ -19,7 +19,7 @@ stats:
   - id: ammo_efficiency
     tag: WeaponAmmoEfficiency
     order: 26
-    base: 0.001
+    base: 0.0049999999
     prefix: "parci"
     suffix: "pia"
     text: "|val|% Ammo Efficiency"
@@ -274,8 +274,8 @@ stats:
     tag: WeaponMagazineReloadHolstered
     order: 27
     base: 0.0099999998
-    prefix: "parci"
-    suffix: "pia"
+    prefix: "auxi"
+    suffix: "rro"
     text: "|val|% Magazine Reloaded/s when Holstered"
     kind: unmodelled
     malus: false
@@ -339,7 +339,7 @@ stats:
   - id: weak_point_critical_chance
     tag: WeaponWeakpointCriticalChance
     order: 25
-    base: 0.0099999998
+    base: 0.0275
     prefix: "exiti"
     suffix: "eus"
     text: "|val|% Weak Point Critical Chance"
@@ -349,7 +349,7 @@ stats:
   - id: weak_point_damage
     tag: WeaponWeakpointDamage
     order: 24
-    base: 0.0099999998
+    base: 0.025
     prefix: "eni"
     suffix: "vo"
     text: "|val|% Weak Point Damage"

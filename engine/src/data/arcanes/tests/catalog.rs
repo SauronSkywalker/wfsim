@@ -401,6 +401,12 @@ fn every_condition_is_honoured_at_resolve_or_at_the_hit() {
                         );
                     }
                 }
+                // Asked of the Tenno, whose neutral state claims none of them.
+                ArcCondition::Tenno(c) => assert!(
+                    !c.holds(crate::data::tenno::default_tenno())
+                        && (!all_conditional || format!("{em:?}") == format!("{none:?}")),
+                    "{path}: a declared Tenno state is off for the neutral Tenno, so the arcane pays nothing"
+                ),
                 ArcCondition::TargetRadiationStacks(n) => assert_eq!(
                     em.echo_needs_radiation_stacks, n,
                     "{path}: a target-state condition must be the SIM's gate"
@@ -431,13 +437,45 @@ fn assumed_max_only_conditionals_are_emergent_noops() {
     assert!((s.fx(5, StackPolicy::AssumedMax, NO_TRAITS, crate::data::tenno::default_tenno()).final_multiplier - 8.0).abs() < 1e-9);
 }
 
+fn sliding_tenno(sliding: bool, aim_gliding: bool) -> crate::data::tenno::Tenno {
+    let mut t = crate::data::tenno::default_tenno().clone();
+    t.state.sliding = sliding;
+    t.state.aim_gliding = aim_gliding;
+    t
+}
+
 #[test]
 fn requires_gates_akimbo_on_the_dual_pistols_trait() {
     let a = secondary("akimbo_slip_shot").unwrap();
-    let off = a.fx(5, StackPolicy::AssumedMax, NO_TRAITS, crate::data::tenno::default_tenno());
+    let sliding = sliding_tenno(true, false);
+    let off = a.fx(5, StackPolicy::AssumedMax, NO_TRAITS, &sliding);
     assert_eq!(off.ammo_efficiency, 0.0);
-    let on = a.fx(5, StackPolicy::AssumedMax, &["dual_pistols"], crate::data::tenno::default_tenno());
+    let on = a.fx(5, StackPolicy::AssumedMax, &["dual_pistols"], &sliding);
     assert!((on.ammo_efficiency - 0.65).abs() < 1e-9);
+}
+
+/// "While sliding or aim gliding" is the fight's DECLARED state, so it is asked
+/// under both policies — neither tick, and assumed-max pays nothing either.
+#[test]
+fn akimbo_slip_shot_pays_only_while_sliding_or_aim_gliding() {
+    let a = secondary("akimbo_slip_shot").unwrap();
+    for policy in [StackPolicy::Emergent, StackPolicy::AssumedMax] {
+        let at = |t: &crate::data::tenno::Tenno| a.fx(5, policy, &["dual_pistols"], t).ammo_efficiency;
+        assert_eq!(at(&sliding_tenno(false, false)), 0.0, "{policy:?}: standing");
+        assert!((at(&sliding_tenno(true, false)) - 0.65).abs() < 1e-9, "{policy:?}: sliding");
+        assert!((at(&sliding_tenno(false, true)) - 0.65).abs() < 1e-9, "{policy:?}: aim gliding");
+    }
+}
+
+/// AN AIM GLIDE IS AIRBORNE: Zazvat-Kar's "while Airborne" holds during one.
+#[test]
+fn aim_gliding_is_airborne() {
+    use crate::model::TennoCondition as C;
+    let gliding = sliding_tenno(false, true);
+    assert!(C::Airborne.holds(&gliding));
+    assert!(C::SlidingOrAimGliding.holds(&gliding));
+    let sliding = sliding_tenno(true, false);
+    assert!(!C::Airborne.holds(&sliding));
 }
 
 #[test]
