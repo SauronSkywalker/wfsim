@@ -35,6 +35,7 @@ riven_words:
   装填: [reload_speed]
   后坐: [weapon_recoil]
   范围: [range]
+  射程: [range]
   滑暴: [critical_chance_for_slide_attack]
   对g: [damage_to_grineer]
   对c: [damage_to_corpus]

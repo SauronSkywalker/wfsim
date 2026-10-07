@@ -780,7 +780,8 @@ ui:
   "×3 on a partial reload, 45° fan": ×3，未打空时换弹扔出，45° 扇形
   "×1, 5 m radius": ×1，5 米半径
   "×3, 3 m radius": ×3，3 米半径
-  "Range": 射程
+  # DE's client wording, off the Reach and Ballista Measure cards.
+  "Range": 攻击范围
   "Range Advantage, the Akjagara-exclusive mod — a weapon-exclusive card outside the pools this roster loads": "「Range Advantage」，Akjagara 家族的专属 MOD——这是一张武器专属卡，不在本武器库载入的卡池里"
   "Recoil": 后坐力
   "Reload": 装填时间
@@ -2748,7 +2749,8 @@ effect_phrases:
   - ['Beam Range', '光束长度']
   - ['Ammo Reserve', '备弹']
   - ['Holstered Reload/s', '收枪装填/秒']
-  - ['\bRange\b', '射程']
+  # DE's client wording: Reach "+1.5 攻击范围", Ballista Measure "+20% 攻击范围".
+  - ['\bRange\b', '攻击范围']
   - ['\bZoom\b', '变焦']
   - ['\(aiming\)', '（瞄准时）']
   # MELEE'S OWN, every one of them DE's client wording -- from the card of the
