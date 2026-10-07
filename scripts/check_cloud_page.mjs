@@ -12,16 +12,17 @@ const { evaluate, check } = app;
 const r = await evaluate(`(async () => {
   const sleep = (ms) => new Promise((ok) => setTimeout(ok, ms));
   const realFetch = window.fetch;
-  let allowance = null;
+  let allowance = null, who = 'acc1';
   window.fetch = async (url, o = {}) => {
     const path = String(url);
     const reply = (j) => new Response(JSON.stringify(j), { headers: { 'content-type': 'application/json' } });
-    if (path === '/api/account') return reply({ ok: true, providers: ['email'], account: { id: 'acc1', created_at: '2026-09-01',
+    if (path === '/api/account') return reply({ ok: true, providers: ['email'], account: { id: who, created_at: '2026-09-01',
       identities: [{ provider: 'email', label: 'a@x' }] } });
     if (path === '/api/billing') return reply({ ok: true, configured: false });
     if (path === '/api/account/agents') return reply({ ok: true, agents: [] });
     if (path === '/api/cloud/sync' && JSON.parse(o.body || '{}').devices) {
       const me = JSON.parse(o.body).device.id;
+      if (who === 'acc2') return reply({ ok: true, devices: [{ id: me, label: 'Mac · Firefox', seen_at: Date.now(), ok: null }] });
       return reply({ ok: true, devices: [
         { id: me, label: 'Windows · Chrome', seen_at: Date.now(), round_at: Date.now(), ok: true, reason: null, unsynced: 2, held: 100 },
         { id: 'phone', label: 'iPhone · Safari', seen_at: Date.now() - 864e5, round_at: Date.now() - 864e5, ok: false, reason: 'offline', unsynced: 0, held: 3 }] });
@@ -79,12 +80,18 @@ const r = await evaluate(`(async () => {
   page().querySelector('[data-cbulk="on"]').click(); await sleep(300);
   const synced = ['t1', 't2', 'f1'].filter((id) => !('cloud_sync' in stored(id)) || stored(id).cloud_sync !== false).length;
   out.capped = { synced, note: !!document.getElementById('page-note') };
+  // ANOTHER ACCOUNT SIGNED IN ON THIS PAGE sees its own browsers, never the last one's.
+  who = 'acc2'; await loadAccount(); renderAuthPage('sync'); await sleep(600);
+  const devs2 = [...page().querySelectorAll('.set-main .block')].find((b) => /Devices/.test(b.querySelector('h2').textContent));
+  out.switched = devs2 ? devs2.textContent.replace(/\\s+/g, ' ') : '';
   window.fetch = realFetch;
   return out;
 })()`);
 
 const ok = (x) => JSON.stringify(x);
 check("the page is in the settings nav, open", r.nav === true);
+check("another account signed in on the same page is shown its own browsers, not the last account's",
+  /Mac · Firefox/.test(r.switched) && !/iPhone/.test(r.switched), r.switched);
 check("every browser of the account is listed: this one marked, what did not sync, and why one failed",
   JSON.stringify(r.devices) === JSON.stringify([2, true, true, true]), JSON.stringify(r.devices));
 check("every item, from every collection and weapon, newest first",

@@ -312,6 +312,7 @@ stays the working copy: signed out, or without the feature, nothing runs.
 | a new entry is synced unless "upload new items" (this browser's `wfsim-sync-auto`) is off | `syncRound` |
 | the server states what the account may hold per pool (`allowance`); past it a new entry stays here and turning one on is refused | `syncAllowance`, `setCloudSync` |
 | `/account/sync` lists every item this browser holds, newest first or by weapon, and switches sync one at a time or several at once; it deletes nothing | `cloudPage` (19-cloud-page.js) |
+| its device and trash lists are the signed-in account's: another account signing in on the page forgets them, and an answer for the last one is dropped | `cloudForget` |
 | a custom travels with what names it: an entry a round pushes brings every custom it names, counted against the allowance; one past it stays here and is named | `syncRound`, `customRefs` |
 | customs are pushed before presets, so no browser pulls a build before its riven | `syncRound` |
 | taking a custom off the account says how many synced items use it | `setCloudSync`, `syncNamers` |

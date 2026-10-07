@@ -7,8 +7,19 @@
 let cloudView = { q: "", status: "all", kind: "all", by: "time" };
 /// THE ACCOUNT'S BROWSERS as the server last listed them, or null before it has.
 let cloudDevices = null;
+/// WHOSE THE LISTS ABOVE AND BELOW ARE: signing in as someone else on this page
+/// forgets them, or the next account is shown the last one's browsers and trash.
+let cloudFor = null;
+function cloudForget(who) {
+  if (cloudFor === who) return;
+  cloudFor = who;
+  cloudDevices = null;
+  cloudTrash = null;
+}
 async function loadCloudDevices() {
+  const who = cloudFor;
   const r = await syncCall({ devices: true });
+  if (who !== cloudFor) return;
   cloudDevices = r && r.ok && Array.isArray(r.devices) ? r.devices : [];
   if (authKindOf(location.pathname) === "sync" && $("cloud-items")) renderAuthPage("sync");
 }
@@ -76,6 +87,7 @@ function cloudItems() {
 }
 
 function cloudPage(a) {
+  cloudForget(a.id);
   const n = syncedCounts();
   const meter = (pool, label, what) => {
     const cap = syncAllowance && syncAllowance[pool];
@@ -107,7 +119,9 @@ function cloudPage(a) {
 /// before it has. A deletion is kept for 30 days (docs/SYNC.md).
 let cloudTrash = null;
 async function loadCloudTrash() {
+  const who = cloudFor;
   const r = await syncCall({ trash: true });
+  if (who !== cloudFor) return;
   cloudTrash = r && r.ok && Array.isArray(r.trash) ? r.trash : [];
   const box = $("cloud-trash");
   if (box) box.innerHTML = cloudTrashHtml();
