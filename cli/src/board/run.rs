@@ -208,20 +208,9 @@ pub fn run() {
     // at the point of use publishes a whole ranking in the units of a question
     // nobody asked, and the number looks exactly like a right one.
     let metric = bench.metric();
-    let duration = scenario
-        .get("duration")
-        .and_then(Value::as_f64)
-        .unwrap_or(300.0);
-    // THE ROW'S NUMBER IN THE RULER'S OWN UNITS, said once. `score` off the
-    // wire is kill PROGRESS over the whole engagement — kills plus the fraction
-    // of the current target depleted — so a `kpm` ruler turns it into a rate
-    // and a `dps` one reads a different field entirely.
-    let score_in = |out: &Value| -> f64 {
-        metric.of(
-            out.get(metric.field).and_then(Value::as_f64).unwrap_or(0.0),
-            duration,
-        )
-    };
+    // THE ROW'S NUMBER IN THE RULER'S OWN UNITS, said once for the scorer and
+    // the page's producer (`board_rows::row_score`).
+    let score_in = |out: &Value| -> f64 { wfsim_webapi::board_rows::row_score(bench, out) };
 
     let mut rows: Vec<Row> = Vec::new();
     let (mut seen, mut refused) = (0usize, 0usize);
@@ -260,137 +249,38 @@ pub fn run() {
             .and_then(Value::as_str)
             .unwrap_or("")
             .to_string();
-        let get = |k: &str| -> Vec<String> {
-            s.get(k)
-                .and_then(Value::as_array)
-                .map(|a| {
-                    a.iter()
-                        .filter_map(Value::as_str)
-                        .map(String::from)
-                        .collect()
-                })
-                .unwrap_or_default()
-        };
-        let (mods, evos, arcs) = (get("mods"), get("evolutions"), get("arcanes"));
-
-        // THE SAME CHECK A BOARD ROW FACES ANYWHERE. A submission arrives over
-        // a network with no UI on the path, so "could a player equip this" is
-        // asked here rather than assumed — and it NORMALISES first, so what
-        // gets scored and what gets published are the same object.
-        // THE BOARD'S door, not the legality one: a row must be a COMPLETE
-        // build. A submission that is merely legal is refused
-        // here and simply never scored.
-        // THE REASON IS PRINTED, not counted. "2 refused" is a number that
-        // tells nobody anything — including me, on the day two complete-looking
-        // Dual Toxocyst builds were turned away and the log said only that they
-        // were. A board that refuses in silence cannot be debugged
-        // by the person whose build it refused, either.
-        // AN ADVERSARY WEAPON'S PROGENITOR ELEMENT is part of the submission,
-        // like its mods and its evolutions — a different element is a different
-        // build, not a weaker one. `board::builds::validate` refuses one the weapon
-        // cannot have and refuses a MISSING one on a weapon that always has
-        // one, so neither can arrive by omission — a legality rule rather than
-        // a ruler's, since a build without an element is not a build a ruler
-        // declines, it is not a build.
-        let valence = s.get("valence").and_then(Value::as_str).unwrap_or("");
-        // A RIVEN'S SHAPE, when the submission carries one. Two flat lists, the
-        // way the endpoint stores them: the ROLLS are never submitted because
-        // they are one person's luck — `wfsim-intake` stores the shape's
-        // corners and the board ranks them.
-        let shape = {
-            let bonuses = get("riven_pos");
-            let malus = s
-                .get("riven_neg")
-                .and_then(Value::as_str)
-                .filter(|x| !x.is_empty());
-            (!bonuses.is_empty()).then(|| wfsim_engine::build::rivens::RivenShape {
-                bonuses: {
-                    let mut b = bonuses;
-                    b.sort();
-                    b
-                },
-                malus: malus.map(String::from),
-            })
-        };
-        // THE EXILUS SLOT'S MOD. Optional as of 2026-08-25 — see
-        // `board::benchmarks::BuildRequirement::allows_exilus` — and its own
-        // field on the wire because a flat `mods` list cannot say which entry
-        // came out of the exilus slot.
-        let exilus = s
-            .get("exilus")
-            .and_then(Value::as_str)
-            .filter(|x| !x.is_empty());
-        // THE WARFRAME HOLDING IT, and only an Exalted row carries one — its
-        // numbers are that frame's ability's, so the record states it where
-        // every other row is scored in the ruler's frameless hands.
-        let wielder: Option<wfsim_engine::data::warframes::Build> =
-            s.get("wielder").and_then(|x| serde_json::from_value(x.clone()).ok());
-        // THE PARTS, flat, exactly as the worker stores them and as the page's
-        // own door reads them (`webapi::kitgun::board_assembly_of`). The chamber is the
-        // weapon's, never the record's.
-        let asm = {
-            let g = s.get("grip").and_then(Value::as_str).unwrap_or("");
-            let l = s.get("loader").and_then(Value::as_str).unwrap_or("");
-            (!(g.is_empty() && l.is_empty())).then(|| wfsim_engine::data::weapons::kitguns::Assembly {
-                // The chamber's WEAPON id, which is what `Assembly` holds.
-                chamber: wfsim_engine::data::weapons::spec(&weapon)
-                    .and_then(|sp| sp.kitgun.clone())
-                    .and_then(|r| wfsim_engine::data::weapons::kitguns::default_assembly(&r))
-                    .map(|d| d.chamber)
-                    .unwrap_or_default(),
-                grip: g.to_string(),
-                loader: l.to_string(),
-            })
-        };
-        let v = match wfsim_engine::board::builds::validate_for_board_with(
-            &bench_id,
-            &weapon,
-            &mods,
-            &evos,
-            &arcs,
-            valence,
-            shape.as_ref(),
-            exilus,
-            asm.as_ref(),
-            // THE WARFRAME THE RECORD CARRIES, and it carries one only where a
-            // ruler cannot pin it. Absent on every ordinary row, which is why
-            // the door drops it there rather than asking for it.
-            wielder.as_ref(),
-        ) {
+        // THE SAME CHECK A BOARD ROW FACES ANYWHERE, and the same READ of the
+        // record: `board_rows::scored_build` is what the page's producer reads
+        // a build with too, so the two cannot fight two different builds. It is
+        // THE BOARD'S door, not the legality one — a row must be a COMPLETE
+        // build — and it normalises first, so what gets scored and what gets
+        // published are the same object.
+        //
+        // THE REASON IS PRINTED, with the whole build, not counted: "2 refused"
+        // is a number that tells nobody anything, including the person whose
+        // build it refused.
+        let v = match wfsim_webapi::board_rows::scored_build(&s, &bench_id) {
             Ok(v) => v,
             Err(e) => {
-                // THE BUILD, not just the weapon. "refused burston_prime:
-                // needs 64 of 60" says a build was turned away and leaves
-                // "which one, and was it really impossible?" unanswerable —
-                // which is the question asked of this log the first time
-                // somebody's submission went missing. The
-                // whole row is what makes a refusal checkable by hand.
+                let list = |k: &str| -> String {
+                    s.get(k)
+                        .and_then(Value::as_array)
+                        .map(|a| a.iter().filter_map(Value::as_str).collect::<Vec<_>>().join(", "))
+                        .unwrap_or_default()
+                };
+                let valence = s.get("valence").and_then(Value::as_str).unwrap_or("");
                 eprintln!(
                     "refused {weapon}: {e}
   mode={} mods=[{}] evolutions=[{}] arcanes=[{}] valence={}",
                     s.get("mode").and_then(Value::as_str).unwrap_or("—"),
-                    mods.join(", "),
-                    evos.join(", "),
-                    arcs.join(", "),
+                    list("mods"),
+                    list("evolutions"),
+                    list("arcanes"),
                     if valence.is_empty() { "—" } else { valence },
                 );
                 refused += 1;
                 continue;
             }
-        };
-
-        // …AND THE NUMBERS ITS RIVEN ROLLED, if the record names them. They are
-        // part of the fight, so they are part of the identity every key here is
-        // taken from: two ends of one shape are two builds with two numbers.
-        //
-        // A RECORD THAT NAMES NONE STATES ONLY A SHAPE, which is what the
-        // library held before `wfsim-intake` resolved them, and the branch in
-        // the scoring loop below searches for the corner as it always did.
-        let v = match s.get("riven_rolls").and_then(Value::as_array) {
-            Some(rolls) => v.with_riven_rolls(
-                rolls.iter().filter_map(Value::as_f64).collect::<Vec<_>>(),
-            ),
-            None => v,
         };
 
         // IT PASSED THE DOOR, so it owes a row somewhere. Recorded before the
@@ -403,7 +293,7 @@ pub fn run() {
         // neither is a property of the mode the loop below enumerates.
         who.entry(ident).or_insert_with(|| Who {
             weapon: v.weapon.clone(),
-            riven: shape.is_some(),
+            riven: v.riven.is_some(),
         });
         // EVERY MODE THIS WEAPON CAN BE PLAYED IN, and not the one the
         // submitter happened to try.
@@ -421,25 +311,18 @@ pub fn run() {
         // carries no stat: tier 1 of an Incarnon ladder is `fixed`, so the form
         // and the evolution are two controls for one fact.
         //
-        // AN UNSUSTAINABLE MODE IS STILL REFUSED. "Always Incarnon" is not a
-        // way to play for three hundred seconds, and a board may not rank a
-        // fight nobody can hold — derived from the mode, so no benchmark has to
-        // carry a list of what it will not take.
-        let modes: Vec<wfsim_engine::data::weapons::WeaponPlayMode> =
-            wfsim_engine::data::weapons::play_modes(&v.weapon)
-                .into_iter()
-                .filter(|m| m.sustainable)
-                .collect();
-        if modes.is_empty() {
+        // THE REQUESTS ARE `board_rows::row_requests`, the page's producer's
+        // too — riven card included, and an unsustainable mode refused there.
+        let fights = wfsim_webapi::board_rows::row_requests(&v, &scenario);
+        if fights.is_empty() {
             eprintln!("refused {weapon}: it has no mode that can be sustained for an engagement");
             refused += 1;
             continue;
         }
-        for played in modes {
+        for (played, req) in fights {
             // ONE BUILD, SCORED ONCE PER MODE. The clone is the row's own copy:
             // `Row` takes the vectors by value and there is a row per mode.
             let v = v.clone();
-            let mut req = wfsim_webapi::simulate_request(&scenario, &v, played);
             // ONE ROW PER BUILD, and the identity is computed BEFORE the fight
             // because it decides whether there is one to run at all, rather than
             // being computed afterwards for dedup alone.
@@ -643,36 +526,7 @@ pub fn run() {
                     // is no screen: a list is published when every build in it
                     // has been measured, and a cheap probe deciding which ones
                     // to skip is a second kind of number on the same board.
-                    //
-                    // A RIVEN ROW IS SCORED AT ITS SHAPE'S CEILING, and finding
-                    // that ceiling is a search: every corner of the roll band, at a
-                    // CHEAP run count, then the winner measured properly at the
-                    // ruler's own. Sixteen probes and one real measurement rather
-                    // than sixteen real ones — the same "search cheaply, then
-                    // measure the winner" the optimizer's `finalists x final_runs`
-                    // is built on, and here it takes the cost of a riven row from
-                    // 16x a plain one to about 2.6x.
-                    //
-                    // The corners are far apart, so picking between them does not
-                    // need the precision the published number does.
-                    if let Some(shape) = &v.riven {
-                        let cls =
-                            wfsim_engine::build::rivens::class_for_weapon(&v.weapon).unwrap_or("");
-                        // THE BUILD NAMES ITS OWN CARD. `wfsim-intake`
-                        // resolved the shape when the record entered the
-                        // library — the god roll, unless a stat's sign had
-                        // stopped saying which end was better — so the row
-                        // measures the riven the record states and searches
-                        // for nothing.
-                        //
-                        // A RECORD THAT NAMES NO ROLLS IS SCORED AT THE GOD
-                        // ROLL, which is what it would have resolved to on
-                        // every build the library holds.
-                        let spec = shape.at(cls, &card_of(&v, shape));
-                        if let Some(o) = req.as_object_mut() {
-                            o.insert("rivens".into(), wfsim_webapi::riven_request(&spec));
-                        }
-                    }
+
                     // THE MEASUREMENT, IN AS MANY SITTINGS AS THE CLOCK ALLOWS.
                     // The ruler's run count is untouchable — it is the accuracy
                     // promise — so what bends is how many of those runs one

@@ -13,6 +13,11 @@ repository is public. A tree without it cannot ship the bot and says so.
 
     python scripts/ship_bot.py            # deploy, then verify
     python scripts/ship_bot.py --verify   # only: does the bot run the site's engine?
+
+THE LIVE BOARD SHIPS WITH IT (`deploy/wfsim-live.service`): `wfsim-intake` and
+`wfsim-board` built for Linux in Docker from this tree, and the scripts that
+drive them. Without Docker the bot still ships and the live board keeps the
+binaries it had, which is said out loud — a stale intake refuses new weapons.
 """
 import json
 import pathlib
@@ -65,6 +70,56 @@ def deploy() -> None:
     # beside it is a file nothing reads that a later glance mistakes for live.
     run(["ssh", *o, host, f"cd {root}/site/pkg && ls | grep -vx '{wasm}' | xargs -r rm -f; "
                           f"sudo systemctl restart {t['service']}"])
+    deploy_live(t)
+
+
+LIVE_SCRIPTS = ["scripts/live_board.sh", "scripts/fetch_library.sh", "scripts/fetch_facts.sh"]
+
+
+def toolchain() -> str:
+    m = re.search(r'^rust = "([0-9.]+)"', (ROOT / "mise.toml").read_text(encoding="utf-8"), re.M)
+    return m.group(1) if m else "1"
+
+
+def live_binaries(out: pathlib.Path) -> bool:
+    """`wfsim-intake` and `wfsim-board` for the server, or False with the reason."""
+    if subprocess.run(["docker", "version"], capture_output=True).returncode != 0:
+        print("LIVE BOARD NOT SHIPPED — Docker is not running, so no Linux binaries; "
+              "the server keeps the ones it has")
+        return False
+    out.mkdir(parents=True, exist_ok=True)
+    image = f"rust:{toolchain()}-bookworm"
+    # A FAILED BUILD IS SAID, NOT FATAL: by now the site is out, and stopping
+    # here would leave the bot unverified for the sake of the live board.
+    r = subprocess.run(["docker", "run", "--rm", "-v", f"{ROOT}:/src:ro", "-v", f"{out}:/out",
+                        "-v", "wfsim-lin-target:/target", "-v", "wfsim-cargo-reg:/usr/local/cargo/registry",
+                        "-e", "CARGO_TARGET_DIR=/target", "-w", "/src", image, "bash", "-c",
+                        "cargo build --release --locked --bin wfsim-intake --bin wfsim-board && "
+                        "cp /target/release/wfsim-intake /target/release/wfsim-board /out/"],
+                       cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace")
+    if r.returncode != 0:
+        print(f"LIVE BOARD NOT SHIPPED — the Linux build failed: {r.stderr.strip()[-400:]}")
+        return False
+    return True
+
+
+def deploy_live(t: dict) -> None:
+    out = ROOT / "target" / "live-linux"
+    if not live_binaries(out):
+        return
+    root, host, o = t["root"], t["host"], ssh_opts(t)
+    rulers = out / "rulers.txt"
+    names = sorted(p.stem for p in (ROOT / "data" / "benchmarks").glob("*.yaml"))
+    rulers.write_bytes("".join(f"{n}\n" for n in names).encode("utf-8"))
+    run(["ssh", *o, host, f"mkdir -p {root}/bin {root}/scripts {root}/live"])
+    run(["scp", "-q", *o, str(out / "wfsim-intake"), str(out / "wfsim-board"), f"{host}:{root}/bin/"])
+    run(["scp", "-q", *o, *LIVE_SCRIPTS, str(rulers), f"{host}:{root}/scripts/"])
+    # RESTARTED ONLY ONCE INSTALLED: the unit and its read token are put on the
+    # server by hand (`deploy/wfsim-live.service`), and until then there is
+    # nothing to restart.
+    run(["ssh", *o, host, f"chmod +x {root}/bin/*; "
+                          "if systemctl is-enabled --quiet wfsim-live 2>/dev/null; "
+                          "then sudo systemctl restart wfsim-live; fi"])
 
 
 def verify() -> int:

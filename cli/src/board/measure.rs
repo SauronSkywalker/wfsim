@@ -6,26 +6,8 @@ use serde_json::Value;
 
 use super::facts::identity_of;
 
-/// THE CARD A BUILD NAMES — its own rolls, or the god roll if it names none.
-///
-/// ONE READER, so a row's card cannot depend on whether the row was fought or
-/// reused. The fact carried a copy while a record could state only a shape;
-/// nothing made the two agree, and two copies of one truth is a rule about
-/// which wins waiting to be needed.
-///
-/// A RECORD NAMING NO ROLLS is what the library held before `wfsim-intake`
-/// resolved them, and the god roll is what it would resolve to today.
-pub(crate) fn card_of(
-    v: &wfsim_engine::board::builds::ValidBuild,
-    shape: &wfsim_engine::build::rivens::RivenShape,
-) -> Vec<f64> {
-    if !v.riven_rolls.is_empty() {
-        return v.riven_rolls.clone();
-    }
-    let cls = wfsim_engine::build::rivens::class_for_weapon(&v.weapon).unwrap_or("");
-    let g = wfsim_engine::build::rivens::god_roll(shape, cls);
-    g.bonuses.iter().map(|b| b.roll).chain(g.malus.iter().map(|m| m.roll)).collect()
-}
+/// THE CARD A BUILD NAMES — `board_rows::card_of`, the page's producer's too.
+pub(crate) use wfsim_webapi::board_rows::card_of;
 
 /// HOW MANY RUNS A PIECE OF A ROW IS, and it is ONE because nothing else
 /// reproduces the number.
@@ -107,13 +89,13 @@ pub(crate) fn run_budgeted(
         }
     }
     while done < want {
-        let piece = wfsim_webapi::simulate_shard_json(req, done, CHUNK_RUNS, &mut |_, _| {});
-        let Ok(s) = serde_json::from_value::<wfsim_engine::fight::Shard>(piece) else {
+        // THE FOLD IS `board_rows::fold_runs`, one run a piece — the page's
+        // producer folds with the same function, so its number is this one.
+        if wfsim_webapi::board_rows::fold_runs(req, &mut acc, done, CHUNK_RUNS).is_err() {
             // A shard that will not parse is not a slow row, it is a broken
             // one; the caller's `ok` check answers it the way it always did.
             return Some(wfsim_engine_webapi_simulate(req));
-        };
-        acc.merge(&s);
+        }
         done += CHUNK_RUNS;
         if done < want && deadline.is_some_and(|d| std::time::Instant::now() >= d) {
             let shard = serde_json::to_value(&acc).unwrap_or(Value::Null);
@@ -121,8 +103,7 @@ pub(crate) fn run_budgeted(
             return None;
         }
     }
-    let shard = serde_json::to_value(&acc).unwrap_or(Value::Null);
-    Some(wfsim_webapi::simulate_merged_json(req, std::slice::from_ref(&shard)))
+    Some(wfsim_webapi::board_rows::measured(req, &acc))
 }
 
 /// BANK WHERE THIS ROW STOPPED, and leave it for the next run.
@@ -145,6 +126,64 @@ pub(crate) fn pause_row(
 mod tests {
     use super::*;
     use serde_json::json;
+
+    /// THE PAGE'S PRODUCER MEASURES THE SCORER'S ROW, bit for bit.
+    ///
+    /// The submission arrives in the player's order and is read by
+    /// `/api/board/rows`; the scorer reads the library's canonical record. Both
+    /// have to name the same fights, and the producer's fold — pieces carried
+    /// between calls AS TEXT, the way the page holds them — has to end on the
+    /// scorer's number. The run count is cut to keep a debug build quick; the
+    /// claim is about the path, not the count.
+    #[test]
+    fn the_pages_producer_measures_the_scorers_row() {
+        let sent = json!({
+            "weapon": "braton_prime",
+            "mods": ["vital_sense", "hellfire", "speed_trigger", "primary_acuity",
+                     "galvanized_aptitude", "hammer_shot", "vigilante_fervor", "magnetic_capacity"],
+            "evolutions": ["braton_prime_evo1_incarnon_form", "braton_prime_daring_reverie",
+                           "braton_prime_voids_guidance", "braton_prime_prelude_of_might"],
+            "arcanes": ["primary_deadhead"],
+            "mode": "cycle",
+        });
+        let page = wfsim_webapi::board_rows::board_rows_json(&sent);
+        let rows = page["rows"].as_array().expect("rows");
+        let ruler = "standard_single_target";
+        let bench = wfsim_engine::board::benchmarks::get(ruler).expect("ruler");
+        let lib = wfsim_webapi::board_rows::library_build(&sent).expect("legal");
+        let canon = wfsim_webapi::board_rows::canonical_record(&lib);
+        let v = wfsim_webapi::board_rows::scored_build(&canon, ruler).expect("complete");
+        let scenario = serde_json::to_value(&bench.scenario).unwrap();
+        let scorer = wfsim_webapi::board_rows::row_requests(&v, &scenario);
+        assert!(scorer.len() >= 2, "an Incarnon weapon has a mode per form");
+        for (played, want) in scorer {
+            let mode = if played.id.is_empty() { "base" } else { played.id };
+            let got = rows
+                .iter()
+                .find(|r| r["ruler"] == ruler && r["mode"] == mode)
+                .unwrap_or_else(|| panic!("the page names no {mode} row"));
+            assert_eq!(got["request"], want, "the page built a different {mode} fight");
+
+            let mut req = want.clone();
+            req["runs"] = json!(9);
+            let banked = run_budgeted(&mut Partial::default(), "measure", &req, 9, None).unwrap();
+            let mut acc = Value::Null;
+            for from in (0..9).step_by(4) {
+                let step = wfsim_webapi::board_rows::board_fold_json(&json!({
+                    "request": req, "acc": acc, "from": from, "count": (9 - from).min(4),
+                }));
+                acc = serde_json::from_str(&step["acc"].to_string()).unwrap();
+            }
+            let scored = wfsim_webapi::board_rows::board_score_json(&json!({
+                "ruler": ruler, "request": req, "acc": acc,
+            }));
+            assert_eq!(
+                scored["score"].as_f64().unwrap().to_bits(),
+                wfsim_webapi::board_rows::row_score(bench, &banked).to_bits(),
+                "the producer's {mode} number is not the scorer's",
+            );
+        }
+    }
 
     /// A ROW PAID FOR IN SITTINGS IS THE ROW PAID FOR IN ONE.
     ///

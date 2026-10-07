@@ -30,89 +30,8 @@ use serde_json::{json, Value};
 use wfsim_cli::args::flag;
 use wfsim_engine::board::benchmarks::family;
 
-/// The ids a record carries under `key`, in order.
-fn ids(rec: &Value, key: &str) -> Vec<String> {
-    rec.get(key)
-        .and_then(Value::as_array)
-        .map(|a| a.iter().filter_map(Value::as_str).map(String::from).collect())
-        .unwrap_or_default()
-}
-
 fn id(rec: &Value, key: &str) -> String {
     rec.get(key).and_then(Value::as_str).unwrap_or("").to_string()
-}
-
-/// THE RIVEN A RECORD STATES, as a shape. `riven_pos` empty means no riven —
-/// a malus alone is not one.
-fn riven_of(rec: &Value) -> Option<wfsim_engine::build::rivens::RivenShape> {
-    let bonuses = ids(rec, "riven_pos");
-    if bonuses.is_empty() {
-        return None;
-    }
-    let malus = id(rec, "riven_neg");
-    Some(wfsim_engine::build::rivens::RivenShape {
-        bonuses,
-        malus: Some(malus).filter(|m| !m.is_empty()),
-    })
-}
-
-/// THE CANONICAL BUILD, as the library stores one.
-///
-/// WRITTEN FROM THE `ValidBuild` and not copied from the submission: what goes
-/// in is what the engine made of it — the mod order canonicalised to one
-/// representative per pairing, the evolution ladder truncated to what the
-/// weapon has, the arcane list padded to its seats. A record that kept the
-/// submitted spelling would key one way and simulate another.
-///
-/// `mode` DOES NOT SURVIVE. It is where the submitter happened to be standing;
-/// mods are equipped on the WEAPON and a mode is how it is fired, so nothing
-/// about a build can become a different build by being played differently. It
-/// was in the door's key until now, and the same cards sent from two modes were
-/// two rows in a table whose whole promise is one row per build.
-fn canonical(v: &wfsim_engine::board::builds::ValidBuild) -> Value {
-    let mut rec = json!({
-        "weapon": v.weapon,
-        "mods": v.mods,
-        "evolutions": v.evolutions,
-        "arcanes": v.arcanes,
-    });
-    let o = rec.as_object_mut().expect("object");
-    if !v.valence.is_empty() {
-        o.insert("valence".into(), json!(v.valence));
-    }
-    if let Some(x) = &v.exilus {
-        o.insert("exilus".into(), json!(x));
-    }
-    if let Some(a) = &v.assembly {
-        o.insert("grip".into(), json!(a.grip));
-        o.insert("loader".into(), json!(a.loader));
-    }
-    // THE WARFRAME, on the one kind of build that carries one. `ValidBuild`
-    // already dropped it everywhere a ruler supplies the frame, so writing it
-    // here cannot make two records of one gun build.
-    if let Some(w) = &v.wielder {
-        o.insert("wielder".into(), serde_json::to_value(w).unwrap_or(Value::Null));
-    }
-    if let Some(r) = &v.riven {
-        o.insert("riven_pos".into(), json!(r.bonuses));
-        if let Some(m) = &r.malus {
-            o.insert("riven_neg".into(), json!(m));
-        }
-    }
-    rec
-}
-
-/// …AND THE ROLLS THE RIVEN IS STORED WITH. Bonuses first, then the malus,
-/// which is the order `RivenShape::at` reads them back in.
-///
-/// A BUILD WITH A RIVEN IS NOT COMPLETE WITHOUT THEM. The shape says which
-/// stats; a fight needs numbers, and a row published without them names a card
-/// nobody can go and obtain.
-fn with_rolls(mut rec: Value, rolls: &[f64]) -> Value {
-    if let Some(o) = rec.as_object_mut() {
-        o.insert("riven_rolls".into(), json!(rolls));
-    }
-    rec
 }
 
 /// EVERY CORNER OF THE SHAPE, THE DEFAULT FIRST — and no fight to choose
@@ -198,10 +117,53 @@ fn rank_choices(v: &wfsim_engine::board::builds::ValidBuild) -> Vec<Vec<String>>
     out
 }
 
-/// A CARD'S RANK IS NOT PART OF WHAT ARRIVES: every card is stored at max rank,
-/// and [`corners_for`] asks the fight about the ones the every-rank list names.
-fn at_max_rank(id: &str) -> String {
-    wfsim_engine::data::mods::split_rank(id).0.to_string()
+/// WHAT THE SUBMITTER'S MACHINE MEASURED, as fact lines in the scorer's own
+/// shape (`facts::FactLog::write`) — for the owner's live board, never for
+/// `scores`.
+///
+/// KEYED HERE, by the build this pass derives: the record names only a
+/// (ruler, mode), so a claim can land on no build but its own. A claim for a
+/// fight the build does not owe — a ruler that refuses it, a mode it cannot
+/// sustain — is dropped, and so is every claim on a riven, whose library builds
+/// are corners the page never measured. `measured_by` says it was a client,
+/// which the projection publishes as `unverified` (`board::CLIENT_MEASURED`).
+fn produced_facts(rec: &Value, lib: &wfsim_engine::board::builds::ValidBuild) -> Vec<Value> {
+    let (Some(list), Some(engine)) = (
+        rec.get("produced").and_then(Value::as_array),
+        rec.get("engine").and_then(Value::as_str),
+    ) else {
+        return Vec::new();
+    };
+    if lib.riven.is_some() {
+        return Vec::new();
+    }
+    let canon = wfsim_webapi::board_rows::canonical_record(lib);
+    let at = format!("{}T00:00:00Z", id(rec, "at"));
+    list.iter()
+        .filter_map(|p| {
+            let ruler = p.get("ruler").and_then(Value::as_str)?;
+            let mode = p.get("mode").and_then(Value::as_str)?;
+            let score = p.get("score").and_then(Value::as_f64).filter(|s| s.is_finite())?;
+            let bench = wfsim_engine::board::benchmarks::get(ruler)?;
+            let v = wfsim_webapi::board_rows::scored_build(&canon, ruler).ok()?;
+            let owed = wfsim_engine::data::weapons::play_modes(&v.weapon)
+                .into_iter()
+                .any(|m| m.sustainable && (if m.id.is_empty() { "base" } else { m.id }) == mode);
+            owed.then(|| {
+                json!({
+                    "identity": wfsim_engine::board::builds::build_id(&v),
+                    "ruler": ruler,
+                    "metric": bench.metric().id,
+                    "mode": mode,
+                    "measured_by": format!("{}{engine}", wfsim_cli::board::CLIENT_MEASURED),
+                    "score": score,
+                    "cost_seconds": 0.0,
+                    "started_at": at,
+                    "finished_at": at,
+                })
+            })
+        })
+        .collect()
 }
 
 /// THE FIGHT AN ARRIVAL NAMED, as a queue row — and this is the only place in
@@ -259,6 +221,7 @@ fn asked_row(
 fn intake(
     lines: impl Iterator<Item = String>,
     deadline: Option<std::time::Duration>,
+    mut produced: Option<&mut Vec<Value>>,
 ) -> (Vec<Value>, Vec<Value>, Vec<String>, usize, usize) {
     let started = std::time::Instant::now();
     // ONE ROW PER BUILD, DEDUPED HERE TOO. Two inbox rows can be the same build
@@ -325,32 +288,10 @@ fn intake(
         }
 
         let weapon = id(&rec, "weapon");
-        let riven = riven_of(&rec);
-        let assembly = wfsim_engine::data::weapons::kitguns::assembly_of(
-            &weapon,
-            &id(&rec, "grip"),
-            &id(&rec, "loader"),
-        );
-        let mods: Vec<String> = ids(&rec, "mods").iter().map(|m| at_max_rank(m)).collect();
-        let exilus = at_max_rank(&id(&rec, "exilus"));
-        let v = match wfsim_engine::board::builds::validate_with(
-            &weapon,
-            &mods,
-            &ids(&rec, "evolutions"),
-            &ids(&rec, "arcanes"),
-            &id(&rec, "valence"),
-            riven.as_ref(),
-            Some(exilus).filter(|x| !x.is_empty()).as_deref(),
-            assembly.as_ref(),
-        )
-        // THE WARFRAME, by the board's own rule rather than by a second copy
-        // of it: dropped where a ruler pins a frameless Tenno, required on an
-        // Exalted weapon whose numbers are that frame's.
-        .and_then(|v| {
-            let w: Option<wfsim_engine::data::warframes::Build> =
-                rec.get("wielder").and_then(|x| serde_json::from_value(x.clone()).ok());
-            v.with_wielder(w.as_ref())
-        }) {
+        // THE LIBRARY'S DOOR, `board_rows::library_build` — the page's producer
+        // reads a submission with the same function, so the build it measures
+        // is the build this stores.
+        let v = match wfsim_webapi::board_rows::library_build(&rec) {
             Ok(v) => v,
             // THE REASON IS PRINTED, not counted. "2 refused" tells nobody
             // anything, including the person who submitted them.
@@ -364,6 +305,9 @@ fn intake(
         // scope: the canonical one shadows it below and carries neither field.
         let sent = (id(&rec, "benchmark"), id(&rec, "mode"));
         let at = id(&row, "at");
+        if let Some(sink) = produced.as_deref_mut() {
+            sink.extend(produced_facts(&rec, &v));
+        }
         // A RIVEN BECOMES ITS CORNERS, and a build without one is itself. The
         // record that arrives states a SHAPE; what is stored is a build a player
         // could go and assemble, which needs numbers.
@@ -398,9 +342,9 @@ fn intake(
             // two ends of one shape are two builds with two numbers.
             let key = wfsim_engine::board::builds::build_id(&v);
             let rec = if rolls.is_empty() {
-                canonical(&v)
+                wfsim_webapi::board_rows::canonical_record(&v)
             } else {
-                with_rolls(canonical(&v), &rolls)
+                wfsim_webapi::board_rows::with_rolls(wfsim_webapi::board_rows::canonical_record(&v), &rolls)
             };
             // …AND WHICH QUEUE ROWS PRODUCED IT. Two records can be one build —
             // a resubmission, or two spellings of one pairing — so the build
@@ -443,13 +387,19 @@ fn intake(
 fn main() {
     let done_path = flag("--done");
     let asked_path = flag("--asked");
+    let produced_path = flag("--produced");
+    let mut produced: Vec<Value> = Vec::new();
     // SECONDS, and no flag means no clock — a local run over a file is not the
     // thing this bounds. The workflows pass one; see `intake`.
     let deadline = flag("--deadline")
         .and_then(|s| s.parse::<u64>().ok())
         .map(std::time::Duration::from_secs);
     let (builds, asked, done, seen, refused) =
-        intake(std::io::stdin().lock().lines().map_while(Result::ok), deadline);
+        intake(
+            std::io::stdin().lock().lines().map_while(Result::ok),
+            deadline,
+            Some(&mut produced),
+        );
 
     let mut out = std::io::BufWriter::new(std::io::stdout().lock());
     for row in &builds {
@@ -470,6 +420,14 @@ fn main() {
     // after a pass that took records in is a pass that lost them.
     if let Some(path) = asked_path {
         let body: String = asked.iter().map(|r| format!("{r}\n")).collect();
+        if let Err(e) = std::fs::write(&path, body) {
+            eprintln!("intake: cannot write {path}: {e}");
+            std::process::exit(1);
+        }
+    }
+    if let Some(path) = produced_path {
+        let body: String = produced.iter().map(|r| format!("{r}
+")).collect();
         if let Err(e) = std::fs::write(&path, body) {
             eprintln!("intake: cannot write {path}: {e}");
             std::process::exit(1);
@@ -509,7 +467,7 @@ mod tests {
     ];
 
     fn ids_of(lines: Vec<String>) -> Vec<String> {
-        intake(lines.into_iter(), None)
+        intake(lines.into_iter(), None, None)
             .0
             .iter()
             .map(|b| b["id"].as_str().unwrap_or_default().to_string())
@@ -534,7 +492,7 @@ mod tests {
         assert_eq!(ids.len(), 1, "three records, one build: {ids:?}");
         // …AND THE MODE IS NOT WRITTEN DOWN EITHER, or the record would state a
         // property the build has not got.
-        let (builds, ..) = intake(vec![row("a", &FULL, json!({ "mode": "cycle" }))].into_iter(), None);
+        let (builds, ..) = intake(vec![row("a", &FULL, json!({ "mode": "cycle" }))].into_iter(), None, None);
         assert!(builds[0]["record"].get("mode").is_none(), "{}", builds[0]);
     }
 
@@ -591,6 +549,39 @@ mod tests {
 
     /// A RECORD NOBODY COULD EQUIP IS DONE, NOT RETRIED. It will never become
     /// legal, and a queue that keeps what it cannot use grows for ever.
+    /// A CLAIM LANDS ON THE BUILD THIS PASS DERIVES, and only on a fight it owes.
+    ///
+    /// The identity is never read off the record — the record has none — so it
+    /// has to be the id of the build that comes out beside it, or the live
+    /// board files the number under a build nobody submitted. A ruler that does
+    /// not exist and a mode the weapon cannot play are dropped, not stored.
+    #[test]
+    fn a_produced_score_lands_on_the_build_it_came_with() {
+        let rec = json!({
+            "weapon": "braton_prime",
+            "mods": ["hellfire", "primary_acuity", "galvanized_aptitude", "hammer_shot",
+                     "speed_trigger", "vigilante_fervor", "vital_sense", "magnetic_capacity"],
+            "evolutions": ["braton_prime_evo1_incarnon_form", "braton_prime_daring_reverie",
+                           "braton_prime_voids_guidance", "braton_prime_prelude_of_might"],
+            "arcanes": ["primary_deadhead"],
+            "engine": "r1",
+            "produced": [
+                { "ruler": "standard_single_target", "mode": "cycle", "score": 1.5 },
+                { "ruler": "standard_single_target", "mode": "no_such_mode", "score": 9.0 },
+                { "ruler": "no_such_ruler", "mode": "base", "score": 9.0 },
+            ],
+        });
+        let line = json!({ "id": "p", "at": "2026-10-07", "record": rec }).to_string();
+        let mut produced = Vec::new();
+        let (builds, ..) = intake(vec![line].into_iter(), None, Some(&mut produced));
+        assert_eq!(builds.len(), 1);
+        assert_eq!(produced.len(), 1, "only the fight the build owes: {produced:?}");
+        assert_eq!(produced[0]["identity"], builds[0]["id"], "filed under another build");
+        assert_eq!(produced[0]["mode"], "cycle");
+        assert_eq!(produced[0]["score"], 1.5);
+        assert_eq!(produced[0]["measured_by"], "client:r1");
+    }
+
     #[test]
     fn a_refused_record_leaves_the_inbox() {
         let (builds, _, done, seen, refused) = intake(
@@ -599,6 +590,7 @@ mod tests {
                 row("good", &FULL, json!({})),
             ]
             .into_iter(),
+            None,
             None,
         );
         assert_eq!((seen, refused, builds.len()), (2, 1, 1));
@@ -629,7 +621,7 @@ mod tests {
             "riven_neg": "zoom",
         });
         let line = json!({ "id": "u1", "at": "2026-01-01", "record": rec }).to_string();
-        let (builds, .., refused) = intake(vec![line].into_iter(), None);
+        let (builds, .., refused) = intake(vec![line].into_iter(), None, None);
         assert_eq!(refused, 0, "a legal riven build is not refused");
         assert!(!builds.is_empty(), "a riven shape resolves to at least one build");
 
@@ -658,7 +650,7 @@ mod tests {
     fn a_submitted_rank_is_stored_at_max() {
         let mut mods = FULL.to_vec();
         mods[3] = "vital_sense@2";
-        let (builds, .., refused) = intake(vec![row("r", &mods, json!({}))].into_iter(), None);
+        let (builds, .., refused) = intake(vec![row("r", &mods, json!({}))].into_iter(), None, None);
         assert_eq!((refused, builds.len()), (0, 1));
         let stored: Vec<&str> = builds[0]["record"]["mods"]
             .as_array()
@@ -695,7 +687,7 @@ mod tests {
     }
 
     fn asked_of(lines: Vec<String>) -> Vec<Value> {
-        intake(lines.into_iter(), None).1
+        intake(lines.into_iter(), None, None).1
     }
 
     /// **THE FIGHT THE SUBMITTER RAN IS ASKED FOR**, and it is the only thing

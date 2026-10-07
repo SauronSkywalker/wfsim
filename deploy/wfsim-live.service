@@ -1,0 +1,24 @@
+# THE OWNER'S LIVE BOARD on the bot server — `scripts/live_board.sh`, which
+# the bot reads through WFSIM_LIVE_BOARD (`deploy/wfsim-bot.service`).
+# Installed to /etc/systemd/system/; `scripts/ship_bot.py` ships its binaries
+# and scripts to /opt/wfsim-bot/{bin,scripts}. /etc/wfsim-live.env holds
+# CF_ACCOUNT, CF_D1_DATABASE and a D1 READ token as CF_TOKEN — nothing here
+# writes to the database.
+[Unit]
+Description=WFSim live board
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/opt/wfsim-bot
+EnvironmentFile=/etc/wfsim-live.env
+ExecStart=/bin/bash scripts/live_board.sh /opt/wfsim-bot/live /opt/wfsim-bot/bin
+# THE BOT ANSWERS FIRST: two cores serve both, and a projection can wait.
+Nice=15
+CPUWeight=20
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

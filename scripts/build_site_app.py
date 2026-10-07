@@ -1664,7 +1664,8 @@ account. This page says what it keeps, and why.</p>
 <li>Usage is counted under a random id your browser keeps, with no IP address
 and no cookie; <a href="/support#usage">the support page</a> says what is counted
 and lets you turn it off.</li>
-<li>A build you send to the leaderboard carries the build and nothing about you.
+<li>A build you send to the leaderboard carries the build, the scores your browser
+measured for it under the leaderboard's own fights, and nothing about you.
 A short share link stores the build it links to.</li>
 <li>A riven screenshot you read on the Rivens tab is read inside your browser and
 does not leave it. Only if you tick <em>Send this read and your corrections</em>

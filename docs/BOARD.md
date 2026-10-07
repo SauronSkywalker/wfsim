@@ -48,12 +48,12 @@ number**. Everything else follows from it:
   one search differ in their mods and not in why the board would not take them;
 - every row is reproducible by anyone with the repo, since the score was
   computed by the engine that ships to their browser under the benchmark's own
-  pinned seed. Measured: wasm and native agree to the last digit
-  (`0.9647804061510868` both ways). What made that untrue for a while was not
-  the engine but the CARRY — see `exact_score` in the scorer: a score read
-  back through `serde_json`'s number parser, which is not correctly rounding,
-  publishes `1.1070976928071057` where the engine computes `...055`, and a
-  reader reproducing the row is right while the board is wrong.
+  pinned seed. Wasm, Windows native and Linux native agree to the last bit
+  (docs/WASM.md). What can make that untrue is not the engine but the CARRY: a
+  score read back through a number parser that is not correctly rounding
+  publishes `1.1070976928071057` where the engine computes `...055`, which is
+  why serde_json runs with `float_roundtrip` and the scorer reads a score's
+  literal (`exact_score`).
 
 ## Four actions, and ONE SOURCE FOR EACH FACT
 
@@ -608,16 +608,42 @@ only produce a conflict — which is exactly what threw away 83 minutes of
 completed scoring on 2026-08-11. The run that just scored takes whatever base is
 current and writes its numbers on top.
 
+## The producer
+
+**THE SUBMITTER'S MACHINE MEASURES WHAT IT SENT, BY THE SCORER'S OWN PATH.**
+After a build is sent, `69-board-produce.js` runs every fight the board owes it
+in the background — `/api/board/rows` names them, `/api/board/fold` folds their
+runs one at a time, `/api/board/score` ends them — and sends the build again
+with the scores as `produced`. All three are `webapi::board_rows`, the same
+functions `wfsim-intake` and the scorer call, so the number is the scorer's to
+the bit: engine parity is exact across wasm and native (docs/WASM.md), and
+`the_pages_producer_measures_the_scorers_row` holds the path. A riven build is
+left to the scorer, whose library holds its corners.
+
+**THE READER GOES FIRST.** Each piece waits on `yieldToForeground` and is sized
+to a quarter second; a phone produces nothing.
+
+**THE NUMBER REACHES THE OWNER'S LIVE BOARD AND NOTHING ELSE.**
+`scripts/live_board.sh` runs on the bot server (`deploy/wfsim-live.service`):
+it polls the inbox, runs `wfsim-intake --produced` to file each claim under the
+build intake derives — never an id from the wire — and projects the facts plus
+every claim no fact has answered, with `wfsim-board --project`, into a board the
+QQ bot reads. A claim projects as `unverified`; a fact replaces it on the next
+hourly read of `scores`. It writes nothing to the database, so `scores`, the
+public board and `publish.yml` are untouched by it.
+
 ## Consent
 
-Asked ONCE, inline, the first time a run finishes under the official scenario —
-never on load, never as a native dialog (they are blocked in this project), and
-never blocking the result. Running your own scenario neither asks nor sends.
+Asked ONCE, inline, the first time a run finishes — never on load, never as a
+native dialog (they are blocked in this project), and never blocking the
+result. Any fight sends its build, because what the board scores is the build
+under the ruler's fight and never the reader's own.
 
-What travels: the weapon, its mods, evolutions and arcanes, and which
-benchmark. No account, no identifier, no riven, none of the names you chose,
-and no score. `scripts/check_official.mjs` asserts on the WIRE that nothing
-leaves before consent and nothing leaves after declining.
+What travels: the weapon, its mods, evolutions and arcanes, its riven's SHAPE,
+the fight it was run in, and — sent again once measured — the scores the
+producer measured for it (§"The producer"). No account, no identifier and none
+of the names you chose. `scripts/check_official.mjs` asserts on the WIRE that
+nothing leaves before consent and nothing leaves after declining.
 
 The endpoint stores no IP, no token and no timestamp finer than the day.
 
@@ -1813,14 +1839,9 @@ build's rows findable afterwards — `WHERE measured_by = ?` — and that is the
 whole of what an engine version is for here.
 
 **A NEW SUBMISSION IS PENDING, NOT A GENERATION.** It has no fact yet, so it
-cannot enter the ranking — but the submitter's own client already computed a
-number to show them, and holding the row back entirely would be less honest than
-showing it as what it is. A submitted row appears immediately, marked as
-unverified, ranked provisionally by the client's number and OUTSIDE the
-ranking, and is replaced by its fact when one exists. The client's number is
-never a score: it is a placeholder that the board is required to overwrite, and
-a placeholder that does not match the fact is a signal worth recording rather
-than a row worth trusting.
+cannot enter a public ranking. The producer's number for it stands on the
+owner's live board only, marked `unverified`, and is replaced there by its fact
+when one exists (§"The producer").
 
 #### THREE TIERS, EACH WITH ITS OWN SCALING LAW
 
@@ -2001,9 +2022,10 @@ already per row. 13.6% of commits.
 - **The library is the only irreplaceable thing.** Boards are derived, the site
   is generated, the code is in git. Anything that could truncate it needs a
   tripwire before it needs a backup.
-- **Nobody submits a number.** A client's figure may stand in front of a reader
-  as an unverified placeholder, and may never be stored as a score or ranked
-  against one. Every published row is reproducible from the repo by anyone.
+- **A client's number never becomes a score on its own.** The producer's
+  figure reaches the owner's live board, marked `unverified`, and never the
+  `scores` table or a public board. Every published row is reproducible from
+  the repo by anyone.
 - **No work is enqueued anywhere.** What is outstanding is derived from the
   facts that exist, so there is no second copy of it to fall out of step with
   the first — §"The queue is a query".

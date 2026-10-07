@@ -339,6 +339,10 @@ THE BOT SHIPS WITH THE SITE: `ship.py` copies `bot/`, `mcp/engine.js`, its wasm
 and `mcp/headless.js` to the server, restarts it and checks the engine it holds
 (`scripts/ship_bot.py`; the server and its key are `private/qq/bot.json`).
 
+IT READS THE OWNER'S LIVE BOARD when the server keeps one (`WFSIM_LIVE_BOARD`,
+docs/BOARD.md §"The producer"), and the published board otherwise. `ship_bot.py`
+ships the live board's Linux binaries and scripts beside the bot.
+
 HER FACE IS `web/src/static/nona.svg`, the one the site's Nona wears; the QQ
 avatar is that file rendered to a PNG and uploaded on QQ's console by hand.
 

@@ -23,6 +23,7 @@ mod entry;
 mod facts;
 mod measure;
 mod publish;
+pub use publish::CLIENT_MEASURED;
 mod queue;
 mod run;
 mod state;

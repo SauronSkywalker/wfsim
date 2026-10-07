@@ -186,7 +186,9 @@ board submission. Run it after adding a weapon or anything a weapon can carry.
 Plain node against a KV stub, no browser. Every key
 `boardPayload()` emits, read out of `app.js`, is a key the worker's `AXES`
 table knows how to keep; every key survives into storage; two builds differing
-in any one axis are two records.
+in any one axis are two records. A producer's scores (`produced`, `engine`) are kept bit for
+bit beside the build, and anything but a list of (ruler, mode, score) is
+refused whole.
 
 ## `check_folds`
 

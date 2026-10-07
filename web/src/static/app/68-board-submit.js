@@ -498,7 +498,10 @@ async function offerBoardSubmit() {
       body: JSON.stringify(body),
     });
     boardState = res.ok ? "sent" : "failed";
-    if (res.ok) track("board.submit", body.weapon);
+    if (res.ok) {
+      track("board.submit", body.weapon);
+      produceBoardRows(body);
+    }
   } catch (_) {
     // Never an error dialog: a board that is unreachable is not a failed run.
     boardState = "failed";
@@ -508,14 +511,16 @@ async function offerBoardSubmit() {
 }
 
 /// THE LINE THE BOARD DRAWS, said to the person it applies to. A submission
-/// below half its weapon's leading row is stored, scored and then not listed,
+/// below the entry line of its group is stored, scored and then not listed,
 /// which from the submitter's side is indistinguishable from one that was lost
 /// — and that exact silence has cost this board two migrations already. The
 /// rule is stated rather than the consequence counted: a number of hidden rows
 /// would need the scorer to publish one, while the RULE is what makes an
 /// absence readable, and it is checkable against the board on screen.
+/// The share is `META.board_entry_share`, the scorer's own constant.
 const boardCutNote = () =>
-  tr("Only builds scoring at least half of their weapon's leader are listed.");
+  tr("Only builds scoring at least {share}% of their group's leader are listed.")
+    .replace("{share}", String(Math.round((META.board_entry_share || 0) * 100)));
 
 /// **WHAT HAPPENED TO THIS RUN**, in one sentence — the ONE statement of it.
 ///
@@ -698,7 +703,7 @@ function renderBoardConsent() {
     // it. Asking would be dishonest when the default has already decided.
     box.innerHTML =
       `<b>${escHtml(tr("Builds you run here are added to the official board."))}</b> ` +
-      escHtml(tr("Only the build is sent: the weapon and its mods, evolutions and arcanes. Not the fight, and nothing about you: no account and no score. The board takes builds with every main slot filled.")) +
+      escHtml(tr("The build is sent: the weapon and its mods, evolutions and arcanes, then the scores your machine measures for it under the board's own rulers. Not your fight, and nothing about you: no account. The board takes builds with every main slot filled.")) +
       // WHEN, on the FIRST visit too — this is the branch a new player reads,
       // and saying it only after the consent had been chosen told the fact to
       // everyone except the person meeting the board for the first time.

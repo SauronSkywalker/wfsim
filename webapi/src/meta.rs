@@ -1196,6 +1196,9 @@ pub fn meta_json() -> Value {
         // riven appraisal's.
         "search_presets": wfsim_engine::data::mods::search_presets(),
         "rank_mark": wfsim_engine::data::mods::RANK_MARK.to_string(),
+        // THE BOARD'S ENTRY LINE, so the sentence a submitter reads about it
+        // states the scorer's number rather than a copy that drifts from it.
+        "board_entry_share": wfsim_engine::data::boards::KEEP_LEADER_SHARE,
         "build_axes": wfsim_engine::board::builds::BUILD_AXES.iter().map(|a| json!({
             "id": a.id,
             "request_field": a.request_field,

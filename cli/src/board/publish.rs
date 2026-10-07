@@ -125,6 +125,10 @@ pub(crate) fn measured_minute(at: &str) -> Option<String> {
     (at.len() >= 16 && at.as_bytes()[10] == b'T').then(|| format!("{}Z", &at[..16]))
 }
 
+/// WHAT `wfsim-intake --produced` writes as `measured_by` before the engine:
+/// the submitter's machine, not a commit.
+pub const CLIENT_MEASURED: &str = "client:";
+
 /// A commit hash shortened to ten characters, which GitHub resolves; anything
 /// that is not a hash is no version to cite and is omitted.
 pub(crate) fn measured_commit(sha: &str) -> Option<String> {
@@ -188,6 +192,14 @@ pub(crate) fn page_row(bench_id: &str, r: &Row) -> Value {
             o.insert("measured_by".into(), json!(by));
         }
     }
+    // A CLIENT'S NUMBER SAYS SO. Only the owner's live board is projected from
+    // one (`scripts/live_board.sh`); a public board reads `scores` alone and
+    // never carries the flag.
+    if r.measured_by.starts_with(CLIENT_MEASURED) {
+        if let Some(o) = row.as_object_mut() {
+            o.insert("unverified".into(), json!(true));
+        }
+    }
     // …AND THE PARTS. The builder reads `row.grip` / `row.loader` to open a
     // board row as a build, so a row that omitted them opened as the chamber's
     // DEFAULT assembly — a different weapon from the one the number is for.
@@ -211,12 +223,11 @@ pub(crate) fn write_pages(dir: &std::path::Path, bench_id: &str, kept: &[Row]) {
     if let Err(e) = std::fs::create_dir_all(dir) {
         panic!("{}: {e}", dir.display());
     }
-    // A CARRIED ROW IS COPIED, NEVER REPARSED. `serde_json`'s number parser
-    // is not correctly rounding (`exact_score`), so a row read into a
-    // `Value` and written back comes out one ULP from what was published:
-    // measured, 21 of 387 weapon files moved on a publish that measured
-    // nothing. `RawValue` hands the bytes through untouched, which is also
-    // the honest meaning of a carry.
+    // A CARRIED ROW IS COPIED, NEVER REPARSED. A row read into a `Value` and
+    // written back is exact only while `float_roundtrip` is on (`Cargo.toml`);
+    // without it 21 of 387 weapon files moved a ULP on a publish that measured
+    // nothing. `RawValue` hands the bytes through untouched, which is also the
+    // honest meaning of a carry.
     // EVERY RULER THE ROSTER STILL HAS, by FAMILY — a `_vN` row belongs to
     // the ruler it is a version of, so a live ruler's older version is not
     // an orphan.
@@ -504,6 +515,11 @@ mod page_row_tests {
         let none = Row { measured_at: String::new(), measured_by: "migrated".into(), ..row(None) };
         let v = page_row("standard_single_target", &none);
         assert!(v.get("measured_at").is_none() && v.get("measured_by").is_none(), "{v}");
+        assert!(v.get("unverified").is_none(), "a scorer's row is not a client's: {v}");
+        let client = Row { measured_by: "client:r42".into(), ..row(None) };
+        let v = page_row("standard_single_target", &client);
+        assert_eq!(v["unverified"], json!(true), "a client's number must say so: {v}");
+        assert!(v.get("measured_by").is_none(), "a client is no commit to cite: {v}");
     }
 
     /// **THE RIVEN REACHES THE PAGE**, which is the whole of what went wrong.

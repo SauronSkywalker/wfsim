@@ -16,6 +16,7 @@
 //! optimizer use — this crate only shapes JSON.
 
 mod board;
+pub mod board_rows;
 mod buffs;
 mod candidates;
 mod fight;
@@ -78,6 +79,9 @@ pub const ROUTES: &[(&str, Endpoint)] = &[
     ("/api/riven", riven_json),
     ("/api/targets", targets_json),
     ("/api/board/check", board_check_json),
+    ("/api/board/rows", board_rows::board_rows_json),
+    ("/api/board/fold", board_rows::board_fold_json),
+    ("/api/board/score", board_rows::board_score_json),
     ("/api/build/keys", build_keys_json),
     ("/api/forma/plan", forma_plan_json),
     ("/api/forma/optimize", forma_optimize_json),
