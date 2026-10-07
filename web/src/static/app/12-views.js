@@ -39,6 +39,8 @@ function nav(path) {
 }
 let routeGen = 0;
 async function route() {
+  // BOOT DRAWS THE FIRST PAGE, from whatever address a redirect left by then.
+  if (!bootRouted) return;
   // AN EXTENSION'S PAGES ARE ROUTES TOO, so nothing is routed before it mounts.
   if (!extSettled) await extReady;
   leaveStartEdit();

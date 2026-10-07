@@ -319,11 +319,13 @@ function headlessStateAxes(meta, p, weapon, exilusId) {
     const m = c && card(c);
     if (m) { s.mod = c; s.rank = r ?? m.max_rank; }
   });
-  const evo = { 1: null, 2: null, 3: null, 4: null };
-  (p.evolutions || []).forEach((id) => {
-    const t = (w.evolutions || []).find((tt) => tt.options.some((o) => o.id === id));
-    if (t) evo[t.tier] = id;
-  });
+  // EVERY TIER INSTALLED: one the build does not name holds its first option
+  // (`evolutions::complete`, the rule the server scores it under).
+  const evo = {};
+  for (const t of w.evolutions || []) {
+    const pick = (p.evolutions || []).find((id) => t.options.some((o) => o.id === id));
+    evo[t.tier] = pick || (t.options[0] || {}).id || null;
+  }
   const nPools = (w.arcane_pools || []).length;
   return {
     wielder: null,

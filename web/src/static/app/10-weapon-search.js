@@ -381,6 +381,7 @@ async function init() {
   // draws anything for them to report on.
   wireStaticFolds();
   wireJump();
+  bootRouted = true;
   route();
   // A language switch reloads the page; the pre-switch build is stashed in
   // sessionStorage and restored here so nothing is lost.

@@ -1,4 +1,8 @@
 let META = null;
+// SET BY `init` RIGHT BEFORE ITS OWN `route()`. The account check answers
+// before the engine does, and a signed-in reader on /login is sent home from
+// it — a page drawn then reads a null `META`. Until this is set, `route` waits.
+let bootRouted = false;
 // 9 × { mod:id|null, pol:string|null, rank:int|null } — POSITIONAL.
 // Indices 0–7 are the regular slots; index 8 is the EXILUS slot (utility mods
 // only; drain counts toward capacity like any slot; absent on sentinels).
