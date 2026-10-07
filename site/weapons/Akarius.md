@@ -13,7 +13,7 @@ Each row is measured on its own, and says when and by which WFSim commit; the ga
 | Ruler | Fight | Mode | Score | Build | Measured |
 | --- | --- | --- | ---: | --- | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.9559 | Ice Storm, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Hornet Strike, Primed Target Cracker, Pistol Elementalist, Magnetic Might, Trick Mag, Secondary Enervate | 2026-09-29 17:01 UTC · 33e2ff32ed |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 32.6169 | Ice Storm, Pistol Pestilence, Primed Heated Charge, Primed Fulmination, Galvanized Diffusion, Hornet Strike, Galvanized Shot, Magnetic Might, Secondary Enervate | 2026-10-06 03:58 UTC · 38faffec31 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 32.6169 | Ice Storm, Pistol Pestilence, Primed Heated Charge, Primed Fulmination, Galvanized Diffusion, Hornet Strike, Galvanized Shot, Magnetic Might, Secondary Enervate | 2026-10-07 17:28 UTC · 7972f35e80 |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.6828 | Ice Storm, Pistol Pestilence, Primed Heated Charge, Scorch, Primed Fulmination, Galvanized Diffusion, Lethal Torrent, Pistol Elementalist, Cascadia Flare | 2026-10-01 13:45 UTC · 42dc456c21 |
 
 ## Not modelled here

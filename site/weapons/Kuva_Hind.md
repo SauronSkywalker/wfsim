@@ -12,9 +12,9 @@ Each row is measured on its own, and says when and by which WFSim commit; the ga
 
 | Ruler | Fight | Mode | Score | Build | Measured |
 | --- | --- | --- | ---: | --- | --- |
-| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | semi auto | 1.0159 | Stormbringer, Primary Acuity, Primed Shred, Galvanized Aptitude, Galvanized Scope, Bladed Rounds, Rifle Elementalist, Vital Sense, Primary Crux | 2026-09-26 15:27 UTC · 37f43e2d09 |
-| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | semi auto | 14.6744 | Stormbringer, Primary Acuity, Primed Shred, Galvanized Aptitude, Galvanized Scope, Bladed Rounds, Rifle Elementalist, Vital Sense, Primary Crux | 2026-10-05 15:55 UTC · 4d57cccc45 |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | semi auto | 0.04867 | Stormbringer, Primary Acuity, Primed Shred, Galvanized Aptitude, Galvanized Scope, Bladed Rounds, Rifle Elementalist, Vital Sense, Primary Crux | 2026-09-26 15:07 UTC · 37f43e2d09 |
+| Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 6.4543 | Hellfire, Thermite Rounds, Primary Acuity, Serration, Hammer Shot, Rifle Elementalist, Vile Acceleration, Vital Sense, Primary Crux | 2026-10-07 09:49 UTC · b2c37e8170 |
+| Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 29.6360 | Hellfire, Thermite Rounds, Primary Acuity, Primed Shred, Serration, Hammer Shot, Rifle Elementalist, Vital Sense, Primary Crux | 2026-10-07 11:44 UTC · 6abcef283c |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.9523 | Hellfire, Thermite Rounds, Primary Acuity, Primed Bane of Grineer, Serration, Rifle Elementalist, Vile Acceleration, Vital Sense, Primary Crux | 2026-10-07 09:44 UTC · b2c37e8170 |
 
 ## In WFSim
 

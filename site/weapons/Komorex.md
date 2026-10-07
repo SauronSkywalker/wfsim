@@ -14,7 +14,7 @@ Each row is measured on its own, and says when and by which WFSim commit; the ga
 | --- | --- | --- | ---: | --- | --- |
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 17.7449 | Hellfire, Galvanized Chamber, Galvanized Aptitude, Bladed Rounds, Critical Delay, Semi-Rifle Cannonade, Vital Sense, Magnetic Capacity, Primary Crux | 2026-10-06 18:39 UTC · 6644c8b983 |
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 21.1481 | Hellfire, Galvanized Chamber, Galvanized Aptitude, Bladed Rounds, Critical Delay, Semi-Rifle Cannonade, Vital Sense, Magnetic Capacity, Primary Crux | 2026-10-06 18:01 UTC · 6644c8b983 |
-| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.2458 | Thermite Rounds, Primary Acuity, Galvanized Aptitude, Bladed Rounds, Critical Delay, Semi-Rifle Cannonade, Vital Sense, Magnetic Capacity, Primary Crux | 2026-10-06 16:48 UTC · 71f70c5e46 |
+| Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 1.2458 | Thermite Rounds, Primary Acuity, Galvanized Aptitude, Bladed Rounds, Critical Delay, Semi-Rifle Cannonade, Vital Sense, Magnetic Capacity, Primary Crux | 2026-10-07 17:22 UTC · 65db03e106 |
 
 ## Not modelled here
 
