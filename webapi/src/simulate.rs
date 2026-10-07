@@ -1263,6 +1263,30 @@ mod asset_tests {
         }
     }
 
+    /// A NUMBER THAT CROSSES A WORKER BOUNDARY AS TEXT COMES BACK BIT FOR BIT.
+    ///
+    /// The browser fleet hands every shard over as a string and the scorer
+    /// keeps its own in memory, so a parse that is not correctly rounding puts
+    /// a different last bit on the page than on the board (`float_roundtrip`
+    /// in `Cargo.toml`; docs/WASM.md). Swept over doubles of every magnitude
+    /// rather than one fight, which may happen to round-trip.
+    #[test]
+    fn a_number_read_back_from_text_is_the_same_bits() {
+        let mut x = 0x9E37_79B9_7F4A_7C15u64;
+        for _ in 0..200_000 {
+            x ^= x << 13;
+            x ^= x >> 7;
+            x ^= x << 17;
+            let v = f64::from_bits(x);
+            if !v.is_finite() {
+                continue;
+            }
+            let text = serde_json::json!(v).to_string();
+            let back: f64 = serde_json::from_str(&text).expect("number text");
+            assert_eq!(back.to_bits(), v.to_bits(), "{text} read back as {back:?}");
+        }
+    }
+
     /// A FLEET PRODUCES THE SAME REPORT AS ONE WORKER.
     ///
     /// `eight_shards_are_one_run` asserts it of the SUMMARY; this asserts it of

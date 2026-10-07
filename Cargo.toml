@@ -20,11 +20,12 @@ repository = "https://github.com/magenie33/wfsim"
 # to keep versions consistent.
 [workspace.dependencies]
 serde = { version = "1", features = ["derive"] }
-# `raw_value` IS LOAD-BEARING, not a convenience: serde_json's number PARSER is
-# not correctly rounding, and every score crosses between processes through it
-# (`load_facts`). Reading the literal text and using `str::parse` is what keeps
-# the board's number the one the engine produced.
-serde_json = { version = "1", features = ["raw_value"] }
+# `float_roundtrip` IS LOAD-BEARING: without it serde_json's number parser is not
+# correctly rounding, and a shard that crosses a worker boundary as text comes
+# back a ULP off — the browser fleet's report then differs from the scorer's,
+# which keeps its shards in memory. `raw_value` hands a score's literal through
+# unparsed (`load_facts`), so a published number is never re-read at all.
+serde_json = { version = "1", features = ["raw_value", "float_roundtrip"] }
 # Maintained fork of the unmaintained serde_yaml (decision in devlog 2026-07-24).
 serde_norway = "0.9"
 

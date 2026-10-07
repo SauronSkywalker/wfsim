@@ -7,19 +7,14 @@ use wfsim_engine::board::benchmarks::family;
 
 /// A SCORE IS READ FROM ITS TEXT, NEVER THROUGH THE JSON NUMBER PARSER.
 ///
-/// `serde_json`'s parser is not correctly rounding: it reads
-/// `1.1070976928071055` back as `1.1070976928071057`, one ULP away, and the
-/// same for roughly one value in ten. Every score crosses from the database to
-/// the publish process through it, so the board published a number the engine
-/// never produced — and a reader reproducing the row from the repo, as the
-/// board invites them to, got the engine's answer and not the board's.
+/// A SCORE'S LITERAL, read by `str::parse` rather than through a `Value`.
 ///
-/// Rust's own `str::parse::<f64>` IS correctly rounding, and every writer in
-/// the chain emits the shortest text that round-trips (Ryu here, and
-/// `JSON.stringify` at the database's edge). So the literal is exact and only
-/// the reader was lossy. `RawValue` is what hands the literal over unparsed;
-/// the quotes are trimmed because the same field arrives as a json number out
-/// of the database and as a string from anything that batches it.
+/// Every writer in the chain emits the shortest text that round-trips (Ryu
+/// here, `JSON.stringify` at the database's edge), so the literal IS the
+/// engine's number. The field arrives as a json number out of the database and
+/// as a string from anything that batches it, which is why the quotes are
+/// trimmed. serde_json reads numbers exactly only under `float_roundtrip`
+/// (`Cargo.toml`); this reader does not depend on that.
 pub(crate) fn exact_score(line: &str) -> Option<f64> {
     #[derive(serde::Deserialize)]
     struct Scored<'a> {
@@ -374,10 +369,9 @@ mod tests {
         let _ = std::fs::remove_file(&path);
     }
 
-    /// THE CLAIM IS THAT THE READER IS EXACT, and the first half of the test is
-    /// what makes the second half mean anything: this value is one serde's
-    /// number parser actually moves, so a reader that agreed with it would be
-    /// publishing a score the engine never produced.
+    /// THE READER IS EXACT, and so is serde's parser beside it. This value is
+    /// one serde moves by a ULP without `float_roundtrip`, so the second
+    /// assertion fails the day that feature is dropped from the workspace.
     #[test]
     fn a_score_is_read_from_its_text_and_not_through_the_number_parser() {
         let want = 1.1070976928071055_f64;
@@ -387,10 +381,10 @@ mod tests {
             .get("score")
             .and_then(Value::as_f64)
             .unwrap();
-        assert_ne!(
+        assert_eq!(
             through_serde.to_bits(),
             want.to_bits(),
-            "serde now reads this value exactly — the test has stopped biting"
+            "serde_json read a score a ULP off — is `float_roundtrip` still on?"
         );
         assert_eq!(exact_score(&line).unwrap().to_bits(), want.to_bits());
         // …AND AS A STRING, which is how anything that batches the line writes

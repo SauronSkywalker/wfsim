@@ -284,6 +284,17 @@ the summary (`eight_shards_are_one_run`), on the whole response
 A COMPARISON IS TO A PART IN 10^12, not bit for bit: floating-point addition
 is not associative.
 
+**…BUT ONE GROUPING IS ONE ANSWER, ON EVERY TARGET.** Folded the same way —
+one run per shard, as the board scorer does — wasm, Windows native and Linux
+native produce the same bits: every run and every report field of 90 board
+rows across all three rulers, and the published score of each row measured by
+the current engine. The tolerance above is for a DIFFERENT grouping and for
+nothing else. THE WIRE HAS TO BE LOSSLESS for that to reach the page: a shard
+crosses to the merge as text, and serde_json parses a number with correct
+rounding only under `float_roundtrip` (`Cargo.toml`) — without it the fleet's
+report is a ULP off the scorer's on most rows.
+`a_number_read_back_from_text_is_the_same_bits` holds it.
+
 ## Planned: one executor, sized from what the machine measures
 
 **THE FLEET IS SHARED AND NOTHING SHARES IT.** Three consumers want the same
