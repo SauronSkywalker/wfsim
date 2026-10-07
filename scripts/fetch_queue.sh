@@ -54,7 +54,24 @@ d1() {
 # A ROW WHOSE BATCH IS GONE IS NOT READ. An inner join, so deleting a batch is
 # the whole of cancelling it: the rows stop being asked for and nothing has to
 # go and find them.
+# `HOLD_SECONDS` LEAVES A YOUNG COMPUTE ORDER TO THE CLIENTS: a row whose order
+# opened less than that long ago is not read, so the scorer takes only what the
+# machines with the site open have not finished (docs/BOARD.md §"Compute
+# orders"). Unset, every owed row is read — which is what a reconciliation needs.
 page_body() {
+  if [ -n "${HOLD_SECONDS:-}" ]; then
+    jq -n -c --argjson limit "$1" --argjson offset "$2" --argjson hold "$HOLD_SECONDS" '
+      {
+        sql: ("SELECT q.batch, q.build_id, q.ruler, q.mode FROM queue q"
+              + " JOIN batches b ON b.id = q.batch"
+              + " WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.identity = q.build_id"
+              + " AND o.ruler = q.ruler AND o.mode = q.mode AND o.at > (unixepoch() - ?) * 1000)"
+              + " ORDER BY b.at, q.batch, q.build_id, q.ruler, q.mode"
+              + " LIMIT ? OFFSET ?"),
+        params: [$hold, $limit, $offset]
+      }'
+    return
+  fi
   jq -n -c --argjson limit "$1" --argjson offset "$2" '
     {
       sql: ("SELECT q.batch, q.build_id, q.ruler, q.mode FROM queue q"

@@ -701,10 +701,10 @@ ui:
   "One ruler, every weapon.": 一把尺子，量全部武器。
   "A score is this engine's measurement of a build under the benchmark's fixed terms. Nobody submits a number.": "分数是本引擎在该基准的固定条件下测出的。没有人提交数字。"
   "Only builds scoring at least {share}% of their group's leader are listed.": "只列出分数达到所在分组榜首 {share}% 以上的配装。"
-  "Your browser also checks other players' scores in the background ({n} so far).": "你的浏览器也会在后台帮忙核对其他玩家的分数（已核对 {n} 场）。"
-  "Your browser does not check other players' scores.": "你的浏览器不帮忙核对其他玩家的分数。"
-  "stop checking": "停止核对"
-  "start checking": "开始核对"
+  "Your browser also computes the board's scores in the background ({n} so far).": "你的浏览器也会在后台帮榜单计算分数（已算 {n} 场）。"
+  "Your browser does not compute the board's scores.": "你的浏览器不帮榜单计算分数。"
+  "stop computing": "停止计算"
+  "start computing": "开始计算"
   "Only this weapon": 仅装备这把武器
   "Open": 前往
   "Optimize": 优化
@@ -877,7 +877,7 @@ ui:
   "Weapon passive: Frenzy — see its buff card (grants +1 toxin while active).": 武器被动：狂乱 —— 详见它的增益卡（生效期间提供 +1 毒素）。
   "Weapons": 武器
   "What each mode is": 每种输出方式分别是什么
-  "The build is sent: the weapon and its mods, evolutions and arcanes, then the scores your machine measures for it under the board's own rulers. Not your fight, and nothing about you: no account. The board takes builds with every main slot filled.": "发送配装：武器及其 MOD、进化和赋能，以及你的电脑按榜单尺子为它测出的分数。不含你的场景，也不含任何关于你的信息：没有账号。榜单只收主槽位全部装满的配装。"
+  "Only the build is sent: the weapon and its mods, evolutions and arcanes. Not your fight, and nothing about you: no account and no score. The board takes builds with every main slot filled.": "只发送配装：武器及其 MOD、进化和赋能。不含场景，也不含任何关于你的信息：没有账号，没有分数。榜单只收主槽位全部装满的配装。"
   "What this benchmark measures": 这个基准到底在量什么
   "What would be sent: the weapon and its mods, evolutions and arcanes. Nothing else — no account, no identifier, no names you chose, and no score (the board measures builds itself).": 会发送的内容：武器，以及它的 MOD、进化和赋能。仅此而已 —— 没有账号，没有任何标识，没有你起的任何名字，也不含分数（榜单自己测量配装）。
   "Where the damage went": 伤害落在哪里

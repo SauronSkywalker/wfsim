@@ -2,9 +2,9 @@
 //! The rows a build owes the board, said ONCE for every party that measures
 //! one: `wfsim-intake` (what a submission becomes in the library), the scorer
 //! (what a library record fights under each ruler) and the page, which runs
-//! the same fights in the background (`/api/board/rows`, `/api/board/fold`,
+//! the same fights for a compute order (`/api/board/order`, `/api/board/fold`,
 //! `/api/board/score`). A client that built its own request would be measuring
-//! a second fight under the first one's name — docs/BOARD.md §"The producer".
+//! a second fight under the first one's name — docs/BOARD.md §"Compute orders".
 
 use serde_json::{json, Value};
 use wfsim_engine::board::builds::ValidBuild;
@@ -191,6 +191,22 @@ pub fn row_requests(
         .collect()
 }
 
+/// EVERY (RULER, MODE) A LIBRARY RECORD CAN BE SCORED ON — the rows a new
+/// build owes, opened as compute orders the moment it arrives. A ruler that
+/// refuses the build owes nothing, and so does a mode it cannot sustain.
+pub fn owed_rows(record: &Value) -> Vec<(String, String)> {
+    wfsim_engine::board::benchmarks::all()
+        .iter()
+        .filter_map(|bench| scored_build(record, &bench.id).ok().map(|b| (bench, b)))
+        .flat_map(|(bench, b)| {
+            wfsim_engine::data::weapons::play_modes(&b.weapon)
+                .into_iter()
+                .filter(|m| m.sustainable)
+                .map(move |m| (bench.id.clone(), if m.id.is_empty() { "base".to_string() } else { m.id.to_string() }))
+        })
+        .collect()
+}
+
 /// FOLD RUNS `from..from+count` INTO `acc`, ONE RUN A PIECE.
 ///
 /// A piece is one run because nothing else reproduces the number: a coarser
@@ -236,41 +252,28 @@ fn bench_named(id: &str) -> Option<&'static wfsim_engine::board::benchmarks::Ben
     wfsim_engine::board::benchmarks::all().iter().find(|b| b.id == id)
 }
 
-/// `/api/board/rows` — EVERY FIGHT A SUBMISSION OWES, as the scorer will fight
-/// it: the library's canonical build, then each ruler's door and modes.
-///
-/// A RIVEN IS LEFT TO THE SCORER: its library builds are a shape's corners,
-/// chosen by a search, and the page does not run that search. A ruler that
-/// refuses the build is listed with its reason rather than dropped.
-pub fn board_rows_json(v: &Value) -> Value {
-    let lib = match library_build(v) {
-        Ok(b) => b,
-        Err(e) => return json!({ "ok": true, "rows": [], "reason": e }),
+/// `/api/board/order` — `{record, ruler, mode}` → `{request}`: the fight a
+/// compute order names, read off its LIBRARY record exactly as the scorer reads
+/// one (`scored_build`, `row_requests`) — a riven's rolls included.
+pub fn board_order_json(v: &Value) -> Value {
+    let record = v.get("record").cloned().unwrap_or(Value::Null);
+    let ruler = get_str(v, "ruler", "");
+    let mode = get_str(v, "mode", "");
+    let Some(bench) = bench_named(ruler) else {
+        return crate::request::err_json("unknown ruler");
     };
-    if lib.riven.is_some() {
-        return json!({ "ok": true, "rows": [], "reason": "a riven build is measured by the scorer" });
+    let b = match scored_build(&record, ruler) {
+        Ok(b) => b,
+        Err(e) => return crate::request::err_json(e),
+    };
+    let scenario = serde_json::to_value(&bench.scenario).unwrap_or(Value::Null);
+    match row_requests(&b, &scenario)
+        .into_iter()
+        .find(|(p, _)| (if p.id.is_empty() { "base" } else { p.id }) == mode)
+    {
+        Some((_, req)) => json!({ "ok": true, "request": req }),
+        None => crate::request::err_json("the weapon cannot sustain that mode"),
     }
-    let canon = canonical_record(&lib);
-    let mut rows = Vec::new();
-    let mut refused = Vec::new();
-    for bench in wfsim_engine::board::benchmarks::all() {
-        let scenario = serde_json::to_value(&bench.scenario).unwrap_or(Value::Null);
-        match scored_build(&canon, &bench.id) {
-            Ok(b) => {
-                for (played, req) in row_requests(&b, &scenario) {
-                    rows.push(json!({
-                        "ruler": bench.id,
-                        "mode": if played.id.is_empty() { "base" } else { played.id },
-                        "request": req,
-                    }));
-                }
-            }
-            Err(e) => refused.push(json!({ "ruler": bench.id, "reason": e })),
-        }
-    }
-    // THE CANONICAL RECORD TRAVELS BACK: it is what a verifier is handed, so a
-    // client that produced it can tell its own claim from another's.
-    json!({ "ok": true, "record": canon, "rows": rows, "refused": refused })
 }
 
 /// `/api/board/fold` — `{request, from, count, acc?}` → `{acc}`. The page
@@ -308,5 +311,5 @@ pub fn board_score_json(v: &Value) -> Value {
     if !out.get("ok").and_then(Value::as_bool).unwrap_or(false) {
         return out;
     }
-    json!({ "ok": true, "score": row_score(bench, &out) })
+    json!({ "ok": true, "score": row_score(bench, &out), "metric": bench.metric().id })
 }

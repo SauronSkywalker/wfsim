@@ -73,9 +73,10 @@ def deploy() -> None:
     deploy_live(t)
 
 
-LIVE_SCRIPTS = ["scripts/live_board.sh", "scripts/live_claims.mjs", "scripts/live_publish.mjs",
+LIVE_SCRIPTS = ["scripts/live_board.sh", "scripts/live_orders.mjs", "scripts/live_publish.mjs",
                 "scripts/board_meta.py", "scripts/fetch_library.sh", "scripts/fetch_facts.sh",
-                "scripts/ship_facts.sh"]
+                "scripts/ship_facts.sh", "scripts/ship_builds.sh",
+                "scripts/ship_queue.sh"]
 
 
 def toolchain() -> str:

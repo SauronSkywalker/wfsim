@@ -127,16 +127,16 @@ mod tests {
     use super::*;
     use serde_json::json;
 
-    /// THE PAGE'S PRODUCER MEASURES THE SCORER'S ROW, bit for bit.
+    /// A COMPUTE ORDER IS THE SCORER'S ROW, bit for bit.
     ///
-    /// The submission arrives in the player's order and is read by
-    /// `/api/board/rows`; the scorer reads the library's canonical record. Both
-    /// have to name the same fights, and the producer's fold — pieces carried
-    /// between calls AS TEXT, the way the page holds them — has to end on the
-    /// scorer's number. The run count is cut to keep a debug build quick; the
-    /// claim is about the path, not the count.
+    /// A client is handed the library's record and a (ruler, mode), asks
+    /// `/api/board/order` for the fight, folds its runs through
+    /// `/api/board/fold` — the accumulator carried between calls AS TEXT, the
+    /// way the page holds it — and ends with `/api/board/score`. That has to
+    /// name the scorer's fight and end on the scorer's number and metric. The
+    /// run count is cut to keep a debug build quick; the claim is the path.
     #[test]
-    fn the_pages_producer_measures_the_scorers_row() {
+    fn a_compute_order_is_the_scorers_row() {
         let sent = json!({
             "weapon": "braton_prime",
             "mods": ["vital_sense", "hellfire", "speed_trigger", "primary_acuity",
@@ -144,25 +144,21 @@ mod tests {
             "evolutions": ["braton_prime_evo1_incarnon_form", "braton_prime_daring_reverie",
                            "braton_prime_voids_guidance", "braton_prime_prelude_of_might"],
             "arcanes": ["primary_deadhead"],
-            "mode": "cycle",
         });
-        let page = wfsim_webapi::board_rows::board_rows_json(&sent);
-        let rows = page["rows"].as_array().expect("rows");
+        let lib = wfsim_webapi::board_rows::library_build(&sent).expect("legal");
+        let record = wfsim_webapi::board_rows::canonical_record(&lib);
         let ruler = "standard_single_target";
         let bench = wfsim_engine::board::benchmarks::get(ruler).expect("ruler");
-        let lib = wfsim_webapi::board_rows::library_build(&sent).expect("legal");
-        let canon = wfsim_webapi::board_rows::canonical_record(&lib);
-        let v = wfsim_webapi::board_rows::scored_build(&canon, ruler).expect("complete");
+        let v = wfsim_webapi::board_rows::scored_build(&record, ruler).expect("complete");
         let scenario = serde_json::to_value(&bench.scenario).unwrap();
         let scorer = wfsim_webapi::board_rows::row_requests(&v, &scenario);
         assert!(scorer.len() >= 2, "an Incarnon weapon has a mode per form");
         for (played, want) in scorer {
             let mode = if played.id.is_empty() { "base" } else { played.id };
-            let got = rows
-                .iter()
-                .find(|r| r["ruler"] == ruler && r["mode"] == mode)
-                .unwrap_or_else(|| panic!("the page names no {mode} row"));
-            assert_eq!(got["request"], want, "the page built a different {mode} fight");
+            let order = wfsim_webapi::board_rows::board_order_json(&json!({
+                "record": record, "ruler": ruler, "mode": mode,
+            }));
+            assert_eq!(order["request"], want, "the order names a different {mode} fight");
 
             let mut req = want.clone();
             req["runs"] = json!(9);
@@ -180,8 +176,9 @@ mod tests {
             assert_eq!(
                 scored["score"].as_f64().unwrap().to_bits(),
                 wfsim_webapi::board_rows::row_score(bench, &banked).to_bits(),
-                "the producer's {mode} number is not the scorer's",
+                "the order's {mode} number is not the scorer's",
             );
+            assert_eq!(scored["metric"], json!(bench.metric().id), "the order's metric is not the ruler's");
         }
     }
 

@@ -32,7 +32,7 @@ import { appraiseRoute } from "./appraise.js";
 import { verifyRoute } from "./verify.js";
 import { liveKey, serveLive, pushLive } from "./live_board.js";
 
-const MAX_BYTES = 8192;        // a build and its produced scores; this is slack
+const MAX_BYTES = 4096;        // a build is a few hundred bytes; this is slack
 // AN OUTER BOUND, NOT THE RULE — see below. It is `MAIN_SLOTS + 1`: eight main
 // slots and the STANCE, which is the one extra card that rides `mods` (the
 // exilus has a key of its own). EXPORTED so `check_board_submit.mjs` can hold
@@ -43,9 +43,6 @@ const ID_PLAIN = /^[a-z0-9_]{1,64}$/;
 // A MOD BELOW ITS MAX RANK is `<card>@<rank>` (`engine::data::mods::RANK_MARK`),
 // and only the axes marked `ranked` may carry one.
 const RANKED_ID = /^[a-z0-9_]{1,64}(@[0-9]{1,2})?$/;
-// EVERY RULER x EVERY MODE A WEAPON SUSTAINS — a melee carries seven.
-const MAX_PRODUCED = 32;
-const ENGINE_ID = /^[A-Za-z0-9._-]{1,40}$/;
 
 /// WHAT A SUBMISSION CARRIES, declared ONCE. Two things are derived from it —
 /// the shape check and the stored record — because two hand-written lists is a
@@ -179,24 +176,6 @@ function record(b) {
       if (!Array.isArray(list) || list.length > a.max) return { err: `bad ${a.key}` };
       if (!list.every((s) => typeof s === "string" && ID.test(s))) return { err: `bad ${a.key}` };
       if (list.length) rec[a.key] = list;
-    }
-  }
-  // WHAT THE SUBMITTER'S MACHINE MEASURED, by the scorer's own path
-  // (`69-board-produce.js`). Kept beside the build for the owner's live board;
-  // never a score — `wfsim-intake` reads it as a claim, keyed by the build it
-  // derives, so an id chosen here can overwrite nothing.
-  if (b.produced !== undefined) {
-    const list = b.produced;
-    if (!Array.isArray(list) || list.length > MAX_PRODUCED) return { err: "bad produced" };
-    const ok = list.every((p) => p && typeof p === "object" && !Array.isArray(p)
-      && Object.keys(p).length === 3
-      && ID_PLAIN.test(p.ruler) && ID_PLAIN.test(p.mode)
-      && typeof p.score === "number" && Number.isFinite(p.score) && p.score >= 0);
-    if (!ok) return { err: "bad produced" };
-    if (typeof b.engine !== "string" || !ENGINE_ID.test(b.engine)) return { err: "bad engine" };
-    if (list.length) {
-      rec.produced = list.map((p) => ({ ruler: p.ruler, mode: p.mode, score: p.score }));
-      rec.engine = b.engine;
     }
   }
   return { rec };

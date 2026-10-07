@@ -1,7 +1,9 @@
-// CROSS-VERIFICATION'S DOOR (worker/verify.js), with no network: a lease hands
-// out a build and never its number, to a client of the claim's own release and
-// one lease at a time; equal bits make a fact and anything else a dispute; a
-// fact already held stands; the answer never says whether the client agreed.
+// COMPUTE ORDERS' DOOR (worker/verify.js), with no network: an order is handed
+// out as a build and never a number; its first result waits for the server's
+// rank; a second must come from another client of the same engine; equal bits
+// make a fact and settle the queue row, anything else is a dispute, and the
+// answer never says which; a row nobody owes, a top-ten row, a live lease and a
+// banned client get nothing.
 //   node scripts/check_board_verify.mjs
 import { verifyRoute, LEASE_MS } from "../worker/verify.js";
 import { DatabaseSync } from "node:sqlite";
@@ -27,74 +29,98 @@ const call = async (path, body) => {
   const r = await verifyRoute(new Request(`https://x${path}`, { method: "POST", body: JSON.stringify(body) }), env, path);
   return r.json();
 };
-const claim = (identity, score, engine = "r1", state = "open") => db.prepare(
-  `INSERT INTO claims (identity, ruler, mode, record, metric, score, engine, state, at)
-   VALUES (?, 'standard_single_target', 'base', ?, 'kpm', ?, ?, ?, '2026-10-07')`)
-  .run(identity, JSON.stringify({ weapon: "braton_prime", mods: ["serration"] }), score, engine, state);
-const row = (identity) => db.prepare("SELECT * FROM claims WHERE identity = ?").get(identity);
+const order = (identity, state = "todo", extra = {}) => {
+  db.prepare(`INSERT INTO orders (identity, ruler, mode, record, state, slot, at) VALUES (?, 'standard_single_target', 'base', ?, ?, ?, 0)`)
+    .run(identity, JSON.stringify({ weapon: "braton_prime", mods: ["serration"] }), state, Math.floor(Math.random() * 1e9));
+  db.prepare("INSERT INTO queue (batch, build_id, ruler, mode) VALUES ('arrivals', ?, 'standard_single_target', 'base')").run(identity);
+  const sets = Object.keys(extra);
+  if (sets.length) db.prepare(`UPDATE orders SET ${sets.map((k) => `${k} = ?`).join(", ")} WHERE identity = ?`).run(...Object.values(extra), identity);
+};
+const row = (identity) => db.prepare("SELECT * FROM orders WHERE identity = ?").get(identity);
 const fact = (identity) => db.prepare("SELECT * FROM scores WHERE identity = ?").get(identity);
-const A = "a".repeat(24), B = "b".repeat(24), C = "c".repeat(24);
+const only = (identity) => db.prepare("UPDATE orders SET slot = CASE WHEN identity = ? THEN 1 ELSE slot END").run(identity);
+const work = (v, engine = "e1") => call("/api/board/work", { verifier: v, engine });
+const answer = (w, v, score, metric = "kpm", engine = "e1") => call("/api/board/verify", { lease: w.lease, verifier: v, engine, score, metric });
+const A = "a".repeat(24), B = "b".repeat(24), C = "c".repeat(24), D = "d".repeat(24);
 const SCORE = 1.1070976928071055;
 Math.random = () => 0.5;  // no spot check unless a test asks for one
 
-claim("one", SCORE);
-db.prepare("INSERT INTO queue (batch, build_id, ruler, mode) VALUES ('arrivals', 'one', 'standard_single_target', 'base')").run();
+order("one");
+const first = await work(A);
+check("an order is handed out as its build", first.work && first.work.record.weapon === "braton_prime", JSON.stringify(first));
+check("...one lease at a time", (await work(A)).work === null);
+await answer(first.work, A, SCORE);
+check("the first result makes it fresh, kept with who measured it and on which engine",
+  row("one").state === "fresh" && row("one").score === SCORE && row("one").produced_by === A && row("one").engine === "e1");
+check("...and no fact yet", !fact("one"));
+check("a fresh order waits for the server's rank and is handed to nobody", (await work(B)).work === null);
 
-check("a client of another release is handed nothing",
-  (await call("/api/board/work", { verifier: B, engine: "r2" })).work === null);
-const got = await call("/api/board/work", { verifier: A, engine: "r1" });
-check("a client of the claim's release is handed its build", got.work && got.work.record.weapon === "braton_prime", JSON.stringify(got));
-check("...and NOT the number to agree with", got.work && !JSON.stringify(got.work).includes(String(SCORE)));
-check("...and one lease at a time", (await call("/api/board/work", { verifier: A, engine: "r1" })).work === null);
+db.prepare("UPDATE orders SET state = 'open' WHERE identity = 'one'").run();
+check("an open order is never handed back to the client that measured it", (await work(A)).work === null);
+check("...nor to a client of another engine", (await work(C, "e2")).work === null);
+const second = await work(B);
+check("...but to another client of its engine", second.work && second.work.record.weapon === "braton_prime");
+check("...and NOT with the number to agree with", second.work && !JSON.stringify(second.work).includes(String(SCORE)));
+const agreed = await answer(second.work, B, SCORE);
+check("equal bits make a fact", fact("one") && fact("one").score === SCORE && fact("one").measured_by === "verified:e1", JSON.stringify(fact("one")));
+check("...the order is verified by the second client", row("one").state === "verified" && row("one").verifier === B);
+check("...and the queue no longer owes the row", !db.prepare("SELECT 1 FROM queue WHERE build_id = 'one'").get());
 
-const stranger = await call("/api/board/verify", { lease: got.work.lease, verifier: B, score: SCORE });
-check("another client's answer on that lease is ignored", stranger.ok && row("one").state === "leased");
-
-const agreed = await call("/api/board/verify", { lease: got.work.lease, verifier: A, score: SCORE });
-check("equal bits make a fact", agreed.ok && fact("one") && fact("one").score === SCORE, JSON.stringify(fact("one")));
-check("...measured by the release, verified", fact("one") && fact("one").measured_by === "verified:r1");
-check("...the claim is verified by that client", row("one").state === "verified" && row("one").verifier === A);
-check("...the queue no longer owes the row",
-  !db.prepare("SELECT 1 FROM queue WHERE build_id = 'one'").get());
-check("...and the client is credited",
-  db.prepare("SELECT agreed FROM verifiers WHERE id = ?").get(A).agreed === 1);
-
-claim("two", SCORE);
-const w2 = await call("/api/board/work", { verifier: B, engine: "r1" });
-const disagreed = await call("/api/board/verify", { lease: w2.work.lease, verifier: B, score: SCORE * 2 });
+order("two", "open", { score: SCORE, metric: "kpm", engine: "e1", produced_by: A });
+only("two");
+const w2 = await work(C);
+const disagreed = await answer(w2.work, C, SCORE * 2);
 check("a different number makes a dispute, and no fact", row("two").state === "dispute" && !fact("two") && row("two").disputed === SCORE * 2);
 check("...and the answer is the same one an agreement gets", JSON.stringify(disagreed) === JSON.stringify(agreed));
 
-claim("three", SCORE);
-db.prepare(`INSERT INTO scores (identity, ruler, mode, measured_by, score, metric, cost_seconds, started_at, finished_at)
-  VALUES ('three', 'standard_single_target', 'base', '4f892ee6e4', 2.5, 'kpm', 1, 'x', 'x')`).run();
-check("a row the scorer already measured is never handed out",
-  (await call("/api/board/work", { verifier: C, engine: "r1" })).work === null);
+order("three", "open", { score: SCORE, metric: "kpm", engine: "e1", produced_by: A });
+only("three");
+const w3 = await work(D);
+await answer(w3.work, D, SCORE, "dps");
+check("the same number in another metric is a dispute", row("three").state === "dispute");
 
-claim("four", SCORE, "r1", "arbiter");
-check("a top-ten row is the server's, never a client's",
-  (await call("/api/board/work", { verifier: C, engine: "r1" })).work === null);
+order("four");
+db.prepare("DELETE FROM queue WHERE build_id = 'four'").run();
+only("four");
+check("an order nobody owes any more is handed to nobody", (await work("e".repeat(24))).work === null);
+check("...and is settled where it was found", row("four").state === "settled");
 
-claim("five", SCORE);
-const w5 = await call("/api/board/work", { verifier: C, engine: "r1" });
-db.prepare("UPDATE claims SET lease_until = ? WHERE identity = 'five'").run(Date.now() - 1);
-check("an expired lease is answered by nobody", (await call("/api/board/verify", { lease: w5.work.lease, verifier: C, score: SCORE })).ok
-  && row("five").state === "leased" && !fact("five"));
-const D = "d".repeat(24);
-const w5b = await call("/api/board/work", { verifier: D, engine: "r1" });
-check("...and goes to the next client", w5b.work && row("five").leased_to === D);
+order("five", "arbiter", { score: SCORE, metric: "kpm", engine: "e1", produced_by: A });
+only("five");
+check("a top-ten order is the server's, never a client's", (await work("f".repeat(24))).work === null);
+
+order("six");
+only("six");
+const G = "g".repeat(24), H = "h".repeat(24);
+const w6 = await work(G);
+db.prepare("UPDATE orders SET lease_until = ? WHERE identity = 'six'").run(Date.now() - 1);
+await answer(w6.work, G, SCORE);
+check("an answer on an expired lease is nobody's", row("six").state === "todo" && row("six").score === null);
+const w6b = await work(H);
+check("...and the order goes to the next client", w6b.work && row("six").leased_to === H);
+
+order("seven", "open", { score: SCORE, metric: "kpm", engine: "e1", produced_by: A });
+only("seven");
+const I = "i".repeat(24);
+const w7 = await work(I);
 Math.random = () => 0;
-await call("/api/board/verify", { lease: w5b.work.lease, verifier: D, score: SCORE });
+await answer(w7.work, I, SCORE);
 check("an agreement the dice pick is a spot check: a fact now, recomputed by the server",
-  row("five").state === "spot" && fact("five") && fact("five").score === SCORE);
+  row("seven").state === "spot" && fact("seven") && fact("seven").score === SCORE);
 Math.random = () => 0.5;
 
-db.prepare("UPDATE verifiers SET banned = 1 WHERE id = ?").run(D);
-claim("six", SCORE);
-check("a banned client is handed nothing", (await call("/api/board/work", { verifier: D, engine: "r1" })).work === null);
+const J = "j".repeat(24);
+order("eight");
+await work(J);
+db.prepare("UPDATE verifiers SET banned = 1 WHERE id = ?").run(J);
+db.prepare("UPDATE orders SET lease = NULL, lease_until = NULL, leased_to = NULL WHERE identity = 'eight'").run();
+check("a banned client is handed nothing", (await work(J)).work === null);
+const seen = db.prepare("SELECT seen FROM verifiers WHERE id = ?").get(A).seen;
+check("a client is written once a day, not once a poll", seen === new Date().toISOString().slice(0, 10)
+  && db.prepare("SELECT COUNT(*) AS n FROM verifiers WHERE id = ?").get(A).n === 1);
 check("a malformed id is refused", (await verifyRoute(new Request("https://x/api/board/work",
-  { method: "POST", body: JSON.stringify({ verifier: "x", engine: "r1" }) }), env, "/api/board/work")).status === 400);
-check("a lease is said to be held for longer than the slowest row", LEASE_MS >= 20 * 60_000);
+  { method: "POST", body: JSON.stringify({ verifier: "x", engine: "e1" }) }), env, "/api/board/work")).status === 400);
+check("a lease is held for longer than the slowest row", LEASE_MS >= 20 * 60_000);
 
-console.log(failures ? `\n${failures} failed` : "\na number reaches the board only when a second client measured the same bits");
+console.log(failures ? `\n${failures} failed` : "\nan order reaches the board when two clients measured the same bits");
 process.exitCode = failures ? 1 : 0;

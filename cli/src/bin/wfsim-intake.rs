@@ -117,55 +117,6 @@ fn rank_choices(v: &wfsim_engine::board::builds::ValidBuild) -> Vec<Vec<String>>
     out
 }
 
-/// WHAT THE SUBMITTER'S MACHINE MEASURED, as fact lines in the scorer's own
-/// shape (`facts::FactLog::write`) — for the owner's live board, never for
-/// `scores`.
-///
-/// KEYED HERE, by the build this pass derives: the record names only a
-/// (ruler, mode), so a claim can land on no build but its own. A claim for a
-/// fight the build does not owe — a ruler that refuses it, a mode it cannot
-/// sustain — is dropped, and so is every claim on a riven, whose library builds
-/// are corners the page never measured. `measured_by` says it was a client,
-/// which the projection publishes as `unverified` (`board::CLIENT_MEASURED`).
-fn produced_facts(rec: &Value, lib: &wfsim_engine::board::builds::ValidBuild) -> Vec<Value> {
-    let (Some(list), Some(engine)) = (
-        rec.get("produced").and_then(Value::as_array),
-        rec.get("engine").and_then(Value::as_str),
-    ) else {
-        return Vec::new();
-    };
-    if lib.riven.is_some() {
-        return Vec::new();
-    }
-    let canon = wfsim_webapi::board_rows::canonical_record(lib);
-    let at = format!("{}T00:00:00Z", id(rec, "at"));
-    list.iter()
-        .filter_map(|p| {
-            let ruler = p.get("ruler").and_then(Value::as_str)?;
-            let mode = p.get("mode").and_then(Value::as_str)?;
-            let score = p.get("score").and_then(Value::as_f64).filter(|s| s.is_finite())?;
-            let bench = wfsim_engine::board::benchmarks::get(ruler)?;
-            let v = wfsim_webapi::board_rows::scored_build(&canon, ruler).ok()?;
-            let owed = wfsim_engine::data::weapons::play_modes(&v.weapon)
-                .into_iter()
-                .any(|m| m.sustainable && (if m.id.is_empty() { "base" } else { m.id }) == mode);
-            owed.then(|| {
-                json!({
-                    "identity": wfsim_engine::board::builds::build_id(&v),
-                    "ruler": ruler,
-                    "metric": bench.metric().id,
-                    "mode": mode,
-                    "measured_by": format!("{}{engine}", wfsim_cli::board::CLIENT_MEASURED),
-                    "score": score,
-                    "cost_seconds": 0.0,
-                    "started_at": at,
-                    "finished_at": at,
-                })
-            })
-        })
-        .collect()
-}
-
 /// THE FIGHT AN ARRIVAL NAMED, as a queue row — and this is the only place in
 /// the pipeline that can say it.
 ///
@@ -221,7 +172,7 @@ fn asked_row(
 fn intake(
     lines: impl Iterator<Item = String>,
     deadline: Option<std::time::Duration>,
-    mut produced: Option<&mut Vec<Value>>,
+    mut orders: Option<&mut Vec<Value>>,
 ) -> (Vec<Value>, Vec<Value>, Vec<String>, usize, usize) {
     let started = std::time::Instant::now();
     // ONE ROW PER BUILD, DEDUPED HERE TOO. Two inbox rows can be the same build
@@ -305,9 +256,6 @@ fn intake(
         // scope: the canonical one shadows it below and carries neither field.
         let sent = (id(&rec, "benchmark"), id(&rec, "mode"));
         let at = id(&row, "at");
-        if let Some(sink) = produced.as_deref_mut() {
-            sink.extend(produced_facts(&rec, &v));
-        }
         // A RIVEN BECOMES ITS CORNERS, and a build without one is itself. The
         // record that arrives states a SHAPE; what is stored is a build a player
         // could go and assemble, which needs numbers.
@@ -368,6 +316,19 @@ fn intake(
             if nth > 0 {
                 continue;
             }
+            // …AND EVERY ROW IT OWES, AS A COMPUTE ORDER — the live board opens
+            // them the moment the build arrives (docs/BOARD.md §"Compute
+            // orders"); the queue's own reconciliation asks more slowly.
+            if let Some(sink) = orders.as_deref_mut() {
+                let owed = if rolls.is_empty() {
+                    wfsim_webapi::board_rows::canonical_record(&v)
+                } else {
+                    wfsim_webapi::board_rows::with_rolls(wfsim_webapi::board_rows::canonical_record(&v), &rolls)
+                };
+                for (ruler, mode) in wfsim_webapi::board_rows::owed_rows(&owed) {
+                    sink.push(json!({ "build_id": key, "ruler": ruler, "mode": mode }));
+                }
+            }
             // THE FIGHT THEY RAN IT IN. `sent` was taken before the canonical
             // record shadowed the inbox one, which carries neither field.
             if let Some(ask) = asked_row(&sent.0, &sent.1, &v, &key) {
@@ -387,8 +348,8 @@ fn intake(
 fn main() {
     let done_path = flag("--done");
     let asked_path = flag("--asked");
-    let produced_path = flag("--produced");
-    let mut produced: Vec<Value> = Vec::new();
+    let orders_path = flag("--orders");
+    let mut orders: Vec<Value> = Vec::new();
     // SECONDS, and no flag means no clock — a local run over a file is not the
     // thing this bounds. The workflows pass one; see `intake`.
     let deadline = flag("--deadline")
@@ -398,7 +359,7 @@ fn main() {
         intake(
             std::io::stdin().lock().lines().map_while(Result::ok),
             deadline,
-            Some(&mut produced),
+            Some(&mut orders),
         );
 
     let mut out = std::io::BufWriter::new(std::io::stdout().lock());
@@ -425,8 +386,8 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if let Some(path) = produced_path {
-        let body: String = produced.iter().map(|r| format!("{r}
+    if let Some(path) = orders_path {
+        let body: String = orders.iter().map(|r| format!("{r}
 ")).collect();
         if let Err(e) = std::fs::write(&path, body) {
             eprintln!("intake: cannot write {path}: {e}");
@@ -549,14 +510,11 @@ mod tests {
 
     /// A RECORD NOBODY COULD EQUIP IS DONE, NOT RETRIED. It will never become
     /// legal, and a queue that keeps what it cannot use grows for ever.
-    /// A CLAIM LANDS ON THE BUILD THIS PASS DERIVES, and only on a fight it owes.
-    ///
-    /// The identity is never read off the record — the record has none — so it
-    /// has to be the id of the build that comes out beside it, or the live
-    /// board files the number under a build nobody submitted. A ruler that does
-    /// not exist and a mode the weapon cannot play are dropped, not stored.
+    /// A NEW BUILD OWES EVERY ROW IT CAN BE SCORED ON, and only those — each
+    /// filed under the build this pass derives, which is the id the library
+    /// stores it under. An Incarnon weapon owes a row per form on every ruler.
     #[test]
-    fn a_produced_score_lands_on_the_build_it_came_with() {
+    fn a_new_build_opens_an_order_for_every_row_it_owes() {
         let rec = json!({
             "weapon": "braton_prime",
             "mods": ["hellfire", "primary_acuity", "galvanized_aptitude", "hammer_shot",
@@ -564,22 +522,15 @@ mod tests {
             "evolutions": ["braton_prime_evo1_incarnon_form", "braton_prime_daring_reverie",
                            "braton_prime_voids_guidance", "braton_prime_prelude_of_might"],
             "arcanes": ["primary_deadhead"],
-            "engine": "r1",
-            "produced": [
-                { "ruler": "standard_single_target", "mode": "cycle", "score": 1.5 },
-                { "ruler": "standard_single_target", "mode": "no_such_mode", "score": 9.0 },
-                { "ruler": "no_such_ruler", "mode": "base", "score": 9.0 },
-            ],
         });
-        let line = json!({ "id": "p", "at": "2026-10-07", "record": rec }).to_string();
-        let mut produced = Vec::new();
-        let (builds, ..) = intake(vec![line].into_iter(), None, Some(&mut produced));
+        let line = json!({ "id": "o", "at": "2026-10-07", "record": rec }).to_string();
+        let mut orders = Vec::new();
+        let (builds, ..) = intake(vec![line].into_iter(), None, Some(&mut orders));
         assert_eq!(builds.len(), 1);
-        assert_eq!(produced.len(), 1, "only the fight the build owes: {produced:?}");
-        assert_eq!(produced[0]["identity"], builds[0]["id"], "filed under another build");
-        assert_eq!(produced[0]["mode"], "cycle");
-        assert_eq!(produced[0]["score"], 1.5);
-        assert_eq!(produced[0]["measured_by"], "client:r1");
+        let rulers = wfsim_engine::board::benchmarks::all().len();
+        assert_eq!(orders.len(), rulers * 2, "every ruler, both forms: {orders:?}");
+        assert!(orders.iter().all(|o| o["build_id"] == builds[0]["id"]), "filed under another build");
+        assert!(orders.iter().any(|o| o["mode"] == "cycle") && orders.iter().any(|o| o["mode"] == "base"));
     }
 
     #[test]

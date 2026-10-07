@@ -81,6 +81,33 @@ queue_batches() {
   ' "$2"
 }
 
+# …AND A COMPUTE ORDER BESIDE EVERY ROW, built from the library's record of the
+# build (docs/BOARD.md §"Compute orders"). One the queue asks for again — a
+# rescore, a sweep — is opened afresh unless clients or the server are still
+# working on it. Three bound parameters a row, so the same chunk fits.
+orders_batches() {
+  jq -R -s -c --argjson n "$QUEUE_BATCH" '
+    [splits("\n")] | map(select(length > 0)) | map(fromjson) as $all
+    | range(0; ($all | length); $n)
+    | . as $i
+    | $all[$i : $i + $n] as $chunk
+    | {
+        sql: ("INSERT INTO orders (identity, ruler, mode, record, state, engine, slot, at)"
+              + " SELECT v.column1, v.column2, v.column3, b.record, ?, ?,"
+              + " abs(random()) % 2147483647, unixepoch() * 1000"
+              + " FROM (VALUES " + ([$chunk[] | "(?,?,?)"] | join(",")) + ") AS v"
+              + " JOIN builds b ON b.id = v.column1 WHERE true"
+              + " ON CONFLICT (identity, ruler, mode) DO UPDATE SET state = ?, engine = ?,"
+              + " slot = excluded.slot, record = excluded.record, score = NULL, metric = NULL,"
+              + " produced_by = NULL, verifier = NULL, disputed = NULL, lease = NULL,"
+              + " lease_until = NULL, leased_to = NULL, at = excluded.at"
+              + " WHERE orders.state IN (?, ?, ?)"),
+        params: (["todo", ""] + [$chunk[] | .build_id, .ruler, .mode]
+                 + ["todo", "", "verified", "rejected", "settled"])
+      }
+  ' "$1"
+}
+
 send() {
   local what="$1" sent=0 failed=0 body
   while IFS= read -r body; do
@@ -127,6 +154,11 @@ ship() {
   set -- $r
   echo "queue: $n row(s) asked for in $1 statement(s), $2 refused"
   [ "$2" = "0" ] || return 1
+  # AN ORDER THAT DID NOT OPEN COSTS SPEED, NEVER A ROW: the queue still owes
+  # it and the scorer measures it as it always has.
+  r=$(orders_batches "$file" | send "compute order")
+  set -- $r
+  [ "$2" = "0" ] || echo "::warning::queue: $2 compute-order statement(s) refused — the scorer will measure those rows"
 }
 
 # ---- self-test ------------------------------------------------------------

@@ -317,39 +317,6 @@ console.log("the board's submission endpoint\n");
   );
 }
 
-// ---- WHAT THE PRODUCER MEASURED TRAVELS BESIDE THE BUILD ----------------
-//
-// `69-board-produce.js` sends the build again with the scores it measured. The
-// numbers are kept as sent; anything that is not a list of (ruler, mode,
-// score) is refused whole, because an inbox row is stored verbatim.
-{
-  const produced = [
-    { ruler: "standard_single_target", mode: "base", score: 1.1070976928071055 },
-    { ruler: "demolisher", mode: "base", score: 0 },
-  ];
-  const kv = database();
-  const res = await post({ ...PAYLOAD, produced, engine: "r123" }, kv);
-  const rec = [...kv.rows.values()][0] || {};
-  check("a build with its produced scores is accepted", res.ok, String(res.status));
-  check("...and the scores are stored bit for bit, with the engine that measured them",
-    JSON.stringify(rec.produced) === JSON.stringify(produced) && rec.engine === "r123",
-    JSON.stringify(rec));
-  const refused = async (body) => {
-    const r = await post(body, database());
-    return !r.ok;
-  };
-  check("a score that is not a number is refused",
-    await refused({ ...PAYLOAD, engine: "r1", produced: [{ ruler: "demolisher", mode: "base", score: "9" }] }));
-  check("a negative or unbounded score is refused",
-    await refused({ ...PAYLOAD, engine: "r1", produced: [{ ruler: "demolisher", mode: "base", score: -1 }] }));
-  check("a field beyond (ruler, mode, score) is refused",
-    await refused({ ...PAYLOAD, engine: "r1", produced: [{ ruler: "demolisher", mode: "base", score: 1, identity: "x" }] }));
-  check("produced scores without the engine that measured them are refused",
-    await refused({ ...PAYLOAD, produced }));
-  check("more rows than any weapon owes is refused",
-    await refused({ ...PAYLOAD, engine: "r1", produced: Array.from({ length: 33 }, () => produced[0]) }));
-}
-
 // ---- ...AND THE DEPLOYED ONE IS THIS ONE --------------------------------
 //
 // `site/` deploys on a push and the worker does NOT, so the code above can be

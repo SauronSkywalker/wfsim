@@ -186,17 +186,17 @@ board submission. Run it after adding a weapon or anything a weapon can carry.
 Plain node against a KV stub, no browser. Every key
 `boardPayload()` emits, read out of `app.js`, is a key the worker's `AXES`
 table knows how to keep; every key survives into storage; two builds differing
-in any one axis are two records. A producer's scores (`produced`, `engine`) are kept bit for
-bit beside the build, and anything but a list of (ruler, mode, score) is
-refused whole.
+in any one axis are two records.
 
 ## `check_board_verify`
 
-Plain node against `worker/schema.sql` on node's sqlite. A lease hands out a
-build and never its number, to a client of the claim's release, one at a time;
-equal bits make a `verified:` fact and delete the queue row, a difference makes
-a dispute and the answer is the same either way; a scored row, a top-ten row
-and a banned client get nothing; an expired lease goes to the next client.
+Plain node against `worker/schema.sql` on node's sqlite. An order is handed out
+as a build and never a number; its first result waits for the server's rank; a
+second comes only from another client of the same engine; equal bits make a
+`verified:` fact and delete the queue row, a difference (score or metric) is a
+dispute and the answer is the same either way; a row nobody owes, a top-ten
+order, a live lease and a banned client get nothing; a client is written once
+a day.
 
 ## `check_folds`
 

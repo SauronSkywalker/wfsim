@@ -498,10 +498,7 @@ async function offerBoardSubmit() {
       body: JSON.stringify(body),
     });
     boardState = res.ok ? "sent" : "failed";
-    if (res.ok) {
-      track("board.submit", body.weapon);
-      produceBoardRows(body);
-    }
+    if (res.ok) track("board.submit", body.weapon);
   } catch (_) {
     // Never an error dialog: a board that is unreachable is not a failed run.
     boardState = "failed";
@@ -703,7 +700,7 @@ function renderBoardConsent() {
     // it. Asking would be dishonest when the default has already decided.
     box.innerHTML =
       `<b>${escHtml(tr("Builds you run here are added to the official board."))}</b> ` +
-      escHtml(tr("The build is sent: the weapon and its mods, evolutions and arcanes, then the scores your machine measures for it under the board's own rulers. Not your fight, and nothing about you: no account. The board takes builds with every main slot filled.")) +
+      escHtml(tr("Only the build is sent: the weapon and its mods, evolutions and arcanes. Not your fight, and nothing about you: no account and no score. The board takes builds with every main slot filled.")) +
       // WHEN, on the FIRST visit too — this is the branch a new player reads,
       // and saying it only after the consent had been chosen told the fact to
       // everyone except the person meeting the board for the first time.

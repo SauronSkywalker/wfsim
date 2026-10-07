@@ -1,17 +1,16 @@
 #!/usr/bin/env bash
-# THE LIVE BOARDS — the site's, from `scores`, and the owner's, with what submitters' machines
-# measured beside it, projected the moment either moves. Runs on the bot server
+# THE LIVE BOARDS, AND THE ORDERS BEHIND THEM — on the bot server
 # (`deploy/wfsim-live.service`); `publish.yml` keeps a daily snapshot in git.
 #
 #   scripts/live_board.sh <work-dir> <bin-dir>
 #
-# It reads the inbox, the library and the scores; it files and settles claims
-# (`live_claims.mjs`) — docs/BOARD.md §"The producer", §"The live board".
-#
-# TWO BOARDS. `verified/` is `scores` alone, pushed to R2 for the site to read;
-# `board/` adds every claim no fact has answered, for the owner and the bot.
-# Verified facts are read every cycle (`live_publish.mjs delta`), so a row a
-# client or the scorer just settled moves both on the next one.
+# EVERY CYCLE: a submission is taken in the moment it lands — its builds into
+# the library, every row it owes into the queue and opened as a compute order
+# (`ship_queue.sh`) — the rows `scores` gained are read, and the boards move:
+# `verified/`, `scores` alone, pushed to R2 for the site; `board/`, with every
+# client result not yet a fact, for the owner and the bot. Then the server's own
+# orders are ranked and settled (`live_orders.mjs`). docs/BOARD.md §"Compute
+# orders", §"The live board".
 #
 # Needs CF_ACCOUNT, CF_TOKEN (D1) and CF_D1_DATABASE, and BOARD_PUSH_TOKEN.
 set -euo pipefail
@@ -24,7 +23,7 @@ REFRESH_SECONDS="${REFRESH_SECONDS:-3600}"
 mkdir -p "$WORK"
 cd "$WORK"
 WORK="$(pwd)"
-touch seen.txt produced.ndjson new-builds.ndjson produced-new.ndjson
+touch new-builds.ndjson unverified.ndjson
 
 d1() {
   curl -s --connect-timeout 15 --max-time 120 -o d1.json -w '%{http_code}' -X POST \
@@ -34,22 +33,23 @@ d1() {
     "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT:?}/d1/database/${CF_D1_DATABASE:?}/query"
 }
 
-# WHAT ARRIVED WITH A NUMBER, and has not been read yet. The inbox is drained
-# hourly by `queue.yml`, so it is small; an id is remembered only while the
-# inbox still holds it.
-poll_inbox() {
+# WHAT ARRIVED, TAKEN IN NOW: the same intake `queue.yml` runs hourly, which
+# stays as the fallback — the builds land and the inbox rows are spent
+# (`ship_builds.sh`), then every row the builds owe is queued and opened as an
+# order. Twice is harmless: a build is keyed by its hash and a queue row by its
+# own key.
+intake_arrivals() {
   local code
-  code=$(d1 '{"sql":"SELECT id, at, record FROM inbox WHERE record LIKE ?","params":["%\"produced\":%"]}') || code=000
+  code=$(d1 '{"sql":"SELECT id, at, record FROM inbox ORDER BY id LIMIT 500"}') || code=000
   [ "$code" = "200" ] || { echo "live: inbox read refused [HTTP $code]" >&2; return 1; }
-  jq -c '.result[0].results[]' < d1.json > inbox-all.ndjson
-  jq -r '.id' < inbox-all.ndjson | sort -u > inbox-ids.txt
-  sort -u seen.txt | comm -12 - inbox-ids.txt > seen.next
-  jq -n -c --rawfile seen seen.next \
-    '($seen | split("\n") | map({key: ., value: true}) | from_entries) as $s
-     | inputs | select($s[.id] | not)' < inbox-all.ndjson > inbox-new.ndjson
-  jq -r '.id' < inbox-new.ndjson >> seen.next
-  mv seen.next seen.txt
-  [ -s inbox-new.ndjson ]
+  jq -c '.result[0].results[]' < d1.json > inbox-new.ndjson
+  [ -s inbox-new.ndjson ] || return 1
+  "$BIN/wfsim-intake" --done done.txt --orders orders-new.ndjson < inbox-new.ndjson > builds-new.ndjson 2>> intake.log
+  bash "$HERE/ship_builds.sh" builds-new.ndjson done.txt >&2 || return 1
+  cat builds-new.ndjson >> new-builds.ndjson
+  jq -r '.id' < builds-new.ndjson >> touched-ids.txt
+  bash "$HERE/ship_queue.sh" "arrivals-$(date -u +%Y-%m-%d)" "the rows a new build owes" orders-new.ndjson >&2 \
+    || echo "live: the new rows were not queued; the hourly reconciliation asks for them" >&2
 }
 
 # READ INTO A SPARE AND SWAPPED ON SUCCESS: a failed read truncates its output,
@@ -62,7 +62,7 @@ refresh_store() {
   # …AND WHICH BUILD IS WHICH WEAPON, which a subset pass is cut by.
   mv library.fresh.ndjson library-ids.ndjson
   mv facts.fresh facts-known.ndjson
-  # A BUILD THE HOURLY INTAKE HAS NOW STORED is in the library itself.
+  # A BUILD THE LIBRARY NOW HOLDS is in the read itself.
   : > new-builds.ndjson
 }
 
@@ -118,28 +118,36 @@ publish_verified() {
   python3 "$HERE/board_meta.py" verified pub/data/board_state.yaml verified/meta.json >&2
 }
 
-# THE OWNER'S BOARD: the facts, and every claim no fact has answered yet —
-# `facts-live.ndjson`, which a subset pass also cuts its facts from.
-open_claims() {
+# THE OWNER'S BOARD: the facts, and every client result no fact has answered
+# yet — `facts-live.ndjson`, which a subset pass also cuts its facts from.
+open_results() {
   jq -r '"\(.identity)|\(.ruler)|\(.mode)"' < facts-known.ndjson | sort -u > known-keys.txt
   jq -n -c --rawfile known known-keys.txt \
     '($known | split("\n") | map({key: ., value: true}) | from_entries) as $s
      | inputs | select($s["\(.identity)|\(.ruler)|\(.mode)"] | not)' \
-    < produced.ndjson > produced-open.ndjson
-  cat facts-known.ndjson produced-open.ndjson > facts-live.ndjson
+    < unverified.ndjson > unverified-open.ndjson
+  cat facts-known.ndjson unverified-open.ndjson > facts-live.ndjson
 }
 
 project_private() {
-  [ -n "${1:-}" ] || open_claims
+  [ -n "${1:-}" ] || open_results
   project_into board facts-live.ndjson . "${1:-}" || return 1
-  echo "live: projected $(wc -l < produced-open.ndjson) client row(s) beside $(wc -l < facts-known.ndjson) fact(s)" >&2
+  echo "live: projected $(wc -l < unverified-open.ndjson) client result(s) beside $(wc -l < facts-known.ndjson) fact(s)" >&2
+}
+
+# WHICH BUILDS' CLIENT RESULTS CHANGED since the last read, into `touched-ids.txt`.
+read_unverified() {
+  node "$HERE/live_orders.mjs" unverified "$WORK" unverified.next || return 1
+  jq -r '"\(.identity)|\(.ruler)|\(.mode)|\(.score)"' < unverified.ndjson | sort > unverified.was
+  jq -r '"\(.identity)|\(.ruler)|\(.mode)|\(.score)"' < unverified.next | sort > unverified.now
+  comm -3 unverified.was unverified.now | tr -d '\t' | cut -d'|' -f1 | sort -u >> touched-ids.txt
+  mv unverified.next unverified.ndjson
 }
 
 last_refresh=0
 while true; do
   whole=0
   facts_moved=0
-  claims_moved=0
   : > touched-ids.txt
   now=$(date +%s)
   if [ $((now - last_refresh)) -ge "$REFRESH_SECONDS" ] || [ ! -s library.json ]; then
@@ -150,6 +158,7 @@ while true; do
       echo "live: the store could not be read; keeping the last copy" >&2
     fi
   fi
+  intake_arrivals || true
   # WHAT WAS VERIFIED SINCE THE LAST READ, without waiting for the hourly one.
   if [ -s facts-known.ndjson ]; then
     code=0
@@ -159,14 +168,8 @@ while true; do
       cat moved-ids.txt >> touched-ids.txt
     fi
   fi
-  if poll_inbox; then
-    "$BIN/wfsim-intake" --produced produced-pass.ndjson < inbox-new.ndjson >> new-builds.ndjson 2>> intake.log
-    cat produced-pass.ndjson >> produced.ndjson
-    cat produced-pass.ndjson >> produced-new.ndjson
-    jq -r '.identity' < produced-pass.ndjson >> touched-ids.txt
-    claims_moved=1
-  fi
-  if [ -s library.json ] && { [ "$whole" = 1 ] || [ "$facts_moved" = 1 ] || [ "$claims_moved" = 1 ] \
+  read_unverified || echo "live: the open orders could not be read" >&2
+  if [ -s library.json ] && { [ "$whole" = 1 ] || [ "$facts_moved" = 1 ] || [ -s touched-ids.txt ] \
        || [ ! -d verified ] || [ ! -d board ]; }; then
     library_live
     # WHOLE ON THE HOUR AND ON A FIRST START; otherwise only the weapons this
@@ -179,7 +182,7 @@ while true; do
     if [ "$whole" = 1 ] || [ ! -d board ]; then
       project_private || echo "live: the projection failed; the last board stands" >&2
     elif [ -s touched-ids.txt ]; then
-      open_claims
+      open_results
       if subset_of touched-ids.txt private-subset.json facts-live.ndjson; then
         project_private private-subset.json || echo "live: the projection failed; the last board stands" >&2
       fi
@@ -191,12 +194,11 @@ while true; do
   if [ -f verified/meta.json ]; then
     node "$HERE/live_publish.mjs" push "$WORK" verified || echo "live: the push did not land; the next cycle sends it" >&2
   fi
-  # CLAIMS ARE FILED AFTER THE PROJECTION, which is what ranks them, and the
-  # server's own rows are settled every cycle — `live_claims.mjs`.
-  if [ -s produced-new.ndjson ] && [ -d board ]; then
-    node "$HERE/live_claims.mjs" file "$WORK" && : > produced-new.ndjson
+  # RANKED AGAINST THE SITE'S BOARD, which is what a top ten is a top ten of.
+  if [ -d verified ]; then
+    node "$HERE/live_orders.mjs" rank "$WORK" || echo "live: ranking failed; the next cycle asks again" >&2
   fi
-  node "$HERE/live_claims.mjs" settle "$WORK" "$BIN" || echo "live: settling failed; the next cycle asks again" >&2
+  node "$HERE/live_orders.mjs" settle "$WORK" "$BIN" || echo "live: settling failed; the next cycle asks again" >&2
   # ONE CYCLE AND OUT, for a check run by hand.
   [ "${ONCE:-}" = 1 ] && break
   sleep "$POLL_SECONDS"

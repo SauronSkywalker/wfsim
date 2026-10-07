@@ -610,30 +610,6 @@ only produce a conflict — which is exactly what threw away 83 minutes of
 completed scoring on 2026-08-11. The run that just scored takes whatever base is
 current and writes its numbers on top.
 
-## The producer
-
-**THE SUBMITTER'S MACHINE MEASURES WHAT IT SENT, BY THE SCORER'S OWN PATH.**
-After a build is sent, `69-board-produce.js` runs every fight the board owes it
-in the background — `/api/board/rows` names them, `/api/board/fold` folds their
-runs one at a time, `/api/board/score` ends them — and sends the build again
-with the scores as `produced`. All three are `webapi::board_rows`, the same
-functions `wfsim-intake` and the scorer call, so the number is the scorer's to
-the bit: engine parity is exact across wasm and native (docs/WASM.md), and
-`the_pages_producer_measures_the_scorers_row` holds the path. A riven build is
-left to the scorer, whose library holds its corners.
-
-**THE READER GOES FIRST.** Each piece waits on `yieldToForeground` and is sized
-to a quarter second; a phone produces nothing.
-
-**THE NUMBER REACHES THE OWNER'S LIVE BOARD AND NOTHING ELSE.**
-`scripts/live_board.sh` runs on the bot server (`deploy/wfsim-live.service`):
-it polls the inbox, runs `wfsim-intake --produced` to file each claim under the
-build intake derives — never an id from the wire — and projects the facts plus
-every claim no fact has answered, with `wfsim-board --project`, into a board the
-QQ bot reads. A claim projects as `unverified`; a fact replaces it on the next
-hourly read of `scores`. It writes nothing to the database, so `scores`, the
-public board and `publish.yml` are untouched by it.
-
 ## The live board
 
 **WHAT THE SITE SHOWS IS `scores`, RANKED THE MOMENT IT MOVES.** Every 20 s
@@ -652,40 +628,53 @@ Measured on the whole store, a subset pass writes exactly the files a whole pass
 does, in a quarter of the time; the hourly read still ranks everything.
 
 **UNVERIFIED NUMBERS NEVER REACH IT.** The owner's board beside it adds every
-open claim (§"The producer") and stays on the server.
+client result not yet a fact (§"Compute orders") and stays on the server.
 
 **THE COMMITTED BOARD IS A SNAPSHOT.** `publish.yml` writes `site/board/` once a
 day for people and for the record; the worker reads it only until the first
 live stamp exists, and never again after.
 
-## Cross-verification
+## Compute orders
 
-**A CLIENT'S NUMBER BECOMES A FACT WHEN A SECOND, INDEPENDENT CLIENT PRODUCES
-THE SAME BITS.** The engine is deterministic across every target, so agreement
-is equality and a difference is proof that one side is wrong.
+**EVERY OWED ROW IS AN ORDER, AND THE MACHINES WITH THE SITE OPEN FILL THEM.**
+Nothing about a submission is computed by the person who sent it: the build
+goes into the library, and every (ruler, mode) it owes becomes a row in `queue`
+and, beside it, an order in `orders` (`ship_queue.sh`) — the same for a sweep
+or a rescore. However many rulers and modes there are, a machine is handed one
+row at a time, so the board's growth is more orders, never a heavier client.
 
-- **Filing.** The live board files each producer claim in `claims` (D1),
-  keyed by the build intake derived, with its canonical record. A claim in its
-  group's TOP TEN on the live board is `arbiter`: the server's alone.
-- **Leasing.** `/api/board/work` (`worker/verify.js`) hands a client one claim
-  of its own engine (`ENGINE_ID`), chosen at random, with the BUILD and never the number;
-  one lease a client, thirty minutes long. A browser skips a build it produced.
-- **Agreeing.** `/api/board/verify` compares bits. Equal: the row enters
-  `scores` as `verified:<engine>` unless a fact is already there, its queue row
-  is deleted, and one agreement in twenty is a `spot` the server recomputes.
-  Different: a `dispute`. The answer never says which.
-- **Settling.** `scripts/live_claims.mjs settle` fights every `arbiter`,
-  `dispute` and `spot` row with the scorer itself and ships the fact. A
-  verifier the server disproves — a dispute it lost, or a spot check it agreed
-  to wrongly — is refused, and every row it agreed to is withdrawn and opened
-  again; only for a claim of the engine the server runs.
-- **Nobody online** costs nothing: an unverified row is still owed, and
-  `scores.yml` measures it as it always has.
+- **Taking in.** The bot server takes a submission in the moment it lands
+  (`live_board.sh`: `wfsim-intake --orders`, `ship_builds.sh`,
+  `ship_queue.sh`); `queue.yml`'s hourly intake is the fallback.
+- **Leasing.** `/api/board/work` (`worker/verify.js`) hands a client one
+  order — its library RECORD, a ruler and a mode, never a number — chosen from
+  a random `slot` on an index, so a lease reads a few rows however long the
+  book is. One lease a client, thirty minutes long; a row no longer owed is
+  settled where it is found.
+- **Fighting.** The client asks `/api/board/order` for the fight off the record
+  (the scorer's `scored_build` and `row_requests`, a riven's rolls included),
+  folds it with `/api/board/fold` and ends it with `/api/board/score`
+  (`69-board-work.js`) — `a_compute_order_is_the_scorers_row` holds the path.
+- **Two results.** The first makes the order `fresh`; the server ranks it
+  against the site's board (`live_orders.mjs rank`) and an order in its group's
+  TOP TEN becomes `arbiter`, the server's alone. Any other becomes `open`, and
+  only a DIFFERENT client of the same `ENGINE_ID` is handed it. Equal bits —
+  score and metric — put it in `scores` as `verified:<engine>` unless a fact is
+  there, and delete its queue row; one agreement in twenty is a `spot` the
+  server recomputes. A difference is a `dispute`. The answer never says which.
+- **Settling.** `live_orders.mjs settle` fights every `arbiter`, `dispute` and
+  `spot` order with the scorer itself and ships the fact. A client the server
+  disproves — the first result, the second, or both — is refused: what it
+  agreed to is withdrawn and opened again, what it measured first is measured
+  again. Only for an order of the engine the server runs.
+- **Nobody online** costs nothing. `scores.yml` reads the queue with
+  `HOLD_SECONDS=7200`: a row whose order opened in the last two hours is the
+  clients'; an older one it measures as it always has.
 
-**THE VERIFIER IS AN ANONYMOUS ID** its browser made for itself
-(`69-board-produce.js`), joined to no account and to no submission, kept in
-`verifiers` so a refusal has something to hold. Verifying is ON by default and
-switched beside the board's own consent; a phone never verifies.
+**THE CLIENT IS AN ANONYMOUS ID** its browser made for itself, joined to no
+account and to no submission, kept in `verifiers` so a refusal has something to
+hold. Working is ON by default and switched beside the board's own consent; a
+phone never works.
 
 ## Consent
 
@@ -694,10 +683,9 @@ native dialog (they are blocked in this project), and never blocking the
 result. Any fight sends its build, because what the board scores is the build
 under the ruler's fight and never the reader's own.
 
-What travels: the weapon, its mods, evolutions and arcanes, its riven's SHAPE,
-the fight it was run in, and — sent again once measured — the scores the
-producer measured for it (§"The producer"). No account, no identifier and none
-of the names you chose. `scripts/check_official.mjs` asserts on the WIRE that
+What travels: the weapon, its mods, evolutions and arcanes, its riven's SHAPE
+and the fight it was run in. No account, no identifier, no score and none of
+the names you chose. `scripts/check_official.mjs` asserts on the WIRE that
 nothing leaves before consent and nothing leaves after declining.
 
 The endpoint stores no IP, no token and no timestamp finer than the day.
@@ -1894,9 +1882,9 @@ build's rows findable afterwards — `WHERE measured_by = ?` — and that is the
 whole of what an engine version is for here.
 
 **A NEW SUBMISSION IS PENDING, NOT A GENERATION.** It has no fact yet, so it
-cannot enter a public ranking. The producer's number for it stands on the
+cannot enter a public ranking. A client's first result for it stands on the
 owner's live board only, marked `unverified`, and is replaced there by its fact
-when one exists (§"The producer").
+when one exists (§"Compute orders").
 
 #### THREE TIERS, EACH WITH ITS OWN SCALING LAW
 
@@ -2072,15 +2060,15 @@ already per row. 13.6% of commits.
   daily snapshot for people and never a fallback, so a reader is never shown a
   board older than `scores` says.
 - **The store keeps nothing about submitters.** No IP, no token, no time finer
-  than the day. A verifying client's anonymous id is the one exception, and it
-  is never joined to a submission (§"Cross-verification").
+  than the day. A working client's anonymous id is the one exception, and it is
+  never joined to a submission (§"Compute orders").
 - **The library is the only irreplaceable thing.** Boards are derived, the site
   is generated, the code is in git. Anything that could truncate it needs a
   tripwire before it needs a backup.
-- **A client's number never becomes a score on its own.** The producer's
-  figure reaches the owner's live board, marked `unverified`; it enters
-  `scores` only when a second client produced the same bits or the server did
-  (§"Cross-verification"). Every published row is reproducible from the repo.
+- **A client's number never becomes a score on its own.** It reaches the
+  owner's live board, marked `unverified`; it enters `scores` only when a
+  second client produced the same bits or the server did (§"Compute orders").
+  Every published row is reproducible from the repo.
 - **No work is enqueued anywhere.** What is outstanding is derived from the
   facts that exist, so there is no second copy of it to fall out of step with
   the first — §"The queue is a query".

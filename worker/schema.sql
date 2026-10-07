@@ -182,37 +182,46 @@ CREATE TABLE IF NOT EXISTS queue (
 -- run asks of this table.
 CREATE INDEX IF NOT EXISTS queue_batch ON queue (batch);
 
--- WHAT A SUBMITTER'S MACHINE MEASURED, WAITING FOR A SECOND ONE TO AGREE —
--- docs/BOARD.md §"Cross-verification". Filed by the live board on the bot
--- server, keyed by the build intake derived; a row reaches `scores` only when
--- an independent client produced the same bits, or the server did.
+-- "IS THIS ROW STILL OWED", asked by every lease of a compute order.
+CREATE INDEX IF NOT EXISTS queue_row ON queue (build_id, ruler, mode);
+
+-- A COMPUTE ORDER: one owed row, handed to the machines that have the site
+-- open — docs/BOARD.md §"Compute orders". Opened beside the `queue` row that
+-- owes it (`ship_queue.sh`), and leasable while that row is still owed; a row
+-- reaches `scores` when two different clients produced the same bits for it,
+-- or the server did.
 --
--- `record` is the canonical build, which is what a verifier fights, and never
--- `score`: a lease hands out the build, not the number to agree with.
--- `state`: open, leased, verified, spot (verified, to be recomputed by the
--- server), arbiter (top ten of its group, the server's alone), dispute,
--- rejected. `at` is the DAY, as everywhere a submission is concerned.
-CREATE TABLE IF NOT EXISTS claims (
+-- `state`: todo (nobody has measured it), fresh (one result, not yet ranked),
+-- open (one result, waiting for a second client), arbiter (in its group's top
+-- ten: the server's alone), dispute, spot (verified, recomputed by the server
+-- too), verified, rejected. `slot` is a random number a lease seeks from, which
+-- is what keeps one lease a few rows read however long the book grows. `engine`
+-- is the first result's `ENGINE_ID`, and only that engine verifies it. `at` is
+-- when the order was opened, in ms: the scorer leaves a young one to clients.
+CREATE TABLE IF NOT EXISTS orders (
   identity    TEXT NOT NULL,
   ruler       TEXT NOT NULL,
   mode        TEXT NOT NULL,
   record      TEXT NOT NULL,
-  metric      TEXT NOT NULL,
-  score       REAL NOT NULL,
-  engine      TEXT NOT NULL,
   state       TEXT NOT NULL,
+  engine      TEXT NOT NULL DEFAULT '',
+  slot        INTEGER NOT NULL,
   lease       TEXT,
   lease_until INTEGER,
   leased_to   TEXT,
+  score       REAL,
+  metric      TEXT,
+  produced_by TEXT,
   verifier    TEXT,
   disputed    REAL,
-  at          TEXT NOT NULL,
+  at          INTEGER NOT NULL,
   PRIMARY KEY (identity, ruler, mode)
 );
 
-CREATE INDEX IF NOT EXISTS claims_state ON claims (state, engine);
-CREATE INDEX IF NOT EXISTS claims_lease ON claims (lease);
-CREATE INDEX IF NOT EXISTS claims_verifier ON claims (verifier);
+CREATE INDEX IF NOT EXISTS orders_pick ON orders (state, engine, slot);
+CREATE INDEX IF NOT EXISTS orders_lease ON orders (lease);
+CREATE INDEX IF NOT EXISTS orders_holder ON orders (leased_to);
+CREATE INDEX IF NOT EXISTS orders_verifier ON orders (verifier);
 
 -- A VERIFYING CLIENT, by the random id its browser made for itself — joined to
 -- no account and to no submission, and sent with verification alone. Kept so a
