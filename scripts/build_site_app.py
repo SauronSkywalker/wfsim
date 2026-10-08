@@ -1708,8 +1708,10 @@ or GitHub name, or your email address;</li>
 <p>A computer computes for WFSim only after you turn it on, and you can turn it
 off on the <a href="/compute">compute page</a> at any time, which stops it at
 once. While it is on it computes the leaderboard's scores and the riven gains
-asked about in chats, only while a WFSim page is open; it steps aside when you
-use the calculator, pauses on battery, and never runs on a phone. WFSim keeps,
+asked about in chats, only while a WFSim page is open: one processor core while
+you use the computer, stepping aside when you use the calculator, and up to 30%
+of its cores while it is idle, which you can change in the compute menu at the
+top. It pauses on battery and never runs on a phone. WFSim keeps,
 for that browser: a random id it made, so its answers can be told apart and a
 false one refused; which statement you agreed to and when; the points its
 answers earned, by day; and when it last answered. Nothing else about the
@@ -1820,7 +1822,7 @@ remains.</li>
 <ul>
 <li><b>不登录时：</b>配装、场景、裂罅只保存在你自己的浏览器里。使用统计记在浏览器保存的一个随机编号下，不设置 cookie；不保存 IP 地址，只在统计到达时由连接判断所在国家或地区，与统计一起保存。浏览器开启「请勿追踪」或「全球隐私控制」时完全不统计，也可在
 <a href="/support#usage">支持页面</a>关闭。提交到排行榜的只有配装本身。</li>
-<li><b>帮忙计算：</b>默认关闭，你在页面右下角或「我的计算」里开启后才会运行；只在电脑上开着 WF模拟 时计算排行榜和裂罅收益，你使用计算器时立刻让路，用电池时暂停，手机上从不运行，随时可在顶部菜单或「我的计算」关闭。开启后浏览器会保存一个它自己生成的随机编号、你同意的说明版本和时间、按天的积分和最后完成时间；不发送电脑的其他任何信息，也不与你关联，除非你登录并认领这台设备。</li>
+<li><b>帮忙计算：</b>默认关闭，你在页面右下角或「我的计算」里开启后才会运行；只在电脑上开着 WF模拟 时计算排行榜和裂罅收益；你在用电脑时只占一个核心、使用计算器时立刻让路，电脑空闲时最多使用 30% 的核心（可在顶部计算菜单调整），用电池时暂停，手机上从不运行，随时可在顶部菜单或「我的计算」关闭。开启后浏览器会保存一个它自己生成的随机编号、你同意的说明版本和时间、按天的积分和最后完成时间；不发送电脑的其他任何信息，也不与你关联，除非你登录并认领这台设备。</li>
 <li><b>九九：</b>九九使用你自己选择的 AI 服务和你提供的密钥。你的提问和她为回答而读取的页面内容由你的浏览器直接发给该服务（其中有中国大陆的服务，也有境外的），适用该服务自己的条款，WF模拟 看不到。密钥只保存在这个浏览器里；对话和她记住的内容也只在这个浏览器里。WF模拟 只统计九九被打开和提问的次数，从不记录内容。她的回答由 AI 生成，并会标明。</li>
 <li><b>QQ 机器人：</b>在 QQ 群或私聊里提到 WF模拟 的机器人时，QQ 会把这条消息连同发送者和群的 openid 发给 WF模拟；每条只保存一天用于回复，然后删除。你询问的裂罅收益也会把裂罅词条和回复位置保存一天。机器人运行在腾讯云广州的服务器上。</li>
 <li><b>存储位置：</b>网站、排行榜和账号数据由 Cloudflare 存储在中国大陆以外；注册账号即单独同意这一点。桌面客户端的更新文件由腾讯云上海提供，QQ 机器人运行在广州；除上面写明的内容外，它们不保存关于你的任何信息。</li>

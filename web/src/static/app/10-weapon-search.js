@@ -39,13 +39,19 @@ function renderComputePicker() {
     })).concat(WASM && !onPhone() ? [
       // …AND THE COMMUNITY'S SHARE, the same switch as the compute page's
       // (69-board-work.js `setBoardVerify`), here on every page, signed in or not.
-      { value: "community:on", label: tr("Help compute WFSim: on"), group: tr("Community computing"),
-        hint: boardVerifyOn() ? tr("current") : "" },
+      ...COMMUNITY_SHARES.map((pct) => ({ value: `community:${pct}`,
+        label: tr("Help compute WFSim: {pct}% of cores when idle").replace("{pct}", pct), group: tr("Community computing"),
+        hint: boardVerifyOn() && communityShare() === pct ? tr("current") : "" })),
       { value: "community:off", label: tr("Help compute WFSim: off"), group: tr("Community computing"),
         hint: boardVerifyOn() ? "" : tr("current") },
     ] : []),
     onPick: (v) => {
-      if (v.startsWith("community:")) { setBoardVerify(v === "community:on"); return; }
+      // PICKING A SHARE IS SAYING YES, to the statement the card shows.
+      if (v.startsWith("community:")) {
+        if (v !== "community:off") setCommunityShare(Number(v.slice(10)));
+        setBoardVerify(v !== "community:off");
+        return;
+      }
       setComputePct(v);
     },
   });

@@ -78,7 +78,7 @@ function verifierId() {
 /// again. Running a stranger's computer without that is what the law calls
 /// controlling it, whatever it computes (docs/BOARD.md §"Contribution").
 const CONSENT_KEY = "wfsim-compute-consent";
-const COMPUTE_CONSENT_V = 1;
+const COMPUTE_CONSENT_V = 2;
 function computeConsent() {
   try {
     const c = JSON.parse(localStorage.getItem(CONSENT_KEY) || "null");
@@ -97,6 +97,28 @@ function setBoardVerify(on) {
   computeRedraw();
   computeChrome();
   renderComputePicker();
+}
+
+/// HOW MUCH OF THE COMPUTER, when it is idle: a share of its cores the reader
+/// picks in the compute menu (`COMMUNITY_SHARES`), 30% unless they do. While the
+/// reader is using it — touched in the last minute with the page in view, or
+/// running something of their own — it takes one core. The statement they
+/// agreed to says both.
+const COMMUNITY_SHARE_KEY = "wfsim-community-share";
+const COMMUNITY_SHARES = [10, 30, 50];
+const COMMUNITY_IDLE_MS = 60_000;
+function communityShare() {
+  try {
+    const n = Number(localStorage.getItem(COMMUNITY_SHARE_KEY));
+    return COMMUNITY_SHARES.includes(n) ? n : 30;
+  } catch (_) { return 30; }
+}
+function setCommunityShare(pct) {
+  try { localStorage.setItem(COMMUNITY_SHARE_KEY, String(pct)); } catch (_) { /* this page only */ }
+}
+function communityLanes() {
+  const idle = (document.hidden || Date.now() - lastTouched > COMMUNITY_IDLE_MS) && !readerBusy();
+  return idle ? Math.max(1, Math.floor((detectedCores().n * communityShare()) / 100)) : 1;
 }
 
 /// …AND EVEN WITH A YES, NOT NOW: paused for this tab by the reader, on a
@@ -194,7 +216,7 @@ const RIVEN_RENEW_MS = 2 * 60_000;
 async function rivenGainOnce(w, id) {
   computeStart({ kind: "riven_gain", weapon: w.weapon, ruler: w.ruler });
   const began = performance.now();
-  const job = quickFleet(w.request, 1, () => yieldToForeground());
+  const job = quickFleet(w.request, communityLanes(), () => yieldToForeground());
   // STILL AT IT, said every `RIVEN_RENEW_MS` so the lease runs on while the
   // search does; told the task went elsewhere, it stops (worker/appraise.js `renew`).
   let lost = false, said = performance.now();

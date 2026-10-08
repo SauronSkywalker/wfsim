@@ -693,7 +693,10 @@ each machine's share is counted under its owner's name. Eight rules:
    carries the yes, which the server keeps on the client's row
    (`verifiers.consent_v`, `consent_at`) and without which it hands nothing
    out. While it runs a mark in the top bar says so with a pause beside it, and
-   it holds itself on battery or with the browser's data saver on. Running a
+   it holds itself on battery or with the browser's data saver on. It takes
+   one core while the reader is at the computer and, once it is idle, the
+   share of its cores they pick in the compute menu — 30% unless they do
+   (`communityLanes`); the statement says so. Running a
    stranger's computer without that yes is controlling it, whatever it
    computes.
 1. **ONLY A FACT SCORES.** A client is credited an order's work when the order

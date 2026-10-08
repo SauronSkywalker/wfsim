@@ -48,7 +48,7 @@ const computeAskable = () => WASM && !onPhone() && computeConsent() === null
   && !/\/card$|^\/appraise\//.test(location.pathname);
 function computeAskHtml() {
   return `<b>${aT("Help compute WFSim's free features?")}</b>
-    <p>${aT("This computer would compute the leaderboard and riven gains for everyone, only while a WFSim page is open. It steps aside the moment you use the calculator, pauses on battery, never runs on a phone, takes no more than one core, and stops with one click. Nothing it computes is sold, and you are not paid. The work is counted to this browser, and to your name only if you choose.")}</p>
+    <p>${aT("This computer would compute the leaderboard and riven gains for everyone, only while a WFSim page is open. While you use the computer it takes one core and steps aside the moment you use the calculator; left idle, it takes up to 30% of its cores, which you can change in the compute menu at the top. It pauses on battery, never runs on a phone, and stops with one click. Nothing it computes is sold, and you are not paid. The work is counted to this browser, and to your name only if you choose.")}</p>
     <div class="ca-acts"><button class="run-btn btn-sm" data-compute-ask="yes">${aT("Turn on")}</button>
       <button class="ghost-btn btn-sm" data-compute-ask="no">${aT("No thanks")}</button>
       <a href="/compute">${aT("Learn more")}</a></div>`;
@@ -185,7 +185,8 @@ function computeHereHtml() {
     escHtml(tr("{n} in the last 30 days").replace("{n}", Number(d.recent || 0).toLocaleString(accountLocale())))}${
     accountState.account ? "" : ` · <a href="/login?return=${encodeURIComponent("/compute")}">${aT("Sign in to count it under your name")}</a>`}</dd></div>` : "";
   return `<div class="block"><div class="bh"><h2>${aT("This browser")}</h2></div><div class="bb"><dl class="kvs">
-    <div class="kv"><dt>${aT("State")}</dt><dd>${escHtml(state)}</dd>${flip}${again}</div>${now}${pts}</dl></div></div>`;
+    <div class="kv"><dt>${aT("State")}</dt><dd>${escHtml(state)}${on ? `<br><span class="set-note">${
+      escHtml(tr("{pct}% of this computer's cores while it is idle, one core while you use it.").replace("{pct}", communityShare()))}</span>` : ""}</dd>${flip}${again}</div>${now}${pts}</dl></div></div>`;
 }
 
 /// THE HONOUR, once earned: a device of the account said yes and has been

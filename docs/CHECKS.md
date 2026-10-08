@@ -219,6 +219,12 @@ signed out, it says how to count the work under a name. Signed in, every device
 of the account is listed by its name with this browser marked, with what each
 is doing or when it last answered; one claimed before it had a name is given
 its guess; a device is renamed inline and removed after an inline question.
+Built site only: nothing computes until a card asks and is answered — an old
+default's yes and a yes to an older statement are no answer — a no is kept, a
+card page never carries it, a yes turns it on with the statement and when; the
+top bar marks and pauses a running task; a battery holds it; and it takes one
+core while the reader is at the computer and the picked share, 30% unless
+changed, of the cores once idle.
 
 ## `check_riven_gain`
 

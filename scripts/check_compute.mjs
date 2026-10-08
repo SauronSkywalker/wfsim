@@ -139,6 +139,17 @@ const c = await evaluate(`(async () => {
   computeEnd(null);
   out.gone = pill() === "";
   computeBattery = { charging: false }; out.battery = computeHeld(); computeBattery = null;
+  // HOW MUCH: one core while the reader is at the computer, the share they
+  // picked (30% unless they did) of its cores once it is idle.
+  const cores = detectedCores().n;
+  localStorage.removeItem("wfsim-community-share");
+  lastTouched = Date.now(); out.busyLanes = communityLanes();
+  lastTouched = 0; out.idleLanes = communityLanes(); out.want30 = Math.max(1, Math.floor(cores * 0.3));
+  setCommunityShare(50); out.idle50 = communityLanes(); out.want50 = Math.max(1, Math.floor(cores * 0.5));
+  localStorage.removeItem("wfsim-community-share"); lastTouched = Date.now();
+  // AN OLDER YES IS NO ANSWER to a statement that now says more.
+  localStorage.setItem("wfsim-compute-consent", JSON.stringify({ v: COMPUTE_CONSENT_V - 1, on: true, at: new Date().toISOString() }));
+  out.oldYes = !boardVerifyOn();
   localStorage.removeItem("wfsim-compute-consent");
   return JSON.stringify(out);
 })()`);
@@ -149,5 +160,8 @@ check("...a card page a bot photographs never carries it", k.cardPage, c);
 check("...a yes turns it on, kept with the statement and when", k.yes, c);
 check("while it runs the top bar says so, and pauses it", /Computing for WFSim/.test(k.mark) && /paused/i.test(k.paused) && k.held === "paused", c);
 check("...the mark leaves when nothing runs, and a battery holds it", k.gone && k.battery === "battery", c);
+check("one core while the reader is at the computer, 30% of its cores once idle, or the share they picked",
+  k.busyLanes === 1 && k.idleLanes === k.want30 && k.idle50 === k.want50, c);
+check("...and a yes to an older statement is asked again", k.oldYes, c);
 
 await app.finish("the compute page shows what each device does, by kind, and nothing private");
