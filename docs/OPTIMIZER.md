@@ -1,7 +1,7 @@
 # Optimizer search design
 
 How the optimizer walks the mod-combination space without wasting
-evaluations. Recorded 2026-07-24. Companion to
+evaluations. Companion to
 [`CORE.md`](CORE.md) §5 (objectives, constraints, engine-only principle)
 and [`MECHANICS.md`](MECHANICS.md) §2–§3 (capacity/polarity, elemental
 hierarchy).
@@ -102,36 +102,14 @@ optimizer never reimplements damage math). Results are cached by
 (canonical form, scenario, policy); equivalent combinations are never
 re-simulated.
 
-## 5. Implementation status
+## 5. Implementation
 
-Implemented in `optimizer/` (`wfsim-optimizer` binary):
-
-- §1 canonical enumeration: 8-of-23 subsets with family exclusivity
-  (155,727 subsets by the generating function — pinned by test), ×
-  distinct-element-order permutations, second-level dedup on the
-  resolved post-[2] vector (1,452,146 order variants → 391,789
-  candidates, ~1 s).
-- §2 legalization via `engine::rules::capacity::plan_forma` per subset.
-- §3 `StackPolicy::AssumedMax` in `engine::build::loadout::resolve`.
-- Constraint hooks (prescribed-mods presets): `require=<mod_id>` / `forbid=<mod_id>`
-  CLI args filter the space before enumeration.
-- Evaluation: **successive halving** across all cores — rounds of
-  (runs, keep): 3→16384, 12→3072, 48→512, 200→64, 1000→24; early
-  rounds rank by mean effective damage (continuous, low variance),
-  the final rounds by mean kills (the objective). Deterministic
-  per-candidate seeds.
-- Benchmark scenario: Dual Toxocyst Incarnon (fixed evolutions, no
-  arcanes) vs Thrax Centurion @9999 Steel Path, instant respawn, 100%
-  headshots, 60 s, finals at 1000 runs.
-- Resumable rounds: `run_funnel` takes `start_round` and an
-  `on_checkpoint` sink, so a browser run that a page reload killed
-  continues from the last COMPLETED round instead of the beginning.
-  Seeds key off the ABSOLUTE round index, so the resumed run is not
-  merely similar to the uninterrupted one — it is the same
-  (`a_resumed_funnel_lands_on_the_same_leaderboard`). The screen resumes
-  too, from a cut of the walk rather than a round boundary
-  (`a_resumed_screen_lands_on_the_same_survivors`). See docs/WASM.md for
-  the checkpoint format and what it deliberately does not cover.
+- §1 and §2: canonical enumeration, legalized by
+  `engine::rules::capacity::plan_forma` per subset.
+- §3: `StackPolicy::AssumedMax` in `engine::build::loadout::resolve`.
+- Constraint hooks: `require=<mod_id>` / `forbid=<mod_id>` filter the space
+  before enumeration (`wfsim-optimizer`).
+- Resumable rounds and the screen's resume cut: docs/WASM.md §Checkpoint.
 - Best-so-far snapshots: the screen publishes its top slice every 4096
   candidates and every completed round publishes its leaderboard, both
   result-shaped. A browser cancel TERMINATES the worker, so a leaderboard
@@ -524,44 +502,12 @@ start. Every build is scored on ONE random stream, so a comparison is paired
 and the score is a fixed function of the build — each accepted move strictly
 raises it over a finite set, which is why the loop ends.
 
-**Measured against ground truth** (`wfsim-truth`, 60 s, Thrax Lv 9999 SP,
-reference 100 runs). "Sample + climb" is the search the descent replaced — a
-uniform sample of the space, then a best-first climb over every 1-swap of the
-best builds — kept at tag `archive/optimizer-sampler`:
-
-| scope | strategy | screen evals | rank | within noise | top-10 recall |
-|---|---|---|---|---|---|
-| Verglas Prime, 14 mods, 30,288 jobs | descent, one start per element | 1,092 | 1 | yes | 80% |
-| | descent, six element-pair starts | 1,535 | 1 | yes | 100% |
-| | descent, one start holding all four | 557 | 283 | **no** (49%) | 0% |
-| | descent, Serration alone | 361 | 1 | yes | 80% |
-| | sample + climb, 1,500 | 1,505 | 1 | yes | 90% |
-| Boar Prime, 11 mods × 2 arcanes × 8 evolution sets, 7,504 jobs, answer set 4 | descent, one start per element | 601 | 3 | yes | 50% |
-| | descent, Primed Point Blank alone | 273 | 3 | yes | 40% |
-| | sample + climb, budget 1,000 | 4,768 | 5 | **no** (1.6%) | 40% |
-
-**Across weapon classes**, each against its own exhausted reference (all
-settled), the descent at its default starts and sample + climb at the same
-screen evaluations:
-
-| scope | jobs | descent: evals, rank, regret | sample + climb: evals, rank, regret |
-|---|---|---|---|
-| Sancti Magistar (melee), 11 mods × 2 arcanes | 7,792 | 446, **1**, 0% | 464, 26, 12.3% |
-| Sancti Magistar, 13 mods × 2 arcanes | 26,878 | 473, **1**, 0% | 470, 22, 5.0% |
-| Lex Prime (incarnon), 11 mods × 2 arcanes × 4 evolution sets | 31,680 | 758, **1**, 0% | 1,664 (budget 760), 200, 47.9% |
-| Kuva Hind (valence), 11 mods × 2 arcanes | 7,032 | 412, **1**, 0% | 430, 16, 10.7% |
-| Kuva Hind, 13 mods × 2 arcanes | 30,704 | 751, **1**, 0% | 752, 3, 1.0% |
-| Rubico Prime (sniper), 11 mods × 2 arcanes | 6,276 | 414, **1**, 0% | 448, 7, 21.9% |
-| Lex Prime, 10 mods × modes base / cycle / transformed | 5,466 | 336, **1**, 0% | — |
-| Kuva Hind, 11 mods × 5 valence elements (answer set 2) | 17,580 | 517, 2, 0.9% (within noise) | — |
-
-**Measured on the whole pool**, where no reference exists: both searches at
-20,000 screen evaluations, winners replayed on 400 paired runs.
-
-| scope | sample + climb | descent | descent − sample + climb |
-|---|---|---|---|
-| Verglas Prime, 59 cards | 0.767 | 1.003 | **+30.8%** (1,433σ), a quarter of the time |
-| Boar Prime, 67 cards × 3 arcanes × 18 evolution sets | 6.62 | 29.49 | **+346%** (535σ) |
+**Measured against ground truth** (`wfsim-truth`, each scope against its own
+exhausted reference): at its default starts the descent lands at rank 1 or
+within noise on every weapon class — melee, incarnon, valence, sniper, modes —
+and matches or beats a uniform sample + climb at the same screen evaluations;
+on the whole pool, where no reference exists, its winners replay well above
+the sampler's. One start holding all four elements stalls at 49% regret.
 
 `the_descent_reaches_the_answer_set_from_any_start` is the CI guard; with
 moves never accepted it fails at rank 440.

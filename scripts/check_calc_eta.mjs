@@ -1,6 +1,6 @@
 // A LONG SCAN SAYS HOW LONG IT HAS LEFT, and the number is worth reading.
 //
-// Stage 3 of docs/WASM.md §"one executor". The per-run cost in this product
+// docs/WASM.md §"One executor". The per-run cost in this product
 // spans 1.1 ms to 29 ms, so "this will be a moment" and "this will be a minute"
 // are the same screen — and the second one, unannounced, is what a reader calls
 // stuck.

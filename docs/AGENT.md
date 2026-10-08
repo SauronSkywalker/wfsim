@@ -316,8 +316,6 @@ carrying six megabytes of wasm would start every page load colder.
 - `ship.py` deploys it after the site, and `--verify` asks it which engine it
   runs against the digest `site/pkg/` serves. It lags silently otherwise.
 
-The bots come next, over the same table; auth only with accounts.
-
 ## The QQ bot
 
 **QQ TAKES CALLS ONLY FROM A WHITELISTED ADDRESS**, so the bot is two halves.
@@ -330,9 +328,8 @@ rows over `/api/qq/claim` (bearer `BOT_RELAY_TOKEN`), answers each from the
 headless table, and replies through QQ's API; a row is handed to one pull at a
 time, again if it was never marked done, and deleted a day after it arrived.
 
-It serves nothing inbound, so it needs no ICP filing. Secrets: the worker holds
-`QQ_APP_SECRET` and `BOT_RELAY_TOKEN`; the server holds the AppID, the
-AppSecret (for its access token) and the same relay token.
+Secrets: the worker holds `QQ_APP_SECRET` and `BOT_RELAY_TOKEN`; the server
+holds the AppID, the AppSecret (for its access token) and the same relay token.
 `scripts/check_qq.mjs` holds the door to QQ's published signing example.
 
 THE BOT SHIPS WITH THE SITE: `ship.py` copies `bot/`, `mcp/engine.js`, its wasm
@@ -372,10 +369,9 @@ question (docs/BOARD.md §"The Riven Analyst").
    never a score.
 3. The channel's bot claims what came back (`/api/appraise/claim`), replays the
    build itself with the card's real rolls, and the first build it accepts
-   wins once; later ones are kept on the board and not announced. It is told
-   as a reply to the asker's message inside QQ's passive window (five minutes
-   in a group, an hour in a private chat), past it as an active message, and
-   only if that fails on the room's next message.
+   wins once; later ones are kept on the board and not announced. It answers
+   as a passive reply while QQ's window is open (`bot/qq.mjs`), past it as an
+   active message, and only if that fails on the room's next message.
 
 The page and the door are channel-blind: a Discord bot claims `channel:
 "discord"` the way the QQ bot claims `"qq"`.
@@ -406,11 +402,8 @@ and carries a `Link` header naming the twin and the discovery documents either
 way — which is why `/`, `/weapons` and `/weapons/*` run the worker first. An
 unknown `/.well-known/` path is a 404, never the SPA.
 
-This is what Cloudflare's agent-readiness scan grades (`isitagentready.com`,
-`POST /api/scan`). Its `authMd` check passes on a real registration: an
-anonymous key issued at once, a claim, and a revocation (docs/ACCOUNTS.md
-§"Agents"). A twin states only what the page does, so a fact reaches it through
-the same function that writes the html, never a second one.
+A twin states only what the page does, so a fact reaches it through the same
+function that writes the html, never a second one.
 
 ## Web Bot Auth
 

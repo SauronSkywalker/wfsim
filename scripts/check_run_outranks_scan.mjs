@@ -1,6 +1,6 @@
 // A PERSON'S SIMULATE DOES NOT WAIT FOR A RANKING NOBODY ASKED FOR OUT LOUD.
 //
-// Stage 2 of docs/WASM.md §"one executor". The quick calc and the simulator
+// docs/WASM.md §"One executor". The quick calc and the simulator
 // both take the whole pool, so without a priority between them they interleave
 // by luck — and the reader who just pressed Run waits behind eighty candidates
 // on exactly the fights where waiting is worst.

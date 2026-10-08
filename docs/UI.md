@@ -1,8 +1,7 @@
 # wfsim — UI Vision
 
-What sets wfsim apart from predecessor calculators (Overframe-style form
-pages): besides a build/config UI, there is a **live 2D top-down view of
-the fight**.
+Besides the build and configuration forms, the page draws a **live 2D top-down
+view of the fight**.
 
 ## Every scenario has ONE core metric, and nothing on the page names it
 
@@ -71,14 +70,9 @@ drift DPS shows over the same pair (18,653 vs 20,551).
 | aim quality / headshot feel | `fight::BodyPart::aim_weight` |
 | plane, positions, ranges | **nothing yet** — see below |
 
-**The Arena VIEW has no engine behind it.** There was an `engine::world`
-(`Vec2`, `Circle`, an `Engagement` of shooter-vs-target-circle with a hard
-range cutoff) written alongside these decisions in 2026-07-24. It was deleted
-on 2026-08-02 with **zero callers**, having never been wired to anything: the
-sim fights one target and assumes it is in range, so a plane had nothing to
-decide. Two modules named after the same thing, one of them dead, is worse than
-one honest gap — and the decisions above are the part worth keeping, which is
-why they live here and not in code.
+**The Arena VIEW has no engine behind it.** The sim fights one target and
+assumes it is in range, so a plane has nothing to decide; the decisions above
+live here and not in code.
 
 When positions become real they belong ON `arena::Arena`, beside the actors
 that would have them, not in a parallel module.
@@ -104,8 +98,7 @@ progress is read against that fight, not against its end), both curves grey
 out everything past `t`, the pools refill.
 
 Its own heading is the word "Replay" and nothing else — a transport control
-does not need explaining, and the sentence that was there took a line from the
-thing it was describing.
+does not need explaining.
 
 The target's pools are a FIXED GRID, not a flowing row: every figure changes on
 every frame, and a flex row re-measures itself each time, so the labels slid
@@ -137,10 +130,6 @@ what it started from (`RunResult::rng_state`) and `fight::replay` re-runs that
 one bit-for-bit. Cost: ONE extra engagement, and only when asked — the
 marginal-gain scan calls the same endpoint once per candidate and shows no
 replay, so `replay: true` is opt-in and only the Simulator's Run sends it.
-
-Why it earns its space: it turns arguments into pictures. "Is Primary Frostbite
-pinned at 40 stacks or decaying?" was a paragraph of reasoning; it is now a
-curve that climbs 0 → 40 over sixty seconds and answers itself.
 
 ## Presets and customs — two kinds of collection
 
@@ -341,32 +330,7 @@ collection `COLLECTIONS` names as one file and imports one back
 
 ## How the page speaks
 
-The voice is a player who measures: sure of the work, short, exact, now and
-then a joke only a player gets. It is the home hero's "Every hit counts."
-and nothing louder.
-
-- **A FACT, NEVER AN ADJECTIVE.** What was measured and what can be checked;
-  no "powerful", "ultimate" or "best". The one bold claim is the home hero's,
-  and it is checkable.
-- **SHORT, AND QUIET.** No exclamation marks, no emoji, no urgency, no
-  countdown, nothing scarce.
-- **A PEER, NOT A VENDOR.** "You", never a service desk's "we appreciate your
-  support". Where the maker speaks, it is "I".
-- **NEVER PRESSURE, NEVER PITY.** No guilt and no "we need you".
-- **THE LIMITS IN THE OPEN.** What it cannot model is said where the reader
-  is, before they ask.
-- **DESCRIBE, NEVER PERSUADE.** A heading names what is below it ("Details",
-  not "why believe it"; no rhetorical questions). A clause goes if deleting it
-  would not make the reader do something wrong — no reason a rule exists, no
-  answer to a question nobody asked, no flourish after the fact.
-- **ENGLISH FIRST.** The English is settled before the Chinese is written, and
-  the Chinese says what the English says, in its own word order.
-
-**CHINESE IS WRITTEN FOR THE MAINLAND, NOT TRANSLATED INTO IT.** Short
-sentences in the order a Chinese reader says them, not the English clause
-order and its dashes. 你, never 您. Bilibili's own words where it has them
-(充电, 实测, 配装), and no slang that belittles the reader or the giver (投喂,
-家人们). No 最 / 第一 / 顶级 / 终极 in anything that reads as promotion — the
+No 最 / 第一 / 顶级 / 终极 in anything that reads as promotion — the
 Advertising Law forbids superlatives. ONE WORD FOR ONE THING: a setup is 场景
 and a run is 战斗, and a game term is DE's own (裂罅, 异况超量, 超宏防护);
 `our_chinese_uses_one_word_for_each_thing` holds the list.
@@ -545,7 +509,7 @@ spelling, sent as text, so the preview prints what the page printed.
 **THE PANEL OFFERS THREE WAYS OUT**: copy the link; copy it AS TEXT — the same
 build decoded from the link's own code, named in the sharer's language, for a
 chat that shows a link as a bare string; and the system share sheet where the
-browser has one (`navigator.share`). `share.create`'s `n` records the first way used per page load.
+browser has one (`navigator.share`).
 
 **THE PANEL IS ONE, AND IT OPENS WHERE A BUILD IS FOUND.** Besides the build
 bar's own button, a share sits beside a build wherever one is arrived at — an
@@ -555,8 +519,7 @@ a link carries. A board row or the result is made the open build first, so the
 bar names what leaves. A FINALIST IS NOT OPENED — opening any build resets the
 search — so the panel opens under its row and encodes that row's build
 (`sharePayload(build)`), without the reader's result and the card, which are
-both drawn from the open build and would describe another. `share.entry`
-records which of them was used.
+both drawn from the open build and would describe another.
 
 ## The share card
 
@@ -588,55 +551,29 @@ Forma head the block, and a riven's own rolls stand beside the grid.
 because a phone cannot click a picture.
 
 **A THEME IS TOKENS, NEVER LAYOUT** (`CARD_THEMES`): colours and fonts. The
-blocks and their order are the build's. This repo ships the default only.
+blocks and their order are the build's.
 
 ## The support page
 
-**`/SUPPORT` ARGUES THE WAY THE REST OF THE SITE DOES.** Every figure on it is
-COUNTED, never typed: `PROJECT_FACTS` is written into `app.js` by
-`build_site_app.py` (commits and the first commit's day) and everything else
-comes from `META` and `BOARD_META`.
+Every figure on `/support` is COUNTED, never typed: `PROJECT_FACTS` is written
+into `app.js` by `build_site_app.py` (commits and the first commit's day) and
+everything else comes from `META` and `BOARD_META`. A figure is claimed only if
+a reader can check it against the public repository.
 
-THREE FIGURES, AND THEY ARE THE THREE MODULES: what is modelled
-(`rosterSize()`, a SUM over META's categories so a new one counts itself and
-the function is never edited again), what players built with it
-(`submissions`), and what came back out (`listed`). Submissions are ONE pool
-every ruler reads, so they are MAXed; listed scores are each ruler's own and are
-ADDED. Three figures an order of magnitude apart read as three facts where two
-of the same size read as one fact printed twice.
-
-A FIGURE IS CLAIMED ONLY IF A READER CAN CHECK IT against the public
-repository.
-
-"HOW IT WORKS" COMES BEFORE "WHY YOU CAN CHECK IT", because a guarantee stated
-first is an adjective — it needs something concrete to attach to. Its three
-lines are MECHANISMS a player recognises from their own arsenal (a grenade's
-impact against the cloud it leaves, an on-kill stack starting at zero, the
-Forma a build needs), and none of them carries a number, a build or a word
-about anybody else's product: a figure would bind the claim to one weapon on
-one day. THE PAGE NEVER COMPARES. It states what this does, and a reader who
-wants a comparison makes it themselves.
-
-THE ORDER: what this is and how it works, what it holds, why it can be checked,
-what the reader has already run, the slot an extension fills (`#ext-support`),
-then what is the same for everyone, and what is counted.
+THREE FIGURES: what is modelled (`rosterSize()`, a SUM over META's categories
+so a new one counts itself and the function is never edited again), what
+players built with it (`submissions`), and what came back out (`listed`).
+Submissions are ONE pool every ruler reads, so they are MAXed; listed scores
+are each ruler's own and are ADDED.
 
 NO SUM APPEARS ON THE PAGE. `check_support` asserts the whole page against a
 currency pattern, because a digit comes back in a sentence unnoticed.
 
-THE PAGE STATES WHAT IS TRUE, IT DOES NOT DENY WHAT ISN'T. "The calculator is
-the same for everyone" names the calculator because that is what is equal. A
-page that braces against its own visitors reads as one with something to brace
-about, and the same facts said forwards are the strongest thing on it.
-
-THE PAGE MAKES NO CLAIM ABOUT WHAT MAY BE OFFERED LATER. It states what is
-checkable today — the three modules, the measurements, the licence.
-
 THE APP NEVER ASKS. No result, limit, banner or mail points the reader
 anywhere they did not go looking. A reader at the sync allowance is told the
-limit and offered Export. A feature may be SHOWN where it would be used: signed
-out, a saved entry's cloud is hollow and links to sign in — the control itself,
-never a line, a count or a reminder beside it.
+limit and offered Export. A feature may be SHOWN where it would be used — signed out, a
+saved entry's cloud is hollow and links to sign in — the control itself, never
+a line, a count or a reminder beside it.
 
 WHAT THE READER HAS RUN NEVER LEAVES THE BROWSER. `wfsim-use` is two integers
 written by `runSim` and read by `/support` alone; the page says so where it
@@ -989,20 +926,14 @@ scan state that list reads, mounted in all five places a scan ranks something.
 **A PAGE THAT IS NOT A MODULE IS A SHELL PAGE** — /support, /benchmark,
 /utility and /download. It belongs to no weapon, so it sits beside the home grid rather
 than under `/weapons/<name>`, and it is not a fourth MODULE: it produces
-nothing the three consume. /download is the offer for the Windows client, and
-it is a PAGE rather than a button because what a downloader asks is a page —
-what SmartScreen does on first run, why the program is unsigned, what updating
-costs, what uninstalling means, where the source is. Its SmartScreen section
-is the OWNER'S OWN WORDING, transcribed from the notes file that ships beside
-the binary: the notes answer the warning after the download, the page answers
-it before. THE ONLY ENTRY IS THE TOPBAR'S OVERFLOW MENU, and no surface of the
-site offers a download anywhere else: the home page is read by somebody who has
-not yet seen the tool work, which is the worst moment to put an unsigned
-executable in front of them, and the people who want the client are the ones
-already using the site and will go looking. `check_downloads` asserts the home
-page offers nothing on every user agent it drives, and that /download is the
-one surface telling a Mac, Linux or phone reader it will not run there. See
-`docs/DESKTOP.md`.
+nothing the three consume. /download is the offer for the Windows client, a
+PAGE that answers what a downloader asks — what SmartScreen does on first run,
+why the program is unsigned, what updating costs, what uninstalling means,
+where the source is. THE ONLY ENTRY IS THE TOPBAR'S OVERFLOW MENU, and no
+surface of the site offers a download anywhere else. `check_downloads` asserts
+the home page offers nothing on every user agent it drives, and that /download
+is the one surface telling a Mac, Linux or phone reader it will not run there.
+See `docs/DESKTOP.md`.
 
 ## Utility
 
@@ -1136,22 +1067,3 @@ override per stat (health, shields, armor, energy, sprint). Unticked, the stat i
 the wielder's, as the server resolved it on the last panel (`panelWielder`);
 ticked, the typed number replaces it. There is no frame picker and no shard
 socket in a scenario any more: both are the linked Warframe build's.
-
-## Planned
-
-- **Surface each attack part's CO anomalies in the builder panel**. Condition Overload is full of per-entry quirks that no rule
-  predicts — the CO catalog lists them one attack at a time, and weapon families
-  split down the middle (Lato Vandal has a row, Lato Prime does not; Zylok Prime
-  is docked to 94%, the plain Zylok is not). MECHANICS §6 has the evidence.
-  The panel already renders per-part rows, so each part should state its own CO
-  standing: the behaviour class, whether that part receives CO at all (an AoE
-  part normally does not — the Torid's cloud is an exception), and the base
-  fraction with what dilutes it. Today a build can silently differ from another
-  by a factor the panel never mentions.
-
-## Not decided yet
-
-- Rendering cadence vs simulation tick (fixed 240 fps sim clock exists in
-  `rules::sim::SimConfig`).
-- How movement paths (target walking, player strafing) are authored in the
-  arena view.

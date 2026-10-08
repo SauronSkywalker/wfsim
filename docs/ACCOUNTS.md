@@ -85,8 +85,6 @@ D1 Time Travel is its backup: any minute of the last 30 days.
 
 ## On the page
 
-The shape a mature product has, because that is where the trust comes from:
-
 | surface | what it is |
 | --- | --- |
 | top bar | ONE always-visible entry, including on phones: "Sign in", or an avatar whose menu holds settings, the reader's builds and sign-out |

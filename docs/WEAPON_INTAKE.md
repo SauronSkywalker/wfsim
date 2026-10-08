@@ -1,12 +1,7 @@
-# Weapon intake — what it costs, and what order to do it in
+# Weapon intake — how a weapon gets in
 
-The wiki knows 353 ranged weapons. This is what one costs and how the next
-ones get in.
-
-**THE ORDER IS docs/INCARNON.md's**: every Incarnon primary
-and secondary comes first. What one weapon costs, and the READ THE PAGE rule,
-apply to all of it; batches A and B below are the backlog behind that program,
-and batch C (sniper) is part of it (Vectis).
+What one weapon costs, the routine a first pass works through, and the READ THE
+PAGE rule. docs/INCARNON.md is the checklist for an Incarnon weapon.
 
 ## …AND IT IS CHECKED BY A TOOL NOW, not by a claim
 
@@ -16,49 +11,24 @@ fetch, joined on `internal_name`. It reports **nothing missing**: 355 held, 153
 out of scope by a documented decision (modular, Amps, Railjack, Exalted) or held
 from another source (melee: docs/MELEE.md §9).
 
-The section below said the same thing by hand on 2026-08-20 and could not stay
-true on its own — a weapon DE ships tomorrow makes it wrong, silently. Read
-`docs/DATA_SOURCES.md` §"`Weapon Comparison/CSV`" first: the dump is MANUALLY
+A claim written by hand cannot stay true on its own — a weapon DE ships
+tomorrow makes it wrong, silently. Read `docs/DATA_SOURCES.md` §"`Weapon Comparison/CSV`" first: the dump is MANUALLY
 pasted and lags the module, and it holds no Arch-Guns, so "nothing missing" is a
 claim about the slots the tool prints and no others.
 
 ## DONE — every non-Exalted gun is in
 
-The backlog this file was written to plan is EMPTY. Every primary and secondary
-the wiki's weapon module holds is in `data/weapons/` except twelve EXALTED
-weapons, which are Warframe and Necramech abilities rather than guns: Artemis
-Bow and its Prime, Lizzie, Neutralizer, both Balefire Chargers, both Dex Pixias,
-Glory, Noctua, and both Regulators. Arch-Guns finished on 2026-08-15 and the
-companion weapons before that.
+Every primary and secondary the wiki's weapon module holds is in
+`data/weapons/` except twelve EXALTED weapons, which are Warframe and Necramech
+abilities rather than guns: Artemis Bow and its Prime, Lizzie, Neutralizer, both
+Balefire Chargers, both Dex Pixias, Glory, Noctua, and both Regulators.
 
-The batches below (A, B, C) are the historical plan and are all complete; they
-are kept because the REASONING in them — which pools a class unlocks, what a
-measurement session is for — is still the reasoning for the next weapon DE
-ships.
-
-**What the sweep found that no earlier pass could.** Nine intake batches over
-one day, ~250 entries, and the guards caught more than the reading did:
-
-- `hema` had carried an `internal_name` one path segment short since the roster
-  began, so every cross-check had silently SKIPPED it. That is what
-  `scripts/survey_internal_names.py` and its ratchet now make impossible.
-- Every per-damage-type array in the engine was written `[f64; 15]` against an
-  enum with SEVENTEEN variants. Nothing noticed until the HAALVU became the
-  first player weapon to deal TAU.
-- The scope card printed "+0% headshot damage" on eight of the ten scoped
-  weapons in the roster, because the sentence named one grant and the field was
-  another.
-- A `Falloff` whose `Reduction` is ZERO is the module saying there is NONE, so
-  it is left out rather than transcribed. `Reduction` is the share REMOVED —
-  Hek's 0.8 is its page's "100% to 20%" — and `falloff.reduction` states it as
-  the module does; a direct-hit falloff and a radial one read the same way.
-- An attack NAME is not a trigger. "Air Burst" is semi-auto; "Auto Mode" on the
-  Zenith is the mode the arsenal does NOT show.
-
-**Six new admission reasons** came out of it, each because the same sentence
-appeared three or more times with no numbers or with one: `silent_weapon`,
-`bolt_corpse_ragdoll`, `empty_reload_is_faster`, and the three the earlier
-batches had already earned.
+**Two module readings the guards hold.** A `Falloff` whose `Reduction` is ZERO
+is the module saying there is NONE, so it is left out rather than transcribed.
+`Reduction` is the share REMOVED — Hek's 0.8 is its page's "100% to 20%" — and
+`falloff.reduction` states it as the module does; a direct-hit falloff and a
+radial one read the same way. And an attack NAME is not a trigger: "Air Burst"
+is semi-auto; "Auto Mode" on the Zenith is the mode the arsenal does NOT show.
 
 ## WHAT IS DELIBERATELY OUT — and the reason is not "later"
 
@@ -105,7 +75,7 @@ mechanics already pinned by an existing measurement needs no new one.
 
 (Note: `tests/golden/` is an empty directory. The measured values live as
 `#[test]`s inside the engine modules, each citing an `M<n>` from
-docs/MEASUREMENTS.md — 30 of them so far.)
+docs/MEASUREMENTS.md.)
 
 ## READ THE PAGE, NOT ONLY THE MODULE
 
@@ -114,26 +84,23 @@ fields — `Attacks`, `Trigger`, `Class`, `Zoom`, `SniperComboMin`. A weapon's
 PASSIVE is not one of them. It lives in the page's prose under
 `==Characteristics==`, and the module says nothing about it at all.
 
-Gotva Prime went in on 2026-08-05 as a "no new mechanics" rifle. It has one:
-"Status Effects have a 15% chance to set the next hit's Critical Chance to
-300%" — a probabilistic, status-triggered crit-chance LOCK, which the engine
-has no machinery for. The commit claimed the batch needed nothing new; that was
-true of the other two and false of this one, and nothing caught it because
-nothing was reading the page.
+Gotva Prime's page carries one the module does not: "Status Effects have a 15%
+chance to set the next hit's Critical Chance to 300%" — a probabilistic,
+status-triggered crit-chance LOCK, which the engine has no machinery for.
 
 So the intake check is: `?action=raw` on the WEAPON PAGE, and read
 `==Characteristics==` before calling anything simple. Karak Wraith has no such
 line; Prisma Grinlok's only one is "Innate Madurai polarity", which is data we
 already carry.
 
-**And `==Notes==` is the same trap one section further down.** The Phenmor was
-audited perk by perk, matched the infobox on every field, and shipped as done. Its Notes carry *"Fire rate decreases from 100% to 60% over 51
-shots as the trigger is held"* — a mechanic no evolution mentions, that the
-infobox contradicts, and that is worth more than any perk on the weapon: 51
-shots is 3.8 s of a 408-round magazine, so the Incarnon form ran **51% too
-fast** until 2026-08-10.
+**And `==Notes==` is the same trap one section further down — read the Notes
+on every weapon.** The Phenmor matches its infobox on every field, and its Notes
+carry *"Fire rate decreases from 100% to 60% over 51 shots as the trigger is
+held"* — a mechanic no evolution mentions, that the infobox contradicts, and
+that is worth more than any perk on the weapon: 51 shots is 3.8 s of a
+408-round magazine.
 
-The pattern in both cases is the same and it is worth stating as a rule: **the
+The rule: **the
 structured fields describe the weapon, the prose says which of them are lies.**
 A stat that the page later qualifies is more dangerous than a stat that is
 missing, because the missing one leaves a hole and the qualified one leaves a
@@ -181,9 +148,9 @@ Three consequences, and each is why the axis exists rather than a field:
 
   **A weapon with no row is not blocked, it is unsubmitted.** The board is fed
   by submissions and the builder's official builds ARE its rows, so a weapon
-  nobody has run under the official ruler has neither — 101 of 159 entries are
-  in that state today, the Kuva Nukor among them. Verified end to end: under the official ruler a full eight-mod, arcane-seated Kuva
-  Nukor passes every submission gate and its payload carries the element.
+  nobody has run under the official ruler has neither. Under the official ruler
+  a full eight-mod, arcane-seated Kuva Nukor passes every submission gate and
+  its payload carries the element.
 
 **Rank 40, not 30.** "Polarizing the weapon increases its max rank by 2, capping
 at rank 40 after 5 polarizations, granting the weapon additional mod capacity" —
@@ -200,17 +167,14 @@ Overload counts and this engine has no type for.
 
 ## THE ROUTINE — what a first pass has to touch to be right
 
-Written after the Kuva Nukor, whose element reached the builder and not the
-submission, and after the Boar Prime, whose CO row was read as a family rule.
-Every line below is a mistake somebody already made. Work it in order; each step
+Every line below is a mistake that has been made. Work it in order; each step
 names where the answer lives, so "I did not know where to look" is not one of
 the ways this goes wrong.
 
 **A PRIME AND ITS ORDINARY ARE ONE INTAKE**. They share a
 riven family, a CO row, a Primary Compression row, a mod pool, an art path and
 every sentence of prose — so doing them apart pays for the reading twice and
-gets one of them wrong, which is exactly how the Boar's row became the Boar
-Prime's. Add both, or neither.
+gets one of them wrong. Add both, or neither.
 
 ### 1. The sources, and which one wins
 
@@ -239,8 +203,7 @@ the weapon is actually built around:
 > direct hit damage.`
 
 paired with its alt-fire's `**Guaranteed {{D|Lifted}} proc.` — i.e. the two
-forms feed each other, and nothing in the infobox hints at it. The same pass
-missed the Cortege's beam cone and its innate body punch through. So read the
+forms feed each other, and nothing in the infobox hints at it. So read the
 bullets and write one `unmodeled:` line per claim you cannot model; a claim you
 never read is the only kind you cannot admit to.
 
@@ -263,11 +226,9 @@ whose arena is the ground. What differs is not only the sustain:
 | shot type | projectile, with falloff | *"lack damage falloff and most of them are hit-scan"* |
 | crit, multiplier, status, fire rate, magazine | identical | identical |
 
-The damage row is the one that has already cost something. The axis was built
-as a SUSTAIN axis and the Larkspur Prime carried the Archwing damage under
-`deployment: atmosphere`, so 112 board rows were scored at half. Three of the
-four headline stats really are identical in both columns, which is exactly why
-the wrong reading survived a review — **check the damage row specifically, on
+The damage row is the one that is misread: three of the four headline stats
+really are identical in both columns, so a wrong column survives a review —
+**check the damage row specifically, on
 the rendered page, for every Arch-Gun.** "Most", not all, so it is declared per
 weapon (`deployments.<name>.damage_multiplier`) and never inferred.
 
@@ -359,14 +320,11 @@ the number is a faithful-looking implementation with nothing behind it.
 All twenty, as 29 entries. What the class taught is in §1 above (two columns,
 and DE's export carries the wrong one).
 
-**THE ARBUCEP WAS THE LAST ONE, and it needed engine work rather than typing.**
-It was held back for a day with the reasoning written out here, because none of
-the three approximations available then was honest: one blended six-element
+**THE ARBUCEP needs two engine mechanics rather than typing**, because none of
+the three approximations is honest: one blended six-element
 vector gets the damage right and the STATUS wrong by six times (a proc is drawn
 once per instance); `multishot: 6` with that vector multiplies the damage by
 six; `multishot: 6` with one element is five-sixths the wrong element.
-
-The engine grew the two mechanics instead:
 
 - **`pellet_elements:`** — the innate element of every projectile a pull fires,
   in firing order. The panel RESOLVES ONCE PER ELEMENT (`resolve` recurses with
@@ -384,78 +342,3 @@ the six vectors are checked element by element, and the multishot factor is
 read OFF THE HIT ACCOUNT (exactly 1.000 unmodded, 1.600 with a +60% mod)
 rather than inferred from a damage total — because a total also moves when the
 DoTs do, and a final multiplier never reaches a DoT payload.
-
-## The batches
-
-### Batch A — RIFLES. The only batch that buys mod coverage.
-
-A `Class = "Rifle"` weapon carries `CompatibilityTags = { "ASSAULT_AMMO" }`,
-and that tag gates **15 mods nothing in the roster can reach today** — Tactical
-Reload, Spring-Loaded Chamber, Maximum Capacity, Guided Ordnance, Vanquished
-Prey, Rifle Ammo Mutation (+ Primed), Deft Tempo, Hydraulic Gauge, Loose Hatch,
-Overview, Recover, Gun Glide, Tainted Mag. That is the single largest mod gate
-in the game we do not have — larger than Sniper's 14.
-
-The assault-rifle pool also reaches every launcher (M106: Tainted Mag equips on
-the Kuva Ogris); a bow and a sniper rifle do not draw it.
-
-Zero new engine mechanics. Candidates, all single-attack, Auto or Semi-Auto,
-hit-scan or plain projectile:
-
-| weapon | MR | trigger | crit | status | why |
-| --- | --- | --- | --- | --- | --- |
-| **Gotva Prime** | 14 | Auto | 23% | 27% | modern Prime auto rifle, the shape most players hold |
-| **Kuva Karak** | 13 | Auto | 23% | 31% | Kuva variant — exercises the Kuva bonus-element axis |
-| **Prisma Grinlok** | 11 | Semi-Auto | 21% | 37% | a SEMI-AUTO rifle: different cadence, and it is what proves the trigger axis is not shotgun-only |
-| AX-52 / Reconifex | 12 / 14 | Auto | 26 / 28% | 18 / 16% | spares |
-| Veldt / Grinlok | 8 / 7 | Semi-Auto | 22 / 15% | 22 / 35% | low-MR spares |
-
-Three is the recommendation. The 15 mods are the deliverable; the weapons are
-how they become reachable.
-
-### Batch B — PISTOLS, DUAL PISTOLS, SHOTGUNS. Breadth, no new mods.
-
-Every one of these pools is already covered (Laetum, Dual Toxocyst, Boar
-Prime), so this batch unlocks **zero** mods. What it buys is roster breadth and
-engine validation across shapes we have one example of each.
-
-| weapon | class | why |
-| --- | --- | --- |
-| **Arca Plasmor** | Shotgun | a PROJECTILE shotgun — every shotgun we model is hit-scan |
-| **Vaykor Hek** | Shotgun | syndicate variant, 25% crit, the classic burst-damage shotgun |
-| **Aklex Prime** | Dual Pistols | 150 base, semi-auto, high per-shot |
-| **Knell Prime** | Pistol | 40% crit / 10% status — a crit-only profile the roster lacks |
-| **Magnus Prime** | Pistol | balanced 28/28, the "no gimmick" control |
-
-### Batch C — SNIPER (Vectis Prime). 14 mods + two new mechanics.
-
-The 14 sniper mods, plus:
-- **Shot Combo Counter** — `1.5 + 0.5⌊log₃(hits / min)⌋`, min 5 → 5/15/45/135
-  for 1.5x/2x/2.5x/3x. 2 s window, scoped-in only, multishot and punch-through
-  each count, AoE and DoT do not.
-- **Zoom buffs** — intrinsic, not moddable, additive with mod bonuses of the
-  same kind. Vectis Prime: 3.5x → +40% headshot damage, 6x → +60%.
-
-Both gate on `aiming`, which the scenario already carries, and the benchmark
-sets `aiming: true` — so a sniper on the board gets its combo.
-
-Then its Incarnon form separately: embedded projectiles dealing Cold three
-times over 2.5 s, plus a 6.7 m headshot explosion. `Critical Parallel` and
-`Survivor's Edge` are the same perks Boar Prime has, so they reuse the
-define-once perk path.
-
-## Order, and why
-
-**A → B → C.** A is the biggest mod win per unit of work and is pure data. B is
-pure data with no mod win, so it is the batch to do while waiting on
-measurements. C is the one that needs engine work and a measurement session of
-its own, so it goes last and gets undivided attention.
-
-## Per batch, what is actually needed from the owner
-
-- **A**: one session measuring one rifle's sustained DPS on a known target, to
-  confirm the auto-rifle cadence. The other two are the same mechanics.
-- **B**: one measurement for Arca Plasmor (projectile shotgun is a shape we
-  have not measured). The rest reuse pinned mechanics.
-- **C**: a combo-counter session — hit counts against multiplier steps — and a
-  zoom-tier headshot check. This is the one that cannot be skipped.

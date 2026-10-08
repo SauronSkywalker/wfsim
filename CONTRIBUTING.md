@@ -112,12 +112,10 @@ a change of one part in 10¹².
 because a change to the inner loop rarely moves them together: `-C
 target-cpu=native` measured −23% / −36% / **+31%** across them.
 
-Before you start, [`docs/DEVELOPMENT.md` §5](docs/DEVELOPMENT.md) lists what has
-already been tried and what each was worth — LTO, dropping a hot-path
-allocation, auto-vectorisation, removing every status proc — so you do not
-spend a day rediscovering that three of them are noise. It also has the one
-that worked, as a worked example: the win came from reading the per-instance
-path for ALLOCATIONS, not from guessing at arithmetic.
+Before you start, [`docs/DEVELOPMENT.md` §5](docs/DEVELOPMENT.md) says where
+wins have come from: build flags are noise or a lottery across shapes, and the
+wins came from reading the per-instance path for ALLOCATIONS, not from guessing
+at arithmetic.
 
 Two things worth knowing before you aim:
 

@@ -164,8 +164,7 @@ the weapon lacks (base 0 → 0), and it never forms a combined element. Worked
 `ModEffect::Physical(type, v)` — data kind `physical_damage_bonus` (the loader
 also routes an `elemental_damage_bonus` with an IPS element here).
 
-**Utility / indirect mod buckets** (pistol-pool import 2026-07-26,
-`data/mods/pistol/`). The declarative pool records these kinds; each carries
+**Utility / indirect mod buckets** (`data/mods/pistol/`). The declarative pool records these kinds; each carries
 the REAL mechanic even where the engine does not consume it yet (the loader
 ignores unknown `kind`s, so the mod still loads). Wiki-sourced calc:
 - **Faction damage** (`faction_damage_bonus`; Expel/Bane/Cleanse/Smite —
@@ -668,8 +667,7 @@ element procs are weighted, not uniform.
 - **SC > 100%**: `floor(SC)` guaranteed rolls + `frac(SC)` chance of one
   more; **each roll's type is drawn independently** (the same type can
   repeat within one hit).
-- **Stack pools are SHARED per target** (high-confidence model,
-  2026-07-24): the pool and its cap live on the target — 10 players'
+- **Stack pools are SHARED per target** (high-confidence model): the pool and its cap live on the target — 10 players'
   Magnetic procs compete for the same 10 slots, FIFO across all sources;
   effect magnitudes (armor strip %, shields amp) read the target's total
   count while payloads read each slot's own provenance. Evidence: the
@@ -678,7 +676,7 @@ element procs are weighted, not uniform.
   low-quality procs from teammates flush high-quality stacks out (FIFO
   is owner-blind). No explicit wiki sentence — verifiable in co-op.
 - **Stack overflow is universally replace-oldest, FIFO by application
-  time** (rule adopted 2026-07-24): every capped stacking debuff (Stagger 5,
+  time**: every capped stacking debuff (Stagger 5,
   Weakened 5, Corrosion 10, Confusion 10, Gas Cloud 10) replaces the
   stack with the EARLIEST application timestamp — remaining duration is
   irrelevant (a stack applied at t=1 with 10,000 s left is replaced
@@ -688,7 +686,7 @@ element procs are weighted, not uniform.
   Chain) never overflow; Freeze's and Detonate's caps trigger state
   transitions instead (Frozen / detonation).
 - **Status damage never procs status** (universal rule, confirmed
-  2026-07-24 by contradiction: Heat ticks proccing Heat would self-stack
+  by contradiction: Heat ticks proccing Heat would self-stack
   forever). No damage instance originating from a status effect — DoT
   ticks, Detonate bursts, Tesla Chain hits, Gas Clouds — ever rolls a
   status proc. Proc rolls happen only on weapon/ability source instances.
@@ -716,8 +714,7 @@ element procs are weighted, not uniform.
   Microwave — see `data/debuffs/independent_procs.yaml`); Knockdown /
   Lifted / Microwave count toward Condition Overload's status-type count.
   ⚠️ Generic Stagger (PT_STAGGERED) ≠ Impact's Stagger (PT_KNOCKBACK).
-- **GunCO family = ONE machinery** (wiki `Condition_Overload_(Mechanic)`;
-  2026-07-27): every source contributes `rate × target-counter` into
+- **GunCO family = ONE machinery** (wiki `Condition_Overload_(Mechanic)`): every source contributes `rate × target-counter` into
   ONE shared bracket — computed on the ORIGINAL base (evolution flat
   damage excluded, the `co_base_fraction`), combined per the weapon's
   CoBehavior class (additive-with-base-damage / independent / inert),
@@ -777,7 +774,7 @@ element procs are weighted, not uniform.
   buffed by component mods** — only by literal matching-element damage;
   conversely Toxin mods DO buff a forced Toxin DoT even when combined
   into Corrosive on the panel.
-- **Snapshot vs live — the boundary rule** (refined 2026-07-24): a DoT
+- **Snapshot vs live — the boundary rule**: a DoT
   stack is a *replay of its proccing hit* — a tick is that hit's deferred
   damage. The dividing line is **not** attacker-vs-defender state but:
   **whatever fed the HIT's damage formula is snapshotted** (mods, buffs,
@@ -921,9 +918,9 @@ variant is naming one variant on purpose; it is not shorthand for the family.
 
 That is what settles the Furis. Its row reads *"Furis"* alone where the
 Burston's reads *"Burston/Burston Prime"*, so the MK1-Furis is absent by the
-table's own grammar, not by an oversight — and the owner confirms it
-(2026-08-06: DE treats the two as separate weapons internally, and the table has
-already shown Prime-vs-base splits). The Furis excludes Evolution II's flat
+table's own grammar, not by an oversight — and the owner confirms it: DE treats
+the two as separate weapons internally, and the table has already shown
+Prime-vs-base splits. The Furis excludes Evolution II's flat
 damage from its CO base (100 of 128, the row's own 78%); the MK1-Furis does not,
 and its +34 feeds CO in full. `furis_haven_foray` / `furis_stormburst` carry
 `co_base_excludes_this_evolution`; the `mk1_furis_*` pair must not, and
@@ -1598,9 +1595,8 @@ and all three fall out of merging rather than needing their own code:
   roll — only one roll happens.
 
 **THE EXPONENT.** "Affected twice" means the DoT goes as multishot **squared**,
-and it is the one number about beams that is routinely misremembered (asked
-again 2026-08-07). The usual guess is that a beam trades proc COUNT for proc
-SIZE and comes out even — a fair reading of "multishot cannot add a beam", and
+and it is the one number about beams that is routinely misremembered. The usual
+guess is that a beam trades proc COUNT for proc SIZE and comes out even — a fair reading of "multishot cannot add a beam", and
 the reason it is worth writing the table out. It does not trade: the merge sums
 BOTH halves, so nothing is given up.
 
@@ -1683,8 +1679,7 @@ only widens who receives it.
 
 A sphere at a chain node could not belong to the beam, whose contact point is
 elsewhere, so it would have to be the node's own damage instance — an explosion
-needing a falloff nothing documents. Hence `false`, flipped 2026-08-06 from the
-`true` the line carried since 2026-07-30 (on this argument). It also
+needing a falloff nothing documents. Hence `false`, on this argument. It also
 explains the datamined asymmetry: no radius on the Incarnon attack, a falloff on
 the Poison Cloud, because only one of the two is a damage instance.
 
@@ -2812,105 +2807,6 @@ reload, and the ceiling display are **measured** (M14).
 
 ---
 
-## 10. WHAT A STATUS-CHANCE CARD IS WORTH — the estimate, and the half everybody drops
-
-Asked often enough to write down (after a player asked why
-the Burston Prime's board build takes **Galvanized Aptitude** over Serration or
-Heavy Caliber). The naive comparison puts all three in the base-damage bucket
-and stops there, which under-counts the status card by about half.
-
-### The three cards, in the one bucket they share
-
-| card | contribution to the base-damage bucket |
-| --- | --- |
-| Serration | flat **+1.65** |
-| Heavy Caliber | flat **+1.65** (its accuracy penalty is free at contact) |
-| Galvanized Aptitude | `0.4 × stacks × status TYPES` |
-
-Serration and Heavy Caliber are the SAME CARD in a contact-range fight —
-measured 144.616 against 144.612, a difference of 0.003%. So the argument only
-ever has one opponent.
-
-The crossover is arithmetic: `0.8 × N > 1.65` at **N > 2.06**. Measured on the
-Burston Prime, same build but for the one slot:
-
-| build | mean status TYPES | Aptitude | Serration | lead |
-| --- | --- | --- | --- | --- |
-| three elemental mods | 2.71 | 176.47 | 144.62 | **+22.0%** |
-| three flat-stat mods | 1.59 | 36.74 | 36.86 | **−0.3%** |
-
-Below two types the doubters are right. The board's build carries status
-BECAUSE that is what makes the card worth its slot — and the archetype gap
-(176 against 37) dwarfs the slot argument entirely.
-
-### …AND THE BUCKET IS ONLY HALF OF IT
-
-The half that gets dropped: **status chance is a rate, and the rate feeds
-DIRECT-damage multipliers, not just DoT.** Viral multiplies HEALTH damage,
-Magnetic multiplies OVERGUARD and SHIELD damage, Heat strips armour. All three
-are `× (2 + 0.25 × (stacks − 1))`-shaped ladders on the TARGET, and how fast
-they fill is exactly what a status-chance card buys.
-
-Measured, the same two builds:
-
-| | Aptitude | Serration |
-| --- | --- | --- |
-| status chance | 0.54 | 0.30 |
-| procs / s | 33.5 | 18.9 |
-| Viral stacks (mean) | 7.11 | 5.82 |
-| Magnetic stacks (mean) | 2.41 | 1.65 |
-
-### The estimate
-
-Multiply four ratios. Each is a measurable intermediate, so the estimate can be
-checked term by term rather than believed whole:
-
-```
-gain ≈  (1 + B + CO_new) / (1 + B + CO_old)     bucket, on the DIRECT share only
-      × Viral(n_new)    / Viral(n_old)          health-damage ladder
-      × Magnetic(n_new) / Magnetic(n_old)       overguard/shield ladder
-      × Armour(strip_new) / Armour(strip_old)   Heat
-```
-
-`B` is whatever else is already in the base-damage bucket — on this build,
-nothing: not one of its other seven mods is a base-damage mod, which is why the
-estimate lands so cleanly.
-
-Worked, for the Burston Prime board build:
-
-```
-CO       (1 + 0.4×1.762×2.71) / (1 + 1.65) = 1.096   ← ×0.979, the direct share
-Viral    (2 + 0.25×6.11) / (2 + 0.25×4.82) = 1.101
-Magnetic (2 + 0.25×1.41) / (2 + 0.25×0.65) = 1.088
-                                    product = 1.199
-
-measured 176.47 / 144.62            = 1.220     residual 1.8%
-```
-
-**+9.6% from the CO bucket and +9.4% from the ladders the status RATE fills.**
-Half the card's value is invisible to an accounting that only looks at
-"+40% per status type".
-
-### …and it is not eaten in full, on three separate channels
-
-Worth stating because each is a real ceiling nobody reaches:
-
-- **STACK UPTIME.** The bonus is ON KILL and caps at 2. Measured: 85.5% of the
-  fight at 2/2, 5.2% at 1, 9.3% at 0 — an effective 1.76 of 2, or 88%.
-- **TYPE COUNT.** 2.71 live on average against the six the build can produce.
-  The CO term is linear in this, so the shortfall is direct.
-- **NOT ALL DAMAGE TAKES IT.** CO is a DIRECT-hit bonus. The Burston's Incarnon
-  radial takes it at a base fraction of 24% (docs/CATALOGS.md) and status DoTs
-  take none, so 2.1% of this build's output is outside the bracket. On a build
-  whose damage is mostly DoT or AoE that share is the whole argument.
-
-### Reproducing this
-
-Every number above comes from `/api/simulate` with `replay: true` on the board's
-own row: `damage_sources` for the shares, `dstacks` for the ladders, `stacks`
-for the arcane's own uptime, and `score` for the totals. Nothing here is
-hand-derived except the two published ladder formulas.
-
 ## 10b. THE ORIGINAL BASE — what a GunCO term computes on
 
 A weapon has an ORIGINAL BASE, and some things add to it while others only add
@@ -3032,13 +2928,11 @@ range = |player − target| − r                       (muzzle to the CENTRE)
 
 from the target's centre. `range` is NOT how far the shot flies — the
 perpendicular is dropped from the circle's centre, so that is the leg the
-formula needs. It was called `travel` for a few hours and the name was worth an
-inconsistency the owner caught immediately: a bullet vanishes at the SURFACE it
-hits, so what it flies is the gap below, one radius shorter, and zero at
-contact. It was `|player − target| · tan(θ)` until 2026-08-16,
-which was wrong twice — measured from the centre rather than from the muzzle,
-and `tan` rather than `sin`, so a wide cone's deviation ran off toward infinity
-instead of being bounded by the distance it had to cover.
+formula needs. A bullet vanishes at the SURFACE it hits, so what it flies is the
+gap below, one radius shorter, and zero at contact. `|player − target| · tan(θ)`
+is wrong twice — measured from the centre rather than from the muzzle, and
+`tan` rather than `sin`, so a wide cone's deviation runs off toward infinity
+instead of being bounded by the distance it has to cover.
 
 **CONTACT IS THEN UNMISSABLE, AT ANY CONE WIDTH**, and that is a property of the
 geometry rather than a rule written into it: at contact the muzzle sits one
@@ -3205,25 +3099,20 @@ It bites at RANGE and in a FORMATION, which is where it was always going to.
 
 ### AN EXPLOSION HAS ONE EPICENTRE
 
-The rulings above say where a blast goes off *on a body*. They did not say where
-it goes off when the pellet **hit nothing**, and until 2026-08-19 the engine
-quietly answered that twice.
+The rulings above say where a blast goes off *on a body*. When the pellet **hit
+nothing** it goes off at ONE point, and every body reads its distance from it:
 
-- The **aimed** body read its falloff from how far the pellet passed it —
-  correct, and the reason the miss distance is computed at all.
-- Every **other** body read its distance from the aimed body's SURFACE, whatever
-  the pellet did. So the crowd was blasted as though every shot landed perfectly.
+- The **aimed** body reads its falloff from how far the pellet passed it — the
+  reason the miss distance is computed at all.
+- Every **other** body reads its distance from that same point, never from the
+  aimed body's SURFACE, which would blast the crowd as though every shot landed
+  perfectly. With ONE body the two readings coincide, so only a crowd tells
+  them apart.
 
-Measured on the wire with an Akarius (7.2 m radius), a target at 10 m and a
-bystander 2 m behind it: pointing **nine metres wide** dropped the aimed body
-from 10105 to 3972 and left the bystander on **7120, against 7115 on target**. A
-player reported it; no check we had could see it, because none existed for the
-case — with ONE body the two epicentres coincide.
-
-`space::detonation_of_miss` is the fix and it invents nothing: the model already
+`space::detonation_of_miss` places it and invents nothing: the model already
 draws how far the pellet deviated and, when the weapon points off the body, which
-way around the cone it went. Those two were being collapsed into a single
-scalar. Kept apart they are a **point on the floor plus a height** — the cone's
+way around the cone it went. Collapsed into one scalar they lose the side; kept
+apart they are a **point on the floor plus a height** — the cone's
 cross-section is a disc, only its in-floor part moves the epicentre across the
 arena, and the rest is how far over or under the shot went, which is a real
 distance to everyone standing on the floor.
@@ -3234,15 +3123,13 @@ the distance between them is `√(a² + b² − 2ab·cos 2πφ)`, which is
 `miss_distance_off_axis` exactly. That identity is asserted at `1e-9` wherever
 the weapon points at the body — which is every fight the engine ran before aim
 became a place you choose, and every board ruler, since none sets an aim point.
-The whole test suite passed unchanged.
 
-TWO SMALLER FAULTS FELL OUT WITH IT. The stage was skipped entirely when the
-blast could not reach the **aimed** body, which threw the explosion away for the
-bodies standing where it actually landed; it now asks whether it reaches anybody.
-And that gate compared `aim_offset` where the damage compares
-`blast_reach(aim_offset)`, so it fired one body radius early.
+**The stage runs whenever the blast reaches ANYBODY**, not only the aimed body,
+so the bodies standing where it actually landed take it. Its gate compares
+`blast_reach(aim_offset)`, as the damage does; comparing `aim_offset` would fire
+it one body radius early.
 
-WHICH WAY the pellet went is now drawn whenever there is a crowd, not only when
+WHICH WAY the pellet went is drawn whenever there is a crowd, not only when
 the weapon points away — against one body only the magnitude decides anything,
 which is why it was gated that way, and a crowd makes the side decide who is in
 the blast. It comes off `rules::rng::Draws::blast_dir`, a stream of its own, so adding
@@ -3646,9 +3533,8 @@ VOID is the fourth and is NOT damage: "creates a 2.5 meter radius field which
 attracts projectiles for 3 seconds". It is an aim aid, this arena has no
 projectile attraction, and modelling it would be inventing a benefit.
 
-Gas and Electricity were an ordinary single-body DoT
-until 2026-08-17 — right while the arena held one body, and half the mechanic
-once it held 361. Verbatim, from each element's own page:
+Gas and Electricity are not an ordinary single-body DoT — that is right while
+the arena holds one body, and half the mechanic once it holds 361. Verbatim, from each element's own page:
 
 > **Gas** — "a gas cloud that deals a tick of damage each second to all enemies
 > within a **3**-meter radius", "subsequent procs increase the radius by **0.3**
@@ -3682,53 +3568,30 @@ Where the arc LANDS on the neighbour is its own draw, a head 10 times in 189
 has no height to. A GAS cloud's copy is body-only in both layers, because its
 neighbours are unmeasured.
 
-### What it cost, and what that cost was made of
+### What keeps an area proc affordable
 
-An area proc hands a `Dot` to every body within its radius, and on a 19x19 grid
-at 1.5 m spacing that is **29 bodies per proc**. The Phantasma Prime — six
-beams, infinite body punch-through, twelve ticks a second — struck 19 bodies
-deep with every one of its six beams, so a full status build produced **146,000
-procs and 4.26 million DoT pushes per run**. Measured: **9,551 ms a run**,
-against 88 with the spread switched off. A hundred runs was sixteen minutes.
+An area proc hands a `Dot` to every body within its radius — on a 19x19 grid at
+1.5 m spacing, **29 bodies per proc** — so two things bound its cost:
 
-Two things were wrong, and neither was the mechanic:
+**The neighbour table.** `space::Neighbours` answers "who is within radius of
+this body?" once per run: per body, its neighbours within `AREA_MAX_M` (a
+full-stack gas cloud plus a body radius), nearest first, so a lookup at any
+smaller radius is a prefix that stops at the first body out of range. Same shape
+and same reason as `rules::chain::Layout` — nothing in this arena moves.
 
-**The scan.** Each proc asked "who is within radius of this body?" by walking
-every body — `O(bodies)` per proc, thousands of procs a second.
-`space::Neighbours` answers it once per run: per body, its neighbours within
-`AREA_MAX_M` (a full-stack gas cloud plus a body radius), nearest first, so a
-lookup at any smaller radius is a prefix that stops at the first body out of
-range. Same shape and same reason as `rules::chain::Layout` — nothing in this arena
-moves.
+**The DoT cap.** `dot_cap` is the unit's declared `stack_caps.general`, and TEN
+where a unit declares nothing, which is the Gas page's own wording ("up to 10 instances of
+the effect can stack on the same target") and the rule the ten-stack families in
+`DEBUFF_ROSTER` already follow. An unbounded list grows with every proc and
+`process_ticks` walks it once per body per shot — linear cost, quadratic outcome.
 
-**The cap.** `dot_cap` was the unit's declared `stack_caps.general` and `None`
-otherwise, so a generic enemy's DoT list was UNBOUNDED. It grew with every proc
-and `process_ticks` walks it once per body per shot — linear cost, quadratic
-outcome. It is TEN now where a unit declares nothing, which is the Gas page's
-own wording ("up to 10 instances of the effect can stack on the same target")
-and the rule the ten-stack families in `DEBUFF_ROSTER` already followed.
+### Every body ticks
 
-**9,551 ms -> ~150 ms, a 64x cut, with `one_fight` reporting every answer
-unchanged.** A hundred runs of the multi-target ruler with the board's own #1
-Phantasma Prime build went from ninety minutes in the browser to 85 seconds.
-
-What is left is the mechanic itself: 146k procs times 29 neighbours is work
-nobody can argue away, and it is what a six-beam infinite-punch-through shotgun
-does to a nineteen-deep column. The remaining lever is PARALLELISM — the runs
-are independent — and taking it means giving each run its own derived seed,
-which changes every published number and is the owner's call rather than an
-optimisation.
-
-### The gap it uncovered: a formation body never ticked at all
-
-`process_ticks` was called for the aimed body and for **nothing else**. So every
-status a chain hop, a splash, a tendril or an echo applied to a neighbour was
-recorded on its debuff state and **never paid out** — a ledger nobody read. Gas
-and Electricity cannot work at all without it, which is how it surfaced.
-
-Every body ticks now, once per shot, and the tick credits
-`damage_by_body`. The player's buff state (`gal`, `arc`) is shared across them,
-which is right: a kill is a kill whichever body it was.
+`process_ticks` runs for every body, once per shot, and the tick credits
+`damage_by_body`; a status a chain hop, a splash, a tendril or an echo applies to
+a neighbour pays out there. Gas and Electricity cannot work at all without it.
+The player's buff state (`gal`, `arc`) is shared across them, which is right: a
+kill is a kill whichever body it was.
 
 ### BLAST — the third, and the one whose halves differ most
 

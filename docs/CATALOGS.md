@@ -50,8 +50,8 @@ Five things, and the last two are the ones that keep being got wrong:
 3. **THE PAGE'S PROSE DOES NOT OVERRIDE THE TABLE.** Its Math section lists
    "Base Damage increases from Incarnon Genesis Evolutions" among the things
    Adding CO ignores, which read as a law would move 107 (entry, perk) pairs
-   here. It is not a law — see the section below for why
-   the page argues that side itself. Rule 2 already covered this; it is spelled
+   here. It is not a law — §"The MATH section's bullets are
+   summaries of catalog rows, NOT laws". Rule 2 already covered this; it is spelled
    out because the prose is what tempts you to break it.
 4. **A VARIANT IS NOT A SPECIAL CASE.** There is no mechanism by which a
    Wraith's Incarnon projectile reads a different CO class from the Latron's:
@@ -117,10 +117,9 @@ a weapon whose class is `Adding`.
 under *"Child projectiles that spawn from a parent projectile"* — a description
 of a behaviour, not a table row, so by rule 2 its bomblets are ordinary.
 
-### THE TENET AND CODA BATCH — re-read 2026-08-20
+### THE TENET AND CODA ROWS
 
-Twenty weapons arrived at once and the two tables name **seven** of their
-attacks. Five are anomalies; two are the catalog saying "checked, ordinary",
+The two tables name **seven** Tenet and Coda attacks. Five are anomalies; two are the catalog saying "checked, ordinary",
 which is a different and useful statement.
 
 | weapon | attack | unmodded | bonus | relative | type | our entry |
@@ -135,18 +134,18 @@ which is a different and useful statement.
 | Tenet Detron | Normal Attack (Projectile) | 26 | 26 | 100% | **Adding** — *"CO-bonus ignores Damage Falloff"* | ordinary; transcribed anyway |
 | Tenet Detron | Burst Shot (Projectile) | 26 | 26 | 100% | **Adding** — *"CO-bonus ignores Damage Falloff"* | ordinary; transcribed anyway |
 
-Four things this batch taught the file.
+Four things these rows show.
 
 1. **THE PLINX ROW IS A MEASUREMENT OF SOMETHING ELSE.** Its unmodded damage
    cell reads 1000 where the infobox lists 100, which is the catalog
    independently confirming the weapon's own Notes: *"the attack deals 100
    Impact on contact and 100 Radiation on explosion, multiplied by the magazine
    capacity"*. A CO table cross-checking a damage mechanic is not what it is
-   for, and it is the second time the damage column has paid for itself.
+   for, and the damage column does it anyway.
 2. **A WEAPON CAN HAVE TWO ROWS WITH OPPOSITE ANSWERS.** The Coda Bassocyst's
    primary fire is Multiplying and its alt fire is `Does not apply` — the two
    ends of the vocabulary, on one weapon, three columns apart.
-3. **THE FERROX ROW IS THE FIRST ONE THIS ENGINE CANNOT CARRY.** It says two
+3. **THE FERROX ROW IS ONE THIS ENGINE CANNOT CARRY.** It says two
    things at once: that a RADIAL takes Condition Overload at all, which no
    ordinary radial does, and that its term reads the DIRECT hit's base (200)
    rather than its own (60). `co_base_fraction` is one number per ENTRY, and
@@ -161,11 +160,8 @@ Four things this batch taught the file.
    no word in `CoBehavior` (the CO term ignoring damage falloff), and it is
    admitted on the weapon rather than silently dropped.
 
-**Rows for roster weapons that are NOT the ordinary case.** Transcribed
-2026-08-12 from `?action=raw`, which is also when this table stopped being three
-rows — the file exists so the catalog can be diffed against the wiki in one
-pass, and most of the roster's rows had been living in INCARNON.md's prose and
-in yaml comments instead. That is how five of them came to be wrong.
+**Rows for roster weapons that are NOT the ordinary case**, transcribed from
+`?action=raw`.
 
 | weapon | attack | relative | type | our entry |
 | --- | --- | --- | --- | --- |
@@ -214,27 +210,18 @@ since no other grip has a row of its own.
 
 Gaze, Rattleguts and Vermisplicer have no row, in either slot, and are ordinary.
 
-### THE 2026-08-20 SWEEP — forty-four entries the catalog named and the roster contradicted
+### MORE ROWS THE ROSTER CARRIES — read off the WIKI PAGE
 
-**A method error, and it is the useful part of this entry.** Every weapon yaml
-written this month opened with *"NO row in the wiki's CO catalog (re-read
-2026-08-20)"*. That check was run against **THIS FILE** — our own transcription,
-which by construction carries only "rows the roster already has". Asking it
-whether a NEW weapon has a row can only ever answer no. The check has to read
-the WIKI PAGE, and when it finally did it found forty-four disagreements.
+**A new weapon is checked against the WIKI PAGE, never against this file.** This
+file carries only the rows the roster already has, so asking it whether a new
+weapon has a row can only ever answer no.
 
-**Not all of them were new.** The Lanka has read Adding at 100% since it was
-written and its row says 38%; both Laser Rifles, the whole Cernos family and the
-Catabolyst are the same story. Condition Overload is on most builds, so each of
-these was a wrong damage number rather than a wrong comment.
-
-**And it took TWO passes, for a reason worth writing down.** The first
-reconciliation matched a row to a form through a short list of attack NAMES —
-"Normal Attack", "Alt-fire", "Charged Attack". The catalog names an attack the
-way that WEAPON's page does, so "Projectile Impact", "Direct Hit", "Lock-On
-Mode", "Slug Impact", "Burst Mode" and "Reload From Empty Impact" matched
-nothing and were skipped in silence. A narrow vocabulary does not fail, it
-under-reports.
+**Match a row by the weapon page's OWN attack name.** The catalog names an
+attack the way that weapon's page does — "Projectile Impact", "Direct Hit",
+"Lock-On Mode", "Slug Impact", "Burst Mode", "Reload From Empty Impact" — so a
+short list of names like "Normal Attack" / "Alt-fire" / "Charged Attack"
+matches nothing and is skipped in silence. A narrow vocabulary does not fail,
+it under-reports.
 
 | our entry | behaviour | co_base_fraction |
 | --- | --- | --- |
@@ -283,14 +270,13 @@ under-reports.
 | `tenet_envoy` | independent | 100% |
 | `trumna_grenade` | independent | 100% |
 
-**Seven AoE PARTS** were reading `takes_condition_overload: false` where the
-catalog gives them their own row — not a fraction being off, the WHOLE term
-missing from an explosion that is most of the weapon: the Ambassador's radial
+**Seven AoE PARTS** have a row of their own, so they take the WHOLE term on an
+explosion that is most of the weapon: the Ambassador's radial
 (75%), both Ferroxes (350% / 333%), both Opticors (250% / 200%), the Trumna's
 main fire (164%), and the Mutalist Cernos's charged cloud at **4100%**, which is
 the most extreme relative column in the catalog. The per-part fraction is still
 not expressible — `co_base_fraction` is one number per ENTRY — and each says so
-on its card, which is the call the Pox has carried since its own 250% row.
+on its card, as the Pox does for its own 250% row.
 
 ### "CO-bonus does not use base damage increase Evolution" — eleven rows
 
@@ -330,16 +316,14 @@ On the question actually asked the score is **15 to 0**:
 | | count | verdict |
 |---|---|---|
 | catalog rows that measured the evolved weapon | 11 | all EXCLUDED |
-| owner measurements (Dual Toxocyst x2, Torid x2) | 4 | all EXCLUDED |
+| in-game measurements (Dual Toxocyst x2, Torid x2) | 4 | all EXCLUDED |
 | anything, anywhere, measuring an evolved weapon and finding it INCLUDED | **0** | — |
 
-Three of the four owner measurements are on perks the catalog does not list, so
+Three of the four measurements are on perks the catalog does not list, so
 its silence has been tested three times and meant "unmeasured" every time.
 
-**SO THE DEFAULT FLIPPED — FOR `Adding` ENTRIES ONLY**. An
-undeclared perk on an Adding entry keeps its flat damage out of the CO term. 238
-weapon+perk pairs moved, by 37% on average at two Galvanized stacks against two
-status types.
+**SO THE DEFAULT IS EXCLUSION — FOR `Adding` ENTRIES ONLY**. An
+undeclared perk on an Adding entry keeps its flat damage out of the CO term.
 
 **`Multiplying` READS THE FULL EVOLVED BASE — MEASURED, and it is the OPPOSITE
 answer** (MEASUREMENTS M51). The reading that settles it: the Torid's base
@@ -352,18 +336,18 @@ reads.**
 
 | class | the term reads | evidence |
 |---|---|---|
-| `Adding` | the UNEVOLVED base | 11 catalog rows + 4 owner readings, 15 to 0 |
+| `Adding` | the UNEVOLVED base | 11 catalog rows + 4 in-game readings, 15 to 0 |
 | `Multiplying` | the FULL evolved base | M51, two attack parts x two perks |
 
 **AND IT IS GENERALISED TO ALL 26 ENTRIES ON THAT ONE WEAPON'S READING**, deliberately ahead of this table: the wiki prints a fraction for a
 minority of attacks, the rule beats the table, and a measurement that
-contradicts it edits ONE weapon's yaml rather than the rule. The class now
+contradicts it edits ONE weapon's yaml rather than the rule. The class
 answers BEFORE a perk's declaration on a `Multiplying` entry, which is what stops
 a reading taken off an `Adding` form from reaching across a transform group and
 diluting one. `no_evolution_dilutes_a_multiplying_co_base` asserts the property
 roster-wide instead of the 26 numbers, so it holds for a weapon nobody has
 entered yet; the reserved per-entry slot is `co_base_fraction:` in the weapon
-yaml, 1.0 everywhere today.
+yaml, 1.0 everywhere.
 
 **A DECLARATION STAYS THE PERK'S, AND IS SCOPED TO THE FORM IT WAS MEASURED ON.**
 The catalog names perks, and a perk reaches both forms of its transform group —
@@ -373,37 +357,26 @@ entry is recorded without asserting the other.
 
 **WHAT WOULD REVERSE IT** is one measurement finding an evolution that DOES feed
 the term. `the_eleven_evolution_exclusion_rows_reproduce_their_own_percentages`
-holds five unlisted perks asserting the new default, and that is the loop such a
-measurement would edit. Until then the old paragraph stands as the record of
-what was believed and why:
+holds five unlisted perks asserting the default, and that is the loop such a
+measurement would edit.
 
-**INCLUDING an evolution's flat damage is the DEFAULT**;
-the exclusion is opt-in per perk.
-
-**AND THE DEFAULT FOLLOWS THE WIKI; A MEASUREMENT RE-CERTIFIES**. Flipping
-that default the other way would touch 107 perks across 65 weapons on the
-strength of ONE measured weapon, which the repo's own rule forbids ("the catalog
-is authoritative and absence means ORDINARY", and a row reaches a family's
-variants rather than a class of behaviour). What the Burston
-measurement (M48) establishes is narrower, and is what is applied:
+The Burston measurement (M48) establishes:
 
 > **A fraction the catalog DERIVES belongs to the PERK, so it reaches every
 > attack part the perk's damage landed on — not only the part the row names.**
 
-The catalog has exactly three derived-fraction rows and they are now treated
-alike: the Zylok family was already flagged, the Burston family was flagged on
-the measurement, and the **Braton family** was flagged with them — its Daring
-Reverie is the +4 the row's `70 + 4 = 74` names, and Munitions Grit is its
-tier-2 twin. That last one needed no new measurement, only consistency: two of
-the three were already done.
+The catalog has exactly three derived-fraction rows and they are treated
+alike: the Zylok, Burston and **Braton** families all carry the flag — the
+Braton's Daring Reverie is the +4 the row's `70 + 4 = 74` names, and Munitions Grit is its
+tier-2 twin.
 
 **AND THE ADOPTED RULE IS ON THE PAGE.** Every weapon's panel states which CO
 rule it is computed under — behaviour, which attack parts, and the fraction
 with its number — whether or not a CO source is equipped
 (`scripts/check_gunco_stated.mjs`). The rules are per-weapon and transcribed by
-hand, and the Burston's was wrong for months; putting it where a player who
-owns the gun can read it is what makes the next one findable before it is
-published rather than after. So every row above has to be flagged on the
+hand; putting it where a player who owns the gun can read it is what makes a
+wrong one findable before it is published rather than after. So every row above
+has to be flagged on the
 perk it names, or that weapon computes its CO term on a base the game does not
 use — for the Despair and the Bronco Prime, on twice it.
 
@@ -519,11 +492,10 @@ yaml carries the per-projectile damage and the pellet count separately. So
 roster carries, with `every_catalog_radial_row_reproduces_our_explosion` for the
 four radial ones.
 
-That is not a CO check and it found a CO-unrelated bug on the first run: **both Bronco Incarnon entries had `multishot: 1.0` where the base
-forms had 7**, so the Incarnon Bronco dealt ONE SEVENTH of its shot — 22 against
-154, and 34 against 238 on the Prime. A lost pellet count is invisible
-everywhere else: the damage per projectile stays right and the panel stays
-plausible.
+That is not a CO check, and it catches what nothing else does: a lost pellet
+count. An Incarnon Bronco at `multishot: 1.0` where its base form has 7 deals
+ONE SEVENTH of its shot — 22 against 154 — while the damage per projectile
+stays right and the panel stays plausible.
 
 Every other multi-pellet entry was checked the same way and is correct — the
 Boar pair, all four Struns, the Ballistica Prime and the Felarx have genuinely
@@ -540,13 +512,9 @@ the flag is missing, on the wrong perk, or on a perk whose flat damage does not
 match. Six negative controls assert the unnamed tier-mates still feed CO in
 full.
 
-It found the **Vasto Prime** still missing its flag, which the
-earlier sweep of eight had left behind.
-
 ### The Vasto Prime row: the damage column cannot pick the perk, and the row still can
 
-This one is worth writing out, because the usual check does not decide it and
-reading it as if it did is how the row was filed **UNRESOLVED** for a day.
+This one is worth writing out, because the usual check does not decide it.
 
 Both EVO2 options give the Vasto Prime **+24**, and — checked against the raw
 wikitext, not a summary of it — **both** carry the note *"Base Damage increase is
@@ -573,7 +541,7 @@ change is one line and a test that already names it.
 
 ---
 
-### The MATH section's bullets are summaries of catalog rows, NOT laws — SETTLED
+### The MATH section's bullets are summaries of catalog rows, NOT laws
 
 The page's **Math** section lists, of Additive-stacking CO:
 
@@ -589,14 +557,13 @@ against the eleven the catalog actually names.
 **It is not a law**. Same ruling as the one this file
 already states: the catalog is authoritative and absence means ORDINARY.
 
-**And the page argues the owner's side.** Two of the four bullets are hedged
-with "Some" outright, and the unhedged "Bow charging" one is enumerated by ~15
-catalog rows that DISAGREE WITH EACH OTHER — Paris/Dread/Cernos at 50%, Miter at
-40%, Lanka at 38%, Drakgoon at 57%, Evensong at 65%, the Ballisticas at 25% and
-50% — and, decisively, **the class contains counter-examples**: the Cinta and
-the Nataruk are charged bows at 100% Multiplying, and the Balefire Charger is
-0%, "Does not apply". A bullet whose own named class holds exceptions in both
-directions is describing what was observed, not stating a rule.
+**The page's own text bears that out.** Two of the four bullets are hedged with
+"Some", and the unhedged "Bow charging" one is enumerated by ~15 catalog rows
+that disagree with each other — Paris/Dread/Cernos at 50%, Miter at 40%, Lanka
+at 38%, Drakgoon at 57%, Evensong at 65%, the Ballisticas at 25% and 50% — and
+the class holds counter-examples in both directions: the Cinta and the Nataruk
+are charged bows at 100% Multiplying, and the Balefire Charger is 0%, "Does not
+apply".
 
 So the Incarnon bullet is the summary of the eleven rows, exactly as the bow
 bullet is the summary of the charged-attack rows. Nothing in the engine changes,
@@ -635,24 +602,15 @@ does not "fix" them away.
 
 ---
 
-### Where this has already gone wrong
+### Reading a row
 
-- **Zylok / Zylok Prime.** Both radials were filed as "no CO catalog
-  row for this weapon" and so took the engine's defaults — CO off, multishot on
-  — and BOTH were wrong. There is a row, and the reason it was missed is worth
-  the line: the catalog keys it under `{{Weapon|Zylok}}/{{Weapon|Zylok Prime}}`,
-  one row for two variants, so a search for either name alone finds a row that
-  looks like it belongs to the other. The Burston and Braton rows are keyed the
-  same way and were read correctly, which is what makes this a lookup habit
-  rather than a one-off. Found while answering "why doesn't the Burston Prime's
-  radial take multishot" — the question that made the column worth reading as a
-  column.
-- **Shedu.** Filed as `additive_with_base_damage` on the reasoning
-  that it had no row. It has one, and it says Multiplying. The mistake was
-  asserting an absence without opening the page — and the page's own Bugs
-  section ("Galvanized Aptitude is multiplicative to base damage sources on
-  direct hits") was describing the same behaviour the catalog classifies, since
-  Galvanized Aptitude IS the CO bonus. Worth +41% on a status build.
+- **One row can key several variants** — `{{Weapon|Zylok}}/{{Weapon|Zylok
+  Prime}}`, and the Burston and Braton rows the same way — so a search for
+  either name alone finds a row that looks like it belongs to the other.
+- **Never assert an absence without opening the page.** A weapon's own Bugs
+  section can describe the behaviour the catalog classifies (the Shedu's
+  "Galvanized Aptitude is multiplicative to base damage sources on direct hits"
+  is its Multiplying row).
 
 ---
 
@@ -736,35 +694,22 @@ The Shedu's row in full, since it is the one the roster leans on:
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Shedu | Primary Fire + AoE | 100% | Multiplies | Snapshot | 6.6 m | +528% | *Primary Fire AoE not affected by Firestorm* | *Cannot use reload pulse radial.* | Arm-Cannon |
 
-### RE-READ 2026-08-19, when the catalog moved
-
-`fetch_catalogs.mjs --force` reported Primary Compression as MOVED, which is the
-one event that invalidates every row here, so all 28 transcribed weapons were
-compared against the live table.
-
-**The mechanics are intact.** The rank ramp is unchanged (0: +50% / +3.0%, 5:
-+100% / +5.5%), every weapon this roster carries is still listed, and every
-`effectiveness` value still matches. What changed on the page was its
-ACQUISITION section — the arcane is now bought from Hunhow at Pontis Tower for
-Emerald and Crimson Talent — which is nothing this repo reads.
-
-**Two things came out of the re-read anyway**, and both are about the STACKING
-column rather than about the numbers:
+### The STACKING column carries two values the schema does not
 
 - Five rows carry `Doesn't Work` there (Arbucep, Cortege ×2, Kuva Ayanga, Torid
   Incarnon) and the schema holds only `multiplies` / `adds`. Those files' yaml
-  said `multiplies`, which reads as a transcription and is not one. At 0%
-  effectiveness the field is inert, so no number moves — but each now says in
+  say `multiplies`, which reads as a transcription and is not one. At 0%
+  effectiveness the field is inert, so no number moves — but each says in
   as many words that it is a placeholder and what the column really reads.
 - **The Vectis pair's column reads `N/A`** and had never been transcribed at
   all. That one is NOT inert: its effectiveness is 4%, so `multiplies` against
   `adds` is a real difference, and `multiplies` is this repo's assumption rather
-  than the catalog's answer. Both files now say so.
+  than the catalog's answer. Both files say so.
 
-The lesson is the one the MOVED check exists for, and it is narrower than
-"re-read everything": what drifts is not the numbers a formula reads, it is the
-columns nobody is acting on — which is exactly why the rule says to transcribe
-those too.
+When `fetch_catalogs.mjs --force` reports the catalog MOVED, compare every
+transcribed row against the live table: what drifts is not the numbers a
+formula reads, it is the columns nobody is acting on — which is why the rule
+says to transcribe those too.
 
 ### SIX AXES, not one
 
@@ -860,13 +805,10 @@ Only ours, so this stays diffable. The full table lives on the wiki, and
 `the_roster_reproduces_primary_compressions_published_column` is, by
 re-deriving the wiki's own Max Damage Bonus column from each entry's radius.
 
-RE-READ 2026-08-20, when the roster finished its primary/secondary intake.
-The published table named **fifty-nine** more of our attacks than we carried,
-and an attack with no `compression:` pays the arcane NOTHING — so every one
-of them was silently worth zero to a build holding Primary Compression. Half
-the additions are a tested **0%** ("Archguns cannot equip", the beam
-exclusion), which is a ROW and not an omission: saying so is the difference
-between "checked" and "nobody looked".
+An attack with no `compression:` pays the arcane NOTHING, so every attack the
+published table names is carried. Half are a tested **0%** ("Archguns cannot
+equip", the beam exclusion), which is a ROW and not an omission: saying so is
+the difference between "checked" and "nobody looked".
 
 109 rows.
 
@@ -1059,4 +1001,4 @@ Rate) — that one is not a `ScopeSpec` and should not be forced into it.
 A new one earns a section here when it has the same shape: a published table,
 one row per weapon or per attack, saying something the weapon's stats do not.
 Put the columns verbatim, the rows the roster actually carries, and — the part
-that pays for itself — **where it has already gone wrong**.
+that pays for itself — **the misreadings a reader has to avoid**.

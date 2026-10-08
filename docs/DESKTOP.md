@@ -6,24 +6,9 @@ to a download link.
 
 ## Why it exists
 
-The web build's art and its 5.43 MB wasm module come from Cloudflare, and
-Cloudflare from mainland China is the least reliable thing on the page — which
-is where the players are. MEASURED from Shanghai on 2026-08-26: the wasm module
-downloads at **2.11 MB/s** from wfsim.app and at **9.73 MB/s** from a Tencent
-COS bucket, and locally it is not a download at all — the module instantiates
-in **~200 ms**. Multiply by the compute lanes, each of which loads its own copy,
-and the difference is the whole first impression.
-
-Three more things fall out of being local, and one of them is a capability
-rather than a speed:
-
-- **Offline.** Every simulation already runs on the reader's own CPU; the
-  network was only ever delivering the files.
-- **Presets survive.** Builds, scenarios and rivens live in `localStorage`;
-  "clear browsing data" takes them all. The app has its own profile.
-- **The 5 MB origin quota is gone.** A replay stays out of a stored result
-  because it is about forty times the summary (docs/UI.md §Results). A desktop
-  build can keep them. *(Not done yet — the shell ships first.)*
+Every simulation runs on the reader's own CPU, so the client works offline, and
+it has its own profile, so presets in `localStorage` survive clearing the
+browser's data.
 
 **It is not faster to compute with, and that is deliberate.** The engine could
 be called natively instead of through wasm, worth perhaps 20–50%, but then the
@@ -115,7 +100,7 @@ rest out of `current/`, and hands the finished directory to `Layout::promote`.
 
 ### The private key is the one unrecoverable thing
 
-`private/wfsim_update_key` (gitignored). Lose it and no installed client can
+The key is kept outside the repository. Lose it and no installed client can
 ever be updated again — every reader frozen, the only way out a manual
 download, which is the outcome this whole design exists to avoid. **Back it up
 somewhere that is not this machine.** The public half is compiled into
@@ -124,10 +109,8 @@ somewhere that is not this machine.** The public half is compiled into
 ## Rollback
 
 Two launches that never report a rendered page make the shell move `prev/` back
-into place. `HEALTH_PROBE` polls for up to a minute rather than sampling once —
-an earlier version checked at a fixed four seconds, which on a slow machine
-would have rolled back a perfectly good update, on exactly the machines least
-able to re-download it.
+into place. `HEALTH_PROBE` polls for up to a minute rather than sampling once: a
+fixed short check rolls back a good update on a slow machine.
 
 This is the one piece of recovery that cannot live in JavaScript: it runs before
 any of it does.
@@ -260,8 +243,7 @@ download — **specifically that the source archive is not something a player
 needs** — plus the SHA-256 and what to do about SmartScreen.
 
 Upload once. It is a **download link, not an update channel** — a network drive
-has no stable direct URL, and automated downloads would not count as real
-traffic anyway.
+has no stable direct URL.
 
 ### The offer: a pointer, and a page
 
@@ -277,14 +259,8 @@ the **owner's own wording**, transcribed from the notes file that ships beside
 the binary — the notes answer the warning after the download, and the page
 answers it before.
 
-The URL is also the half that can be said out loud: a reader who saw this in a
-video types `wfsim.app/download`.
-
-**The topbar's overflow menu is the only entry.** The home page offers no
-download at all — it is read by somebody who has not yet seen the tool work,
-which is the worst moment to ask them to run an unsigned executable, and the
-people who want the client are the ones already using the site and will go
-looking for it. Nothing reads the user agent outside /download, which is the
+**The topbar's overflow menu is the only entry**; the home page offers no
+download at all. Nothing reads the user agent outside /download, which is the
 surface that tells a Mac, Linux or phone reader it will not run there.
 
 **Windows only.** The release workflow can cut `WFSim.AppImage` too — a
@@ -315,8 +291,8 @@ assertion can see.
 
 ## Three ways this builds cleanly and ships the wrong thing
 
-All three were found in one afternoon, all three produced a zero exit code, and
-none of them is visible in a log. They are why `build_desktop.py` refuses an
+All three produce a zero exit code, and none of them is visible in a log. They
+are why `build_desktop.py` refuses an
 executable under 20 MB and why `check_desktop_probes.mjs` exists. Two of the
 three were the BUNDLER, which is no longer used — dropping the installer
 dropped them with it.
@@ -345,7 +321,6 @@ was caught by an assertion about the artifact, never by the tool that made it.
 ## Not signed
 
 No code-signing certificate. SmartScreen shows its blue warning on first run and
-the notes file says so with the steps. An OV certificate (~¥2000–5000/yr) would
-not remove the warning immediately either — SmartScreen goes on file reputation,
-so a fresh certificate still warns, just with a name attached. Revisit if there
-is ever a reason to.
+the notes file says so with the steps. A certificate would not remove the
+warning immediately either — SmartScreen goes on file reputation, so a fresh
+certificate still warns, just with a name attached.

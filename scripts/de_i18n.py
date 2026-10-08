@@ -253,7 +253,7 @@ FAMILIES = {
 }
 HAND_SOURCE = (
     "hand-transcribe from the CN wiki's API — never translate "
-    "(docs/DATA_SOURCES.md §The CN wiki is reachable through its API)"
+    "(docs/DATA_SOURCES.md §The CN wiki)"
 )
 
 

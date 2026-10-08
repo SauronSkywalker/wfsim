@@ -3,9 +3,8 @@
 **Goal.** Answer two questions with numbers instead of guesses: *how many
 people use wfsim.app*, and *how well do they use it*. Not marketing
 attribution — where visitors come from is recorded as far as the site that
-sent them, and no further. The output is roadmap
-fuel: which module and which weapons are actually exercised, and whether a
-visit produces a RESULT or nothing.
+sent them, and no further. It records which module and which weapons are
+exercised, and whether a visit produces a RESULT or nothing.
 
 ## Why the edge cannot answer it
 
@@ -92,7 +91,7 @@ with this thing, not how many times: forty edits to one build are one build.
 | `desktop.download` | a desktop download link was clicked | — | — |
 | `door.seen` | a greyed option naming another page was drawn: the share panel's, for readers it does not sign for | the way in: `share` | — |
 | `door.open` | a page was reached by a link that names its way in (`?from=`), which is then taken off the address | the way in: `topbar`, `menu`, `share`, `support`, … | — |
-| `presets.saved` | the engine has answered `/api/meta` | `presets` or `customs` — the pool a sync allowance would count | how many this browser holds, board rows opened into a bar not counted |
+| `presets.saved` | the engine has answered `/api/meta` | `presets` or `customs` | how many this browser holds, board rows opened into a bar not counted |
 | `nona.open` | Nona's panel was opened | — | 1 with a key set, 0 without |
 | `nona.ask` | a reader message was sent to her — never its text | — | which reader message of this conversation it is |
 | `nona.concise` | concise mode was switched in her settings | — | 1 on, 0 off |
@@ -126,19 +125,13 @@ python scripts/usage.py --days 28
 
 Needs `CF_ACCOUNT` and `CF_TOKEN` (an API token with **Account Analytics:
 Read**) in the environment or in `private/cloudflare.env`. It prints, per day,
-visitors, visitors with a result and the **activation rate**; each module's
-visitors; the **week-over-week return rate**; **China against overseas** —
-activation, boot time p50/p90, engine failure rate, shares made and opened;
-the top subjects per event; and visitors by landing route, language, shell and
-country.
+visitors and visitors with a result; each module's visitors; the top subjects
+per event; and visitors by landing route, language, shell and country.
 
 It also ranks the **most active visitors** — by days seen, then results — under
 the first eight characters of their id. A visitor is a browser and nothing
 more; it becomes a person only if they tell us the id `/support` shows them,
 and then `python scripts/usage.py --visitor <id>` lists everything it sent.
-
-Activation and return are the two numbers that matter. Pageviews are not a
-measure of a calculator; producing a result is.
 
 ## Retention
 

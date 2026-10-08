@@ -2700,7 +2700,7 @@ abilities:
   nourish: 消化滋养
   nourish_helminth: 消化滋养（Helminth）
   # 真理密语, off the CN wiki's own ability page (`?action=raw` via the API —
-  # DATA_SOURCES §"The CN wiki is reachable through its API, not its pages").
+  # DATA_SOURCES §"The CN wiki").
   # IT IS NOT AN ITEM DE EXPORTS AT ALL, unlike the seven above, so a derived
   # name was not an option: nothing about "Xata's Whisper" would have
   # produced 真理密语.

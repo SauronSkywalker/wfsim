@@ -5,10 +5,7 @@
 >
 
 This file is DERIVED, not invented. Every rule in §1–§7 was read off the code
-that already existed, and the counts are the evidence for which spelling won. The
-roster was ~250 weapons and ~1,100 data keys deep when it was written, which is
-late enough that the patterns are real and early enough that fixing them cost
-one afternoon.
+that already existed, and the counts are the evidence for which spelling won.
 
 ## 1. The shape of a name
 
@@ -38,14 +35,12 @@ file, which is the whole point.
 | metres per second | `_mps` | `_speed` alone |
 | a fraction of a whole | `_pct` | `_percent`, `_frac`, `_ratio` |
 
-**METRES WAS ALREADY PERFECT and is the model the rest were made to match.** At
-the survey, `_m` covered 13 data keys and 15 Rust fields with **zero**
-exceptions, so a reader who sees a bare number knows it is not a distance.
+**METRES IS THE MODEL the rest were made to match:** `_m` covered every
+distance key and field with **zero** exceptions, so a reader who sees a bare
+number knows it is not a distance.
 
-**SECONDS WAS THE WORST**, with four spellings and — the part that actually
-costs — three of them for ONE concept: `duration_s`, `duration_secs` and
-`duration_seconds` all existed, in the same engine, meaning the same thing. 465
-occurrences across 51 files were renamed to fix it.
+**SECONDS HAD FOUR SPELLINGS**, three of them for ONE concept — `duration_s`,
+`duration_secs` and `duration_seconds` meant the same thing. One spelling now.
 
 ### `_pct` is a FRACTION, 0..1
 
@@ -72,9 +67,8 @@ longer one won every time such a pair came up, and that is the tie-break rule:
 
 ## 4. Words are not abbreviated — AND TWO OF THEM MEANT TWO THINGS
 
-This is the rule the owner asked for second, and it is the one that cost the
-most: a reader of `bd_eximus_expiry` has to already know that `bd` is base
-damage before the name tells them anything at all.
+A reader of `bd_eximus_expiry` has to already know that `bd` is base damage
+before the name tells them anything at all.
 
 **`ms` MEANT MULTISHOT AND MILLISECONDS.** One two-letter name, two units, one
 codebase — `evo_ms` in the engine and `ms_per_run` in `one_fight`.
@@ -137,50 +131,15 @@ problem when it is a one-row checker problem.
 
 ## 8. AN INFRASTRUCTURE RESOURCE IS NAMED AT THE GRANULARITY IT IS PROVISIONED
 
-One worker, one bucket, one database — each holding everything of its kind for
-this product, because the cheap shape is a container with several things inside
-it and not a container per thing. The CONTENT is named one level down.
-
-| resource | name | what is inside |
-| --- | --- | --- |
-| Worker | `wfsim` | the site and its api |
-| Worker | `wfsim-mcp` | the MCP server — its own because it bundles the engine, which the site's cold start must not carry (`docs/AGENT.md`) |
-| D1 database | `wfsim` | the board's `inbox`, `builds`, `scores`, `batches`, `queue`, `shares`, `usage_days`; and the private worker's own tables |
-| D1 database | `wfsim-accounts` | `accounts`, `identities`, `sessions`, `email_codes` — personal data, restored apart and never in the public backup (`docs/ACCOUNTS.md`) |
-| R2 bucket | `wfsim` | `ocr-samples/` — the riven screenshots readers offer (`docs/ACCOUNTS.md`) |
-| Analytics Engine dataset | `wfsim` | usage points, one per thing a reader did (`docs/ANALYTICS.md`) |
-
-**A NAME DESCRIBES THE RESOURCE, NOT WHAT HAPPENS TO BE IN IT.** A bucket named
-for one prefix is false the day a second prefix is added, and opening a second
-BUCKET to keep it true buys a credential scope, a lifecycle config and a domain
-for nothing. A prefix and a table cost none of that, which is where content
-belongs.
-
-**A SECOND RESOURCE OF ONE TYPE NEEDS A BOUNDARY**, and takes its name from
-that boundary: a different lifecycle, a different write path, a blast radius
-worth separating — `wfsim-staging`, not `wfsim-2`. Without one, the second
-resource is a table or a prefix inside the first.
-
-**THE TYPE IS NEVER IN THE NAME, AND NEITHER IS THE VENDOR.** A console lists
-one type per section and a command carries its own (`wrangler d1 execute`, `aws
-s3 cp`), so a name spending its field on either says nothing the reader did not
-already have. That is §4 at the account's scale: `wfsim-db` costs what
-`bd_eximus_expiry` costs, and `wfsim-r2` is false the day the store moves.
-
-**THE TYPE LIVES IN THE CONFIG KEY** — `D1_DATABASE_ID`, `R2_BUCKET` — which is
-the layer a vendor change rewrites anyway, and which is therefore also what to
-GREP for. The resource name says the product, the binding says the role in code
-(`env.LIBRARY`), and the config says the product's vendor.
-
-**HYPHENS, NOT UNDERSCORES.** An object store's name has to be DNS-compatible —
-lowercase, 3–63 characters, no underscores — so every resource follows the
-constraint the strictest of them carries. §1's shape governs code and data keys,
-which have no such rule; the two conventions are separate because the two
-namespaces are.
-
-**AN ENVIRONMENT JOINS THE NAME WHEN A SECOND ONE EXISTS**, and not before. A
-`prod` in every name while there is one environment distinguishes nothing. The
-second names itself — `wfsim-staging` — and the first keeps what it has.
+One resource per kind — one worker, one bucket, one database — holds everything
+of its kind for this product; the CONTENT is named one level down, as a table
+or a prefix. A name describes the resource, not what happens to be in it. A
+second resource of one type needs a boundary (a lifecycle, a write path, a blast
+radius) and takes its name from it — `wfsim-staging`, not `wfsim-2`. Neither the
+type nor the vendor is in the name: the type lives in the config key
+(`D1_DATABASE_ID`, `R2_BUCKET`). Hyphens, not underscores, because an object
+store's name must be DNS-compatible. An environment joins the name only when a
+second one exists.
 
 ---
 

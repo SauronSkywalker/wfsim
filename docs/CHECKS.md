@@ -530,19 +530,17 @@ a reload.
 
 ## `check_calc_recovers`
 
-**THE QUICK CALC SURVIVES LOSING ITS WORKERS.** Reported by the owner and by
-players: it stops producing numbers and stays stopped, and a reload does not
-help. Three faults compounded, each permanent on its own:
+**THE QUICK CALC SURVIVES LOSING ITS WORKERS**: it never stops producing
+numbers and stays stopped. Three faults each make that permanent on its own,
+and the check holds all three:
 
-- `laneAt` returned a DEAD lane rather than replacing it, and `freeLane` fell
-  back to `laneAt(0)` — so once every worker had died, every later call went to
-  a corpse. A reload rebuilt the same pool the same way, because the lane count
-  is a stored preference and the trigger is deterministic;
-- `laneAsk` recognised `cancelled` and not `worker_dead`, so a worker whose
-  module never loaded returned a failure the scan read as an empty measurement:
-  the counter advanced and the chip never appeared;
-- the fight's key was stamped when a scan STARTED, so a scan that died half way
-  left the page believing that fight was answered and nothing ever re-asked.
+- `laneAt` replaces a DEAD lane rather than returning it, and nothing falls back
+  to a fixed lane — the lane count is a stored preference and the trigger is
+  deterministic, so a reload would rebuild the same dead pool;
+- `laneAsk` treats `worker_dead` as a failure, like `cancelled`, never as an
+  empty measurement;
+- the fight's key is stamped only by a scan that measured everything, so a scan
+  that died half way is asked again.
 
 **IT KILLS THE POOL**, which is the only honest way to test a recovery path, and
 asserts the calculator reaches a COMPLETE answer anyway — completion being the
@@ -1141,8 +1139,8 @@ a riven travels as a shape and never as rolls, that intake derives the id from
 the build, that no `mode` survives into the library, and that the PAIRING the
 player built is the pairing that is stored while the ORDER is the canonical one.
 
-Each end already had its own check, and all of them passed on the day `mode` was
-in the door's key — because no check looked at what came out the far end.
+Each end has its own check; this one looks at what comes out the far end, which
+no per-end check sees.
 
 ## `check_comment_style`
 

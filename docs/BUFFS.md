@@ -192,7 +192,7 @@ Crosshairs' KILL half is the mod that does — a list of expiries
 (`windows.crit_on_headshot_stacks`) rather than the Galvanized family's one
 clock, which is why that mod's two halves decay differently from each other.
 
-`all_at_once` became real on 2026-08-18, on a MOD rather than a perk. Split
+`all_at_once` is carried by a MOD rather than a perk. Split
 Flights states both halves of it in consecutive lines — *"Subsequent hits
 refresh all stacks' duration"* and *"Stacks expire all at once after 2 seconds
 without a hit"* — so it shares `lose_one_and_reset`'s single clock and differs
@@ -331,7 +331,7 @@ below lands. Replaces the old ad-hoc `stacking_buff` / `on_headshot_*` kinds.
 ## Activation policy: what a buff is worth at t = 0
 
 A conditional/stacking buff can be evaluated under three policies
-(recorded 2026-07-24; see [`OPTIMIZER.md`](OPTIMIZER.md) §3):
+(see [`OPTIMIZER.md`](OPTIMIZER.md) §3):
 
 1. **`assumed_max`** — full stacks, 100% uptime. What the **PANEL** shows: a
    build's ceiling, which is the question the panel answers.
@@ -359,13 +359,11 @@ normally and never falls off. Nothing downstream knows the concept exists:
 there is no `pinned`/`locked` field on any buff spec any more, and no read site
 has a branch for it.
 
-That shape is the point. The flag it replaced had to be honoured wherever a
-stack count was read, and it was missed at enough of them that "no timeout"
-came to mean its own opposite — the stacks decayed anyway while the trigger was
-skipped, so a locked buff decayed to zero and could never come back. It was
-wrong in three of the five families at once (Galvanized on-kill stacks, Lethal
-Rearmament, Overwhelming Attrition), and a player reported the worst of them. A duration cannot be forgotten, because
-it is the thing the clocks already read.
+That shape is the point. A separate flag has to be honoured wherever a stack
+count is read, and one missed read site makes "no timeout" mean its own
+opposite — the stacks decay while the trigger is skipped, so a locked buff
+decays to zero and never comes back. A duration cannot be forgotten, because it
+is the thing the clocks already read.
 
 Two consequences worth knowing:
 
@@ -391,11 +389,10 @@ knobs land where the same sentences point:
   thing that actually ends this buff.
 
 It is a buff by every test that matters (a trigger grants it, a trigger takes
-it, it has a cap), and it had no card until 2026-08-08. That was not cosmetic:
-a tendril costs a kill, so at a level where kills are slow — and against a
-target that does not die at all — **the Ocucor's only augment measured as
-nothing** — which is exactly what a player reported: the augment's card
-offered no stack count, so its damage could not be measured at all. The count is rostered only when a mod READS it: the tendrils' own
+it, it has a cap), so it has a card. That is not cosmetic: a tendril costs a
+kill, so at a level where kills are slow — and against a target that does not
+die at all — without a stack count **the Ocucor's only augment measures as
+nothing**. The count is rostered only when a mod READS it: the tendrils' own
 damage is cosmetic on the beam's target and is deliberately not modelled, so
 without Sentient Surge a card for them would move no number.
 
@@ -518,9 +515,9 @@ only input the rule takes.
 **Secondary Enervate (次要·失活) is the worked example of the consumable half.**
 Untimed and UNCAPPED — a hit adds a stack of +10 flat crit chance with no
 ceiling — but a big crit wipes the pile, so it starts at 0 like everything else
-that can be spent. It lives in a PERK rather than in `arcane.buffs`, which is
-why it had no card at all until 2026-08-03: the arcane whose entire point is a
-stack count was the one you could not set. `BuffMeta.uncapped` says there is no
+that can be spent. It lives in a PERK rather than in `arcane.buffs`, and it has a card all the
+same: the arcane whose entire point is a stack count has to be settable.
+`BuffMeta.uncapped` says there is no
 maximum, the card shows `/ ∞` and its input takes no `max`, and
 `FightParams::enervate_stacks` carries the configured pile into the run. In the whole data set today, exactly one buff
 qualifies: **Fevered Frenzy** (the Dual Toxocyst evolution).
@@ -529,10 +526,8 @@ The modelled fight is therefore: *you have been at it a while, but you have not
 been in contact for the last few seconds and are about to be.* Whatever
 survives a lull is up; whatever expires in one is not.
 
-This REPLACES the 2026-08-02 decision that every buff starts full. That one was
-made to keep the buff cards uniform, and uniform they stay — the number they
-open on is what changed. The reason it had to change is not the scenario, it is
-that the old default asserted stacks the fight could not produce:
+The buff cards are uniform, and they open at zero rather than full, because a
+full start asserts stacks the fight could not produce:
 
 | target | full-start | zero-start | apart |
 |---|---|---|---|
@@ -577,7 +572,7 @@ build it perfectly well. It opens full because keeping it up is not something a
 player has to think about, so a fight that opens without it is the less
 realistic of the two.
 
-**A CLOSED LIST, and the owner's own allowance.** `card_opens_full:` on the
+**A CLOSED LIST, and a stated allowance.** `card_opens_full:` on the
 buff. It is a judgement about how the game is actually played, not a claim off
 the card, and the two diverge: a card can say "lasts permanently throughout the
 mission" for a pile that takes a hundred kills to fill, and that one should NOT
@@ -872,8 +867,7 @@ the section says "early access" on screen rather than only in a comment.
 
 Same `family:` → only the strongest runs. The wiki states it on Freeze Force —
 *"Multiple Freeze Forces do not stack; the buff with the highest Ability Strength
-will take effect"* — and the owner asked for it by name for Roar vs Roar
-(Helminth). `resolve` settles it once, comparing by RESOLVED value so a
+will take effect"* — and it applies to Roar vs Roar (Helminth). `resolve` settles it once, comparing by RESOLVED value so a
 200%-strength Helminth Roar beats an unbuffed Rhino's, and the page draws the
 loser dimmed with a line saying why. Adding two Roars would be +80% against +50%,
 which is a 20% error nobody spots in a DPS figure.

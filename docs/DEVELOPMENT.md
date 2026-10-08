@@ -2,8 +2,7 @@
 
 This project is developed on both **Windows** and **macOS**. Toolchains are
 managed with [mise](https://mise.jdx.dev/) so every machine uses the same
-pinned Rust version. **We do not use Docker** during development; containerized
-packaging is deferred until the project is feature-complete.
+pinned Rust version. **We do not use Docker.**
 
 ## 1. Prerequisites (all platforms)
 
@@ -137,17 +136,13 @@ Run it after adding a weapon, a mod pool, or anything a weapon can carry. It
 is the check that makes `weaponAxes()` in `app.js` worth having:
 that function is one description of a weapon's axes so a special case is a
 one-place change, and this is what notices when a second place appears
-anyway. In the two hours around its own writing it caught the optimizer
-offering Exilus and Arcane scopes on a sentinel weapon, an exilus slot on the
-Larkspur with no mod that could enter it, and the two modules computing the
-exilus pool from different sources — agreeing only by coincidence.
+anyway.
 
 ## 5. Making the engine FASTER, without making it wrong
 
 `one_fight` is the harness for it. It exists because the repo could already
 grade the search's ACCURACY (`wfsim-truth`) and had no way to state its COST —
-and "it feels faster" and "it got dumber" are indistinguishable without both
-(community request).
+and "it feels faster" and "it got dumber" are indistinguishable without both.
 
 ```bash
 cargo run --release --bin one_fight -- save    # remember where you started
@@ -163,38 +158,22 @@ never let you scroll past. It catches a change of one part in 10¹².
 **THE COST COLUMN COMPARES TWO BINARIES IN ONE SESSION, NOT TWO MOMENTS.**
 `save` keeps the executable beside its numbers, and a comparison runs the saved
 one, then the new one, then the saved one again, against the mean of the two
-outer readings. That is not belt and braces: this machine holds a performance
-state for minutes, and the SAME binary measured 2.4x apart between states —
-three rebuilds of identical source read 890 / 2107 / 2125 ns a shot, and
-running those three alternately read 2126 / 2147 / 2136, the fast one no longer
-fast. A full workspace build leaves the machine about 40% quicker for the next
-few minutes, which is exactly when anybody measures.
+outer readings: a machine holds a performance state for minutes, and the SAME
+binary measures far apart between states — quickest straight after a full build.
+**A delta under about 10% taken immediately after a build is still not a
+result** — let it settle, or run it twice. A machine reference is timed in the
+same process and printed when it moves; it is evidence that the moment was
+bad, never a scale factor.
 
-Straight after a build the old method said −40% and the interleaved one says
-+1.1% and calls it noise. What is left is the decay not being linear across
-three suites, so **a delta under about 10% taken immediately after a build is
-still not a result** — let it settle, or run it twice. A machine reference is
-timed in the same process and printed when it moves; it is evidence that the
-moment was bad, never a scale factor, because it caught only 9% of that 40%.
-
-**IT ALSO GRADES ITS OWN COVERAGE**, and it has to, because the answer column
-can only catch a change in something the suite actually does. For as long as
-this tool existed its default build combined every element away — Hellfire +
-Cryo Rounds is Blast, Infected Clip + Stormbringer is Corrosive — so the suite
-ticked **no status DoT at all**, and nothing said so: a change to DoT tick
-damage left all three shapes unmoved to fifteen digits, and so did the same
-change scaled by a thousand. A broken burn would have been
-reported as "3 of 3 answers unchanged, 40% faster: ship it", which is the exact
-failure this tool exists to catch arriving through the one door it was not
-watching.
-
-Two things fixed it, and only the second one is permanent. A fourth shape —
-the **Braton Prime**, 60% of whose base is Slash, and a PHYSICAL type is the
-one thing an elemental mod cannot combine away — burns under the unchanged
-default build. And the tool now FAILS when the whole suite ticks nothing, so
-the next person to edit the mod list or the weapon list cannot silently undo
-it. `-v` prints the burn-tick count per shape. The mod list itself is
-deliberately untouched: it is what every saved baseline was measured under.
+**IT ALSO GRADES ITS OWN COVERAGE**, because the answer column can only catch a
+change in something the suite actually does. The default build combines every
+element away — Hellfire + Cryo Rounds is Blast, Infected Clip + Stormbringer is
+Corrosive — so a fourth shape, the **Braton Prime**, 60% of whose base is Slash
+(a PHYSICAL type is the one thing an elemental mod cannot combine away), burns
+under it. The tool FAILS when the whole suite ticks nothing, so editing the mod
+list or the weapon list cannot silently drop status DoT from the suite. `-v`
+prints the burn-tick count per shape. The mod list is what every saved baseline
+was measured under: leave it.
 
 Every knob is a `key=value` argument — `weapon=`, `mods=`, `runs=`,
 `duration=`, `enemy=`, `level=`, `steel_path=`, `seed=`, `repeats=`, and `-v`.
@@ -240,81 +219,23 @@ them together: `-C target-cpu=native` measured −23% on the Torid, −36% on th
 Scourge and **+31% on the Gotva Prime**. One weapon would have said "ship it"
 and one "revert", both truthfully.
 
-**What has already been tried, so nobody spends a day on it twice** (this
-machine; per-run cost 0.4–1.2 ms for a 180 s fight, repeat spread
-~2%):
-
-| tried | result |
-| --- | --- |
-| `lto = "fat"` + `codegen-units = 1` | ~2% — inside the noise |
-| dropping the per-call `Vec` in `monte_carlo` | 2–4% |
-| `-C target-cpu=native` (auto-vectorisation) | −23% / −36% / **+31%** — a lottery |
-| removing ALL 943 status procs from a run | 13% |
-
-**What DID work, as a worked example of the loop**:
-`DebuffState::distinct_statuses` — Condition Overload's input, asked once per
-damage INSTANCE — built a `Vec<DamageType>` and scanned it linearly per entry:
-a heap allocation and an O(n²) pass, thousands of times a run on a launcher.
-Seventeen damage types fit in a `u32`, so the set became one word and the count
-became `count_ones`. Identical by construction, and the harness said so:
-
-```text
-shape             ms/run    ns/shot   vs base  answer
-torid              0.888       4936     -5.1%  same
-gotva_prime        0.975        530     -8.0%  same
-scourge            0.423       1022     -3.3%  same
-```
-
-Found by reading the per-instance path for ALLOCATIONS rather than by guessing
-at arithmetic — which is the shape of the remaining wins if there are any. The
-per-shot loop is otherwise allocation-free (the one `vec!` in it is behind the
-replay's `trace` guard).
-
-**THE SECOND WIN WAS IN THE TICK LOOP, and only a crowd shows it.** Praedos
-under Melee Influence on the ruler's 25 bodies spends 60% of a run in
-`process_ticks`, and three things there were paid per STACK that belong to the
-INSTANT: an Electricity or Gas group tick re-read the element and faction
-brackets for every stack (each read locks the cast plan and walks the ability
-list — `dot::Source` now reads them once), the queue held one key per stack of
-a group that fires as one (73% of its pops were stale), and every tick built
-the ledger's parts with nobody recording. Identical answers, measured with
-`one_fight … bodies=25 arcanes=melee_influence` against the old binary:
-**−36% to −43%**, and −4.6% on the default suite. The rule it generalises to:
-what is the same for every stack at one instant is read once per instant.
-
-**…AND A BODY WITH NOTHING DUE ANSWERS AT ONCE.** The same fight on a real
-build (ten cards, five evolutions) carries ~340 DoTs a body and asks every
-body at every shot; more than half of those asks found nothing due and still
-walked the whole list to build a queue. `DebuffState::dots_due` is a lower
-bound on the earliest tick, kept by `push_dot`, and a pass that cannot pop an
-event returns before touching the list: 220 → 150 ms a run on the captured
-request, the answer identical to the last digit.
-
-Beyond that the cost is spread across the per-shot and per-tick work, and the
-room is in **how many runs get spent** — see docs/OPTIMIZER.md.
+**Where wins come from.** Build flags (LTO, `codegen-units`,
+`target-cpu=native`) are noise or a lottery across shapes. Read the
+per-instance path for ALLOCATIONS rather than guessing at arithmetic, and read
+once per instant what is the same for every stack at that instant. Beyond that
+the room is in **how many runs get spent** — see docs/OPTIMIZER.md.
 
 ### The quick calc pays a different fixed cost
 
 `gainScan` measures every candidate for one slot, and unlike the optimizer —
 which resolves a candidate against an already-parsed arena — it pays a whole
-`parse_fight` per candidate, 361 bodies and all. That is the setup column here,
-measured through the shipping build on the Praedos, 28 cores / 14 lanes:
-
-| fight | bodies | build | ms/run | setup per call | one full scan |
-| --- | --- | --- | --- | --- | --- |
-| default | 1 | empty | 1.1 | 2.1 ms | 289 ms |
-| group ruler | 361 | empty | 9.4 | 24.3 ms | 1.3 s |
-| group ruler | 361 | 7 mods + Influence | 14.6 | 15.5 ms | 1.5 s |
-
-Two things follow, and both have been mistaken for something else:
+`parse_fight` per candidate, 361 bodies and all.
 
 - **A scan that takes minutes is broken, not slow.** The heaviest fight in the
-  product is a second and a half here, and Influence across the crowd is a
-  fifth of it rather than the disaster it is assumed to be. Every report of the
-  quick calc hanging has been a POOL fault; `scripts/check_calc_recovers.mjs`
-  holds that line.
+  product scans in seconds. Every report of the quick calc hanging has been a
+  POOL fault; `scripts/check_calc_recovers.mjs` holds that line.
 - **Batching the candidates into one call buys about a tenth** — the setup
-  column against a ten-run candidate — and costs splitting `simulate_from`,
+  cost against a ten-run candidate — and costs splitting `simulate_from`,
   which the simulator and the board share. The lane count buys more of it for
   nothing: the default share is half the machine's cores.
 
@@ -351,11 +272,10 @@ which ranks but never says what a candidate is worth.
 and slower in the browser and the native number would never say so. This runs
 the identical fight through the shipping wasm build in a real browser and
 prints the RATIO against your native baseline, which is what makes a native
-measurement mean anything for a player. Measured here: **wasm is 1.3–1.8×
-native**, and not a constant — so the proxy needs calibrating per shape, which
-is the reason this exists. Regenerate `site/` first or you are timing
-yesterday's engine. It refuses to print a ratio when the two tools ran
-different fights, which is the mistake it made on its first run.
+measurement mean anything for a player. **wasm is 1.3–1.8× native**, and not
+a constant — so the proxy needs calibrating per shape. Regenerate `site/` first
+or you are timing yesterday's engine. It refuses to print a ratio when the two
+tools ran different fights.
 
 **`cargo run --release --bin one_fight -- ablate` — WHERE the time goes.**
 The harness above validates a candidate; this one helps you find one, without a
@@ -390,8 +310,8 @@ too high here: Primary Debilitate profiles at 96.5% of a Phantasma row against
 1.7x measured on the ruler itself. Read the coarse answer (which subsystem) and
 take the shares of anything state-shaped back to the real scenario.
 
-**Read it with its two refusals in mind**, both of which it learned the hard
-way. A row whose SHOT COUNT moved is not an ablation, it is a different fight.
+**Read it with its two refusals in mind.**
+A row whose SHOT COUNT moved is not an ablation, it is a different fight.
 A row whose share is NEGATIVE is not an ablation either — it did not remove
 work, it changed which work happens: truncating the body-part list reported
 −77% because every hit became a headshot. The fight is fixed-length
@@ -423,71 +343,10 @@ See [`CORE.md`](CORE.md) §4 for the full architecture. In short:
 - `AGENTS.md` (repo root) — the condensed rulebook for every coding agent,
   whatever tool runs it; no tool gets a file of its own.
 
-## 7. Docker (deferred)
+## 7. Sharing the checkout
 
-Intentionally **not** used during development. We will revisit containerized
-builds/packaging only once the simulator is feature-complete. Until then, mise
-is the single source of truth for the toolchain.
-
-## 8. Sharing the checkout
-
-Several agent sessions, from any tool, work this repository at once, often in
-the same checkout and on the same branch. Everything below follows from that.
-
-**Once per clone:** `git config core.hooksPath .githooks`, so a commit-msg hook
-strips AI-tool credit lines whichever tool commits (`docs/CHECKS.md`
-§`check_commit_trailers`).
-
-**One worktree per task.** `git fetch origin` then
-`git worktree add ../wfsim-<task> -b <task> origin/main`, even from inside
-another worktree: an old one usually holds another session's uncommitted work,
-and a commit or a `site/` build from it ships their half-finished state.
-
-**Stage by name, never `git add -A` / `commit -a`.** Another session's files sit
-beside yours, and `-A` puts their work under your message. Run `git add` and
-`git commit` in ONE command and read `git log --oneline -1` afterwards: a
-parallel `-A` in the gap between them takes your staged files into THEIR commit.
-Commit your own files early on a long edit, so a sweep finds nothing of yours.
-
-**Never `--amend` without confirming HEAD is yours**, in the same command
-(`git log -1 --format='%h %s'`). HEAD moves under you; amending then rewrites
-another session's commit. Repair an unpushed one with `git reset --soft
-<their-commit>`, never `reset --hard` — the tree may hold someone's live edits.
-Never rewrite a pushed commit.
-
-**The working tree, not HEAD, is what a binary measures.** `data/` is compiled
-in, so another session's uncommitted yaml changes your build's numbers and can
-move every board fingerprint. `git status` before and after any comparison.
-
-**After a rebase, count the replayed commits.** When main was rewritten, a
-branch cut from the old main replays commits main dropped on purpose;
-`git rebase --onto origin/main <last-foreign-commit>` and a
-`git diff --stat origin/main..HEAD` listing only your files.
-
-**Is it merged? Assert the content, not the ancestry.** A rebase-merge rewrites
-hashes, so `git branch --merged` and `git cherry` both report a landed branch as
-missing. Check that the specific things the branch introduced are on main.
-
-**In a rebase, `--theirs` is YOUR side.** For `site/board.json`, take the bot's
-file by hash (`git checkout <bot-commit> -- site/board.json`) — the bot rescored
-against the pushed engine.
-
-**Stop a server by the PID on its port**, never by image name: every session
-keeps its own `wfsim-web.exe`, and `taskkill /IM` takes theirs down too.
-
-**Build `site/` and ship from the main checkout.** A fresh worktree has no
-`web/cache/img`, so the build stops at the image gate after writing
-`index.html` and before the prerendered pages — a `site/` that looks built and
-names two generations of `app.js`. Commit in the worktree,
-`git merge --ff-only` it in the main checkout, and run `scripts/ship.py` there.
-Copy the cache if a worktree build is unavoidable, never link it:
-`git worktree remove --force` follows a junction and empties the original.
-
-**When `ship.py`'s push is rejected** by a board rescore landing first: rebase,
-push, `cargo build --manifest-path desktop/Cargo.toml` (the payload manifest
-now describes a tree that no longer exists), `scripts/release_desktop.py`, then
-`scripts/ship.py --verify`. Rerunning the whole of `ship.py` pays for the site
-build again.
+The multi-session working process (worktrees, staging, shipping from the main
+checkout) is in `private/agents` — read its README first.
 
 ### Shell traps on Windows
 
@@ -517,8 +376,8 @@ loop rarely moves them together (`target-cpu=native` is −23% / −36% / **+31%
 
 IT GRADES ITS OWN COVERAGE — the fourth shape is a Braton Prime, whose 60%
 SLASH is the one thing an elemental mod cannot combine away, and the tool
-FAILS when the whole suite burns nothing. `docs/DEVELOPMENT.md` §5 lists what
-has been tried and what it was worth.
+FAILS when the whole suite burns nothing. `docs/DEVELOPMENT.md` §5 says where
+wins have come from.
 
 ## `one_fight` compares two binaries, not two moments
 

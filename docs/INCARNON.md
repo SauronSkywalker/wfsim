@@ -1,8 +1,8 @@
-# Incarnon guns — the whole roster, what covers what, and what is done
+# Incarnon guns — the whole roster, and what covers what
 
-Plan of record: **before any other weapon, do every
-Incarnon primary and secondary.** This file is the checklist. docs/WEAPON_INTAKE.md
-still holds what one weapon costs and the non-Incarnon backlog behind it.
+The Incarnon roster: what covers what, and how each part is read. Read the
+Notes, on every weapon, before calling it done — an Incarnon form's cadence can
+live there and nowhere else (docs/WEAPON_INTAKE.md §"READ THE PAGE").
 
 Everything below is read from the wiki: `Incarnon` for the adapter→weapon
 mapping, each `<X> Incarnon Genesis` page for the gauge and the evolutions, and
@@ -51,39 +51,11 @@ therefore never equippable on an Incarnon weapon: tier 1 is always there.
 - **Melee is out of scope**: 14 melee Genesis adapters, plus Innodem, Praedos,
   Ruvox and Thalys. Thalys (Isleweaver) shows up in the wiki's Incarnon gallery
   and is a Heavy Scythe — not a gun, not part of this program.
-- **Two adapters were missing from the owner's list**: **Braton** (primary, 4
-  variants) and **Lato** (secondary, 3 variants). Conversely **Torid** and
-  **Dual Toxocyst** are on neither list and are already done.
-
-## Done — 10 weapons, 5 adapters, 2 naturals
-
-| adapter / weapon | weapons in the repo |
-| --- | --- |
-| Boar Genesis | `boar`, `boar_prime` (+ `_incarnon`) |
-| Burston Genesis | `burston`, `burston_prime` (+ `_incarnon`) |
-| Furis Genesis | `furis`, `mk1_furis` (+ `_incarnon`) |
-| Torid Genesis | `torid` (+ `_incarnon`) |
-| Dual Toxocyst Genesis | `dual_toxocyst` (+ `_incarnon`) |
-| Laetum (natural) | `laetum` (+ `_incarnon`) |
-| **Phenmor (natural)** | `phenmor` (+ `_incarnon`) — 2026-08-08 |
-| **Braton Genesis** | `braton`, `mk1_braton`, `braton_vandal`, `braton_prime` (+ `_incarnon`) — 2026-08-08 |
-| **Latron Genesis** | `latron`, `latron_wraith`, `latron_prime` (+ `_incarnon`) — 2026-08-08 |
-| **Boltor Genesis** | `boltor`, `telos_boltor`, `boltor_prime` (+ `_incarnon`) — 2026-08-08 |
-| **Sybaris Genesis** | `sybaris`, `dex_sybaris`, `sybaris_prime` — BULK |
-| **Dera Genesis** | `dera`, `dera_vandal` — BULK |
-| **Lato Genesis** | `lato`, `lato_vandal`, `lato_prime` — BULK |
-| **Lex Genesis** | `lex`, `lex_prime` — BULK |
-| **Vasto Genesis** | `vasto`, `vasto_prime` — BULK |
-| **Bronco Genesis** | `bronco`, `bronco_prime` — BULK |
-| **Kunai Genesis** | `kunai`, `mk1_kunai` — BULK |
-
-Remaining: **16 adapters (30 weapons) + 2 naturals**.
 
 ## BULK vs HAND — what "rough" means, precisely
 
-Owner So from the Sybaris onward the intake runs a
-pipeline, and the two halves of a weapon are held to different
-standards ON PURPOSE:
+The intake runs a pipeline, and the two halves of a weapon are held to
+different standards ON PURPOSE:
 
 | | source | standard |
 | --- | --- | --- |
@@ -91,7 +63,7 @@ standards ON PURPOSE:
 | **evolutions** | the wiki's evolution table, transcribed | ROUGH. A clause the intake's rule engine recognises becomes a real effect; one it does not becomes a kind NAMED `unmodelled_<its own words>`. |
 
 **"Rough" never means silent.** An `unmodelled_*` kind loads as
-`EvoEffect::Inert`, and since 2026-08-08 BOTH the builder tile and the optimizer
+`EvoEffect::Inert`, and BOTH the builder tile and the optimizer
 row print it as "not modelled yet" / "partly modelled" with the clause in the
 tooltip. A perk that does nothing says so where you pick it.
 
@@ -109,13 +81,11 @@ mined for its numbers, because reading "On Kill: +30 damage" as an unconditional
   EVOLUTION strings need the CN wiki one adapter at a time, and the bulk pass
   does not do it. A Chinese session shows English perk names on a bulk weapon
   until its family is transcribed.
-- ~~**CO catalog rows.**~~ **READ AND APPLIED.** The whole catalog
-  was pulled for every weapon in the program. What it
-  changed and what it exposed:
+- **CO catalog rows** — read and applied for every weapon in the program:
 
   | weapon | row | what it means here |
   | --- | --- | --- |
-  | **Latron / Latron Prime** | Incarnon Mode, **Multiplying** | was shipped as Additive — FIXED. A free-standing final multiplier is a different number on any build carrying Serration. |
+  | **Latron / Latron Prime** | Incarnon Mode, **Multiplying** | A free-standing final multiplier is a different number on any build carrying Serration. |
   | Latron **Wraith** | *no row* | **Multiplying, carried from the family.** The row names the Latron and its Prime; the form is the ADAPTER's and the projectile is the same, so the class reaches this variant too. CATALOGS.md §1. |
   | **Kunai / MK1-Kunai** | Incarnon Mode, **Multiplying** | applied at intake. |
   | Braton family | Incarnon Form Radial, Adding, 95% | already applied. |
@@ -129,176 +99,17 @@ mined for its numbers, because reading "On Kill: +30 damage" as an unconditional
 - **anything the wiki says in prose rather than in the table**: innate multishot
   on a form, guaranteed procs, ricochet counts, per-form status splits.
 
-**Eleven weapons in one night**, which is the number to plan the rest against:
-one natural and three adapters, 22 weapon entries and 112 evolution files, and
-NO ENGINE WORK — every perk either mapped onto a kind the engine already had or
-loaded as a named inert one. The cost was never the weapon file; it was reading
-two wikis carefully enough to catch the three places they disagree.
-
-### What the Phenmor cost, against what this file predicted
-
-Predicted "4 new perks, no new mechanic". Actual: **no engine work at all**, and
-four perks that load as INERT rather than as new kinds — two of them already
-inert on the Furis, two genuinely new shapes.
-
-**Three of the four are implemented now, and the two shared with the
-Furis were never the hard ones.** Both had been filed under "the engine cannot",
-and in both cases the sentence describing why was about the wrong mechanism:
-
-- **Ready Retaliation** was called a reload-speed kind the loader had no arm
-  for. It needed the arm and a WINDOW — and a reload that is paid for while it
-  runs, since the window can lapse mid-reload.
-- **Executioner's Fortune** was called "an instant reload the sim cannot END
-  rather than scale". There is never a reload in flight for it to end: its
-  trigger is a headshot, and you cannot shoot while reloading. It is a magazine
-  that FILLS, which is machinery Sentient Surge already had. On the Furis, where
-  any headshot pays, it takes a 300-second engagement from 61 reloads to **9**
-  and is worth **+39%** over the tier's alternatives — the largest single perk
-  correction in the set. On the Phenmor, where the card demands a KILL, it is
-  worth what the fight's kills are worth: +2% against a level-1 target that dies
-  constantly, and zero on the official ruler, whose one Thrax never dies.
-
-The lesson is the one WEAPON_INTAKE now states about wiki prose, pointed at our
-own comments: a note saying "the engine cannot do X" is a claim with a shelf
-life, and both of these were describing a mechanism the perk does not use.
-
-The last two were genuinely new shapes, and both landed the same day once their
-exact wording arrived. **All 13 Phenmor perks are modelled.**
-
-- **Spiteful Defilement** — +100% crit damage while the target carries fewer
-  than three status TYPES. Two clauses decided it and both were the card's:
-  "added after mods as a flat value" put it in the same bucket Cold's received
-  crit-damage bonus uses (+1.0 on the finished multiplier, not a doubling), and
-  "5 corrosive and 5 radiation … will not disable this buff" made the counter
-  distinct TYPES — which is Condition Overload's own bucket, read rather than
-  recomputed. It is the anti-CO perk: the third type turns it off, and the third
-  type is where CO starts paying. Worth **+37% / +27%** (base / cycle).
-- **Lingering Judgement** — a buff armed by a headshot STREAK (2 in 2 s, held
-  8 s), granting headshot damage into the ADDITIVE bracket beside Primary
-  Deadhead's. On the official ruler, which puts every shot into a head, it arms
-  on the second shot and never lapses: worth **+50%** in both modes with no
-  arcane, and much less with Deadhead equipped — on a 2x head the pair is
-  x1.385 together, not x1.5.
-
-Neither beats **Devouring Attrition** (+252% / +355%), which is the tier's
-answer and the reason the board's Phenmor rows all carry it.
-
-Everything else mapped onto kinds already in the engine. Two guard tests caught
-the weapon on the way in and are the reason nothing shipped silently: the
-Cannonade roster (a semi-auto base form whose Incarnon form is Auto — the Dual
-Toxocyst's shape, on the rifle side for the first time) and the inert-effects
-pin.
-
-### What the Braton family cost — 8 weapons in one pass
-
-Predicted "4 new perks". Actual: **three** new inert kinds and no engine work,
-which is what a four-variant adapter is supposed to look like — one wiki table,
-36 evolution files, and the numbers are the only thing that varies.
-
-- **Daring Reverie** — the larger half needs a CHANNELED ABILITY, a Warframe
-  state this arena has no concept of. Worth naming because on three of the four
-  variants the conditional half is the BIGGER number.
-- **Munitions Grit** — the +20% multishot has no flat-multishot arm for an
-  evolution. Its surcharge IS modelled, and the pair is circular: the surcharge
-  only pays on projectiles multishot generated.
-- **Gunsmoke Pick Up** — out of reach twice over: no ammo-restore kind, and a
-  PUNCH THROUGH trigger needs a second body behind the first.
-
-The Incarnon form is the roster's **second explosion to take Condition
-Overload**, after the Burston — its own catalog row, with "Radial hit only
-receives CO bonus on target directly hit by bullet" and "AoE does not scale off
-multishot", both declared on the radial.
-
-**TWO SOURCE DISAGREEMENTS**, out of 36 values, both recorded in the yaml
-rather than reconciled: the EN and CN wikis SWAP Survivor's Edge's crit chance
-between the Braton and the MK1-Braton (10/12 against 12/10), and they read
-Mercenary Chamber's Vandal capacity as 750 against 755. The EN numbers ship,
-because the EN page is where the effect text was transcribed from. A swap is
-the one kind of disagreement that looks like agreement if you only check the
-multiset, which is why it is written down.
-
-### What the Latron family cost
-
-Four inert kinds, no engine work, and the two that matter are NEAR-MISSES
-rather than absences — which is the useful kind of gap to find, because each
-one is a trigger arm away from working:
-
-- **Riddled Target** wants the live stacking-multishot buff the engine already
-  has. That one's trigger is an ELECTRICITY status (Stormburst's); this one is
-  PUNCTURE. Large here: the base form is 60-80% Puncture, so four stacks of
-  +25% would ride on the weapon's own main damage type and never lapse.
-- **Flensing Spikes** strips armour per PUNCTURE status. Armour stripping exists
-  for Corrosive and Heat — the two the game strips with — and a third rule has
-  no arm. Against the official ruler's Thrax at level 9999 it would be worth a
-  great deal.
-
-**A THIRD THING THE ARENA CANNOT HOLD**, and it is the weapon rather than a
-perk: the Incarnon form is a RICOCHET projectile that explodes "up to 6 times".
-The first collision and its explosion land on the target in front of you and the
-other five bounces have nowhere to go — the same treatment punch-through and
-beam chaining already get here. So a Latron's number is its SINGLE-TARGET
-number, and the weapon is worth more against a crowd, which is true of it in
-game too.
-
-**Zero source disagreements** across all 27 values, against the Braton's two.
-That is the argument for reading both wikis every time rather than only when
-something looks odd.
-
-### What the Boltor family cost
-
-Three inert kinds, no engine work, and one of them is the one that matters most
-to everything still on this list:
-
-- **Rapid Reinforcement** is the MOST COMMON PERK IN THE SET — 14 guns by the
-  count above, more than any other name — and this is its first appearance in
-  the repo. It is a reload-speed bonus, which `data::evolutions` has no arm for
-  even though the MODS loader does. Implementing that one arm removes a slot
-  from half the remaining program, which is exactly what the ordering section
-  predicted.
-- **Crimson Overture** would be the first on-kill stacking buff to move the
-  BASE damage; the engine's existing ones (Galvanized Chamber, Bladed Rounds)
-  all multiply it.
-- **Hunter's Mantra**'s second half needs a channeled ability, like the
-  Braton's Daring Reverie — and both its payloads are spatial anyway.
-
-**THE INCARNON IS A PSEUDO-SHOTGUN**: 3 base multishot, a per-projectile damage
-a fraction of the base form's, and a 10/30/60 Impact/Puncture/Slash split on
-every variant. It is the first RIFLE here that fires like one, and the shape was
-already pinned by the Boar. The per-projectile status chance reads lower than
-the base form's for the same reason it does on a shotgun — three rolls instead
-of one.
-
-**One source disagreement**, on Crimson Overture's stack cap: EN reads 4x for
-the Boltor and 3x for the other two, CN reads 3x for all three. The EN number
-ships and the disagreement is recorded at the site. The EN table also renders
-Hunter's Mantra's base-damage number onto the Incarnon Form row above it; the CN
-page and its own summary table both give it to Hunter's Mantra alone, and that
-is the reading followed.
-
-**Icons are not free.** Five of the thirteen had no verified wiki `File:` name
-and were dropped rather than guessed — the site build FAILS on an icon that
-does not resolve, and a guessed name caches as a 31 KB HTML error page that
-passes a naive existence check. The Laetum's thirteen ship without icons for
-the same reason.
-
-## The cost is PERKS, not weapon files
+## The perks
 
 Across all 34 guns the wiki lists **318 evolution slots / 119 distinct perks**.
-This repo carries **37** of those names; **82 are new**, filling **127** of the
-318 slots. A name we already carry means the engine effect exists and the new
-weapon only needs its own YAML with its own numbers — a name we do not carry
-may need a new `kind:` in the engine.
+A name already carried means the engine effect exists and the new weapon only
+needs its own YAML with its own numbers.
 
 Every Genesis has the same 9-slot shape: EVO1 Incarnon Form, EVO2 ×2, EVO3 ×3,
 EVO4 ×3. The naturals have 13.
 
-**Variants are nearly free.** A Prime shares its family's perk list and differs
-only in numbers — Boar Prime cost 9 evolution files and no engine work. So the
-unit of planning is the ADAPTER, and a 4-variant adapter (Braton, Strun) is the
-best return in the set.
-
-**Do the shared perks first.** 19 new perk kinds appear on two or more guns and
-cover 64 of the 127 new slots:
+A Prime shares its family's perk list and differs only in numbers. Perks that
+appear on two or more guns:
 
 | appears on | perk |
 | --- | --- |
@@ -313,28 +124,6 @@ Two wiki spelling traps, both the same perk under two spellings — do not creat
 a second id for either: Paris's **"Markman's Focus"** is Marksman's Focus
 (Dread, Latron, Despair), and Bronco's **"Practised Grip"** is Practiced Grip,
 which we already carry (Boar, Soma, Furis).
-
-## Engine mechanics this program needs
-
-Five shapes the engine has no machinery for today. Each gates the adapters
-named and nothing else, so they can be scheduled independently.
-
-| mechanic | gates | what it is |
-| --- | --- | --- |
-| **Spool-up** | Gorgon ×3, Soma ×2 | `Trigger = Auto-Spool`, `Spool` rounds to full rate: Gorgon 9 / Wraith 6 / Prisma 7, Soma 6 / Prime 4. The first rounds of every magazine fire slower. |
-| **Duplex trigger** | Zylok ×2 | Two rounds per press+release. Its own trigger family (the Burston precedent: Burst is not Semi-Auto). The Incarnon form is Charge instead, so Precision's Payoff ("burst headshots") is base-form only — the wiki says so outright. |
-| **Per-round reload** | Strun ×4 (and Felarx) | `ReloadStyle = ByRound`: the magazine refills a shell at a time and can be interrupted. |
-| **Sniper combo + zoom tiers** | Vectis ×2 | Already scoped in WEAPON_INTAKE §Batch C, with the formula and the zoom-buff rule. |
-| **Stug's bounce explosions** | Stug | The blob economy is built (MECHANICS §7.3); the Incarnon form's bounce explosions and the charged alternate fire are what is left. |
-
-Also new but small: Gorgon's Incarnon form uses an **`Auto Charge`** trigger
-(hold to charge, repeats), which is not one of the five triggers the engine
-parses today (`auto`, `semi_auto`, `burst`, `charge`, `held`).
-
-Everything else reuses shapes already pinned: bows (Cernos Prime), charged
-projectiles (Phantasma Prime), hit-scan auto/semi/burst, beams (Torid Incarnon
-Form — which is what Atomos and Gammacor fire in their BASE form), shotgun
-pellets (Boar), and radial AoE with falloff (Torid, Burston Incarnon).
 
 ## The gauge is two numbers, and one of them is datamined
 
@@ -381,13 +170,13 @@ size the data declares. It was verified to fail with any one gate removed.
 | Burston | Burston (MR0)\*, Burston Prime (MR12)\* | Burst/Auto | auto hit-scan + radial | 30 → 600 | 0 | **done** |
 | Torid | Torid (MR4)\* | Semi-Auto | held beam | 34 → 170 | 0 | **done** |
 | Miter | Miter (MR6) | Charge | auto projectile + radial | 5 → 20 | 2 | — |
-| Boltor\* | Boltor (MR2)\*, Telos (MR12)\*, Prime (MR13)\* | Auto | auto projectile | 8 → 160 | 3 | **done 2026-08-08** |
+| Boltor\* | Boltor (MR2)\*, Telos (MR12)\*, Prime (MR13)\* | Auto | auto projectile | 8 → 160 | 3 | **done** |
 | Sybaris | Sybaris (MR5), Dex (MR7), Prime (MR12) | Burst | hit-scan | 8 → 200 | 3 | — |
-| Braton\* | Braton (MR0)\*, Mk1 (MR0)\*, Prime (MR8)\*, Vandal (MR4)\* | Auto | auto hit-scan + AoE | 10 → 200 | 4 | **done 2026-08-08** |
+| Braton\* | Braton (MR0)\*, Mk1 (MR0)\*, Prime (MR8)\*, Vandal (MR4)\* | Auto | auto hit-scan + AoE | 10 → 200 | 4 | **done** |
 | Dera | Dera (MR4), Vandal (MR7) | Auto | hit-scan | 2 → 50 | 4 | — |
 | Soma | Soma (MR6), Prime (MR7) | Auto-Spool | hit-scan | 10 → 200 | 4 | **spool** |
 | Dread | Dread (MR5) | Charge (bow) | charged projectile, 0.6 s | 5 → 20 | 5 | — |
-| Latron\* | Latron (MR0)\*, Prime (MR10)\*, Wraith (MR7)\* | Semi-Auto | semi projectile + AoE | 5 → 40 | 5 | **done 2026-08-08** |
+| Latron\* | Latron (MR0)\*, Prime (MR10)\*, Wraith (MR7)\* | Semi-Auto | semi projectile + AoE | 5 → 40 | 5 | **done** |
 | Strun | Strun (MR1), Mk1 (MR0), Prime (MR14), Wraith (MR10) | Semi-Auto | projectile + AoE | 1 → 40 | 5 | **by-round reload** |
 | Gorgon | Gorgon (MR3), Wraith (MR7), Prisma (MR11) | Auto-Spool | auto-charge projectile + AoE | 0.66 → — | 5 | **spool**, auto-charge |
 | Vectis | Vectis (MR2), Prime (MR14) | Semi-Auto | projectile + headshot AoE + embed AoE | 10 → 45 | 5 | **sniper combo, zoom tiers** |
@@ -423,98 +212,17 @@ is intrinsic — but they still model as a transform group here, and they carry
 | weapon | slot | attacks | new perks | note |
 | --- | --- | --- | --- | --- |
 | Laetum\* | secondary | semi projectile → auto projectile + radial | 0 | **done** |
-| Phenmor\* | primary | semi projectile → auto projectile | 4 | **done 2026-08-08**, and REOPENED 2026-08-10 — the perks cost nothing, the WEAPON did: its Incarnon fire rate spools down and nothing had read that sentence (see below) |
+| Phenmor\* | primary | semi projectile → auto projectile | 4 | **done** — its Incarnon fire rate spools down, a mechanic stated only in the Notes (MECHANICS §9) |
 | Onos | secondary | auto projectile → held projectile **and** charged hit-scan + radial | 6 | TWO Incarnon attacks in one form — the only gun here that does that |
 | Felarx | primary | auto projectile → semi projectile | 11 | almost nothing shared; also `ReloadStyle = ByRound` |
 
-## Order, and why
+## Reading a perk
 
-1. ~~**Phenmor**~~ — **done 2026-08-08**; the spool-down landed 2026-08-10. 4
-   new perks, no new mechanic *in the perks*, and 9 of its 13 perk names already
-   carried — the highest ratio in the set.
+A clause nothing in a one-target fight can pay is `out_of_scope`, with one of
+UNMODELLED.md's classes as the reason, rather than `unmodelled_*`.
 
-   **And it still cost engine work, from the part nobody was reading.** Every
-   perk mapped onto an existing kind and the audit called the weapon complete,
-   because "what does this weapon cost" was answered entirely out of its
-   EVOLUTIONS. The Incarnon form's own Notes carry a mechanic no evolution
-   mentions — *"Fire rate decreases from 100% to 60% over 51 shots as the
-   trigger is held"* — and 51 shots is 3.8 s of a 408-round magazine, so the
-   form was simulated 51% too fast for two days (MECHANICS §9). An intake that
-   reads a weapon's perks and its infobox has read neither the sentence that
-   makes the infobox wrong nor the one that says the weapon's whole case is its
-   fire rate. **Read the Notes, on every weapon, before calling it done.**
-2. **The 19 shared perk kinds**, driven by whichever adapter needs them first.
-   ~~Rapid Reinforcement alone appears on 14 guns~~ — **done 2026-08-08**
-   (`EvoEffect::ReloadSpeedBonus`, into the same additive bucket the mods
-   feed). Its conditional sibling Ready Retaliation is implemented too: a
-   reload from empty arms it when it completes (UNMODELLED.md §"The MANUAL
-   reload").
-3. **The zero-mechanic adapters, widest family first**: ~~Braton (4)~~,
-   ~~Latron (3)~~, ~~Boltor (3)~~, ~~Sybaris (3)~~, ~~Lato (3)~~, ~~Dera~~,
-   ~~Vasto~~, ~~Lex~~, ~~Bronco~~, ~~Kunai~~, ~~Sicarus~~, ~~Despair~~,
-   ~~Cestra~~, ~~Atomos~~, ~~Ballistica (3)~~, ~~Gammacor~~, ~~Angstrum~~,
-   ~~Miter~~ — **all done 2026-08-08** (batches 1-4, 40 entries). None left in
-   this class.
-4. ~~**Paris + Dread** together~~ — **done 2026-08-08** (batch 5). Twelve
-   entries: each bow is THREE — drawn (the arsenal's), tapped (free, no gauge)
-   and Incarnon. That third form is what split `PlayMode::Alternate` into
-   Alternate (free, rankable) and Transformed (gauge-fed, not): with two
-   alternate forms both emitting `id: "alternate"`, a build naming a mode named
-   neither. The CO base fraction came out DERIVABLE rather than guessed — all
-   four bows deal exactly twice their tapped total when drawn, so the charge
-   multiplier is 2 and the fraction is 0.5, the same number the Cernos Prime
-   carries for the same reason.
-5. ~~**The mechanic-gated ones**~~ — **all done 2026-08-08** (batches 6-8):
-   Soma+Gorgon (spool), Strun+Felarx (by-round reload), Zylok (duplex),
-   Vectis (sniper combo). None of the mechanics is SIMULATED; each is declared
-   on the entry that has it, in `unmodeled:`, which the stats panel prints. The
-   measurements below are what would turn a declaration into a model.
-6. ~~**Onos**, then **Stug**~~ — **done 2026-08-08**. The Onos's Incarnon
-   form has TWO attacks and an entry carries one, so this one carries the held
-   beam and NAMES the charged shot and its explosion; pairing the beam with the
-   charge's explosion would have been a wrong number rather than a missing one.
-   The Stug is the first weapon in the roster to take `co_behavior: inert` — the
-   catalog gives it "0%, does not apply", and a blob has no direct hit for a
-   per-status bonus to attach to.
-
-**THE ROSTER IS COMPLETE.** Every Incarnon adapter and every natural Incarnon
-in this document has entries, evolutions, art and names. What is left is
-per-gun VERIFICATION and the mechanics below.
-
-## The verification pass — 182 undifferentiated gaps to 74
-
-The roster has had entries since 2026-08-08; what it did not have was PERKS that
-did anything. This night was that pass, and the shape of it is worth keeping
-because the next one will look the same.
-
-**Half the list was never work.** The intake wrote every clause it had no rule
-for as `unmodelled_<its own words>`, and the tile printed "not modelled yet"
-over all of them — including perks nobody should ever implement, because nothing
-in a one-target fight can pay them. Those are now `out_of_scope` with one of
-UNMODELLED.md's seven classes as the reason, off the ratchet and on the page
-with a muted chip that says "nothing to earn here". 86 clauses, the largest
-single change to what this program's remaining work IS.
-
-**A fifth of the list was a punctuation artifact.** `unmodelled_stacks_up_to_x`
-was the commonest inert kind in the whole roster (50 files) and is not a
-mechanic: it is the CAP of the grant on the line above, split off because the
-intake read a card as clauses. Every one of them disappeared with its parent.
-
-**What the perks actually cost.** Nine mechanics, and only three needed a new
-idea:
-
-| built | for | note |
-| --- | --- | --- |
-| `BuffTrigger::Firing` / `StatusApplied` / `Hit` / `ConsecutiveHeadshot` | Blazing Barrel, Paragon Essence, Striking Succession, Well Rehearsed | four triggers, one line each in the sim |
-| `BuffGrant::BaseMultishot` / `MultishotPercent` / `FlatBaseDamage` | the same perk NAME landing in three different brackets | see below |
-| `ClearedBy::Reload` | Blazing Barrel | differs from `MagazineRefilled` on exactly one of four events |
-| `EvoEffect::StackingGrant` | anything | a stacking buff is a yaml block now — trigger, grant, size, cap, clock, decay, clearer |
-| `base_form_only` | 11 perks | "Does not affect Incarnon Form", obeyed |
-| sprint-gated fire rate | Deadly Pace | second user of the CO gate's `condition:` spelling |
-| below-half-health / undamaged | five guns / three | conditions on the TARGET |
-
-**THE BRACKET IS THE WORK, not the number.** Three of the nine exist only
-because one perk name means different arithmetic on different families:
+**THE BRACKET IS THE WORK, not the number.** One perk name can mean different
+arithmetic on different families:
 Blazing Barrel is "+0.05 BASE Multishot" on the Strun and "+5% Multishot" on the
 Sybaris, both written `0.05`, and they differ by 2.2x the moment a multishot mod
 is equipped. Striking Succession's "+15 Base Damage" is worth x1.58 bare and
@@ -542,8 +250,7 @@ Boar Prime cost nothing to verify). New sessions are needed for:
 - **spool** — rounds-to-full-rate against sustained DPS, one Gorgon;
 - **by-round reload** — Strun, interrupted and uninterrupted;
 - **duplex cadence** — Zylok, shots per second at the listed fire rate;
-- **sniper combo + zoom** — the Vectis session already specified in
-  WEAPON_INTAKE §Batch C;
+- **sniper combo + zoom** — the Vectis session (MECHANICS §"THE SNIPER RIFLE");
 - **Vectis's gauge** — 5 hits × 10 rounds should be 50, the page says 45;
 - **Stug** — everything about it.
 

@@ -9,7 +9,7 @@ eroding any of it.
 ## The invariants
 
 Each one is enforced by something that fails. A rule with no enforcement is a
-wish, and this module has already shown what wishes turn into.
+wish.
 
 | # | Invariant | Enforced by |
 | --- | --- | --- |
@@ -357,13 +357,11 @@ A new test is trusted once it has failed on the broken input (`AGENTS.md`).
 
 ## Her voice
 
-**ONE VOICE, A QUIET CONTRAST** (`VOICE` in `core/prompt.js`): the words are
-reserved, brief and exact, and a kaomoji at the end of a sentence says what she
-feels, which may disagree with the words on purpose. Never one inside a number,
-a table, a comparison, a verdict or the correction of her own mistake, never
-an emoji, and the aside never adds a line. Concise mode drops the voice. The
-bot's lines (`bot/answer.mjs`) are written in the same voice, through the
-language overlay.
+Her manner is `VOICE` in `core/prompt.js`. A kaomoji goes only at the end of a
+sentence: never one inside a number, a table, a comparison, a verdict or the
+correction of her own mistake, never an emoji, and the aside never adds a line.
+Concise mode drops the manner. The bot's lines (`bot/answer.mjs`) use the same
+voice, through the language overlay.
 
 ## Adding something
 
@@ -382,8 +380,7 @@ note first, then the code, then the case that fails without it.
 ## What she does not do
 
 - **Nothing leaves the browser** but the requests to the reader's own address.
-  No server of ours sees a key, a conversation or a memory; that changes only
-  with accounts, under the boundaries in the plan's research page.
+  No server of ours sees a key, a conversation or a memory.
 - **No outward action**: sharing, submitting to the board, opening a link.
 - **No hand action**: she proposes, the reader takes.
 - **No framework, bundler or dependency** — the page has none.

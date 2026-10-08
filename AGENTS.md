@@ -41,7 +41,7 @@ Read the row for what you are about to touch before the code, not after.
 | capacity and Forma | `docs/INVESTMENT.md` |
 | the update channel, mirrors, shells | `docs/DISTRIBUTION.md` |
 | the Windows client | `docs/DESKTOP.md` |
-| setup, profiling, what has been tried, parallel work | `docs/DEVELOPMENT.md` |
+| setup, profiling | `docs/DEVELOPMENT.md` |
 | how usage is counted | `docs/ANALYTICS.md` |
 | accounts, privacy, billing | `docs/ACCOUNTS.md` |
 

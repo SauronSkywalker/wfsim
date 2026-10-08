@@ -1,7 +1,7 @@
 # Melee — seven ways to swing one weapon
 
-The roster's first melee weapon landed on 2026-08-28: the **Magistar**, as seven
-entries. This is what melee is, what it cost, and what is still owed.
+The **Magistar**, as seven entries, is the template. This is what melee is, and
+what is still owed.
 
 ---
 
@@ -16,10 +16,8 @@ definition of a MODE in this repo — `WeaponPlayMode::sustainable` asks exactly
 heavy attack, the slide and the heavy slam are seven `FormKind`s and seven
 modes, not seven animations of one.
 
-It was proposed here first as a new axis called a "rotation", on the reasoning
-that a player mixes attacks inside one fight. The owner corrected it: they do
-not. Melee therefore needed **no new build axis at all** — `mode` already means
-this — which took the largest piece of speculative work off the plan.
+A player does not mix attacks inside one fight, so melee needs **no new build
+axis** — `mode` already means this.
 
 The count is not a problem to be managed. Seven rows per weapon per ruler is
 seven different builds being ranked, which is what the board is for.
@@ -353,8 +351,7 @@ in the tenth), and `board::builds::validate_with` does not count it against
 
 **THE COMBOS COME FROM `Module:Stances/data`**, the wiki's own Lua table, which
 publishes `Dmg`, `Hits`, `Procs`, `Types`, `ImpactMultiplier` and `Duration` per
-combo. It was found only after the first transcription, and it corrected three
-things: a swing that lands TWICE (`Hits = { 1, 2 }`), a bonus to the Impact
+combo. It carries three things a transcription of the rendered table misses: a swing that lands TWICE (`Hits = { 1, 2 }`), a bonus to the Impact
 component alone (`ImpactMultiplier = { 1.5 }`, which is a different thing from
 the forced Knockback proc several of the same swings also carry), and the SLAM
 three of Crushing Ruin's four combos end on.
@@ -425,8 +422,7 @@ Additional Combo Count Chance and Chance to Gain Combo Count as separate
 entries, one for each slot. And **a malus-only stat keeps DE's sign** rather
 than being flipped into one, which is the whole of MEASUREMENTS M71.
 
-**Nothing else moved.** Every new field is empty or zero on a gun, and all 824
-engine tests — the golden values among them — are unchanged.
+Every new field is empty or zero on a gun.
 
 ---
 
@@ -735,39 +731,23 @@ under Bugs. What it still assumes: docs/UNMODELLED.md §"THE OKINA".
 
 ---
 
-## 7b. HOW A MODE EXPLAINS ITSELF, AND WHY IT GOT SHORTER
+## 7b. HOW A MODE EXPLAINS ITSELF
 
-Seven modes broke the mode-def block twice on the same day, in opposite
-directions.
-
-**It listed them all, and that was a wall.** The block was written to explain
-every mode a weapon has, which was right at two or three
-and is seven paragraphs above the build at seven — six of them about something
-the reader did not pick. It draws the PICKED one now; comparison is what the
-board does, one row per mode.
-
-**Every line had to earn its place**. Three of the four
-sentences a melee mode printed said nothing:
-
-| line | why it went |
-| --- | --- |
-| "Swung as its Neutral Combo for the whole engagement." | restates the heading, which already reads *Neutral Combo* |
-| "Nothing is spent to be in it, so it can be held forever." | true of all seven |
-| "— a ruler ranks it." | true of all seven |
-
-What replaced them is per-mode by construction: how many of its swings are
-**spins** (a spin reaches the whole room and a sweep reaches one body — the one
-spatial fact separating two combos of the same weapon), whether it **spends the
-combo counter** (which makes it a different BUILD, since Blood Rush and Weeping
-Wounds read the counter it empties), whether its damage is a **slam** the
-weapon's reach does not bound, and what it **forces** whatever the roll says.
+The mode-def block draws the PICKED mode only; comparison is what the board
+does, one row per mode. Every line it prints is per-mode by construction: how
+many of its swings are **spins** (a spin reaches the whole room and a sweep
+reaches one body — the one spatial fact separating two combos of the same
+weapon), whether it **spends the combo counter** (which makes it a different
+BUILD, since Blood Rush and Weeping Wounds read the counter it empties), whether
+its damage is a **slam** the weapon's reach does not bound, and what it
+**forces** whatever the roll says. A line true of every mode is not printed.
 
 **The three numbers are in one unit, and two conversions get them there.** A
 combo script's multipliers are relative to the ENTRY they are written in, and
 the explosion is not in the script at all. `magistar_heavy_slam` states
 `damage: { impact: 0.0 }` — the whole attack is its 630 Blast `radial:` — so a
-summary counting swing multipliers reported **100% of base** for an attack that
-deals **300%**, and naively adding the radial gave 400%. `swing_share`
+summary counting swing multipliers would report **100% of base** for an attack
+that deals **300%**, and naively adding the radial gives 400%. `swing_share`
 (this entry's vector over the weapon's, 1.0 everywhere but the slam) and
 `radial_share` are both on the FORM rather than in `combo_summary`, because
 `stance_combos` has no weapon entry behind it: anything read off the entry would
@@ -810,18 +790,11 @@ entry per mode (`data/weapons/exalted/valkyr_talons*.yaml`). Three things differ
 Valkyr Prime Talons are the same weapon — "their stats are, however, identical"
 — so there is one entry, not two.
 
-## 8. WHAT MELEE COSTS FROM HERE
+## 8. JOINING A MELEE MOD
 
-The Magistar paid for nearly all of the machinery. The second melee weapon is a
-`data/weapons/melee/<id>.yaml` per mode — about 40 lines each, every number from
-the wiki's infobox and its stance's published table — plus one line in
-`assets.yaml` and one in `data/i18n/zh/names.yaml`.
-
-**Two traps, both hit on the way in.** The export carries `Beginner /
-Intermediate / Expert` internal tiers of the same mod under one display name:
-joining by NAME put a phantom Pressure Point (+200%, rank 10) in front of this
-work, and the bare path is the player's card. Join by `uniqueName`, and let the
-wiki settle every number.
+The export carries `Beginner / Intermediate / Expert` internal tiers of the same
+mod under one display name, and the bare path is the player's card: join by
+`uniqueName`, never by name, and let the wiki settle every number.
 
 ---
 

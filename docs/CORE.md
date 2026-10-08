@@ -13,17 +13,6 @@
 damage and kill performance that matches in-game measurements **item by
 item**, and search backwards for the optimal mod combination.
 
-How it differs from the usual Warframe DPS calculators (Overframe, various
-spreadsheets):
-
-| Typical DPS calculator | wfsim |
-|---|---|
-| Computes a steady-state DPS number | Simulates the **per-shot / per-hit** damage sequence over time |
-| Ignores range, ballistics, accuracy | Treats range / ballistics / hit resolution / AoE as first-class |
-| Simplifies elemental combination | Follows the game's elemental combination order and rules exactly |
-| Abstracts the target into one health bar | Models armor / shields / health / unit type / mitigation curves |
-| Outputs "theoretical" values | Outputs values that **align with measurements** (verifiable) |
-
 **Definition of Done for correctness:** for a set of known weapon + mod
 combinations, wfsim's per-shot damage, critical damage, status-proc damage,
 and actual damage against specific (armored) enemies must match in-game
@@ -194,17 +183,15 @@ and never the file.
   total damage within effective range / burst damage, etc.
 - **Constraints:** mod slot count, polarity/capacity, mod exclusivity,
   arcanes, etc.
-- **Method (coarse first, then fast):** exhaustive search + pruning first to
-  establish a correct baseline, heuristics later (greedy / genetic / beam
-  search) for speed.
+- **Method:** exhaustive search + pruning is the correct baseline a faster
+  search is checked against.
 - **Principle:** the optimizer only ever calls the engine — it never gets its
   own simplified damage formula, or the "optimum" it finds is fake.
 - **Search strategy:** deduplicate by "canonical form" (position-sensitive
   mods = element order first, everything else unordered; polarity layout is
   not part of a build's identity); candidates pass "best-effort legalization"
   (innate polarity reassignment → greedy Forma → reject if it can't fit);
-  conditional buffs default to full stacks (configurable / fully simulated in
-  the future). Details in [`OPTIMIZER.md`](OPTIMIZER.md).
+  conditional buffs default to full stacks. Details in [`OPTIMIZER.md`](OPTIMIZER.md).
 
 ---
 
@@ -215,8 +202,7 @@ and never the file.
   combination space × several Monte-Carlo simulation runs per candidate" — a
   CPU-bound search×simulation double loop that Rust is uniquely suited to
   among the candidates considered; strong typing and numeric reliability also
-  fit "correctness first". A future web UI can reuse the engine compiled to
-  WASM.
+  fit "correctness first".
 - **Project shape:** a Cargo workspace — `engine/` (every mechanic, layered as
   §4), `optimizer/` (only calls the engine), `webapi/` (the endpoints), and the
   transports `web/`, `wasm/`, `cli/`.
@@ -228,23 +214,3 @@ and never the file.
   normalized into versioned YAML — see [`DATA_SOURCES.md`](DATA_SOURCES.md).
 - **Accuracy verification:** systematic Simulacrum measurement protocol and
   the golden-test baseline — see [`MEASUREMENTS.md`](MEASUREMENTS.md).
-
----
-
-## 7. Roadmap
-
-- **M0 — skeleton:** pick language/stack, set up repo structure, define the
-  core data-model schema.
-- **M1 — single shot correct:** implement pipeline [1]–[5]
-  (mods/elements/crit/status); **per-shot damage** matches measurements on an
-  unarmored target.
-- **M2 — target mitigation:** add [7] armor/shields/resistances; actual
-  damage against **armored enemies** matches measurements.
-- **M3 — hit resolution:** add [6] range/multishot/ballistics/AoE/headshots;
-  support "damage as a function of distance".
-- **M4 — temporal simulation:** add [8] temporal integration
-  (reload/combo/DoT/buffs); output TTK and the damage-time series.
-- **M5 — optimizer:** best-build search on top of a fully correct engine.
-- **Throughout:** every milestone must ship golden tests against in-game
-  measurements, or it doesn't count as done.
-

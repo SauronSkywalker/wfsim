@@ -10,16 +10,13 @@ number**. Everything else follows from it:
   ever asked to resubmit. What retires a stored score is a person deleting its
   row — §"A stored score is reused because it EXISTS";
 - **THE STORE IS A LIBRARY OF BUILDS AND EVERY RULER CROSSES THE WHOLE OF IT**. A submission carries no score, so the ruler it happened to be
-  measured under was never a property of the record — it was a gate, and the
-  gate was expensive: of 914 distinct builds players had sent, only 46 had ever
-  been scored on more than one board. ANY fight can upload now, and a new ruler
-  is scored from the library the day it lands rather than waiting for anyone to
-  resubmit. Measured on the first run after it landed: standard_multi_target went from 106
-  published rows to 551, single_target_no_aim from 113 to 498;
+  measured under was never a property of the record. ANY fight can upload, and
+  a new ruler is scored from the library the day it lands rather than waiting
+  for anyone to resubmit;
 - **…AND EVERY MODE OF THE WEAPON IS SCORED FROM IT.** The mode a build was
   tuned for was never a property of the record either — mods are equipped on the
   WEAPON and a mode is how it is fired, so nothing about a build can become
-  illegal by being played differently. One submission is now one row per
+  illegal by being played differently. One submission is one row per
   sustainable mode: a Ballistica Prime build sent from its Incarnon cycle also
   answers `base`, `alternate` and `alternate_cycle`, and a melee build answers
   all seven. What it carries that pays nothing in a mode costs a low row, which
@@ -39,10 +36,7 @@ number**. Everything else follows from it:
   page, from any path**: how full a build must be is the searcher's setting
   too, so a seven-mod scope produces seven-mod winners — and those are refused
   by `/api/board/check`, which IS `validate_for_board` rather than a copy of
-  it, because a second implementation is a second answer. The SIMULATOR's path
-  kept such a copy — its own count of mods, tiers and seats, and a capacity
-  floor that ignored the capacity a stance hands back — so a melee build that
-  fits could be refused by the page and never reach the door. There is one
+  it, because a second implementation is a second answer. There is one
   rule, it is the engine's, and the page ASKS it (`boardDoor`). The panel reports the run
   in aggregate ("7 of 10 uploaded · 3 × needs 8 mods"), since twenty rows off
   one search differ in their mods and not in why the board would not take them;
@@ -185,21 +179,13 @@ back fails CI rather than being discovered in a published number.
 | the facts | the `scores` table in it | written by `ship_facts.sh` |
 | the deploy | `wrangler.jsonc` | `scripts/deploy.sh`, from a git push |
 | the endpoint | `worker/index.js` | the Cloudflare Worker, same origin |
-
-**THE ENDPOINT STORES THE WHOLE BUILD, and it has failed to twice.** `mode` was
-sent by the page and never written down; `valence` was, and seven
-Kuva Nukor submissions were refused on every scoring run since they arrived —
-"Kuva Nukor has no Valence element" — while the panel had told each submitter
-"sent". `/api/board/check` cannot catch this one: it
-validates the payload the page is about to send, which DID carry the element,
-and the field was lost afterwards. Both times the identity hash was wrong the
-same way too, so two builds differing only in the dropped axis collapsed onto
-one key and the second overwrote the first. `scripts/check_board_submit.mjs`
-now asserts both properties against every axis, derived from a real payload
-rather than listed — the stranded records themselves are unrecoverable, since
-what they are missing was never stored.
 | the scorer | `cli/src/board/` (run by `cli/src/bin/wfsim-board.rs`) | the scheduled job |
 | the automation | `.github/workflows/scores.yml` | GitHub Actions |
+
+**THE ENDPOINT STORES THE WHOLE BUILD.** Every axis the page sends is written,
+and every axis is part of the identity hash, or two builds differing only in a
+dropped axis collapse onto one key. `scripts/check_board_submit.mjs` asserts
+both against every axis, derived from a real payload rather than listed.
 
 **The board is in the repo AND in the database, and they are different
 things.** `site/board/` is what is PUBLISHED — committed, diffable, served
@@ -317,12 +303,10 @@ A tenth a night crosses the library in ten, and the pool is what has gone five
 days unmeasured. It only ADDS to the queue — the hourly scorer pays for it in
 the hours after, which is what spreads the bill.
 
-**THE CADENCE IS THE BOARD'S BIGGEST BILL.** Counted on 2026-09-21: 6,635 of
-the 9,722 owed rows were sweeps against 2,200 from arrivals, and a scoring day
-costs 25-50 CPU-hours. What the sweep buys is the only AUTOMATIC path a model
-correction has to the board — a code change re-scores nothing on its own — so
-the number is a trade between how long a fix waits and how much is re-measured
-for nothing.
+**THE CADENCE IS THE BOARD'S BIGGEST BILL.** What the sweep buys is the only
+AUTOMATIC path a model correction has to the board — a code change re-scores
+nothing on its own — so the number is a trade between how long a fix waits and
+how much is re-measured for nothing.
 
 **IT LANDS IN ITS OWN BATCH**, named for the night, so it can be reordered ahead
 of the arrivals or dropped — `DELETE FROM batches WHERE id = ?`.
@@ -333,12 +317,9 @@ through a batch when it fires; it publishes what is there, and the next one
 publishes what is there then. It has no `needs:` and waits for nothing.
 
 **NOTHING IS LOST BY PUBLISHING EARLY**, and that is what makes the indifference
-safe. It was not always: while asking for a row again meant DELETING its fact, a
-publish over a half-finished rescore would have written those rows out of
-existence, which is what the old `unready` hold-back protected against. Asking
-is a QUEUE row now and `scores` only ever grows — a build being re-measured
-keeps its old number until the new one replaces it, and a build with no number
-was never on the board.
+safe. Asking for a row again is a QUEUE row and `scores` only ever grows — a
+build being re-measured keeps its old number until the new one replaces it, and
+a build with no number was never on the board.
 
 **AND IF NOTHING MOVED IT DOES NOT PUBLISH.** The commit is guarded on the diff
 of the generated files, so a run over an unchanged table costs one job and
@@ -357,10 +338,8 @@ paid in a size that fits beside everything else.
 **THE BOARD RUN TAKES NO INPUT.** There is nothing to name: what it does is
 decided entirely by what `queue` holds and in what order.
 
-A PUSHED RUN DID EXACTLY WHAT THE NEXT SCHEDULED ONE DOES, so it duplicated a
-run that was coming anyway while competing for the same forty slots. Over 95
-measured runs, 21 of 22 pushed runs were cancelled by the next push and the
-board published nothing.
+**A PUSH DOES NOT START A RUN.** It would do exactly what the next scheduled
+one does, while competing for the same slots.
 
 **ONE PENDING RUN, AND THE REST ARE CANCELLED.** That is GitHub's rule, not a
 setting, and it is why a run has to fit inside the cadence that starts the next
@@ -382,21 +361,15 @@ withheld old rows would be a board with no source at all.
 comes with it: one row, one weapon, one ruler, whatever the case needs. The row
 comes back absent on the next run, and an absent row is computed.
 
-**A HASH OF THE INPUTS WAS TRIED AND WAS A WORSE INSTRUMENT.** It fired on every
-edit to a file no entity owns — comments, tests, validation rules, fields only
-the page reads — and stayed silent on the one case that matters, a code change
-that moves a number. Measured, the cost of assuming a fingerprint difference
-meant "wrong" was **7,808 minutes across 128 shards, median shard 55 minutes and
-worst 192, four hours of wall clock** against a schedule firing every twenty, so
-every successor was discarded: eleven engine commits in one morning produced no
-completed run for ten hours. A hash of `engine/` is worse still — it says the
-BYTES moved, which is a different question from whether any NUMBER did, and it
-cost a full rescore on 55.6% of commits to answer a question it was not asking.
+**NO HASH OF THE INPUTS DECIDES REUSE.** A hash fires on every edit to a file
+no entity owns — comments, tests, validation rules, fields only the page reads —
+and stays silent on the one case that matters, a code change that moves a
+number. A hash of `engine/` says the BYTES moved, which is a different question
+from whether any NUMBER did.
 
-TIME IS NOT AN INPUT, which is why there is no cooldown and never will be
-(asked and answered). An untouched row is valid forever; a row whose engine
-moved is wrong immediately, not in an hour. A cooldown would be both too slow
-and too fast at once.
+TIME IS NOT AN INPUT, which is why there is no cooldown. An untouched row is
+valid forever; a row whose engine moved is wrong immediately, not in an hour. A
+cooldown would be both too slow and too fast at once.
 
 ### One backlog, and one bound
 
@@ -618,22 +591,14 @@ and cannot buy is §"Two ceilings, and neither is the shard count".
 
 **A FACT CARRIES ITS RULER, and the key would not be a key without it.** A row
 key is `identity#mode` and carries no ruler, so two boards scoring one build
-produce the SAME key with different numbers. A store that held both published
-whichever landed last under a ruler that never measured it: the Torid's aimed
-**28.44229348067104** kpm sat at the top of the NO-AIM board, digit for digit,
-where that build actually scores **0.170**.
-
-It read as a scenario leak and was not one — every score was computed under its
-own ruler's terms, then overwritten on the way out. The `scores` table keys on
+produce the SAME key with different numbers. The `scores` table keys on
 `(build, ruler, mode)`, and `load_facts` filters on the ruler as it reads, so
-the two cannot meet. That is the general shape of every
-defect this pipeline has produced: a value identified by less than what
-determines it.
+the two cannot meet. A value identified by less than what determines it is the
+general shape of a defect in this pipeline.
 
 The generated files are NEVER rebased. There is no sense in which two versions
 of a computed board each hold something worth keeping, so a three-way merge can
-only produce a conflict — which is exactly what threw away 83 minutes of
-completed scoring on 2026-08-11. The run that just scored takes whatever base is
+only produce a conflict. The run that just scored takes whatever base is
 current and writes its numbers on top.
 
 ## The live board
@@ -740,26 +705,12 @@ Torid, six mods:
 | Heat, Cold, Toxin, Electric | Blast + Corrosive | **12,424** |
 | Heat, Toxin, Cold, Electric | Gas + Magnetic | **46,583** |
 
-The identity SORTED the mods for a day, on the strength of one measurement that
-happened to reorder mods whose pairing did not change. Two different fights
-collapsed into one row, and the score published was whichever pairing the sort
-produced — belonging to neither submitter.
-
-**And the MODE is the other half of it**. A Torid through its
-Incarnon cycle and a Torid that never transmutes are two entrants, so the key is
-`identity(build)#mode` — which the SCORER has always done and the ENDPOINT did
-not. The worker hashed weapon+mods+evolutions+arcanes and never stored `mode` at
-all, so two modes of one build overwrote each other in storage and every record
-reached the scorer mode-less, where the migration fallback turned it into "the
-cycle where there is one".
-
-That is the whole reason the published boards read 306 `cycle` rows, 158 `base`
-ones and not a single weapon with both: every Incarnon weapon cycle, every other
-weapon base. It looked like a fact about how people play. It was one line.
-
-Old records stay readable — the fallback is what they are for — and
-`wfsim-board` now prints how many arrived without a mode, so the migration is
-visible and ends at zero instead of being permanent.
+**And the MODE is the other half of it**. A Torid through its Incarnon cycle
+and a Torid that never transmutes are two entrants, so the key is
+`identity(build)#mode`, at the endpoint and the scorer alike. A record stored
+without a mode is read through the migration fallback — the cycle where there
+is one — and `wfsim-board` prints how many arrived without a mode, so the
+migration is visible and ends at zero.
 
 Raw order is not the answer either: three elementals in slots 1-3, the same
 three in 4-6, the same three interleaved with the rest, and the non-elementals
@@ -772,11 +723,6 @@ then by DE's own English name. The endpoint stores what was
 submitted verbatim — it has no mod pool and cannot tell an elemental mod from
 any other — and the scorer collapses spellings after `validate` has canonicalised
 them.
-
-**Rows submitted while the endpoint sorted on the way in are unrecoverable**:
-the order those players built is gone, and they re-score as "elements in
-alphabetical order" — a legal build, and probably not theirs. Submissions keep
-what was placed.
 
 ## The pipeline, stated once
 
@@ -808,12 +754,8 @@ answer could be published.
 6. **Published IN THE BENCHMARK'S OWN METRIC.** `score` off the wire is kill
    PROGRESS — kills plus the depleted fraction of the current target — over the
    whole engagement, averaged over the ruler's runs, and the benchmark says
-   `metric: kpm`. Publishing the raw
-   figure under a "kill rate" label overstated every row by the length of the
-   fight: 55.26 on screen for a build that kills 11.05 a minute over the 300 s
-   the ruler ran at the time (found 2026-08-04; the ruler is 180 s now, which
-   changes the multiplier and not the bug). Ranking never noticed — it is a linear rescale — but a
-   ranking is not what people read.
+   `metric: kpm`. Publishing the raw figure under a "kill rate" label would
+   overstate every row by the length of the fight.
 7. **Shown at four significant figures AND four decimals**,
    by `data::boards::format_score`. Four decimals is where two builds a player is
    choosing between stop tying; four significant figures is what keeps a small
@@ -831,7 +773,7 @@ resupplied; starving every weapon would measure who brought the biggest magazine
 rather than who kills fastest.
 
 It does not hand ammo to a weapon that cannot receive any. `reserve_is_infinite`
-reads three facts, and two of them were one field until 2026-08-04:
+reads three facts:
 
 | fact | where from | false for |
 | --- | --- | --- |
@@ -870,8 +812,8 @@ slots.
 
 ## Rivens: a SHAPE, not an item
 
-A riven was off the board until now, and the reason still holds: *"they are
-personal random items, so a board that counted them would rank luck"*. What is on the board is not the item.
+A riven ITEM stays off the board: a board that counted personal random items
+would rank luck. What is on the board is not the item.
 
 **A SUBMISSION CARRIES A SHAPE** — which stats the card rolled, and which one
 is the malus. Nothing else: a roll is one person's luck, and the player's own
@@ -1065,16 +1007,12 @@ one came out of which.
 A row MAY wear an exilus mod, and a row without one is not a lesser build. Both
 sit on the same board and the better number wins.
 
-It was EXCLUDED from 2026-08-04, on the reasoning that "exilus mods are handling
-and mobility with no single-target damage model". That is true of most of the
-pool and false of the part that decides a fight: `vile_precision` is **−36% fire
-rate**, which takes an Ignis Wraith from **11.9694 to 9.3737** on the group
-ruler — a real 22% that the board could not see. Beam range is exilus too
+Most exilus mods are handling and mobility, and the part that decides a fight
+is not: `vile_precision` is **−36% fire rate**, which takes an Ignis Wraith
+from **11.9694 to 9.3737** on the group ruler. Beam range is exilus too
 (`sinister_reach`, `ruinous_extension`, `galvanized_acceleration`) and IS
-modelled, though measurement found it does not bind on the current rulers: the
-same Ignis scores 11.9694 with and without Sinister Reach. That is a finding
-rather than a reason to keep the slot out — it is now something the board can
-answer instead of something the rules assumed.
+modelled, though it does not bind on the current rulers: the same Ignis scores
+11.9694 with and without Sinister Reach.
 
 **Not `full`.** Requiring an exilus would force a choice worth nothing on most
 weapons and publish whichever mod the dice favoured, which is what the quick
@@ -1084,9 +1022,7 @@ calc's `tied` marking exists to admit rather than to rank.
 `mods`. An exilus-eligible mod is legal in a MAIN slot too, so a flat list
 cannot say which one came out of the exilus slot — only the page has the slots.
 For the same reason it is its own field in `ValidBuild`, in the worker's `AXES`,
-in the board row, and in `board::builds::identity`: the last of those was found by
-scoring two Atomos builds differing only in `ruinous_extension` and getting ONE
-row back.
+in the board row, and in `board::builds::identity`.
 
 ## The entry line
 
@@ -1199,8 +1135,8 @@ draw the same kind of line (F1's 107% qualifying rule, cycling's 3-20% time
 limit) half the leader is very generous, which is the intent — it marks where a
 build stops being a DIFFERENT answer, not where it stops being the best one.
 
-**WHAT IT HIDES IS NOT THE CHEAP BUILD.** That was the objection, and the board
-refutes it — the rows below the line carry 8 of 8 mods exactly like the rows
+**WHAT IT HIDES IS NOT THE CHEAP BUILD.** The rows below the line carry 8 of 8
+mods exactly like the rows
 above, and differ by taking the worse arcane (Merciless where Deadhead wins) or
 by spending slots on mods this fight cannot pay: Magazine Extension, Parallax
 Scope, Quick Reload, all of which `UNMODELLED.md` already says are worth
@@ -1224,18 +1160,16 @@ about a row at exactly half.
 
 ## It is a Worker, not Pages
 
-That distinction is worth stating because it looks like it should not matter and
-it decides everything. `wrangler.jsonc` deploys `site/` as a Worker's static
-assets, and until the board there was no script at all. Two consequences:
+`wrangler.jsonc` deploys `site/` as a Worker's static assets with a script in
+front of them. Two consequences:
 
 - **Pages conventions do nothing here.** A `functions/` directory is ignored;
   the endpoint is a route inside `worker/index.js`.
 - **`assets.run_worker_first` is not optional.** Assets match before the script
   runs, and `not_found_handling: single-page-application` answers every
-  unmatched path with index.html — so an api path came back as the SPA with a
-  200. A 200 carrying the wrong content type is the quietest failure a client
-  can get, and the only reason it was caught quickly is that the page reports
-  "could not reach the board" rather than assuming success.
+  unmatched path with index.html — so an api path the worker does not run first
+  comes back as the SPA with a 200. The page reports "could not reach the
+  board" rather than assuming success.
 
 ## Setup, once (repo owner)
 
@@ -1419,9 +1353,8 @@ approximate: `near` is sorted by (distance, index), which is exactly the scan's
 for instance over every seed of a grid, at three spacings, for both chain
 shapes.
 
-It is built PER RUN rather than held on `FightParams`, and that is deliberate: it
-was a field for an hour and a test caught the trap at once — widen
-`beam.damage_radius_m` after the params are built and the cached layout is
+It is built PER RUN rather than held on `FightParams`: widen
+`beam.damage_radius_m` after the params are built and a cached layout is
 silently stale, which is the two-declarations bug wearing a cache.
 
 ### Where each mechanism stops growing, at 1.5 m
@@ -1490,9 +1423,8 @@ a band and 1.5 sits in it.
 
 ## The multi-target ruler
 
-`data/benchmarks/standard_multi_target.yaml` — the second ruler, and the first that is
-about a ROOM rather than a target. Its companion's name has said "Single
-Target" first since it was written, precisely so this could exist beside it.
+`data/benchmarks/standard_multi_target.yaml` — the second ruler, and the first
+that is about a ROOM rather than a target.
 
 **5 x 5 at 3 m centre to centre, Thrax Centurion Lv 9999 SP, 180 s, KPM.** The
 shooter stands at CONTACT with the middle body of the front rank and fires
@@ -1540,21 +1472,15 @@ arena is the source — what you see is what gets simulated — and it reads
 `formation`. Expanding at simulate time would have left the canvas drawing one
 body for a crowd fight; expanding in both places is the two-implementations
 bug this repo keeps paying for. One expansion, and every consumer downstream —
-the canvas, the payload, `parse_fight`, the scorer — sees only bodies. The
-board page's own arena had `sc.formation = []` hard-coded from when a ruler
-could not have one, and now draws the ruler's real crowd.
+the canvas, the payload, `parse_fight`, the scorer — sees only bodies,
+including the board page's own arena.
 
-### A second ruler broke two things that were the same thing
+### Which ruler leads is declared
 
-The rulers were in PATH ORDER, and that was indistinguishable from "the primary
-one" while `standard_single_target.yaml` sorted first. `standard_multi_target.yaml` sorts before
-it, so the board page opened on a brand-new EMPTY ranking — and, worse, every
-first-time visitor's default SCENARIO became a crowd fight, because the app
-seeds the active scenario from the first builtin.
-
-`primary: true` on `standard_single_target.yaml` is the declaration, and
-`board::benchmarks::all()` sorts on it, so both consumers inherit one answer
-rather than each carrying its own idea of which ruler leads.
+`primary: true` on `standard_single_target.yaml` declares the ruler the board
+page opens on and the one the app seeds its default scenario from;
+`board::benchmarks::all()` sorts on it, so both consumers inherit one answer.
+Path order is not a declaration: a new ruler's file can sort first.
 
 ### An empty board is a real state
 
@@ -1564,11 +1490,7 @@ its twelve rules, draws its fight and reports "0 of 224 entrants measured".
 and says so on screen, because a check that quietly exercises nothing reads
 exactly like one that exercised everything.
 
-## Adding a ruler: what it costs (audited 2026-08-17)
-
-There will be many. `standard_single_target` was alone for months, then a companion,
-then `standard_multi_target` — so the chain was walked end to end asking what the FOURTH
-one would cost.
+## Adding a ruler: what it costs
 
 **A ruler is a data file.** Nothing on the path holds a list of benchmark ids:
 
@@ -1619,12 +1541,6 @@ night's change is ~35 added lines and git stores the delta. Measured on the
 first real snapshot — 2,502 records, 1,598,310 bytes — **1.52 MB once and about
 22 KB a night after it**, against 570 MB a year if each night were kept whole.
 
-(The estimate that justified the design said 692 KB and 10 KB, from a record
-shape sampled out of a board row. A real record is 639 bytes against the 287
-that guessed, because a board row does not carry every axis. The conclusion
-survives the correction by a wide margin, which is the only reason it is a
-footnote rather than a redesign.)
-
 **THE SNAPSHOT CARRIES ITS KEYS**, which `library.json` does not — that file
 is the values, which is enough to score and not enough to restore. Recomputing
 `identity()` in a restore script would be a second implementation of the one
@@ -1665,65 +1581,17 @@ and a restore is the worst moment to discover one of them carried a quote.
 - **`site/board/` in git** is a partial copy: every PUBLISHED row carries its
   build. What it misses is the builds under the 50% floor.
 
-## What it costs as it grows, and where it moves next
+## What it costs as it grows
 
-The board is the thing nothing else in this space has, so the question is not
-whether it survives more users but what it costs per user and which of those
-costs are the wrong SHAPE. The rule the whole pipeline is measured against:
+The rule the whole pipeline is measured against:
 
 > **Every step's cost should be proportional to what CHANGED, not to what
 > EXISTS.**
 
 Scoring obeys it: a build with a fact costs nothing, so a run's bill is the
-builds that arrived. Reading did not, and that is what made the board fall
-behind on 2026-08-26.
-
-### What was fixed, and what it was
-
-| | before | after |
-| --- | --- | --- |
-| read the library | **9 min**, every run, one request per build | one ordered query — `scripts/fetch_library.sh` |
-| a scheduled run behind a full rescore | cancelled by its successor | its own concurrency group, keyed by trigger |
-| a truncated library | published a valid board with rows missing | refused — `guard_shrink`, floor at 90% of the last board's `submissions:` |
-| the only copy of the library | one store at one vendor | that, plus a nightly snapshot on a git branch |
-
-**THE READ STOPPED BEING A LOOP.** KV has no bulk read and Cloudflare's API
-allows 1200 requests per five minutes — 4 a second, which is what the old loop
-was already doing, so fetching faster was never available. One ordered, paged
-`SELECT` replaced it, and the cache, the pruning pass, the three-try retry and
-the flag that skipped the listing went with it.
-
-### Three cheapenings that are deliberately not here
-
-Each was taken out because it made the pipeline harder to reason about while the
-foundation was still wrong, and each is worth having once the foundation is
-boring. **They are recorded so that reintroducing one is a decision rather than
-a rediscovery**, and the order below is the order they pay off in.
-
-**A SCREEN WHOSE CUT COMES FROM THE LIST'S OWN LEADER.** 36% of a 132-hour bill
-went on rows scoring under a quarter of their group's leader — rows that
-cannot be published whatever they measure. A cheap probe deciding which to skip
-is a second kind of number on the same board, which is why the old one had to
-go: it wrote a `probe:` field, the archive then had to say "screened, not
-measured", and the assembly needed a rule for it. Done again, the cut must come
-from the group's OWN leader in the facts, and a screened row must produce no row
-at all rather than a lesser one.
-
-**WORK ORDERED BY COST.** The split already packs by measured cost, so the
-shards are balanced; what is not ordered is which rows a BOUNDED run takes.
-`--new-limit` takes them in walk order, so a run's 3,000 rows are whatever the
-library's order hands it. Taking the cheapest first would publish more weapons
-per run, because a weapon is published only when every one of its rows is
-measured — and the tail rows that hold a weapon back are the expensive ones.
-
-**RESUMABLE PARTIALS IN THE FACTS TABLE.** A row is indivisible today: a shard
-killed part-way through a 121-minute row keeps nothing of it, and the next run
-starts that row from zero. The scorer already banks partial progress WITHIN a
-run (`Partial`, and `a_row_paid_for_in_sittings_is_the_row_paid_for_in_one`
-pins that the sum is bit-identical); what is missing is a place to put one
-between runs. The reason it is not the `scores` table is that a partial is not a
-fact — it is a fact under construction, and putting the two in one table would
-give the publisher something to filter out.
+builds that arrived. Reading the library is one ordered, paged query
+(`scripts/fetch_library.sh`), and a library that comes back under 90% of the
+last board's `submissions:` is refused (`guard_shrink`).
 
 ### The fight IS the run, measured
 
@@ -1751,20 +1619,6 @@ its worst row, and one row is indivisible.
 rows read (the library once, the facts twice — the shards read the artifact, not
 the database) and 4,441 written. At 24 runs a day that is 1.06M reads against a
 free 5M/day, and 107k writes against a free 100k/day.
-
-### The next wall, named in advance
-
-1. **Reading the library is one unsharded job**, and it is now one paged query
-   rather than a request per build. What grows is the number of PAGES, which is
-   linear in the library and measured in seconds.
-2. **Every published row is committed.** A weapon at a time, so an hour that
-   moved twenty weapons writes twenty small files rather than the board — but
-   the repo still grows with the community.
-3. **Full rescores are O(store)**, and the shard count buys a constant factor
-   against two ceilings that are both already reached — §"Two ceilings, and
-   neither is the shard count". A code change is no longer assumed to change
-   every number (§"When the code moved"), and what a full rescore does pay for
-   is bounded by the screen below.
 
 ### Where the 179 hours go, measured
 
@@ -1805,10 +1659,8 @@ build does.
 
 ### Two ceilings, and neither is the shard count
 
-Raising `SHARDS` was the answer three times and it is not available a fourth,
-because the shard count is not what binds. Both ceilings are measured, and a
-sizing argument that does not name them will be wrong the way the last three
-were.
+The shard count is not what binds. Both ceilings are measured, and a sizing
+argument that does not name them will be wrong.
 
 **FORTY JOBS RUN AT ONCE, WHATEVER THE MATRIX SAYS.** The account's concurrent
 job limit is the real fan-out: across every board run in a day, concurrency sat
@@ -1819,9 +1671,8 @@ cache restore while buying no parallelism at all. **The wall clock of a full
 rescore is `total work / the jobs in flight`**, and no shard count moves it.
 
 **AND THE CEILING IS THE WHOLE REPOSITORY'S**, not the board's. A rescore that
-takes all forty starves every other workflow: a board run held them for three
-and a half hours with CI queued behind it, which is how a red build went two
-days unseen. `max-parallel: 32` on the scoring matrix leaves eight — the board
+takes all forty starves every other workflow, CI included. `max-parallel: 32`
+on the scoring matrix leaves eight — the board
 is a background job, CI is the one a person waits on, and a rescore a quarter
 longer against hours it already takes is the cheaper side of that trade.
 
@@ -1830,267 +1681,17 @@ infinite fan-out a full rescore cannot finish faster than that. Row-wise
 splitting is within a small factor of its own floor already.
 
 Together they say the same thing: **a full rescore cannot be made fast, so the
-lever is not paying for one.** §"A row's code dependency is measured, not
-assumed" is where that lever is.
+lever is not paying for one** — §"A rescore costs the rows somebody deleted".
 
 ### Not paying for rows almost nobody reads
 
 A third of the bill goes on rows scoring under a quarter of their group's
 leader. They are PUBLISHED and a reader can widen the depth to them, which is
-why they are not simply dropped — but a reader at the default never sees one,
-and they are the largest cheapening still available. **There is no screen today**: the one that was here wrote a second
-kind of number onto the same board, and what it cost to keep the two apart is
-§"Three cheapenings that are deliberately not here", which also says what a
-second attempt has to get right.
-
-### What this system actually is
-
-Strip the implementation and the board is **a materialised ranking over an
-expensive pure function on a growing input set**:
-
-```
-score = f(build, ruler, engine_version, data_version)
-```
-
-Six properties decide everything downstream:
-
-1. **`f` is deterministic** — the seed is pinned, so the same inputs give the
-   same number for ever.
-2. **`f` is expensive** — 21.4 seconds per `(build, ruler)` on average, 8,071
-   CPU minutes over 22,656 pairs, and the spread is four orders of magnitude
-   wide (§"Where the 179 hours go").
-3. **The input set only grows**, apart from the one-year expiry.
-4. **The output is a projection** — top N per (weapon, mode, ruler).
-5. **A ROW IS `(build, ruler, mode)`, and a mode is a property of the WEAPON.**
-   Every melee carries seven — base, block, block_forward, forward, heavy,
-   heavy_slam, slide — the Ballistica Prime four, and most guns one or two, so
-   the roster's 149 weapons are 259 groups on each board. A weapon with n modes
-   is n independent rankings, because the cards that win them differ.
-6. **Most changes are to the CODE.** Measured over two weeks of 647 commits:
-   55.6% touch `engine`/`webapi`/the scorer, 13.6% touch only `data/`. The data
-   half of invalidation is already asked per row and is the cheap half; the
-   expensive half is the one a single hash answers for the whole board.
-
-Anything with the first four properties is a BUILD SYSTEM, and that is not an
-analogy: Bazel and Nix exist for exactly this shape — an expensive pure function
-over a versioned input set — so the answers can be taken from there rather than
-invented.
-
-#### A SCORE IS A FACT, NOT A STEP IN A PIPELINE
-
-This is the one idea the rest follows from. `(build, ruler, mode) -> score` is
-true for ever once computed. It is a fact, not an intermediate result, and a
-fact should be written down THE MOMENT IT IS COMPUTED rather than when a batch
-finishes.
-
-The board is recomputed as a batch today, and every symptom traces back to that:
-
-| | batch (today) | facts |
-| --- | --- | --- |
-| a run is cancelled | everything it computed is lost | at most one score |
-| a code push | a 2h20m blocking full rescore | N facts are missing; they backfill |
-| a new submission | one cron period | seconds |
-| adding a ruler | rescore everything | the missing facts enqueue; nothing else moves |
-
-#### A MIXTURE IS ALLOWED, AND THAT IS WHAT MAKES A BACKFILL INVISIBLE
-
-The tempting invariant is *a board whose rows were measured by different builds
-is not a board*, enforced by publishing only a COMPLETE set of one build's
-measurements. It was tried, and it is the wrong trade:
-
-- it pays a **full rescore on every code change** — 130 CPU-hours — to confirm
-  numbers that almost never move, since 55.6% of commits touch the engine and
-  nearly none of them can move one;
-- while that runs, **the board cannot move at all**, so a six-hour backfill is a
-  six-hour freeze on new builds;
-- and the guarantee is not even achievable by declaration: one label over a
-  store written by six different commits is a claim the data does not support.
-
-**THE BOARD IS A RECORD OF WHAT WAS MEASURED**, and its reliability comes from
-every row being a real measurement rather than from an atomicity property of the
-publish:
-
-```
-   within a weapon      never mixed   — a weapon's file is written whole
-   across weapons       may be mixed  — and every row in it is a real measurement
-```
-
-A row measured by an older build is not a wrong row; it is a row nothing has
-DISPROVED. `measured_by` says which build wrote it, which is what makes a broken
-build's rows findable afterwards — `WHERE measured_by = ?` — and that is the
-whole of what an engine version is for here.
-
-**A NEW SUBMISSION IS PENDING, NOT A GENERATION.** It has no fact yet, so it
-cannot enter a public ranking. A client's first result for it stands on the
-owner's live board only, marked `unverified`, and is replaced there by its fact
-when one exists (§"Compute orders").
-
-#### THREE TIERS, EACH WITH ITS OWN SCALING LAW
-
-They are one lockstep batch in Actions today, and that is the whole of the
-trouble.
-
-| tier | scales with | needs | the right thing |
-| --- | --- | --- | --- |
-| ingest | new submissions | cheap, always up | a Worker, and a doorbell |
-| compute | missing facts | embarrassingly parallel, CPU-bound | wherever CPU is cheapest |
-| serve | readers | fast, unblockable | a static file on the CDN — already right |
-
-**THE QUEUE IS A QUERY, SO THERE IS NO QUEUE.** Once a score is a fact keyed by
-its inputs, the work outstanding is `the keys with no fact yet, ordered by
-priority` — derived from the store, never stored beside it. That is strictly
-better than a real queue here rather than merely cheaper: nothing can be lost,
-because nothing was enqueued; a worker that dies leaves the key missing and the
-next one takes it; scoring twice is harmless because `f` is deterministic, so
-at-least-once delivery costs nothing to tolerate; and a push that reorders every
-priority at once is a different `ORDER BY` rather than a re-enqueue of the
-backlog. A queue would add one more piece of state that can disagree with
-reality, which is the failure this section exists to remove. What ingest needs
-is not a queue but one bit — *there is work* — and a `repository_dispatch` from
-the Worker carries it.
-
-#### THE MOAT IS THE LIBRARY, SO IT IS A DATABASE AND NOT A CACHE
-
-What compounds is COVERAGE — builds times rulers — and that part is already
-architected correctly: the library model made a new ruler cost the community
-nothing, because it is scored from the library the day it lands.
-
-What follows is that KV is the wrong store for it. No queries, no transactions,
-no bulk read, and listing is the only index — so "which weapons are
-under-covered", "how much did the library grow this month", "which facts are
-stale" are questions that cannot be asked. Those are exactly the questions
-running a moat consists of. D1 is SQLite: it answers them, and it can be dumped
-whole, which is a hard requirement for the one asset that cannot be regenerated.
-
-#### WHERE THE COMPUTE GOES, AND A NUMBER WORTH KNOWING
-
-**THE FREE TIER IS NOT SHORT OF COMPUTE.** Actions minutes are unmetered on a
-public repo, so the budget is the concurrency ceiling times the clock: 40 jobs
-times 24 hours is **960 CPU hours a day, free**. Steady state is nowhere near
-it — about 365 new builds a day across three rulers is ~160 CPU minutes at the
-median row, a quarter of one percent of the budget.
-
-**WHAT EXCEEDS IT IS RESCORES, AND THEY ARE NOT RARE.** A full rescore is 179
-CPU hours, and every push touching `engine`, `webapi` or `cli` asks for one. A
-working day of thirteen such pushes asks for **2,327 CPU hours against 960
-available** — nearly twice what exists, which no scheduling policy can absorb
-and no shard count can compress. A board hours behind on such a day is not a
-starved queue; it is an oversubscribed one.
-
-The bill is also almost entirely for work that could not have mattered: of the
-thirteen, most touch one mechanic, and a melee change re-derives 7,388 gun rows
-that never execute a line of it. Under §"A row's code dependency is measured"
-the same day asks for well under the budget. **Sizing the compute is downstream
-of not asking for it.**
-
-The two kinds of compute are good at opposite things, so use both against the
-same missing-fact query: GitHub Actions is free and unmetered and absorbs a
-burst 40 ways, while a small always-on box gives SECOND-level latency for a new
-submission — which is a product difference, not an ops one, for a tool whose
-board is the reason people come back.
-
-A box in Germany is the right place for scoring and the wrong place for anything
-a player waits on: the players are in China, and what makes wfsim.app fast and
-reachable there is that it is static and on Cloudflare. User-facing work stays at
-the edge; CPU-bound work goes on the box.
-
-### The order to move in, and the one rule under all of it
-
-> **EVERY LAYER'S FAILURE MUST BE SLOWNESS, NOT A WRONG ANSWER.**
-
-That is what the faults this section replaces had in common. Each was a
-hand-kept list — which paths wake the board, which families are attributed,
-which files affect no number, which fields a sample carries — and each, left
-incomplete, published a number the engine does not compute rather than costing
-time. `AFFECTS_NO_NUMBER` states the correct direction for its own list and is
-the model: *forgetting an entry is slow and never wrong.*
-
-**1. THE LIBRARY IS PERMANENT AND CHEAP.** Builds are configurations; storing
-every one for ever costs almost nothing, and it is the only thing here that
-cannot be regenerated. Deduplicated by `board::builds::identity`, which keeps mod
-ORDER because elements pair in first-placement order — the same cards in two
-arrangements are two builds with two scores.
-
-**2. INVALIDATION, AND ITS TWO HALVES ARE DIFFERENT PROBLEMS.**
-
-The DATA half is already asked per row, from the entities the row names, and it
-is the cheap half: 13.6% of commits. It stays. What it needs is the silent gaps
-closed, not more precision.
-
-The CODE half is 55.6% of commits and a single hash for the whole board, so
-every one of them nominally marks everything unverified. The answer is not a
-finer declaration: **unverified is not wrong**, so the slice repairs it at a
-bounded rate and nothing declares that changing one thing affects another.
-
-**WHAT NO SAMPLE CAN CLOSE.** Any probe that reads one row per group misses a
-change that moves some builds of a group and not the sampled one. That is why
-the check on a published number is the AUDIT, which reads every row in turn
-rather than one per group — §"When the code moved", the two backstops.
-
-**3. PROGRESS IS MONOTONIC.** A score keyed by its inputs is a fact, written the
-moment it is computed rather than when a batch ends (§"A score is a fact").
-`worker/schema.sql` already holds the table. A cancelled run then loses one row
-instead of an afternoon, which does not make a long run shorter — it stops the
-length of a run from being a question anyone has to answer.
-
-**4. PUBLISHING IS A PROJECTION.** Read the facts, rank, write the files:
-seconds, and independent of whether any scoring is in flight. A weapon whose
-every row is measured ships; one with a gap keeps what it has.
-
-**TRIGGERING AND SCHEDULING**, which is where the failure direction was
-inverted: the trigger is an EXCLUSION list naming only what the board itself
-generates, a run that finds nothing to do costs one job rather than a hundred
-and twenty-eight, and a submission rings a doorbell rather than being waited for
-by a schedule.
-
-### What was refused, and why that is written down
-
-Each of these is a plausible answer that measurement turned down. They are here
-so the next reading does not have to re-derive the refusal.
-
-**Per-unit code fingerprints, and the refactor under them.** Attributing code
-units to weapon classes so a melee change retires melee rows: a hash of what a
-row READ says the bytes moved, which is a different question from whether a
-number did. And the refactor it needs is real — every melee commit touches
-`engine/src/fight/melee.rs` now, and a gun change touches `fight/pellet.rs` —
-so the files tell a melee commit from a gun one. What a hash of them still
-cannot say is whether a NUMBER moved, which is the question a row asks.
-
-**A message queue.** The pipeline wears every sign of one — durable work,
-stateless workers scaled sideways, at-least-once semantics, backpressure, a
-bounded batch per cycle — and it is not a queue and must not become one.
-
-THERE IS NO QUEUE, THERE IS A SET DIFFERENCE: what the library holds, minus what
-the score store holds, recomputed from scratch every run. No pending list, no
-head, no ack, no redelivery, no dead letter. That is the RECONCILIATION LOOP a
-controller runs — desired state against observed state, closing the gap a little
-each cycle — and it is why a run that dies loses nothing. There was never a
-message to lose.
-
-THE LICENCE FOR IT IS THAT THE WORK IS DERIVABLE. A queue earns its complexity
-where the work item is the ONLY record of itself: an event nobody wrote down is
-gone. Here the BUILD is the record and it is permanent, so what remains to be
-done can always be derived again. At-least-once needs no thought either — a
-score is a pure function, so computing one twice costs time and nothing else.
-
-WHAT WOULD CHANGE IT is the walk. The difference is taken by reading the whole
-library each run, which is O(the library) and today is seconds. Grow it a
-hundredfold and that walk becomes the cost, and an index of what is missing
-starts to earn its keep — most likely a query against the store rather than a
-queue, but that is the first moment the question is worth asking again.
-
-THE ONE THING THAT IS NOT DERIVABLE IS A SUBMISSION, and that is the one thing
-with a queue: `inbox` holds what a player sent until `wfsim-intake` has made a
-build of it. Everything downstream of the library is a set difference.
-
-**Adaptive precision — fewer runs for rows far from a boundary.** The run count
-is the RULER'S OWN TERM and is where a published number's authority comes from.
-Spending less of it is not an optimisation of the board, it is a trade against
-the thing the board is for.
-
-**Recording which data files a fight read.** Exact and safe, and it would retire
-four hand lists at once — but it improves the half that is already cheap and
-already per row. 13.6% of commits.
+why they are not simply dropped — but a reader at the default never sees one.
+**There is no screen today.** One must take its cut from the group's OWN leader
+in the facts, and a screened row must produce no row at all rather than a
+lesser one: a probe that writes a second kind of number onto the board needs a
+rule to keep the two apart.
 
 ### What must not change
 
@@ -2110,7 +1711,7 @@ already per row. 13.6% of commits.
   Every published row is reproducible from the repo.
 - **No work is enqueued anywhere.** What is outstanding is derived from the
   facts that exist, so there is no second copy of it to fall out of step with
-  the first — §"The queue is a query".
+  the first — §"The shape, end to end".
 - **THE RUN COUNT IS THE RULER'S OWN TERM.** A published row is measured at the
   count its benchmark names, and that is where its authority comes from. Every
   cheaper answer this pipeline finds has to come from computing FEWER ROWS, and
@@ -2123,6 +1724,9 @@ already per row. 13.6% of commits.
   one card set in two arrangements is two builds; measured on the boards, 338
   rows differ from a sibling by order alone and NOT ONE of them scores the same.
   An identity that sorted them would publish one and lose the other.
+- **A LAYER'S FAILURE MUST BE SLOWNESS, NEVER A WRONG ANSWER.** A hand-kept list
+  left incomplete must cost time, not publish a number the engine does not
+  compute.
 
 ---
 
@@ -2158,8 +1762,8 @@ scores  what has been measured — one row per (build, ruler, mode), the latest,
 queue   what somebody asked for. Empty at rest. Ordered by its batch.
 ```
 
-**A RESCORE IS "MEASURE THESE ROWS AGAIN", AND THERE IS NO SECOND KIND** — but
-it is now an INSERT rather than a DELETE, and that is what stops a rescore from
+**A RESCORE IS "MEASURE THESE ROWS AGAIN", AND THERE IS NO SECOND KIND** — and
+it is an INSERT, never a DELETE, which is what stops a rescore from
 putting a hole in the board: the old number stays published until the new one
 replaces it. `--queue-in` is what makes a stored score stop being a reason to
 skip a row.
@@ -2190,19 +1794,6 @@ forced list.
 
 > **A FACT IS DURABLE THE INSTANT IT IS COMPUTED, AND NOTHING DOWNSTREAM MAY
 > DESTROY IT.**
-
-Both halves were violated, and the two together lost a full rescore — 8,008 CPU
-minutes, computed correctly and then deleted:
-
-1. A shard's scores became durable only when the shard FINISHED and then
-   UPLOADED. GitHub's artifact service timed out on one of 128, the assembly
-   was skipped, and nothing was published.
-2. The next assembly read the banked scores, silently preferred the older
-   merged set — deltas sorted before it by name — wrote that older set back,
-   and SWEPT the deltas it had just discarded.
-
-Neither step was wrong about anything it could see. The design let a merge whose
-correctness nothing checked gate a delete.
 
 ### The four pieces, and what each is allowed to do
 
@@ -2314,30 +1905,30 @@ when a batch ends, so a run cancelled at 95% has kept 95%.
 **A WEAPON IS NEVER INTERNALLY MIXED, AND ACROSS WEAPONS IT MAY BE.** A file is
 written whole, so every row in it was measured against the data the build reads
 today; the cross-weapon ranking can hold rows measured by different builds, and
-every one of them is a real measurement — §"A mixture is allowed".
+every one of them is a real measurement — §"The board is a record, and a mixture is allowed".
 
 ### What it costs, at each tier
 
-| tier | runs on | free ceiling | steady state |
-| --- | --- | --- | --- |
-| serve | Cloudflare static assets | unmetered | — |
-| write | Worker + D1 | 100k requests/day; 100k rows written/day | tens of submissions |
-| compute | GitHub Actions | unmetered minutes, 40 jobs = 960 CPU hours/day | ~160 CPU minutes |
-| store | D1 | 500 MB per database; the library is 4.4 MB and the facts about 5 | — |
-| backup | a git branch | ~22 KB a night | — |
+| tier | runs on | free ceiling |
+| --- | --- | --- |
+| serve | Cloudflare static assets | unmetered |
+| write | Worker + D1 | 100k requests/day; 100k rows written/day |
+| compute | GitHub Actions | unmetered minutes, 40 jobs = 960 CPU hours/day |
+| store | D1 | 500 MB per database |
+| backup | a git branch | ~22 KB a night |
 
-**The free tier carries all of this**, and the one thing that would not fit it
-is gone: KV metered LIST and WRITE at a thousand a DAY, where D1 counts rows at
-a hundred thousand and has no listing operation at all. The paid plan is taken
-for Workers Builds concurrency rather than for any of these numbers.
+**The free tier carries all of this**: D1 counts rows at a hundred thousand a
+day and has no listing operation, where KV metered LIST and WRITE at a thousand
+a DAY. The paid plan is taken for Workers Builds concurrency rather than for
+any of these numbers.
 
 ### The rule efficiency is judged by
 
 > **Every step's cost should be proportional to what CHANGED, not to what
 > EXISTS.**
 
-Finding the work becomes an indexed query, publishing becomes one query, and
-and finding the rows a broken build wrote becomes `WHERE measured_by = ?`.
+Finding the work is an indexed query, publishing is one query, and finding the
+rows a broken build wrote is `WHERE measured_by = ?`.
 
 **THE ONE STEP THAT STAYS O(EXISTS) IS A FULL RESCORE**, and no store changes
 that: forty jobs is the account's ceiling and one 121-minute row is a floor no
@@ -2375,7 +1966,7 @@ about the set had to be faked: "how many are there" became a counter key with
 an hourly corrector, "is this build already held" became a read before every
 write, and "which weapons are under-covered" could not be asked at all. Its free
 plan meters LIST and WRITE at a thousand a DAY against D1's hundred thousand
-rows, and it was the listing that took the board down.
+rows.
 
 **WHY R2 HOLDS NOTHING OF THE BOARD.** It held the score blobs, and a score is a row now.
 The one job it might have inherited is the off-vendor copy, and it is the wrong
@@ -2416,9 +2007,6 @@ recording anything finer would quietly retire this whole arrangement.
 the branch a backup rather than a hope, and CI runs its self-test — but a
 self-test proves the SHAPE, not the destination.
 
-So the migration is three changes and not two, and the third is not the tidying
-up:
-
 **THE RESTORE POINTS AT THE SAME PLACE THE WORKER WRITES.** A backup that runs,
 commits and passes its self-test while restoring into a store nothing uses is
 discovered by somebody who has just lost the library.
@@ -2453,13 +2041,10 @@ how many builds the library holds. `SELECT COUNT(*) FROM builds`, and nothing
 else — no build, no weapon, no day. The scorer records `submissions:` per board
 and the difference is a footnote, SILENT when the board is current.
 
-**ONE QUERY, WHERE IT WAS A WALK AND THEN A COUNTER.** Listing a KV namespace
-took seven requests at the library's size against a free plan metering LIST at a
-thousand a DAY, so a hundred and forty-three readers spent the day's allowance
-and every board run afterwards died at its first step with `10048` until UTC
-midnight — on the day a video landed. Avoiding the walk took a counter key and
-an hourly corrector to keep it true. `COUNT(*)` replaces all of it, which is
-most of why the library lives in a database at all.
+**ONE QUERY, NEVER A WALK OR A COUNTER.** Listing a store on every read spends
+a metered allowance, and a counter key needs a corrector to stay true.
+`COUNT(*)` needs neither, which is most of why the library lives in a database
+at all.
 
 Absent or unreachable, the endpoint answers `count: null` and the page draws
 nothing: falling back to a walk would put the outage back where it was found,

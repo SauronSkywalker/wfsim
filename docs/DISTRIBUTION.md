@@ -1,9 +1,5 @@
 # Distribution: one channel, many mirrors, many shells
 
-**Status: phases 1–4 implemented. Phase 5 is written and unconfigured** — the
-stage job needs COS credentials in the repository's secrets and is silent and
-green without them. See §Phases.
-
 ## What this answers
 
 Every simulation runs on the reader's own CPU, through the same engine compiled
@@ -22,13 +18,6 @@ There are three, and **a file may not travel in a plane that is not its own.**
 | **release** | `index.html`, `app.js`, `style.css`, `worker.js`, `pkg/` | on a code change | **yes** — it is code | **no**: two channels on different releases give different answers |
 | **assets** | `img/`, `pol/`, `logo.svg`, `nona.svg` | rarely, and only by addition | no — the hash is the check | yes: an asset is present and correct, or absent |
 | **data** | the board | every hour | no — it is reproducible | yes, briefly, and visibly |
-
-The cost of ignoring this is not theoretical. `site/board/` is 4.8 MB and is
-rewritten every hour; the blob store is never pruned. Carrying it in the release
-would bank about 38 GB of immortal blobs a year in the one place this project
-pays for, and hand every client a download for files it replaces within the
-hour. **So the planes are separated before the publish is automated, not
-after.**
 
 ## Three words
 
@@ -228,11 +217,6 @@ There is deliberately **no seed in the payload**. A seed is stale on arrival and
 it puts a file that moves every hour inside an artefact that must not,
 which is the whole failure this plane exists to prevent.
 
-**What a board still cannot say is which engine scored it.** `fp` is per row and
-is dropped on the way to the page, so a client comparing its own run against a
-row cannot yet tell whether the same code produced both. The stamp is where that
-belongs when the engine exports one fingerprint for the whole of its data.
-
 ## The shell contract
 
 A new platform implements this and nothing else. It is what keeps "we should
@@ -270,38 +254,3 @@ markup as a board; the honest 404 is the empty board it already draws.
 any that disagree, with how far behind it is. Read-only, no credentials, so it
 runs on a schedule and on demand. **An invariant nothing checks is a wish**, and
 this one is invisible by construction: a stale mirror serves a page that works.
-
-## Phases
-
-1. **Identity.** *Done.* `release_id` over the release plane, `site/release.json`,
-   `RELEASE_ID` stamped into the page, the footer and `/support` printing it,
-   `board.meta.json` beside the board.
-2. **Keys and contract.** *Done.* `PUBLIC_KEYS` is a list; the contract above is
-   written down while there is still one shell to fit it to.
-3. **The data plane.** *Done.* The shell keeps `live/` beside `current/`, asks
-   the stamp every hour, and fetches the board only when the digest it
-   holds is not the one being served.
-4. **The pointer.** *Done.* `channel.json` published and preferred;
-   `manifest.json` and its detached signature kept for older shells.
-5. **Automation.** *Written; the CI half is unconfigured.* The stage → promote
-   path is proved end to end from a workstation: staged, resolved through the
-   marker, 866 files verified against the tree, pointer signed and read back,
-   and a second stage answering "already staged". `stage.yml` runs on every push
-   and computes the same manifest a Tauri toolchain does, then stops — it needs
-   `COS_SECRET_ID`, `COS_SECRET_KEY`, `COS_BUCKET` and `COS_REGION` in the
-   repository's secrets to reach the bucket, and is silent and green without
-   them. `scripts/promote.py` and `.github/workflows/mirrors.yml` need nothing.
-
-   **Adding those four secrets is what turns this on**, and it is the last act
-   of the plan: after it, a push stages itself and the only thing left for a
-   person is signing a pointer that builds nothing.
-
-Two things are deliberately NOT on this list. **`site/` leaving git**: Cloudflare
-deploys from the repository and the browser checks run against the committed
-`site/`, so it costs two changes at once and buys little once the rest is in
-place. **`channel.json` on wfsim.app**: a blob now falls back to
-`<mirror>/<path>`, so the site is a real second source for the PAYLOAD — but it
-does not serve the pointer, so resolving which release to fetch still has one
-host. Publishing a signed pointer into `site/` would mean signing inside the
-site build, which is the key back in the automatic path. The mirror check is
-what says whether that one host is answering.

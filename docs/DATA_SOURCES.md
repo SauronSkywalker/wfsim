@@ -8,13 +8,12 @@ authoritative datamined values.
 
 `warframe.fandom.com` is the LEGACY mirror. It is not a second opinion and it
 is not a fallback — it is an older copy, and reading a number off it is reading
-a number from before whatever changed. Nothing in `data/` cites it (1,587
-citations, all to the official host, checked 2026-08-21) and nothing should.
+a number from before whatever changed. Nothing in `data/` cites it and nothing
+should.
 
 It has to be said out loud because SEARCH DOES NOT AGREE: the Fandom copy
 outranks the official wiki for most weapon queries, so "search for the wiki
-page" lands there by default. That is how it got reached during the
-2026-08-21 Latron investigation.
+page" lands there by default.
 
 The one other host that is a source is `warframe.huijiwiki.com`, and only for
 one thing: DE's own CHINESE card text, which the English wiki does not carry.
@@ -166,7 +165,7 @@ threw away 211 of the 355 joins. What ambiguity means here is decided per FIELD:
 a weapon-level value is used when every attack row agrees and is counted as
 unchecked when they do not.
 
-### What it said the first time it ran
+### What the cross-check found
 
 **Coverage: nothing missing.** 355 of the 508 weapons are in the roster and the
 other 153 are out of scope by a decision with a document behind it — melee and
@@ -234,14 +233,11 @@ Our field names follow the wiki concept words (snake_case + unit suffixes):
 | `Mastery` / `MaxRank` | `mastery_rank` / `max_rank` |
 | `DefaultUpgrades` (innate mod) | modeled as a `perks[]` entry |
 
-## Plan (reduce the manual workload)
+## Working method
 
-- For now: read the page, then transcribe the tables it does not state from the
+- Read the page, then transcribe the tables it does not state from the
   **module** (never from a summarizing reader); cite the module URL in each
   entry's `source`, and §"INSIDE THE WIKI" for which wins on a disagreement.
-- Later: a small **importer** fetches these modules and emits our YAML directly,
-  so bulk entry is automated. DE's Public Export (`scripts/de_export.py`)
-  supplies the identity fields; the numbers stay the module's.
 - **No `verification` blocks, no `schema_version`**:
   whatever is written in the data IS the current belief, corrected in place
   as measurements land. Confidence lives in
@@ -252,98 +248,32 @@ Our field names follow the wiki concept words (snake_case + unit suffixes):
   [`../data/README.md`](../data/README.md)): fields are structured data a
   program consumes; human narrative is a `#` comment. No prose in fields.
 
-### The CN wiki is reachable through its API, not its pages
+### The CN wiki
 
-`warframe.huijiwiki.com` — the second source `data/README.md` names for display
-names, and the ONLY source for Incarnon evolution strings (DE's export
-carries none) — serves every page URL and every `?action=raw`
-behind a Cloudflare challenge. 403, "Just a moment...", no body.
-
-Its **MediaWiki API answers normally**:
-
-```
-curl -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/131.0"   "https://warframe.huijiwiki.com/api.php?action=parse&page=<标题>&prop=wikitext&format=json"
-```
-
-Recorded because the wall produced a worse outcome than an empty field: with
-the pages unreachable, five Boar Prime evolution names were TRANSLATED from
-their English instead, and four of the five were wrong (堡垒齐射 / 佣兵膛室 /
-熟练握把 / 暴击并行, against DE's 要塞齐射 / 佣兵枪膛 / 熟练之握 / 临界平行).
-DE's Chinese names are routinely non-literal — Commodore's Fortune is 准将沐福
-— so a name that cannot be read must be left EMPTY and asked for, never
-derived.
-
-#### …and on 2026-08-05 the API was walled too
-
-The `api.php` call above now answers **403 Forbidden** for every action,
-`list=search` included — the same Cloudflare challenge that already covered the
-pages. So the Burston family's 18 evolution names went in EMPTY, which is the
-rule ("if a source cannot be reached, LEAVE IT EMPTY AND SAY SO") and which
-`python scripts/de_i18n.py check` reports as 18 unnamed.
-
-WEAPON names survived it, because they have a second source: **DE's export in
-Chinese (`Export*_zh.json`) carries `name` per `uniqueName`**, so 伯斯顿 /
-伯斯顿 Prime / 野猪 / 野猪 Prime are DE's own strings joined on internal name
-rather than anyone's reading of the English. Evolution strings have no such
-fallback — DE's export carries none — which is exactly why the CN wiki is the
-only source for them and why losing it costs those 18 and nothing else.
-
-#### …and on 2026-08-07 it opened again — for curl, not for the language
-
-Both `api.php` and the plain pages answer **200** now. The interesting part is
-that they answer 200 to **curl** and **403 to Python's `urllib`**, from the same
-machine, in the same minute, carrying the same browser User-Agent. So the
-challenge is reading the **TLS fingerprint**, not the header: a fetch written in
-the obvious way ("it's just an HTTP GET, do it in the script") will conclude the
-wall is still up and leave names empty that could have been read.
-
-    curl -s -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36       (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"       --get --data-urlencode "page=盗贼灵化之源"       "https://warframe.huijiwiki.com/api.php?action=parse&prop=wikitext&format=json"
-
-**Percent-encode the title yourself.** Git Bash hands a CJK `--data-urlencode`
-argument to curl in the console code page, and the API answers "The value
-passed for "page" contains invalid or non-normalized data" — which reads as a
-wall and is not one. `page=%E7%BB%84%E5%90%88%E6%9E%AA` (组合枪) goes through.
-
-The evolution pages are `<武器>灵化之源` (伯斯顿灵化之源, 盗贼灵化之源,
-野猪灵化之源); a weapon page transcludes them with `{{#lst:…|Incarnon}}`, so
-reading the weapon page finds the section EMPTY and the names one hop away.
-
-#### …and on 2026-08-08 the whole roster went through it
+`warframe.huijiwiki.com` is the ONLY source for Incarnon evolution strings —
+DE's export carries none. WEAPON names do not need it: DE's export in Chinese
+(`Export*_zh.json`) carries `name` per `uniqueName`, so those are DE's own
+strings joined on internal name. The evolution pages are `<武器>灵化之源`
+(伯斯顿灵化之源, 盗贼灵化之源); a weapon page transcludes them with
+`{{#lst:…|Incarnon}}`, so the weapon page's section reads EMPTY and the names
+are one hop away.
 
 `scripts/cn_evolution_names.py` reads every family's page and transcribes both
-the perk NAME and its CARD TEXT — 447 of the 449 that were still empty. Two
-things about it are worth keeping:
+the perk NAME and its CARD TEXT.
 
 **The join is by NUMBERS, never by position.** Both pages list a tier's perks
 in the same order, so position would usually work, and "usually" is how a tier
-ends up silently shifted by one. It was tried: our perks are read in FILENAME
-order, and a positional pass swapped Evolved Autoloader with Swift Deliverance
-on the Dera, Kinetic Baffle with Frictionless Flight on the Felarx, and
-Marksman's Hand with Ready Retaliation on the Dex Sybaris. Every one of those
-looked right in the output.
+ends up silently shifted by one: our perks are read in FILENAME order.
 
 **A page can be wrong about its own weapon, and the other pages say so.** The
-Dera's has 迅速判决 against a magazine-capacity line and 扩充齐发 against a
-projectile-speed one — the opposite of what those two names carry on sixteen
-other pages, so number-matching faithfully reproduced its swap. The script now
-runs until it stops moving: each round counts what each English perk name was
-called, and a name read on two or more pages beats a one-off. It reported three
-such disagreements (Deathtrap Trigger 死陷触发 8:3, Extended Volley 扩充齐发
-18:2, Survivor's Edge 生还占优 29:2).
+script runs until it stops moving: each round counts what each English perk
+name was called, and a name read on two or more pages beats a one-off.
 
-Two names are still empty and say why in the file: the Felarx's Kinetic Baffle
-and Frictionless Flight are listed together in one table cell away from their
-values, both carry the number 50, and nothing on the page ties either name to
-either effect.
-
-With that, the Burston and Furis families' 36 evolution strings went in and
-`de_i18n.py check` reports **nothing unnamed in any family** for the first
-time. Two of them also corroborated engine fixes made the day before from the
-English wiki alone — 力量前奏 reads "暴击几率低于 40% 时，**基础**暴击伤害增加
-+3x" (Prelude of Might applies before mods, not after), and 风雷骤起 reads
-"+40% 多重射击，持续 2s，最高叠加至 3 层" (Stormburst's three 2-second stacks).
-A second source agreeing is not a measurement, but it is the cheapest check
-there is.
+A name that cannot be read is left EMPTY and asked for, never derived from the
+English — DE's Chinese names are routinely non-literal (Commodore's Fortune is
+准将沐福). `python scripts/de_i18n.py check` reports what is unnamed. The
+Felarx's Kinetic Baffle and Frictionless Flight are empty for that reason and
+say why in the file.
 
 ### A card is TWO fields, and we were reading one
 
@@ -428,11 +358,9 @@ network is how a weapon gets added with its row unchecked — which is how the
 Boar's CO row became the Boar Prime's. `grep -i scourge
 vendor/wiki/condition_overload.wiki` is the whole lookup.
 
-**Why through a BROWSER.** The wiki answers `curl -A …` with **403** and its
-`api.php` with a "Please wait" bot-challenge page, both of which are 200-shaped
-strings a naive fetcher would cache as a catalog. The script drives the repo's
-own headless Chrome (`cdp.mjs`) — the same machinery the UI checks use — and
-refuses to write anything with no wiki table in it.
+**The fetch drives the repo's own headless Chrome** (`cdp.mjs`, the same
+machinery the UI checks use) and refuses to write anything with no wiki table
+in it.
 
 **Why WIKITEXT, not HTML.** A row is a `|`-separated line, so a weapon is one
 `grep`, and a diff between two fetches is a diff of the CATALOG rather than of
@@ -463,8 +391,7 @@ each is cited at its formula in MECHANICS.
 
 **And the CN wiki is a second opinion on mechanics, not only on names.** Its
 真理密语 page carries three worked examples, an IPS-distribution rule and a Blast
-clause that the EN page has none of — see §"The CN wiki is reachable through its
-API, not its pages" for how to read it, and M40 for what it settled.
+clause that the EN page has none of — see M40 for what it settled.
 
 ## FETCH THE MODULE WITH `curl`, not through a summarising reader
 
@@ -512,8 +439,8 @@ means "nobody has looked", which is what the ratchet in `data::weapons` counts �
 ## The module pages TRUNCATE, and a summariser will fill the gap
 
 `Module:Weapons/data/primary` and `/secondary` are single Lua tables of a few
-hundred KB. Fetched through a summarising reader they arrive CUT OFF — measured
-2026-08-12, the primary reached "Felarx" and the secondary "Hystrix Prime", both
+hundred KB. Fetched through a summarising reader they arrive CUT OFF — measured:
+the primary reached "Felarx" and the secondary "Hystrix Prime", both
 alphabetical. Asked for a weapon past the cut, the reader answered with
 confident numbers that were not in the content: a Sicarus fire rate of 5 (it is
 3.5) and a Vasto of 3.33 (2.5). Both would have gone into the data.
@@ -588,24 +515,6 @@ several attacks is the export's blend, and the line says so.
 
 The modules are cached under `private/scripts/.cache/` (~330 KB per slot);
 `--refresh` re-fetches.
-
-### Sources we do NOT use, and what each would be good for
-
-Found in wfhub.top's own credits page (Tenno Hub, a Chinese Warframe
-companion site) — its data sources barely overlap ours, and two are worth
-knowing about. Neither is adopted: a third source belongs as a third CHECK, not
-as a replacement for either of ours.
-
-| source | what it is | what it would fix here |
-| --- | --- | --- |
-| [oracle.browse.wf/dicts](https://oracle.browse.wf/dicts/zh.json) | DE's own localization dictionaries, per language | our Chinese is assembled from three paths (DE's export whole sentences, a hand-written `effect_phrases` table, hand-written names). One source could unify them. |
-| [pa001024/riven-mirror](https://github.com/pa001024/riven-mirror) (MIT) | a riven calculator, source-available | ALREADY USED as a third opinion on the riven config multipliers — see the table in `engine/src/build/rivens/`. It is where the "community calculators read 1.0" claim actually comes from, and reading its source is what turned that from a rumour into a citation that can be weighed. |
-
-The rest of Tenno Hub's list is worldstate and market data (`api.warframestat.us`,
-`api.warframe.market`, `oracle.browse.wf/worldState.json`, `browse.wf/arbys.txt`),
-which is live-service state — nothing the calculator models. The Utility page
-reads DE's own file instead (below). **One exception since
-2026-08-08**, and it is not price data: see below.
 
 ### THE WORLD STATE is DE's file, named from DE's dictionaries
 
@@ -684,28 +593,12 @@ multi-target model, so a wrong value cannot currently move a result. Worth a
 measurement before the 2D model consumes them; MEASUREMENTS M15 already needs
 the same setup and can take the tape measure at the same time.
 
-### What the second source caught
+### What the second source catches
 
-Cost of having had only one: **20 mods** wrong on `base_drain`/`max_rank`, and
-**7** wrong on effect values. The value errors mattered more than the drains:
-
-- `fire_rate_bonus` sat at the placeholder pair `rank0 0.1667 / rankMax 1.0`
-  (= 1/6 and 1.0, never filled in) on **five** rifle mods. Two of them are
-  DRAWBACK mods, so the sim read Critical Delay's −20% and Vile Precision's
-  −36% fire-rate penalties as **+100% bonuses**. Primed Shred read +100%
-  instead of +55%.
-- `internal_bleeding` had a `proc_conversion` mod modeled as an
-  `elemental_damage_bonus` — the generator read the element out of the
-  description and invented a damage bucket. Its pistol twin Hemorrhage was
-  already correct.
-- `metal_auger`'s punch-through ramp is NON-linear (0.4 / 0.7 / 1.0 / 1.4 /
-  1.8 / 2.1), so `rankMax/6` was the wrong rank-0.
-
-Note the single-source audit could not have found the Primed Shred one even in
-principle: it checks that a modeled value appears in the mod's own description,
-and `1.0` matched via the "+1 multiplier" reading against the `2` in
-"(x2 for Bows)". A wrong value hiding behind a coincidence in the same string
-is exactly what a second, independent ramp rules out.
+A single-source audit checks that a modeled value appears in the mod's own
+description, so a wrong value hiding behind a coincidence in the same string
+passes it. A second, independent ramp rules that out — which is why
+`crosscheck.py` compares against both the wiki and DE's export.
 
 ### Second pass: rendered text vs `levelStats`, rank by rank
 
@@ -731,8 +624,7 @@ sentence. What it caught:
   `duration` stays the max-rank value the engine builds with.
 
 `fixed_and_rank_varying_values_land_in_the_right_slots` pins the cases;
-`desc_info_fills_every_x_across_the_pool` (now over EVERY class, not just the
-pistol pool it was written for) fails on any placeholder left unfilled.
+`desc_info_fills_every_x_across_the_pool` (over EVERY class) fails on any placeholder left unfilled.
 
 ### Mod compatibility is a UNION of pools
 
@@ -746,7 +638,7 @@ tag as `compatName`:
 | `Assault Rifle` | 15 | assault rifles only |
 | `Sniper` | 14 | snipers only |
 | `Bow` | 10 | bows only |
-| `Shotgun` | 119 | shotguns — a separate pool, not a subset of Rifle. **Imported 2026-08-03**: 86 importable, 76 shipped (ten are PvP-exclusive, see below) |
+| `Shotgun` | 119 | shotguns — a separate pool, not a subset of Rifle. 86 importable, 76 shipped (ten are PvP-exclusive, see below) |
 
 So a weapon's pool is a union: a launcher draws `PRIMARY` + `Rifle` and no
 narrower tag; a bow draws `PRIMARY` + `Rifle` + `Bow`; a shotgun draws
@@ -823,7 +715,7 @@ though the scripts do not travel with it.
 | `verify_mods.py --type <T>` | COVERAGE (every importable wiki mod of that Type has a file, and no file is a stranger) + drain / polarity / rarity / max_rank / exilus. Imports `gen_mods`' filters so the two cannot disagree about what the pool should hold |
 
 **Two of its findings are EXPECTED, and both are decisions, not gaps** — read
-this before "fixing" either (audited 2026-08-01):
+this before "fixing" either:
 
 - `--type Rifle` reports 6 MISSING: **Apex Predator, Comet Rounds, Lucky Shot,
   Ripper Rounds, Serrated Rounds, Vanquished Prey**. All six are
@@ -867,12 +759,10 @@ INVISIBLE to a numbers-only check and both produce data that looks fine:
 And two cases where the wiki is the thing that is wrong, kept flagged rather
 than silenced:
 
-- ~~The module's `Description` can lag its own `MaxRank`~~ — **withdrawn
-  2026-07-30.** That read Hawk Eye and Steady Hands backwards: the module's
-  `MaxRank` 5 is the wrong field, not its description. DE's export says fusionLimit 3
-  and the wiki page's rank table agrees, so the rank-3 text was right all
-  along. `audit_mod_effects.py` still has a DESC-STALE category because the
-  shape is possible in principle, but neither known case is one.
+- On Hawk Eye and Steady Hands the module's `MaxRank` 5 is the wrong field,
+  not its description: DE's export says fusionLimit 3 and the wiki page's rank
+  table agrees. `audit_mod_effects.py` keeps a DESC-STALE category because the
+  shape is possible in principle, but no known case is one.
 - Amalgam Barrel Diffusion really grants **109.50%** multishot and the tooltip
   rounds to 110% — an explicit allowlist entry with the wiki quote, not a
   tolerance that would hide the next real error.
@@ -978,22 +868,9 @@ wrong slot satisfies all of them.** This tool asks the other question — does t
 number in the yaml equal the number in the wiki's own weapon module? — and it is
 the only one that does.
 
-Run over the whole roster on 2026-08-20 it found, in entries written months
-apart and never by the same hand:
-
-- **eleven entries carrying a zero for an INNATE punch through the wiki
-  publishes** — Dread 2.5, Miter 2.5, Paris 2, Paris Prime 3, Strun Prime 0.8,
-  both Vectis 1, Ballistica Prime 1, both Opticors 1, Battacor 2, Enkaus 1. Four
-  of those had zeroed it on purpose, under the rule that an AoE attack takes no
-  punch through — but `build::loadout::resolve` gates only the MODS on the attack's
-  shape and always keeps the innate metres, so the rule had been applied to the
-  wrong half. It cost nothing while the arena held one body and costs a lot
-  since the formation landed.
-- **the Lanka's partial charge crit at 25% where its page says the partial
-  charge crits LESS** (20%) — the one finding that moved a damage number.
-- **the Angstrum's magazine at 1 where the module says 3**, so it reloaded after
-  every rocket.
-- eight wrong ammo pickups, eleven wrong accuracies, three wrong ammo costs.
+**AN AoE ATTACK KEEPS ITS INNATE PUNCH THROUGH.** `build::loadout::resolve`
+gates only the MODS on the attack's shape and always keeps the innate metres,
+so an entry never zeroes a punch through the wiki publishes.
 
 **How an entry is matched to its attack.** A module row holds several attacks
 and an entry carries ONE without recording which, so the match is by VALUE: the
@@ -1018,36 +895,24 @@ It needs `private/scripts/wiki_weapons.py` and therefore does not run in CI.
 
 ### The catalogs, read from the SOURCE — `scripts/audit_condition_overload.py`
 
-**A method error worth naming.** Every weapon yaml written in August 2026 opened
-with *"NO row in the wiki's CO catalog (re-read 2026-08-20)"*, and that check had
-been run against **docs/CATALOGS.md** — our own transcription, which by
-construction carries only "rows the roster already has". Asking it whether a NEW
-weapon has a row can only ever answer no.
-
-Reading the WIKI PAGE instead found **forty-six** entries the Attack Catalog
-names and the roster contradicted, a third of them weapons that had been here for
-months: the Lanka reading Adding at 100% against its row's 38%, both Laser
-Rifles, the whole Cernos family, the Catabolyst, and the Castanas pair taking a
-Condition Overload term the catalog says outright does not apply. Condition
-Overload is on most builds, so each was a wrong DAMAGE NUMBER.
+**CHECK A NEW WEAPON AGAINST THE WIKI PAGE, NEVER AGAINST docs/CATALOGS.md.**
+Our transcription carries only rows the roster already has, so asking it whether
+a NEW weapon has a row can only ever answer no. This tool reads the page.
 
 `the_only_condition_overload_anomalies_are_the_ones_the_catalog_names` is the
 CI-side guard and protects a different thing — that OUR data does not drift from
 OUR list. Only this tool can see the wiki GAIN a row.
 
-**It took two passes, and the second lesson is sharper than the first.** The
-first reconciliation matched a row to a form through a short list of attack
-NAMES. The catalog names an attack the way that WEAPON's page does, so
-"Projectile Impact", "Direct Hit", "Lock-On Mode", "Slug Impact", "Burst Mode"
-and "Reload From Empty Impact" matched nothing and were skipped in SILENCE. The
-tool now REPORTS an attack name it cannot place instead of passing over it: a
-narrow vocabulary does not fail, it under-reports.
+**IT REPORTS AN ATTACK NAME IT CANNOT PLACE** instead of passing over it. The
+catalog names an attack the way that WEAPON's page does ("Projectile Impact",
+"Direct Hit", "Lock-On Mode", "Reload From Empty Impact"), so a short list of
+attack names skips rows in silence: a narrow vocabulary does not fail, it
+under-reports.
 
-The same shape applies to Primary Compression, which the same sweep found had
-**fifty-nine** roster attacks named in the published table and undeclared here —
-where an undeclared attack pays the arcane nothing at all. That one is checked by
-`the_roster_reproduces_primary_compressions_published_column`, which re-derives
-the wiki's own Max Damage Bonus column from each entry's radius.
+Primary Compression has the same shape — an attack the published table names
+and the roster leaves undeclared pays the arcane nothing at all — and is checked
+by `the_roster_reproduces_primary_compressions_published_column`, which
+re-derives the wiki's own Max Damage Bonus column from each entry's radius.
 
 ### The join key itself
 
@@ -1058,19 +923,13 @@ fail a sweep, it MISSES one — and a miss is indistinguishable from a weapon
 nobody has cross-checked. "Cross-checked, 0 disagreements" is exactly what a
 comparison that never ran reports.
 
-It had already happened. `hema` carried
-`/Lotus/Weapons/Infested/InfWFAccompanyingPri/InfestedBurstRifle` against DE's
-`/Lotus/Weapons/Infested/LongGuns/InfWFAccompanyingPri/InfestedBurstRifle` —
-ONE PATH SEGMENT SHORT — from the day it was written, and every sweep since had
-skipped it in silence.
-
 `scripts/survey_internal_names.py` writes `data/surveys/internal_names.yaml`
 (one row per entry that STATES a key — a form inherits its weapon's and
 states none), read by `every_internal_name_resolves_in_the_export` and nothing
 else. Both halves refuse independently: the script will not record a key that
 joins to nothing, and the test fails when an entry states a key the survey does
-not hold. Verified to bite — reinstating the Hema's missing segment fails the
-test naming the weapon and both paths, and makes the script exit non-zero
+not hold. Verified to bite — a key one path segment short (the Hema's
+`/LongGuns/`) fails the test naming the weapon and both paths, and makes the script exit non-zero
 rather than write.
 
 ## Equippability: the wiki module is the only structured source
@@ -1217,9 +1076,7 @@ not propagate like that. riven-mirror's (MIT, read from `toUpLevel` /
 `toNegaUpLevel` in `src/warframe/rivenmod.ts`) is where the community's "1.0"
 claim comes from and does not hold together: `1.243/1.0 = 1.243` against
 `0.942/0.755 = 1.2477`. It looks like a rounding of a consistent set; the wiki's
-does not. semlar's calculator computes client-side and states no constants;
-codingace lists 1.30 / 1.10 / 0.90 by bonus COUNT with no malus row and a
-"1 bonus" case weapon rivens do not roll, so it is describing something else.
+does not.
 
 TAKING 1.0 ON THE ARGUMENT THAT `base x 90` LANDS ON ROUND NUMBERS (165 / 150 /
 120 / 90) IS WRONG: the wiki publishes its own base-value column and it IS

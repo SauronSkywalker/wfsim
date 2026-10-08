@@ -559,11 +559,8 @@ evolutions:
   boar_prime_survivors_edge: 生还占优
   boar_survivors_edge: 生还占优
 
-  # Burston / Burston Prime — DE's own strings, read 2026-08-07 from the CN
-  # wiki's transcription (伯斯顿灵化之源) through `api.php`. The wall recorded
-  # in docs/DATA_SOURCES.md on 2026-08-05 is DOWN again: both `api.php` and the
-  # plain pages answer 200 to curl (urllib still gets 403 — Cloudflare reads the
-  # TLS fingerprint, not the User-Agent, so the fetch must be curl's).
+  # Burston / Burston Prime — DE's own strings, from the CN wiki's
+  # transcription (伯斯顿灵化之源), docs/DATA_SOURCES.md §"The CN wiki".
   # THE TWO WEAPONS SHARE ONE GENESIS and DE wrote each string once; the second
   # id is a transcription of the same string, not a second reading of it.
   burston_prime_evo1_incarnon_form: 灵化形态
