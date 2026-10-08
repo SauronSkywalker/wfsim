@@ -25,6 +25,17 @@ const COMPUTE_KINDS = {
     },
     href: (t) => (META && t.weapon ? `${weaponPath(t.weapon)}?bench=${encodeURIComponent(t.ruler)}` : null),
   },
+  // A RIVEN GAIN someone asked about in a chat: the weapon and the ruler, never
+  // the card's rolls or who asked.
+  riven_gain: {
+    name: "Riven gain",
+    what: (t) => {
+      const w = META && (META.weapons || []).find((x) => x.id === t.weapon);
+      const b = META && (META.benchmarks || []).find((x) => x.id === t.ruler);
+      return [w ? w.name : t.weapon, b ? tr(b.name) : t.ruler].filter(Boolean).join(" · ");
+    },
+    href: () => null,
+  },
 };
 const computeKind = (t) => COMPUTE_KINDS[t && t.kind] || { name: "Task", what: () => "", href: () => null };
 

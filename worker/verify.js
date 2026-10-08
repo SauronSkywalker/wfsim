@@ -8,6 +8,8 @@
 // computes a number.
 //
 //   POST /api/board/work    { verifier, engine, protocol }                                → { work: { lease, record, ruler, mode } | null, stale? }
+//        — or `work: { kind: "riven_gain", lease, code, weapon, ruler, request, context }`, a
+//        riven gain someone is waiting on (worker/appraise.js §"Volunteer work").
 //   POST /api/board/verify  { lease, verifier, engine, score, metric, work, compute_ms }  → { ok }
 //
 // EQUAL means the score, the metric AND the work (`Shard::work`): a fact
@@ -17,6 +19,9 @@
 // ONLY THE ENGINE THE SITE SERVES WORKS (`site/release.json`): an order exists
 // because the code that scores it is the current code, and a tab left open on
 // an older one would answer it with the old arithmetic.
+
+import { ownersOf } from "./contribution.js";
+import { rivenTask } from "./appraise.js";
 
 /// A browser fights a crowd row in minutes; a lease outlives the slowest.
 export const LEASE_MS = 30 * 60_000;
@@ -32,7 +37,7 @@ const SLOT_SPAN = 2147483647;
 /// WHAT A PAGE THAT CAN FILL AN ORDER SENDS. A tab opened before orders existed
 /// asks too, takes an order, and answers in a shape this refuses — holding the
 /// order for a lease's length — so a page that does not say this gets nothing.
-export const PROTOCOL = 3;
+export const PROTOCOL = 4;
 
 const VERIFIER_ID = /^[a-z0-9]{16,40}$/;
 const ENGINE_ID = /^[A-Za-z0-9._-]{1,40}$/;
@@ -48,16 +53,6 @@ const computeOf = (o) => {
   return clientsOf(o).map((_, i) => ms[i] || "");
 };
 
-/// WHO OWNS EACH OF `ids`, from the devices their owners claimed
-/// (`worker/accounts.js` §devices) — an unclaimed one is absent, its own owner.
-async function ownersOf(env, ids) {
-  const out = new Map();
-  if (!env.ACCOUNTS || !ids.length) return out;
-  const { results } = await env.ACCOUNTS.prepare(
-    `SELECT verifier, account FROM devices WHERE verifier IN (${ids.map(() => "?").join(", ")})`).bind(...ids).all();
-  for (const r of results) out.set(r.verifier, r.account);
-  return out;
-}
 
 const json = (body, status = 200) => new Response(JSON.stringify(body), {
   status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
@@ -153,6 +148,14 @@ async function work(request, env) {
   const held = await db.prepare("SELECT 1 AS x FROM orders WHERE leased_to = ? AND lease_until > ? LIMIT 1")
     .bind(b.verifier, now).first();
   if (held) return json({ ok: true, work: null });
+  // A RIVEN GAIN FIRST: someone is waiting on it in a chat. It holds its own
+  // lease, so a client on one gets nothing more here either.
+  {
+    const riven = await rivenTask(env, b.verifier, engine, (ids) => ownersOf(env, ids));
+    if (riven) return json({ ok: true, work: riven });
+    const busy = await db.prepare("SELECT 1 FROM appraisals WHERE leased_to = ? AND lease_until > ?").bind(b.verifier, now).first();
+    if (busy) return json({ ok: true, work: null });
+  }
   // A FURTHER RESULT COMES FROM ANOTHER OWNER: one person's machines agreeing
   // with each other would be one witness counted twice.
   const open = (await candidates(db, "open", engine, now, 4)).filter((o) => !clientsOf(o).includes(b.verifier));

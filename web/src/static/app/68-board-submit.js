@@ -192,14 +192,35 @@ function boardPayload() {
 const exilusOf = (res) =>
   (res && res.exilus && res.exilus !== "none" ? res.exilus : undefined);
 
-function boardPayloadFromResult(res) {
-  const bench = (scenarioNamed(activeScenario) || {}).builtin;
+/// WHAT A RESULT DOES NOT SAY ABOUT ITS BUILD, read off this page: the ruler,
+/// the weapon, its mode, stance, valence and assembly, the hands it was run in.
+/// A riven gain run for someone else freezes it on the page that set the search
+/// up (81-appraisal.js) and hands it back here, so one function turns any
+/// computer's result into the build that page would have sent. `rivens`, when
+/// given, names each riven in the search by its shape — the computer running it
+/// holds none of them.
+function boardBuildContext() {
+  return {
+    benchmark: (scenarioNamed(activeScenario) || {}).builtin,
+    weapon: $("weapon").value,
+    mode,
+    stance: (slots[STANCE] || {}).mod || "",
+    valence: valence.element,
+    grip: (assembly && assembly.grip) || "",
+    loader: (assembly && assembly.loader) || "",
+    wielder: wielderPayload(),
+  };
+}
+
+function boardPayloadFromResult(res, ctx = boardBuildContext()) {
+  const bench = ctx.benchmark;
   const arcs = asArcaneList(res.arcane, (res.arcane || []).length)
     .filter((a) => a && a !== "none");
+  const rivenId = (res.mods || []).find(isRivenId) || "-";
   return {
     benchmark: bench || undefined,
-    weapon: $("weapon").value,
-    mode: res.mode || mode,
+    weapon: ctx.weapon,
+    mode: res.mode || ctx.mode,
     // AS RANKED, not sorted — the order pairs the elementals, and a sorted list
     // is a build the search never measured. The same rule `boardPayload` states.
     // THE EIGHT MAIN SLOTS, and the exilus one is DROPPED — the same rule
@@ -214,7 +235,7 @@ function boardPayloadFromResult(res) {
     // that (a saved checkpoint), and it is conditional so the same card cannot
     // arrive twice.
     mods: (() => {
-      const st = (slots[STANCE] || {}).mod;
+      const st = ctx.stance;
       const out = (res.mods || [])
         .filter((m) => !exilusOf(res) || m !== exilusOf(res))
         .map((m) => (isRivenId(m) ? BOARD_RIVEN_SLOT : m));
@@ -222,16 +243,16 @@ function boardPayloadFromResult(res) {
     })(),
     // THE RESULT'S OWN RIVEN, not the builder's: the search may have been
     // handed a different card than the one the builder holds, or none.
-    ...boardRivenShape((res.mods || []).find(isRivenId) || "-"),
+    ...(ctx.rivens ? ctx.rivens[rivenId] || { riven_pos: [], riven_neg: "" } : boardRivenShape(rivenId)),
     evolutions: (res.evolutions || []).slice(),
     arcanes: arcs,
-    valence: res.valence || valence.element,
+    valence: res.valence || ctx.valence,
     exilus: exilusOf(res),
-    grip: (assembly && assembly.grip) || "",
-    loader: (assembly && assembly.loader) || "",
+    grip: ctx.grip,
+    loader: ctx.loader,
     // …AND THE WARFRAME, from the page for the reason the riven and the
     // assembly are: the search was run in these hands, so they are the row's.
-    wielder: wielderPayload(),
+    wielder: ctx.wielder,
   };
 }
 

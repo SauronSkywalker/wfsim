@@ -27,7 +27,26 @@ async function browser() {
 async function page() {
   await browser();
   const t = await (await fetch(`http://127.0.0.1:${PORT}/json/new?about:blank`, { method: "PUT" })).json();
-  const ws = new WebSocket(t.webSocketDebuggerUrl);
+  return attach(t.webSocketDebuggerUrl, () => fetch(`http://127.0.0.1:${PORT}/json/close/${t.id}`).catch(() => {}));
+}
+
+/// A PAGE IN A BROWSER CONTEXT OF ITS OWN — no storage any earlier page left —
+/// opened through the browser's own target, and the context dropped on close.
+async function cleanPage() {
+  await browser();
+  const v = await (await fetch(`http://127.0.0.1:${PORT}/json/version`)).json();
+  const b = await attach(v.webSocketDebuggerUrl, async () => {});
+  const ctx = (await b.send("Target.createBrowserContext", { disposeOnDetach: true })).result.browserContextId;
+  const target = (await b.send("Target.createTarget", { url: "about:blank", browserContextId: ctx })).result.targetId;
+  const p = await attach(`ws://127.0.0.1:${PORT}/devtools/page/${target}`, async () => {
+    await b.send("Target.disposeBrowserContext", { browserContextId: ctx }).catch(() => {});
+    await b.close();
+  });
+  return p;
+}
+
+async function attach(url, closed) {
+  const ws = new WebSocket(url);
   await new Promise((ok, no) => { ws.onopen = ok; ws.onerror = no; });
   let seq = 0;
   const waiting = new Map();
@@ -36,8 +55,34 @@ async function page() {
     if (m.id && waiting.has(m.id)) { waiting.get(m.id)(m); waiting.delete(m.id); }
   };
   const send = (method, params = {}) => new Promise((ok) => { const id = ++seq; waiting.set(id, ok); ws.send(JSON.stringify({ id, method, params })); });
-  const close = async () => { ws.close(); await fetch(`http://127.0.0.1:${PORT}/json/close/${t.id}`).catch(() => {}); };
+  const close = async () => { ws.close(); await closed(); };
   return { send, close };
+}
+
+/// THE QUESTION A RIVEN GAIN ASKS, frozen: its link opened with `?freeze` in a
+/// clean context, which sets the search up and writes `{ engine, request }` to
+/// `body[data-request]` (81-appraisal.js) — so the request is the page's own and
+/// holds nothing of anyone's.
+export async function freezeRequest(url, { wait = READY_MS } = {}) {
+  const p = await cleanPage();
+  try {
+    await p.send("Page.enable");
+    await p.send("Page.navigate", { url });
+    const ask = async (expr) => ((await p.send("Runtime.evaluate", { expression: expr, returnByValue: true })).result || {}).result?.value;
+    const until = Date.now() + wait;
+    for (;;) {
+      const got = await ask(`document.body && document.body.dataset.request || ""`);
+      if (got) {
+        const r = JSON.parse(got);
+        if (r.error) throw new Error(`freeze: ${r.error}`);
+        return r;
+      }
+      if (Date.now() > until) throw new Error(`freeze timed out: ${url}`);
+      await sleep(250);
+    }
+  } finally {
+    await p.close();
+  }
 }
 
 /// The card at `url` as a PNG buffer in the page's language `lang`, or an Error.

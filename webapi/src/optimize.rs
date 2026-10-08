@@ -1191,7 +1191,7 @@ fn parse_starts(
 /// rows are ranked by what it answers, so a reader who simulates a row's build
 /// gets the row's number to the last digit. A row the simulator refuses keeps
 /// the reason and ranks last.
-fn measured_by_the_simulator(rows: Vec<Value>, finalists: usize, state: &FunnelState) -> Vec<Value> {
+fn measured_by_the_simulator(rows: Vec<Value>, finalists: usize, state: &FunnelState) -> (Vec<Value>, u64) {
     use std::sync::atomic::Ordering::Relaxed;
     let mut rows: Vec<Value> = rows
         .into_iter()
@@ -1211,19 +1211,22 @@ fn measured_by_the_simulator(rows: Vec<Value>, finalists: usize, state: &FunnelS
                 ("kills_min", "kills_min"),
                 ("kills_max", "kills_max"),
                 ("dps", "dps"),
+                ("work", "work"),
             ] {
                 row[to] = sim.get(from).cloned().unwrap_or(Value::Null);
             }
             row
         })
         .collect();
+    // WHAT THE ROUND COST, every contender counted — the ones cut below too.
+    let work = rows.iter().fold(0u64, |a, r| a.saturating_add(r.get("work").and_then(Value::as_u64).unwrap_or(0)));
     let at = |r: &Value, k: &str| r.get(k).and_then(Value::as_f64).unwrap_or(f64::NEG_INFINITY);
     rows.sort_by(|a, b| at(b, "kill_progress").total_cmp(&at(a, "kill_progress")).then(at(b, "dps").total_cmp(&at(a, "dps"))));
     rows.truncate(finalists);
     for (i, r) in rows.iter_mut().enumerate() {
         r["rank"] = json!(i + 1);
     }
-    rows
+    (rows, work)
 }
 
 /// GRADE the search against ground truth — the same request, the same plan,
@@ -1471,6 +1474,7 @@ pub fn grade_optimize(
             best: Default::default(),
             spread: Default::default(),
             sims: Default::default(),
+            work: Default::default(),
             progress: None,
             lead: false,
             mod_slots: build_size.min(8),
@@ -1988,6 +1992,7 @@ pub fn run_optimize_resumable(
             best: Default::default(),
             spread: Default::default(),
             sims: Default::default(),
+            work: Default::default(),
             progress: Some(state),
             lead: fleet.get("lead").is_some(),
             mod_slots: build_size.min(8),
@@ -2137,7 +2142,7 @@ pub fn run_optimize_resumable(
             row
         })
         .collect();
-    let results = if measure { measured_by_the_simulator(results, finalists, state) } else { results };
+    let (results, final_work) = if measure { measured_by_the_simulator(results, finalists, state) } else { (results, 0) };
 
     // WHAT THE SEARCH ACTUALLY COVERED. A run that did not reach the end of
     // its space has not searched the scope it was given, and it must not read
@@ -2188,6 +2193,9 @@ pub fn run_optimize_resumable(
         "shards": shards,
         "final_runs": final_runs,
         "finalists": finalists,
+        // THE FINAL ROUND'S WORK, every contender's simulation summed — a fleet
+        // adds its scorers' `work` to it (08-checkpoint-api.js).
+        "final_work": final_work,
         "headshot_pct": headshot_pct,
         "duration": duration,
         "results": results,
@@ -3003,6 +3011,42 @@ mod whole_scope_tests {
         assert!(steps > 1, "the leader paused {steps} times");
         assert_eq!(rows(&led), rows(&alone), "candidate_runs {candidate_runs}, after {steps} steps");
         }
+    }
+
+    /// THE WORK OF A SEARCH IS THE SEARCH'S, not the fleet's: however the
+    /// scoring is split, the scorers' `work` plus the final round's sums to one
+    /// number — what two volunteer computers must agree on to be credited
+    /// (worker/appraise.js §"Volunteer work").
+    #[test]
+    fn a_search_costs_the_same_work_however_the_fleet_splits_it() {
+        let start = json!({ "slots": [], "evolutions": [], "arcane": [], "fixed": [] });
+        let req = json!({
+            "weapon": "braton_prime", "enemy": "thrax_centurion", "level": 100,
+            "duration": 2.0, "runs": 2, "finalists": 2,
+            "candidate_runs": 2, "strategy": "quick", "starts": [start],
+        });
+        let with = |fleet: Value| {
+            let mut r = req.clone();
+            r["quick_fleet"] = fleet;
+            run_optimize(parse_optimize(&r).unwrap(), &FunnelState::default(), |_, _| {}, None)
+        };
+        let total = |parts: usize| -> u64 {
+            let (mut scores, mut work, mut steps): (Vec<Value>, u64, u32) = (Vec::new(), 0, 0);
+            loop {
+                let out = with(json!({ "lead": true, "fresh": steps == 0, "scores": scores }));
+                let Some(pending) = out.get("pending").and_then(Value::as_array).cloned() else {
+                    return work + out["final_work"].as_u64().unwrap();
+                };
+                steps += 1;
+                assert!(steps < 500, "the leader never settles");
+                let outs: Vec<Value> = pending.chunks(pending.len().div_ceil(parts)).map(|part| with(json!({ "score": part }))).collect();
+                work += outs.iter().map(|o| o["work"].as_u64().unwrap()).sum::<u64>();
+                scores = outs.iter().flat_map(|o| o["scores"].as_array().cloned().unwrap_or_default()).collect();
+            }
+        };
+        let one = total(1);
+        assert!(one > 0, "a search that fought costs work");
+        assert_eq!(total(3), one);
     }
 
     /// THE ROW IS THE SIMULATOR'S NUMBER: a row's `replay`, simulated, answers

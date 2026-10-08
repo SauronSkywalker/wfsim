@@ -147,6 +147,40 @@ function maybeReloadForRelease() {
   reloadForRelease();
 }
 
+/// A RIVEN GAIN, run here for someone waiting in a chat (worker/appraise.js
+/// §"Volunteer work"): the frozen request through a search of its own
+/// (`quickFleet`, one worker, the reader's optimizer untouched), paced so the
+/// reader goes first, and its winner sent back under the lease — as the build
+/// the page that froze it would have sent — with the search's work. Turning
+/// computing off stops it, and the lease lapses to another computer.
+async function rivenGainOnce(w, id) {
+  computeStart({ kind: "riven_gain", weapon: w.weapon, ruler: w.ruler });
+  const began = performance.now();
+  const job = quickFleet(w.request, 1, () => yieldToForeground());
+  while (!job.result) {
+    if (!boardVerifyOn()) {
+      job.cancelled = true;
+      job.workers.forEach((x) => x.terminate());
+      computeEnd(null);
+      return true;
+    }
+    const s = job.status || {};
+    computeProgress(s.sims_done || 0, 0);
+    await new Promise((r) => setTimeout(r, 1000));
+  }
+  const r = job.result;
+  const best = r && r.ok !== false && (r.results || []).find((x) => x && (x.mods || []).length);
+  if (!best) { computeEnd(null); return true; }
+  const sent = await fetch(`/api/appraise/${encodeURIComponent(w.code)}/result`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ build: boardPayloadFromResult(best, w.context), lease: w.lease, verifier: id,
+      score: Number(best.kill_progress) || 0, work: r.work || 0 }),
+  }).then((x) => x.ok).catch(() => false);
+  computeEnd(sent ? { ms: Math.round(performance.now() - began), work: r.work || 0 } : null);
+  return true;
+}
+
 /// ONE ORDER, fought here and answered — `true` when there was one. The answer
 /// never says whether it agreed; a lease this browser leaves lapses on its own.
 async function workOnce() {
@@ -154,11 +188,12 @@ async function workOnce() {
   const id = verifierId();
   if (!id) return false;
   await claimDevice(id);
-  const ask = await postBoardWork("/api/board/work", { verifier: id, engine: ENGINE_ID, protocol: 3 });
+  const ask = await postBoardWork("/api/board/work", { verifier: id, engine: ENGINE_ID, protocol: 4 });
   if (ask && ask.stale && !boardStale) { boardStale = true; renderBoardConsent(); }
   maybeReloadForRelease();
   const w = ask && ask.work;
   if (!w) return false;
+  if (w.kind === "riven_gain") return rivenGainOnce(w, id);
   const order = await api("/api/board/order", { record: w.record, ruler: w.ruler, mode: w.mode });
   if (!order || !order.ok) return true;
   computeStart({ kind: "board", weapon: w.record.weapon, ruler: w.ruler, mode: w.mode });

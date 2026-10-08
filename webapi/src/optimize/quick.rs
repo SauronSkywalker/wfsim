@@ -118,6 +118,9 @@ pub(crate) struct QuickCtx<'a> {
     pub(crate) spread: std::sync::Mutex<std::collections::HashMap<String, f64>>,
     /// Engagements simulated: every order of every build, at `runs` each.
     pub(crate) sims: std::sync::atomic::AtomicU64,
+    /// …and the work those fights took (`Summary::work`), which a fleet worker
+    /// hands back beside them so a search run as volunteer work can be credited.
+    pub(crate) work: std::sync::atomic::AtomicU64,
     /// Where the page reads progress: builds scored (`enumerated`) and fights
     /// run (`sims_done`), advanced a chunk at a time so a slow host shows it.
     pub(crate) progress: Option<&'a wfsim_optimizer::FunnelState>,
@@ -681,7 +684,9 @@ impl QuickCtx<'_> {
         // One seed for every chunk, so the chunks stay one paired stream.
         let mut sums = Vec::with_capacity(jobs.len());
         for chunk in jobs.chunks(PROGRESS_CHUNK) {
-            sums.extend(wfsim_optimizer::descent::evaluate_paired(chunk, self.scenario, runs, self.seed));
+            let got = wfsim_optimizer::descent::evaluate_paired(chunk, self.scenario, runs, self.seed);
+            self.work.fetch_add(got.iter().fold(0u64, |a, s| a.saturating_add(s.work)), Relaxed);
+            sums.extend(got);
             if let Some(p) = self.progress {
                 p.sims_done.fetch_add(chunk.len() as u64 * u64::from(runs), Relaxed);
             }
@@ -730,6 +735,7 @@ impl QuickCtx<'_> {
             }
         }
         let before = self.sims.load(std::sync::atomic::Ordering::Relaxed);
+        let work_before = self.work.load(std::sync::atomic::Ordering::Relaxed);
         let mut rows: Vec<Value> = Vec::new();
         for (runs, bs) in &groups {
             let got = self.score_orders_at(bs, *runs);
@@ -742,7 +748,8 @@ impl QuickCtx<'_> {
             }));
         }
         let fights = self.sims.load(std::sync::atomic::Ordering::Relaxed) - before;
-        json!({ "ok": true, "scores": rows, "fights": fights })
+        let work = self.work.load(std::sync::atomic::Ordering::Relaxed) - work_before;
+        json!({ "ok": true, "scores": rows, "fights": fights, "work": work })
     }
 
     /// The leader takes the scores the fleet returned; `fresh` begins a new

@@ -75,7 +75,7 @@ export function makeAnswer({ run, meta, zh, headless, host }) {
     t("I am Nona, WFSim's assistant. Send zk or pz… not that I was waiting for you. (⁄ ⁄•⁄ω⁄•⁄ ⁄)"),
     t("zk weapon [ruler] [stats] [count]: the rivens the board has measured for this weapon, against its best build without one."),
     t("pz weapon [ruler] [riven] [count]: the best builds the board has measured for this weapon; add riven for builds that carry one."),
-    t("fx weapon [ruler] each stat with its number: the gain of your own riven — whoever opens the link searches its best build on their own computer."),
+    t("fx weapon [ruler] each stat with its number: the gain of your own riven — the community's computers search its best build."),
     t("For example: {a}, or {b}", { a: "zk 托里德 双暴 负任意 5", b: "pz 托里德 爆破使 紫卡 3" }),
   ].join("\n");
   const UNREAD = "I could not read “{word}”… Write a stat as the card does, or as short as 双暴, 暴伤 or 负任意. (・_・;)";
@@ -195,7 +195,7 @@ export function makeAnswer({ run, meta, zh, headless, host }) {
     }
     const card = `${SITE}${headless.headlessWeaponPath(meta.weapons || [], hit.w.id)}/card?kind=appraise&code=${opened.code}`;
     const line = rolled.map((x) => `${x.malus ? "−" : "+"}${statZh(cls, x.id)} ×${x.roll.toFixed(2)}`).join(" ");
-    return { line: t("Nona read it. Scan the code in the picture to search with your own computer — riven gain {code}. (๑•̀ㅂ•́)و✧", { code: opened.code }),
+    return { line: t("Nona read it. The community's computers are working on it — usually a minute or two — and Nona will post the answer here. Can't wait? Scan the code to run it on your own computer, riven gain {code}. (๑•̀ㅂ•́)و✧", { code: opened.code }),
       card, text: `${weaponName(hit.w)} · ${rulerShort(ruler)} · ${line}\n${SITE}/appraise/${opened.code}` };
   }
 

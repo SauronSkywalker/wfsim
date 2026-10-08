@@ -61,6 +61,8 @@ const card = JSON.parse(await evaluate(`JSON.stringify((loadPresetList(RIVENS).f
 check("…and that riven is the asker's card, rolls and all", (card.bonuses || []).map((b) => `${b.id}@${b.roll}`).join(",") === "critical_damage@1.1,multishot@1.05"
   && card.malus && card.malus.id === "zoom" && card.malus.roll === 0.9, JSON.stringify(card));
 check("the search started without a click", await evaluate("optJobId != null || !!optLast"));
+// THE QUESTION AS THE SEARCH ASKS IT, kept to set beside the frozen one below.
+const asked = await evaluate("JSON.stringify(optimizeBody())");
 check("a banner says what the page is doing", /riven gain|裂罅收益/i.test(await evaluate(`($("appraisal-banner") || {}).textContent || ""`)));
 await evaluate(`(() => { const i = $("appraisal-name"); i.value = "Kai"; i.dispatchEvent(new Event("input")); })()`);
 
@@ -84,8 +86,50 @@ if (sent) {
   await app.load("/weapons/Torid/optimizer", 6000);
   check("the reader's own presets, rivens and checkpoint are as they were", (await evaluate(OWN)) === before);
 
+  // FROZEN: the same link with `?freeze` sets the search up and stops, writing
+  // the request it would send — what the bot stores for other computers to run.
+  await app.load("/appraise/TEST7?freeze=1", 9000);
+  let frozen = null;
+  for (let i = 0; i < 40 && !frozen; i++) { await sleep(250); frozen = await evaluate("document.body.dataset.request || null"); }
+  const f = JSON.parse(frozen || "{}");
+  // A RIVEN IS MADE AFRESH ON EACH LOAD, with an id and a default name of its own;
+  // everything else the search is told must be the same.
+  // A riven's `drafts` are the editor's unsaved alternatives, which no search reads.
+  const same = (text) => JSON.stringify(JSON.parse(text.replace(/riven:[a-z0-9]+/g, "riven:R")),
+    (k, v) => (k === "drafts" ? undefined : v && typeof v === "object" && !Array.isArray(v) && "spec" in v ? { ...v, id: "R", name: "" } : v));
+  const askedBody = JSON.parse(asked);
+  const differ = [...new Set([...Object.keys(askedBody), ...Object.keys(f.request || {})])]
+    .filter((k) => same(JSON.stringify(askedBody[k]) || "null") !== same(JSON.stringify((f.request || {})[k]) || "null"));
+  check("a frozen link writes the request the search would send, and its engine", f.engine === await evaluate("ENGINE_ID")
+    && differ.length === 0, differ.map((k) => `${k}: ${same(JSON.stringify(askedBody[k]) || "null")} vs ${
+      same(JSON.stringify((f.request || {})[k]) || "null")}`).join(" | "));
+  check("…and starts nothing", await evaluate("optJobId == null"));
+
+  // RUN AS VOLUNTEER WORK: the frozen request and context, on a computer that
+  // holds nothing of the asker's, through the background's own search — the
+  // same build the page sent above, to the key, and the search's work beside it.
+  {
+    const vol = JSON.parse(await evaluate(`(async () => {
+      const f = JSON.parse(document.body.dataset.request);
+      window.__sent.results = [];
+      await rivenGainOnce({ kind: "riven_gain", lease: "0".repeat(32), code: "TEST7", weapon: "torid",
+        ruler: "standard_single_target", request: f.request, context: f.context }, "v".repeat(24));
+      return JSON.stringify(window.__sent.results);
+    })()`, 30 * 60000));
+    const canon = (v) => (Array.isArray(v) ? `[${v.map(canon).join(",")}]`
+      : v && typeof v === "object" ? `{${Object.keys(v).sort().map((k) => `${JSON.stringify(k)}:${canon(v[k])}`).join(",")}}`
+      : JSON.stringify(v));
+    const v = vol[0] || {};
+    check("run as volunteer work, the frozen search answers the build the page found", canon(v.build) === canon(sent.results[0].build),
+      `${JSON.stringify(v.build)} vs ${JSON.stringify(sent.results[0].build)}`);
+    check("…under its lease, with the search's work", v.lease === "0".repeat(32) && v.verifier === "v".repeat(24)
+      && Number.isSafeInteger(v.work) && v.work > 0 && Number.isFinite(v.score), JSON.stringify(v).slice(0, 200));
+  }
+
   // THE ANSWER'S PICTURE: that build replayed with the asker's rolls, judged,
   // scored and set against the board — what the bot reads and sends.
+  // A PAGE OF ITS OWN FIRST: the frozen page above keeps its storage in memory.
+  await app.load("/weapons/Torid/optimizer", 6000);
   await evaluate(`localStorage.setItem("__build", ${JSON.stringify(JSON.stringify(r.build))})`);
   await app.load("/weapons/Torid/card?kind=appraise&code=TEST7&result=1", 6000);
   for (let i = 0; i < 240 && !(await evaluate(`document.body.dataset.cardReady === "1"`)); i++) await sleep(500);

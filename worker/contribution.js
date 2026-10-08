@@ -36,6 +36,18 @@ const PER_STATEMENT = 90;
 
 const points = (work) => Math.floor(work / WORK_PER_POINT);
 
+/// WHO OWNS EACH OF `ids`, from the devices their owners claimed
+/// (`worker/accounts.js` §devices) — an unclaimed one is absent, its own owner.
+export async function ownersOf(env, ids) {
+  const out = new Map();
+  if (!env.ACCOUNTS || !ids.length) return out;
+  const { results } = await env.ACCOUNTS.prepare(
+    `SELECT verifier, account FROM devices WHERE verifier IN (${ids.map(() => "?").join(", ")})`).bind(...ids).all();
+  for (const r of results) out.set(r.verifier, r.account);
+  return out;
+}
+
+
 const since = () => new Date(Date.now() - (RECENT_DAYS - 1) * 86_400_000).toISOString().slice(0, 10);
 
 /// THE WORK EACH OF `ids` IS CREDITED — `{ work, recent }`, all of it and the
@@ -70,9 +82,11 @@ async function activityOf(env, ids) {
   for (let i = 0; i < ids.length; i += PER_STATEMENT) {
     const part = ids.slice(i, i + PER_STATEMENT);
     const marks = part.map(() => "?").join(", ");
-    const [seen, held] = await env.LIBRARY.batch([
+    const [seen, held, gains] = await env.LIBRARY.batch([
       env.LIBRARY.prepare(`SELECT id, last_at FROM verifiers WHERE id IN (${marks})`).bind(...part),
       env.LIBRARY.prepare(`SELECT leased_to, record, ruler, mode FROM orders WHERE lease_until > ? AND leased_to IN (${marks})`)
+        .bind(t, ...part),
+      env.LIBRARY.prepare(`SELECT leased_to, weapon, ruler FROM appraisals WHERE lease_until > ? AND leased_to IN (${marks})`)
         .bind(t, ...part),
     ]);
     for (const r of seen.results) out.set(r.id, { last_at: r.last_at || null, now: null });
@@ -81,6 +95,11 @@ async function activityOf(env, ids) {
       try { weapon = JSON.parse(r.record).weapon || null; } catch (_) { /* a record that is not one names nothing */ }
       const e = out.get(r.leased_to) || { last_at: null, now: null };
       e.now = { kind: "board", weapon, ruler: r.ruler, mode: r.mode };
+      out.set(r.leased_to, e);
+    }
+    for (const r of gains.results) {
+      const e = out.get(r.leased_to) || { last_at: null, now: null };
+      e.now = { kind: "riven_gain", weapon: r.weapon, ruler: r.ruler };
       out.set(r.leased_to, e);
     }
   }

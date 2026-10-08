@@ -719,6 +719,10 @@ each machine's share is counted under its owner's name. Seven rules:
    An anonymous row's name and tier never leave the server; the reader's own
    row is marked to them alone. A browser asks what it earned by its own id
    (`/api/board/points`).
+   A RIVEN GAIN (docs/AGENT.md §"Riven appraisal") is credited the same way:
+   its search's work, summed by the engine (`Summary::work`, the scorers'
+   `work` and the final round's `final_work`), to the two owners' computers
+   whose answers agree.
 7. **A MARK NEVER MOVES A PLACE.** A named row carries the mark its account
    carries on a signed share, proved by the paid half and attached by the
    server (`cloudMarks`), drawn by the extension (`contributorMark`); the order

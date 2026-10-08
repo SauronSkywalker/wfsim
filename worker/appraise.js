@@ -16,6 +16,15 @@ const RECLAIM_MS = 120_000;
 /// How many appraisals one asker / one room may open in an hour.
 const PER_ASKER = 5, PER_ROOM = 20, HOUR = 3_600_000;
 const MAX_BUILD = 8_000, MAX_THANKS = 24;
+/// A frozen search: the optimize request the page builds, which carries the fight.
+const MAX_REQUEST = 65_536;
+/// How long a volunteer computer holds a riven gain before another may take it.
+export const RIVEN_LEASE_MS = 15 * 60_000;
+/// Answers after which a riven gain stops being handed out to agree on.
+const RIVEN_ANSWERS = 3;
+const VERIFIER_ID = /^[a-z0-9]{16,40}$/;
+const LEASE_ID = /^[a-f0-9]{32}$/;
+const ENGINE_ID = /^[A-Za-z0-9._-]{1,40}$/;
 
 const json = (body, status = 200) => new Response(JSON.stringify(body), {
   status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
@@ -36,14 +45,17 @@ const botAuthed = (request, env) => {
   return !!env.BOT_RELAY_TOKEN && auth === `Bearer ${env.BOT_RELAY_TOKEN}`;
 };
 
+import { ownersOf } from "./contribution.js";
+
 export async function appraiseRoute(request, env, path) {
   if (!env.LIBRARY) return json({ ok: false, error: "not offered here" }, 501);
   if (path === "/api/appraise/new") return open(request, env);
   if (path === "/api/appraise/claim") return claim(request, env);
-  const m = path.match(/^\/api\/appraise\/([A-Za-z0-9]{3,12})(\/result)?$/);
+  const m = path.match(/^\/api\/appraise\/([A-Za-z0-9]{3,12})(\/result|\/request)?$/);
   if (!m) return json({ ok: false, error: "not found" }, 404);
   const code = m[1].toUpperCase();
-  return m[2] ? handBack(request, env, code) : read(request, env, code);
+  if (m[2] === "/request") return freeze(request, env, code);
+  return m[2] ? handBack(request, env, code, (ids) => ownersOf(env, ids)) : read(request, env, code);
 }
 
 /// THE BOT OPENS ONE: `{ channel, chat, asker, room, weapon, ruler, riven }`.
@@ -93,9 +105,119 @@ async function read(request, env, code) {
     ...(res ? { result: { id: res.id, build: JSON.parse(res.build), thanks: res.thanks } } : {}) });
 }
 
+/// THE BOT FREEZES THE QUESTION: `{ engine, request, context }`, the optimize
+/// request its clean page built (81-appraisal.js `?freeze`) and what turns a
+/// result into a build, stored once — every computer that runs this riven gain
+/// runs exactly it.
+async function freeze(request, env, code) {
+  if (request.method !== "POST") return json({ ok: false, error: "POST only" }, 405);
+  if (!botAuthed(request, env)) return json({ ok: false, error: "unauthorized" }, 401);
+  const text = await request.text();
+  if (text.length > MAX_REQUEST) return json({ ok: false, error: "too large" }, 413);
+  let b;
+  try { b = JSON.parse(text); } catch (_) { return json({ ok: false, error: "not json" }, 400); }
+  if (!ENGINE_ID.test(b.engine || "") || !b.request || typeof b.request !== "object"
+      || !b.context || typeof b.context !== "object") {
+    return json({ ok: false, error: "needs engine, request and context" }, 400);
+  }
+  // THE REQUEST AND WHAT TURNS ITS RESULT INTO A BUILD (68-board-submit.js
+  // `boardBuildContext`), kept together: neither means anything alone.
+  const r = await env.LIBRARY.prepare("UPDATE appraisals SET request = ?, engine = ? WHERE code = ? AND request IS NULL")
+    .bind(JSON.stringify({ request: b.request, context: b.context }), b.engine, code).run();
+  return json({ ok: true, stored: !!r.meta.changes });
+}
+
+// ---- Volunteer work ------------------------------------------------------------
+//
+// A RIVEN GAIN IS ALSO A TASK the community's computers take, as a board order is
+// (worker/verify.js): one nobody has answered goes first — someone is waiting in
+// a chat — then one answered once, to a computer of another owner, until two
+// owners' answers agree on the build, its score and the search's work, which
+// credits both. The search is deterministic for a frozen request, so honest
+// computers agree to the bit; the bot replays the first answer before the chat
+// hears it, so a made-up number is never said.
+
+/// THE CANONICAL TEXT OF A BUILD: keys sorted, so two computers' answers compare.
+const canon = (v) => (Array.isArray(v) ? `[${v.map(canon).join(",")}]`
+  : v && typeof v === "object" ? `{${Object.keys(v).sort().map((k) => `${JSON.stringify(k)}:${canon(v[k])}`).join(",")}}`
+  : JSON.stringify(v));
+
+/// THE TASK FOR `verifier` on the served `engine`, leased, or null. `owners(ids)`
+/// answers who owns each device (worker/verify.js `ownersOf`).
+export async function rivenTask(env, verifier, engine, owners) {
+  const db = env.LIBRARY, now = Date.now();
+  const held = await db.prepare("SELECT 1 FROM appraisals WHERE leased_to = ? AND lease_until > ?").bind(verifier, now).first();
+  if (held) return null;
+  const { results } = await db.prepare(
+    `SELECT a.code, a.weapon, a.ruler, a.request,
+            (SELECT count(*) FROM appraisal_results r WHERE r.code = a.code AND r.verifier IS NOT NULL) AS answered
+       FROM appraisals a
+      WHERE a.request IS NOT NULL AND a.engine = ? AND a.at > ? AND a.agreed_at IS NULL
+        AND (a.lease_until IS NULL OR a.lease_until < ?)
+      ORDER BY (answered = 0) DESC, a.at LIMIT 8`).bind(engine, now - KEEP_MS, now).all();
+  for (const a of results) {
+    if (a.answered >= RIVEN_ANSWERS) continue;
+    const by = (await db.prepare("SELECT verifier FROM appraisal_results WHERE code = ? AND verifier IS NOT NULL")
+      .bind(a.code).all()).results.map((r) => r.verifier);
+    if (by.includes(verifier)) continue;
+    if (by.length) {
+      const own = await owners([verifier, ...by]);
+      const mine = own.get(verifier);
+      if (mine && by.some((v) => own.get(v) === mine)) continue;
+    }
+    const lease = [...crypto.getRandomValues(new Uint8Array(16))].map((x) => x.toString(16).padStart(2, "0")).join("");
+    const took = await db.prepare(`UPDATE appraisals SET lease = ?, lease_until = ?, leased_to = ?
+        WHERE code = ? AND (lease_until IS NULL OR lease_until < ?)`)
+      .bind(lease, now + RIVEN_LEASE_MS, verifier, a.code, now).run();
+    if (took.meta.changes) {
+      const { request, context } = JSON.parse(a.request);
+      return { kind: "riven_gain", lease, code: a.code, weapon: a.weapon, ruler: a.ruler, request, context };
+    }
+  }
+  return null;
+}
+
+/// A VOLUNTEER'S ANSWER, under its lease: kept like any build handed back, and
+/// once two owners' answers agree, the work credited to both.
+async function volunteerAnswer(env, a, b, now, owners) {
+  if (!VERIFIER_ID.test(b.verifier || "") || !LEASE_ID.test(b.lease || "")
+      || !Number.isSafeInteger(b.work) || b.work < 0 || typeof b.score !== "number" || !Number.isFinite(b.score)) {
+    return json({ ok: false, error: "bad answer" }, 400);
+  }
+  const db = env.LIBRARY;
+  if (a.lease !== b.lease || a.leased_to !== b.verifier || !(a.lease_until >= now)) return json({ ok: true, first: false });
+  const key = canon(b.build);
+  await db.batch([
+    db.prepare(`INSERT INTO appraisal_results (code, build, thanks, at, verifier, score, work, key) VALUES (?, ?, '', ?, ?, ?, ?, ?)`)
+      .bind(a.code, JSON.stringify(b.build), now, b.verifier, b.score, b.work, key),
+    db.prepare("UPDATE appraisals SET lease = NULL, lease_until = NULL, leased_to = NULL WHERE code = ?").bind(a.code),
+  ]);
+  const { results } = await db.prepare(
+    "SELECT verifier, score, work, key FROM appraisal_results WHERE code = ? AND verifier IS NOT NULL ORDER BY id").bind(a.code).all();
+  const own = await owners(results.map((r) => r.verifier));
+  const ownerOf = (v) => own.get(v) || v;
+  for (let i = 0; i < results.length; i++) {
+    for (let j = i + 1; j < results.length; j++) {
+      const x = results[i], y = results[j];
+      if (x.key !== y.key || x.score !== y.score || x.work !== y.work || ownerOf(x.verifier) === ownerOf(y.verifier)) continue;
+      const won = await db.prepare("UPDATE appraisals SET agreed_at = ? WHERE code = ? AND agreed_at IS NULL").bind(now, a.code).run();
+      if (!won.meta.changes) return json({ ok: true, first: !a.done_at });
+      const today = new Date(now).toISOString().slice(0, 10);
+      await db.batch([x, y].flatMap((r) => [
+        db.prepare("UPDATE verifiers SET work = work + ? WHERE id = ?").bind(r.work, r.verifier),
+        db.prepare(`INSERT INTO verifier_days (verifier, day, work) VALUES (?, ?, ?)
+          ON CONFLICT (verifier, day) DO UPDATE SET work = work + excluded.work`).bind(r.verifier, today, r.work),
+      ]));
+      return json({ ok: true, first: !a.done_at });
+    }
+  }
+  return json({ ok: true, first: !a.done_at });
+}
+
 /// A BUILD HANDED BACK: `{ build, thanks }`, a board record and an optional name.
-/// Every one is kept until the bot judges it; the first it accepts wins.
-async function handBack(request, env, code) {
+/// Every one is kept until the bot judges it; the first it accepts wins. One sent
+/// under a volunteer lease carries `{ lease, verifier, score, work }` instead.
+async function handBack(request, env, code, owners = async () => new Map()) {
   if (request.method !== "POST") return json({ ok: false, error: "POST only" }, 405);
   if (env.OCR_LIMIT) {
     const { success } = await env.OCR_LIMIT.limit({ key: "appraise" + (request.headers.get("cf-connecting-ip") || "unknown") });
@@ -107,8 +229,9 @@ async function handBack(request, env, code) {
   try { b = JSON.parse(text); } catch (_) { return json({ ok: false, error: "not json" }, 400); }
   if (!b.build || typeof b.build !== "object" || !Array.isArray(b.build.mods)) return json({ ok: false, error: "needs build" }, 400);
   const db = env.LIBRARY, now = Date.now();
-  const a = await db.prepare("SELECT code, done_at, at FROM appraisals WHERE code = ?").bind(code).first();
+  const a = await db.prepare("SELECT code, done_at, at, lease, lease_until, leased_to FROM appraisals WHERE code = ?").bind(code).first();
   if (!a || a.at < now - KEEP_MS) return json({ ok: false, error: "no such appraisal" }, 404);
+  if (b.lease !== undefined) return volunteerAnswer(env, a, b, now, owners);
   await db.prepare("INSERT INTO appraisal_results (code, build, thanks, at) VALUES (?, ?, ?, ?)")
     .bind(code, JSON.stringify(b.build), cleanThanks(b.thanks), now).run();
   return json({ ok: true, first: !a.done_at });

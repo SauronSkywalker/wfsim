@@ -7,7 +7,7 @@
 import { readFileSync } from "node:fs";
 import { loadEngine, SITE } from "./engine.mjs";
 import { makeAnswer } from "./answer.mjs";
-import { renderCard, renderCardWith } from "./render.mjs";
+import { renderCard, renderCardWith, freezeRequest } from "./render.mjs";
 import { relayWorld } from "./world.mjs";
 
 const ENV_FILE = process.env.BOT_ENV || "/etc/wfsim-bot.env";
@@ -79,7 +79,20 @@ async function openAppraisal(row, ask) {
     authorization: `Bearer ${env.BOT_RELAY_TOKEN}` }, body: JSON.stringify({ ...ask, channel: "qq",
     chat: { kind: row.kind, msg_id: d.id, msg_at: row.at, ...(group ? { group_openid: d.group_openid } : { user_openid: d.author.user_openid }) },
     asker: (d.author && (d.author.member_openid || d.author.user_openid)) || "unknown", room: group ? d.group_openid : "" }) });
-  return r.json().catch(() => ({ ok: false, error: String(r.status) }));
+  const opened = await r.json().catch(() => ({ ok: false, error: String(r.status) }));
+  if (opened.ok && opened.code) freezeAppraisal(opened.code).catch((e) => console.error("freeze", opened.code, e && e.message));
+  return opened;
+}
+
+/// …AND ITS QUESTION FROZEN, so the community's computers can run it: the link
+/// opened with `?freeze` in a clean browser context, and what that page builds
+/// stored with the appraisal (worker/appraise.js §"Volunteer work"). Until it
+/// is stored nobody but a scan can answer it.
+async function freezeAppraisal(code) {
+  const frozen = await freezeRequest(`${SITE}/appraise/${code}?freeze=1`);
+  const r = await fetch(`${SITE}/api/appraise/${code}/request`, { method: "POST", headers: { "content-type": "application/json",
+    authorization: `Bearer ${env.BOT_RELAY_TOKEN}` }, body: JSON.stringify(frozen) });
+  if (!r.ok) throw new Error(`store: ${r.status}`);
 }
 
 // ---- riven appraisals: judge what came back, tell the chat once ----------------

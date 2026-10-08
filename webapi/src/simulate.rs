@@ -939,6 +939,8 @@ fn simulate_from(v: &Value, work: Work, on_run: &mut impl FnMut(u32, u32)) -> Va
             / s.duration_seconds.max(1e-9),
         "kills_min": s.min_kills,
         "kills_max": s.max_kills,
+        // WHAT THE RUNS COST (`Shard::work`), for a search run as volunteer work.
+        "work": s.work,
         "dps": s.mean_effective_damage / s.duration_seconds.max(1e-9),
         "shots": s.mean_shots,
         "pellets": s.mean_pellets,

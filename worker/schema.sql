@@ -331,8 +331,19 @@ CREATE TABLE IF NOT EXISTS appraisals (
   at       INTEGER NOT NULL,
   winner   INTEGER,
   done_at  INTEGER,
-  told_at  INTEGER
+  told_at  INTEGER,
+  -- AS VOLUNTEER WORK (worker/appraise.js §"Volunteer work"): the search frozen
+  -- once by the bot, the engine it is for, the lease of the computer running it,
+  -- and when two owners' computers agreed on its answer.
+  request     TEXT,
+  engine      TEXT,
+  lease       TEXT,
+  lease_until INTEGER,
+  leased_to   TEXT,
+  agreed_at   INTEGER
 );
+--   ALTER TABLE appraisals ADD COLUMN request TEXT;  (and engine, lease, leased_to TEXT;
+--   lease_until, agreed_at INTEGER) — the live table was made before them.
 CREATE INDEX IF NOT EXISTS appraisals_by_asker ON appraisals (channel, asker, at);
 CREATE TABLE IF NOT EXISTS appraisal_results (
   id         INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -342,8 +353,15 @@ CREATE TABLE IF NOT EXISTS appraisal_results (
   at         INTEGER NOT NULL,
   claimed_at INTEGER,
   checked_at INTEGER,
-  verdict    TEXT
+  verdict    TEXT,
+  -- A VOLUNTEER'S ANSWER: whose computer, its winner's score, the search's work,
+  -- and the build's canonical text, which two answers must share to agree.
+  verifier   TEXT,
+  score      REAL,
+  work       INTEGER,
+  key        TEXT
 );
+--   ALTER TABLE appraisal_results ADD COLUMN verifier TEXT;  (and key TEXT; score REAL; work INTEGER)
 CREATE INDEX IF NOT EXISTS appraisal_results_by_code ON appraisal_results (code);
 
 -- EVERY VOID FISSURE THE GAME OPENS, from the world state the bot server relays

@@ -349,7 +349,9 @@ avatar is that file rendered to a PNG and uploaded on QQ's console by hand.
 
 ## Riven appraisal
 
-A reader's OWN riven is answered by the optimizer, run in the browser of whoever
+A reader's OWN riven — what it GAINS a weapon, a riven gain (裂罅收益) on every
+page and in every chat; "appraisal" stays in ids and the wire — is answered by
+the optimizer, run by the community's computers or in the browser of whoever
 opens the link — never by re-scoring known builds, which is the board's
 question (docs/BOARD.md §"The Riven Analyst").
 
@@ -367,7 +369,23 @@ question (docs/BOARD.md §"The Riven Analyst").
    optimizer are untouched. Every finalist goes to the board unasked; the winner
    goes back to the appraisal as a BUILD with an optional name to thank —
    never a score.
-3. The channel's bot claims what came back (`/api/appraise/claim`), replays the
+   THE SAME LINK WITH `?freeze` sets that search up and stops, writing
+   `{ engine, request, context }` to `body[data-request]`: the optimize request
+   the page would send and what turns a result into a build
+   (`boardBuildContext`). The bot opens it right after the appraisal, in a
+   browser context of its own with no storage (`bot/render.mjs`
+   `freezeRequest`), and stores it once (`/api/appraise/<code>/request`).
+3. ANY COMPUTER COMPUTING FOR THE BOARD runs it (worker/appraise.js
+   §"Volunteer work"): `/api/board/work` hands a frozen riven gain nobody has
+   answered before any board order, on the served engine only, and its page
+   runs the request through a search of its own (`quickFleet`, the reader's
+   optimizer untouched) and sends the build under its lease with the search's
+   work. Then it goes to a computer of another owner; two owners' answers
+   equal in build, score and work credit both, as a board fact does. The
+   search is deterministic for a frozen request, so honest computers agree to
+   the bit. The chat is told the community is on it, and the link stays as
+   the asker's own faster way.
+4. The channel's bot claims what came back (`/api/appraise/claim`), replays the
    build itself with the card's real rolls, and the first build it accepts
    wins once; later ones are kept on the board and not announced. It answers
    as a passive reply while QQ's window is open (`bot/qq.mjs`), past it as an

@@ -32,8 +32,11 @@ function isolateAppraisalStorage() {
 }
 
 /// THE LINK, ANSWERED: read the appraisal, put the address on its weapon's
-/// optimizer, draw that page, then set it up and start.
-async function openAppraisal(code) {
+/// optimizer, draw that page, then set it up and start. `freeze` sets it up and
+/// stops there, writing the search it would run to `body[data-request]` — what
+/// the bot stores once, from a browser that holds nothing of anyone's, so every
+/// computer that runs this riven gain searches the same question.
+async function openAppraisal(code, freeze = false) {
   isolateAppraisalStorage();
   let job = null;
   try {
@@ -51,15 +54,21 @@ async function openAppraisal(code) {
   history.replaceState(null, "", `${weaponPath(w.id)}/optimizer`);
   await route();
   renderAppraisal();
-  if (job.done) return;
+  if (job.done && !freeze) return;
   try {
     await setUpAppraisal(w, job);
+    if (freeze) {
+      const context = { ...boardBuildContext(), rivens: { [appraisal.rivenMod]: boardRivenShape(appraisal.rivenMod) } };
+      document.body.dataset.request = JSON.stringify({ engine: ENGINE_ID, request: optimizeBody(), context });
+      return;
+    }
     appraisal.phase = "searching";
     renderAppraisal();
     await runOptimize();
   } catch (e) {
     appraisal.phase = "failed";
     appraisal.error = String((e && e.message) || e);
+    if (freeze) document.body.dataset.request = JSON.stringify({ error: appraisal.error });
     renderAppraisal();
   }
 }

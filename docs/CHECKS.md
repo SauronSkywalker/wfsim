@@ -68,7 +68,11 @@ asker's riven, pinned, beside each element's 60/60 card — answering one build
 at ten fights a candidate; the search starts with no click; the reader's own
 presets, rivens and checkpoint are left exactly as they were; the winner goes
 back as a build carrying that riven's shape and the typed name and no score;
-and the finalists reach the board even with uploading switched off.
+and the finalists reach the board even with uploading switched off. The same
+link with `?freeze` writes the request the search sent and its engine, starting
+nothing; and that frozen request and context, run as volunteer work through the
+background's own search, answers the same build to the key, under its lease,
+with the search's work.
 
 ## `check_agent_door`
 
@@ -213,6 +217,18 @@ signed out, it says how to count the work under a name. Signed in, every device
 of the account is listed by its name with this browser marked, with what each
 is doing or when it last answered; one claimed before it had a name is given
 its guess; a device is renamed inline and removed after an inline question.
+
+## `check_riven_gain`
+
+Plain node against `worker/schema.sql` and `worker/accounts.sql`, the served
+engine stubbed. Only the bot freezes a riven gain's question, and only once; a
+computer asking for work is handed a frozen one nobody answered before any
+board order, only on the served engine, and nobody else holds it meanwhile; an
+answer counts only under its own lease; one answer credits nobody; the second
+run never goes to a computer of the same owner but does to another's; unequal
+answers credit nobody and a third computer is asked; two owners' equal answers
+credit both, the work and the day, and not the one that differed; after which
+it is handed out no more.
 
 ## `check_contribution`
 

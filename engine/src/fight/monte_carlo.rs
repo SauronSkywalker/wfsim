@@ -21,6 +21,9 @@ pub struct Summary {
     /// damage is: neither answers the other's question.
     pub by_seat: [SeatCounters; MAX_COMBATANTS],
     pub runs: u32,
+    /// THE WORK THESE RUNS TOOK — [`Shard::work`] — so a search that runs many
+    /// of them can say what it cost, as a board order does.
+    pub work: u64,
     pub duration_seconds: f64,
     pub mean_damage: f64,
     pub dps: f64,
@@ -618,6 +621,7 @@ impl Shard {
     /// run count, which is why none of it can live in the shard.
     pub fn finish(self, params: &FightParams, _runs: u32) -> (Summary, RunSeries) {
         let runs = self.runs;
+        let work = self.work();
         let series = self.series.clone();
         let (sum, sum_sq, min, max) = (self.sum, self.sum_sq, self.min, self.max);
         let (effective, effective_sq, dot) = (self.effective, self.effective_sq, self.dot);
@@ -672,6 +676,7 @@ impl Shard {
         mean_damage_by_combatant,
         by_seat: self.seat_counters,
         runs,
+        work,
         duration_seconds: params.duration_seconds,
         mean_damage: mean,
         dps: mean / params.duration_seconds,

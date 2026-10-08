@@ -110,9 +110,20 @@ function woptMerge(parts) {
 /// it answers with the result. Every worker is busy on every batch, whatever
 /// the number of starts.
 function woptQuickFleet(body, n) {
+  const job = quickFleet(body, n);
+  wopt = job;
+  return { ok: true, job_id: job.id };
+}
+
+/// …ONE SUCH SEARCH, as a job object of its own: the reader's optimizer holds
+/// one (`wopt`), and a riven gain run for someone else holds another, so
+/// neither waits on the other. `pace` is awaited before every round — the
+/// background's way to let the reader go first. The result carries `work`:
+/// what every scorer's fights and the final round cost (`Shard::work`).
+function quickFleet(body, n, pace = async () => {}) {
   const job = { id: woptNextId++, workers: [], status: null, result: null, board: null,
     cancelled: false, shards: n, t0: Date.now() };
-  const done = { builds: 0, fights: 0 };
+  const done = { builds: 0, fights: 0, work: 0 };
   const live = new Array(n).fill(null);
   // Where each start stands, as the leader last reported it.
   let starts = [];
@@ -144,12 +155,13 @@ function woptQuickFleet(body, n) {
   (async () => {
     let scores = [];
     for (let step = 0; ; step++) {
+      await pace();
       if (job.cancelled || job.result) return;
       // The leader's own progress matters only once it reaches the final round.
       const r = await call(0, { ...body, quick_fleet: { lead: true, fresh: step === 0, scores } },
         (p) => { if (p.rounds) job.status = p; });
       if (!r || job.cancelled) return;
-      if (!r.pending) { job.result = r; stop(); return; }
+      if (!r.pending) { job.result = { ...r, work: done.work + (r.final_work || 0), fights: done.fights }; stop(); return; }
       starts = r.progress || starts;
       const per = Math.ceil(r.pending.length / n);
       const outs = await Promise.all(Array.from({ length: n }, (_, i) => {
@@ -164,12 +176,12 @@ function woptQuickFleet(body, n) {
       scores = outs.flatMap((o) => o.scores || []);
       done.builds += scores.length;
       done.fights += outs.reduce((a, o) => a + (o.fights || 0), 0);
+      done.work += outs.reduce((a, o) => a + (o.work || 0), 0);
       live.fill(null);
       show();
     }
   })();
-  wopt = job;
-  return { ok: true, job_id: job.id };
+  return job;
 }
 
 function woptStart(body, checkpoint) {

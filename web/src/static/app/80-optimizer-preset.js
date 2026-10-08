@@ -247,37 +247,45 @@ let optLastStatus = null; // the running job's last poll, which the door reads
 
 const postJson = (url, body) => api(url, body);
 
+/// THE SEARCH THE PAGE WOULD RUN, as the request it sends — read off the builder
+/// and the optimizer as they stand. A riven gain freezes it once, on a page that
+/// holds nothing of anyone's (81-appraisal.js), so every computer searches the
+/// same question.
+function optimizeBody() {
+  // NO SCOPE: the server searches every candidate the quick calc offers.
+  const starts = startsPayload();
+  return {
+    weapon: $("weapon").value,
+    rivens: rivenPayload(),
+    // The quick calc's every-rank list: those cards are candidates at each rank.
+    every_rank: everyRank(),
+    mode,
+    valence_element: valence.element,
+    valence_bonus: valence.bonus,
+    ...(assembly ? { assembly: { ...assembly } } : {}),
+    // THE STANCE, PINNED TO THE BUILDER'S — a stance decides what a swing
+    // IS, and no position of the descent ranges over it.
+    stance: slotModId(slots[STANCE]) || "",
+    // THE FIGHT, WHOLE AND DERIVED — `theFight()`, the call the simulator
+    // makes, so a candidate is scored under the fight the replay runs.
+    ...theFight(),
+    // The best N of every whole build the starts' sweeps scored, each
+    // re-measured at the final runs.
+    finalists: optRun.finalists,
+    strategy: "quick",
+    starts, candidate_runs: optRun.candidate_runs,
+    // What the player ruled out; the rest of the builder's lists is the scope.
+    limits: opt.limits,
+  };
+}
+
 async function runOptimize() {
   clearCheckpoint(); // a fresh run supersedes any interrupted one
   optLastStatus = null;
   $("run-opt").disabled = true; $("run-opt").textContent = "Optimizing…";
   $("opt-results").innerHTML = `<div class="placeholder">starting…</div>`;
   try {
-    // NO SCOPE: the server searches every candidate the quick calc offers.
-    const starts = startsPayload();
-    const body = {
-      weapon: $("weapon").value,
-      rivens: rivenPayload(),
-      // The quick calc's every-rank list: those cards are candidates at each rank.
-      every_rank: everyRank(),
-      mode,
-      valence_element: valence.element,
-      valence_bonus: valence.bonus,
-      ...(assembly ? { assembly: { ...assembly } } : {}),
-      // THE STANCE, PINNED TO THE BUILDER'S — a stance decides what a swing
-      // IS, and no position of the descent ranges over it.
-      stance: slotModId(slots[STANCE]) || "",
-      // THE FIGHT, WHOLE AND DERIVED — `theFight()`, the call the simulator
-      // makes, so a candidate is scored under the fight the replay runs.
-      ...theFight(),
-      // The best N of every whole build the starts' sweeps scored, each
-      // re-measured at the final runs.
-      finalists: optRun.finalists,
-      strategy: "quick",
-      starts, candidate_runs: optRun.candidate_runs,
-      // What the player ruled out; the rest of the builder's lists is the scope.
-      limits: opt.limits,
-    };
+    const body = optimizeBody();
     // STARTED, beside `optimizer.run` for finished: the gap is what was cancelled or failed.
     track("optimizer.start", $("weapon").value);
     const r = await postJson("/api/optimize", body);
