@@ -3,7 +3,8 @@
 // is handed one nobody answered before any board order, only on the engine the
 // site serves; a second goes only to another owner's computer; an answer counts
 // only under its own lease; two owners' equal answers credit both, once, and
-// unequal ones credit nobody.
+// unequal ones credit nobody; and one someone waits on goes to a computer
+// offering many cores, until it has waited long enough for any.
 //   node scripts/check_riven_gain.mjs
 import { appraiseRoute } from "../worker/appraise.js";
 import { verifyRoute, PROTOCOL } from "../worker/verify.js";
@@ -39,9 +40,9 @@ const appraise = async (method, path, body, headers = {}) => {
     ...(body === undefined ? {} : { body: JSON.stringify(body) }) }), env, path);
   return { status: r.status, body: await r.json() };
 };
-const work = async (verifier, engine = "e1") => {
+const work = async (verifier, engine = "e1", lanes = 8) => {
   const r = await verifyRoute(new Request("https://x/api/board/work", { method: "POST",
-    body: JSON.stringify({ verifier, engine, protocol: PROTOCOL, consent: { v: 1, at: "2026-10-08T08:00:00.000Z" } }) }), env, "/api/board/work");
+    body: JSON.stringify({ verifier, engine, protocol: PROTOCOL, consent: { v: 1, at: "2026-10-08T08:00:00.000Z" }, lanes }) }), env, "/api/board/work");
   return (await r.json()).work;
 };
 const bot = { authorization: "Bearer relay" };
@@ -72,6 +73,10 @@ const again = await appraise("POST", `/api/appraise/${code}/request`, { ...FROZE
 check("...once: a second freeze changes nothing", stored.body.stored === true && again.body.stored === false);
 
 check("a computer on another engine is handed nothing", (await work(A, "e0")) === null);
+// FEW CORES WAIT THEIR TURN: a riven gain someone waits on goes to a computer
+// that can run it fast, until it has waited long enough for anyone to take it.
+check("a computer offering few cores is not handed a fresh riven gain", (await work(A, "e1", 2) || {}).kind !== "riven_gain");
+LIBRARY.raw.prepare("UPDATE orders SET lease = NULL, lease_until = NULL, leased_to = NULL").run();
 const t1 = await work(A);
 check("a computer asking for work is handed the riven gain before any board order, frozen question and all",
   t1 && t1.kind === "riven_gain" && t1.code === code && JSON.stringify(t1.request) === JSON.stringify(FROZEN.request)
@@ -115,6 +120,15 @@ check("two owners' equal answers credit both — the work, and the day — and n
   credited(A) === 4e9 && credited(C) === 4e9 && credited(B) === 0 && today(A) === 4e9 && today(C) === 4e9,
   `${credited(A)} ${credited(B)} ${credited(C)}`);
 check("...after which it is handed out no more", (await work(D) || {}).kind !== "riven_gain");
+
+const late = await open("asker2");
+await appraise("POST", `/api/appraise/${late}/request`, FROZEN, bot);
+LIBRARY.raw.prepare("UPDATE orders SET lease = NULL, lease_until = NULL, leased_to = NULL").run();
+LIBRARY.raw.prepare("UPDATE appraisals SET lease = NULL, lease_until = NULL, leased_to = NULL WHERE leased_to = ?").run(D);
+check("...still not in its first two minutes", (await work(D, "e1", 1) || {}).code !== late);
+LIBRARY.raw.prepare("UPDATE orders SET lease = NULL, lease_until = NULL, leased_to = NULL").run();
+LIBRARY.raw.prepare("UPDATE appraisals SET at = ? WHERE code = ?").run(Date.now() - 3 * 60_000, late);
+check("...but past them, any computer takes it", (await work(D, "e1", 1) || {}).code === late);
 
 console.log(failures ? `\n${failures} failed` : "\na riven gain is run by the community and credited when two owners agree");
 process.exitCode = failures ? 1 : 0;

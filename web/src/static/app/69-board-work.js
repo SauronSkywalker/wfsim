@@ -258,7 +258,7 @@ async function workOnce() {
   await claimDevice(id);
   const c = computeConsent();
   const ask = await postBoardWork("/api/board/work",
-    { verifier: id, engine: ENGINE_ID, protocol: 5, consent: { v: c.v, at: c.at } });
+    { verifier: id, engine: ENGINE_ID, protocol: 5, consent: { v: c.v, at: c.at }, lanes: communityLanes() });
   if (ask && ask.stale && !boardStale) { boardStale = true; renderBoardConsent(); }
   maybeReloadForRelease();
   const w = ask && ask.work;

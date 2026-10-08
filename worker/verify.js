@@ -7,7 +7,7 @@
 // `CLIENTS_PER_FACT` equal results make a fact in `scores`. Nothing here
 // computes a number.
 //
-//   POST /api/board/work    { verifier, engine, protocol, consent }                       → { work: { lease, record, ruler, mode } | null, stale? }
+//   POST /api/board/work    { verifier, engine, protocol, consent, lanes }                → { work: { lease, record, ruler, mode } | null, stale? }
 //        — or `work: { kind: "riven_gain", lease, code, weapon, ruler, request, context }`, a
 //        riven gain someone is waiting on (worker/appraise.js §"Volunteer work").
 //   POST /api/board/verify  { lease, verifier, engine, score, metric, work, compute_ms }  → { ok }
@@ -159,7 +159,10 @@ async function work(request, env) {
   // A RIVEN GAIN FIRST: someone is waiting on it in a chat. It holds its own
   // lease, so a client on one gets nothing more here either.
   {
-    const riven = await rivenTask(env, b.verifier, engine, (ids) => ownersOf(env, ids));
+    // HOW MANY CORES IT CAN GIVE NOW (69-board-work.js `communityLanes`), which
+    // decides whether a riven gain someone waits on is its to take.
+    const lanes = Number.isInteger(b.lanes) && b.lanes > 0 && b.lanes <= 256 ? b.lanes : 1;
+    const riven = await rivenTask(env, b.verifier, engine, (ids) => ownersOf(env, ids), lanes);
     if (riven) return json({ ok: true, work: riven });
     const busy = await db.prepare("SELECT 1 FROM appraisals WHERE leased_to = ? AND lease_until > ?").bind(b.verifier, now).first();
     if (busy) return json({ ok: true, work: null });

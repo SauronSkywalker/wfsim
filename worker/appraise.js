@@ -20,6 +20,13 @@ const MAX_BUILD = 8_000, MAX_THANKS = 24;
 const MAX_REQUEST = 65_536;
 /// How long a volunteer computer holds a riven gain before another may take it.
 export const RIVEN_LEASE_MS = 15 * 60_000;
+/// A RIVEN GAIN SOMEONE IS WAITING ON GOES TO A COMPUTER THAT CAN RUN IT FAST:
+/// one offering at least `RIVEN_MIN_LANES` idle cores, until it has waited
+/// `RIVEN_WAIT_MS` unanswered — then to any. A search is many short steps one
+/// after another, so it is cores on one computer, not computers, that make it
+/// quick (private/plans/fx-volunteer-compute.md, the CTFSU timing).
+export const RIVEN_MIN_LANES = 4;
+export const RIVEN_WAIT_MS = 2 * 60_000;
 /// Answers after which a riven gain stops being handed out to agree on.
 const RIVEN_ANSWERS = 3;
 const VERIFIER_ID = /^[a-z0-9]{16,40}$/;
@@ -151,12 +158,12 @@ const canon = (v) => (Array.isArray(v) ? `[${v.map(canon).join(",")}]`
 
 /// THE TASK FOR `verifier` on the served `engine`, leased, or null. `owners(ids)`
 /// answers who owns each device (worker/verify.js `ownersOf`).
-export async function rivenTask(env, verifier, engine, owners) {
+export async function rivenTask(env, verifier, engine, owners, lanes = 1) {
   const db = env.LIBRARY, now = Date.now();
   const held = await db.prepare("SELECT 1 FROM appraisals WHERE leased_to = ? AND lease_until > ?").bind(verifier, now).first();
   if (held) return null;
   const { results } = await db.prepare(
-    `SELECT a.code, a.weapon, a.ruler, a.request,
+    `SELECT a.code, a.weapon, a.ruler, a.request, a.at,
             (SELECT count(*) FROM appraisal_results r WHERE r.code = a.code AND r.verifier IS NOT NULL) AS answered
        FROM appraisals a
       WHERE a.request IS NOT NULL AND a.engine = ? AND a.at > ? AND a.agreed_at IS NULL
@@ -164,6 +171,7 @@ export async function rivenTask(env, verifier, engine, owners) {
       ORDER BY (answered = 0) DESC, a.at LIMIT 8`).bind(engine, now - KEEP_MS, now).all();
   for (const a of results) {
     if (a.answered >= RIVEN_ANSWERS) continue;
+    if (a.answered === 0 && lanes < RIVEN_MIN_LANES && now - a.at < RIVEN_WAIT_MS) continue;
     const by = (await db.prepare("SELECT verifier FROM appraisal_results WHERE code = ? AND verifier IS NOT NULL")
       .bind(a.code).all()).results.map((r) => r.verifier);
     if (by.includes(verifier)) continue;

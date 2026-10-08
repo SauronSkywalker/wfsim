@@ -235,7 +235,9 @@ board order, only on the served engine, and nobody else holds it meanwhile; an
 answer counts only under its own lease; one answer credits nobody; the second
 run never goes to a computer of the same owner but does to another's; a
 computer still searching keeps its lease running on and one that does not hold
-it changes nothing; the chat is told once that a computer took it; unequal
+it changes nothing; the chat is told once that a computer took it; a computer
+offering few cores is not handed a fresh one until it has waited two minutes,
+then any is; unequal
 answers credit nobody and a third computer is asked; two owners' equal answers
 credit both, the work and the day, and not the one that differed; after which
 it is handed out no more.
