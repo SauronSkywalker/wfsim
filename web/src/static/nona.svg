@@ -18,7 +18,7 @@
     <path fill="#f1dfb5" d="M86 296 C70 150 160 98 256 98 C352 98 442 150 426 296
       C424 330 416 360 400 372 C384 330 382 270 372 240 Q322 244 300 196 Q284 236 240 242 Q222 212 212 196
       Q190 244 140 240 C130 270 128 330 112 372 C96 360 88 330 86 296 Z"/>
-    
+    <g fill="none" stroke-width="8"><path d="M170 250 Q188 238 206 248"/><path d="M306 248 Q324 238 342 250"/></g>
     <g stroke="none"><g transform="translate(188 300) scale(1.4) translate(-196 -300)"><ellipse cx="196" cy="300" rx="21" ry="27" fill="#0b0b0b"/><circle cx="203" cy="289" r="8" fill="#fff"/><g stroke="#0b0b0b" stroke-width="1.6" stroke-linecap="round" fill="none"><path d="M203 281v5M203 292v5M195 289h5M206 289h5"/></g></g><g transform="translate(324 300) scale(1.4) translate(-316 -300)"><ellipse cx="316" cy="300" rx="21" ry="27" fill="#0b0b0b"/><circle cx="323" cy="289" r="8" fill="#fff"/><g stroke="#0b0b0b" stroke-width="1.6" stroke-linecap="round" fill="none"><path d="M323 281v5M323 292v5M315 289h5M326 289h5"/></g></g></g>
     <g fill="#e9b86a" stroke="none"><ellipse cx="152" cy="356" rx="21" ry="10.5"/><ellipse cx="360" cy="356" rx="21" ry="10.5"/></g>
     <path d="M236 350 q10 12 20 0 q10 12 20 0" fill="none"/>
