@@ -8,10 +8,13 @@
 // what each fight cost its client is kept beside it. Equal includes the WORK,
 // which a fact credits to every client that measured it; and a further result
 // never comes from a device of the same owner (docs/BOARD.md §"Contribution").
+// A scorer run's claim takes the old rows no client holds, and no client is
+// handed one until its release (scripts/fetch_queue.sh).
 //   node scripts/check_board_verify.mjs
 import { verifyRoute, LEASE_MS, PROTOCOL } from "../worker/verify.js";
 import { DatabaseSync } from "node:sqlite";
 import { readFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
 
 let failures = 0;
 const check = (what, ok, detail = "") => {
@@ -230,20 +233,31 @@ check("...but from another owner's", wu.work && row("owned").leased_to === U);
 db.prepare("UPDATE orders SET lease = NULL, lease_until = NULL, leased_to = NULL WHERE identity = 'owned'").run();
 check("...or from a device nobody claimed", (await work(V)).work && row("owned").leased_to === V);
 
-// THE HOLD: an order past it is the scorer's, and no client is handed it.
-const held = { ...env, HOLD_SECONDS: 7200 };
-const workHeld = async (v) => (await callIn(held, "/api/board/work", { verifier: v, engine: "e1", protocol: PROTOCOL, consent: YES })).work;
+// THE CLAIM (scripts/fetch_queue.sh): an old order nobody holds is the scorer
+// run's, and while it is no client is handed it; one a client holds stays its.
+const body = (...a) => JSON.parse(execFileSync("bash", ["scripts/fetch_queue.sh", "--body", ...a],
+  { env: { ...process.env, HOLD_SECONDS: "14400" }, encoding: "utf8" }));
+const sql = (b) => db.prepare(b.sql.replaceAll("unixepoch()", String(Math.floor(Date.now() / 1000))));
 const W = "w".repeat(24), X = "x".repeat(24), Y = "y".repeat(24);
 db.prepare("UPDATE orders SET state = 'settled'").run();
-order("late");
-order("lateopen", "open", { score: SCORE, metric: "kpm", engine: "e1", produced_by: R, clients: R });
+db.prepare("DELETE FROM queue").run();
+db.prepare("INSERT INTO batches (id, at, why, total) VALUES ('arrivals', '2026-01-01', 'check', 4)").run();
+order("old");
+order("oldopen", "open", { score: SCORE, metric: "kpm", engine: "e1", produced_by: R, clients: R });
+order("oldheld", "todo", { leased_to: X, lease: "b".repeat(32), lease_until: Date.now() + LEASE_MS });
 order("young");
 db.prepare("UPDATE orders SET at = ? WHERE identity = 'young'").run(Date.now() - 60_000);
-const wy = await workHeld(W);
-check("an order inside the hold is handed to a client", wy && row("young").leased_to === W);
-check("...and one past it is not, to anybody", (await workHeld(X)) === null && (await workHeld(Y)) === null);
-check("...it is marked lapsed where it was found, and so is an open one",
-  row("late").state === "lapsed" && row("lateopen").state === "lapsed", `${row("late").state} ${row("lateopen").state}`);
+sql(body("claim")).run(...body("claim").params);
+check("a run claims every old order no client holds, open or not",
+  row("old").state === "scoring:todo" && row("oldopen").state === "scoring:open", `${row("old").state} ${row("oldopen").state}`);
+check("...and leaves a held one and a young one to the clients", row("oldheld").state === "todo" && row("young").state === "todo");
+const page = body("page", "100", "0");
+const read = sql(page).all(...page.params).map((r) => r.build_id).sort();
+check("...and reads exactly what it claimed", JSON.stringify(read) === JSON.stringify(["old", "oldopen"]), JSON.stringify(read));
+const wy = await work(W);
+check("no client is handed a claimed order", wy.work && row("young").leased_to === W && (await work(Y)).work === null);
+sql(body("release")).run(...body("release").params);
+check("the release hands what the run left back as it was", row("old").state === "todo" && row("oldopen").state === "open");
 
 console.log(failures ? `\n${failures} failed` : "\nan order reaches the board when CLIENTS_PER_FACT clients measured the same bits");
 process.exitCode = failures ? 1 : 0;

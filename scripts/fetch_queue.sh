@@ -54,10 +54,11 @@ d1() {
 # A ROW WHOSE BATCH IS GONE IS NOT READ. An inner join, so deleting a batch is
 # the whole of cancelling it: the rows stop being asked for and nothing has to
 # go and find them.
-# `HOLD_SECONDS` LEAVES A YOUNG COMPUTE ORDER TO THE CLIENTS: a row whose order
-# opened less than that long ago is not read, so the scorer takes only what the
-# machines with the site open have not finished (docs/BOARD.md §"Compute
-# orders"). Unset, every owed row is read — which is what a reconciliation needs.
+# `HOLD_SECONDS` LEAVES A YOUNG COMPUTE ORDER TO THE CLIENTS, and an old one to
+# whoever reaches it first (docs/BOARD.md §"Compute orders"). A run CLAIMS the
+# old ones before it reads (`claim_body`), and reads only what it claimed or
+# what has no order the clients could take, so no row is fought twice. Unset,
+# every owed row is read — which is what a reconciliation needs.
 page_body() {
   if [ -n "${HOLD_SECONDS:-}" ]; then
     jq -n -c --argjson limit "$1" --argjson offset "$2" --argjson hold "$HOLD_SECONDS" '
@@ -65,10 +66,11 @@ page_body() {
         sql: ("SELECT q.batch, q.build_id, q.ruler, q.mode FROM queue q"
               + " JOIN batches b ON b.id = q.batch"
               + " WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.identity = q.build_id"
-              + " AND o.ruler = q.ruler AND o.mode = q.mode AND o.at > (unixepoch() - ?) * 1000)"
+              + " AND o.ruler = q.ruler AND o.mode = q.mode"
+              + " AND (o.at > (unixepoch() - ?) * 1000 OR o.state IN (?, ?)))"
               + " ORDER BY b.at, q.batch, q.build_id, q.ruler, q.mode"
               + " LIMIT ? OFFSET ?"),
-        params: [$hold, $limit, $offset]
+        params: [$hold, "todo", "open", $limit, $offset]
       }'
     return
   fi
@@ -80,6 +82,29 @@ page_body() {
             + " LIMIT ? OFFSET ?"),
       params: [$limit, $offset]
     }'
+}
+
+# THE CLAIM: every old `todo` or `open` order no client holds a live lease on
+# becomes `scoring:<state>`, which no lease seeks (worker/verify.js reads those
+# two states only), so a client is never handed a row this run is fighting. One
+# a client holds stays its own, and the read above skips it.
+claim_body() {
+  jq -n -c --argjson hold "$HOLD_SECONDS" '
+    {
+      sql: ("UPDATE orders SET state = ? || state"
+            + " WHERE state IN (?, ?) AND at <= (unixepoch() - ?) * 1000"
+            + " AND (lease_until IS NULL OR lease_until < unixepoch() * 1000)"
+            + " AND EXISTS (SELECT 1 FROM queue q WHERE q.build_id = orders.identity"
+            + " AND q.ruler = orders.ruler AND q.mode = orders.mode)"),
+      params: ["scoring:", "todo", "open", $hold]
+    }'
+}
+
+# THE RELEASE: what a run claimed and did not settle goes back to the clients.
+# Run when the run ends, and before every claim, since runs are serialized and
+# a claim left over is one whose run died.
+release_body() {
+  jq -n -c '{ sql: "UPDATE orders SET state = substr(state, 9) WHERE state IN (?, ?)", params: ["scoring:todo", "scoring:open"] }'
 }
 
 fetch() {
@@ -175,6 +200,23 @@ DEAD
 }
 
 if [ "${1:-}" = "--self-test" ]; then self_test; exit $?; fi
+# THE STATEMENTS THEMSELVES, for check_board_verify.mjs to run against the schema.
+if [ "${1:-}" = "--body" ]; then "${2:?claim|release|page}_body" "${@:3}"; exit $?; fi
+
+# A RELEASE OR A CLAIM THAT FAILS FAILS THE RUN: a read without its claim is a
+# list the clients are still being handed, which is every row fought twice.
+send_one() {
+  if ! d1 "$1"; then
+    echo "::error::queue: the database refused the $2 [HTTP $D1_CODE]"
+    [ -s "$D1_OUT" ] && { head -c 500 "$D1_OUT"; echo; }
+    return 1
+  fi
+  echo "queue: $2 — $(jq -r '.result[0].meta.changes // 0' < "$D1_OUT") order(s)"
+}
+if [ "${1:-}" = "--release" ]; then
+  configured || { echo "queue: no database configured, nothing to release"; exit 0; }
+  send_one "$(release_body)" "release"; exit $?
+fi
 
 if ! configured; then
   # NOTHING OWED IS A WORKING STATE, and it is what a machine with no
@@ -182,5 +224,9 @@ if ! configured; then
   : > "${1:?usage: fetch_queue.sh <out.ndjson>}"
   echo "queue: no database configured, nothing owed"
   exit 0
+fi
+if [ -n "${HOLD_SECONDS:-}" ]; then
+  send_one "$(release_body)" "release of a claim left over"
+  send_one "$(claim_body)" "claim"
 fi
 fetch "${1:?usage: fetch_queue.sh <out.ndjson>}"

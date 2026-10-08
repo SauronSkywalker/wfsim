@@ -194,9 +194,10 @@ CREATE INDEX IF NOT EXISTS queue_row ON queue (build_id, ruler, mode);
 -- `state`: todo (nobody has measured it), fresh (one result, not yet ranked),
 -- open (one result, waiting for a second client), arbiter (in its group's top
 -- ten: the server's alone), dispute, spot (verified, recomputed by the server
--- too), verified, rejected, lapsed (past the hold unfinished: the scorer's).
--- `slot` is a random number a lease seeks from, which is what keeps one lease a
--- few rows read however long the book grows. `engine`
+-- too), verified, rejected, and scoring:todo / scoring:open (claimed by a
+-- `scores.yml` run, so no lease seeks it; released when the run ends). `slot`
+-- is a random number a lease seeks from, which is what keeps one lease a few
+-- rows read however long the book grows. `engine`
 -- is the first result's `ENGINE_ID`, and only that engine verifies it. `at` is
 -- when the order was opened, in ms: the scorer leaves a young one to clients.
 -- `clients` is every client that measured it, comma-separated, in the order

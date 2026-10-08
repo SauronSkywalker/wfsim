@@ -110,34 +110,18 @@ async function admit(db, id) {
   return id;
 }
 
-/// HOW LONG AN ORDER IS THE CLIENTS', in seconds: `vars.HOLD_SECONDS` in
-/// wrangler.jsonc, which `scores.yml` reads too, so the scorer takes a row at
-/// the moment the clients stop being offered it. Unset, no order lapses.
-const holdMs = (env) => {
-  const s = Number(env.HOLD_SECONDS);
-  return Number.isFinite(s) && s > 0 ? s * 1000 : Infinity;
-};
-
 /// UP TO `n` LEASABLE ORDERS IN ONE STATE, from a random slot onwards and then
 /// from the start: a seek on `orders_pick`, so a lease reads a few rows however
 /// long the book is.
-/// AN ORDER PAST THE HOLD IS THE SCORER'S, and one found here is marked
-/// `lapsed` instead of handed out: a client fighting it duplicates the fallback,
-/// and marking it keeps the seek a few rows long once a whole rescore lapses.
-async function candidates(db, state, engine, now, n, hold) {
+async function candidates(db, state, engine, now, n) {
   const start = Math.floor(Math.random() * SLOT_SPAN);
   const out = [];
   for (const from of [start, 0]) {
     const { results } = await db.prepare(
-      `SELECT identity, ruler, mode, record, produced_by, clients, at FROM orders
+      `SELECT identity, ruler, mode, record, produced_by, clients FROM orders
         WHERE state = ? AND engine = ? AND slot >= ? AND (lease_until IS NULL OR lease_until < ?)
         ORDER BY slot LIMIT ?`).bind(state, engine, from, now, n).all();
-    for (const o of results) {
-      if (o.at > now - hold) { out.push(o); continue; }
-      await db.prepare(`UPDATE orders SET state = 'lapsed', ${done}
-                         WHERE identity = ? AND ruler = ? AND mode = ? AND state = ? AND (lease_until IS NULL OR lease_until < ?)`)
-        .bind(o.identity, o.ruler, o.mode, state, now).run();
-    }
+    out.push(...results);
     if (out.length) break;
   }
   return out;
@@ -185,13 +169,12 @@ async function work(request, env) {
   }
   // A FURTHER RESULT COMES FROM ANOTHER OWNER: one person's machines agreeing
   // with each other would be one witness counted twice.
-  const hold = holdMs(env);
-  const open = (await candidates(db, "open", engine, now, 4, hold)).filter((o) => !clientsOf(o).includes(b.verifier));
+  const open = (await candidates(db, "open", engine, now, 4)).filter((o) => !clientsOf(o).includes(b.verifier));
   const owners = await ownersOf(env, [b.verifier, ...open.flatMap(clientsOf)]);
   const mine = owners.get(b.verifier);
   const pool = [
     ...open.filter((o) => !mine || !clientsOf(o).some((c) => owners.get(c) === mine)).map((o) => ({ ...o, state: "open" })),
-    ...(await candidates(db, "todo", "", now, 4, hold)).map((o) => ({ ...o, state: "todo" })),
+    ...(await candidates(db, "todo", "", now, 4)).map((o) => ({ ...o, state: "todo" })),
   ];
   for (const o of pool) {
     const key = [o.identity, o.ruler, o.mode];

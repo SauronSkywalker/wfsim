@@ -67,9 +67,9 @@ is how they are kept:
    the SPOT CHECK that keeps colluding clients a gamble.
 4. **THREE DIALS.** `CLIENTS_PER_FACT` (how many clients must agree),
    `SPOT_SHARE` (how many facts the server recomputes anyway) and the hold
-   (`HOLD_SECONDS`, how long an order is the clients' before the fallback takes
-   it — `vars` in `wrangler.jsonc`, read by the worker and by `scores.yml`).
-   Changing how the board runs is turning one of them.
+   (`HOLD_SECONDS` in `scores.yml`, how long an order is the clients' alone
+   before the fallback may take it). Changing how the board runs is turning one
+   of them.
 5. **ONE ENGINE.** A client works only while its page runs the engine the site
    serves (`release.json`'s `engine`); a result of any other is no result.
 
@@ -672,13 +672,17 @@ row at a time, so the board's growth is more orders, never a heavier client.
   refused: what it agreed to is withdrawn and opened again, what it measured
   first is measured again. Only for an order of the engine the server runs.
   A top-ten order the scorer already measured is settled unfought.
-- **Nobody online** costs nothing. `scores.yml` reads the queue with
-  `HOLD_SECONDS`: a row whose order opened within the hold is the clients'; an
-  older one it measures as it always has. **AND THE CLIENTS STOP AT THE SAME
-  MOMENT**: the worker marks an unleased `todo` or `open` order past the hold
-  `lapsed` where its seek finds it and hands it to nobody, since a client
-  fighting it would duplicate the scorer. A lease already out is let finish. A
-  rescore reopens a lapsed order like a settled one.
+- **Nobody online** costs nothing. An order younger than `HOLD_SECONDS` is
+  the clients' alone. An older one is offered to the clients as before, and
+  goes to whichever reaches it first — **NEVER TO BOTH.** A `scores.yml` run
+  CLAIMS before it reads (`fetch_queue.sh`): every old `todo` or `open` order
+  no client holds a live lease on becomes `scoring:todo` / `scoring:open`,
+  which no lease seeks, and the run reads only those and the rows with no order
+  a client could take. A row a client holds stays the client's and the run
+  skips it. The run's last job releases what it claimed back to its state, and
+  the next run's claim releases first, so a run that died strands nothing.
+  The orders table is the one dispatcher: nothing computes a row it was not
+  handed by it.
 
 **THE CLIENT IS AN ID** its browser made for itself, joined to no submission,
 kept in `verifiers` so a refusal has something to hold, and joined to an

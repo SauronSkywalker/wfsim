@@ -207,7 +207,10 @@ a row nobody owes, a server's order, a live lease and a banned client get
 nothing; a page of an engine the site no longer serves, or of an older
 protocol, is told it is stale; a computer that never said yes is handed
 nothing, and the yes it sent is kept on its row; a client is written once a
-day.
+day. A scorer run's claim (`fetch_queue.sh`, run as the statements it sends)
+takes every old order, open or not, that no client holds, leaves a held one and
+a young one alone, reads exactly what it claimed, hands no client a claimed
+order, and its release puts each back in the state it was in.
 
 ## `check_compute`
 
