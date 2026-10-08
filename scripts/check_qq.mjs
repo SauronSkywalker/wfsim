@@ -45,6 +45,22 @@ check("…and a message whose body was changed is refused", no.status === 401 &&
 await post("/api/qq", event, { "x-signature-timestamp": "100", "x-signature-ed25519": await sign("100", event) });
 check("…and a retried callback is kept once", db.prepare("SELECT COUNT(*) n FROM bot_inbox").get().n === 1);
 
+// A GROUP THAT GIVES THE BOT EVERY MESSAGE sends an @ as GROUP_MESSAGE_CREATE
+// too: an @ of this bot and a command are kept, the room's talk is not.
+const room = async (id, d) => {
+  const e = JSON.stringify({ op: 0, t: "GROUP_MESSAGE_CREATE", d: { id, group_openid: "g1", author: { member_openid: "a1" }, ...d } });
+  await post("/api/qq", e, { "x-signature-timestamp": "100", "x-signature-ed25519": await sign("100", e) });
+  return !!db.prepare("SELECT 1 FROM bot_inbox WHERE id = ?").get(id);
+};
+check("in a group giving every message, an @ of the bot is kept",
+  await room("g-at", { content: "<@!b> zk 托里德", mentions: [{ is_you: true }] }));
+check("…and a command without the @, spaced or not",
+  await room("g-fx", { content: "fx 托里德 暴伤160.9 多重120.7" }) && await room("g-zk", { content: "zk托里德" }) && await room("g-slash", { content: "/帮助" }));
+check("…and the room's own talk is not",
+  !(await room("g-chat", { content: "今天刷什么" })) && !(await room("g-word", { content: "fxxk" })) && !(await room("g-bare", { content: "fx" }))
+  && !(await room("g-other", { content: "<@!c> 你好", mentions: [{ is_you: false }] })));
+db.prepare("DELETE FROM bot_inbox WHERE id LIKE 'g-%'").run();
+
 check("the pull needs the server's token", (await post("/api/qq/claim", {}, { authorization: "Bearer wrong" })).status === 401);
 const auth = { authorization: "Bearer relay" };
 const first = await (await post("/api/qq/claim", {}, auth)).json();

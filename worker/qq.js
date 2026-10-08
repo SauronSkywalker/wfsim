@@ -4,7 +4,19 @@
 // bot answers in `bot_inbox`. It sends nothing: QQ only takes calls from the
 // whitelisted bot server, which claims the rows over `/api/qq/claim`.
 
-const KINDS = new Set(["C2C_MESSAGE_CREATE", "GROUP_AT_MESSAGE_CREATE"]);
+const KINDS = new Set(["C2C_MESSAGE_CREATE", "GROUP_AT_MESSAGE_CREATE", "GROUP_MESSAGE_CREATE"]);
+/// A COMMAND WITHOUT THE @: the word, then a space or the weapon's own script —
+/// "fx 托里德", "zk托里德" — so "fxxk" and a bare "fx" in passing are chat.
+const COMMAND = /^\s*[/／]?\s*(?:fx|zk|pz)(?:\s+\S|[^\x00-\x7F])|^\s*[/／]\s*帮助/i;
+
+/// WHAT IS KEPT: a private chat, an @, and — in a group whose owner gave the bot
+/// every message, where an @ arrives as GROUP_MESSAGE_CREATE too — an @ of this
+/// bot or a command. The rest of the room's talk is never stored.
+export function qqAddressed(kind, d) {
+  if (!KINDS.has(kind) || !d || !d.id) return false;
+  if (kind !== "GROUP_MESSAGE_CREATE") return true;
+  return (d.mentions || []).some((m) => m && m.is_you) || COMMAND.test(String(d.content || ""));
+}
 const CLAIM_MAX = 20;
 /// A claim not marked done within this is handed out again.
 const RECLAIM_MS = 90_000;
@@ -55,7 +67,7 @@ async function qqCallback(request, env) {
   const ok = sig.length === 64 && await crypto.subtle.verify({ name: "Ed25519" }, keys.pub, sig,
     new TextEncoder().encode(ts + body));
   if (!ok) return json({ ok: false, error: "bad signature" }, 401);
-  if (ev.op === 0 && KINDS.has(ev.t) && ev.d && ev.d.id) {
+  if (ev.op === 0 && qqAddressed(ev.t, ev.d)) {
     await env.LIBRARY.prepare("INSERT OR IGNORE INTO bot_inbox (id, channel, kind, body, at) VALUES (?, 'qq', ?, ?, ?)")
       .bind(String(ev.d.id), ev.t, JSON.stringify(ev.d), Date.now()).run();
   }

@@ -328,6 +328,11 @@ rows over `/api/qq/claim` (bearer `BOT_RELAY_TOKEN`), answers each from the
 headless table, and replies through QQ's API; a row is handed to one pull at a
 time, again if it was never marked done, and deleted a day after it arrived.
 
+A GROUP CAN GIVE THE BOT EVERY MESSAGE (its owner, in mobile QQ: 机器人可获取的群聊
+消息范围 → 获取群内全部消息; the console subscribes `GROUP_MESSAGE_CREATE`). Then an
+@ arrives as `GROUP_MESSAGE_CREATE` too, and the door keeps only an @ of this
+bot or a command typed without one (`qqAddressed`); the room's talk is never stored.
+
 Secrets: the worker holds `QQ_APP_SECRET` and `BOT_RELAY_TOKEN`; the server
 holds the AppID, the AppSecret (for its access token) and the same relay token.
 `scripts/check_qq.mjs` holds the door to QQ's published signing example.

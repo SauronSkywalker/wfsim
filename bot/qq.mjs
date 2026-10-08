@@ -30,11 +30,15 @@ async function accessToken() {
   return token.value;
 }
 
+/// A GROUP'S MESSAGE: an @, or any message the worker kept from a group that
+/// gives the bot all of them (worker/qq.js `qqAddressed`).
+const inGroup = (row) => row.kind === "GROUP_AT_MESSAGE_CREATE" || row.kind === "GROUP_MESSAGE_CREATE";
+
 /// THE REPLY'S ADDRESS: a private chat answers its user, a group its group.
 function chatPath(row) {
   const d = row.body;
   if (row.kind === "C2C_MESSAGE_CREATE") return `/v2/users/${d.author.user_openid}`;
-  if (row.kind === "GROUP_AT_MESSAGE_CREATE") return `/v2/groups/${d.group_openid}`;
+  if (inGroup(row)) return `/v2/groups/${d.group_openid}`;
   return null;
 }
 
@@ -69,7 +73,7 @@ async function send(row, ans) {
 /// kept with it, and only this bot reads that back (worker/appraise.js).
 async function openAppraisal(row, ask) {
   const d = row.body;
-  const group = row.kind === "GROUP_AT_MESSAGE_CREATE";
+  const group = inGroup(row);
   const r = await fetch(`${SITE}/api/appraise/new`, { method: "POST", headers: { "content-type": "application/json",
     authorization: `Bearer ${env.BOT_RELAY_TOKEN}` }, body: JSON.stringify({ ...ask, channel: "qq",
     chat: { kind: row.kind, msg_id: d.id, msg_at: row.at, ...(group ? { group_openid: d.group_openid } : { user_openid: d.author.user_openid }) },
@@ -171,7 +175,7 @@ async function appraisalTick() {
 /// A ROOM SPOKE: what it was owed goes out on that message, after its answer.
 async function tellHeld(row) {
   const d = row.body;
-  const k = row.kind === "GROUP_AT_MESSAGE_CREATE" ? `g:${d.group_openid}` : `u:${d.author.user_openid}`;
+  const k = inGroup(row) ? `g:${d.group_openid}` : `u:${d.author.user_openid}`;
   const owed = held.get(k);
   if (!owed || !owed.length) return;
   held.delete(k);
