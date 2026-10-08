@@ -3,8 +3,8 @@
 // docs/BOARD.md §"Contribution". A signed-in page claims the browser it runs
 // in (its verifier id, `69-board-work.js`); the work every fact credited to that
 // id (`verifiers.work`, worker/verify.js) is then the account's. Only the owner
-// is joined to a device, never a submission, and an account is on the public
-// ranking only once it chose to be.
+// is joined to a device, never a submission, and an account with a claimed
+// device is on the public ranking until it chooses to be off it.
 //
 //   GET  /api/account/devices        → { devices: [{ id, claimed_at, points, recent }], points, recent, shown }
 //   POST /api/account/devices/claim  { verifier } → { ok }
@@ -55,7 +55,7 @@ async function devices(env, account) {
   const { results } = await env.ACCOUNTS.prepare(
     "SELECT verifier, claimed_at FROM devices WHERE account = ?1 ORDER BY claimed_at").bind(account).all();
   const work = await workOf(env, results.map((d) => d.verifier));
-  const shown = !!(await env.ACCOUNTS.prepare("SELECT 1 FROM contributors WHERE account = ?1").bind(account).first());
+  const shown = !(await env.ACCOUNTS.prepare("SELECT 1 FROM contribution_hidden WHERE account = ?1").bind(account).first());
   const list = results.map((d) => ({ id: d.verifier.slice(0, 6), claimed_at: d.claimed_at, ...(work.get(d.verifier) || NONE) }));
   return json({ ok: true, shown,
     points: points(list.reduce((s, d) => s + d.work, 0)), recent: points(list.reduce((s, d) => s + d.recent, 0)),
@@ -84,18 +84,19 @@ async function claim(env, account, b) {
 }
 
 async function shown(env, account, b) {
-  await (b.shown === true
-    ? env.ACCOUNTS.prepare("INSERT OR IGNORE INTO contributors (account, shown_at) VALUES (?1, ?2)").bind(account, now().slice(0, 10))
-    : env.ACCOUNTS.prepare("DELETE FROM contributors WHERE account = ?1").bind(account)).run();
+  await (b.shown === false
+    ? env.ACCOUNTS.prepare("INSERT OR IGNORE INTO contribution_hidden (account, hidden_at) VALUES (?1, ?2)").bind(account, now().slice(0, 10))
+    : env.ACCOUNTS.prepare("DELETE FROM contribution_hidden WHERE account = ?1").bind(account)).run();
   return json({ ok: true });
 }
 
-/// THE RANKING: every account that chose to be on it, by the work its devices
+/// THE RANKING: every account with a claimed device that did not choose to be
+/// off it, by the work its devices
 /// were credited — all of it, or the last `RECENT_DAYS` days — most first.
 async function ranking(env, period) {
   const { results } = await env.ACCOUNTS.prepare(
-    `SELECT a.id, a.username, a.display_name, d.verifier FROM contributors c
-       JOIN accounts a ON a.id = c.account JOIN devices d ON d.account = c.account`).all();
+    `SELECT a.id, a.username, a.display_name, d.verifier FROM devices d JOIN accounts a ON a.id = d.account
+       WHERE NOT EXISTS (SELECT 1 FROM contribution_hidden h WHERE h.account = d.account)`).all();
   const work = await workOf(env, results.map((r) => r.verifier));
   const by = new Map();
   for (const r of results) {

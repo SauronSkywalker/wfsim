@@ -465,10 +465,11 @@ function accountComputeBlock() {
     <div class="kv"><dt>${aT("On the ranking")}</dt><dd>${aT(d.shown ? "Your name is shown" : "Not shown")}</dd>
       <button class="ghost-btn btn-sm" data-auth="contribution-shown" data-shown="${d.shown ? "no" : "yes"}">${
         aT(d.shown ? "Hide" : "Show")}</button></div></dl>
-    <p class="set-note">${aT("A browser you are signed in on counts its board compute here. What it computes goes to the public board and nowhere else.")}</p></div></div>`;
+    <p class="set-note">${aT("A browser you are signed in on counts its board compute here, and your name is on the public ranking unless you hide it. What it computes goes to the public board and nowhere else.")}</p></div></div>`;
 }
 
-/// THE CONTRIBUTION RANKING — public, the accounts that chose to be on it, by
+/// THE CONTRIBUTION RANKING — public, every account with a claimed device that
+/// did not choose to be off it, by
 /// all their points or the last thirty days'. A mark beside a name is the
 /// extension's to draw (`contributorMarks`), proved by the server, and never
 /// moves a place: the order is the points alone.
@@ -492,7 +493,7 @@ function contributorsPage() {
 }
 
 /// THE READER'S OWN LINE: signed out, how to be on it; signed in, their points
-/// and the one switch that puts them on it or takes them off.
+/// and the one switch that takes them off it or back on — on by default.
 function contributorsYouHtml() {
   if (!accountState.providers.length) return "";
   if (!accountState.account) {
@@ -505,7 +506,7 @@ function contributorsYouHtml() {
       <dd>${escHtml(d.points.toLocaleString(accountLocale()))} · ${aT(d.shown ? "Your name is shown" : "Not shown")}</dd>
       <button class="ghost-btn btn-sm" data-auth="contribution-shown" data-shown="${d.shown ? "no" : "yes"}">${
         aT(d.shown ? "Hide" : "Show my name")}</button></div></dl>
-    ${d.shown ? "" : `<p class="set-note" style="margin:0">${aT("Your display name and handle appear here, with any mark your account carries.")}</p>`}</div></div>`;
+    ${d.shown ? `<p class="set-note" style="margin:0">${aT("Your display name and handle are shown here, with any mark your account carries. Hide them any time.")}</p>` : ""}</div></div>`;
 }
 
 function accountDataBlock() {

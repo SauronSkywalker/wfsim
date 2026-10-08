@@ -705,8 +705,10 @@ ELSE**, and each machine's share is counted under its owner's name. Seven rules:
    (`/api/account/devices/claim`, `devices` in the accounts database); the
    last account to claim it owns it, and its work goes with it. A refused
    client's work counts for nothing.
-6. **THE RANKING IS OPT-IN.** `/contributors` lists the accounts that chose to
-   be on it, by display name, by all their points or the last thirty days'
+6. **THE RANKING IS ON BY DEFAULT, WITH A WAY OFF.** `/contributors` lists
+   every account with a claimed device that did not hide itself
+   (`contribution_hidden`), by display name, by all their points or the last
+   thirty days'
    (`verifier_days`, credited with the total and read through the same ban).
    A browser asks what it earned by its own id (`/api/board/points`).
 7. **A MARK NEVER MOVES A PLACE.** A name may carry the marks its account

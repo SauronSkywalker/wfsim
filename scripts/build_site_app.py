@@ -1708,9 +1708,10 @@ or GitHub name, or your email address;</li>
 </ul>
 <p>A browser you are signed in on while it computes the leaderboard's scores is
 counted as yours: WFSim joins its random id to your account, and the work it
-computed is counted under your account. Only you see it, until you choose to
-show your name on the contributors' ranking. It is never joined to anything you
-submit.</p>
+computed is counted under your account. Your display name, your username and
+your points are then shown on the public contributors' ranking, with any mark
+your account carries, until you hide them on that page or in your account. It
+is never joined to anything you submit.</p>
 <p>With an email address you also choose a password. WFSim keeps it only as a
 salted, slow hash that cannot be turned back into the password. Mail is sent only
 to prove an address — when you register it, link it or reset its password — and

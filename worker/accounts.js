@@ -618,7 +618,9 @@ export async function accountRoute(request, env, path) {
   // EVERYTHING HELD ABOUT THIS ACCOUNT, as it is held — docs/ACCOUNTS.md.
   const devices = (await env.ACCOUNTS.prepare("SELECT verifier, claimed_at FROM devices WHERE account = ?1")
     .bind(account).all()).results;
+  const hidden = await env.ACCOUNTS.prepare("SELECT hidden_at FROM contribution_hidden WHERE account = ?1").bind(account).first();
   return json({ ok: true, account: await accountView(env, account), agents: await agentsOf(env, account), devices,
+    contribution_hidden: hidden ? hidden.hidden_at : null,
     ...(await cloudExport(env, account)),
     exported_at: now() }, 200,
     { "content-disposition": 'attachment; filename="wfsim-account.json"' });

@@ -1,8 +1,9 @@
 // THE CONTRIBUTION RANKING (worker/contribution.js), with no network — docs/BOARD.md
 // §"Contribution". A signed-in browser claims its device and the last claim owns
 // it; an account's points are its devices' credited work, a refused device's
-// counting for nothing; the ranking lists only the accounts that chose to be on
-// it, most first, by all their points or the last thirty days'; a browser can
+// counting for nothing; the ranking lists every account with a claimed device
+// that did not choose to be off it, most first, by all their points or the last
+// thirty days'; a browser can
 // ask what it earned by its own id; nothing works signed out or from another
 // site; deleting the account releases its devices.
 //   node scripts/check_contribution.mjs
@@ -76,16 +77,13 @@ const a = await mine(ann);
 check("an account's points are its devices' credited work", a.points === 8 && a.devices.length === 2, JSON.stringify(a));
 check("...and its last thirty days, the days before them left out", a.recent === 5, JSON.stringify(a));
 check("...and its page never sees a device's whole id", a.devices.every((d) => d.id.length === 6));
-check("an account is off the ranking until it chooses", a.shown === false && (await ranking()).length === 0);
-
-await show(ann, true);
-check("shown, it is on the ranking by its display name", JSON.stringify(await ranking()) ===
+check("an account is on the ranking once it claims a device, by its display name", a.shown === true && JSON.stringify(await ranking()) ===
   JSON.stringify([{ name: "Ann", username: "ann", points: 8, recent: 5 }]), JSON.stringify(await ranking()));
 
 await claim(bob, Y);
 check("the last claim owns a device, and its work goes with it", (await mine(ann)).points === 5 && (await mine(bob)).points === 3);
 
-await claim(cy, Z); await claim(cy, W); await show(cy, true); await show(bob, true);
+await claim(cy, Z); await claim(cy, W);
 const r = await ranking();
 check("the ranking is most first, a refused device counting for nothing",
   r.map((e) => `${e.username}:${e.points}`).join(" ") === "cy:9 ann:5 bob:3", JSON.stringify(r));
@@ -103,7 +101,9 @@ check("...a refused one, nothing either", (await points(W)).points === 0 && (awa
 check("...and a malformed id is refused", (await points("nope")).reason === "bad_device");
 
 await show(ann, false);
-check("hidden again, it leaves the ranking", !(await ranking()).some((e) => e.username === "ann"));
+check("hidden, it leaves the ranking", !(await ranking()).some((e) => e.username === "ann") && (await mine(ann)).shown === false);
+await show(ann, true);
+check("...and shown again, it is back", (await ranking()).some((e) => e.username === "ann"));
 
 accounts.raw.prepare("DELETE FROM accounts WHERE id = 'acct-cy'").run();
 check("deleting an account releases its devices and its place",
