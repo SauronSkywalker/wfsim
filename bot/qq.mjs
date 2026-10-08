@@ -15,11 +15,6 @@ const env = Object.fromEntries(readFileSync(ENV_FILE, "utf8").split(/\r?\n/)
   .filter((l) => l.includes("=") && !l.startsWith("#")).map((l) => [l.slice(0, l.indexOf("=")).trim(), l.slice(l.indexOf("=") + 1).trim()]));
 const API = env.QQ_API || "https://api.sgroup.qq.com";
 const IDLE_MS = 1000;
-/// QQ's passive reply window, from the message: five minutes in a group, an hour
-/// in a private chat (bot.q.qq.com, 消息收发概述), each kept with time to spare.
-/// Past it the answer goes as an active message, and only if that fails does it
-/// wait for the room's next message.
-const REPLY_WINDOW_MS = { group: 270_000, private: 3_480_000 };
 /// How long an appraisal's answer may take to draw: a replay is a whole fight.
 const REPLAY_MS = 300_000;
 
@@ -109,11 +104,25 @@ const drawn = new Map();
 const held = new Map();
 let judged = [], told = [], startedTold = [];
 
-async function tellAppraisal(item, chatPath, reply, late) {
+/// TO THE CHAT THAT ASKED: a reply to the asking message, and an active message
+/// when QQ refuses the reply. QQ's stated reply window is not trusted either
+/// way — its refusal is the measurement, logged with the message's age.
+async function postToChat(chat, seq, body) {
+  const path = `${chatPathOf(chat)}/messages`;
+  const age = Math.round((Date.now() - Number(chat.msg_at || 0)) / 1000);
+  try {
+    return await qq(path, { ...body, msg_id: chat.msg_id, msg_seq: seq });
+  } catch (e) {
+    console.error(`reply refused ${age}s after the message, sending active: ${e && e.message || e}`);
+  }
+  return qq(path, body);
+}
+
+async function tellAppraisal(item, chatPath, post, late) {
   let png = (drawn.get(item.code) || {}).png;
   if (!png) png = (await renderCardWith(answer.answerCard(item, item.result_id), { wait: REPLAY_MS })).png;
   const media = await qq(`${chatPath}/files`, { file_type: 1, file_data: png.toString("base64"), srv_send_msg: false });
-  await qq(`${chatPath}/messages`, { ...reply, msg_type: 7, content: answer.told(item, late), media: { file_info: media.file_info } });
+  await post({ msg_type: 7, content: answer.told(item, late), media: { file_info: media.file_info } });
   drawn.delete(item.code);
 }
 
@@ -123,16 +132,12 @@ async function appraisalTick() {
   if (!r.ok) throw new Error(`appraise claim: ${r.status}`);
   const { judge = [], tell = [], started = [] } = await r.json();
   judged = []; told = []; startedTold = [];
-  // A COMPUTER TOOK IT: said once, as a reply inside the asker's window — never
-  // as an active message, which QQ rations and the answer itself may need.
+  // A COMPUTER TOOK IT: said once, however long the asker has waited.
   for (const s of started) {
-    const open = Date.now() - Number(s.chat.msg_at || 0) < REPLY_WINDOW_MS[s.chat.group_openid ? "group" : "private"];
-    if (open) {
-      try {
-        await qq(`${chatPathOf(s.chat)}/messages`, { msg_id: s.chat.msg_id, msg_seq: 2, msg_type: 0, content: answer.started(s) });
-      } catch (e) {
-        console.error(`started ${s.code}: ${e && e.message || e}`);
-      }
+    try {
+      await postToChat(s.chat, 2, { msg_type: 0, content: answer.started(s) });
+    } catch (e) {
+      console.error(`started ${s.code}: ${e && e.message || e}`);
     }
     startedTold.push(s.code);
   }
@@ -149,15 +154,12 @@ async function appraisalTick() {
   }
   for (const t of tell) {
     if ([...held.values()].flat().some((x) => x.code === t.code)) continue;
-    const open = Date.now() - Number(t.chat.msg_at || 0) < REPLY_WINDOW_MS[t.chat.group_openid ? "group" : "private"];
     try {
-      // INSIDE THE WINDOW, a reply to the asker's message; past it, an active
-      // message to the same chat — no message to reply to, and none needed.
-      await tellAppraisal(t, chatPathOf(t.chat), open ? { msg_id: t.chat.msg_id, msg_seq: 3 } : {}, false);
+      await tellAppraisal(t, chatPathOf(t.chat), (body) => postToChat(t.chat, 3, body), false);
       told.push(t.code);
       continue;
     } catch (e) {
-      console.error(`tell ${t.code}${open ? "" : " (active)"}: ${e && e.message || e}`);
+      console.error(`tell ${t.code}: ${e && e.message || e}`);
     }
     // NEITHER WENT (the chat turned active messages off, say): it rides on the
     // room's next message.
@@ -176,7 +178,8 @@ async function tellHeld(row) {
   let seq = 2;
   for (const t of owed) {
     try {
-      await tellAppraisal(t, chatPath(row), { msg_id: d.id, msg_seq: seq++ }, true);
+      const reply = { msg_id: d.id, msg_seq: seq++ };
+      await tellAppraisal(t, chatPath(row), (body) => qq(`${chatPath(row)}/messages`, { ...body, ...reply }), true);
       told.push(t.code);
     } catch (e) {
       console.error(`tell held ${t.code}: ${e && e.message || e}`);
