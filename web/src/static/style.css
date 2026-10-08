@@ -270,9 +270,9 @@ body.on-wbench [data-module="builder"]{display:none}
 .ar-count{font-size:11px;color:var(--dim);align-self:center;margin-left:2px}
 .ar-jumps{display:flex;gap:4px;padding:5px 6px;border-top:1px solid var(--line);flex-wrap:wrap}
 .ar-jump{font-size:11px;padding:2px 8px;border:1px solid var(--line);border-radius:999px;
-  background:var(--panel);color:var(--muted);cursor:pointer;line-height:1.5}
+  background:var(--surface);color:var(--muted);cursor:pointer;line-height:1.5}
 .ar-jump:hover:not(:disabled){color:var(--fg);border-color:var(--muted)}
-.ar-jump.on{background:var(--gold);border-color:var(--gold);color:var(--panel);font-weight:600}
+.ar-jump.on{background:var(--gold);border-color:var(--gold);color:var(--surface);font-weight:600}
 .ar-jump:disabled{opacity:.45;cursor:default}
 .arena.ar-ro .ar-jump{opacity:.45;cursor:default;pointer-events:none}
 .arena{margin:6px 0;border:1px solid var(--line);border-radius:8px;background:var(--panel2);overflow:hidden}
@@ -842,7 +842,7 @@ body.on-wbench [data-module="builder"]{display:none}
 .snote{color:var(--muted);font-size:11px}
 /* Projectile blocks inside a form: the gun's rows sit flush, each
    projectile it launches is boxed off with its own heading. */
-.fpart{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:8px 11px;margin-top:12px}
+.fpart{border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:8px 11px;margin-top:12px}
 .fparth{font-size:12px;font-weight:700;color:var(--text);border-bottom:1px solid var(--line);padding-bottom:5px;margin-bottom:4px}
 .fparth .fmeta{color:var(--text-2);font-weight:400;font-size:11px;margin-left:8px}
 .fpart /* Cross-weapon preset import: an inline panel under the bar, one row per
@@ -1127,7 +1127,7 @@ body.on-card #card-page{display:block;width:720px;margin:0 auto;padding:22px 24p
 .lc-top .sb-empty{margin-left:auto}
 .lc-title{font-size:22px;margin:4px 0 2px}
 .lc-sub{margin-bottom:14px}
-.lc-box{margin:0 0 12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.lc-box{margin:0 0 12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
 .lc-head{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
 .lc-rank,.lc-score,.lc-gain{font-size:19px}
 .lc-gain{color:var(--good-text)}
@@ -1326,7 +1326,7 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
 .menu-sect{position:relative}
 .menu-head{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);
   padding:8px 10px 4px;border-top:1px solid var(--line);margin-top:4px;position:sticky;top:0;
-  z-index:2;background:var(--panel)}
+  z-index:2;background:var(--surface)}
 .menu-sect:first-child .menu-head{border-top:none;margin-top:0}
 
 /* Every saved riven, with what it rolls. The bar above chooses; this is what
@@ -1426,7 +1426,7 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
    and the selected one has to be visible without opening anything. */
 .rp-foes{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 8px}
 .rp-foe{font:inherit;font-size:11px;padding:3px 9px;border-radius:999px;cursor:pointer;
-  background:var(--panel);color:var(--muted);border:1px solid var(--line)}
+  background:var(--surface);color:var(--muted);border:1px solid var(--line)}
 .rp-foe:hover{color:var(--fg)}
 .rp-foe.sel{background:var(--accent-dim,var(--line));color:var(--fg);border-color:var(--accent,var(--fg))}
 .rp-foe .sm{opacity:.6}
@@ -3345,7 +3345,7 @@ iframe.wld-frame{width:100%;height:480px;border:1px solid var(--line);border-rad
 #cloud-items .cloud.bad{color:var(--gold);border-color:color-mix(in srgb,var(--gold) 45%,transparent);cursor:default}
 #cloud-items .cloud:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 /* Riven appraisal's banner over the optimizer (81-appraisal.js). */
-.appraisal{border:1px solid var(--gold);background:color-mix(in srgb,var(--gold) 9%,var(--panel));border-radius:10px;padding:10px 12px;margin:0 0 12px;display:grid;gap:6px}
+.appraisal{border:1px solid var(--gold);background:color-mix(in srgb,var(--gold) 9%,var(--surface));border-radius:10px;padding:10px 12px;margin:0 0 12px;display:grid;gap:6px}
 .appraisal-h b{color:var(--gold)}
 .appraisal-b{font-size:13px;line-height:1.5}
 .appraisal-n{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;color:var(--text-2)}
