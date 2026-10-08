@@ -50,6 +50,31 @@ async function qq(path, body) {
   return text ? JSON.parse(text) : {};
 }
 
+/// A CARD ALREADY DRAWN is the same picture while the published board is: kept
+/// by its address and the board's `digest`, read at most once a minute, and for
+/// ten minutes at most, since a card prints how long ago it was measured.
+const CARD_KEEP_MS = 600_000, CARD_KEEP_MAX = 64, STAMP_EVERY_MS = 60_000;
+const cards = new Map();
+let stamp = { digest: "", at: 0 };
+async function boardDigest() {
+  if (Date.now() - stamp.at < STAMP_EVERY_MS) return stamp.digest;
+  const digest = await fetch(`${SITE}/board.meta.json`).then((r) => r.json()).then((j) => String(j.digest || "")).catch(() => "");
+  stamp = { digest, at: Date.now() };
+  return digest;
+}
+async function cardFor(url) {
+  const digest = await boardDigest();
+  const hit = digest && cards.get(url);
+  if (hit && hit.digest === digest && Date.now() - hit.at < CARD_KEEP_MS) return hit.png;
+  const png = await renderCard(url);
+  if (digest) {
+    cards.delete(url);
+    cards.set(url, { png, digest, at: Date.now() });
+    if (cards.size > CARD_KEEP_MAX) cards.delete(cards.keys().next().value);
+  }
+  return png;
+}
+
 /// THE ANSWER, SENT: the long image with its line, or the answer in words when
 /// the image cannot be made or taken — a reader is never left with nothing.
 async function send(row, ans) {
@@ -58,7 +83,7 @@ async function send(row, ans) {
   const reply = { msg_id: row.body.id, msg_seq: 1 };
   if (ans.card) {
     try {
-      const png = await renderCard(ans.card);
+      const png = await cardFor(ans.card);
       const media = await qq(`${chat}/files`, { file_type: 1, file_data: png.toString("base64"), srv_send_msg: false });
       await qq(`${chat}/messages`, { ...reply, msg_type: 7, content: ans.line, media: { file_info: media.file_info } });
       return;
