@@ -10,7 +10,7 @@
 //   GET /api/world/names                             every era and mission type, named
 //   GET /api/world/arbitrations                      the arbitrations of the coming days
 //   PUT /api/world   (bearer BOT_RELAY_TOKEN)         DE's worldState.php, as read
-import NAMES from "./world_names.json";
+import NAMES from "./world_names.json" with { type: "json" };
 
 const KEY = "world/items.json";
 /// The relay runs each minute; a reader is never more than this behind it.
