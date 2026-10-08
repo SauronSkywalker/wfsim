@@ -165,7 +165,6 @@ says it is shown. Nothing new is collected for it.
 
 ## Not collected
 
-Referrer PATHS and campaign attribution, Google Analytics, user accounts, and any
-third-party script on the critical path. Depth and sharing — optimizer runs per
-session, weapon switches, shared and opened-from-share links — wait until the
-numbers above say which axis is worth splitting.
+Referrer PATHS (a referrer is its host), campaign tags, Google Analytics, and any
+third-party script on the critical path. No event is joined to an account, and
+none carries a build beyond its weapon id or any text a reader typed.
