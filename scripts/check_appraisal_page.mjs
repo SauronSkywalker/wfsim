@@ -112,6 +112,8 @@ if (sent) {
     const vol = JSON.parse(await evaluate(`(async () => {
       const f = JSON.parse(document.body.dataset.request);
       window.__sent.results = [];
+      // A YES TO COMPUTING, which a volunteer search checks at every step.
+      localStorage.setItem("wfsim-compute-consent", JSON.stringify({ v: COMPUTE_CONSENT_V, on: true, at: new Date().toISOString() }));
       await rivenGainOnce({ kind: "riven_gain", lease: "0".repeat(32), code: "TEST7", weapon: "torid",
         ruler: "standard_single_target", request: f.request, context: f.context }, "v".repeat(24));
       return JSON.stringify(window.__sent.results);
