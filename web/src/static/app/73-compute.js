@@ -62,7 +62,8 @@ function computeChrome() {
       ask = document.createElement("div");
       ask.id = "compute-ask";
       ask.setAttribute("role", "region");
-      ask.style.cssText = "position:fixed;right:16px;bottom:16px;z-index:50;max-width:360px;padding:14px 16px;"
+      // BOTTOM LEFT: Nona's button holds the bottom right.
+      ask.style.cssText = "position:fixed;left:16px;bottom:16px;z-index:50;max-width:360px;padding:14px 16px;"
         + "border:1px solid var(--line);border-radius:10px;background:var(--panel);box-shadow:0 6px 24px rgba(0,0,0,.25);font-size:13px;line-height:1.6";
       ask.addEventListener("click", (e) => {
         const b = e.target.closest("[data-compute-ask]");
@@ -250,7 +251,7 @@ function computeRecentHtml() {
 }
 
 function computePage() {
-  return `<div class="settings"><div class="set-main"><h1 class="page">${aT("Compute")}</h1>
+  return `<div class="settings solo"><div class="set-main"><h1 class="page">${aT("Compute")}</h1>
     <p class="set-note">${aT("What this browser computes is free for everyone, never sold, and never runs a paid feature. It runs only while a WFSim page is open on a computer, steps aside the moment you run something yourself, never runs on a phone, and one click turns it off.")}
       <a href="/contributors">${aT("Contributors")}</a></p>
     ${computeHereHtml()}${computeDevicesHtml()}${computeRecentHtml()}</div></div>`;

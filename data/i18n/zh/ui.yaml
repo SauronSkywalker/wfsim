@@ -2571,6 +2571,7 @@ ui:
   "Help compute WFSim: on": 帮 WF模拟 计算：开
   "Help compute WFSim: off": 帮 WF模拟 计算：关
   "Community computing": 社区计算
+  "Contributor": 贡献者
   "Help compute WFSim: {pct}% of cores when idle": "帮 WF模拟 计算：空闲时 {pct}% 核心"
   "{pct}% of this computer's cores while it is idle, one core while you use it.": "电脑空闲时使用 {pct}% 的核心，你使用电脑时只用一个核心。"
   "A community computer has taken riven gain {code} — usually a few minutes. Nona will post the answer here. (｀・ω・´)": "已经有一台社区电脑接手收益码 {code} 了，一般需要几分钟，算完九九直接发到这里。(｀・ω・´)"

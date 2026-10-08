@@ -497,18 +497,21 @@ function contributorsPage() {
   const list = contributorsState;
   const recent = contributorsPeriod === "recent";
   const n = (x) => escHtml(x.toLocaleString(accountLocale()));
-  const who = (c) => (c.name === null ? `<span class="muted">${aT("Anonymous contributor")}</span>`
-    : escHtml(c.name) + (extHookNow("contributorMark", c.mark) || ""));
-  const honour = (c) => (c.volunteer ? ` <span class="contrib-volunteer" style="font-size:12px;color:var(--accent)">${aT("WFSim Volunteer")}</span>` : "");
-  const rows = (list || []).map((c, i) => `<div class="kv"><dt>${i + 1}. ${who(c)}${honour(c)}${
-    c.you ? ` <span class="set-note">${aT("(you)")}</span>` : ""}</dt><span>${n(recent ? c.recent : c.points)}</span></div>`).join("");
+  const who = (c) => (c.name === null ? `<span class="rank-name muted">${aT("Anonymous contributor")}</span>`
+    : `<span class="rank-name">${escHtml(c.name)}</span>${extHookNow("contributorMark", c.mark) || ""}`);
+  const honour = (c) => (c.volunteer ? `<span class="contrib-volunteer">${aT("WFSim Volunteer")}</span>` : "");
+  const rows = (list || []).map((c, i) => `<li class="rank-row${i < 3 ? " top" : ""}${c.you ? " you" : ""}">
+      <span class="rank-n">${i + 1}</span><span class="rank-who">${who(c)}${honour(c)}${
+      c.you ? `<span class="rank-you">${aT("(you)")}</span>` : ""}</span><span class="rank-pts">${n(recent ? c.recent : c.points)}</span></li>`).join("");
+  const head = `<li class="rank-row rank-head" aria-hidden="true"><span class="rank-n">#</span><span class="rank-who">${
+    aT("Contributor")}</span><span class="rank-pts">${aT(recent ? "Last 30 days" : "Points")}</span></li>`;
   const tab = (id, label) => `<button class="seg${contributorsPeriod === id ? " on" : ""}" data-auth="contributors-period"
       data-period="${id}" aria-pressed="${contributorsPeriod === id}">${aT(label)}</button>`;
-  return `<div class="settings"><div class="set-main"><h1 class="page">${aT("Contributors")}</h1>
+  return `<div class="settings solo"><div class="set-main"><h1 class="page">${aT("Contributors")}</h1>
     <p class="set-note">${aT("The people whose computers help run what WFSim gives everyone for free — the leaderboard first among them. What they compute is free for everyone, never sold, and never runs a paid feature. It runs only while a WFSim page is open on a computer, steps aside the moment you run something yourself, never runs on a phone, and one click turns it off.")}</p>
     ${contributorsYouHtml()}
     <div class="block"><div class="bh"><span class="oseg">${tab("all", "All time")} ${tab("recent", "Last 30 days")}</span></div><div class="bb">${list == null ? ""
-      : rows ? `<dl class="kvs">${rows}</dl>` : `<p class="set-note" style="margin:0">${aT("Nobody yet.")}</p>`}</div></div>
+      : rows ? `<ol class="rank-list">${head}${rows}</ol>` : `<p class="set-note" style="margin:0">${aT("Nobody yet.")}</p>`}</div></div>
     <p class="set-note">${aT("Points count verified compute and nothing else. A membership adds none.")}</p></div></div>`;
 }
 
