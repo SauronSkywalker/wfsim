@@ -692,9 +692,8 @@ each machine's share is counted under its owner's name. Seven rules:
    is nobody's.
 2. **THE SAME WORK IS THE SAME POINTS ON EVERY MACHINE.** The engine counts its
    own work: `Shard::work`, the shard's whole-number counters
-   (`WORK_COUNTERS`) times `WORK_WEIGHTS`, in billionths of a second of the
-   reference machine. A client's `compute_ms` is its machine's speed and is
-   never credited. One point is 10^9 of work.
+   (`WORK_COUNTERS`) times `WORK_WEIGHTS`. A client's `compute_ms` is its
+   machine's speed and is never credited. One point is 10^9 of work.
 3. **THE WORK IS PART OF THE BITS.** A result names its work beside its score,
    and a further result agrees only if the work is equal too. The server's spot
    check holds the clients to the work as well as the score, so a claimed work
@@ -726,10 +725,17 @@ each machine's share is counted under its owner's name. Seven rules:
    is the points alone, and nothing paid adds a point or puts an order in a
    device's hands sooner.
 
-**THE WEIGHTS ARE FIT, NOT CHOSEN.** `wfsim-work` folds a sample of the
-published board on the reference machine and solves for the weights with the
-least relative error. Refit when a release moves the fit; a refit changes the
-points of facts made after it, never of facts already credited.
+**THE WEIGHTS ARE FIT, NOT CHOSEN, AND NOT ON ANYONE'S MACHINE.**
+`.github/workflows/work.yml` builds the wasm contributors run from the ref it
+runs on, times it over a fixed sample of the published board on four hosted
+runners, takes each row's median time across them, and solves non-negative
+least squares on relative error (`scripts/work_calibrate.mjs`). Its report
+gives each price's standard error and the error on a held-out half; a price
+whose error is near its size is not pinned down and is shipped as zero
+(`drop=`). A refit keeps what a point is worth (`unit=keep`) and moves only the
+prices between counts; it changes the points of facts made after it, never of
+facts already credited. A count is added where the error gathers in one kind
+of fight — `hits` and `body_shots` are what a crowd costs.
 
 ## Consent
 

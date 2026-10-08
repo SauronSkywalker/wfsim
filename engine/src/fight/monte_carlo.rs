@@ -379,10 +379,11 @@ impl Default for Shard {
 pub const WORK_COUNTERS: [&str; 9] = ["runs", "shots", "pellets", "procs", "dot_ticks", "field_ticks", "kills",
     "hits", "body_shots"];
 
-/// WHAT ONE OF EACH COUNT COSTS, in billionths of a second on the reference
-/// machine — fit by `wfsim-work` over the board's rows (docs/BOARD.md
-/// §"Contribution"). Refit when a release moves the fit; a point earned stays.
-pub const WORK_WEIGHTS: [u64; 9] = [423_973, 476, 385, 124, 214, 0, 6_545, 0, 0];
+/// WHAT ONE OF EACH COUNT COSTS, in billionths of a point — fit by
+/// `.github/workflows/work.yml` over the board's rows (docs/BOARD.md
+/// §"Contribution"). A zero is a count the fit did not pin down. Refit when a
+/// release moves the fit; a point earned stays.
+pub const WORK_WEIGHTS: [u64; 9] = [373_843, 226, 258, 41, 0, 85, 0, 216, 8];
 
 impl Shard {
     /// The counts named by [`WORK_COUNTERS`].
@@ -400,7 +401,7 @@ impl Shard {
         ]
     }
 
-    /// THE WORK THIS SHARD HOLDS, in billionths of a reference second. Integer
+    /// THE WORK THIS SHARD HOLDS, in billionths of a point. Integer
     /// arithmetic, so it is the same number on every target.
     pub fn work(&self) -> u64 {
         self.work_counts().iter().zip(WORK_WEIGHTS).fold(0u64, |a, (n, w)| a.saturating_add(n.saturating_mul(w)))

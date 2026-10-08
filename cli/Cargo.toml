@@ -25,12 +25,6 @@ path = "src/bin/wfsim-board.rs"
 name = "wfsim-intake"
 path = "src/bin/wfsim-intake.rs"
 
-# Fits the weights a compute order's work is counted in, on the reference
-# machine — a calibration step, never a pipeline one.
-[[bin]]
-name = "wfsim-work"
-path = "src/bin/wfsim-work.rs"
-
 [dependencies]
 wfsim-engine = { path = "../engine" }
 wfsim-optimizer = { path = "../optimizer" }

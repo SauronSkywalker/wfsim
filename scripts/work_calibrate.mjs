@@ -3,14 +3,15 @@
 // under V8. `.github/workflows/work.yml` runs it; docs/BOARD.md §"Contribution".
 //
 //   node scripts/work_calibrate.mjs measure out=<file.json> [rows=300] [repeats=2] [share=0.25] [pkg=<dir>]
-//   node scripts/work_calibrate.mjs fit <file.json>... [unit=keep|seconds]
+//   node scripts/work_calibrate.mjs fit <file.json>... [unit=keep|seconds] [drop=<count>,...]
 //
 // `measure` times the first `share` of each sampled row's runs: a price is per
 // count, so more rows buy more than longer ones. `pkg` is a wasm-bindgen
 // output to time instead of the site's — an engine not yet shipped. `fit` takes each row's MEDIAN
 // time across the files, one per machine. `unit=keep` holds what a point is
 // worth and moves only the prices between counts; `unit=seconds` makes a point
-// one second of the median machine.
+// one second of the median machine. `drop` prices a count at zero — one whose
+// error came out near its size is not pinned down, and is not shipped.
 
 import { createHash } from "node:crypto";
 import fs from "node:fs";
@@ -189,6 +190,9 @@ function fit() {
     .map((r) => ({ counts: r.counts, seconds: quantile(r.times, 0.5) }))
     .filter((r) => r.seconds > 1e-3);
 
+  const drop = arg("drop", "").split(",").filter(Boolean);
+  for (const d of drop) if (!COUNTERS.includes(d)) throw new Error(`no count named ${d}`);
+  for (const r of rows) r.counts = r.counts.map((c, j) => (drop.includes(COUNTERS[j]) ? 0 : c));
   const w = fitRows(rows);
   const errs = relErrors(rows, w);
   // OUT OF SAMPLE: fit on half the rows, judge on the other half — a fit that
