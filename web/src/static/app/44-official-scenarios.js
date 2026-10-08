@@ -119,7 +119,18 @@ const defaultEvolutions = (weaponId, sel) => Object.fromEntries(weaponEvos(weapo
   const pick = sel && sel[t.tier];
   return [t.tier, opts.some((o) => o.id === pick) ? pick : opts.length ? opts[0].id : null];
 }));
-const modById = (id) => poolWithRivens().find((m) => m.id === id);
+/// AN INDEX OVER `poolWithRivens()`: a board's rows look up every mod they name,
+/// thousands on one card. Only a riven id (`isRivenId`) reads the saved rivens.
+let modIndex = { pool: null, map: null };
+const modById = (id) => {
+  if (isRivenId(id)) return rivenMods().find((m) => m.id === id);
+  if (modIndex.pool !== currentPool) {
+    const map = new Map();
+    for (const m of currentPool) if (!map.has(m.id)) map.set(m.id, m);
+    modIndex = { pool: currentPool, map };
+  }
+  return modIndex.map.get(id);
+};
 // A SECTION THAT IS NOT THERE IS NOT A DEAD APP.
 //
 // This threw on a null element, and the throw is upstream of everything:

@@ -253,7 +253,7 @@ function copyRiven() {
   const name = freeName(ps, (n) => (from.name || "riven") + " copy" + (n > 1 ? " " + n : ""));
   const id = newRivenId(loadPresetWhole(RIVENS));
   ps.push({ id, name, savedAt: Date.now(), state: snapshotRiven() });
-  if (rivenNames[open]) rivenNames[id] = rivenNames[open];
+  if (rivenNames[open]) rivenNames = { ...rivenNames, [id]: rivenNames[open] };
   storePresetList(RIVENS, ps);
   openRiven(id);
   refreshRivenNames();

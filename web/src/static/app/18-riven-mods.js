@@ -33,11 +33,14 @@ let rivenModCache = { key: null, list: [] };
 
 // The saved rivens of the CURRENT weapon, shaped like mods so every list,
 // picker and slot that already understands a mod understands these.
+// THE CACHE IS KEYED BY IDENTITY: the stored list is reparsed only when its text
+// changes (`loadPresetWhole`) and `rivenNames` is replaced, never edited, so a
+// key that serialised both cost more than the list it saved — every `modById`.
 function rivenMods() {
-  const w = $("weapon").value;
+  const w = $("weapon").value, owner = presetWeapon(), whole = loadPresetWhole(RIVENS);
+  const c = rivenModCache;
+  if (c.w === w && c.owner === owner && c.whole === whole && c.names === rivenNames) return c.list;
   const raw = loadPresetList(RIVENS);
-  const key = w + "|" + JSON.stringify(raw) + "|" + JSON.stringify(rivenNames);
-  if (rivenModCache.key === key) return rivenModCache.list;
   const list = raw.map((p) => {
     const st = p.state || {};
     const stats = (st.bonuses || st.positives || []).concat(st.malus || st.curse || []);
@@ -77,7 +80,7 @@ function rivenMods() {
       __spec: st,
     };
   });
-  rivenModCache = { key, list };
+  rivenModCache = { w, owner, whole, names: rivenNames, list };
   return list;
 }
 
