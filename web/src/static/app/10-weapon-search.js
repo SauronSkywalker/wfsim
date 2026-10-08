@@ -36,8 +36,18 @@ function renderComputePicker() {
         ? tr("{n} of {c} cores").replace("{n}", s.lanes).replace("{c}", cores)
         : tr("{n} lanes · cores unknown, assuming {c}")
             .replace("{n}", s.lanes).replace("{c}", cores),
-    })),
-    onPick: (v) => setComputePct(v),
+    })).concat(WASM && !onPhone() ? [
+      // …AND THE COMMUNITY'S SHARE, the same switch as the compute page's
+      // (69-board-work.js `setBoardVerify`), here on every page, signed in or not.
+      { value: "community:on", label: tr("Help compute WFSim: on"), group: tr("Community computing"),
+        hint: boardVerifyOn() ? tr("current") : "" },
+      { value: "community:off", label: tr("Help compute WFSim: off"), group: tr("Community computing"),
+        hint: boardVerifyOn() ? "" : tr("current") },
+    ] : []),
+    onPick: (v) => {
+      if (v.startsWith("community:")) { setBoardVerify(v === "community:on"); return; }
+      setComputePct(v);
+    },
   });
   // The face shows the LANES; the list shows the shares.
   const btn = $("compute-select");

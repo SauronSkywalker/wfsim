@@ -15,6 +15,7 @@
 // provider's secrets are absent, and `/api/account` says which are configured,
 // so the page offers only the ways in that work.
 
+import { nameBlocked } from "./names.js";
 import { cloudEnd, cloudExport } from "./cloud.js";
 import { agentsOf } from "./agents.js";
 
@@ -511,6 +512,7 @@ async function profile(env, account, b) {
   if ("display_name" in b) {
     const shown = String(b.display_name ?? "").replace(/[\u0000-\u001f\u007f]/g, "").trim();
     if ([...shown].length > DISPLAY_NAME_MAX) return no("bad_display_name");
+    if (nameBlocked(shown)) return no("name_not_allowed");
     writes.push(db.prepare("UPDATE accounts SET display_name = ?1 WHERE id = ?2").bind(shown || null, account));
   }
   if ("username" in b) {
@@ -518,6 +520,7 @@ async function profile(env, account, b) {
     if (name !== a.username) {
       if (!USERNAME.test(name)) return no("bad_username");
       if (name.startsWith(USERNAME_BORN) || USERNAMES_RESERVED.has(name)) return no("username_reserved");
+      if (nameBlocked(name)) return no("name_not_allowed");
       const after = renameAfter(a);
       if (after) return no("rename_too_soon", 429, { rename_after: after });
       const held = await db.prepare("SELECT account FROM username_holds WHERE username = ?1 AND held_until > ?2")

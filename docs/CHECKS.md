@@ -877,7 +877,9 @@ page: a born `user_` name reads as not chosen, the Profile form saves both
 names and the top bar shows the display name at once, a refusal is said in the
 card, and inside the day after a change the username field is shut while the
 display name still saves; the agents acting for the account are listed, and one
-click disconnects one.
+click disconnects one. Signing up asks for one yes — the privacy policy and the
+account kept outside mainland China — and neither the email form nor a
+provider's button goes anywhere until it is ticked.
 
 ## `check_sync_client`
 

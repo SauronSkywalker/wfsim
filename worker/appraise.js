@@ -36,9 +36,14 @@ const newCode = () => {
 
 /// A name to thank, as a person typed it: short, one line, and never a link —
 /// it is posted into a chat on their behalf.
-const cleanThanks = (s) => String(s || "").replace(/[\u0000-\u001f\u007f<>]/g, " ")
-  .replace(/(https?:\/\/|www\.)\S*/gi, "").replace(/\S+\.(com|net|org|cn|app|io|gg)\b\S*/gi, "")
-  .replace(/\s+/g, " ").trim().slice(0, MAX_THANKS).trim();
+const cleanThanks = (s) => {
+  const t = String(s || "").replace(/[\u0000-\u001f\u007f<>]/g, " ")
+    .replace(/(https?:\/\/|www\.)\S*/gi, "").replace(/\S+\.(com|net|org|cn|app|io|gg)\b\S*/gi, "")
+    .replace(/\s+/g, " ").trim().slice(0, MAX_THANKS).trim();
+  // …AND NEVER A WORD A CHAT MUST NOT CARRY (worker/names.js): dropped, not
+  // refused — the build still counts, it is only not thanked by that name.
+  return nameBlocked(t) ? "" : t;
+};
 
 const botAuthed = (request, env) => {
   const auth = request.headers.get("authorization") || "";
@@ -46,6 +51,7 @@ const botAuthed = (request, env) => {
 };
 
 import { ownersOf } from "./contribution.js";
+import { nameBlocked } from "./names.js";
 
 export async function appraiseRoute(request, env, path) {
   if (!env.LIBRARY) return json({ ok: false, error: "not offered here" }, 501);

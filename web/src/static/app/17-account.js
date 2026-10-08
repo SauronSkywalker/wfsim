@@ -61,6 +61,8 @@ const ACCOUNT_SAYS = {
   username_taken: "That username is taken.",
   rename_too_soon: "A username can change once a day.",
   bad_display_name: "A display name is at most 32 characters.",
+  name_not_allowed: "That name cannot be used.",
+  needs_consent: "Tick the box above to agree first.",
 };
 const accountSaid = (key) => tr(ACCOUNT_SAYS[key] || key);
 
@@ -236,11 +238,11 @@ const authError = () => (authFlow.error
   ? `<div class="auth-err" role="alert">${escHtml(accountSaid(authFlow.error))}</div>` : "");
 const authVal = (id) => (($(id) || {}).value || "").trim();
 
-function authProviders(verb, back) {
+function authProviders(verb, back, needsConsent = false) {
   const on = ACCOUNT_SLOTS.filter((s) => s.id !== "email" && accountState.providers.includes(s.id));
   if (!on.length) return "";
   const or = accountState.providers.includes("email") ? `<div class="or">${aT("or with email")}</div>` : "";
-  return on.map((s) => `<a class="prov" data-native href="${authStart(s.id, "login", `/login?return=${encodeURIComponent(back)}`)}">${
+  return on.map((s) => `<a class="prov" data-native${needsConsent ? " data-needs-consent" : ""} href="${authStart(s.id, "login", `/login?return=${encodeURIComponent(back)}`)}">${
     ACCOUNT_ICONS[s.id]}${escHtml(tr(verb).replace("{p}", s.name))}</a>`).join("") + or;
 }
 
@@ -273,15 +275,24 @@ function authLoginCard() {
       ` <a href="/reset?return=${encodeURIComponent(back)}">${aT("Forgot password?")}</a>`)}
     <button class="run-btn" data-auth="login">${aT("Sign in")}</button>` : ""}
     <div class="auth-foot">${aT("New to WFSim?")} <a href="/signup?return=${encodeURIComponent(back)}">${aT("Create an account")}</a></div>
-    <div class="fine">${aT("By continuing you have read the")} <a data-native href="/privacy">${aT("privacy policy")}</a></div>`;
+    <div class="fine">${aT("By continuing you have read the")} <a data-native href="/privacy">${aT("privacy policy")}</a>${
+      aT(", and agree that a new account is kept outside mainland China.")}</div>`;
 }
+
+/// THE ONE YES AN ACCOUNT NEEDS: the privacy policy, and that the account is kept
+/// by Cloudflare outside mainland China — a transfer abroad that the law asks to
+/// be agreed to on its own. Nothing creates the account until it is ticked.
+const authConsentBox = () => `<label class="fine" style="display:flex;gap:8px;align-items:flex-start;text-align:left">
+    <input type="checkbox" id="auth-consent"${authFlow.consent ? " checked" : ""}>
+    <span>${aT("I have read the")} <a data-native href="/privacy">${aT("privacy policy")}</a>${
+      aT(" and agree that my account is kept by Cloudflare outside mainland China.")}</span></label>`;
 
 function authSignupCard() {
   const back = authReturn();
   if (authFlow.step === 2) return authCodeStep("Check your email", "Create account");
   return `<h2>${aT("Create a WFSim account")}</h2>
     <p class="lede">${aT("Your builds follow you across devices.")}</p>
-    ${authError()}${authProviders("Sign up with {p}", back)}
+    ${authError()}${authConsentBox()}${authProviders("Sign up with {p}", back, true)}
     ${accountState.providers.includes("email") ? `${authField("auth-email", "Email", "email", "email")}
     ${authField("auth-password", "Password", "password", "new-password")}<span class="hint">${aT("At least 8 characters")}</span>
     <button class="run-btn" data-auth="register">${aT("Continue")}</button>` : ""}
@@ -642,8 +653,19 @@ async function authSignedIn(r) {
   if (authKindOf(location.pathname)) nav(back);
 }
 
+/// The box ticked, or the card says it must be — kept across a redraw.
+function authConsented() {
+  const box = $("auth-consent");
+  authFlow.consent = !!(box && box.checked);
+  if (authFlow.consent) return true;
+  authFlow.error = "needs_consent";
+  renderAuthPage(authFlow.kind);
+  return false;
+}
+
 async function authAct(el) {
   const what = el.dataset.auth;
+  if (what === "register" && !authConsented()) return;
   if (what.startsWith("compute-") || what.startsWith("device-")) return computeAct(el, what);
   const kind = authFlow.kind;
   const main = $("auth-page");
@@ -774,6 +796,9 @@ async function authAct(el) {
     }
     const email = e.target.closest('a[href="#email-password"]');
     if (email) { e.preventDefault(); $("email-password").scrollIntoView({ behavior: "smooth", block: "start" }); return; }
+    // A WAY TO SIGN UP WAITS FOR THE YES, as the email form does.
+    const prov = e.target.closest("a.prov[data-needs-consent]");
+    if (prov && !authConsented()) { e.preventDefault(); return; }
     const el = e.target.closest("[data-auth]");
     if (el) { e.preventDefault(); authAct(el); }
   });

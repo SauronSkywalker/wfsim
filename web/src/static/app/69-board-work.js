@@ -96,6 +96,7 @@ function setBoardVerify(on) {
   renderBoardConsent();
   computeRedraw();
   computeChrome();
+  renderComputePicker();
 }
 
 /// …AND EVEN WITH A YES, NOT NOW: paused for this tab by the reader, on a

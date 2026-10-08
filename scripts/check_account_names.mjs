@@ -7,7 +7,7 @@
 /// username field is shut while the display name still saves.
 import { openApp } from "./cdp.mjs";
 
-const app = await openApp({ boot: 12000 });
+const app = await openApp({ boot: 12000, base: process.env.WFSIM_BASE });
 const { evaluate, check } = app;
 
 const r = await evaluate(`(async () => {
@@ -76,5 +76,43 @@ check("...and the display name still saves, sending no username",
 
 check("the account page lists the agents acting for it", r.agentListed === true);
 check("...and one click disconnects one", r.revoked === '["g1"]' && r.agentGone === true, JSON.stringify([r.revoked, r.agentGone]));
+
+// THE ONE YES AN ACCOUNT NEEDS (17-account.js `authConsentBox`): signing up, by
+// email or by a provider, waits for the box that agrees to the privacy policy
+// and to the account being kept outside mainland China.
+const s = JSON.parse(await evaluate(`(async () => {
+  const sleep = (ms) => new Promise((ok) => setTimeout(ok, ms));
+  const realFetch = window.fetch;
+  const sent = [];
+  window.fetch = async (url, o = {}) => {
+    const path = String(url);
+    const reply = (j) => new Response(JSON.stringify(j), { headers: { 'content-type': 'application/json' } });
+    if (path === '/api/account') return reply({ ok: true, providers: ['email', 'google'], account: null });
+    if (path.startsWith('/api/auth/')) { sent.push(path); return reply({ ok: true, outcome: 'code_sent' }); }
+    return realFetch(url, o);
+  };
+  await loadAccount(); history.pushState({}, '', '/signup'); route(); await sleep(300);
+  const page = document.getElementById('auth-page');
+  const out = { box: !!page.querySelector('#auth-consent'), mentions: /mainland China|中国大陆/.test(page.textContent) };
+  page.querySelector('#auth-email').value = 'a@example.com';
+  page.querySelector('#auth-password').value = 'longenough1';
+  page.querySelector('[data-auth="register"]').click(); await sleep(200);
+  out.blocked = sent.length === 0 && /Tick the box|请先勾选/.test(page.textContent);
+  if (!page.querySelector('#auth-consent')) { window.fetch = realFetch; return JSON.stringify(out); }
+  const before = location.href;
+  const prov = page.querySelector('a.prov[data-needs-consent]');
+  out.provHeld = !!prov && (prov.click(), await sleep(100), location.href === before);
+  page.querySelector('#auth-consent').checked = true;
+  page.querySelector('#auth-email').value = 'a@example.com';
+  page.querySelector('#auth-password').value = 'longenough1';
+  page.querySelector('[data-auth="register"]').click(); await sleep(300);
+  out.sent = sent.length > 0;
+  window.fetch = realFetch;
+  return JSON.stringify(out);
+})()`));
+check("signing up asks for one yes: the privacy policy, and the account kept outside mainland China", s.box && s.mentions, JSON.stringify(s));
+check("...nothing is sent until it is ticked", s.blocked, JSON.stringify(s));
+check("...nor does a provider's button go anywhere", s.provHeld, JSON.stringify(s));
+check("...and ticked, the sign-up goes through", s.sent, JSON.stringify(s));
 
 await app.finish("an account's name is set on the page and shown where the account is");

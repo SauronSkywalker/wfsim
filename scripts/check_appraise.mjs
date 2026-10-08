@@ -80,5 +80,10 @@ check("…and only under its own appraisal", !(await call("GET", `/api/appraise/
 const done = await call("GET", `/api/appraise/${code}`);
 check("the page then reads it done, and whom it thanked", done.body.done === true && done.body.thanked === "B");
 
+const other = (await call("POST", "/api/appraise/new", ask("names"), bot)).body.code;
+await call("POST", `/api/appraise/${other}/result`, { build, thanks: "a 片达人" });
+check("a name carrying a listed word is not carried into a chat at all, though the build counts",
+  db.prepare("SELECT thanks FROM appraisal_results WHERE code = ?").get(other).thanks === "");
+
 if (failures) { console.log(`\n${failures} failed`); process.exit(1); }
 console.log("\nan appraisal is asked once, answered once");
