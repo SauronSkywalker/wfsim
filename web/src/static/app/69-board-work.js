@@ -118,6 +118,34 @@ const postBoardWork = (path, body) => fetch(path, {
   body: JSON.stringify(body),
 }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
 
+/// A NEWER RELEASE IS OUT (`stale`): this page's engine is given no more work,
+/// so a machine left computing would idle for ever. It reloads itself — the
+/// build kept as a language switch keeps it — once nobody has touched it for
+/// `IDLE_RELOAD_MS` and nothing the reader started is running; until then the
+/// switch says so. Not in the desktop shell, whose updater swaps the files.
+const IDLE_RELOAD_MS = 10 * 60_000;
+let boardStale = false;
+let lastTouched = Date.now();
+for (const ev of ["pointerdown", "keydown", "wheel", "touchstart"]) {
+  addEventListener(ev, () => { lastTouched = Date.now(); }, { passive: true, capture: true });
+}
+function readerBusy() {
+  return foregroundHeld > 0 || optJobId !== null || gainScan.running || shapleyJob.running;
+}
+function reloadForRelease() {
+  try { sessionStorage.setItem("wfsim-lang-stash", JSON.stringify(snapshotState())); } catch (_) { /* nothing to keep */ }
+  location.reload();
+}
+function maybeReloadForRelease() {
+  if (!boardStale || window.__WFSIM_DESKTOP__ || readerBusy() || Date.now() - lastTouched < IDLE_RELOAD_MS) return;
+  // ONE TRY AN HOUR: a CDN still serving the old files must not make a loop.
+  try {
+    if (Date.now() - Number(sessionStorage.getItem("wfsim-release-reload") || 0) < 3_600_000) return;
+    sessionStorage.setItem("wfsim-release-reload", String(Date.now()));
+  } catch (_) { return; }
+  reloadForRelease();
+}
+
 /// ONE ORDER, fought here and answered — `true` when there was one. The answer
 /// never says whether it agreed; a lease this browser leaves lapses on its own.
 async function workOnce() {
@@ -126,6 +154,8 @@ async function workOnce() {
   if (!id) return false;
   await claimDevice(id);
   const ask = await postBoardWork("/api/board/work", { verifier: id, engine: ENGINE_ID, protocol: 3 });
+  if (ask && ask.stale && !boardStale) { boardStale = true; renderBoardConsent(); }
+  maybeReloadForRelease();
   const w = ask && ask.work;
   if (!w) return false;
   const order = await api("/api/board/order", { record: w.record, ruler: w.ruler, mode: w.mode });
@@ -160,7 +190,11 @@ function boardVerifyHtml() {
     ? tr("Your browser helps compute what WFSim gives everyone for free, in the background ({n} so far).")
       .replace("{n}", String(boardVerifiedCount()))
     : tr("Your browser does not compute the board's scores.");
-  return ` <span class="board-state">${escHtml(text)}</span>` +
+  const stale = on && boardStale
+    ? ` <span class="board-state">${escHtml(tr("A new version is out; this page refreshes itself once it is left idle."))}</span>
+      <button class="ghost-btn small" id="board-reload">${escHtml(tr("refresh now"))}</button>`
+    : "";
+  return ` <span class="board-state">${escHtml(text)}</span>${stale}` +
     ` <button class="ghost-btn small" id="board-verify-flip">${escHtml(on ? tr("stop computing") : tr("start computing"))}</button>` +
     (accountState.providers.length ? boardPointsHtml(on) : "");
 }
@@ -185,6 +219,8 @@ function boardPointsHtml(on) {
 function wireBoardVerify() {
   const b = $("board-verify-flip");
   if (b) b.onclick = () => setBoardVerify(!boardVerifyOn());
+  const again = $("board-reload");
+  if (again) again.onclick = reloadForRelease;
   for (const [id, named] of [["board-name-yes", true], ["board-name-no", false]]) {
     const el = $(id);
     if (el) el.onclick = async () => {

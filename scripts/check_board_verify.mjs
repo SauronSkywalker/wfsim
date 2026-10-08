@@ -171,6 +171,8 @@ order("lock");
 only("lock");
 const P = "p".repeat(24), Q = "q".repeat(24);
 check("a tab of an engine the site does not serve is handed nothing", (await work("o".repeat(24), "e0")).work === null);
+check("...and is told it is stale, so a machine left computing reloads", (await work("o".repeat(24), "e0")).stale === true
+  && (await work("o".repeat(24), "e1", PROTOCOL - 1)).stale === true && !(await work(C)).stale);
 const blind = { ...env, ASSETS: { fetch: async () => new Response("missing", { status: 404 }) } };
 check("...and nobody is while the served engine cannot be read",
   (await callIn(blind, "/api/board/work", { verifier: P, engine: "e1", protocol: PROTOCOL })).work === null);

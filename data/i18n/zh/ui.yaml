@@ -2534,6 +2534,8 @@ ui:
   "You are on the contributors' ranking without your name. Show it?": "你在贡献榜上是匿名的。要显示你的名字吗？"
   "This browser: {n} points.": "这台浏览器：{n} 积分。"
   "Sign in to count it under your name": 登录后记在你的名下
+  "A new version is out; this page refreshes itself once it is left idle.": "有新版本了，这个页面闲置一会儿后会自动刷新。"
+  "refresh now": 立即刷新
   "An AI agent connects by asking you for a code WFSim mails to your address. Disconnecting it stops its key at once.": "AI agent 需要向你索要 WFSim 发到你邮箱的验证码才能连接。断开后，它的 key 立即失效。"
   "Profile": "个人资料"
   "Username": "用户名"

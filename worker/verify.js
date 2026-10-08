@@ -7,7 +7,7 @@
 // `CLIENTS_PER_FACT` equal results make a fact in `scores`. Nothing here
 // computes a number.
 //
-//   POST /api/board/work    { verifier, engine, protocol }                                → { work: { lease, record, ruler, mode } | null }
+//   POST /api/board/work    { verifier, engine, protocol }                                → { work: { lease, record, ruler, mode } | null, stale? }
 //   POST /api/board/verify  { lease, verifier, engine, score, metric, work, compute_ms }  → { ok }
 //
 // EQUAL means the score, the metric AND the work (`Shard::work`): a fact
@@ -140,9 +140,12 @@ async function work(request, env) {
   const { b, err } = await read(request);
   if (err) return err;
   if (!VERIFIER_ID.test(b.verifier || "") || !ENGINE_ID.test(b.engine || "")) return json({ ok: false, error: "bad request" }, 400);
-  if (b.protocol !== PROTOCOL) return json({ ok: true, work: null });
+  // AN OLDER PAGE IS TOLD SO (`stale`), or a machine left computing would ask
+  // for ever and be given nothing once a release ships.
+  if (b.protocol !== PROTOCOL) return json({ ok: true, work: null, stale: true });
   const engine = await servedEngine(env);
-  if (!engine || b.engine !== engine) return json({ ok: true, work: null });
+  if (!engine) return json({ ok: true, work: null });
+  if (b.engine !== engine) return json({ ok: true, work: null, stale: true });
   const db = env.LIBRARY, now = Date.now();
   await retire(db, engine);
   if (!(await admit(db, b.verifier))) return json({ ok: true, work: null });
