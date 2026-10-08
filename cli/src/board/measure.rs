@@ -147,12 +147,41 @@ mod tests {
         });
         let lib = wfsim_webapi::board_rows::library_build(&sent).expect("legal");
         let record = wfsim_webapi::board_rows::canonical_record(&lib);
+        assert!(order_is_the_scorers(&record) >= 2, "an Incarnon weapon has a mode per form");
+    }
+
+    /// …AND A RIVEN CORNER'S IS TOO: the order carries the corner's ROLLS, so
+    /// two corners of one shape are handed out as two different fights.
+    #[test]
+    fn a_riven_corners_order_is_the_scorers_row_with_its_rolls() {
+        let corner = |rolls: [f64; 3]| json!({
+            "weapon": "furis",
+            "mods": ["primed_convulsion", "pathogen_rounds", "galvanized_diffusion", "primed_target_cracker",
+                     "galvanized_shot", "gunslinger", "magnetic_might", "riven"],
+            "evolutions": ["furis_evo1_incarnon_form", "furis_stormburst", "furis_extended_volley", "furis_headcracker"],
+            "arcanes": ["secondary_enervate"],
+            "exilus": "eject_magazine",
+            "riven_pos": ["damage", "multishot"],
+            "riven_neg": "weapon_recoil",
+            "riven_rolls": rolls,
+        });
+        let god = corner([1.1, 1.1, 0.9]);
+        assert!(order_is_the_scorers(&god) >= 1);
+        let order = |rec: &Value| wfsim_webapi::board_rows::board_order_json(&json!({
+            "record": rec, "ruler": "standard_single_target", "mode": "base",
+        }))["request"].clone();
+        assert_ne!(order(&god), order(&corner([0.9, 1.1, 0.9])), "the rolls never reached the fight");
+    }
+
+    /// The order for every mode `record` owes under one ruler names the
+    /// scorer's fight and ends on its number; how many modes it checked.
+    fn order_is_the_scorers(record: &Value) -> usize {
         let ruler = "standard_single_target";
         let bench = wfsim_engine::board::benchmarks::get(ruler).expect("ruler");
-        let v = wfsim_webapi::board_rows::scored_build(&record, ruler).expect("complete");
+        let v = wfsim_webapi::board_rows::scored_build(record, ruler).expect("complete");
         let scenario = serde_json::to_value(&bench.scenario).unwrap();
         let scorer = wfsim_webapi::board_rows::row_requests(&v, &scenario);
-        assert!(scorer.len() >= 2, "an Incarnon weapon has a mode per form");
+        let modes = scorer.len();
         for (played, want) in scorer {
             let mode = if played.id.is_empty() { "base" } else { played.id };
             let order = wfsim_webapi::board_rows::board_order_json(&json!({
@@ -180,6 +209,7 @@ mod tests {
             );
             assert_eq!(scored["metric"], json!(bench.metric().id), "the order's metric is not the ruler's");
         }
+        modes
     }
 
     /// A ROW PAID FOR IN SITTINGS IS THE ROW PAID FOR IN ONE.
