@@ -79,7 +79,7 @@ db.prepare("UPDATE orders SET state = 'open' WHERE identity = 'one'").run();
 check("an open order is never handed back to the client that measured it", (await work(A)).work === null);
 check("...nor to a client of another engine", (await work(C, "e2")).work === null);
 const second = await work(B);
-check("...but to another client of its engine", second.work && second.work.record.weapon === "braton_prime");
+check("...but to another client of its engine", second.work && second.work.record.weapon === "braton_prime" && !second.stale);
 check("...and NOT with the number to agree with", second.work && !JSON.stringify(second.work).includes(String(SCORE)));
 const agreed = await answer(second.work, B, SCORE);
 check("equal bits make a fact", fact("one") && fact("one").score === SCORE && fact("one").measured_by === "verified:e1", JSON.stringify(fact("one")));
@@ -172,7 +172,7 @@ only("lock");
 const P = "p".repeat(24), Q = "q".repeat(24);
 check("a tab of an engine the site does not serve is handed nothing", (await work("o".repeat(24), "e0")).work === null);
 check("...and is told it is stale, so a machine left computing reloads", (await work("o".repeat(24), "e0")).stale === true
-  && (await work("o".repeat(24), "e1", PROTOCOL - 1)).stale === true && !(await work(C)).stale);
+  && (await work("o".repeat(24), "e1", PROTOCOL - 1)).stale === true);
 const blind = { ...env, ASSETS: { fetch: async () => new Response("missing", { status: 404 }) } };
 check("...and nobody is while the served engine cannot be read",
   (await callIn(blind, "/api/board/work", { verifier: P, engine: "e1", protocol: PROTOCOL })).work === null);
