@@ -1357,4 +1357,47 @@ mod the_demolisher_ruler {
             assert_eq!(get(&aimed, k), get(&demo, k), "`{k}` differs and is not a declared term");
         }
     }
+    /// THE HEAVY GUNNER RULER MOVES THE TARGET AND NOTHING ELSE: the enemy, and
+    /// the Eximus flag that says which of the unit's two forms it is.
+    #[test]
+    fn the_heavy_gunner_ruler_changes_the_target_and_nothing_else() {
+        let of = |id: &str| {
+            wfsim_engine::board::benchmarks::all()
+                .iter()
+                .find(|b| b.id == id)
+                .unwrap_or_else(|| panic!("no ruler {id}"))
+                .scenario
+                .clone()
+        };
+        let (aimed, gunner) = (of("standard_single_target"), of("heavy_gunner"));
+        let get = |s: &serde_norway::Value, k: &str| s.get(k).cloned();
+        assert_eq!(
+            get(&gunner, "enemy").and_then(|v| v.as_str().map(String::from)).as_deref(),
+            Some("corrupted_heavy_gunner")
+        );
+        assert_eq!(get(&gunner, "eximus").and_then(|v| v.as_bool()), Some(true));
+        let keys = |s: &serde_norway::Value| -> Vec<String> {
+            s.as_mapping()
+                .expect("a scenario is a mapping")
+                .keys()
+                .filter_map(|k| k.as_str().map(String::from))
+                .collect()
+        };
+        let (ka, kg) = (keys(&aimed), keys(&gunner));
+        for k in &ka {
+            assert!(kg.contains(k), "the heavy gunner ruler drops `{k}`");
+        }
+        for k in &kg {
+            assert!(k == "eximus" || ka.contains(k), "the heavy gunner ruler invents `{k}`");
+        }
+        for k in ka.iter().filter(|k| *k != "enemy") {
+            assert_eq!(get(&aimed, k), get(&gunner, k), "`{k}` differs and is not a declared term");
+        }
+        // …AND THE FIGHT IS THE ONE THE FILE NAMES: an Eximus, so Overguard in
+        // front of the replaced health.
+        let mut v = serde_json::to_value(&gunner).expect("a scenario is json");
+        v["weapon"] = serde_json::json!("braton");
+        let f = super::parse_fight(&v).expect("the heavy gunner fight parses");
+        assert!(f.arena.target.eximus && f.arena.target.overguard() > 0.0);
+    }
 }

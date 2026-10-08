@@ -835,6 +835,7 @@ ui:
   "Sim": 模拟
   "Simulator": 模拟器
   "Demolisher · one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM": 爆破使 · 单体 · 爆破型吞噬者 9999 钢铁 · 四人血量 · 180 秒 · KPM
+  "Heavy Gunner · one target · Eximus Corrupted Heavy Gunner Lv 9999 SP · 180 s · KPM": 重型机枪手 · 单体 · 卓越者堕落重型机枪手 9999 钢铁 · 180 秒 · KPM
   "Measured builds": 实测配装
   "what this weapon's number does not account for": 这把武器的数字没算进去的东西
   "the board's best riven-free build for each ruler": 榜单上每把尺子下最好的无裂罅配装
@@ -850,6 +851,7 @@ ui:
   "Standard means this fight is claimed to represent most play, not that it is the fight you play: a crowd of tough, unaffiliated targets, packed as close as every elemental area effect still reaches and no larger than holds them whole.": 「标准」是说这场战斗被判断为能代表大多数情况，不是说你平时就在打它：一群耐打、不属于任何派系的目标，站得刚好让每种元素范围效果都能打到邻居，方阵大小刚好装下它们。
   "The spacing decides whether splash or single-target damage wins: 3 m is where that ordering matches play, and it is the widest whole metre at which Electricity still reaches a neighbour.": 决定溅射还是单体胜出的是间隔：3 米时这个排序和实战一致，也是电还能打到相邻敌人的最大整米间隔。
   "One specific fight players run, measured as it is rather than as a stand-in for most play: a Demolisher a full squad meets, taken apart by one weapon.": 这是玩家实际会打的一场具体战斗，按它本来的样子来测，不代表大多数情况：一整支小队面对的爆破使，由一把武器单独拆掉。
+  "One specific fight players run, measured as it is rather than as a stand-in for most play: the Eximus Corrupted Heavy Gunner of the Void Fissures, taken apart by one weapon.": 这是玩家实际会打的一场具体战斗，按它本来的样子来测，不代表大多数情况：虚空裂缝里的卓越者堕落重型机枪手，由一把武器单独拆掉。
   "Skull Shots and Stinging Truth, the Viper-exclusive mods — weapon-exclusive cards outside the pools this roster loads": "「Skull Shots」和「Stinging Truth」，Viper 家族的专属 MOD——这是武器专属卡，不在本武器库载入的卡池里"
   "Sometimes it says the number is right and the game is wrong, and names the bug a hotfix would take away.":
     有时候它会说：数字没错，是游戏错了——顺带指出那个下次热修可能就没了的 bug。
@@ -2110,6 +2112,10 @@ ui:
   "Radiation cannot proc on this unit: the type is dropped from the draw, and every other type on the build gets likelier for it.": "辐射无法在这个单位上触发：抽取异常时会去掉辐射，配装上其他每种类型的触发几率都会因此变高。"
   "It can never be Frozen, so Cold climbs to its cap and stays there. An Impact proc lands and counts as a status type, and does not stagger it.": "它永远不会被冰冻，所以冷冻层数会一路叠到上限并保持。冲击异常能触发，也算作一种异常类型，但打不出硬直。"
   "The score is kills per minute, counting the fraction of the current target already gone. Removing 3% of one Demolisher in 180 seconds scores 0.03 and still ranks.": "分数是每分钟击杀数，并计入当前目标已被削去的比例。180 秒内削掉一只爆破使的 3%，得分 0.03，仍然进榜。"
+  "The target is one Eximus Corrupted Heavy Gunner at level 9999 on Steel Path. The fight lasts 180 seconds.": "目标是一只 9999 级钢铁之路的卓越者堕落重型机枪手。战斗持续 180 秒。"
+  "The target is a Corrupted Heavy Gunner because it spawns in Void Fissures, it is the toughest Orokin unit, and it is one of the targets players most often test builds on. It is Orokin, so faction mods and faction bonuses read on it, and it takes Puncture and Viral at 1.5x and Radiation at 0.5x. As an Eximus it carries Overguard in front of a health pool three and a half times an ordinary Heavy Gunner's; it is armoured; its weak points are 3x on the head and 1x elsewhere.": "选堕落重型机枪手做目标，是因为它会在虚空裂缝里出现，是堕落者里最硬的单位，也是玩家最常拿来测配装的木桩之一。它属于堕落者派系，所以派系 MOD 和派系加成对它生效；它受穿刺和病毒 1.5 倍、辐射 0.5 倍伤害。作为卓越者，它在生命值前面还有一层超宏防护，生命值是普通重型机枪手的三倍半；它有护甲；弱点是头部 3 倍、其他部位 1 倍。"
+  "Which Eximus it is changes nothing here: no Eximus aura is applied, and no type that shields itself from weapons is used.": "是哪一种卓越者在这里没有区别：不计任何卓越者光环，也不使用会替自己挡武器伤害的类型。"
+  "The score is kills per minute, counting the fraction of the current target already gone. Removing 3% of one Heavy Gunner in 180 seconds scores 0.03 and still ranks.": "分数是每分钟击杀数，并计入当前目标已被削去的比例。180 秒内削掉一只重型机枪手的 3%，得分 0.03，仍然进榜。"
   "Every main slot is filled, every evolution tier the entry has is taken, every arcane seat it has is filled. The Exilus slot is optional: a row may wear one and a row without one is not a lesser build, so the two sit on the same board and the better number wins.": "每个主槽都装满，该条目拥有的每一阶进化都选，每一个赋能位都填。Exilus 槽可选：配装可以装，也可以不装，不装的并不低人一等，两者在同一块榜上比，分数高的赢。"
   "The stance slot is optional too, and it is not a discount but a GRANT: a stance hands the weapon 10 mod capacity on a matching polarity, 5 on a bare slot and 4 on the wrong colour. A row without one is not a lesser build; it is a build that spent the capacity elsewhere.": "架势槽同样可选，而且它不是减免，而是赠予：架势在极性相符时给武器 10 点 MOD 容量，无极性时给 5 点，极性不符时给 4 点。不装架势的配装并不低人一等，只是把这份容量花在了别处。"
   "The reserve is not spent: every entry fires as if it were being resupplied by the squad this target was brought for, so nothing here ranks ammo economy. An entry that cannot be resupplied at all runs on its own reserve.": "备弹不消耗：每个条目开火时都当作有这只目标所针对的小队在给它补给，所以这里不比弹药经济。完全无法补给的条目只能靠自己的备弹。"
