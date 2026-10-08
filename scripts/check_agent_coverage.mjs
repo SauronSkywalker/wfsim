@@ -91,9 +91,9 @@ for (const w of WEAPONS) {
     // a document before the scan: a list with nothing open hides the editor.
     if (m === "rivens") await evaluate(`window.wfsim.do("rivens.card.new", {})`, { awaitPromise: true });
     // A search is born on its first edit, and only then does its bar carry
-    // rename and delete.
+    // rename and delete — and a reader on the read-only built-in edits a COPY.
     if (m === "optimizer") {
-      await evaluate(`(() => { addStart(snapshotState()); })()`);
+      await evaluate(`(() => { if (builtinSearchActive()) copyActivePreset(optBarCfg()); addStart(snapshotState()); })()`);
       await new Promise((r) => setTimeout(r, 900));
     }
     if (m === "enemies") await evaluate(`(() => { const b = document.querySelector("#enemy-tools .cu-new"); if (b) b.click(); })()`);

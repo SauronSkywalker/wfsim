@@ -336,6 +336,7 @@ const AGENT_EXEMPT = [
   { sel: "#theme-toggle", kind: "pref", why: "light or dark, for this browser" },
   { sel: "#quick-calc", kind: "pref", why: "the quick calc's own settings, for this browser" },
   { sel: "#board-no", kind: "pref", why: "whether this browser sends results to the board" },
+  { sel: "#board-verify-flip", kind: "pref", why: "whether this browser computes the board's orders" },
   { sel: "#w-name a", kind: "outward", why: "links to the wiki and the market" },
   { sel: "#qq-copy-foot", kind: "outward", why: "copies the community group number" },
   { sel: ".pop.ren", kind: "reader", why: "renaming a build is the reader's" },
