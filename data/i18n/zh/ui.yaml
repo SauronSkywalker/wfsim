@@ -515,8 +515,8 @@ ui:
   "Evolution": 进化
   "Evolutions": 进化
   "Exilus slot": Exilus 槽
-  "Eximus possible": 可以是精英
-  "Eximus": 精英
+  "Eximus possible": 可以是卓越者
+  "Eximus": 卓越者
   "In the bar": "已在栏里"
   "Mine": "我的"
   "No build matches — remove a condition": "没有符合的配装 —— 去掉一个条件试试"
@@ -1082,7 +1082,7 @@ ui:
   frozen: 冻结
   "full at": 满层于
   "fully automatic": 全自动
-  "has an Eximus variant": 存在精英变体
+  "has an Eximus variant": 存在卓越者变体
   head: 头部
   "headshots": 爆头
   "Headshots grant 2 stacks (max 16) of Vinquibus Precision, +250% melee damage; it lands on a weapon the sim does not fire, so it adds nothing here.": "爆头会获得 2 层（上限 16 层）Vinquibus Precision，近战伤害 +250%；它作用在模拟不会使用的武器上，所以这里不产生收益。"
@@ -1506,9 +1506,9 @@ ui:
   "another build acting in this fight": 这场战斗里另一套正在出手的配装
   "the whole squad — {n} builds acting together, so it is not a board figure": 整队合计 —— {n} 套配装一起出手，所以这个数不是榜单口径
   "every figure but DPS is {who}'s — DPS is the whole fight's": 除 DPS 外每一项都是 {who} 的；DPS 是整场的
-  "a Guardian Eximus nearby gives its allies 90% damage reduction. It does NOT reach Overguard, so a target with a pool in front of it loses that pool at full speed and then takes a tenth": 附近有守护者 Eximus 时，它的同伴获得 90% 伤害减免。这个减免不作用于超宏防护，所以带超宏防护的目标会先按原速掉完超宏防护，之后才只吃十分之一
+  "a Guardian Eximus nearby gives its allies 90% damage reduction. It does NOT reach Overguard, so a target with a pool in front of it loses that pool at full speed and then takes a tenth": 附近有守护者卓越者时，它的同伴获得 90% 伤害减免。这个减免不作用于超宏防护，所以带超宏防护的目标会先按原速掉完超宏防护，之后才只吃十分之一
   "Ancient Protector aura": 远古守护者光环
-  "an Ancient Protector nearby covers its allies in Overguard worth 800% of their maximum health. A body with Overguard of its own is excluded by name, so this does nothing to an Eximus": 附近有远古守护者时，它的同伴会获得相当于自身最大生命 800% 的超宏防护。维基点名排除了本来就自带超宏防护的单位，所以对 Eximus 无效
+  "an Ancient Protector nearby covers its allies in Overguard worth 800% of their maximum health. A body with Overguard of its own is excluded by name, so this does nothing to an Eximus": 附近有远古守护者时，它的同伴会获得相当于自身最大生命 800% 的超宏防护。维基点名排除了本来就自带超宏防护的单位，所以对卓越者无效
   "Guardian aura": 守护者光环
   "the body the weapon was on": 武器瞄准的那一具
   "the bonus this copy came out of its Lich with — added as the weapon's own BASE damage, so elemental mods and status scale with it": 这把枪从它的 Lich 那里带出来的加成——作为武器自身的基础伤害加上去，所以元素 MOD 和异常都会跟着放大
@@ -1540,7 +1540,7 @@ ui:
   "The dart's 1.5 s explosion delay is not modelled: the blast arrives with the dart, so a short fight gets its damage early.": "飞镖 1.5 秒的爆炸延迟未建模：爆炸与飞镖同时到达，所以短时间的战斗拿到伤害的时间偏早。"
   "The discharge also strips Sentient and Shadow Stalker damage resistances; no target here has any.": "放电还会移除 Sentient 和暗影 Stalker 的伤害抗性；这里没有目标带有这种抗性。"
   "The duplex trigger is not modelled: one pull fires two rounds in game, and this entry paces one per pull.": "双发扳机未建模：游戏里扣一次发射两发，本条目按每次一发计算。"
-  "the elite variant: more health, and a pool of Overguard in front of it": 精英变体：更高生命，且生命前面还有一层超宏防护
+  "the elite variant: more health, and a pool of Overguard in front of it": 卓越者变体：更高生命，且生命前面还有一层超宏防护
   "the target a squad of this size meets — it is a fatter enemy, not more guns: one weapon still fires, and what is ranked is how much of it yours takes off": 这个人数的小队会遇到的目标——它只是更厚的敌人，不是更多的枪：开火的仍然只有一把武器，排名比的是你这一把能把它削掉多少
   "The embedded detonation also forces a ragdoll, which is not damage and is not applied.": "嵌入后的引爆还会必定造成布娃娃效果，它不是伤害，未应用。"
   "The escalating ammo cost the wiki lists under Bugs (2/2/2/3/3/4/6 through a magazine, and -1 damage per extra ammo) is not modelled, so the number reads slightly high.": "wiki 列在 Bugs 里的递增弹药消耗（一个弹匣内依次为 2/2/2/3/3/4/6，每多耗 1 发伤害 −1）未建模，所以数字略偏高。"
