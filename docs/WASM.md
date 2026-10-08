@@ -213,6 +213,14 @@ share the worker pool; a person's Run holds priority for its duration, and
 background work yields between pieces, never mid-piece, so the foreground
 waits for one piece rather than for the scan (`check_run_outranks_scan.mjs`).
 
+**…AND THE COMMUNITY'S WORK YIELDS TO ALL OF IT.** A board order or a
+volunteer riven gain runs only while the reader computes nothing: no call of
+theirs on the pool (`readerInFlight`, counted on the lane — a call is the
+reader's unless the community's work tagged it), no search, scan or Shapley
+between calls, and no other WFSim tab saying it is busy (`readerBusy`). A board
+order waits between pieces and re-asks a piece the reader's Stop took; a riven
+gain, on workers of its own, stops (`check_compute.mjs`).
+
 **THE RUN COUNT IS NOT ONE OF THE THINGS THAT ADAPT.** Adaptation is a property
 of the SCHEDULER — how the work is cut up, which lane takes it, what waits for
 what. How many runs an answer is measured over decides the ANSWER, and an

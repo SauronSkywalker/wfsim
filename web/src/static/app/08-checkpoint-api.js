@@ -301,7 +301,7 @@ function woptCancel() {
   return { ok: true, job_id: wopt.id };
 }
 
-async function api(path, body, onProgress) {
+async function api(path, body, onProgress, opts) {
   if (!WASM) {
     // GET endpoints (the rest are POST-with-body):
     if (path === "/api/meta" || path === "/api/i18n") return (await fetch(path)).json();
@@ -327,7 +327,7 @@ async function api(path, body, onProgress) {
   // pool that is genuinely gone must end in an answer rather than a loop.
   let r = null;
   for (let attempt = 0; attempt < 3; attempt++) {
-    r = await freeLane().call(path, body, onProgress);
+    r = await freeLane().call(path, body, onProgress, !!(opts && opts.community));
     if (!r || !r.worker_dead) return r;
     const i = pool.findIndex((l) => l && l.dead);
     if (i >= 0) pool[i] = null;

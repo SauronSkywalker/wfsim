@@ -172,7 +172,7 @@ function computeHereHtml() {
     : held === "data" ? tr("Paused while the browser saves data.")
     : boardStale ? tr("A new version is out; this page refreshes itself once it is left idle.")
     : computeNow ? tr("Computing now.")
-    : foregroundHeld > 0 ? tr("Paused while you use the calculator.")
+    : readerBusy() ? tr("Paused while you use the calculator.")
     : tr("Waiting for the next task.");
   const flip = WASM && !onPhone()
     ? ` <button class="ghost-btn btn-sm" data-auth="compute-flip">${aT(on ? "stop computing" : "start computing")}</button>` : "";

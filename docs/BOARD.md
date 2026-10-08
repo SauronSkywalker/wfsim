@@ -677,8 +677,8 @@ row at a time, so the board's growth is more orders, never a heavier client.
 
 **THE CLIENT IS AN ID** its browser made for itself, joined to no submission,
 kept in `verifiers` so a refusal has something to hold, and joined to an
-account only by that account claiming it (§"Contribution"). Working is ON by
-default and switched beside the board's own consent; a phone never works.
+account only by that account claiming it (§"Contribution"). Working is OFF
+until the reader says yes (rule 0 below); a phone never works.
 
 ## Contribution
 

@@ -148,6 +148,12 @@ const yieldToForeground = async (live) => {
   }
 };
 
+/// THE READER'S OWN CALLS IN FLIGHT, counted on the lane rather than listed by
+/// feature: every call on the pool is the reader's unless the community's work
+/// tagged it (`api(…, { community: true })`), so a new feature that computes is
+/// counted without anyone remembering to add it. Community work yields to this.
+let readerInFlight = 0;
+
 /// HOW LONG A LANE MAY SAY NOTHING before it is presumed gone, in ms.
 ///
 /// Generous on purpose: a false kill costs one rebuilt worker, and the window
@@ -223,10 +229,13 @@ function makeLane() {
   // The fix is to make SILENCE a bounded outcome rather than an infinite wait:
   // a simulate beats once a run (see `worker.js`), so a lane that says nothing
   // for the window below is presumed gone and settled like any other dead one.
+  // Which pending calls are the reader's — see `readerInFlight`.
+  const readerIds = new Set();
+  const settleReaders = () => { readerInFlight = Math.max(0, readerInFlight - readerIds.size); readerIds.clear(); };
   const perish = (why) => {
     dead = true;
     pending.forEach((res) => res({ ok: false, error: why, worker_dead: true }));
-    pending.clear(); progress.clear(); wd.clear(); busy = 0;
+    pending.clear(); progress.clear(); wd.clear(); busy = 0; settleReaders();
   };
   const wd = watchSilence(() => { track("engine.fail", "worker_silent"); perish("worker stopped answering"); });
   // A LANE THAT CANNOT LOAD IS A LANE, NOT A DEAD PAGE.
@@ -265,6 +274,7 @@ function makeLane() {
       progress.delete(e.data.id);
       wd.done();
       busy = Math.max(0, busy - 1);
+      if (readerIds.delete(e.data.id)) readerInFlight = Math.max(0, readerInFlight - 1);
       r(e.data.payload);
     }
   };
@@ -288,24 +298,27 @@ function makeLane() {
       progress.clear();
       wd.clear();
       busy = 0;
+      settleReaders();
     },
-    send(msg, onProgress) {
+    send(msg, onProgress, community = false) {
       return new Promise((res) => {
         if (dead) { res({ ok: false, cancelled: true }); return; }
         const id = ++seq;
         pending.set(id, res);
         wd.start();
         busy += 1;
+        if (!community) { readerIds.add(id); readerInFlight += 1; }
         if (onProgress) progress.set(id, onProgress);
         w.postMessage({ ...msg, id });
       });
     },
     /// An ENDPOINT on this lane. Progress is asked for explicitly because only
     /// `/api/simulate` reports it — see the worker.
-    call(path, body, onProgress) {
+    call(path, body, onProgress, community = false) {
       return lane.send(
         { kind: "api", path, body: body ?? {}, progress: !!onProgress },
         onProgress,
+        community,
       );
     },
     get warm() { return warm; },

@@ -10,8 +10,9 @@
 /// `/api/board/score` ends it the scorer's way — all `webapi::board_rows` — so
 /// the number sent is the scorer's to the bit.
 ///
-/// THE READER GOES FIRST. Every piece waits on `yieldToForeground` and is sized
-/// to about `PIECE_MS`, so a run the reader starts waits for one piece at most.
+/// THE READER GOES FIRST. Every piece waits on `yieldToReader` — ANY computing
+/// of the reader's, in this tab or another — and is sized to about `PIECE_MS`,
+/// so whatever the reader starts waits for one piece at most.
 /// Not on a phone: minutes of background work on a battery is a cost the reader
 /// never agreed to.
 const PIECE_MS = 250;
@@ -27,11 +28,14 @@ async function measureRow(request, ruler, live, onPiece = () => {}) {
   let count = 1;
   let spent = 0;
   while (from < runs) {
-    await yieldToForeground();
+    await yieldToReader(live);
     if (!live()) return null;
     const n = Math.min(count, runs - from);
     const began = performance.now();
-    const step = await api("/api/board/fold", { request, acc, from, count: n });
+    const step = await api("/api/board/fold", { request, acc, from, count: n }, null, { community: true });
+    // THE READER'S STOP TOOK THE POOL, and this piece with it: asked again,
+    // since `acc` holds every piece before it and the fold is deterministic.
+    if (step && step.cancelled) continue;
     if (!step || !step.ok) return null;
     acc = step.acc;
     from += n;
@@ -42,8 +46,14 @@ async function measureRow(request, ruler, live, onPiece = () => {}) {
     onPiece(from, runs);
     count = Math.max(1, Math.min(1000, Math.round((n * PIECE_MS) / ms)));
   }
-  const began = performance.now();
-  const s = await api("/api/board/score", { ruler, request, acc });
+  let s = null;
+  let began = 0;
+  do {
+    await yieldToReader(live);
+    if (!live()) return null;
+    began = performance.now();
+    s = await api("/api/board/score", { ruler, request, acc }, null, { community: true });
+  } while (s && s.cancelled);
   spent += performance.now() - began;
   return s && s.ok && Number.isFinite(s.score) ? { ...s, compute_ms: Math.round(spent) } : null;
 }
@@ -189,8 +199,28 @@ let lastTouched = Date.now();
 for (const ev of ["pointerdown", "keydown", "wheel", "touchstart"]) {
   addEventListener(ev, () => { lastTouched = Date.now(); }, { passive: true, capture: true });
 }
+/// THE READER IS COMPUTING — anything, here or in another WFSim tab. The calls on
+/// the pool are counted where they run (`readerInFlight`); the jobs that live
+/// between calls, or on workers of their own, are named.
+function ownTabBusy() {
+  return foregroundHeld > 0 || readerInFlight > 0 || optJobId !== null || gainScan.running || shapleyJob.running;
+}
+/// …AND ANOTHER TAB SAYS SO every second while it is, each word good for two:
+/// a Run in one tab holds the community's work in all of them.
+const READER_CHANNEL = (() => { try { return new BroadcastChannel("wfsim-reader-busy"); } catch (_) { return null; } })();
+let otherTabBusyUntil = 0;
+if (READER_CHANNEL) {
+  READER_CHANNEL.onmessage = (e) => {
+    const until = Number(e.data && e.data.until);
+    if (Number.isFinite(until)) otherTabBusyUntil = Math.max(otherTabBusyUntil, Math.min(until, Date.now() + 2000));
+  };
+  setInterval(() => { if (ownTabBusy()) READER_CHANNEL.postMessage({ until: Date.now() + 2000 }); }, 1000);
+}
 function readerBusy() {
-  return foregroundHeld > 0 || optJobId !== null || gainScan.running || shapleyJob.running;
+  return ownTabBusy() || Date.now() < otherTabBusyUntil;
+}
+async function yieldToReader(live) {
+  while (readerBusy() && (!live || live())) await new Promise((r) => setTimeout(r, 25));
 }
 function reloadForRelease() {
   try { sessionStorage.setItem("wfsim-lang-stash", JSON.stringify(snapshotState())); } catch (_) { /* nothing to keep */ }
@@ -216,7 +246,7 @@ const RIVEN_RENEW_MS = 2 * 60_000;
 async function rivenGainOnce(w, id) {
   computeStart({ kind: "riven_gain", weapon: w.weapon, ruler: w.ruler });
   const began = performance.now();
-  const job = quickFleet(w.request, communityLanes(), () => yieldToForeground());
+  const job = quickFleet(w.request, communityLanes(), () => yieldToReader());
   // STILL AT IT, said every `RIVEN_RENEW_MS` so the lease runs on while the
   // search does; told the task went elsewhere, it stops (worker/appraise.js `renew`).
   let lost = false, said = performance.now();
@@ -226,7 +256,9 @@ async function rivenGainOnce(w, id) {
       const r = await postBoardWork(`/api/appraise/${encodeURIComponent(w.code)}/renew`, { lease: w.lease, verifier: id });
       if (r && r.held === false) lost = true;
     }
-    if (lost || !boardVerifyOn() || computeHeld()) {
+    // …AND IT STOPS THE MOMENT THE READER COMPUTES: its workers are its own, so
+    // waiting between rounds would leave them on the reader's cores for a round.
+    if (lost || !boardVerifyOn() || computeHeld() || readerBusy()) {
       job.cancelled = true;
       job.workers.forEach((x) => x.terminate());
       computeEnd(null);
@@ -252,7 +284,8 @@ async function rivenGainOnce(w, id) {
 /// ONE ORDER, fought here and answered — `true` when there was one. The answer
 /// never says whether it agreed; a lease this browser leaves lapses on its own.
 async function workOnce() {
-  if (!boardVerifyOn() || onPhone() || computeHeld()) return false;
+  // NO LEASE WHILE THE READER COMPUTES: one taken now would sit idle under it.
+  if (!boardVerifyOn() || onPhone() || computeHeld() || readerBusy()) return false;
   const id = verifierId();
   if (!id) return false;
   await claimDevice(id);
@@ -264,7 +297,7 @@ async function workOnce() {
   const w = ask && ask.work;
   if (!w) return false;
   if (w.kind === "riven_gain") return rivenGainOnce(w, id);
-  const order = await api("/api/board/order", { record: w.record, ruler: w.ruler, mode: w.mode });
+  const order = await api("/api/board/order", { record: w.record, ruler: w.ruler, mode: w.mode }, null, { community: true });
   if (!order || !order.ok) return true;
   computeStart({ kind: "board", weapon: w.record.weapon, ruler: w.ruler, mode: w.mode });
   const s = await measureRow(order.request, w.ruler, () => boardVerifyOn() && !computeHeld(), computeProgress);

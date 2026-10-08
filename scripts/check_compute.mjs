@@ -164,4 +164,37 @@ check("one core while the reader is at the computer, 30% of its cores once idle,
   k.busyLanes === 1 && k.idleLanes === k.want30 && k.idle50 === k.want50, c);
 check("...and a yes to an older statement is asked again", k.oldYes, c);
 
+// THE READER GOES FIRST, WHATEVER THEY RUN (69-board-work.js `readerBusy`): a
+// call of theirs on the pool holds the community's work and a community call
+// does not, a search between calls holds it, another tab's word holds it, and
+// work waiting on it resumes the moment nothing does.
+const y = await evaluate(`(async () => {
+  const sleep = (ms) => new Promise((ok) => setTimeout(ok, ms));
+  const out = {};
+  for (let i = 0; i < 200 && readerBusy(); i++) await sleep(50);
+  out.idle = !readerBusy();
+  const mine = api("/api/meta");
+  out.reader = readerInFlight > 0 && readerBusy();
+  await mine;
+  out.after = !readerBusy();
+  const theirs = api("/api/meta", null, null, { community: true });
+  out.community = readerInFlight === 0 && !readerBusy();
+  await theirs;
+  optJobId = 12345; out.search = readerBusy(); optJobId = null;
+  const other = new BroadcastChannel("wfsim-reader-busy");
+  other.postMessage({ until: Date.now() + 2000 }); await sleep(100);
+  out.otherTab = readerBusy(); other.close(); otherTabBusyUntil = 0;
+  let waiting = true;
+  optJobId = 1;
+  const held = yieldToReader().then(() => { waiting = false; });
+  await sleep(200); out.waits = waiting;
+  optJobId = null; await held; out.resumes = !waiting;
+  return JSON.stringify(out);
+})()`);
+const yr = JSON.parse(y);
+check("[built site] the reader's own call on the pool holds the community's work, and a community call does not",
+  yr.idle && yr.reader && yr.after && yr.community, y);
+check("...a search between calls holds it, and so does another tab computing", yr.search && yr.otherTab, y);
+check("...work waiting on the reader resumes the moment nothing of theirs runs", yr.waits && yr.resumes, y);
+
 await app.finish("the compute page shows what each device does, by kind, and nothing private");
