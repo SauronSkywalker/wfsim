@@ -20,14 +20,14 @@ const t = (x) => (zh.ui && zh.ui[x]) || x;
 const COMMANDS = [
   { type: "command", name: "pz", desc: t("the best builds on the board") },
   { type: "command", name: "zk", desc: t("rivens against the best build without one") },
-  { type: "command", name: "fx", desc: t("appraise your own riven") },
+  { type: "command", name: "fx", desc: t("the gain of your own riven") },
   { type: "command", name: "帮助", desc: t("what Nona can do") },
   { type: "link", name: t("WFSim, the site"), desc: t("open the site"), link: "https://wfsim.app" },
 ];
 const MENU = [
   { type: "send_message", name: t("Builds"), send_message: "pz " },
   { type: "send_message", name: t("Rivens"), send_message: "zk " },
-  { type: "send_message", name: t("Appraise"), send_message: "fx " },
+  { type: "send_message", name: t("Riven gain"), send_message: "fx " },
   { type: "send_message", name: t("Help"), send_message: "帮助" },
   { type: "link", name: t("Site"), link: "https://wfsim.app" },
 ];

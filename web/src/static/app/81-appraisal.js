@@ -44,7 +44,7 @@ async function openAppraisal(code) {
   if (!w) {
     history.replaceState(null, "", "/");
     await route();
-    presetToast(tr("This riven appraisal could not be found — it may have expired."));
+    presetToast(tr("This riven gain could not be found — it may have expired."));
     return;
   }
   appraisal = { code: job.code, job, phase: job.done ? "done-before" : "setting-up", first: null };
@@ -133,12 +133,12 @@ function renderAppraisal() {
     sending: tr("Sending the build back…"),
     sent: appraisal.first ? tr("Done — Nona will post the result in the chat. Thank you!")
       : tr("Someone finished first; your build still went onto the board. Thank you!"),
-    "done-before": tr("This riven has already been appraised. Thank you for coming!"),
-    failed: `${tr("The appraisal could not finish")}: ${appraisal.error || ""}`,
+    "done-before": tr("This riven's gain has already been found. Thank you for coming!"),
+    failed: `${tr("The riven gain could not finish")}: ${appraisal.error || ""}`,
   }[p] || "";
   const saved = appraisalName();
   const asking = p === "setting-up" || p === "searching";
-  box.innerHTML = `<div class="appraisal-h"><b>${escHtml(tr("Riven appraisal"))}</b></div>
+  box.innerHTML = `<div class="appraisal-h"><b>${escHtml(tr("Riven gain"))}</b></div>
     <div class="appraisal-b">${escHtml(said)}</div>
     ${asking ? `<label class="appraisal-n">${escHtml(tr("Your name, to be thanked in the chat (optional)"))}
       <input id="appraisal-name" maxlength="24" value="${escHtml(saved)}" autocomplete="nickname"></label>` : ""}`;

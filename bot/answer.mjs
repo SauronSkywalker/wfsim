@@ -75,7 +75,7 @@ export function makeAnswer({ run, meta, zh, headless, host }) {
     t("I am Nona, WFSim's assistant. Send zk or pz… not that I was waiting for you. (⁄ ⁄•⁄ω⁄•⁄ ⁄)"),
     t("zk weapon [ruler] [stats] [count]: the rivens the board has measured for this weapon, against its best build without one."),
     t("pz weapon [ruler] [riven] [count]: the best builds the board has measured for this weapon; add riven for builds that carry one."),
-    t("fx weapon [ruler] each stat with its number: appraise your own riven — whoever opens the link searches its best build on their own computer."),
+    t("fx weapon [ruler] each stat with its number: the gain of your own riven — whoever opens the link searches its best build on their own computer."),
     t("For example: {a}, or {b}", { a: "zk 托里德 双暴 负任意 5", b: "pz 托里德 爆破使 紫卡 3" }),
   ].join("\n");
   const UNREAD = "I could not read “{word}”… Write a stat as the card does, or as short as 双暴, 暴伤 or 负任意. (・_・;)";
@@ -191,11 +191,11 @@ export function makeAnswer({ run, meta, zh, headless, host }) {
     const opened = ctx && ctx.openAppraisal ? await ctx.openAppraisal({ weapon: hit.w.id, ruler: ruler.id, riven }) : null;
     if (!opened || !opened.code) {
       return t(opened && /limit/.test(opened.error || "") ? "Nona is still busy with your earlier ones. Try again in a while. (´；ω；`)"
-        : "Nona could not open the appraisal just now. Try again in a moment. (＞﹏＜)");
+        : "Nona could not start the riven gain just now. Try again in a moment. (＞﹏＜)");
     }
     const card = `${SITE}${headless.headlessWeaponPath(meta.weapons || [], hit.w.id)}/card?kind=appraise&code=${opened.code}`;
     const line = rolled.map((x) => `${x.malus ? "−" : "+"}${statZh(cls, x.id)} ×${x.roll.toFixed(2)}`).join(" ");
-    return { line: t("Nona read it. Scan the code in the picture to search with your own computer — appraisal {code}. (๑•̀ㅂ•́)و✧", { code: opened.code }),
+    return { line: t("Nona read it. Scan the code in the picture to search with your own computer — riven gain {code}. (๑•̀ㅂ•́)و✧", { code: opened.code }),
       card, text: `${weaponName(hit.w)} · ${rulerShort(ruler)} · ${line}\n${SITE}/appraise/${opened.code}` };
   }
 
@@ -215,7 +215,7 @@ export function makeAnswer({ run, meta, zh, headless, host }) {
     const gain = typeof v.gain === "number" ? `${v.gain >= 0 ? "+" : "−"}${Math.abs(v.gain * 100).toFixed(1)}%` : "—";
     const said = t("{w} with this riven: {shown}, {gain} against the best build without one. Thanks to {who} for searching it! (⁄ ⁄•⁄ω⁄•⁄ ⁄)",
       { w: weaponName(w), shown: v.shown || "—", gain, who: item.thanks || t("a kind someone in the chat") });
-    return late ? `${t("The appraisal from earlier is in.")} ${said}` : said;
+    return late ? `${t("The riven gain from earlier is in.")} ${said}` : said;
   };
   /// The long image of an appraisal's answer — the page that replays it.
   answer.answerCard = (item, resultId) => `${SITE}${headless.headlessWeaponPath(meta.weapons || [], item.weapon)}/card?kind=appraise&code=${item.code}&result=${resultId}`;

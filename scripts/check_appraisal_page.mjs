@@ -61,7 +61,7 @@ const card = JSON.parse(await evaluate(`JSON.stringify((loadPresetList(RIVENS).f
 check("…and that riven is the asker's card, rolls and all", (card.bonuses || []).map((b) => `${b.id}@${b.roll}`).join(",") === "critical_damage@1.1,multishot@1.05"
   && card.malus && card.malus.id === "zoom" && card.malus.roll === 0.9, JSON.stringify(card));
 check("the search started without a click", await evaluate("optJobId != null || !!optLast"));
-check("a banner says what the page is doing", /riven appraisal|裂罅评估/i.test(await evaluate(`($("appraisal-banner") || {}).textContent || ""`)));
+check("a banner says what the page is doing", /riven gain|裂罅收益/i.test(await evaluate(`($("appraisal-banner") || {}).textContent || ""`)));
 await evaluate(`(() => { const i = $("appraisal-name"); i.value = "Kai"; i.dispatchEvent(new Event("input")); })()`);
 
 let sent = null;

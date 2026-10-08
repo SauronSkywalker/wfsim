@@ -103,7 +103,7 @@ async function renderCardPage(w, ask) {
     document.body.dataset.verdict = JSON.stringify({ ok, score, shown, gain, top, of, rank, reason });
   }
   if (verdict) {
-    title = trF("{w} · Riven appraisal", { w: w.name });
+    title = trF("{w} · Riven gain", { w: w.name });
     link = `${LIVE_ORIGIN}${weaponPath(w.id)}/riven-analyst`;
     const who = job.result.thanks || tr("a kind someone in the chat");
     body = () => !verdict.ok ? `<p class="sim-empty">${escHtml(verdict.reason || "")}</p>`
@@ -116,9 +116,9 @@ async function renderCardPage(w, ask) {
         + `<p class="sb-empty">${escHtml(trF("Searched by {who}. Thank you!", { who }))}</p>`);
   } else if (kind === "appraise") {
     // THE ASKER'S CARD AND THE WAY IN: whoever scans the code searches it.
-    title = trF("{w} · Riven appraisal", { w: w.name });
+    title = trF("{w} · Riven gain", { w: w.name });
     link = `${LIVE_ORIGIN}/appraise/${code}`;
-    body = () => !job ? "" : cardBox(`<span class="sb-h">${escHtml(tr("Appraisal code"))}</span><b class="lc-score">${escHtml(code)}</b>`,
+    body = () => !job ? "" : cardBox(`<span class="sb-h">${escHtml(tr("Riven gain code"))}</span><b class="lc-score">${escHtml(code)}</b>`,
       rivenSpecCardHtml(w, { name: "", spec: { ...job.riven, polarity: job.riven.polarity || "madurai" } })
       + `<p class="lc-note">${escHtml(tr("Scan the code below: your own browser searches this riven's best build, and Nona posts the result in the chat."))}</p>`
       + `<p class="sb-empty">${escHtml(link.replace(/^https?:\/\//, ""))}</p>`);
