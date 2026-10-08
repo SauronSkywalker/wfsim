@@ -684,8 +684,18 @@ default and switched beside the board's own consent; a phone never works.
 
 **WHAT THE COMMUNITY'S MACHINES COMPUTE IS WHAT WFSIM GIVES EVERYONE FOR FREE —
 THE BOARD FIRST — AND NEVER ANYTHING SOLD**: no paid feature runs on it, and
-each machine's share is counted under its owner's name. Seven rules:
+each machine's share is counted under its owner's name. Eight rules:
 
+0. **NOTHING IS COMPUTED WITHOUT THE READER'S YES.** Computing is off until
+   the reader turns it on in answer to one statement, asked once in a card on
+   a computer that can compute (`COMPUTE_CONSENT_V`, 73-compute.js); a yes or
+   a no is kept with when, a new statement asks again, and every ask for work
+   carries the yes, which the server keeps on the client's row
+   (`verifiers.consent_v`, `consent_at`) and without which it hands nothing
+   out. While it runs a mark in the top bar says so with a pause beside it, and
+   it holds itself on battery or with the browser's data saver on. Running a
+   stranger's computer without that yes is controlling it, whatever it
+   computes.
 1. **ONLY A FACT SCORES.** A client is credited an order's work when the order
    becomes a fact, and every client in that agreement is credited all of it. A
    result that never becomes a fact earns nothing; the official machines' work
@@ -723,6 +733,10 @@ each machine's share is counted under its owner's name. Seven rules:
    its search's work, summed by the engine (`Summary::work`, the scorers'
    `work` and the final round's `final_work`), to the two owners' computers
    whose answers agree.
+   A device that said yes and has been credited makes its account a
+   **WFSim Volunteer** — an honour earned by computing, never sold — shown on
+   the account page, the compute page, and beside a name on the ranking, never
+   on an anonymous row.
 7. **A MARK NEVER MOVES A PLACE.** A named row carries the mark its account
    carries on a signed share, proved by the paid half and attached by the
    server (`cloudMarks`), drawn by the extension (`contributorMark`); the order

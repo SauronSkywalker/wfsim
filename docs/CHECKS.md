@@ -205,7 +205,9 @@ that does not name its work is refused; a further result never goes to another
 device of the same owner, and does go to another owner's or an unclaimed one;
 a row nobody owes, a server's order, a live lease and a banned client get
 nothing; a page of an engine the site no longer serves, or of an older
-protocol, is told it is stale; a client is written once a day.
+protocol, is told it is stale; a computer that never said yes is handed
+nothing, and the yes it sent is kept on its row; a client is written once a
+day.
 
 ## `check_compute`
 
@@ -240,7 +242,9 @@ ranked, most first, by all its points or the last thirty days' alone, and
 ANONYMOUS — no name, handle or mark, and the paid half never asked about it —
 until it agrees, when it shows the display name or else the username and the
 mark the paid half proves; a no is kept, a yes can be taken back, and the
-reader's own row is marked to them alone; a browser asked by its own id is told
+reader's own row is marked to them alone; a yes and work credited make the
+account a volunteer, since that yes, shown beside a name and never on an
+anonymous row; a browser asked by its own id is told
 what it earned and whether it is claimed, a refused one nothing; nothing is
 claimed signed out, from another site or with a malformed id; an owner sees
 each device by its name, when it last answered and the task it holds by kind

@@ -39,6 +39,60 @@ const COMPUTE_KINDS = {
 };
 const computeKind = (t) => COMPUTE_KINDS[t && t.kind] || { name: "Task", what: () => "", href: () => null };
 
+/// THE QUESTION, asked once on a computer that can compute and has not
+/// answered the current statement (69-board-work.js `computeConsent`): a card
+/// in the corner, never a dialog, never on a card page a bot photographs, and
+/// gone once answered either way. Its words are the statement consented to —
+/// change them and `COMPUTE_CONSENT_V` with them.
+const computeAskable = () => WASM && !onPhone() && computeConsent() === null
+  && !/\/card$|^\/appraise\//.test(location.pathname);
+function computeAskHtml() {
+  return `<b>${aT("Help compute WFSim's free features?")}</b>
+    <p>${aT("This computer would compute the leaderboard and riven gains for everyone, only while a WFSim page is open. It steps aside the moment you use the calculator, pauses on battery, never runs on a phone, takes no more than one core, and stops with one click. Nothing it computes is sold, and you are not paid. The work is counted to this browser, and to your name only if you choose.")}</p>
+    <div class="ca-acts"><button class="run-btn btn-sm" data-compute-ask="yes">${aT("Turn on")}</button>
+      <button class="ghost-btn btn-sm" data-compute-ask="no">${aT("No thanks")}</button>
+      <a href="/compute">${aT("Learn more")}</a></div>`;
+}
+/// …AND WHILE IT RUNS, A MARK IN THE TOP BAR saying so, with the pause beside
+/// it: work nobody can see is work nobody agreed to keep doing.
+function computeChrome() {
+  let ask = document.getElementById("compute-ask");
+  if (computeAskable()) {
+    if (!ask) {
+      ask = document.createElement("div");
+      ask.id = "compute-ask";
+      ask.setAttribute("role", "region");
+      ask.style.cssText = "position:fixed;right:16px;bottom:16px;z-index:50;max-width:360px;padding:14px 16px;"
+        + "border:1px solid var(--line);border-radius:10px;background:var(--panel);box-shadow:0 6px 24px rgba(0,0,0,.25);font-size:13px;line-height:1.6";
+      ask.addEventListener("click", (e) => {
+        const b = e.target.closest("[data-compute-ask]");
+        if (b) setBoardVerify(b.dataset.computeAsk === "yes");
+      });
+      document.body.appendChild(ask);
+    }
+    ask.innerHTML = computeAskHtml();
+  } else if (ask) ask.remove();
+  const bar = document.querySelector(".topbar-inner");
+  let pill = document.getElementById("compute-pill");
+  const show = WASM && boardVerifyOn() && (computeNow || computePaused);
+  if (!show || !bar) { if (pill) pill.remove(); return; }
+  if (!pill) {
+    pill = document.createElement("span");
+    pill.id = "compute-pill";
+    pill.style.cssText = "font-size:12px;color:var(--muted);margin-right:10px;white-space:nowrap";
+    pill.addEventListener("click", (e) => {
+      if (!e.target.closest("[data-compute-pause]")) return;
+      computePaused = !computePaused;
+      computeChrome();
+      computeRedraw();
+    });
+    const account = document.getElementById("account");
+    bar.insertBefore(pill, account && account.parentNode === bar ? account : null);
+  }
+  pill.innerHTML = `<a href="/compute">${aT(computePaused ? "Computing paused" : "Computing for WFSim")}</a> · <a href="#" data-compute-pause>${
+    aT(computePaused ? "resume" : "pause")}</a>`;
+}
+
 function computeLog() {
   try {
     const l = JSON.parse(localStorage.getItem(COMPUTE_LOG_KEY) || "[]");
@@ -49,6 +103,7 @@ function computeLog() {
 function computeStart(task) {
   computeNow = { ...task, started: Date.now(), done: 0, total: 0 };
   computeRedraw();
+  computeChrome();
 }
 function computeProgress(done, total) {
   if (computeNow) { computeNow.done = done; computeNow.total = total; }
@@ -63,6 +118,7 @@ function computeEnd(result) {
     try { localStorage.setItem(COMPUTE_LOG_KEY, JSON.stringify([entry, ...computeLog()].slice(0, COMPUTE_LOG_MAX))); } catch (_) { /* this page only */ }
   }
   computeRedraw();
+  computeChrome();
 }
 /// Drawn again while the page is open — a progress tick at most once a second.
 function computeRedraw(tick) {
@@ -106,9 +162,13 @@ function computeTaskHtml(t) {
 /// THIS BROWSER: whether it computes and why not, what it is on, what it earned.
 function computeHereHtml() {
   const on = boardVerifyOn();
+  const held = computeHeld();
   const state = !WASM ? tr("This copy of WFSim does not compute; the site at wfsim.app does.")
     : onPhone() ? tr("Phones never compute.")
     : !on ? tr("Computing is off in this browser.")
+    : held === "paused" ? tr("Paused in this tab.")
+    : held === "battery" ? tr("Paused while this computer runs on battery.")
+    : held === "data" ? tr("Paused while the browser saves data.")
     : boardStale ? tr("A new version is out; this page refreshes itself once it is left idle.")
     : computeNow ? tr("Computing now.")
     : foregroundHeld > 0 ? tr("Paused while you use the calculator.")
@@ -126,6 +186,16 @@ function computeHereHtml() {
     accountState.account ? "" : ` · <a href="/login?return=${encodeURIComponent("/compute")}">${aT("Sign in to count it under your name")}</a>`}</dd></div>` : "";
   return `<div class="block"><div class="bh"><h2>${aT("This browser")}</h2></div><div class="bb"><dl class="kvs">
     <div class="kv"><dt>${aT("State")}</dt><dd>${escHtml(state)}</dd>${flip}${again}</div>${now}${pts}</dl></div></div>`;
+}
+
+/// THE HONOUR, once earned: a device of the account said yes and has been
+/// credited. Before that, the one line saying how it is earned.
+function computeHonourHtml(d) {
+  if (!d) return "";
+  const v = d.volunteer;
+  return `<div class="kv"><dt>${aT("Honour")}</dt><dd>${v
+    ? `<b>${aT("WFSim Volunteer")}</b> · ${escHtml(tr("since {date}").replace("{date}", new Date(v).toLocaleDateString(accountLocale())))}`
+    : aT("WFSim Volunteer, once a computer you turned on has computed its first task")}</dd></div>`;
 }
 
 /// EVERY DEVICE OF THE ACCOUNT — the server's word on what each last did and
@@ -162,7 +232,7 @@ function computeDevicesHtml() {
   }).join("");
   const total = `${computePts(s.points)} · ${escHtml(tr("{n} in the last 30 days").replace("{n}", Number(s.recent || 0).toLocaleString(accountLocale())))}`;
   return `<div class="block"><div class="bh"><h2>${aT("Your devices")}</h2></div><div class="bb">${rows
-    ? `<dl class="kvs">${rows}</dl><p class="set-note" style="margin:8px 0 0">${aT("All together")}: ${total}</p>`
+    ? `<dl class="kvs">${rows}${computeHonourHtml(s)}</dl><p class="set-note" style="margin:8px 0 0">${aT("All together")}: ${total}</p>`
     : `<p class="set-note" style="margin:0">${aT("No device yet: leave WFSim open on a computer while you are signed in.")}</p>`}</div></div>`;
 }
 

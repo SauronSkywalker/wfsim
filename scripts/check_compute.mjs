@@ -49,7 +49,8 @@ const r = await evaluate(`(async () => {
   const page = () => document.getElementById("auth-page");
   const rowsOf = (title) => {
     const block = [...page().querySelectorAll(".block")].find((b) => (b.querySelector(".bh h2") || {}).textContent === title);
-    return block ? [...block.querySelectorAll(".kv")] : [];
+    // THE DEVICES' ROWS: the honour below them is a row of its own.
+    return block ? [...block.querySelectorAll(".kv")].filter((k) => k.querySelector("dt").textContent !== "Honour") : [];
   };
   const out = {};
   history.pushState({}, "", "/compute"); route(); await loadAccount(); await sleep(500);
@@ -104,5 +105,49 @@ check("this browser, claimed before it had a name, is given its guess", !!r.gues
 check("a device is renamed inline", r.editing && r.renamed.includes("Garage Mac"), JSON.stringify(r.renamed));
 check("...and removed after an inline question", r.asks && r.after === 1
   && r.posted.some(([what, b]) => what === "remove" && b.id === "abcdef"), JSON.stringify(r.posted));
+
+// THE QUESTION BEFORE ANY COMPUTING (69-board-work.js `computeConsent`): on a
+// computer that can compute and has not answered, a card asks once; an old
+// default's "yes" is no answer; a no is kept and not asked again; a yes turns
+// it on with the statement and the time; a card page a bot photographs never
+// carries it; and while it runs a mark in the top bar says so, with a pause.
+const c = await evaluate(`(async () => {
+  const sleep = (ms) => new Promise((ok) => setTimeout(ok, ms));
+  const out = { wasm: WASM };
+  const card = () => !!document.getElementById("compute-ask");
+  localStorage.removeItem("wfsim-compute-consent");
+  localStorage.setItem("wfsim-board-verify", "yes");
+  history.pushState({}, "", "/"); computeChrome();
+  out.asked = card(); out.offBefore = !boardVerifyOn();
+  document.querySelector('#compute-ask [data-compute-ask="no"]').click(); await sleep(50);
+  const no = JSON.parse(localStorage.getItem("wfsim-compute-consent") || "null");
+  computeChrome();
+  out.no = !card() && no && no.on === false && no.v === COMPUTE_CONSENT_V && !boardVerifyOn();
+  localStorage.removeItem("wfsim-compute-consent");
+  history.pushState({}, "", "/weapons/Torid/card"); computeChrome();
+  out.cardPage = !card();
+  history.pushState({}, "", "/"); computeChrome();
+  document.querySelector('#compute-ask [data-compute-ask="yes"]').click(); await sleep(50);
+  const yes = JSON.parse(localStorage.getItem("wfsim-compute-consent") || "null");
+  out.yes = !card() && boardVerifyOn() && yes.on === true && Number.isFinite(Date.parse(yes.at));
+  computeStart({ kind: "board", weapon: "torid", ruler: "standard_single_target", mode: "base" });
+  const pill = () => (document.getElementById("compute-pill") || { textContent: "" }).textContent;
+  out.mark = pill();
+  document.querySelector("#compute-pill [data-compute-pause]").click(); await sleep(50);
+  out.paused = pill(); out.held = computeHeld();
+  document.querySelector("#compute-pill [data-compute-pause]").click(); await sleep(50);
+  computeEnd(null);
+  out.gone = pill() === "";
+  computeBattery = { charging: false }; out.battery = computeHeld(); computeBattery = null;
+  localStorage.removeItem("wfsim-compute-consent");
+  return JSON.stringify(out);
+})()`);
+const k = JSON.parse(c);
+check("[built site] nothing computes until asked: a card asks, and an old default's yes is no answer", k.wasm && k.asked && k.offBefore, c);
+check("...a no is kept and not asked again", k.no, c);
+check("...a card page a bot photographs never carries it", k.cardPage, c);
+check("...a yes turns it on, kept with the statement and when", k.yes, c);
+check("while it runs the top bar says so, and pauses it", /Computing for WFSim/.test(k.mark) && /paused/i.test(k.paused) && k.held === "paused", c);
+check("...the mark leaves when nothing runs, and a battery holds it", k.gone && k.battery === "battery", c);
 
 await app.finish("the compute page shows what each device does, by kind, and nothing private");

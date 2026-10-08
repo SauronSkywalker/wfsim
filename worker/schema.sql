@@ -244,6 +244,8 @@ CREATE INDEX IF NOT EXISTS orders_verifier ON orders (verifier);
 --   ALTER TABLE verifiers ADD COLUMN compute_ms INTEGER NOT NULL DEFAULT 0;
 --   ALTER TABLE verifiers ADD COLUMN work INTEGER NOT NULL DEFAULT 0;
 --   ALTER TABLE verifiers ADD COLUMN last_at TEXT;
+--   ALTER TABLE verifiers ADD COLUMN consent_v INTEGER;
+--   ALTER TABLE verifiers ADD COLUMN consent_at TEXT;
 CREATE TABLE IF NOT EXISTS verifiers (
   id     TEXT PRIMARY KEY,
   agreed INTEGER NOT NULL DEFAULT 0,
@@ -251,7 +253,10 @@ CREATE TABLE IF NOT EXISTS verifiers (
   seen   TEXT NOT NULL,
   compute_ms INTEGER NOT NULL DEFAULT 0,
   work   INTEGER NOT NULL DEFAULT 0,
-  last_at TEXT
+  last_at TEXT,
+  -- THE READER'S YES: the statement version they agreed to, and when.
+  consent_v  INTEGER,
+  consent_at TEXT
 );
 
 -- THE SAME WORK BY THE DAY IT WAS CREDITED, for the ranking's last thirty days

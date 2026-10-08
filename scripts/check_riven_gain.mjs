@@ -41,7 +41,7 @@ const appraise = async (method, path, body, headers = {}) => {
 };
 const work = async (verifier, engine = "e1") => {
   const r = await verifyRoute(new Request("https://x/api/board/work", { method: "POST",
-    body: JSON.stringify({ verifier, engine, protocol: PROTOCOL }) }), env, "/api/board/work");
+    body: JSON.stringify({ verifier, engine, protocol: PROTOCOL, consent: { v: 1, at: "2026-10-08T08:00:00.000Z" } }) }), env, "/api/board/work");
   return (await r.json()).work;
 };
 const bot = { authorization: "Bearer relay" };

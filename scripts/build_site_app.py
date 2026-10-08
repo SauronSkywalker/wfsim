@@ -1706,9 +1706,19 @@ keeps:</p>
 or GitHub name, or your email address;</li>
 <li>when you linked it.</li>
 </ul>
-<p>A browser you are signed in on while it computes the leaderboard's scores is
-counted as yours: WFSim joins its random id to your account, and the work it
-computed is counted under your account. Your points then appear on the public
+<p>A computer computes for WFSim only after you turn it on, and you can turn it
+off on the <a href="/compute">compute page</a> at any time, which stops it at
+once. While it is on it computes the leaderboard's scores and the riven gains
+asked about in chats, only while a WFSim page is open; it steps aside when you
+use the calculator, pauses on battery, and never runs on a phone. WFSim keeps,
+for that browser: a random id it made, so its answers can be told apart and a
+false one refused; which statement you agreed to and when; the points its
+answers earned, by day; and when it last answered. Nothing else about the
+computer is sent, and none of it is joined to you unless you sign in.</p>
+<p>A browser you are signed in on while it computes is counted as yours: WFSim
+joins its random id to your account, with a name for it that your browser
+guesses from its system and browser (such as "Mac · Chrome") and you can change
+or remove, and the work it computed is counted under your account. Your points then appear on the public
 contributors' ranking without your name. Only if you choose to show it does the
 ranking show your display name (or your username, if you have none) and any
 mark your account carries; you can take it back at any time. It is never joined

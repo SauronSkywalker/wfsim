@@ -53,7 +53,6 @@ async function measureRow(request, ruler, live, onPiece = () => {}) {
 /// once can be refused (docs/BOARD.md §"Compute orders"). A browser that cannot
 /// keep it does not work: a new id every visit is a ban nobody can apply.
 const VERIFIER_KEY = "wfsim-verifier";
-const VERIFY_KEY = "wfsim-board-verify";
 const VERIFIED_KEY = "wfsim-board-verified";
 /// THE ACCOUNT THIS BROWSER WAS LAST CLAIMED FOR, so a claim is sent once.
 const CLAIMED_KEY = "wfsim-verifier-owner";
@@ -72,13 +71,50 @@ function verifierId() {
   } catch (_) { return null; }
 }
 
-/// ON BY DEFAULT, the owner's call; the switch sits beside the board's own.
+/// NOTHING IS COMPUTED UNTIL THE READER SAID YES — to the statement they were
+/// shown, `COMPUTE_CONSENT_V` (73-compute.js `computeAskHtml`), asked once,
+/// inline. A yes or a no is kept with when it was given, and the yes travels
+/// with every ask for work so the server keeps it too; a new statement asks
+/// again. Running a stranger's computer without that is what the law calls
+/// controlling it, whatever it computes (docs/BOARD.md §"Contribution").
+const CONSENT_KEY = "wfsim-compute-consent";
+const COMPUTE_CONSENT_V = 1;
+function computeConsent() {
+  try {
+    const c = JSON.parse(localStorage.getItem(CONSENT_KEY) || "null");
+    return c && c.v === COMPUTE_CONSENT_V ? c : null;
+  } catch (_) { return null; }
+}
 function boardVerifyOn() {
-  try { return localStorage.getItem(VERIFY_KEY) !== "no"; } catch (_) { return false; }
+  const c = computeConsent();
+  return !!(c && c.on);
 }
 function setBoardVerify(on) {
-  try { localStorage.setItem(VERIFY_KEY, on ? "yes" : "no"); } catch (_) { /* private mode */ }
+  try {
+    localStorage.setItem(CONSENT_KEY, JSON.stringify({ v: COMPUTE_CONSENT_V, on: !!on, at: new Date().toISOString() }));
+  } catch (_) { /* private mode: nothing kept, so nothing runs */ }
   renderBoardConsent();
+  computeRedraw();
+  computeChrome();
+}
+
+/// …AND EVEN WITH A YES, NOT NOW: paused for this tab by the reader, on a
+/// battery, or with the browser's data saver on. `why` says which.
+let computePaused = false;
+let computeBattery = null;
+try {
+  if (navigator.getBattery) {
+    navigator.getBattery().then((b) => {
+      computeBattery = b;
+      b.addEventListener("chargingchange", () => { computeRedraw(); computeChrome(); });
+    }).catch(() => {});
+  }
+} catch (_) { /* no battery API: a desktop, as far as this can tell */ }
+function computeHeld() {
+  if (computePaused) return "paused";
+  if (computeBattery && !computeBattery.charging) return "battery";
+  if (navigator.connection && navigator.connection.saveData) return "data";
+  return "";
 }
 function boardVerifiedCount() {
   try { return Number(localStorage.getItem(VERIFIED_KEY)) || 0; } catch (_) { return 0; }
@@ -158,7 +194,7 @@ async function rivenGainOnce(w, id) {
   const began = performance.now();
   const job = quickFleet(w.request, 1, () => yieldToForeground());
   while (!job.result) {
-    if (!boardVerifyOn()) {
+    if (!boardVerifyOn() || computeHeld()) {
       job.cancelled = true;
       job.workers.forEach((x) => x.terminate());
       computeEnd(null);
@@ -184,11 +220,13 @@ async function rivenGainOnce(w, id) {
 /// ONE ORDER, fought here and answered — `true` when there was one. The answer
 /// never says whether it agreed; a lease this browser leaves lapses on its own.
 async function workOnce() {
-  if (!boardVerifyOn() || onPhone()) return false;
+  if (!boardVerifyOn() || onPhone() || computeHeld()) return false;
   const id = verifierId();
   if (!id) return false;
   await claimDevice(id);
-  const ask = await postBoardWork("/api/board/work", { verifier: id, engine: ENGINE_ID, protocol: 4 });
+  const c = computeConsent();
+  const ask = await postBoardWork("/api/board/work",
+    { verifier: id, engine: ENGINE_ID, protocol: 5, consent: { v: c.v, at: c.at } });
   if (ask && ask.stale && !boardStale) { boardStale = true; renderBoardConsent(); }
   maybeReloadForRelease();
   const w = ask && ask.work;
@@ -197,7 +235,7 @@ async function workOnce() {
   const order = await api("/api/board/order", { record: w.record, ruler: w.ruler, mode: w.mode });
   if (!order || !order.ok) return true;
   computeStart({ kind: "board", weapon: w.record.weapon, ruler: w.ruler, mode: w.mode });
-  const s = await measureRow(order.request, w.ruler, boardVerifyOn, computeProgress);
+  const s = await measureRow(order.request, w.ruler, () => boardVerifyOn() && !computeHeld(), computeProgress);
   if (!s) { computeEnd(null); return true; }
   const sent = await postBoardWork("/api/board/verify",
     { lease: w.lease, verifier: id, engine: ENGINE_ID, score: s.score, metric: s.metric, work: s.work, compute_ms: s.compute_ms });
@@ -212,6 +250,10 @@ async function workOnce() {
 /// ONLY THE DEPLOYED SITE WORKS: the dev server has no orders to hand out.
 if (WASM) {
   loadDevicePoints();
+  // THE QUESTION ONCE THE PAGE IS DRAWN, and again on every route: a card page
+  // a bot photographs must not carry it.
+  setTimeout(computeChrome, 1500);
+  addEventListener("popstate", () => setTimeout(computeChrome, 0));
   (async () => {
     for (;;) {
       let worked = false;

@@ -7,7 +7,7 @@
 // `CLIENTS_PER_FACT` equal results make a fact in `scores`. Nothing here
 // computes a number.
 //
-//   POST /api/board/work    { verifier, engine, protocol }                                → { work: { lease, record, ruler, mode } | null, stale? }
+//   POST /api/board/work    { verifier, engine, protocol, consent }                       → { work: { lease, record, ruler, mode } | null, stale? }
 //        — or `work: { kind: "riven_gain", lease, code, weapon, ruler, request, context }`, a
 //        riven gain someone is waiting on (worker/appraise.js §"Volunteer work").
 //   POST /api/board/verify  { lease, verifier, engine, score, metric, work, compute_ms }  → { ok }
@@ -37,12 +37,13 @@ const SLOT_SPAN = 2147483647;
 /// WHAT A PAGE THAT CAN FILL AN ORDER SENDS. A tab opened before orders existed
 /// asks too, takes an order, and answers in a shape this refuses — holding the
 /// order for a lease's length — so a page that does not say this gets nothing.
-export const PROTOCOL = 4;
+export const PROTOCOL = 5;
 
 const VERIFIER_ID = /^[a-z0-9]{16,40}$/;
 const ENGINE_ID = /^[A-Za-z0-9._-]{1,40}$/;
 const LEASE_ID = /^[a-f0-9]{32}$/;
 const METRIC_ID = /^[a-z_]{1,24}$/;
+const ISO = /^\d{4}-\d\d-\d\dT[\d:.]+Z$/;
 
 const needed = (env) => env.CLIENTS_PER_FACT ?? CLIENTS_PER_FACT;
 /// EVERY CLIENT THAT MEASURED AN ORDER, in the order their results came, and
@@ -143,7 +144,14 @@ async function work(request, env) {
   if (b.engine !== engine) return json({ ok: true, work: null, stale: true });
   const db = env.LIBRARY, now = Date.now();
   await retire(db, engine);
+  // NO WORK WITHOUT THE READER'S YES — `consent: { v, at }`, the statement they
+  // agreed to and when (69-board-work.js `computeConsent`) — kept on the
+  // client's row the first time it is seen and whenever it changes.
+  const c = b.consent;
+  if (!c || !Number.isInteger(c.v) || c.v < 1 || typeof c.at !== "string" || !ISO.test(c.at)) return json({ ok: true, work: null });
   if (!(await admit(db, b.verifier))) return json({ ok: true, work: null });
+  await db.prepare(`UPDATE verifiers SET consent_v = ?, consent_at = ? WHERE id = ? AND (consent_v IS NOT ? OR consent_at IS NOT ?)`)
+    .bind(c.v, c.at, b.verifier, c.v, c.at).run();
   // ONE AT A TIME: a client holding a live lease gets nothing more.
   const held = await db.prepare("SELECT 1 AS x FROM orders WHERE leased_to = ? AND lease_until > ? LIMIT 1")
     .bind(b.verifier, now).first();

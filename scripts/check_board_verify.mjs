@@ -57,7 +57,8 @@ const order = (identity, state = "todo", extra = {}) => {
 const row = (identity) => db.prepare("SELECT * FROM orders WHERE identity = ?").get(identity);
 const fact = (identity) => db.prepare("SELECT * FROM scores WHERE identity = ?").get(identity);
 const only = (identity) => db.prepare("UPDATE orders SET slot = CASE WHEN identity = ? THEN 1 ELSE slot END").run(identity);
-const work = (v, engine = "e1", protocol = PROTOCOL) => call("/api/board/work", { verifier: v, engine, protocol });
+const YES = { v: 1, at: "2026-10-08T08:00:00.000Z" };
+const work = (v, engine = "e1", protocol = PROTOCOL, consent = YES) => call("/api/board/work", { verifier: v, engine, protocol, consent });
 const answer = (w, v, score, metric = "kpm", engine = "e1", compute_ms = 1000, work = WORK) =>
   call("/api/board/verify", { lease: w.lease, verifier: v, engine, score, metric, work, compute_ms });
 const A = "a".repeat(24), B = "b".repeat(24), C = "c".repeat(24), D = "d".repeat(24);
@@ -66,7 +67,11 @@ Math.random = () => 0.5;  // no spot check unless a test asks for one
 
 order("one");
 check("a page that cannot fill an order is handed none", (await work(A, "e1", null)).work === null && row("one").lease === null);
+check("a computer that never said yes is handed nothing", (await work(A, "e1", PROTOCOL, null)).work === null
+  && (await work(A, "e1", PROTOCOL, { v: 1, at: "yesterday" })).work === null);
 const first = await work(A);
+check("...and the yes it sent is kept on its row, the statement and when",
+  JSON.stringify(db.prepare("SELECT consent_v AS v, consent_at AS at FROM verifiers WHERE id = ?").get(A)) === JSON.stringify(YES));
 check("an order is handed out as its build", first.work && first.work.record.weapon === "braton_prime", JSON.stringify(first));
 check("...one lease at a time", (await work(A)).work === null);
 await answer(first.work, A, SCORE);
@@ -147,7 +152,7 @@ check("a fact names every client that measured it, first to last", row("one").cl
 // CLIENTS_PER_FACT: how many different clients must send the same bits.
 const callWith = async (n, path, body) => (await verifyRoute(new Request(`https://x${path}`,
   { method: "POST", body: JSON.stringify(body) }), { ...env, CLIENTS_PER_FACT: n }, path)).json();
-const workWith = (n, v) => callWith(n, "/api/board/work", { verifier: v, engine: "e1", protocol: PROTOCOL });
+const workWith = (n, v) => callWith(n, "/api/board/work", { verifier: v, engine: "e1", protocol: PROTOCOL, consent: YES });
 const answerWith = (n, w, v) => callWith(n, "/api/board/verify", { lease: w.lease, verifier: v, engine: "e1", score: SCORE, metric: "kpm", work: WORK });
 const K = "k".repeat(24), L = "l".repeat(24), M = "m".repeat(24), N = "n".repeat(24);
 
@@ -175,7 +180,7 @@ check("...and is told it is stale, so a machine left computing reloads", (await 
   && (await work("o".repeat(24), "e1", PROTOCOL - 1)).stale === true);
 const blind = { ...env, ASSETS: { fetch: async () => new Response("missing", { status: 404 }) } };
 check("...and nobody is while the served engine cannot be read",
-  (await callIn(blind, "/api/board/work", { verifier: P, engine: "e1", protocol: PROTOCOL })).work === null);
+  (await callIn(blind, "/api/board/work", { verifier: P, engine: "e1", protocol: PROTOCOL, consent: YES })).work === null);
 await answer((await work(P)).work, P, SCORE, "kpm", "e0");
 check("an answer from another engine is dropped, and the order handed out again",
   row("lock").state === "todo" && row("lock").lease === null && row("lock").score === null);
@@ -186,7 +191,7 @@ check("what the fight cost is kept beside the client that fought it",
 check("...and both agreeing clients' costs are kept on a fact, in order", row("one").clients_compute_ms === "1000,1000",
   row("one").clients_compute_ms);
 db.prepare("UPDATE orders SET state = 'open' WHERE identity = 'lock'").run();
-await callIn({ ...env, ASSETS: site("e9") }, "/api/board/work", { verifier: Q, engine: "e9", protocol: PROTOCOL });
+await callIn({ ...env, ASSETS: site("e9") }, "/api/board/work", { verifier: Q, engine: "e9", protocol: PROTOCOL, consent: YES });
 check("once the site serves a new engine, an open result of the old one is opened again from nothing",
   row("lock").state === "todo" && row("lock").clients === "" && row("lock").score === null && row("lock").engine === "");
 

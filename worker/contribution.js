@@ -7,13 +7,13 @@
 // device is on the public ranking, ANONYMOUS until it agrees to show its name
 // (`contribution_choice`): publishing a name is the person's choice, asked once.
 //
-//   GET  /api/account/devices        → { devices: [{ id, label, claimed_at, points, recent, last_at, now }], points, recent, named, decided }
+//   GET  /api/account/devices        → { devices: [{ id, label, claimed_at, points, recent, last_at, now }], points, recent, named, decided, volunteer }
 //   POST /api/account/devices/claim  { verifier, label? } → { ok }
 //   POST /api/account/devices/label  { id, label }        → { ok }
 //   POST /api/account/devices/remove { id }               → { ok }
 //   POST /api/account/contribution   { named }    → { ok }
 //   POST /api/board/points           { verifier } → { points, recent, claimed }
-//   GET  /api/contributors[?period=recent] → { contributors: [{ name, points, recent, mark?, you? }] }
+//   GET  /api/contributors[?period=recent] → { contributors: [{ name, points, recent, mark?, volunteer?, you? }] }
 //        — `name` (the display name, else the username) is null for an account
 //        that did not agree, and `mark` is the paid half's, for a named one only.
 //
@@ -60,17 +60,22 @@ async function workOf(env, ids) {
     const part = ids.slice(i, i + PER_STATEMENT);
     const marks = part.map(() => "?").join(", ");
     const [all, recent] = await env.LIBRARY.batch([
-      env.LIBRARY.prepare(`SELECT id, work FROM verifiers WHERE banned = 0 AND id IN (${marks})`).bind(...part),
+      env.LIBRARY.prepare(`SELECT id, work, consent_at FROM verifiers WHERE banned = 0 AND id IN (${marks})`).bind(...part),
       env.LIBRARY.prepare(
         `SELECT d.verifier AS id, SUM(d.work) AS work FROM verifier_days d JOIN verifiers v ON v.id = d.verifier
           WHERE v.banned = 0 AND d.day >= ? AND d.verifier IN (${marks}) GROUP BY d.verifier`).bind(from, ...part),
     ]);
-    for (const r of all.results) out.set(r.id, { work: r.work || 0, recent: 0 });
+    for (const r of all.results) out.set(r.id, { work: r.work || 0, recent: 0, consent_at: r.consent_at || null });
     for (const r of recent.results) if (out.has(r.id)) out.get(r.id).recent = r.work || 0;
   }
   return out;
 }
-const NONE = { work: 0, recent: 0 };
+const NONE = { work: 0, recent: 0, consent_at: null };
+
+/// A VOLUNTEER: a device that said yes to computing and has had work credited
+/// for it — an honour earned by computing, not by a click, and never sold.
+/// `since` is the earliest such yes.
+const volunteerSince = (ws) => ws.filter((w) => w.consent_at && w.work > 0).map((w) => w.consent_at).sort()[0] || null;
 
 /// WHAT EACH OF `ids` IS DOING: when it last answered (`last_at`), and the task
 /// it holds a live lease on (`now`) — named as a task KIND and its public facts,
@@ -125,9 +130,9 @@ async function devices(env, account) {
   const list = results.map((d) => ({ id: d.verifier.slice(0, 6), label: d.label || null, claimed_at: d.claimed_at,
     ...(doing.get(d.verifier) || { last_at: null, now: null }), ...(work.get(d.verifier) || NONE) }));
   // `shown` is `named` for a page from before the ranking was anonymous.
-  return json({ ok: true, named, decided: !!choice, shown: named,
+  return json({ ok: true, named, decided: !!choice, shown: named, volunteer: volunteerSince(list),
     points: points(list.reduce((s, d) => s + d.work, 0)), recent: points(list.reduce((s, d) => s + d.recent, 0)),
-    devices: list.map(({ work: w, recent: r, ...d }) => ({ ...d, points: points(w), recent: points(r) })) });
+    devices: list.map(({ work: w, recent: r, consent_at: _c, ...d }) => ({ ...d, points: points(w), recent: points(r) })) });
 }
 
 /// WHAT ONE BROWSER HAS EARNED, asked by the browser itself: its id is a secret
@@ -190,15 +195,18 @@ async function ranking(env, period, me) {
   const work = await workOf(env, results.map((r) => r.verifier));
   const by = new Map();
   for (const r of results) {
-    const e = by.get(r.id) || { id: r.id, named: !!r.named, name: r.display_name || r.username, username: r.username, work: 0, recent: 0 };
+    const e = by.get(r.id) || { id: r.id, named: !!r.named, name: r.display_name || r.username, username: r.username, work: 0, recent: 0, ws: [] };
     const w = work.get(r.verifier) || NONE;
     e.work += w.work;
     e.recent += w.recent;
+    e.ws.push(w);
     by.set(r.id, e);
   }
   const key = period === "recent" ? "recent" : "points";
   const contributors = [...by.values()]
-    .map((e) => ({ id: e.id, name: e.named ? e.name : null, points: points(e.work), recent: points(e.recent) }))
+    .map((e) => ({ id: e.id, name: e.named ? e.name : null, points: points(e.work), recent: points(e.recent),
+      // THE HONOUR travels with a name only: an anonymous row says nothing more.
+      ...(e.named && volunteerSince(e.ws) ? { volunteer: true } : {}) }))
     .filter((e) => e[key] > 0)
     .sort((x, y) => y[key] - x[key] || y.points - x.points || (x.id < y.id ? -1 : 1))
     .slice(0, RANKED);

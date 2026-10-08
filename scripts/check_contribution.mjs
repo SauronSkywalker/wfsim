@@ -158,6 +158,20 @@ check("...and a name that is not one is refused", (await relabel(ed, p6, "x".rep
   && (await relabel(ed, p6, "  ")).reason === "bad_label");
 check("nobody renames or removes another's device", (await relabel(fay, p6, "mine")).status === 404 && (await remove(fay, p6)).status === 404
   && (await mine(ed)).devices.length === 2);
+// THE HONOUR: a device that said yes and has been credited makes its account a volunteer.
+check("no yes on record, no honour, however much was credited", (await mine(ed)).volunteer === null);
+library.raw.prepare("UPDATE verifiers SET consent_v = 1, consent_at = '2026-10-08T08:00:00.000Z' WHERE id = ?").run(P);
+library.raw.prepare("UPDATE verifiers SET consent_v = 1, consent_at = '2026-10-07T08:00:00.000Z' WHERE id = ?").run(Q);
+library.raw.prepare("UPDATE verifiers SET work = 0 WHERE id = ?").run(Q);
+check("a yes and work credited is the honour, since that yes — a yes with nothing computed is not",
+  (await mine(ed)).volunteer === "2026-10-08T08:00:00.000Z", JSON.stringify((await mine(ed)).volunteer));
+library.raw.prepare("UPDATE verifiers SET work = ? WHERE id = ?").run(1 * POINT, Q);
+await choose(ed, true);
+const withEd = await ranking();
+check("...shown beside a name on the ranking", withEd.some((e) => e.name === "ed" && e.volunteer === true), JSON.stringify(withEd));
+await choose(ed, false);
+check("...and never on an anonymous row", (await ranking()).every((e) => e.name !== null || !("volunteer" in e)));
+
 check("removed, a device and its work leave the account", (await remove(ed, q6)).ok
   && (await mine(ed)).devices.length === 1 && (await mine(ed)).points === 4);
 

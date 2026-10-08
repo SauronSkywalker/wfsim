@@ -464,7 +464,7 @@ function accountComputeBlock() {
       <a class="ghost-btn btn-sm" href="/compute">${aT("Compute")}</a>
       <a class="ghost-btn btn-sm" href="/contributors">${aT("Ranking")}</a></div>
     <div class="kv"><dt>${aT("On the ranking")}</dt><dd>${aT(d.named ? "Your name is shown" : "Anonymous")}</dd>
-      ${contributionNameButton(d)}</div></dl>
+      ${contributionNameButton(d)}</div>${computeHonourHtml(d)}</dl>
     <p class="set-note">${aT("A browser you are signed in on counts its compute here, and it is on the public ranking without your name unless you choose to show it. What it computes is free for everyone and never sold.")}</p></div></div>`;
 }
 
@@ -488,7 +488,8 @@ function contributorsPage() {
   const n = (x) => escHtml(x.toLocaleString(accountLocale()));
   const who = (c) => (c.name === null ? `<span class="muted">${aT("Anonymous contributor")}</span>`
     : escHtml(c.name) + (extHookNow("contributorMark", c.mark) || ""));
-  const rows = (list || []).map((c, i) => `<div class="kv"><dt>${i + 1}. ${who(c)}${
+  const honour = (c) => (c.volunteer ? ` <span class="contrib-volunteer" style="font-size:12px;color:var(--accent)">${aT("WFSim Volunteer")}</span>` : "");
+  const rows = (list || []).map((c, i) => `<div class="kv"><dt>${i + 1}. ${who(c)}${honour(c)}${
     c.you ? ` <span class="set-note">${aT("(you)")}</span>` : ""}</dt><span>${n(recent ? c.recent : c.points)}</span></div>`).join("");
   const tab = (id, label) => `<button class="seg${contributorsPeriod === id ? " on" : ""}" data-auth="contributors-period"
       data-period="${id}" aria-pressed="${contributorsPeriod === id}">${aT(label)}</button>`;
