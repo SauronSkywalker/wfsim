@@ -681,6 +681,9 @@ row at a time, so the board's growth is more orders, never a heavier client.
   a client could take. A row a client holds stays the client's and the run
   skips it. The run's last job releases what it claimed back to its state, and
   the next run's claim releases first, so a run that died strands nothing.
+  A claimed `open` order the run measured to the client's own bits becomes
+  `verified` and pays its client (§"Contribution" rule 1); one it did not
+  goes back with the release, unpaid.
   The orders table is the one dispatcher: nothing computes a row it was not
   handed by it.
 
@@ -711,7 +714,10 @@ each machine's share is counted under its owner's name. Eight rules:
 1. **ONLY A FACT SCORES.** A client is credited an order's work when the order
    becomes a fact, and every client in that agreement is credited all of it. A
    result that never becomes a fact earns nothing; the official machines' work
-   is nobody's.
+   is nobody's. THE SERVER IS A WITNESS TOO: a client result the official
+   machines reproduce bit for bit — a claimed order the scorer measured
+   (`order_credit.mjs`), or a disputed or top-ten order `settle` confirms —
+   is credited to the clients it agrees with, exactly as a second client's yes.
 2. **THE SAME WORK IS THE SAME POINTS ON EVERY MACHINE.** The engine counts its
    own work: `Shard::work`, the shard's whole-number counters
    (`WORK_COUNTERS`) times `WORK_WEIGHTS`. A client's `compute_ms` is its

@@ -18,6 +18,7 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync, rmSync } from "node
 import { execFileSync } from "node:child_process";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { d1, clientsOf, credit } from "./order_credit.mjs";
 
 const TOP = 0;
 const RANK_PER_CYCLE = 2000;
@@ -25,24 +26,10 @@ const SETTLE_PER_CYCLE = 3;
 const HERE = dirname(fileURLToPath(import.meta.url));
 const [mode, work, arg] = process.argv.slice(2);
 
-async function d1(sql, params = []) {
-  const { CF_ACCOUNT, CF_TOKEN, CF_D1_DATABASE } = process.env;
-  const r = await fetch(`https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT}/d1/database/${CF_D1_DATABASE}/query`, {
-    method: "POST",
-    headers: { authorization: `Bearer ${CF_TOKEN}`, "content-type": "application/json" },
-    body: JSON.stringify({ sql, params }),
-  });
-  const j = await r.json().catch(() => null);
-  if (!r.ok || !j || !j.success) throw new Error(`d1 ${r.status}: ${JSON.stringify(j && j.errors)}`);
-  return j.result[0].results;
-}
-
 const lines = (p) => (existsSync(p) ? readFileSync(p, "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l)) : []);
 const key = (f) => `${f.identity}|${f.ruler}|${f.mode}`;
 const where = "WHERE identity = ? AND ruler = ? AND mode = ?";
 const keyOf = (o) => [o.identity, o.ruler, o.mode];
-/// EVERY CLIENT THAT MEASURED AN ORDER, in the order their results came.
-const clientsOf = (o) => (o.clients || [o.produced_by, o.verifier].filter(Boolean).join(",")).split(",").filter(Boolean);
 
 /// WHERE A RESULT STANDS among the verified rows of its group on the site's
 /// board — one ruler, one mode, riven or not, the grouping the page draws.
@@ -135,14 +122,19 @@ async function settle() {
     // WHOEVER THE SERVER DISAGREES WITH WAS WRONG: every client that sent the
     // order's number, the one that disputed it, or all of them. A dispute's
     // client is the last to have answered.
+    let paid = [];
     if (o.engine === engine) {
       const ids = clientsOf(o);
       const disputer = o.state === "dispute" ? ids.pop() : null;
       if (!claimed) for (const id of ids) await ban(id);
       if (disputer && truth !== o.disputed) await ban(disputer);
+      // …AND WHOEVER IT AGREES WITH EARNED IT, work included: a spot was
+      // credited when it became a fact, an arbiter or disputed order never was.
+      if (claimed && o.state !== "spot" && got.work && got.work === o.work) paid = ids;
     }
     const state = claimed ? "verified" : "rejected";
     await d1(`UPDATE orders SET state = ? ${where}`, [state, ...keyOf(o)]);
+    await credit(d1, paid, o.work);
     console.error(`orders: settled ${o.state} ${o.identity.slice(0, 8)} ${o.ruler}/${o.mode} — ${state}`);
   }
 }

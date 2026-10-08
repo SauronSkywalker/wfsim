@@ -210,7 +210,9 @@ nothing, and the yes it sent is kept on its row; a client is written once a
 day. A scorer run's claim (`fetch_queue.sh`, run as the statements it sends)
 takes every old order, open or not, that no client holds, leaves a held one and
 a young one alone, reads exactly what it claimed, hands no client a claimed
-order, and its release puts each back in the state it was in.
+order, and its release puts each back in the state it was in. A claimed
+order the scorer reproduces — engine, score, metric and work — pays its clients
+once (`order_credit.mjs`), and one that differs in any of them pays nothing.
 
 ## `check_compute`
 

@@ -499,14 +499,20 @@ jobs:
           CF_D1_DATABASE=$(sed 's|^[[:space:]]*//.*$||' wrangler.jsonc \
             | jq -r '.d1_databases[0].database_id // empty')
           export CF_D1_DATABASE
+          # A CLIENT RESULT THIS RUN REPRODUCES IS PAID TO ITS CLIENTS
+          # (`order_credit.mjs`), but only of the engine this tree builds: the
+          # page's `ENGINE_ID`, by the function that stamps it.
+          python3 -c "import yaml" 2>/dev/null || pip install --quiet pyyaml
+          ENGINE=$(python3 -c "import sys; sys.path.insert(0, 'scripts'); from build_site_app import engine_id; print(engine_id())")
           ( while sleep 60; do
               bash scripts/ship_facts.sh facts.ndjson || true
+              node scripts/order_credit.mjs facts.ndjson "$ENGINE" || true
             done ) &
           SHIPPER=$!
           # …AND ONCE MORE AT THE END, whatever happened to the loop: `trap`
           # rather than a line after it, so a scorer that exits non-zero still
           # banks what it managed.
-          trap 'kill $SHIPPER 2>/dev/null || true; bash scripts/ship_facts.sh facts.ndjson || true' EXIT
+          trap 'kill $SHIPPER 2>/dev/null || true; bash scripts/ship_facts.sh facts.ndjson || true; node scripts/order_credit.mjs facts.ndjson "$ENGINE" || true' EXIT
           # THE SAME BOUNDS THE PLAN COUNTED WITH. A shard that took on a
           # different set from the one the split was sized for is a shard doing
           # somebody else's slice.

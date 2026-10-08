@@ -9,9 +9,11 @@
 // which a fact credits to every client that measured it; and a further result
 // never comes from a device of the same owner (docs/BOARD.md §"Contribution").
 // A scorer run's claim takes the old rows no client holds, and no client is
-// handed one until its release (scripts/fetch_queue.sh).
+// handed one until its release (scripts/fetch_queue.sh). A claimed order the
+// scorer reproduces to the same bits pays its clients (scripts/order_credit.mjs).
 //   node scripts/check_board_verify.mjs
 import { verifyRoute, LEASE_MS, PROTOCOL } from "../worker/verify.js";
+import { creditConfirmed } from "./order_credit.mjs";
 import { DatabaseSync } from "node:sqlite";
 import { readFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
@@ -258,6 +260,23 @@ const wy = await work(W);
 check("no client is handed a claimed order", wy.work && row("young").leased_to === W && (await work(Y)).work === null);
 sql(body("release")).run(...body("release").params);
 check("the release hands what the run left back as it was", row("old").state === "todo" && row("oldopen").state === "open");
+
+// THE SCORER'S FACT PAYS THE CLIENT IT REPRODUCES, once, and no other.
+const q = async (s, p = []) => (/^\s*select|returning/i.test(s) ? db.prepare(s).all(...p) : (db.prepare(s).run(...p), []));
+const Z = "z".repeat(24);
+db.prepare("INSERT OR IGNORE INTO verifiers (id, seen) VALUES (?, '2026-01-01')").run(Z);
+const workOf = (v) => db.prepare("SELECT work FROM verifiers WHERE id = ?").get(v).work;
+for (const id of ["same", "otherscore", "otherwork", "otherengine"]) {
+  order(id, "scoring:open", { score: SCORE, metric: "kpm", engine: id === "otherengine" ? "e0" : "e1", produced_by: Z, clients: Z });
+}
+const scorer = (identity, score = SCORE, w = WORK) => ({ identity, ruler: "standard_single_target", mode: "base", score, metric: "kpm", work: w });
+const facts = [scorer("same"), scorer("otherscore", SCORE + 1), scorer("otherwork", SCORE, WORK + 1), scorer("otherengine")];
+const paid = [await creditConfirmed(q, facts.slice(0, 3), "e1"), await creditConfirmed(q, facts.slice(3), "e1")];
+check("a client result the scorer reproduces is paid to its client",
+  paid[0] === 1 && row("same").state === "verified" && workOf(Z) === WORK, `${paid} ${row("same").state} ${workOf(Z)}`);
+check("...never one that differs in score, work or engine",
+  paid[1] === 0 && ["otherscore", "otherwork", "otherengine"].every((id) => row(id).state === "scoring:open"));
+check("...and only once", (await creditConfirmed(q, facts, "e1")) === 0 && workOf(Z) === WORK);
 
 console.log(failures ? `\n${failures} failed` : "\nan order reaches the board when CLIENTS_PER_FACT clients measured the same bits");
 process.exitCode = failures ? 1 : 0;
