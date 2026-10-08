@@ -100,7 +100,7 @@ async function runShapley() {
   // ONE SUBSET PER CALL, every lane pulling the next as it frees up — the same
   // shape as the quick calc's scan, and it yields to a person's own Run.
   const ask = async (lane, m) => {
-    const r = await laneAsk(lane, "/api/simulate", { ...base, ...fight, ...shapleyPayload(parts, m) }, live);
+    const r = await laneSimulate(lane, { ...base, ...fight, ...shapleyPayload(parts, m) }, live);
     if (!live() || r === null) return r !== null;
     if (!r.ok || !Array.isArray(r[field])) {
       const on = parts.filter((_, i) => m >> i & 1).map((p) => p.label).join(", ") || tr("none of them");

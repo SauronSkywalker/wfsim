@@ -263,7 +263,7 @@ async function scanGains(axis, repaint) {
       if (!live()) return;
       const c = cands[cursor++];
       if (!c) return;
-      const r = await laneAsk(lane, "/api/simulate",
+      const r = await laneSimulate(lane,
         { ...buildPayload(), ...scenario, ...c.payload }, live);
       if (!live()) return;               // the fight moved — this answer is stale
       // THE POOL REFUSED TWICE. Counted rather than silent: this lane's share
@@ -340,7 +340,7 @@ async function scanGains(axis, repaint) {
   if (gainScan.lanesLost) {
     for (const c of cands.filter((x) => !gainScan.by[x.id] && !gainScan.refused[x.id])) {
       if (!live()) return;
-      const r = await laneAsk(freeLane(), "/api/simulate",
+      const r = await laneSimulate(freeLane(),
         { ...buildPayload(), ...scenario, ...c.payload }, live);
       if (!live()) return;
       if (r === null) break;             // still gone: stop rather than spin

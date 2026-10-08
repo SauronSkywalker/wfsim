@@ -437,6 +437,40 @@ async function laneAsk(lane, path, body, live) {
   return gone(again) ? null : again;
 }
 
+/// ONE SIMULATION ON ONE LANE, IN QUARTER-SECOND PIECES — what a background
+/// scan measures each candidate with. A whole candidate in one call is the
+/// piece a person's Run waits behind, and a crowd fight's candidate is half a
+/// second; cut the way `simulateFleet` cuts, it yields between pieces and the
+/// shards merge to the same bits. A lane that cannot take pieces (a pinned or
+/// native one) is asked whole, and a piece lost is re-asked as `laneAsk` does.
+async function laneSimulate(lane, body, live) {
+  if (!WASM || !lane || typeof lane.send !== "function") return laneAsk(lane, "/api/simulate", body, live);
+  const runs = Math.max(1, Number(body.runs) || 1);
+  const gone = (x) => !!x && (x.cancelled || x.worker_dead);
+  const parts = [];
+  let from = 0, count = 1;
+  while (from < runs) {
+    await yieldToForeground(live);
+    if (live && !live()) return null;
+    const n = Math.min(count, runs - from);
+    const t0 = performance.now();
+    let r = await lane.send({ kind: "shard", body, from, count: n });
+    if (gone(r)) {
+      if (live && !live()) return null;
+      lane = freeLane();
+      r = await lane.send({ kind: "shard", body, from, count: n });
+      if (gone(r)) return null;
+    }
+    // THE ENGINE'S REFUSAL IS AN ANSWER — passed on whole, as one call's would be.
+    if (!r || r.error || r.ok === false) return r;
+    parts.push(r);
+    from += n;
+    count = Math.max(1, Math.round((n * 250) / Math.max(1, performance.now() - t0)));
+  }
+  const m = await lane.send({ kind: "merge", body, shards: parts });
+  return gone(m) ? laneAsk(freeLane(), "/api/simulate", body, live) : m;
+}
+
 /// RUN A SIMULATION ACROSS THE POOL, and merge in Rust.
 ///
 /// The runs of a simulation are INDEPENDENT given their index, so N lanes each
