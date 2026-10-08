@@ -874,6 +874,7 @@ pub fn run_once_traced(
         // of one pull land simultaneously, so one roll per pull.
         let mut encumber_done = false;
         r.shots += 1;
+        r.body_shots += bodies.len() as u32;
         // ...and the same boundary for a per-instance arcane cap: the whole
         // pull is ONE damage instance, pellets and radial included.
         me.arc.next_instance();

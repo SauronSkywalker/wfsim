@@ -309,6 +309,12 @@ pub struct Shard {
     /// One extra run per simulation, against carrying a thousand of them.
     pub(super) index: Vec<RunKey>,
     pub(super) series: RunSeries,
+    /// WORK METERS — [`RunResult::hits`] and [`RunResult::body_shots`], summed.
+    /// Defaulted so an accumulator from before they existed still parses.
+    #[serde(default)]
+    pub(super) hits: u64,
+    #[serde(default)]
+    pub(super) body_shots: u64,
 }
 
 impl Default for Shard {
@@ -361,6 +367,8 @@ impl Default for Shard {
             seat_counters: [SeatCounters::default(); MAX_COMBATANTS],
             index: Vec::new(),
             series: RunSeries::default(),
+            hits: 0,
+            body_shots: 0,
         }
     }
 }
@@ -368,16 +376,17 @@ impl Default for Shard {
 /// THE COUNTS A SHARD'S WORK IS WEIGHED BY, in [`WORK_WEIGHTS`]' order. Each is
 /// a whole number every engine produces bit for bit, so two machines that
 /// folded the same runs weigh the same work, however fast either was.
-pub const WORK_COUNTERS: [&str; 7] = ["runs", "shots", "pellets", "procs", "dot_ticks", "field_ticks", "kills"];
+pub const WORK_COUNTERS: [&str; 9] = ["runs", "shots", "pellets", "procs", "dot_ticks", "field_ticks", "kills",
+    "hits", "body_shots"];
 
 /// WHAT ONE OF EACH COUNT COSTS, in billionths of a second on the reference
 /// machine — fit by `wfsim-work` over the board's rows (docs/BOARD.md
 /// §"Contribution"). Refit when a release moves the fit; a point earned stays.
-pub const WORK_WEIGHTS: [u64; 7] = [423_973, 476, 385, 124, 214, 0, 6_545];
+pub const WORK_WEIGHTS: [u64; 9] = [423_973, 476, 385, 124, 214, 0, 6_545, 0, 0];
 
 impl Shard {
     /// The counts named by [`WORK_COUNTERS`].
-    pub fn work_counts(&self) -> [u64; 7] {
+    pub fn work_counts(&self) -> [u64; 9] {
         [
             u64::from(self.runs),
             self.shots,
@@ -386,6 +395,8 @@ impl Shard {
             self.dot_ticks,
             self.field_ticks,
             self.kills,
+            self.hits,
+            self.body_shots,
         ]
     }
 
@@ -415,6 +426,8 @@ impl Shard {
         self.virus_stack_health += o.virus_stack_health;
         self.armor_left_health += o.armor_left_health;
         self.procs += o.procs;
+        self.hits += o.hits;
+        self.body_shots += o.body_shots;
         self.field_ticks += o.field_ticks;
         self.dot_ticks += o.dot_ticks;
         self.reloads += o.reloads;
@@ -556,6 +569,8 @@ pub fn shard(
         a.virus_stack_health += r.virus_stack_health;
         a.armor_left_health += r.armor_left_health;
         a.procs += u64::from(r.procs);
+        a.hits += u64::from(r.hits);
+        a.body_shots += u64::from(r.body_shots);
         a.field_ticks += u64::from(r.field_ticks);
         a.dot_ticks += u64::from(r.dot_ticks);
         a.reloads += u64::from(r.reloads);

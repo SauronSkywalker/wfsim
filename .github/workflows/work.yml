@@ -1,11 +1,12 @@
 name: Work prices
 
 # THE REFERENCE MACHINE FOR `WORK_WEIGHTS` — what one of each counted thing
-# costs (docs/BOARD.md §"Contribution"). Four hosted runners each time the
-# committed site's wasm over the same board rows, and a row's price is fit to
-# its MEDIAN time across them, so no one machine, and no owner's machine, sets
-# what a point is worth. The Node version is pinned: it is the wasm engine
-# being timed. Run by hand; a new price ships as an engine commit.
+# costs (docs/BOARD.md §"Contribution"). The engine is built from the ref this
+# runs on exactly as the site builds it (wasm-bindgen and `wasm-opt -Oz` at the
+# site's versions), four hosted runners time it over the same board rows, and a
+# row's price is fit to its MEDIAN time across them, so no one machine, and no
+# owner's machine, sets what a point is worth. Node is pinned: its V8 is the
+# wasm engine being timed. Run by hand, on a branch before its engine ships.
 
 on:
   workflow_dispatch:
@@ -18,7 +19,32 @@ on:
         default: keep
 
 jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          # keep in sync with mise.toml
+          toolchain: "1.97.1"
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+      - name: Build the engine the site would ship
+        run: |
+          cargo build --release -p wfsim-wasm --target wasm32-unknown-unknown
+          # wasm-bindgen at Cargo.lock's version; binaryen at the site build's.
+          bindgen=$(awk '/^name = "wasm-bindgen"$/ {getline; gsub(/version = |"/, ""); print; exit}' Cargo.lock)
+          curl -sSfL "https://github.com/rustwasm/wasm-bindgen/releases/download/$bindgen/wasm-bindgen-$bindgen-x86_64-unknown-linux-musl.tar.gz" | tar xz
+          "./wasm-bindgen-$bindgen-x86_64-unknown-linux-musl/wasm-bindgen" target/wasm32-unknown-unknown/release/wfsim_wasm.wasm --target no-modules --no-typescript --out-dir pkg
+          curl -sSfL https://github.com/WebAssembly/binaryen/releases/download/version_132/binaryen-version_132-x86_64-linux.tar.gz | tar xz
+          ./binaryen-version_132/bin/wasm-opt -Oz -o pkg/wfsim_wasm_bg.wasm pkg/wfsim_wasm_bg.wasm
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pkg
+          path: pkg
+
   measure:
+    needs: build
     runs-on: ubuntu-24.04
     timeout-minutes: 150
     strategy:
@@ -29,8 +55,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22.20.0"
+      - uses: actions/download-artifact@v4
+        with:
+          name: pkg
+          path: pkg
       - name: Time the board's rows
-        run: node scripts/work_calibrate.mjs measure out=measure-${{ matrix.machine }}.json rows=${{ inputs.rows }}
+        run: node scripts/work_calibrate.mjs measure out=measure-${{ matrix.machine }}.json rows=${{ inputs.rows }} pkg=pkg
       - uses: actions/upload-artifact@v4
         with:
           name: measure-${{ matrix.machine }}

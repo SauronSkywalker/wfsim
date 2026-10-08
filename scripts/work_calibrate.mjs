@@ -2,22 +2,26 @@
 // FITS `WORK_WEIGHTS` in the engine contributors run — the site's own wasm,
 // under V8. `.github/workflows/work.yml` runs it; docs/BOARD.md §"Contribution".
 //
-//   node scripts/work_calibrate.mjs measure out=<file.json> [rows=300] [repeats=2] [share=0.25]
+//   node scripts/work_calibrate.mjs measure out=<file.json> [rows=300] [repeats=2] [share=0.25] [pkg=<dir>]
 //   node scripts/work_calibrate.mjs fit <file.json>... [unit=keep|seconds]
 //
 // `measure` times the first `share` of each sampled row's runs: a price is per
-// count, so more rows buy more than longer ones. `fit` takes each row's MEDIAN
+// count, so more rows buy more than longer ones. `pkg` is a wasm-bindgen
+// output to time instead of the site's — an engine not yet shipped. `fit` takes each row's MEDIAN
 // time across the files, one per machine. `unit=keep` holds what a point is
 // worth and moves only the prices between counts; `unit=seconds` makes a point
 // one second of the median machine.
 
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import vm from "node:vm";
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname.replace(/^\/(\w:)/, "$1")), "..");
-const COUNTERS = ["runs", "shots", "pellets", "procs", "dot_ticks", "field_ticks", "kills"];
+// THE ENGINE'S OWN LIST, read from its source so a new meter is timed the day it lands.
+const ENGINE_SRC = fs.readFileSync(path.join(ROOT, "engine/src/fight/monte_carlo.rs"), "utf8");
+const COUNTERS = JSON.parse(ENGINE_SRC.match(/pub const WORK_COUNTERS: \[&str; \d+\] = (\[[^\]]*\])/)[1].replace(/,\s*\]/, "]"));
 
 const arg = (name, dflt) => {
   const a = process.argv.find((x) => x.startsWith(name + "="));
@@ -25,13 +29,17 @@ const arg = (name, dflt) => {
 };
 
 function engine() {
-  const release = JSON.parse(fs.readFileSync(path.join(ROOT, "site/release.json"), "utf8"));
-  const js = fs.readFileSync(path.join(ROOT, `site/pkg/wfsim_wasm.${release.wasm}.js`), "utf8");
+  const pkg = arg("pkg", "");
+  const release = pkg ? {} : JSON.parse(fs.readFileSync(path.join(ROOT, "site/release.json"), "utf8"));
+  const jsFile = pkg ? path.join(pkg, "wfsim_wasm.js") : path.join(ROOT, `site/pkg/wfsim_wasm.${release.wasm}.js`);
+  const wasmFile = pkg ? path.join(pkg, "wfsim_wasm_bg.wasm") : path.join(ROOT, `site/pkg/wfsim_wasm_bg.${release.wasm}.wasm`);
+  if (pkg) release.wasm = createHash("sha256").update(fs.readFileSync(wasmFile)).digest("hex").slice(0, 12);
+  const js = fs.readFileSync(jsFile, "utf8");
   const ctx = vm.createContext({ console, TextEncoder, TextDecoder, WebAssembly });
   vm.runInContext(js + "\nthis.wasm_bindgen = wasm_bindgen;", ctx);
   // Built inside the context: the shim tells its argument's shape by the
   // context's own `Object.prototype`.
-  ctx.bytes = fs.readFileSync(path.join(ROOT, `site/pkg/wfsim_wasm_bg.${release.wasm}.wasm`));
+  ctx.bytes = fs.readFileSync(wasmFile);
   vm.runInContext("wasm_bindgen.initSync({ module: bytes })", ctx);
   return { api: (p, body) => JSON.parse(ctx.wasm_bindgen.api(p, JSON.stringify(body))), release };
 }
@@ -188,8 +196,7 @@ function fit() {
   const held = relErrors(rows.filter((_, i) => i % 2), fitRows(rows.filter((_, i) => i % 2 === 0)));
   const spread = standardErrors(rows, w);
 
-  const src = fs.readFileSync(path.join(ROOT, "engine/src/fight/monte_carlo.rs"), "utf8");
-  const current = JSON.parse(src.match(/pub const WORK_WEIGHTS: \[u64; 7\] = (\[[^\]]*\])/)[1].replace(/_/g, ""));
+  const current = JSON.parse(ENGINE_SRC.match(/pub const WORK_WEIGHTS: \[u64; \d+\] = (\[[^\]]*\])/)[1].replace(/_/g, ""));
   const total = (ws, k) => rows.reduce((s, r) => s + r.counts.reduce((t, c, j) => t + c * ws[j], 0), 0) * k;
   const unit = arg("unit", "keep");
   const k = unit === "seconds" ? 1e9 : total(current, 1) / total(w, 1);

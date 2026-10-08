@@ -202,6 +202,7 @@ pub(in crate::fight) fn settle(
     // call site the gate is a second thing a new site has to remember; as a
     // closure, forgetting it is not something the language allows.
         r.tally.book(settled.raw, settled.effective, clock);
+    r.hits += 1;
     // THE WASTE, through the same door as the damage. Booking it at the
     // call sites instead would be the exact split this function exists to
     // close: a tenth site could move the rate and appear in no ledger.

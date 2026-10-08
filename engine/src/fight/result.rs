@@ -383,6 +383,11 @@ pub struct RunResult {
     /// The most standing at once — where the duration is visible.
     pub ghosts_peak: u32,
     pub kills: u32,      // InstantRespawn deaths (0 with InfiniteHealth)
+    /// WORK METERS (`Shard::work_counts`) for what a crowd costs beyond the
+    /// pulls themselves: every damage instance settled on a body, and the
+    /// bodies standing at each pull — the walks a pull makes over the crowd.
+    pub hits: u32,
+    pub body_shots: u32,
     /// See [`Settled::overkill`] — summed over the engagement.
     pub overkill: f64,
     /// See [`Settled::spilled`] — summed over the engagement.
