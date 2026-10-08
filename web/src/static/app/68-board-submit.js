@@ -674,7 +674,9 @@ function renderBoardOutcome() {
 
 function renderBoardConsent() {
   const box = $("board-consent");
-  if (!box) return;
+  // NOT BEFORE META: the device points answer can land first, and the build
+  // lookup below reads META's weapons; the load draws this again once META is in.
+  if (!box || !META) return;
   // TWO REASONS NOTHING IS SENT, and they must not collapse into one silence.
   // A board ROW explains itself elsewhere ("it is already a row on the
   // board"); with no box on a player's OWN fight, someone who builds a
