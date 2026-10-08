@@ -3,17 +3,21 @@
 // docs/BOARD.md §"Contribution". A signed-in page claims the browser it runs
 // in (its verifier id, `69-board-work.js`); the work every fact credited to that
 // id (`verifiers.work`, worker/verify.js) is then the account's. Only the owner
-// is joined to a device, never a submission, and an account with a claimed
-// device is on the public ranking until it chooses to be off it.
+// is joined to a device, never a submission. Every account with a claimed
+// device is on the public ranking, ANONYMOUS until it agrees to show its name
+// (`contribution_choice`): publishing a name is the person's choice, asked once.
 //
-//   GET  /api/account/devices        → { devices: [{ id, claimed_at, points, recent }], points, recent, shown }
+//   GET  /api/account/devices        → { devices: [{ id, claimed_at, points, recent }], points, recent, named, decided }
 //   POST /api/account/devices/claim  { verifier } → { ok }
-//   POST /api/account/contribution   { shown }    → { ok }
+//   POST /api/account/contribution   { named }    → { ok }
 //   POST /api/board/points           { verifier } → { points, recent, claimed }
-//   GET  /api/contributors[?period=recent] → { contributors: [{ name, username, points, recent }] }
+//   GET  /api/contributors[?period=recent] → { contributors: [{ name, points, recent, mark?, you? }] }
+//        — `name` (the display name, else the username) is null for an account
+//        that did not agree, and `mark` is the paid half's, for a named one only.
 //
 // `recent` is the last `RECENT_DAYS` days, so a newcomer can lead somewhere.
 import { json, no, now, sameSite, sessionAccount } from "./accounts.js";
+import { cloudMarks } from "./cloud.js";
 
 /// `WORK_WEIGHTS` counts in billionths of a point.
 const WORK_PER_POINT = 1e9;
@@ -55,9 +59,11 @@ async function devices(env, account) {
   const { results } = await env.ACCOUNTS.prepare(
     "SELECT verifier, claimed_at FROM devices WHERE account = ?1 ORDER BY claimed_at").bind(account).all();
   const work = await workOf(env, results.map((d) => d.verifier));
-  const shown = !(await env.ACCOUNTS.prepare("SELECT 1 FROM contribution_hidden WHERE account = ?1").bind(account).first());
+  const choice = await env.ACCOUNTS.prepare("SELECT named FROM contribution_choice WHERE account = ?1").bind(account).first();
+  const named = !!(choice && choice.named);
   const list = results.map((d) => ({ id: d.verifier.slice(0, 6), claimed_at: d.claimed_at, ...(work.get(d.verifier) || NONE) }));
-  return json({ ok: true, shown,
+  // `shown` is `named` for a page from before the ranking was anonymous.
+  return json({ ok: true, named, decided: !!choice, shown: named,
     points: points(list.reduce((s, d) => s + d.work, 0)), recent: points(list.reduce((s, d) => s + d.recent, 0)),
     devices: list.map(({ work: w, recent: r, ...d }) => ({ ...d, points: points(w), recent: points(r) })) });
 }
@@ -83,24 +89,29 @@ async function claim(env, account, b) {
   return json({ ok: true });
 }
 
-async function shown(env, account, b) {
-  await (b.shown === false
-    ? env.ACCOUNTS.prepare("INSERT OR IGNORE INTO contribution_hidden (account, hidden_at) VALUES (?1, ?2)").bind(account, now().slice(0, 10))
-    : env.ACCOUNTS.prepare("DELETE FROM contribution_hidden WHERE account = ?1").bind(account)).run();
+/// THE READER'S ANSWER, either way, so they are asked once. A page from before
+/// the ranking was anonymous sends `shown`, which meant the same.
+async function choose(env, account, b) {
+  const named = typeof b.named === "boolean" ? b.named : b.shown;
+  if (typeof named !== "boolean") return no("bad_choice");
+  await env.ACCOUNTS.prepare(
+    `INSERT INTO contribution_choice (account, named, chosen_at) VALUES (?1, ?2, ?3)
+     ON CONFLICT (account) DO UPDATE SET named = ?2, chosen_at = ?3`).bind(account, named ? 1 : 0, now().slice(0, 10)).run();
   return json({ ok: true });
 }
 
-/// THE RANKING: every account with a claimed device that did not choose to be
-/// off it, by the work its devices
-/// were credited — all of it, or the last `RECENT_DAYS` days — most first.
-async function ranking(env, period) {
+/// THE RANKING: every account with a claimed device, by the work its devices
+/// were credited — all of it, or the last `RECENT_DAYS` days — most first. A
+/// name and a handle leave here only for an account that agreed; the reader's
+/// own row is marked `you`, to them alone.
+async function ranking(env, period, me) {
   const { results } = await env.ACCOUNTS.prepare(
-    `SELECT a.id, a.username, a.display_name, d.verifier FROM devices d JOIN accounts a ON a.id = d.account
-       WHERE NOT EXISTS (SELECT 1 FROM contribution_hidden h WHERE h.account = d.account)`).all();
+    `SELECT a.id, a.username, a.display_name, c.named, d.verifier FROM devices d JOIN accounts a ON a.id = d.account
+       LEFT JOIN contribution_choice c ON c.account = d.account`).all();
   const work = await workOf(env, results.map((r) => r.verifier));
   const by = new Map();
   for (const r of results) {
-    const e = by.get(r.id) || { name: r.display_name || r.username, username: r.username, work: 0, recent: 0 };
+    const e = by.get(r.id) || { id: r.id, named: !!r.named, name: r.display_name || r.username, username: r.username, work: 0, recent: 0 };
     const w = work.get(r.verifier) || NONE;
     e.work += w.work;
     e.recent += w.recent;
@@ -108,10 +119,16 @@ async function ranking(env, period) {
   }
   const key = period === "recent" ? "recent" : "points";
   const contributors = [...by.values()]
-    .map((e) => ({ name: e.name, username: e.username, points: points(e.work), recent: points(e.recent) }))
+    .map((e) => ({ id: e.id, name: e.named ? e.name : null, points: points(e.work), recent: points(e.recent) }))
     .filter((e) => e[key] > 0)
-    .sort((x, y) => y[key] - x[key] || y.points - x.points || x.username.localeCompare(y.username))
+    .sort((x, y) => y[key] - x[key] || y.points - x.points || (x.id < y.id ? -1 : 1))
     .slice(0, RANKED);
+  const marks = await cloudMarks(env, contributors.filter((e) => e.name !== null).map((e) => e.id));
+  for (const e of contributors) if (marks[e.id]) e.mark = marks[e.id];
+  for (const e of contributors) {
+    if (e.id === me) e.you = true;
+    delete e.id;
+  }
   return json({ ok: true, period: key === "recent" ? "recent" : "all", contributors });
 }
 
@@ -120,7 +137,8 @@ export async function contributionRoute(request, env, path) {
   if (path === "/api/contributors") {
     if (request.method !== "GET") return no("method", 405);
     if (!env.ACCOUNTS) return json({ ok: true, contributors: [] });
-    return ranking(env, new URL(request.url).searchParams.get("period"));
+    const me = env.AUTH_SECRET ? await sessionAccount(env, request) : null;
+    return ranking(env, new URL(request.url).searchParams.get("period"), me);
   }
   if (path === "/api/board/points") {
     if (request.method !== "POST") return no("method", 405);
@@ -138,5 +156,5 @@ export async function contributionRoute(request, env, path) {
   if (get) return devices(env, account);
   let b = {};
   try { b = JSON.parse((await request.text()) || "{}"); } catch (_) { return no("not_json"); }
-  return path === "/api/account/devices/claim" ? claim(env, account, b) : shown(env, account, b);
+  return path === "/api/account/devices/claim" ? claim(env, account, b) : choose(env, account, b);
 }

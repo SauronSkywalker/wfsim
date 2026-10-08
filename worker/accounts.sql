@@ -130,9 +130,11 @@ CREATE TABLE IF NOT EXISTS devices (
 );
 CREATE INDEX IF NOT EXISTS devices_by_account ON devices (account);
 
--- AN ACCOUNT KEPT OFF THE CONTRIBUTION RANKING, by its own choice. An account
--- with a claimed device is on the ranking unless it is here.
-CREATE TABLE IF NOT EXISTS contribution_hidden (
+-- WHETHER AN ACCOUNT AGREED TO SHOW ITS NAME ON THE CONTRIBUTION RANKING. An
+-- account with a claimed device is on it anonymously; `named` 1 shows its name,
+-- 0 is a no that stops the asking, and no row is not asked yet.
+CREATE TABLE IF NOT EXISTS contribution_choice (
   account   TEXT PRIMARY KEY REFERENCES accounts (id) ON DELETE CASCADE,
-  hidden_at TEXT NOT NULL
+  named     INTEGER NOT NULL,
+  chosen_at TEXT NOT NULL
 );

@@ -204,14 +204,18 @@ nothing; a client is written once a day.
 
 ## `check_contribution`
 
-Plain node against `worker/accounts.sql` and `worker/schema.sql`. A signed-in
-browser claims its device and the last claim owns it, its work going with it;
-an account's points are its devices' credited work, a refused device's counting
-for nothing; the ranking lists only the accounts that chose to be on it, most
-first, by all their points or by the last thirty days' alone; a browser asked
-by its own id is told what it earned and whether it is claimed, a refused one
-nothing; nothing is claimed signed out, from another site or with a malformed
-id; deleting the account releases its devices.
+Plain node against `worker/accounts.sql` and `worker/schema.sql`, the paid half
+stubbed. A signed-in browser claims its device and the last claim owns it, its
+work going with it; an account's points are its devices' credited work, a
+refused device's counting for nothing; every account with a claimed device is
+ranked, most first, by all its points or the last thirty days' alone, and
+ANONYMOUS — no name, handle or mark, and the paid half never asked about it —
+until it agrees, when it shows the display name or else the username and the
+mark the paid half proves; a no is kept, a yes can be taken back, and the
+reader's own row is marked to them alone; a browser asked by its own id is told
+what it earned and whether it is claimed, a refused one nothing; nothing is
+claimed signed out, from another site or with a malformed id; deleting the
+account releases its devices and its answer.
 
 ## `check_folds`
 

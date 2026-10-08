@@ -105,7 +105,11 @@ async function loadDevicePoints() {
   if (!id) return;
   devicePointsAt = Date.now();
   const r = await postBoardWork("/api/board/points", { verifier: id });
-  if (r && r.ok) { devicePoints = r; renderBoardConsent(); }
+  if (!(r && r.ok)) return;
+  devicePoints = r;
+  // WHETHER THE RANKING MAY NAME THEM is asked here, where they see their points.
+  if (accountState.account && !devicesState) await loadDevices();
+  renderBoardConsent();
 }
 
 const postBoardWork = (path, body) => fetch(path, {
@@ -162,6 +166,7 @@ function boardVerifyHtml() {
 }
 /// WHAT IT EARNED, and where it counts: under the account that claimed this
 /// browser, or — signed out — the one line saying signing in puts it there.
+/// Signed in with points and never asked, the one question: show the name?
 function boardPointsHtml(on) {
   const d = on && devicePoints;
   const earned = d ? ` <span class="board-state">${escHtml(tr("This browser: {n} points.")
@@ -169,9 +174,22 @@ function boardPointsHtml(on) {
   const join = on && !accountState.account
     ? ` <a href="/login?return=${encodeURIComponent("/contributors")}">${escHtml(tr("Sign in to count it under your name"))}</a> ·`
     : "";
-  return `${earned}${join} <a href="/contributors">${escHtml(tr("Contributors"))}</a>`;
+  const mine = accountState.account && devicesState;
+  const ask = on && mine && !mine.decided && mine.points > 0
+    ? ` <span class="board-state">${escHtml(tr("You are on the contributors' ranking without your name. Show it?"))}</span>
+      <button class="ghost-btn small" id="board-name-yes">${escHtml(tr("Show my name"))}</button>
+      <button class="ghost-btn small" id="board-name-no">${escHtml(tr("Keep it anonymous"))}</button> ·`
+    : "";
+  return `${earned}${join}${ask} <a href="/contributors">${escHtml(tr("Contributors"))}</a>`;
 }
 function wireBoardVerify() {
   const b = $("board-verify-flip");
   if (b) b.onclick = () => setBoardVerify(!boardVerifyOn());
+  for (const [id, named] of [["board-name-yes", true], ["board-name-no", false]]) {
+    const el = $(id);
+    if (el) el.onclick = async () => {
+      const r = await accountCall("POST", "/api/account/contribution", { named });
+      if (r && r.ok) { await loadDevices(); contributorsState = null; renderBoardConsent(); }
+    };
+  }
 }

@@ -705,16 +705,20 @@ ELSE**, and each machine's share is counted under its owner's name. Seven rules:
    (`/api/account/devices/claim`, `devices` in the accounts database); the
    last account to claim it owns it, and its work goes with it. A refused
    client's work counts for nothing.
-6. **THE RANKING IS ON BY DEFAULT, WITH A WAY OFF.** `/contributors` lists
-   every account with a claimed device that did not hide itself
-   (`contribution_hidden`), by display name, by all their points or the last
-   thirty days'
-   (`verifier_days`, credited with the total and read through the same ban).
-   A browser asks what it earned by its own id (`/api/board/points`).
-7. **A MARK NEVER MOVES A PLACE.** A name may carry the marks its account
-   carries elsewhere, drawn by the extension (`contributorMarks`) from what
-   the server proves; the order is the points alone, and nothing paid adds a
-   point or puts an order in a device's hands sooner.
+6. **EVERYONE IS RANKED; A NAME IS SHOWN ONLY BY CONSENT.** `/contributors`
+   lists every account with a claimed device, by all their points or the last
+   thirty days' (`verifier_days`, credited with the total and read through the
+   same ban). A row is anonymous until its account agrees to show its name
+   (`contribution_choice`, asked once, inline, where the reader sees their
+   points); then it is the display name, else the username, and nothing else.
+   An anonymous row's name and tier never leave the server; the reader's own
+   row is marked to them alone. A browser asks what it earned by its own id
+   (`/api/board/points`).
+7. **A MARK NEVER MOVES A PLACE.** A named row carries the mark its account
+   carries on a signed share, proved by the paid half and attached by the
+   server (`cloudMarks`), drawn by the extension (`contributorMark`); the order
+   is the points alone, and nothing paid adds a point or puts an order in a
+   device's hands sooner.
 
 **THE WEIGHTS ARE FIT, NOT CHOSEN.** `wfsim-work` folds a sample of the
 published board on the reference machine and solves for the weights with the

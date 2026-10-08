@@ -54,6 +54,21 @@ export async function cloudEnd(env, account) {
   }
 }
 
+/// THE MARKS OF THE NAMED ACCOUNTS ON THE CONTRIBUTION RANKING — `{ account:
+/// mark }` as the paid half proves them, passed through unread; empty with none
+/// bound or none answering, and the ranking stands without them.
+export async function cloudMarks(env, accounts) {
+  if (!env.CLOUD || !accounts.length) return {};
+  try {
+    const r = await env.CLOUD.fetch(new Request("https://cloud.internal/internal/marks",
+      { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ accounts }) }));
+    const j = await r.json();
+    return (j && j.ok && j.marks) || {};
+  } catch (_) {
+    return {};
+  }
+}
+
 /// What the paid half holds about an account, for its export — `{ billing,
 /// sync }` as it sends them; empty with none bound.
 export async function cloudExport(env, account) {

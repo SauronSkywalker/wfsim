@@ -462,26 +462,33 @@ function accountComputeBlock() {
     <div class="kv"><dt>${aT("Points")}</dt><dd>${escHtml(d.points.toLocaleString(accountLocale()))} · ${
       escHtml((n === 1 ? tr("{n} device") : tr("{n} devices")).replace("{n}", String(n)))}</dd>
       <a class="ghost-btn btn-sm" href="/contributors">${aT("Ranking")}</a></div>
-    <div class="kv"><dt>${aT("On the ranking")}</dt><dd>${aT(d.shown ? "Your name is shown" : "Not shown")}</dd>
-      <button class="ghost-btn btn-sm" data-auth="contribution-shown" data-shown="${d.shown ? "no" : "yes"}">${
-        aT(d.shown ? "Hide" : "Show")}</button></div></dl>
-    <p class="set-note">${aT("A browser you are signed in on counts its board compute here, and your name is on the public ranking unless you hide it. What it computes goes to the public board and nowhere else.")}</p></div></div>`;
+    <div class="kv"><dt>${aT("On the ranking")}</dt><dd>${aT(d.named ? "Your name is shown" : "Anonymous")}</dd>
+      ${contributionNameButton(d)}</div></dl>
+    <p class="set-note">${aT("A browser you are signed in on counts its board compute here, and it is on the public ranking without your name unless you choose to show it. What it computes goes to the public board and nowhere else.")}</p></div></div>`;
 }
 
-/// THE CONTRIBUTION RANKING — public, every account with a claimed device that
-/// did not choose to be off it, by
-/// all their points or the last thirty days'. A mark beside a name is the
-/// extension's to draw (`contributorMarks`), proved by the server, and never
-/// moves a place: the order is the points alone.
+/// THE ONE SWITCH for whether the ranking names this account — the same on the
+/// account page and the ranking.
+function contributionNameButton(d) {
+  return `<button class="ghost-btn btn-sm" data-auth="contribution-named" data-named="${d.named ? "no" : "yes"}">${
+    aT(d.named ? "Hide my name" : "Show my name")}</button>`;
+}
+
+/// THE CONTRIBUTION RANKING — public, every account with a claimed device, by
+/// all their points or the last thirty days'. A row is anonymous unless its
+/// account agreed to show its name. A named row's mark comes with it from the
+/// server and the extension draws it (`contributorMark`); it never moves a
+/// place: the order is the points alone.
 let contributorsPeriod = "all";
 let devicesAskedFor = null;
-let contributorMarks = {};
 function contributorsPage() {
   const list = contributorsState;
   const recent = contributorsPeriod === "recent";
   const n = (x) => escHtml(x.toLocaleString(accountLocale()));
-  const rows = (list || []).map((c, i) => `<div class="kv"><dt>${i + 1}. ${escHtml(c.name)}${contributorMarks[c.username] || ""}</dt>
-      <dd>@${escHtml(c.username)}</dd><span>${n(recent ? c.recent : c.points)}</span></div>`).join("");
+  const who = (c) => (c.name === null ? `<span class="muted">${aT("Anonymous contributor")}</span>`
+    : escHtml(c.name) + (extHookNow("contributorMark", c.mark) || ""));
+  const rows = (list || []).map((c, i) => `<div class="kv"><dt>${i + 1}. ${who(c)}${
+    c.you ? ` <span class="set-note">${aT("(you)")}</span>` : ""}</dt><span>${n(recent ? c.recent : c.points)}</span></div>`).join("");
   const tab = (id, label) => `<button class="seg${contributorsPeriod === id ? " on" : ""}" data-auth="contributors-period"
       data-period="${id}" aria-pressed="${contributorsPeriod === id}">${aT(label)}</button>`;
   return `<div class="settings"><div class="set-main"><h1 class="page">${aT("Contributors")}</h1>
@@ -492,8 +499,9 @@ function contributorsPage() {
     <p class="set-note">${aT("Points count verified compute and nothing else. A membership adds none.")}</p></div></div>`;
 }
 
-/// THE READER'S OWN LINE: signed out, how to be on it; signed in, their points
-/// and the one switch that takes them off it or back on — on by default.
+/// THE READER'S OWN LINE: signed out, how to be on it; signed in and not yet
+/// asked, the one question whether to show their name; after, their points and
+/// the switch.
 function contributorsYouHtml() {
   if (!accountState.providers.length) return "";
   if (!accountState.account) {
@@ -502,11 +510,16 @@ function contributorsYouHtml() {
   }
   const d = devicesState;
   if (!d) return "";
+  if (!d.decided) {
+    return `<div class="block"><div class="bb"><p class="set-note" style="margin:0 0 8px">${
+      escHtml(tr("You have {n} points, on the ranking without your name. Show your name there?").replace("{n}", d.points.toLocaleString(accountLocale())))}</p>
+      <button class="ghost-btn btn-sm" data-auth="contribution-named" data-named="yes">${aT("Show my name")}</button>
+      <button class="ghost-btn btn-sm" data-auth="contribution-named" data-named="no">${aT("Keep it anonymous")}</button>
+      <p class="set-note" style="margin:8px 0 0">${aT("Shown, it is your display name, or your username if you have none, with any mark your account carries. You can change it any time.")}</p></div></div>`;
+  }
   return `<div class="block"><div class="bb"><dl class="kvs"><div class="kv"><dt>${aT("Your points")}</dt>
-      <dd>${escHtml(d.points.toLocaleString(accountLocale()))} · ${aT(d.shown ? "Your name is shown" : "Not shown")}</dd>
-      <button class="ghost-btn btn-sm" data-auth="contribution-shown" data-shown="${d.shown ? "no" : "yes"}">${
-        aT(d.shown ? "Hide" : "Show my name")}</button></div></dl>
-    ${d.shown ? `<p class="set-note" style="margin:0">${aT("Your display name and handle are shown here, with any mark your account carries. Hide them any time.")}</p>` : ""}</div></div>`;
+      <dd>${escHtml(d.points.toLocaleString(accountLocale()))} · ${aT(d.named ? "Your name is shown" : "Anonymous")}</dd>
+      ${contributionNameButton(d)}</div></dl></div></div>`;
 }
 
 function accountDataBlock() {
@@ -561,15 +574,10 @@ function renderAuthPage(kind) {
     if (contributorsState === null) {
       contributorsState = undefined;
       const period = contributorsPeriod;
-      accountCall("GET", period === "recent" ? "/api/contributors?period=recent" : "/api/contributors").then(async (r) => {
+      accountCall("GET", period === "recent" ? "/api/contributors?period=recent" : "/api/contributors").then((r) => {
         if (period !== contributorsPeriod) return;
         contributorsState = (r && r.ok && r.contributors) || [];
         if (authKindOf(location.pathname) === "contributors") renderAuthPage(kind);
-        const marks = await extHook("contributorMarks", contributorsState.map((c) => c.username));
-        if (marks && typeof marks === "object") {
-          contributorMarks = marks;
-          if (authKindOf(location.pathname) === "contributors") renderAuthPage(kind);
-        }
       });
     }
     return;
@@ -720,8 +728,8 @@ async function authAct(el) {
       contributorsState = null;
       return renderAuthPage(kind);
     }
-    if (what === "contribution-shown") {
-      const r = await accountCall("POST", "/api/account/contribution", { shown: el.dataset.shown === "yes" });
+    if (what === "contribution-named") {
+      const r = await accountCall("POST", "/api/account/contribution", { named: el.dataset.named === "yes" });
       if (!(r && r.ok)) return fail(r);
       await loadDevices();
       contributorsState = null;

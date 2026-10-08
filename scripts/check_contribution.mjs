@@ -1,9 +1,9 @@
 // THE CONTRIBUTION RANKING (worker/contribution.js), with no network — docs/BOARD.md
 // §"Contribution". A signed-in browser claims its device and the last claim owns
 // it; an account's points are its devices' credited work, a refused device's
-// counting for nothing; the ranking lists every account with a claimed device
-// that did not choose to be off it, most first, by all their points or the last
-// thirty days'; a browser can
+// counting for nothing; the ranking lists every account with a claimed device,
+// most first, by all their points or the last thirty days', ANONYMOUS until
+// the account agrees to show its name; a browser can
 // ask what it earned by its own id; nothing works signed out or from another
 // site; deleting the account releases its devices.
 //   node scripts/check_contribution.mjs
@@ -31,7 +31,15 @@ const d1 = (file) => {
   return { raw: db, prepare: (sql) => stmt(sql), batch: (stmts) => Promise.all(stmts.map((s) => s.all())) };
 };
 const accounts = d1("accounts.sql"), library = d1("schema.sql");
-const env = { ACCOUNTS: accounts, LIBRARY: library, AUTH_SECRET: "x" };
+// THE PAID HALF, stubbed: it proves a mark for Ann and Cy, and records whom it was asked about.
+const askedCloud = [];
+const CLOUD = { fetch: async (req) => {
+  const { accounts: ids } = await req.json();
+  askedCloud.push(...ids);
+  const held = { "acct-ann": { tier: "member", titles: [] }, "acct-cy": { tier: "patron", titles: [] } };
+  return new Response(JSON.stringify({ ok: true, marks: Object.fromEntries(ids.filter((i) => held[i]).map((i) => [i, held[i]])) }));
+} };
+const env = { ACCOUNTS: accounts, LIBRARY: library, AUTH_SECRET: "x", CLOUD };
 
 const POINT = 1e9;
 const person = async (id, username, display = null) => {
@@ -54,8 +62,8 @@ const call = async (path, { cookie = "", body, method = body ? "POST" : "GET", o
 };
 const claim = (cookie, verifier) => call("/api/account/devices/claim", { cookie, body: { verifier } });
 const mine = (cookie) => call("/api/account/devices", { cookie });
-const show = (cookie, shown) => call("/api/account/contribution", { cookie, body: { shown } });
-const ranking = async () => (await call("/api/contributors")).contributors;
+const choose = (cookie, named) => call("/api/account/contribution", { cookie, body: { named } });
+const ranking = async (cookie = "", q = "") => (await call(`/api/contributors${q}`, { cookie })).contributors;
 
 const ann = await person("acct-ann", "ann", "Ann"), bob = await person("acct-bob", "bob"), cy = await person("acct-cy", "cy");
 const X = "x".repeat(24), Y = "y".repeat(24), Z = "z".repeat(24), W = "w".repeat(24);
@@ -77,8 +85,9 @@ const a = await mine(ann);
 check("an account's points are its devices' credited work", a.points === 8 && a.devices.length === 2, JSON.stringify(a));
 check("...and its last thirty days, the days before them left out", a.recent === 5, JSON.stringify(a));
 check("...and its page never sees a device's whole id", a.devices.every((d) => d.id.length === 6));
-check("an account is on the ranking once it claims a device, by its display name", a.shown === true && JSON.stringify(await ranking()) ===
-  JSON.stringify([{ name: "Ann", username: "ann", points: 8, recent: 5 }]), JSON.stringify(await ranking()));
+check("an account is on the ranking once it claims a device, ANONYMOUS and not yet asked",
+  a.named === false && a.decided === false && JSON.stringify(await ranking()) === JSON.stringify([{ name: null, points: 8, recent: 5 }]),
+  JSON.stringify(await ranking()));
 
 await claim(bob, Y);
 check("the last claim owns a device, and its work goes with it", (await mine(ann)).points === 5 && (await mine(bob)).points === 3);
@@ -86,11 +95,29 @@ check("the last claim owns a device, and its work goes with it", (await mine(ann
 await claim(cy, Z); await claim(cy, W);
 const r = await ranking();
 check("the ranking is most first, a refused device counting for nothing",
-  r.map((e) => `${e.username}:${e.points}`).join(" ") === "cy:9 ann:5 bob:3", JSON.stringify(r));
-check("...and an account with no username shows its username", r.find((e) => e.username === "bob").name === "bob");
-const recent = (await call("/api/contributors?period=recent")).contributors;
+  r.map((e) => e.points).join(" ") === "9 5 3", JSON.stringify(r));
+check("...and an anonymous row carries no name, handle or mark, and the paid half is not asked about it",
+  r.every((e) => e.name === null && !("username" in e) && !("mark" in e)) && askedCloud.length === 0,
+  `${JSON.stringify(r)} ${askedCloud}`);
+check("the reader's own row is marked to them, and to nobody else",
+  JSON.stringify((await ranking(ann)).map((e) => !!e.you)) === "[false,true,false]" && !(await ranking()).some((e) => e.you));
+
+await choose(ann, true); await choose(bob, true); await choose(cy, false);
+const named = await ranking();
+check("agreed, a row shows the display name alone, or the username when there is none",
+  JSON.stringify(named.map((e) => e.name)) === JSON.stringify([null, "Ann", "bob"]) && named.every((e) => !("username" in e)),
+  JSON.stringify(named));
+check("...a named row carries the mark the paid half proves, and only named rows were asked about",
+  JSON.stringify(named[1].mark) === JSON.stringify({ tier: "member", titles: [] }) && !("mark" in named[0]) && !("mark" in named[2])
+  && !askedCloud.includes("acct-cy"), `${JSON.stringify(named)} ${askedCloud}`);
+check("...and a no is kept, so it is not asked again", (await mine(cy)).decided === true && (await mine(cy)).named === false);
+await choose(ann, false);
+check("taken back, the name leaves the ranking", !(await ranking()).some((e) => e.name === "Ann") && (await mine(ann)).named === false);
+check("an answer that is not one is refused", (await call("/api/account/contribution", { cookie: ann, body: { named: "yes" } })).reason === "bad_choice");
+
+const recent = await ranking("", "?period=recent");
 check("the last thirty days rank by those days, and an account with none there is not on it",
-  recent.map((e) => `${e.username}:${e.recent}`).join(" ") === "bob:3 ann:2", JSON.stringify(recent));
+  recent.map((e) => `${e.name}:${e.recent}`).join(" ") === "bob:3 null:2", JSON.stringify(recent));
 
 check("a browser asks what it earned by its own id, and is told whether it is claimed",
   JSON.stringify(await points(X)) === JSON.stringify({ status: 200, ok: true, points: 5, recent: 2, claimed: true }),
@@ -100,15 +127,11 @@ check("...an id nobody claimed or credited earns nothing", (await points("q".rep
 check("...a refused one, nothing either", (await points(W)).points === 0 && (await points(W)).recent === 0);
 check("...and a malformed id is refused", (await points("nope")).reason === "bad_device");
 
-await show(ann, false);
-check("hidden, it leaves the ranking", !(await ranking()).some((e) => e.username === "ann") && (await mine(ann)).shown === false);
-await show(ann, true);
-check("...and shown again, it is back", (await ranking()).some((e) => e.username === "ann"));
-
 accounts.raw.prepare("DELETE FROM accounts WHERE id = 'acct-cy'").run();
-check("deleting an account releases its devices and its place",
+check("deleting an account releases its devices, its place and its answer",
   !accounts.raw.prepare("SELECT 1 FROM devices WHERE account = 'acct-cy'").get()
-  && !(await ranking()).some((e) => e.username === "cy"));
+  && !accounts.raw.prepare("SELECT 1 FROM contribution_choice WHERE account = 'acct-cy'").get()
+  && !(await ranking()).some((e) => e.points === 9));
 
 console.log(failures ? `\n${failures} failed` : "\nan account's points are the work its devices were credited");
 process.exitCode = failures ? 1 : 0;

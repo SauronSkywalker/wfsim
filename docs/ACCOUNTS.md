@@ -170,9 +170,9 @@ change that page in the commit that changes what is kept.
 - A browser that computes the board's scores keeps a random id it made and
   sends it with each one (`verifiers`, docs/BOARD.md §"Compute orders"). A
   signed-in browser is claimed for its account (`devices`), so its work counts
-  there (docs/BOARD.md §"Contribution"), and the account's name and points are
-  on the public ranking until it hides them (`contribution_hidden`); it is
-  never joined to a submission.
+  there (docs/BOARD.md §"Contribution"). Its points are on the public ranking
+  anonymously; its display name (else its username) is shown only once the
+  account agrees (`contribution_choice`). It is never joined to a submission.
 - **An account is never joined to the usage count or to a board submission.**
   Both pages promise that nothing about the reader travels with them, and the
   session cookie reaching those endpoints is never read by them.
