@@ -202,6 +202,15 @@ device of the same owner, and does go to another owner's or an unclaimed one;
 a row nobody owes, a server's order, a live lease and a banned client get
 nothing; a client is written once a day.
 
+## `check_contribution`
+
+Plain node against `worker/accounts.sql` and `worker/schema.sql`. A signed-in
+browser claims its device and the last claim owns it, its work going with it;
+an account's points are its devices' credited work, a refused device's counting
+for nothing; the ranking lists only the accounts that chose to be on it, most
+first; nothing is claimed signed out, from another site or with a malformed id;
+deleting the account releases its devices.
+
 ## `check_folds`
 
 Every block and every section on a weapon page folds, and the jump menu is READ

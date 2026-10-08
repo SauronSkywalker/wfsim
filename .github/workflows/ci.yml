@@ -133,6 +133,8 @@ jobs:
         run: node scripts/check_appraise.mjs
       - name: A client's number reaches the board only when CLIENTS_PER_FACT clients agree
         run: node scripts/check_board_verify.mjs
+      - name: A machine's compute counts under the account that claimed it, on the ranking only by choice
+        run: node scripts/check_contribution.mjs
       - name: The site reads the live board, and the committed one only until it exists
         run: node scripts/check_board_live.mjs
       # A BOX THAT REDRAWS UNDER A COMPOSITION takes no Chinese at all, while
