@@ -343,3 +343,18 @@ CREATE TABLE IF NOT EXISTS appraisal_results (
   verdict    TEXT
 );
 CREATE INDEX IF NOT EXISTS appraisal_results_by_code ON appraisal_results (code);
+
+-- EVERY VOID FISSURE THE GAME OPENS, from the world state the bot server relays
+-- each minute (worker/world.js `fissureLog`). `id` is DE's own, so the minutes
+-- that see one again write nothing. `list` is normal, steel_path or railjack;
+-- `mission` is NULL for a Void Storm. Which combinations a reminder may hold is
+-- read from here. Added to a live database with this statement alone.
+CREATE TABLE IF NOT EXISTS fissures (
+  id            TEXT PRIMARY KEY,
+  list          TEXT NOT NULL,
+  tier          TEXT NOT NULL,
+  mission       TEXT,
+  node          TEXT NOT NULL,
+  started_at_ms INTEGER NOT NULL,
+  ends_at_ms    INTEGER NOT NULL
+);

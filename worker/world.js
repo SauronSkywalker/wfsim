@@ -13,10 +13,6 @@
 import NAMES from "./world_names.json" with { type: "json" };
 
 const KEY = "world/items.json";
-/// EVERY FISSURE THE GAME HAS OPENED since the relay began, as `[list, tier,
-/// mission]` — the only source of which combinations exist: no export or wiki
-/// table says which era opens which mission type (`fissureSeen`).
-const SEEN_KEY = "world/fissures_seen.json";
 /// The relay runs each minute; a reader is never more than this behind it.
 const FRESH_S = 30;
 const MAX_BYTES = 4 * 1024 * 1024;
@@ -30,8 +26,9 @@ export async function worldRoute(request, env, ctx, path) {
   // WHAT A REMINDER CAN NAME BEFORE IT IS OPEN: the table the items are named
   // from, without its nodes, and every fissure seen so far.
   if (path === "/api/world/names") {
-    const seen = env.UPLOADS && await env.UPLOADS.get(SEEN_KEY).then((o) => o && o.json()).catch(() => null);
-    return json({ ok: true, tiers: NAMES.tiers, missions: NAMES.missions, fissures: (seen && seen.fissures) || [] }, 200,
+    const seen = env.LIBRARY && await env.LIBRARY.prepare("SELECT DISTINCT list, tier, mission FROM fissures").all()
+      .then((r) => r.results.map((x) => [x.list, x.tier, x.mission])).catch(() => null);
+    return json({ ok: true, tiers: NAMES.tiers, missions: NAMES.missions, fissures: seen || [] }, 200,
       { "cache-control": "public, max-age=600" });
   }
   if (path === "/api/world/arbitrations") return arbitrationRoute(request, ctx, path);
@@ -66,22 +63,21 @@ async function worldRelay(request, env) {
   const items = worldItems(ws, now);
   await env.UPLOADS.put(KEY, JSON.stringify({ ok: true, read_at_ms: now, items }),
     { httpMetadata: { contentType: "application/json" } });
-  await fissureSeen(env, items);
+  // A LOG THAT FAILS COSTS THE LOG, never the relay.
+  await fissureLog(env, items).catch((e) => console.error(`fissure log: ${e && e.message || e}`));
   return json({ ok: true, items: items.length });
 }
 
-/// A COMBINATION IS KEPT ONCE SEEN, and the file is written only when one is
-/// new. A reminder made from nothing offers only these (`fissureBuild`).
-export const fissureCombos = (items) => items.filter((x) => x.kind === "fissure")
-  .map((x) => [x.attributes.list, x.attributes.tier, x.attributes.mission]);
-async function fissureSeen(env, items) {
-  const was = await env.UPLOADS.get(SEEN_KEY).then((o) => o && o.json()).catch(() => null);
-  const known = new Set(((was && was.fissures) || []).map((c) => JSON.stringify(c)));
-  const before = known.size;
-  for (const c of fissureCombos(items)) known.add(JSON.stringify(c));
-  if (known.size === before) return;
-  const fissures = [...known].map((c) => JSON.parse(c)).sort((a, b) => String(a).localeCompare(String(b)));
-  await env.UPLOADS.put(SEEN_KEY, JSON.stringify({ fissures }), { httpMetadata: { contentType: "application/json" } });
+/// EVERY FISSURE THE GAME OPENS, one row per DE id, written the first minute it
+/// is seen (`fissures`, worker/schema.sql). It is the only source of which
+/// combinations of list, era and mission exist — no export or wiki table says
+/// which era opens which mission type — and of how often each comes.
+async function fissureLog(env, items) {
+  if (!env.LIBRARY) return;
+  const insert = env.LIBRARY.prepare("INSERT OR IGNORE INTO fissures (id, list, tier, mission, node, started_at_ms, ends_at_ms) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)");
+  const rows = items.filter((x) => x.kind === "fissure" && x.id).map((x) => insert.bind(x.id,
+    x.attributes.list, x.attributes.tier, x.attributes.mission, x.attributes.node, x.started_at_ms, x.ends_at_ms));
+  if (rows.length) await env.LIBRARY.batch(rows);
 }
 
 /// ONE SHAPE FOR EVERYTHING A UTILITY PAGE LISTS: `{kind, id, attributes,
