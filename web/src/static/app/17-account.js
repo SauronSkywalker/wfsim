@@ -464,7 +464,7 @@ function accountComputeBlock() {
       <a class="ghost-btn btn-sm" href="/contributors">${aT("Ranking")}</a></div>
     <div class="kv"><dt>${aT("On the ranking")}</dt><dd>${aT(d.named ? "Your name is shown" : "Anonymous")}</dd>
       ${contributionNameButton(d)}</div></dl>
-    <p class="set-note">${aT("A browser you are signed in on counts its board compute here, and it is on the public ranking without your name unless you choose to show it. What it computes goes to the public board and nowhere else.")}</p></div></div>`;
+    <p class="set-note">${aT("A browser you are signed in on counts its compute here, and it is on the public ranking without your name unless you choose to show it. What it computes is free for everyone and never sold.")}</p></div></div>`;
 }
 
 /// THE ONE SWITCH for whether the ranking names this account — the same on the
@@ -492,7 +492,7 @@ function contributorsPage() {
   const tab = (id, label) => `<button class="seg${contributorsPeriod === id ? " on" : ""}" data-auth="contributors-period"
       data-period="${id}" aria-pressed="${contributorsPeriod === id}">${aT(label)}</button>`;
   return `<div class="settings"><div class="set-main"><h1 class="page">${aT("Contributors")}</h1>
-    <p class="set-note">${aT("The people whose machines compute the board.")}</p>
+    <p class="set-note">${aT("The people whose computers help run what WFSim gives everyone for free — the leaderboard first among them. What they compute is free for everyone, never sold, and never runs a paid feature. It runs only while a WFSim page is open on a computer, steps aside the moment you run something yourself, never runs on a phone, and one click turns it off.")}</p>
     ${contributorsYouHtml()}
     <div class="block"><div class="bh"><span class="oseg">${tab("all", "All time")} ${tab("recent", "Last 30 days")}</span></div><div class="bb">${list == null ? ""
       : rows ? `<dl class="kvs">${rows}</dl>` : `<p class="set-note" style="margin:0">${aT("Nobody yet.")}</p>`}</div></div>

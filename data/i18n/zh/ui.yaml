@@ -747,7 +747,7 @@ ui:
   "One ruler, every weapon.": 一把尺子，量全部武器。
   "A score is this engine's measurement of a build under the benchmark's fixed terms. Nobody submits a number.": "分数是本引擎在该基准的固定条件下测出的。没有人提交数字。"
   "Only builds scoring at least {share}% of their group's leader are listed.": "只列出分数达到所在分组榜首 {share}% 以上的配装。"
-  "Your browser also computes the board's scores in the background ({n} so far).": "你的浏览器也会在后台帮榜单计算分数（已算 {n} 场）。"
+  "Your browser helps compute what WFSim gives everyone for free, in the background ({n} so far).": "你的浏览器在后台帮 WF模拟 计算所有人都能免费使用的功能（已完成 {n} 个）。"
   "Your browser does not compute the board's scores.": "你的浏览器不帮榜单计算分数。"
   "stop computing": "停止计算"
   "start computing": "开始计算"
@@ -2514,9 +2514,9 @@ ui:
   "Ranking": 排行
   "On the ranking": 排行榜
   "Your name is shown": 显示你的名字
-  "A browser you are signed in on counts its board compute here, and it is on the public ranking without your name unless you choose to show it. What it computes goes to the public board and nowhere else.": "登录了这个账号的浏览器，为榜单做的计算记在这里，并以匿名方式出现在公开的贡献榜上，除非你选择显示名字。它算的只用于公开榜单，不作他用。"
+  "A browser you are signed in on counts its compute here, and it is on the public ranking without your name unless you choose to show it. What it computes is free for everyone and never sold.": "登录了这个账号的浏览器，计算量记在这里，并以匿名方式出现在公开的贡献榜上，除非你选择显示名字。它算出来的东西对所有人免费，永远不会卖钱。"
   "Contributors": 贡献者
-  "The people whose machines compute the board.": 用自己的设备计算榜单的人。
+  "The people whose computers help run what WFSim gives everyone for free — the leaderboard first among them. What they compute is free for everyone, never sold, and never runs a paid feature. It runs only while a WFSim page is open on a computer, steps aside the moment you run something yourself, never runs on a phone, and one click turns it off.": "这些人用自己的电脑，帮 WF模拟 运行所有人都能免费使用的功能，排行榜就是其中之一。算出来的东西对所有人免费，永远不会卖钱，也不会用于任何付费功能。只在电脑上开着 WF模拟 页面时才计算，你自己一开始计算它就立刻让路，手机上从不运行，一键就能关闭。"
   "Nobody yet.": 还没有人。
   "All time": 全部
   "Last 30 days": 近 30 天

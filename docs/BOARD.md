@@ -682,8 +682,9 @@ default and switched beside the board's own consent; a phone never works.
 
 ## Contribution
 
-**WHAT THE COMMUNITY'S MACHINES COMPUTE GOES TO THE PUBLIC BOARD AND NOWHERE
-ELSE**, and each machine's share is counted under its owner's name. Seven rules:
+**WHAT THE COMMUNITY'S MACHINES COMPUTE IS WHAT WFSIM GIVES EVERYONE FOR FREE —
+THE BOARD FIRST — AND NEVER ANYTHING SOLD**: no paid feature runs on it, and
+each machine's share is counted under its owner's name. Seven rules:
 
 1. **ONLY A FACT SCORES.** A client is credited an order's work when the order
    becomes a fact, and every client in that agreement is credited all of it. A

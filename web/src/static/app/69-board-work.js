@@ -157,7 +157,7 @@ if (WASM) {
 function boardVerifyHtml() {
   const on = boardVerifyOn();
   const text = on
-    ? tr("Your browser also computes the board's scores in the background ({n} so far).")
+    ? tr("Your browser helps compute what WFSim gives everyone for free, in the background ({n} so far).")
       .replace("{n}", String(boardVerifiedCount()))
     : tr("Your browser does not compute the board's scores.");
   return ` <span class="board-state">${escHtml(text)}</span>` +
