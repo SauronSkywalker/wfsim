@@ -384,7 +384,11 @@ question (docs/BOARD.md §"The Riven Analyst").
    equal in build, score and work credit both, as a board fact does. The
    search is deterministic for a frozen request, so honest computers agree to
    the bit. The chat is told the community is on it, and the link stays as
-   the asker's own faster way.
+   the asker's own faster way. A computer still searching renews its lease
+   every two minutes (`/api/appraise/<code>/renew`), so a slow one is never
+   overtaken by its own lease, and stops when told the task went elsewhere;
+   once one has taken it the chat is told so, as a reply inside the asker's
+   window only — QQ rations active messages, and the answer may need one.
 4. The channel's bot claims what came back (`/api/appraise/claim`), replays the
    build itself with the card's real rolls, and the first build it accepts
    wins once; later ones are kept on the board and not announced. It answers

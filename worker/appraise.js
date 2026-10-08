@@ -57,10 +57,11 @@ export async function appraiseRoute(request, env, path) {
   if (!env.LIBRARY) return json({ ok: false, error: "not offered here" }, 501);
   if (path === "/api/appraise/new") return open(request, env);
   if (path === "/api/appraise/claim") return claim(request, env);
-  const m = path.match(/^\/api\/appraise\/([A-Za-z0-9]{3,12})(\/result|\/request)?$/);
+  const m = path.match(/^\/api\/appraise\/([A-Za-z0-9]{3,12})(\/result|\/request|\/renew)?$/);
   if (!m) return json({ ok: false, error: "not found" }, 404);
   const code = m[1].toUpperCase();
   if (m[2] === "/request") return freeze(request, env, code);
+  if (m[2] === "/renew") return renew(request, env, code);
   return m[2] ? handBack(request, env, code, (ids) => ownersOf(env, ids)) : read(request, env, code);
 }
 
@@ -172,15 +173,31 @@ export async function rivenTask(env, verifier, engine, owners) {
       if (mine && by.some((v) => own.get(v) === mine)) continue;
     }
     const lease = [...crypto.getRandomValues(new Uint8Array(16))].map((x) => x.toString(16).padStart(2, "0")).join("");
-    const took = await db.prepare(`UPDATE appraisals SET lease = ?, lease_until = ?, leased_to = ?
+    const took = await db.prepare(`UPDATE appraisals SET lease = ?, lease_until = ?, leased_to = ?,
+        started_at = COALESCE(started_at, ?)
         WHERE code = ? AND (lease_until IS NULL OR lease_until < ?)`)
-      .bind(lease, now + RIVEN_LEASE_MS, verifier, a.code, now).run();
+      .bind(lease, now + RIVEN_LEASE_MS, verifier, now, a.code, now).run();
     if (took.meta.changes) {
       const { request, context } = JSON.parse(a.request);
       return { kind: "riven_gain", lease, code: a.code, weapon: a.weapon, ruler: a.ruler, request, context };
     }
   }
   return null;
+}
+
+/// STILL AT IT: the computer holding a riven gain says so while its search runs,
+/// and its lease runs on from now — a slow computer is never overtaken by its own
+/// lease. `held: false` tells it the task went elsewhere, so it stops.
+async function renew(request, env, code) {
+  if (request.method !== "POST") return json({ ok: false, error: "POST only" }, 405);
+  let b = {};
+  try { b = await request.json(); } catch (_) { return json({ ok: false, error: "not json" }, 400); }
+  if (!VERIFIER_ID.test(b.verifier || "") || !LEASE_ID.test(b.lease || "")) return json({ ok: false, error: "bad renew" }, 400);
+  const now = Date.now();
+  const r = await env.LIBRARY.prepare(`UPDATE appraisals SET lease_until = ?
+      WHERE code = ? AND lease = ? AND leased_to = ? AND lease_until >= ? AND agreed_at IS NULL`)
+    .bind(now + RIVEN_LEASE_MS, code, b.lease, b.verifier, now).run();
+  return json({ ok: true, held: !!r.meta.changes });
 }
 
 /// A VOLUNTEER'S ANSWER, under its lease: kept like any build handed back, and
@@ -268,6 +285,9 @@ async function claim(request, env) {
   for (const code of (Array.isArray(b.told) ? b.told : []).slice(0, 50)) {
     await db.prepare("UPDATE appraisals SET told_at = ? WHERE code = ?").bind(now, String(code)).run();
   }
+  for (const code of (Array.isArray(b.started_told) ? b.started_told : []).slice(0, 50)) {
+    await db.prepare("UPDATE appraisals SET started_told = ? WHERE code = ?").bind(now, String(code)).run();
+  }
   const { results: toJudge } = await db.prepare(`SELECT r.id, r.code, r.build, r.thanks, r.at,
       a.weapon, a.ruler, a.riven, a.chat, a.asker, a.at AS asked_at
     FROM appraisal_results r JOIN appraisals a ON a.code = r.code
@@ -277,10 +297,14 @@ async function claim(request, env) {
     await db.batch(toJudge.map((r) => db.prepare("UPDATE appraisal_results SET claimed_at = ? WHERE id = ?").bind(now, r.id)));
   }
   const { results: toTell } = await db.prepare(`SELECT a.code, a.weapon, a.ruler, a.riven, a.chat, a.asker, a.at AS asked_at,
-      a.done_at, r.id AS result_id, r.thanks, r.verdict
+      a.done_at, r.id AS result_id, r.thanks, r.verdict, r.verifier IS NOT NULL AS volunteer
     FROM appraisals a JOIN appraisal_results r ON r.id = a.winner
     WHERE a.channel = ? AND a.done_at IS NOT NULL AND a.told_at IS NULL ORDER BY a.done_at LIMIT 20`).bind(channel).all();
+  // A COMPUTER TOOK IT: the chat may be told so, once, while it waits.
+  const { results: toStart } = await db.prepare(`SELECT code, weapon, ruler, riven, chat, asker, at AS asked_at, started_at
+    FROM appraisals WHERE channel = ? AND started_at IS NOT NULL AND started_told IS NULL AND told_at IS NULL AND done_at IS NULL
+    ORDER BY started_at LIMIT 20`).bind(channel).all();
   const parse = (r) => ({ ...r, riven: JSON.parse(r.riven), chat: JSON.parse(r.chat),
     ...(r.build ? { build: JSON.parse(r.build) } : {}), ...(r.verdict ? { verdict: JSON.parse(r.verdict) } : {}) });
-  return json({ ok: true, judge: toJudge.map(parse), tell: toTell.map(parse) });
+  return json({ ok: true, judge: toJudge.map(parse), tell: toTell.map(parse), started: toStart.map(parse) });
 }

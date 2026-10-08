@@ -107,7 +107,7 @@ const chatPathOf = (chat) => chat.group_openid ? `/v2/groups/${chat.group_openid
 const drawn = new Map();
 /// Answers whose asker's window closed, by room, until that room says anything.
 const held = new Map();
-let judged = [], told = [];
+let judged = [], told = [], startedTold = [];
 
 async function tellAppraisal(item, chatPath, reply, late) {
   let png = (drawn.get(item.code) || {}).png;
@@ -119,10 +119,23 @@ async function tellAppraisal(item, chatPath, reply, late) {
 
 async function appraisalTick() {
   const r = await fetch(`${SITE}/api/appraise/claim`, { method: "POST", headers: { "content-type": "application/json",
-    authorization: `Bearer ${env.BOT_RELAY_TOKEN}` }, body: JSON.stringify({ channel: "qq", judged, told }) });
+    authorization: `Bearer ${env.BOT_RELAY_TOKEN}` }, body: JSON.stringify({ channel: "qq", judged, told, started_told: startedTold }) });
   if (!r.ok) throw new Error(`appraise claim: ${r.status}`);
-  const { judge = [], tell = [] } = await r.json();
-  judged = []; told = [];
+  const { judge = [], tell = [], started = [] } = await r.json();
+  judged = []; told = []; startedTold = [];
+  // A COMPUTER TOOK IT: said once, as a reply inside the asker's window — never
+  // as an active message, which QQ rations and the answer itself may need.
+  for (const s of started) {
+    const open = Date.now() - Number(s.chat.msg_at || 0) < REPLY_WINDOW_MS[s.chat.group_openid ? "group" : "private"];
+    if (open) {
+      try {
+        await qq(`${chatPathOf(s.chat)}/messages`, { msg_id: s.chat.msg_id, msg_seq: 2, msg_type: 0, content: answer.started(s) });
+      } catch (e) {
+        console.error(`started ${s.code}: ${e && e.message || e}`);
+      }
+    }
+    startedTold.push(s.code);
+  }
   for (const j of judge) {
     try {
       const { png, verdict } = await renderCardWith(answer.answerCard(j, j.id), { wait: REPLAY_MS });
@@ -140,7 +153,7 @@ async function appraisalTick() {
     try {
       // INSIDE THE WINDOW, a reply to the asker's message; past it, an active
       // message to the same chat — no message to reply to, and none needed.
-      await tellAppraisal(t, chatPathOf(t.chat), open ? { msg_id: t.chat.msg_id, msg_seq: 2 } : {}, false);
+      await tellAppraisal(t, chatPathOf(t.chat), open ? { msg_id: t.chat.msg_id, msg_seq: 3 } : {}, false);
       told.push(t.code);
       continue;
     } catch (e) {

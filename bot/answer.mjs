@@ -199,6 +199,9 @@ export function makeAnswer({ run, meta, zh, headless, host }) {
       card, text: `${weaponName(hit.w)} · ${rulerShort(ruler)} · ${line}\n${SITE}/appraise/${opened.code}` };
   }
 
+  /// …AND WHILE IT WAITS: a computer has taken it.
+  const started = (s) => t("A community computer has taken riven gain {code} — usually a few minutes. Nona will post the answer here. (｀・ω・´)", { code: s.code });
+
   /// `{ text }`, or `{ line, card, text }` — the long image at `card` with
   /// `line` under it, and `text` the answer in words if the image cannot be made.
   async function answer(text, ctx) {
@@ -214,10 +217,12 @@ export function makeAnswer({ run, meta, zh, headless, host }) {
     const v = item.verdict || {};
     const gain = typeof v.gain === "number" ? `${v.gain >= 0 ? "+" : "−"}${Math.abs(v.gain * 100).toFixed(1)}%` : "—";
     const said = t("{w} with this riven: {shown}, {gain} against the best build without one. Thanks to {who} for searching it! (⁄ ⁄•⁄ω⁄•⁄ ⁄)",
-      { w: weaponName(w), shown: v.shown || "—", gain, who: item.thanks || t("a kind someone in the chat") });
+      { w: weaponName(w), shown: v.shown || "—", gain,
+        who: item.thanks || (item.volunteer ? t("the community's computers") : t("a kind someone in the chat")) });
     return late ? `${t("The riven gain from earlier is in.")} ${said}` : said;
   };
   /// The long image of an appraisal's answer — the page that replays it.
+  answer.started = started;
   answer.answerCard = (item, resultId) => `${SITE}${headless.headlessWeaponPath(meta.weapons || [], item.weapon)}/card?kind=appraise&code=${item.code}&result=${resultId}`;
   return answer;
 }

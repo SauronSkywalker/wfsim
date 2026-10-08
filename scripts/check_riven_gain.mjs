@@ -77,6 +77,18 @@ check("a computer asking for work is handed the riven gain before any board orde
   t1 && t1.kind === "riven_gain" && t1.code === code && JSON.stringify(t1.request) === JSON.stringify(FROZEN.request)
   && JSON.stringify(t1.context) === JSON.stringify(FROZEN.context), JSON.stringify(t1));
 check("...and nobody else holds it meanwhile", (await work(B) || {}).kind !== "riven_gain");
+// STILL AT IT: the holder's word runs its lease on; anyone else's runs nothing.
+LIBRARY.raw.prepare("UPDATE appraisals SET lease_until = ? WHERE code = ?").run(Date.now() + 1000, code);
+const kept = await appraise("POST", `/api/appraise/${code}/renew`, { lease: t1.lease, verifier: A });
+const until = LIBRARY.raw.prepare("SELECT lease_until FROM appraisals WHERE code = ?").get(code).lease_until;
+check("a computer still searching keeps its lease running on", kept.body.held === true && until > Date.now() + 60_000, String(until - Date.now()));
+check("...and one that does not hold it is told so, and changes nothing",
+  (await appraise("POST", `/api/appraise/${code}/renew`, { lease: t1.lease, verifier: B })).body.held === false
+  && LIBRARY.raw.prepare("SELECT lease_until FROM appraisals WHERE code = ?").get(code).lease_until === until);
+const told1 = await appraise("POST", "/api/appraise/claim", { channel: "qq" }, bot);
+check("the chat may be told a computer took it, once", told1.body.started.some((x) => x.code === code));
+await appraise("POST", "/api/appraise/claim", { channel: "qq", started_told: [code] }, bot);
+check("...and is not told twice", !(await appraise("POST", "/api/appraise/claim", { channel: "qq" }, bot)).body.started.some((x) => x.code === code));
 LIBRARY.raw.prepare("UPDATE orders SET lease = NULL, lease_until = NULL, leased_to = NULL").run();
 
 const BUILD = { weapon: "torid", mods: ["serration", "riven"], riven_pos: ["critical_damage", "multishot"], riven_neg: "" };

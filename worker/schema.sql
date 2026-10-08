@@ -345,10 +345,13 @@ CREATE TABLE IF NOT EXISTS appraisals (
   lease       TEXT,
   lease_until INTEGER,
   leased_to   TEXT,
-  agreed_at   INTEGER
+  agreed_at   INTEGER,
+  -- WHEN A COMPUTER FIRST TOOK IT, and when the chat was told one had.
+  started_at   INTEGER,
+  started_told INTEGER
 );
 --   ALTER TABLE appraisals ADD COLUMN request TEXT;  (and engine, lease, leased_to TEXT;
---   lease_until, agreed_at INTEGER) — the live table was made before them.
+--   lease_until, agreed_at, started_at, started_told INTEGER) — the live table was made before them.
 CREATE INDEX IF NOT EXISTS appraisals_by_asker ON appraisals (channel, asker, at);
 CREATE TABLE IF NOT EXISTS appraisal_results (
   id         INTEGER PRIMARY KEY AUTOINCREMENT,

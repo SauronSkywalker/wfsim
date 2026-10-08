@@ -190,12 +190,21 @@ function maybeReloadForRelease() {
 /// reader goes first, and its winner sent back under the lease — as the build
 /// the page that froze it would have sent — with the search's work. Turning
 /// computing off stops it, and the lease lapses to another computer.
+const RIVEN_RENEW_MS = 2 * 60_000;
 async function rivenGainOnce(w, id) {
   computeStart({ kind: "riven_gain", weapon: w.weapon, ruler: w.ruler });
   const began = performance.now();
   const job = quickFleet(w.request, 1, () => yieldToForeground());
+  // STILL AT IT, said every `RIVEN_RENEW_MS` so the lease runs on while the
+  // search does; told the task went elsewhere, it stops (worker/appraise.js `renew`).
+  let lost = false, said = performance.now();
   while (!job.result) {
-    if (!boardVerifyOn() || computeHeld()) {
+    if (performance.now() - said > RIVEN_RENEW_MS) {
+      said = performance.now();
+      const r = await postBoardWork(`/api/appraise/${encodeURIComponent(w.code)}/renew`, { lease: w.lease, verifier: id });
+      if (r && r.held === false) lost = true;
+    }
+    if (lost || !boardVerifyOn() || computeHeld()) {
       job.cancelled = true;
       job.workers.forEach((x) => x.terminate());
       computeEnd(null);
