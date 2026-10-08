@@ -282,9 +282,14 @@ async function workOnce() {
 /// ONLY THE DEPLOYED SITE WORKS: the dev server has no orders to hand out.
 if (WASM) {
   loadDevicePoints();
-  // THE QUESTION ONCE THE PAGE IS DRAWN, and again on every route: a card page
-  // a bot photographs must not carry it.
-  setTimeout(computeChrome, 1500);
+  // THE QUESTION ONCE THE PAGE HAS STARTED — its words come with the language's
+  // strings, which arrive with the engine, so asked any sooner a slow network
+  // reads it in English — and again on every route: a card page a bot
+  // photographs must not carry it.
+  (function askWhenReady() {
+    if (window.__wfsimReady) computeChrome();
+    else setTimeout(askWhenReady, 500);
+  })();
   addEventListener("popstate", () => setTimeout(computeChrome, 0));
   (async () => {
     for (;;) {
