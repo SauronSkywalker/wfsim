@@ -198,6 +198,11 @@ pub enum EvoEffect {
     /// full-stack bonus (per_stack × max_stacks) that joins the weapon's
     /// buff multishot; `max_stacks` lets the per-buff config rescale it.
     AssumedMaxMultishot { total: f64, max_stacks: u32 },
+    /// AN ELEMENT ON FRENZY'S CLOCK (Neurotoxin: "On Headshot: +70% Toxin for
+    /// 3s" — Frenzy's trigger and Frenzy's window). It joins the passive's own
+    /// injection, so it combines where Frenzy's Toxin does and is up exactly
+    /// when Frenzy is.
+    FrenzyInjectedElement { element: crate::rules::damage::DamageType, amount: f64 },
     /// Unconditional CO rate (Carnage Reign): +v per status TYPE, additive
     /// with mod CO sources. `excludes_evolution_damage`: the GunCO base
     /// excludes evolution flat damage (wiki CO catalog, DT row).

@@ -70,6 +70,8 @@ effects:
     condition: "max_energy >= 200"
     grants: condition_overload
     value: 0.33
+    misprint: >-
+      The card omits a requirement: the +33% Direct Damage per Status Type pays only with Energy Max 200 or higher, and nothing below it.
     # THE CO SEMANTICS ARE NOT ON THIS ENTRY and never were: the gate feeds the
     # same `co` term `innate_co_per_type` does (`loadout.rs`), so `co_behavior`
     # still comes from the WEAPON file and the base exclusion from

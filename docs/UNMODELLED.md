@@ -328,12 +328,11 @@ barrier entity in front of a body. The second is the same gap §1 wants.
 
 ## What the ratchet has left
 
-**Five inert evolution clauses**, down from 226 in early August and 51 at the
+**Four inert evolution clauses**, down from 226 in early August and 51 at the
 start of this pass, and none of them is waiting on the evolution layer:
 
 | clause | what it is actually blocked on |
 |---|---|
-| Neurotoxin (Dual Toxocyst) | DE's own wiki says *"Currently does not work"*. Measure it after they fix it. |
 | Dual Mode Chamber (Felarx) | an OPEN DECISION — see below. |
 | Devastation Cascade (Onos) | every stack pays out on the fully charged blast, an ATTACK PART the weapon entry does not carry. |
 | Precision's Payoff (Zylok, Zylok Prime) | needs the DUPLEX trigger, which `data/weapons/secondary/zylok.yaml` declares as its own gap: *"one pull fires TWO rounds in game and this entry paces one per pull"*. |

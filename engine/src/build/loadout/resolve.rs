@@ -1018,7 +1018,8 @@ pub fn resolve_for(
     // bonuses", and on a melee weapon that bucket is exactly those.
     let build_in = |base_vector: &DamageVector,
                      elem_bonus: Option<&mut Vec<(DamageType, f64)>>,
-                     base_damage: f64|
+                     base_damage: f64,
+                     inject: bool|
      -> (DamageVector, f64) {
         let modified_base = base_vector.total() * (1.0 + base_damage);
         let scale = 1.0 + base_damage;
@@ -1075,7 +1076,7 @@ pub fn resolve_for(
             }
         }
         let mut elem_bonus = elem_bonus;
-        for &(t, bonus) in &base.injected_elements {
+        for &(t, bonus) in base.injected_elements.iter().filter(|_| inject) {
             input.injected.push((t, modified_base * bonus));
             // The injection "behaves like a Toxin mod, additive with
             // elemental mods" (frenzy.yaml) — so it ALSO raises that
@@ -1092,9 +1093,22 @@ pub fn resolve_for(
         (elements::combine(&physical, &input), modified_base)
     };
     let build = |base_vector: &DamageVector, elem_bonus: Option<&mut Vec<(DamageType, f64)>>| {
-        build_in(base_vector, elem_bonus, base_damage)
+        build_in(base_vector, elem_bonus, base_damage, true)
     };
 
+    // THE SAME HIT WITH FRENZY DOWN. The injection rides a timed buff, so the
+    // fight needs both vectors and picks one per shot; built before `build`
+    // adds the injection to the DoT brackets.
+    let resting = (!base.injected_elements.is_empty()).then(|| {
+        let mut bonus = elem_bonus.clone();
+        let (damage, _) =
+            build_in(&base.base_vector.scale(charge_scale), Some(&mut bonus), base_damage, false);
+        crate::build::loadout::ResolvedResting {
+            damage,
+            elem_dot_bonus: bonus.into_iter().map(|(t, v)| (t, 1.0 + v)).collect(),
+            injected: base.injected_elements.clone(),
+        }
+    });
     let (damage, modified_base) =
         build(&base.base_vector.scale(charge_scale), Some(&mut elem_bonus));
     // The radial part (Laetum Incarnon's 300 Radiation explosion): its own
@@ -1104,7 +1118,7 @@ pub fn resolve_for(
         // is directly proportional to the amount of ammo consumed" — the bomb
         // IS the explosion on this weapon, and the direct hit is the smaller
         // half of it.
-        let (rd, rmb) = build_in(&r.base_vector.scale(charge_scale), None, base_damage);
+        let (rd, rmb) = build_in(&r.base_vector.scale(charge_scale), None, base_damage, true);
         ResolvedRadial {
             blast_kind: r.blast_kind,
             damage: rd,
@@ -1440,6 +1454,7 @@ pub fn resolve_for(
         projectile_width_m: base.projectile_width_m,
         range_m: beam_range_m,
         damage,
+        resting,
         radial,
         cluster,
         reload_grenade,

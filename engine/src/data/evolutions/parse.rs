@@ -85,6 +85,12 @@ pub(super) fn effect(v: &Value) -> Option<EvoEffect> {
     }
     Some(match kind {
         "flat_base_damage" => EvoEffect::FlatBaseDamage(f(v, "value").unwrap_or(0.0)),
+        "frenzy_injected_element" => {
+            match v.get("element").and_then(Value::as_str).and_then(crate::rules::damage::DamageType::from_name) {
+                Some(element) => EvoEffect::FrenzyInjectedElement { element, amount: f(v, "amount").unwrap_or(0.0) },
+                None => EvoEffect::Inert("frenzy_injected_element without a known `element:`".into()),
+            }
+        }
         // …AND THE RELATIVE ONE, which is how a MELEE Genesis is written.
         "base_damage_bonus" => EvoEffect::BaseDamageBonus(f(v, "value").unwrap_or(0.0)),
         "initial_combo" => EvoEffect::InitialCombo(f(v, "value").unwrap_or(0.0)),

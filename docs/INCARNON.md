@@ -282,12 +282,6 @@ so it uses that vocabulary and lands here when its PAYLOAD is one the engine
 does not model. The label names the payload, which is what tells the two apart.
 
 - **Ripper Rounds** — punch through, multi-target only.
-- **Neurotoxin** — "+70% Toxin for 3 s on headshot", real DPS on a weapon played
-  at 100% headshots and the one genuine gap in this group. It is also
-  `currently_broken` in game ("Currently does not work"), and `apply` skips
-  broken evolutions wholesale, so the two cancel out. Whoever models a per-type
-  buff payload should check DE fixed the perk first: a mechanic that cannot be
-  measured cannot be verified.
 
 ### The Furis Genesis
 

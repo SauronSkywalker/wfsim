@@ -23,6 +23,7 @@ mod headshot_buff_wiring;
 mod incarnon_reload_route;
 mod m102_latron_prime;
 mod m103_latron_punch_through;
+mod m111_dual_toxocyst_neurotoxin;
 mod melee;
 mod okina;
 mod orbs_fields_beams;
@@ -70,6 +71,7 @@ impl Default for FightParams {
             projectile_width_m: 0.0,
             range_m: f64::INFINITY,
             damage: Self::dual_toxocyst_base_vector(),
+            resting: None,
             radial: None,
             cluster: None,
             reload_grenade: None,
@@ -395,6 +397,7 @@ fn single_part(part: BodyPart) -> FightParams {
 /// means. A test that wants one open sets that one field and says why.
 pub(super) fn windows_for(_p: &FightParams) -> crate::fight::state::CardWindows {
     crate::fight::state::CardWindows {
+        frenzy: f64::NEG_INFINITY,
         fire_rate_after_reload: 0.0,
         crit_on_headshot: 0.0,
         crit_on_headshot_stacks: Vec::new(),

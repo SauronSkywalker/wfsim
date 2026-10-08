@@ -217,6 +217,8 @@ impl EvolutionDef {
                 | EvoEffect::IncarnonChargeRate(_) => None,
                 // Rolled per instance, not a buff with an uptime.
                 EvoEffect::ChanceDamageOnNoncrit { .. } => None,
+                // FRENZY'S CARD IS ITS CARD: it is up exactly when Frenzy is.
+                EvoEffect::FrenzyInjectedElement { .. } => None,
                 // The transformation grants no CARD: what it unlocks is a
                 // FORM, whose own weapon entry carries every stat it brings.
                 EvoEffect::UnlocksForm(_)

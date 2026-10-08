@@ -325,7 +325,12 @@ pub struct ResolvedPanel {
     /// melee's Reach pair is the same quantity said the other way, in metres.
     pub range_m: f64,
     /// Post-hierarchy damage vector (physical × (1+base_damage) + combined elements).
+    /// It carries the passive's injected elements (Frenzy's Toxin) — the hit
+    /// with the buff UP.
     pub damage: DamageVector,
+    /// The hit with that buff DOWN, when the panel injects anything. The fight
+    /// picks one of the two per shot by the buff's own clock.
+    pub resting: Option<ResolvedResting>,
     /// The resolved radial (AoE) part, when the weapon has one.
     pub radial: Option<ResolvedRadial>,
     /// The resolved bomblets, when the weapon's explosion throws any.
@@ -872,4 +877,15 @@ pub struct ProcConv {
     /// Chance ×`low_rate_multiplier` while LIVE fire rate < this (strictly).
     pub low_rate_threshold: f64,
     pub low_rate_multiplier: f64,
+}
+
+/// THE DIRECT HIT WITHOUT THE PASSIVE'S INJECTION — [`ResolvedPanel::resting`].
+#[derive(Debug, Clone)]
+pub struct ResolvedResting {
+    pub damage: DamageVector,
+    /// [`ResolvedPanel::elem_dot_bonus`] without the injection.
+    pub elem_dot_bonus: Vec<(DamageType, f64)>,
+    /// What the buff injects, as a fraction of ModifiedBase per element — the
+    /// part of a DoT's bracket that is read per tick while it is up.
+    pub injected: Vec<(DamageType, f64)>,
 }

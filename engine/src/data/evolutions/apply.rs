@@ -290,6 +290,14 @@ pub fn apply(base: &mut WeaponBase, evos: &[&EvolutionDef]) {
                 // on the charge-backed form too; what differs is the RULE, and
                 // the sim picks that off `continuous`, not off the form id.
                 EvoEffect::MultishotConsumesAmmo(v) => base.multishot_ammo_bonus = *v,
+                // ONLY BESIDE FRENZY'S OWN: a panel built with Frenzy down
+                // (`frenzy_active: false`) carries no injection, and this rides
+                // that buff's window.
+                EvoEffect::FrenzyInjectedElement { element, amount } => {
+                    if !base.injected_elements.is_empty() {
+                        base.injected_elements.push((*element, *amount));
+                    }
+                }
                 EvoEffect::AssumedMaxMultishot { total, max_stacks } => {
                     base.buff_multishot_bonus += total;
                     base.buff_multishot_max_stacks = base.buff_multishot_max_stacks.max(*max_stacks);

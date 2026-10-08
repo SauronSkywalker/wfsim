@@ -604,6 +604,16 @@ pub fn run_once_traced(
         } else {
             (&me.fixed.main_pre.0, me.fixed.main_pre.2)
         };
+        // FRENZY'S TOXIN IS A BUFF'S, so it is on this shot only while the
+        // buff is: read before the bar lapses it, which is what lets the
+        // ticks settled below see the exact moment it ran out.
+        me.windows.sync_frenzy(&me.bar);
+        let resting =
+            if me.incarnon.in_base_form { &me.fixed.base_resting } else { &me.fixed.main_resting };
+        let qvec = match resting {
+            Some(down) if t >= me.windows.frenzy => down,
+            _ => qvec,
+        };
         // ---- THE MELEE SWING THIS SHOT IS — see [`swing_this_shot`] ------
         let Swung {
             swing,
@@ -1091,6 +1101,9 @@ pub fn run_once_traced(
         // WHERE THIS SEAT IS DUE NEXT. `after_the_shot` advanced `t` by this
         // weapon's cadence, which is this seat's clock and nobody else's.
         me.next_t = t;
+        // …and again once the shot has refreshed it, for the ticks the
+        // fight settles after its last shot.
+        me.windows.sync_frenzy(&me.bar);
         r.per_seat[seat_index].add(SeatCounters::of(&r).since(counters_before));
     }
 

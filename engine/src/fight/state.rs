@@ -342,6 +342,19 @@ pub(super) struct CardWindows {
     /// EXIMUS ADVANTAGE's window, the same clock as the one above with a
     /// different key. It never opens at all unless the target is an Eximus.
     pub(super) base_damage_eximus: f64,
+    /// WHEN FRENZY LAPSES — a copy of the bar's expiry (INFINITY for a locked
+    /// one), written only by [`Self::sync_frenzy`], because the tick paths that
+    /// read it are not handed the bar.
+    pub(super) frenzy: f64,
+}
+
+impl CardWindows {
+    /// THE ONE WRITER of [`Self::frenzy`]: the bar is the truth.
+    pub(super) fn sync_frenzy(&mut self, bar: &BuffBar) {
+        self.frenzy = bar
+            .get(crate::rules::perks::frenzy::BUFF_ID)
+            .map_or(f64::NEG_INFINITY, |b| b.expiry_seconds.unwrap_or(f64::INFINITY));
+    }
 }
 
 impl Ammo {

@@ -85,18 +85,17 @@ attack:
   # `rules::chain::bounce_path` actually walks. A bounce is geometry instead, so
   # the shape is per entry rather than per mechanic.
   #
-  # HEADSHOT CHANCE 0.5, and this entry is where the note
-  # below said it should be: *"Ricochets can headshot"*. A redirect is not aimed,
-  # so the scenario's headshot_pct is the wrong number for it and DE publishes
-  # none — half is a decision rather than a transcription, and this entry is the
-  # only one that takes it.
+  # HEADSHOT CHANCE 0.2, MEASURED (M111): 37 heads in 200 ricochets, 21/100
+  # with the aimed shot on the head and 16/100 on the body — the same rate
+  # either way. A redirect is not aimed, so the scenario's headshot_pct is the
+  # wrong number for it.
   ricochet:
     bounces: 1                  # per hit, within 5 m of the struck enemy
-    headshot_chance: 0.5
+    headshot_chance: 0.2
     range_m: 5.0
     # notes:
-    # - Ricochets trigger Frenzy — NOT modelled: Frenzy arms off this
-    # weapon's own on-headshot rule, which reads the aimed pellet.
+    # - "Ricochets can headshot and trigger Frenzy" — a ricochet's head arms
+    # Frenzy (and Neurotoxin with it) like the aimed pellet's.
     # - "Per-hit trigger (wiki Ricochet): each multishot pellet and each
     # punch-through victim ricochets separately; terrain never, corpses
     # do; ragdolled enemies cannot be ricochet targets."
@@ -117,7 +116,8 @@ attack:
 # CONFIRMED: the Frenzy passive EXISTS in the Incarnon
 # Form too - the buff persists across transforms and headshots keep
 # triggering it while transformed (fire rate x2.5, ammo efficiency - inert
-# on the charge-backed magazine - and the +100% Toxin injection).
+# on the charge-backed magazine - and the +100% Toxin injection, up only
+# while the buff is).
 perks:
   - frenzy
 
@@ -125,9 +125,6 @@ perks:
 
 # ITS RICOCHET IS THE REAL ONE — a hitscan redirect inside a published 5 m,
 # so seeking the nearest enemy IS the mechanic here and needs no admission.
-# What is still assumed is where the redirected hit LANDS.
-unmodeled:
-  - reason: bounce_headshot_assumed
 
 source:
   url: https://wiki.warframe.com/w/Dual_Toxocyst

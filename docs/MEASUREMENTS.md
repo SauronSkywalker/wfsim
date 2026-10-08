@@ -206,6 +206,7 @@ path, so an entry may be renamed but never renumbered.
 | [M108](measurements/M108-blast-pile-drops-the-rest-of-its-shot.md) | the shot that fills a Blast pile keeps nothing past ten: a Boar Prime at 8 procs a shot detonates on the second and leaves no stack, at ~17 pellets once a shot; every neighbour reading is one ten-stack pile (1920 + 288 per crit stack); the lost procs still show the icon and fire Cascadia Empowered (16 750s, 10 host pops) | ✅ 2026-09-29 (owner) |
 | [M109](measurements/M109-stug-overflow-shot-waits-its-fuse.md) | a Stug shot carrying more stacks than the cap (multishot over 10, over 5 in Incarnon form) is reported to wait its 1.5 s fuse and lose the excess rather than detonate; built as read, with the count, the crossing and the explosion still to measure | ⚠ 2026-10-03 (owner) — open |
 | [M110](measurements/M110-tenet-exec-shockwave-width.md) | a Tenet Exec shockwave is 3 m wide; built with three blasts 5 m apart down a line (three lines from a heavy slam), with the fan, the timing and the falloff still to measure | ⚠ 2026-10-05 (owner) — open |
+| [M111](measurements/M111-dual-toxocyst-neurotoxin-and-ricochet-heads.md) | Neurotoxin adds 70% Toxin in Frenzy's and the mods' one Toxin bracket, and a Dual Toxocyst ricochet finds a head 20% of the time | ✅ 2026-10-09 (owner) |
 
 ## By weapon
 
@@ -228,7 +229,7 @@ settles a RULE rather than a weapon has no row and is found by number above.
 | Cernos Prime | `cernos_prime` | [M16](measurements/M16-cernos-prime-tap-rate.md) · [M20](measurements/M20-primary-frostbite-never-stacked.md) · [M28](measurements/M28-primary-frostbite-proc-source.md) |
 | Coda Catabolyst | `coda_catabolyst` | [M107](measurements/M107-critical-mutation-is-a-global-buff.md) |
 | Cryotra | `cryotra` | [M47](measurements/M47-body-radius-on-the-floor.md) |
-| Dual Toxocyst | `dual_toxocyst` | [M9](measurements/M09-incarnon-transition-timings.md) · [M49](measurements/M49-dual-toxocyst-co-and-carnage-reign.md) |
+| Dual Toxocyst | `dual_toxocyst` | [M9](measurements/M09-incarnon-transition-timings.md) · [M49](measurements/M49-dual-toxocyst-co-and-carnage-reign.md) · [M111](measurements/M111-dual-toxocyst-neurotoxin-and-ricochet-heads.md) |
 | Felarx | `felarx` | [M36](measurements/M36-felarx-incarnon-and-gun-co.md) · [M37](measurements/M37-debilitate-dot-attrition-bug.md) |
 | Furis | `furis` | [M35](measurements/M35-riven-stat-pools-counted.md) · [M101](measurements/M101-furis-co-reads-its-own-base-under-haven-foray.md) |
 | Gotva Prime | `gotva_prime` | [M30](measurements/M30-stat-lock-mod-bucket.md) |

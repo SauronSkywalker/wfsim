@@ -247,7 +247,10 @@ authoritative rules):
 8. Elements **injected by a buff** enter at their defined position —
    Frenzy's "+100% Toxin" appends at the END of the mod order, additive
    with Toxin mods, joining an existing Toxin-bearing combination if one
-   formed (wiki, Dual Toxocyst).
+   formed (wiki, Dual Toxocyst). Neurotoxin's "+70% Toxin" joins the same
+   injection (M111). It is a BUFF's element: the fight resolves the hit
+   with and without it (`ResolvedPanel::resting`) and each shot takes the
+   one Frenzy's clock says, and a DoT reads it per tick (`element_at`).
 
 Worked example (Load Order): Prova/Lecta (innate Electricity) + Cold(1)
 Toxin(2) Heat(3) → Cold+Toxin = **Viral**, then Heat pairs with the
@@ -1147,8 +1150,9 @@ each multishot pellet ricochets once, and each punch-through victim
 spawns its own ricochets. Terrain hits never ricochet; **corpse hits DO**
 (exception: Neutralizer). Per-weapon ranges (DT Incarnon 5 m, Lato
 Incarnon 10-12 m, ...); Neutralizer's range scales with Ability Range and
-prioritizes weak points. DT-specific: ricochets can headshot and trigger
-Frenzy; ragdolled enemies cannot be ricochet targets.
+prioritizes weak points. DT-specific: ricochets can headshot (20% of
+arrivals, M111) and trigger Frenzy; ragdolled enemies cannot be ricochet
+targets.
 
 **Bounce** (wiki `Bounce` — the PROJECTILE half, and a different mechanic
 from Ricochet above however often the community uses one word for both:

@@ -110,8 +110,12 @@ pub struct FightParams {
     /// stack ceiling at the proc.
     pub squad: crate::data::tenno::SquadEffects,
     /// The weapon's (modded) base damage vector. Quantized once per run for
-    /// dealing damage and proc-type weighting.
+    /// dealing damage and proc-type weighting. With Frenzy UP when the panel
+    /// injects; [`Self::resting`] is the same hit with it down.
     pub damage: DamageVector,
+    /// See [`crate::build::loadout::ResolvedPanel::resting`]. Every shot picks
+    /// between the two by [`super::state::CardWindows::frenzy`].
+    pub resting: Option<crate::build::loadout::ResolvedResting>,
     /// RESOLVED (modded) crit chance of the DIRECT part — the name is
     /// historical; `unmodded_crit_chance` below is the real base.
     pub base_crit_chance: f64,
@@ -179,9 +183,9 @@ pub struct FightParams {
     /// A BURST trigger's modded shape — see [`crate::model::BurstSpec`].
     pub burst: Option<crate::model::BurstSpec>,
     /// Whether the weapon's Frenzy passive is equipped (Dual Toxocyst base
-    /// form). Wired: fire-rate x2.5 on true headshots (3 s, refreshable).
-    /// NOT yet wired: +100% Toxin injection (needs the element layer) and
-    /// ammo efficiency (ammo is infinite here anyway).
+    /// form): fire rate x2.5, +100% ammo efficiency and the +100% Toxin
+    /// injection ([`Self::resting`]), on true headshots and ricochet heads
+    /// (3 s, refreshable).
     pub frenzy: bool,
     /// Stats an equipped mod has LOCKED at the weapon's default — the panel's
     /// [`crate::build::loadout::ResolvedPanel::locked`], carried in because the panel's

@@ -255,6 +255,10 @@ impl EvolutionDef {
                     "+{:.0}% damage on multishot-generated projectiles; multishot consumes ammo",
                     v * 100.0
                 ),
+                EvoEffect::FrenzyInjectedElement { element, amount } => format!(
+                    "+{:.0}% {element:?} while Frenzy is up",
+                    amount * 100.0
+                ),
                 EvoEffect::AssumedMaxMultishot { total, max_stacks } => format!(
                     "+{:.0}% multishot ({max_stacks} on-ability-cast stacks, full by default)",
                     total * 100.0

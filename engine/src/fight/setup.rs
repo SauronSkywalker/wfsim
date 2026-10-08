@@ -273,10 +273,7 @@ impl FightParams {
                 let (now, want) = (base_damage.without + base_damage.full, base_damage.without + base_damage.full * fraction);
                 if now > 0.0 && want < now {
                     let k = want / now;
-                    self.damage = self.damage.scale(k);
-                    if let Some(d) = self.dot_modified_base.as_mut() {
-                        *d *= k;
-                    }
+                    self.scale_damage(k);
                 }
                 if let Some(b) = self.evo_base_damage.as_mut() {
                     b.stacks = stacks;
@@ -479,10 +476,7 @@ impl FightParams {
                 let now = bd.without + bd.full;
                 if now > 0.0 {
                     let k = bd.without / now;
-                    self.damage = self.damage.scale(k);
-                    if let Some(d) = self.dot_modified_base.as_mut() {
-                        *d *= k;
-                    }
+                    self.scale_damage(k);
                 }
                 self.evo_base_damage = None;
             }
@@ -631,7 +625,14 @@ impl FightParams {
             .on_weakpoint
             .filter(|b| b.element == ty && t < w.weakpoint_buff)
             .map_or(0.0, |b| b.bonus);
-        weakpoint + self.scheduled_element_at(ty, t)
+        // …AND FRENZY'S, opened by a headshot: what it injects is additive
+        // with elemental mods, so it sits in this bracket while it is up.
+        let frenzy: f64 = self
+            .resting
+            .as_ref()
+            .filter(|_| t < w.frenzy)
+            .map_or(0.0, |r| r.injected.iter().filter(|(e, _)| *e == ty).map(|(_, v)| v).sum());
+        weakpoint + frenzy + self.scheduled_element_at(ty, t)
     }
 
     /// The share the ABILITIES and the arcane add, which is a pure function of
@@ -1066,6 +1067,7 @@ impl FightParams {
             apl_inserted,
             form: panel.form,
             damage: panel.damage,
+            resting: panel.resting.clone(),
             radial: compressed_radial,
             cluster: panel.cluster,
             reload_grenade: panel.reload_grenade,
@@ -1668,12 +1670,27 @@ impl FightParams {
         self.with_live_elements(self.damage.quantized_against(mb), mb, t, w).total() / mb
     }
 
+    /// ONE RATIO ON THE HIT, with Frenzy up and down alike — a site that
+    /// scaled one vector would leave the other worth the unscaled number.
+    pub(super) fn scale_damage(&mut self, k: f64) {
+        self.damage = self.damage.scale(k);
+        if let Some(r) = self.resting.as_mut() {
+            r.damage = r.damage.scale(k);
+        }
+        if let Some(d) = self.dot_modified_base.as_mut() {
+            *d *= k;
+        }
+    }
+
     /// The (1 + element bonuses) bracket a MOD gives this element's DoT ticks.
     /// Everything with a clock on it is read per tick instead
     /// ([`Self::element_at`]), which is the same number for a mod and the only
     /// right one for a buff.
     pub(super) fn elem_bracket(&self, t: DamageType) -> f64 {
-        self.elem_dot_bonus
+        // Frenzy DOWN: its injection has a clock, so `element_at` adds it.
+        self.resting
+            .as_ref()
+            .map_or(&self.elem_dot_bonus, |r| &r.elem_dot_bonus)
             .iter()
             .find(|(x, _)| *x == t)
             .map_or(1.0, |(_, v)| *v)

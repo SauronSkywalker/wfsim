@@ -133,6 +133,9 @@ pub(super) struct Fixed<'a> {
     pub(super) main_variant_rad: Vec<crate::rules::damage::DamageVector>,
     pub(super) main_pre: (crate::rules::damage::DamageVector, f64, f64),
     pub(super) base_pre: Option<(crate::rules::damage::DamageVector, f64, f64)>,
+    /// The two above with Frenzy DOWN, when the form's panel injects anything.
+    pub(super) main_resting: Option<crate::rules::damage::DamageVector>,
+    pub(super) base_resting: Option<crate::rules::damage::DamageVector>,
     pub(super) base_variants: Vec<(crate::rules::damage::DamageVector, f64, f64)>,
     pub(super) base_variant_rad: Vec<crate::rules::damage::DamageVector>,
     pub(super) status_damage: f64,
@@ -403,6 +406,7 @@ pub(super) fn open<'a>(
     // states run each spec's own decay family from there.
     let arc = ArcRuntime::init(params);
     let windows = CardWindows {
+        frenzy: f64::NEG_INFINITY,
         fire_rate_after_reload: params
             .fire_rate_on_reload
             .map_or(0.0, |b| if b.initial_active { b.duration } else { 0.0 }),
@@ -473,6 +477,13 @@ pub(super) fn open<'a>(
     let main_variant_rad = variant_rad(params);
     let main_pre = precompute(params);
     let base_pre = params.cycle.as_ref().map(|c| precompute(&c.base_form));
+    // Same denominator: an injected element is outside ModifiedBase.
+    let resting = |p: &FightParams| {
+        let mb = p.dot_modified_base.unwrap_or_else(|| p.damage.total());
+        p.resting.as_ref().map(|r| r.damage.quantized_against(mb))
+    };
+    let main_resting = resting(params);
+    let base_resting = params.cycle.as_ref().and_then(|c| resting(&c.base_form));
     let base_variants = params.cycle.as_ref().map_or_else(Vec::new, |c| variant_pre(&c.base_form));
     let base_variant_rad =
         params.cycle.as_ref().map_or_else(Vec::new, |c| variant_rad(&c.base_form));
@@ -737,6 +748,8 @@ pub(super) fn open<'a>(
                 main_variant_rad,
                 main_pre,
                 base_pre,
+                main_resting,
+                base_resting,
                 base_variants,
                 base_variant_rad,
                 status_damage,

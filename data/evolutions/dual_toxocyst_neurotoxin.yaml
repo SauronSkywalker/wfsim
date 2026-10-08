@@ -6,27 +6,15 @@ position_in_tier: 2
 icon: AdditionalViralDamageInFrenziedState(xWhite).png   # wiki File: name (Dual_Toxocyst_Incarnon_Genesis)
 description: "On Headshot: +70% Toxin for 3s."
 selection: choose_one
-currently_broken: true          # wiki: "Currently does not work"
 
 effects:
-  # A "timed buff" is a STACKING buff with ONE stack —
-  # `stacking_buff` already carries trigger + per_stack + max_stacks +
-  # duration, so there is no second vocabulary for it.
-  #
-  # The PAYLOAD is what the engine cannot take: a live per-type damage
-  # multiplier is a mechanic the sim does not have (the damage vector is baked
-  # at resolve time), so the loader records it as inert and names the payload.
-  # Adding the mechanic is a NEW MECHANIC, and AGENTS requires an in-game
-  # measurement for one — which this CANNOT have: DE's wiki still says
-  # "Currently does not work" (re-read 2026-08-03), which `currently_broken`
-  # below records. Measure it after DE fixes it, then model it.
-  # One stack of a stacking buff — see dual_toxocyst_ripper_rounds.yaml.
-  - kind: stacking_buff
-    trigger: headshot
-    grants: toxin_damage
-    per_stack: 0.70
-    max_stacks: 1
-    duration: 3
+  # Frenzy's trigger (a headshot) and Frenzy's window (3 s), so it is one more
+  # element in Frenzy's own injection: +70% of ModifiedBase, at the end of the
+  # mod order beside Frenzy's +100%. MEASUREMENTS M111: unmodded, Fevered
+  # Frenzy, both up — a body shot reads 336, and Frenzy alone would be 250.
+  - kind: frenzy_injected_element
+    element: toxin
+    amount: 0.70
 
 source:
   url: https://wiki.warframe.com/w/Dual_Toxocyst_Incarnon_Genesis

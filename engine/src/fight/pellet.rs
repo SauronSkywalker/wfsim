@@ -1517,6 +1517,9 @@ pub(super) fn settle_pellet(pellet_idx: u32, shot: &Strike, live: &mut Live) {
             // again, in full, at a body it has not hit — and the one
             // spread that may land on a head.
             if let Some(path) = ric_path.as_deref() {
+                // "Ricochets can headshot and trigger Frenzy" (wiki, Dual
+                // Toxocyst Incarnon Genesis): a bounce's head is this shot's.
+                *any_head |= path.iter().any(|&(b, head)| head && b != 0);
                 spread_from_ricochet(
                 seat,
                 windows,

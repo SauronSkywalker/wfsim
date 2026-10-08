@@ -109,7 +109,7 @@ fn loads_the_dt_evolution_pool() {
     assert_eq!(options("dual_toxocyst", 2).len(), 2); // the EVO II choice
     // Broken evolutions carry the wiki flag.
     assert!(get("dual_toxocyst_ready_retaliation").unwrap().currently_broken);
-    assert!(get("dual_toxocyst_neurotoxin").unwrap().currently_broken);
+    assert!(!get("dual_toxocyst_neurotoxin").unwrap().currently_broken);
 }
 
 #[test]
@@ -325,13 +325,7 @@ fn the_inert_evolution_effects_are_the_ones_we_meant() {
         // movement state and one on a headshot window, so applying either
         // unconditionally would overstate the build. They also land on the
         // Laetum's Incarnon magazine, which takes no efficiency at all.
-        // ---- ONE-STACK STACKING BUFFS -------------------------------
-        // A "timed buff" is a stacking buff with ONE stack, landing here
-        // when its PAYLOAD is one the engine does not model. Ripper Rounds:
-        // punch through, multi-target only. Neurotoxin: "+70% Toxin for 3 s
-        // on headshot" — the one genuine gap here, though it is also
-        // `currently_broken` and `apply` skips those, so they cancel out.
-        "dual_toxocyst_neurotoxin :: stacking_buff toxin_damage",
+
         // WHAT EACH ENTRY IS WAITING ON: docs/INCARNON.md §"Perks this
         // loader does not model, and what each needs".
         //
