@@ -105,7 +105,7 @@ function setBoardVerify(on) {
 /// running something of their own — it takes one core. The statement they
 /// agreed to says both.
 const COMMUNITY_SHARE_KEY = "wfsim-community-share";
-const COMMUNITY_SHARES = [10, 30, 50];
+const COMMUNITY_SHARES = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 const COMMUNITY_IDLE_MS = 60_000;
 function communityShare() {
   try {
