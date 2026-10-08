@@ -142,25 +142,31 @@ function renderArbitrations() {
 
 // ---- A REMINDER MADE FROM NOTHING -------------------------------------------
 //
-// Its mission type, faction and node, each Any until picked, from all the
-// schedule holds from now on (the worker's `choices`).
+// Its mission type, faction and node, each Any until picked. A node is one
+// mission type and faction (the worker's `choices.node`), so EACH OFFERS ONLY
+// what some node of the schedule from now on holds beside the other picks: no
+// reminder waits for an arbitration that never comes.
 
 let arbitrationNew = { mission: null, faction: null, node: null };
 function arbitrationBuild(box) {
   if (!arbitrationsNow()) { box.innerHTML = arbitrationsWaitHtml(); return; }
   const c = arbitrations.choices;
+  const fits = (id, n, skip) => ["mission", "faction", "node"].every((k) => k === skip || arbitrationNew[k] === null
+    || (k === "node" ? id : n[k]) === arbitrationNew[k]);
+  const offered = (k) => new Set(Object.entries(c.node).filter(([id, n]) => fits(id, n, k)).map(([id, n]) => k === "node" ? id : n[k]));
+  const missions = offered("mission"), factions = offered("faction"), nodeIds = offered("node");
   const chip = (k, v, label) => filterChip(label, arbitrationNew[k] === v, `data-anew="${k}" data-v="${v === null ? "" : escHtml(v)}"`);
   const named = (m) => Object.entries(m).map(([id, n]) => ({ id, label: worldName(n, id) }))
     .sort((a, b) => a.label.localeCompare(b.label, LANG));
-  const nodes = Object.entries(c.node).map(([id, n]) => ({ value: id,
+  const nodes = Object.entries(c.node).filter(([id]) => nodeIds.has(id)).map(([id, n]) => ({ value: id,
     label: `${worldName(n.name, id)}${n.system ? ` · ${worldName(n.system)}` : ""}` }))
     .sort((a, b) => a.label.localeCompare(b.label, LANG));
   const any = Object.values(arbitrationNew).some((v) => v !== null);
   box.innerHTML = `<div class="frem frem-new">
       <div class="slotf-row"><span class="slotf-lab">${escHtml(tr("Mission"))}</span>${chip("mission", null, tr("Any"))}${
-        named(c.mission).map((m) => chip("mission", m.id, m.label)).join("")}</div>
+        named(c.mission).filter((m) => missions.has(m.id)).map((m) => chip("mission", m.id, m.label)).join("")}</div>
       <div class="slotf-row"><span class="slotf-lab">${escHtml(tr("Faction"))}</span>${chip("faction", null, tr("Any"))}${
-        named(c.faction).map((f) => chip("faction", f.id, f.label)).join("")}</div>
+        named(c.faction).filter((f) => factions.has(f.id)).map((f) => chip("faction", f.id, f.label)).join("")}</div>
       <div class="slotf-row"><span class="slotf-lab">${escHtml(tr("Node"))}</span>${
         ddButton("arbitration-new-node", { value: arbitrationNew.node ?? "", search: true,
           items: [{ value: "", label: tr("Any") }, ...nodes],

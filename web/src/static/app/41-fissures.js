@@ -69,9 +69,24 @@ function renderFissures() {
 }
 
 /// A REMINDER MADE FROM NOTHING, for a fissure that is not open now: its list,
-/// era and mission, each Any until picked, from every era and mission type DE
-/// names (`/api/world/names`). A Void Storm has no mission to match on.
+/// era and mission, each Any until picked. EACH OFFERS ONLY what some fissure
+/// the game has opened holds beside the other two picks (`/api/world/names`
+/// `fissures`, `[list, tier, mission]`), so no reminder waits for a fissure that
+/// never comes. A Void Storm has no mission to match on.
+const FISSURE_NEW_KEYS = ["list", "tier", "mission"];
 let fissureNew = { list: null, tier: null, mission: null };
+/// The values of `k` some seen fissure holds with every other pick.
+function fissureOffered(k) {
+  const seen = worldNames.fissures || [];
+  const out = new Set();
+  for (const c of seen) {
+    if (FISSURE_NEW_KEYS.every((o, i) => o === k || fissureNew[o] === null || c[i] === fissureNew[o])) {
+      const v = c[FISSURE_NEW_KEYS.indexOf(k)];
+      if (v !== null) out.add(v);
+    }
+  }
+  return out;
+}
 function fissureBuild(box) {
   if (!worldNames) {
     box.innerHTML = worldNamesFailed
@@ -83,16 +98,17 @@ function fissureBuild(box) {
     return;
   }
   if (fissureNew.list === "railjack") fissureNew.mission = null;
+  const lists = fissureOffered("list"), tiers = fissureOffered("tier"), offered = fissureOffered("mission");
   const chip = (k, v, label) => filterChip(label, fissureNew[k] === v, `data-fnew="${k}" data-v="${v === null ? "" : v}"`);
-  const missions = Object.entries(worldNames.missions)
+  const missions = Object.entries(worldNames.missions).filter(([id]) => offered.has(id))
     .map(([id, n]) => ({ value: id, label: worldName(n, id) }))
     .sort((a, b) => a.label.localeCompare(b.label, LANG));
   const any = Object.values(fissureNew).some((v) => v !== null);
   box.innerHTML = `<div class="frem frem-new">
       <div class="slotf-row"><span class="slotf-lab">${escHtml(tr("List"))}</span>${chip("list", null, tr("Any"))}${
-        FISSURE_LISTS.map(([k, label]) => chip("list", k, tr(label))).join("")}</div>
+        FISSURE_LISTS.filter(([k]) => lists.has(k)).map(([k, label]) => chip("list", k, tr(label))).join("")}</div>
       <div class="slotf-row"><span class="slotf-lab">${escHtml(tr("Relic era"))}</span>${chip("tier", null, tr("Any"))}${
-        FISSURE_TIERS.map((t) => chip("tier", t, worldName(worldNames.tiers[t], t))).join("")}</div>
+        FISSURE_TIERS.filter((t) => tiers.has(t)).map((t) => chip("tier", t, worldName(worldNames.tiers[t], t))).join("")}</div>
       ${fissureNew.list === "railjack" ? "" : `<div class="slotf-row"><span class="slotf-lab">${escHtml(tr("Mission"))}</span>${
         ddButton("fissure-new-mission", { value: fissureNew.mission ?? "", search: true,
           items: [{ value: "", label: tr("Any") }, ...missions],

@@ -7,12 +7,16 @@
 // are not in DE's file: they come from a schedule (`arbitrationsOf`).
 //
 //   GET /api/world                                   the items, as last relayed, and the arbitration now
-//   GET /api/world/names                             every era and mission type, named
+//   GET /api/world/names                             every era and mission type, named, and the fissures seen
 //   GET /api/world/arbitrations                      the arbitrations of the coming days
 //   PUT /api/world   (bearer BOT_RELAY_TOKEN)         DE's worldState.php, as read
 import NAMES from "./world_names.json" with { type: "json" };
 
 const KEY = "world/items.json";
+/// EVERY FISSURE THE GAME HAS OPENED since the relay began, as `[list, tier,
+/// mission]` — the only source of which combinations exist: no export or wiki
+/// table says which era opens which mission type (`fissureSeen`).
+const SEEN_KEY = "world/fissures_seen.json";
 /// The relay runs each minute; a reader is never more than this behind it.
 const FRESH_S = 30;
 const MAX_BYTES = 4 * 1024 * 1024;
@@ -24,9 +28,11 @@ const msOf = (d) => Number(d && d.$date && d.$date.$numberLong) || 0;
 
 export async function worldRoute(request, env, ctx, path) {
   // WHAT A REMINDER CAN NAME BEFORE IT IS OPEN: the table the items are named
-  // from, without its nodes. It changes only with a deploy.
+  // from, without its nodes, and every fissure seen so far.
   if (path === "/api/world/names") {
-    return json({ ok: true, tiers: NAMES.tiers, missions: NAMES.missions }, 200, { "cache-control": "public, max-age=3600" });
+    const seen = env.UPLOADS && await env.UPLOADS.get(SEEN_KEY).then((o) => o && o.json()).catch(() => null);
+    return json({ ok: true, tiers: NAMES.tiers, missions: NAMES.missions, fissures: (seen && seen.fissures) || [] }, 200,
+      { "cache-control": "public, max-age=600" });
   }
   if (path === "/api/world/arbitrations") return arbitrationRoute(request, ctx, path);
   if (path !== "/api/world") return json({ ok: false, error: "not found" }, 404);
@@ -60,7 +66,22 @@ async function worldRelay(request, env) {
   const items = worldItems(ws, now);
   await env.UPLOADS.put(KEY, JSON.stringify({ ok: true, read_at_ms: now, items }),
     { httpMetadata: { contentType: "application/json" } });
+  await fissureSeen(env, items);
   return json({ ok: true, items: items.length });
+}
+
+/// A COMBINATION IS KEPT ONCE SEEN, and the file is written only when one is
+/// new. A reminder made from nothing offers only these (`fissureBuild`).
+export const fissureCombos = (items) => items.filter((x) => x.kind === "fissure")
+  .map((x) => [x.attributes.list, x.attributes.tier, x.attributes.mission]);
+async function fissureSeen(env, items) {
+  const was = await env.UPLOADS.get(SEEN_KEY).then((o) => o && o.json()).catch(() => null);
+  const known = new Set(((was && was.fissures) || []).map((c) => JSON.stringify(c)));
+  const before = known.size;
+  for (const c of fissureCombos(items)) known.add(JSON.stringify(c));
+  if (known.size === before) return;
+  const fissures = [...known].map((c) => JSON.parse(c)).sort((a, b) => String(a).localeCompare(String(b)));
+  await env.UPLOADS.put(SEEN_KEY, JSON.stringify({ fissures }), { httpMetadata: { contentType: "application/json" } });
 }
 
 /// ONE SHAPE FOR EVERYTHING A UTILITY PAGE LISTS: `{kind, id, attributes,
@@ -150,7 +171,8 @@ export function arbitrationsOf(sched, from, to) {
 
 /// THE COMING DAYS, for the arbitration page and a reminder's next time; and
 /// every mission type, faction and node the rest of the schedule holds, for a
-/// reminder made from nothing.
+/// reminder made from nothing — each node with its own mission type and faction,
+/// which are what make a combination of the three possible.
 async function arbitrationRoute(request, ctx, path) {
   if (request.method !== "GET") return json({ ok: false, error: "GET only" }, 405);
   const cache = caches.default;
@@ -167,7 +189,8 @@ async function arbitrationRoute(request, ctx, path) {
   for (const x of arbitrationsOf(sched, now, Infinity)) {
     for (const k of ["mission", "faction", "node"]) {
       const v = x.attributes[k];
-      if (v && !(v in choices[k])) choices[k][v] = k === "node" ? { name: x.names.node, system: x.names.system } : x.names[k];
+      if (v && !(v in choices[k])) choices[k][v] = k === "node"
+        ? { name: x.names.node, system: x.names.system, mission: x.attributes.mission, faction: x.attributes.faction } : x.names[k];
     }
   }
   const res = json({ ok: true, read_at_ms: now, items, choices }, 200, { "cache-control": "public, max-age=600" });
