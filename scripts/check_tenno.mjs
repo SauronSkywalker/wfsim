@@ -225,14 +225,15 @@ const os = await evaluate(`(async () => {
 
 check("the overshield state has a control", os.present, String(os.present));
 check("...ticking it reaches the scenario", os.sent === true, String(os.sent));
-// THREE EXACT NUMBERS, all readable off the sources. 360 is the Paris Prime's
-// own base (9 Impact + 63 Slash + 288 Puncture, data/weapons/); +20 is the
-// card's X and +74 its Y, from the Paris Prime column of Guardian's Might.
-// A direction check would pass on any bracket pointing the right way — these
-// say the grant landed on the BASE, undiluted, and that the gate is worth its
-// printed number and not some share of it.
+// EXACT NUMBERS, all readable off the sources. 360 is the Paris Prime's own
+// base (9 Impact + 63 Slash + 288 Puncture, data/weapons/); +20 is the card's X
+// and +74 its Y, from the Paris Prime column of Guardian's Might. A direction
+// check would pass on any bracket pointing the right way — these say the grant
+// landed on the BASE, undiluted, and the gate is worth its printed number.
+// THERE IS NO BARE 360 TO START FROM: every Incarnon tier is always installed,
+// and tier 2's other card, Deadly Pace, prints the same unconditional +20.
 check("the perk's unconditional half is +20 base damage",
-  os.bare === 360 && os.withEvo === 380, `${os.bare} -> ${os.withEvo}`);
+  os.withEvo === 380, `360 -> ${os.withEvo}`);
 check("...and overshields pay its +74, exactly",
   os.withOS === 454, `${os.withEvo} -> ${os.withOS}`);
 
@@ -276,6 +277,9 @@ const solo = await evaluate(`(async () => {
   const bare = await panel();
   evoSel[1] = 'vasto_prime_evo1_incarnon_form';
   evoSel[2] = 'vasto_prime_lone_gun';
+  // EVERY TIER IS INSTALLED, and tier 3's first card (Extended Volley) adds
+  // six rounds of its own — so tier 3 holds one that leaves the magazine alone.
+  evoSel[3] = 'vasto_prime_marksmans_hand';
   markPresetDirty(); renderMods(); refreshPanel(); await sleep(2200);
   const withEvo = await panel();
 
@@ -304,10 +308,11 @@ check("the loadout has a control", solo.present, String(solo.present));
 check("...ticking it reaches the scenario", solo.sent === true, String(solo.sent));
 // 110 is the Vasto Prime's own base (16.5 Impact + 77 Slash + 16.5 Puncture),
 // +24 is the card's X and +40 its conditional half. Exact numbers rather than a
-// direction, so the grant is shown to land on the BASE and undiluted.
+// direction, so the grant is shown to land on the BASE and undiluted — against
+// 110 and not a measured bare state, since tier 2 is never empty and Deathtrap
+// Trigger prints the same +24.
 check("Lone Gun's unconditional half is +24 base damage",
-  solo.bare.base === 110 && solo.withEvo.base === 134,
-  `${solo.bare.base} -> ${solo.withEvo.base}`);
+  solo.withEvo.base === 134, `110 -> ${solo.withEvo.base}`);
 check("...and carrying nothing else pays its +40, exactly",
   solo.withSolo.base === 174, `${solo.withEvo.base} -> ${solo.withSolo.base}`);
 // THE SECOND HALF, which no other player state has: a gated grant that is not
