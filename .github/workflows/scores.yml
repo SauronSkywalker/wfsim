@@ -316,10 +316,13 @@ jobs:
           export CF_D1_DATABASE
           bash scripts/reconcile_queue.sh library.json facts-known.ndjson queue.ndjson
           # …AND WHAT THIS RUN TAKES IS WHAT THE CLIENTS HAVE NOT: a row whose
-          # compute order opened in the last two hours is theirs to finish
-          # (docs/BOARD.md §"Compute orders"). The reconciliation above read
-          # every row, because what is owed does not depend on who measures it.
-          HOLD_SECONDS=7200 bash scripts/fetch_queue.sh queue.ndjson
+          # compute order opened within the hold is theirs to finish, and the
+          # worker stops offering it at the same moment because both read the
+          # hold from wrangler.jsonc (docs/BOARD.md §"Compute orders"). The
+          # reconciliation above read every row, because what is owed does not
+          # depend on who measures it.
+          HOLD_SECONDS=$(sed 's|^[[:space:]]*//.*$||' wrangler.jsonc | jq -er '.vars.HOLD_SECONDS')
+          HOLD_SECONDS=$HOLD_SECONDS bash scripts/fetch_queue.sh queue.ndjson
 
       # …AND HANDED TO EVERY JOB BELOW, so the database is read ONCE a run.
       - uses: actions/upload-artifact@v4

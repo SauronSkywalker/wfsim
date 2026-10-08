@@ -89,6 +89,10 @@
   "send_email": [{ "name": "EMAIL" }],
   // THE PAID HALF: a private worker, the only way to reach it (worker/cloud.js).
   "services": [{ "binding": "CLOUD", "service": "wfsim-cloud" }],
+  // THE HOLD, the board's third dial (docs/BOARD.md §"Compute orders"): how long
+  // a compute order is offered to the clients before `scores.yml` measures it
+  // instead. Both sides read it from here, so turning it is one edit.
+  "vars": { "HOLD_SECONDS": 7200 },
   "ratelimits": [
     { "name": "AUTH_LIMIT", "namespace_id": "1001", "simple": { "limit": 10, "period": 60 } },
     // HOW OFTEN ONE ADDRESS MAY OFFER A SCREENSHOT (worker/ocr_samples.js).

@@ -230,5 +230,20 @@ check("...but from another owner's", wu.work && row("owned").leased_to === U);
 db.prepare("UPDATE orders SET lease = NULL, lease_until = NULL, leased_to = NULL WHERE identity = 'owned'").run();
 check("...or from a device nobody claimed", (await work(V)).work && row("owned").leased_to === V);
 
+// THE HOLD: an order past it is the scorer's, and no client is handed it.
+const held = { ...env, HOLD_SECONDS: 7200 };
+const workHeld = async (v) => (await callIn(held, "/api/board/work", { verifier: v, engine: "e1", protocol: PROTOCOL, consent: YES })).work;
+const W = "w".repeat(24), X = "x".repeat(24), Y = "y".repeat(24);
+db.prepare("UPDATE orders SET state = 'settled'").run();
+order("late");
+order("lateopen", "open", { score: SCORE, metric: "kpm", engine: "e1", produced_by: R, clients: R });
+order("young");
+db.prepare("UPDATE orders SET at = ? WHERE identity = 'young'").run(Date.now() - 60_000);
+const wy = await workHeld(W);
+check("an order inside the hold is handed to a client", wy && row("young").leased_to === W);
+check("...and one past it is not, to anybody", (await workHeld(X)) === null && (await workHeld(Y)) === null);
+check("...it is marked lapsed where it was found, and so is an open one",
+  row("late").state === "lapsed" && row("lateopen").state === "lapsed", `${row("late").state} ${row("lateopen").state}`);
+
 console.log(failures ? `\n${failures} failed` : "\nan order reaches the board when CLIENTS_PER_FACT clients measured the same bits");
 process.exitCode = failures ? 1 : 0;

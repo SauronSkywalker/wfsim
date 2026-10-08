@@ -101,9 +101,9 @@ orders_batches() {
               + " slot = excluded.slot, record = excluded.record, score = NULL, metric = NULL,"
               + " produced_by = NULL, verifier = NULL, disputed = NULL, lease = NULL,"
               + " lease_until = NULL, leased_to = NULL, at = excluded.at"
-              + " WHERE orders.state IN (?, ?, ?)"),
+              + " WHERE orders.state IN (?, ?, ?, ?)"),
         params: (["todo", ""] + [$chunk[] | .build_id, .ruler, .mode]
-                 + ["todo", "", "verified", "rejected", "settled"])
+                 + ["todo", "", "verified", "rejected", "settled", "lapsed"])
       }
   ' "$1"
 }

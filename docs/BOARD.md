@@ -68,7 +68,8 @@ is how they are kept:
 4. **THREE DIALS.** `CLIENTS_PER_FACT` (how many clients must agree),
    `SPOT_SHARE` (how many facts the server recomputes anyway) and the hold
    (`HOLD_SECONDS`, how long an order is the clients' before the fallback takes
-   it). Changing how the board runs is turning one of them.
+   it — `vars` in `wrangler.jsonc`, read by the worker and by `scores.yml`).
+   Changing how the board runs is turning one of them.
 5. **ONE ENGINE.** A client works only while its page runs the engine the site
    serves (`release.json`'s `engine`); a result of any other is no result.
 
@@ -672,8 +673,12 @@ row at a time, so the board's growth is more orders, never a heavier client.
   first is measured again. Only for an order of the engine the server runs.
   A top-ten order the scorer already measured is settled unfought.
 - **Nobody online** costs nothing. `scores.yml` reads the queue with
-  `HOLD_SECONDS=7200`: a row whose order opened in the last two hours is the
-  clients'; an older one it measures as it always has.
+  `HOLD_SECONDS`: a row whose order opened within the hold is the clients'; an
+  older one it measures as it always has. **AND THE CLIENTS STOP AT THE SAME
+  MOMENT**: the worker marks an unleased `todo` or `open` order past the hold
+  `lapsed` where its seek finds it and hands it to nobody, since a client
+  fighting it would duplicate the scorer. A lease already out is let finish. A
+  rescore reopens a lapsed order like a settled one.
 
 **THE CLIENT IS AN ID** its browser made for itself, joined to no submission,
 kept in `verifiers` so a refusal has something to hold, and joined to an
