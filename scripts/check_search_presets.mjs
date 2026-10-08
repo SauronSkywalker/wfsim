@@ -20,6 +20,18 @@ check("…answering the run terms it states", await evaluate("optRun.finalists =
 check("…read-only on screen: its note shows and its controls are inert", await evaluate(`!$("opt-builtin").hidden
   && $("opt-finalists").disabled && [...$("opt-starts").querySelectorAll("button")].every((b) => b.disabled)`));
 check("…and the run button is not among them", await evaluate(`!$("run-opt").disabled`));
+check("…nor the limits' mod filter, which edits nothing", await evaluate(`!$("opt-limit-filter").disabled`));
+check("…a limit row clicked changes nothing", await evaluate(`(() => {
+  const was = JSON.stringify(opt.limits);
+  const row = document.querySelector("#opt-limit-mods .opt[data-axis]");
+  if (row) row.click();
+  return !!row && JSON.stringify(opt.limits) === was;
+})()`));
+check("…and the limits stay inert when they redraw", await evaluate(`(() => {
+  renderOptLimits();
+  return [...$("opt-limits").querySelectorAll("select,input[type=checkbox]")].every((el) => el.disabled)
+    && !$("opt-limit-filter").disabled;
+})()`));
 // AN EDIT THAT REACHES IT ANYWAY — the door, say — is not written anywhere.
 await evaluate(`setOptSizes({ finalists: 3 })`);
 await sleep(1200);

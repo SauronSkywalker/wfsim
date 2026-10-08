@@ -46,11 +46,14 @@ const builtinSearchActive = () => String(activeOptPreset || "").startsWith("sear
 /// A BUILT-IN SEARCH, ON SCREEN: the starts, the limits and the run terms go
 /// inert and a note says why and offers the copy. Only the visible half — a
 /// built-in is never stored, so the auto-save has nothing to write it into.
+/// A box marked `data-view-only` narrows what is SHOWN and edits nothing, so it
+/// stays live: locked, a reader could not even look for what a built-in leaves out.
 function lockBuiltinSearch() {
   const on = builtinSearchActive();
   ["opt-starts", "opt-limits", "opt-finalists", "opt-cand-runs"].map((id) => $(id)).filter(Boolean).forEach((b) => {
     b.classList.toggle("locked", on);
-    const els = b.matches("input,select,button,textarea") ? [b] : [...b.querySelectorAll("input,select,button,textarea")];
+    const els = (b.matches("input,select,button,textarea") ? [b] : [...b.querySelectorAll("input,select,button,textarea")])
+      .filter((el) => !el.hasAttribute("data-view-only"));
     els.forEach((el) => {
       if (on) {
         if (!el.disabled) { el.disabled = true; el.dataset.builtinLock = "1"; }

@@ -119,7 +119,7 @@ function renderOptLimits() {
     + `<div class="opt-limit-fill"><label>${escHtml(tr("fill at most"))} <select data-fill="mods">${
       [8, 7, 6, 5, 4, 3, 2, 1, 0].map((n) => `<option value="${n}"${n === L.mods ? " selected" : ""}>${n}</option>`).join("")}</select> ${escHtml(tr("mods"))}</label>`
     + (AX.hasExilus ? toggle(L.exilus, "exilus", tr("fill the exilus")) : "") + `</div>`
-    + `<input id="opt-limit-filter" type="text" placeholder="${escHtml(tr("search mods by name or effect…"))}" value="${escHtml(q)}" autocomplete="off">`
+    + `<input id="opt-limit-filter" type="text" data-view-only placeholder="${escHtml(tr("search mods by name or effect…"))}" value="${escHtml(q)}" autocomplete="off">`
     + `<div class="combo-menu opt-limit-list" id="opt-limit-mods">${sectionedRows(excludeOffers(q), (m) => (m.riven ? "Riven" : "Mods"),
       (m) => modRow(m, { rank: m.card ? m.rank : m.max_rank, attrs: `data-axis="mods" data-id="${m.id}"`,
         cls: isOut("mods", m.id) ? "cur opt-out" : "",
@@ -152,8 +152,10 @@ function renderOptLimits() {
   box.innerHTML = html;
   box.querySelectorAll(".opt-limit-list").forEach((el, i) => { el.scrollTop = kept[i] || 0; });
   if (window.scrollY !== pageY) window.scrollTo(window.scrollX, pageY);
+  // A BUILT-IN CANNOT BE EDITED, and a row is a click target the lock's
+  // `disabled` does not reach — so a row asks, and a redraw locks again.
   box.querySelectorAll(".opt[data-axis]").forEach((o) => o.addEventListener("click", (e) => {
-    if (e.target.closest("a")) return;
+    if (e.target.closest("a") || builtinSearchActive()) return;
     toggleLimit(o.dataset.axis, o.dataset.id);
   }));
   box.querySelectorAll("[data-fill]").forEach((el) => el.addEventListener("change", () => {
@@ -170,6 +172,7 @@ function renderOptLimits() {
     const g = $("opt-limit-filter");
     g.focus(); g.setSelectionRange(at, at);
   });
+  lockBuiltinSearch();
 }
 
 /// Exclude an option or take it back. An axis that would be left with nothing
