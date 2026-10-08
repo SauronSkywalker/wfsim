@@ -951,6 +951,7 @@ none of it feeds the builder, the simulator or the optimizer (`docs/CORE.md`
 | the bell on a row makes one, holding the attributes the kind names (a fissure's list, era and mission; an arbitration's mission type and faction) until the reader changes the chips | `reminderDraft`, `*_REMINDER_DEFAULT` |
 | Reminders also makes one from nothing, for what is not open: one kind at a time, each attribute Any until picked, offering only what can occur beside the other picks — a fissure's combination of list, era and mission as the game has opened one (the worker keeps each it sees), an arbitration's as a node of the schedule holds them | `fissureBuild`, `fissureSeen`, `arbitrationBuild` |
 | a reminder for a kind known ahead says when it fires next instead of how many are open | `reminderStatus`, `arbitrationNext` |
+| a saved reminder nothing can ever match says so in red — no fissure the game has opened holds its picks, or no node of the arbitration schedule does | `possible`, `fissurePossible`, `arbitrationPossible` |
 | what a new reminder already matches is seen, so it fires for what opens later | `reminderAdd` |
 | reminders live in this browser and fire while the site is open there, on any page: once per item, said on the page, counted on the Utility link until Reminders is opened | `reminderCheck`, `reminderRead` |
 | a system notification as well only when the reader turns it on, which is when the browser asks, and only for a tab in the background | `reminderSystemOn` |

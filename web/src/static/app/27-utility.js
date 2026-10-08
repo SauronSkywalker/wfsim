@@ -10,10 +10,11 @@
 const UTILITY_TABS = [["fissures", "Void Fissures"], ["arbitrations", "Arbitrations"], ["reminders", "Reminders"]];
 const utilityTitle = (tab) => (UTILITY_TABS.find(([t]) => t === tab) || UTILITY_TABS[0])[1];
 /// EACH KIND, by the worker's `kind`: `{ tab, render(), describe(item),
-/// nameOf(key, names, value), attributes: [[key]], build(box), next(r) }` —
-/// `attributes` are what a reminder may hold, in the order its editor offers
-/// them; `build` draws a reminder made from nothing into the Reminders tab, and
-/// `next`, for a kind known ahead, says when a reminder fires next.
+/// nameOf(key, names, value), attributes: [[key]], build(box), next(r),
+/// possible(r) }` — `attributes` are what a reminder may hold, in the order its
+/// editor offers them; `build` draws a reminder made from nothing into the
+/// Reminders tab; `next`, for a kind known ahead, says when a reminder fires
+/// next; `possible` says whether anything can ever match it (null: not known yet).
 const UTILITY_KINDS = {};
 let utilityTab = null;
 
@@ -257,12 +258,14 @@ function reminderLabel(r) {
 }
 
 /// UNDER A REMINDER: how many it matches open now, or, for a kind known ahead
-/// and nothing open, when it fires next.
+/// and nothing open, when it fires next. A reminder nothing can match says so
+/// instead — one an older page saved, before its editor offered only what occurs.
 function reminderStatus(r) {
   const open = (worldOf(r.kind) || []).filter((x) => reminderMatches(r, x)).length;
   const kind = UTILITY_KINDS[r.kind];
+  if (!open && kind && kind.possible && kind.possible(r) === false) return { text: tr("The game has never opened one like this"), never: true };
   const next = !open && kind && kind.next ? kind.next(r) : null;
-  return next || trF("{n} open now", { n: open });
+  return { text: next || trF("{n} open now", { n: open }), never: false };
 }
 
 /// A MOMENT AHEAD, in the reader's own time zone: weekday, date and time.
@@ -346,18 +349,19 @@ function renderReminders() {
       ? `<p class="bench-note">${escHtml(tr("This browser blocks notifications from this site; reminders show on the page only."))}</p>`
       : `<div class="slotf-row">${filterChip(tr("Also as a system notification when this tab is in the background"),
           reminderSystemOn(), `data-rsystem="1"`)}</div>`;
+  if (!worldNames && rs.some((r) => r.kind === "fissure")) worldNamesLoad().then(renderUtility);
   box.innerHTML = `<p class="bench-note rem-lead">${escHtml(tr("Reminders live in this browser and fire while WFSim is open in it, on any page."))}</p>
     ${system}
     <h3 class="wgroup-h">${escHtml(tr("New reminder"))}</h3>
     <div id="reminder-new"></div>
     <h3 class="wgroup-h">${escHtml(tr("Your reminders"))}</h3>
-    ${rs.length ? `<div class="bench-rows">${rs.map((r) => `
+    ${rs.length ? `<div class="bench-rows">${rs.map((r) => { const st = reminderStatus(r); return `
       <div class="brow frow">
         <span class="ftier">${escHtml(UTILITY_KINDS[r.kind] ? tr(utilityTitle(UTILITY_KINDS[r.kind].tab)) : r.kind)}</span>
         <span class="bname">${escHtml(reminderLabel(r))}
-          <span class="fnode">${escHtml(reminderStatus(r))}</span></span>
+          <span class="fnode${st.never ? " warn" : ""}">${escHtml(st.text)}</span></span>
         <button type="button" class="ghost-btn small" data-rdel="${escHtml(r.id)}">${escHtml(tr("Delete"))}</button>
-      </div>`).join("")}</div>`
+      </div>`; }).join("")}</div>`
       : `<div class="sim-empty">${escHtml(tr("No reminders yet. Make one above, or with the bell on a row of a list."))}</div>`}
     <h3 class="wgroup-h">${escHtml(tr("Recently fired"))}</h3>
     ${hits.length ? `<div class="bench-rows">${hits.map((h) => `

@@ -2138,6 +2138,7 @@ span.warn{color:var(--critical);font-size:11px;align-self:center}
 .brow .ftier{flex:0 0 64px;padding:1px 6px;border:1px solid var(--line);border-radius:6px;
   color:var(--text-2);font-size:11px;text-align:center;white-space:nowrap}
 .brow .fnode{display:block;color:var(--text-2);font-size:11.5px}
+.brow .fnode.warn{color:var(--critical)}
 /* The one open now, in a list that runs ahead of it. */
 .brow.fnow .ftier{border-color:var(--accent);color:var(--accent)}
 /* THE BELL: quiet until a reminder matches the row, then the accent. */

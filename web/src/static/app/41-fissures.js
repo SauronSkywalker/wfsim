@@ -22,6 +22,7 @@ UTILITY_KINDS.fissure = {
   attributes: [["list"], ["tier"], ["mission"], ["node"]],
   nameOf: (k, names, v) => k === "list" ? fissureListName(v) : worldName((names || {})[k], v),
   build: fissureBuild,
+  possible: fissurePossible,
   describe: (f) => [
     f.attributes && f.attributes.list !== "normal" ? fissureListName(f.attributes.list) : "",
     worldName(f.names.tier), worldName(f.names.mission),
@@ -86,6 +87,13 @@ function fissureOffered(k) {
     }
   }
   return out;
+}
+/// Whether a seen fissure holds every list, era and mission the reminder states;
+/// a node was copied from an open fissure, so it says nothing more.
+function fissurePossible(r) {
+  const seen = worldNames && worldNames.fissures;
+  if (!seen || !seen.length) return null;
+  return seen.some((c) => FISSURE_NEW_KEYS.every((k, i) => !(k in r.attributes) || c[i] === r.attributes[k]));
 }
 function fissureBuild(box) {
   if (!worldNames) {

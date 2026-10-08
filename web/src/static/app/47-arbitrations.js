@@ -22,6 +22,7 @@ UTILITY_KINDS.arbitration = {
     a.names.system ? ` (${worldName(a.names.system)})` : ""}${a.names.faction ? ` · ${worldName(a.names.faction)}` : ""}`,
   build: arbitrationBuild,
   next: arbitrationNext,
+  possible: arbitrationPossible,
 };
 
 // ---- THE SCHEDULE -----------------------------------------------------------
@@ -73,6 +74,14 @@ function arbitrationNext(r) {
   const now = Date.now();
   const hit = items.find((x) => x.started_at_ms > now && reminderMatches(r, x));
   return hit ? trF("Next: {when}", { when: utilityWhen(hit.started_at_ms) }) : tr("Not in the next 14 days");
+}
+
+/// WHETHER A NODE of the schedule from now on holds every attribute the
+/// reminder states; null while the schedule is not here.
+function arbitrationPossible(r) {
+  if (!arbitrationsNow()) return null;
+  return Object.entries(arbitrations.choices.node).some(([id, n]) =>
+    Object.entries(r.attributes || {}).every(([k, v]) => (k === "node" ? id : n[k]) === v));
 }
 
 // ---- THE PAGE ---------------------------------------------------------------
