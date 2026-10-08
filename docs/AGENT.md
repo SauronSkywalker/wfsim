@@ -392,11 +392,11 @@ question (docs/BOARD.md §"The Riven Analyst").
    the asker's own faster way. A computer still searching renews its lease
    every two minutes (`/api/appraise/<code>/renew`), so a slow one is never
    overtaken by its own lease, and stops when told the task went elsewhere;
-   A riven gain nobody has answered goes first to a computer offering at least
-   four idle cores (`RIVEN_MIN_LANES`; the ask carries `lanes`), until it has
-   waited two minutes — a search is many short steps in a row, so cores on one
-   computer, not more computers, are what make it quick. Once one has taken it the chat is told so, as a reply inside the asker's
-   window only — QQ rations active messages, and the answer may need one.
+   A riven gain nobody has answered goes to a computer offering idle cores by
+   tier (`RIVEN_LANE_TIERS`; the ask carries `lanes`) — eight at once, four
+   after ten seconds, any after two minutes — since a search is many short steps
+   in a row, so cores on one computer, not more computers, are what make it
+   quick. Once one has taken it the chat is told so.
 4. The channel's bot claims what came back (`/api/appraise/claim`), replays the
    build itself with the card's real rolls, and the first build it accepts
    wins once; later ones are kept on the board and not announced. It answers

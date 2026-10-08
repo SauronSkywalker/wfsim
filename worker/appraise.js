@@ -20,13 +20,14 @@ const MAX_BUILD = 8_000, MAX_THANKS = 24;
 const MAX_REQUEST = 65_536;
 /// How long a volunteer computer holds a riven gain before another may take it.
 export const RIVEN_LEASE_MS = 15 * 60_000;
-/// A RIVEN GAIN SOMEONE IS WAITING ON GOES TO A COMPUTER THAT CAN RUN IT FAST:
-/// one offering at least `RIVEN_MIN_LANES` idle cores, until it has waited
-/// `RIVEN_WAIT_MS` unanswered — then to any. A search is many short steps one
-/// after another, so it is cores on one computer, not computers, that make it
-/// quick (private/plans/fx-volunteer-compute.md, the CTFSU timing).
-export const RIVEN_MIN_LANES = 4;
-export const RIVEN_WAIT_MS = 2 * 60_000;
+/// A RIVEN GAIN SOMEONE IS WAITING ON GOES TO THE COMPUTER THAT RUNS IT FASTEST:
+/// unanswered, it needs the idle cores of the first tier its age has reached —
+/// eight at once, four after one round of asks (a page asks every ten seconds),
+/// any after two minutes. A search is many short steps one after another, so it
+/// is cores on one computer, not computers, that make it quick
+/// (private/plans/fx-volunteer-compute.md, the CTFSU timing).
+export const RIVEN_LANE_TIERS = [{ lanes: 8, after_ms: 0 }, { lanes: 4, after_ms: 10_000 }, { lanes: 1, after_ms: 2 * 60_000 }];
+const rivenLanesNeeded = (waited_ms) => Math.min(...RIVEN_LANE_TIERS.filter((t) => waited_ms >= t.after_ms).map((t) => t.lanes));
 /// Answers after which a riven gain stops being handed out to agree on.
 const RIVEN_ANSWERS = 3;
 const VERIFIER_ID = /^[a-z0-9]{16,40}$/;
@@ -171,7 +172,7 @@ export async function rivenTask(env, verifier, engine, owners, lanes = 1) {
       ORDER BY (answered = 0) DESC, a.at LIMIT 8`).bind(engine, now - KEEP_MS, now).all();
   for (const a of results) {
     if (a.answered >= RIVEN_ANSWERS) continue;
-    if (a.answered === 0 && lanes < RIVEN_MIN_LANES && now - a.at < RIVEN_WAIT_MS) continue;
+    if (a.answered === 0 && lanes < rivenLanesNeeded(now - a.at)) continue;
     const by = (await db.prepare("SELECT verifier FROM appraisal_results WHERE code = ? AND verifier IS NOT NULL")
       .bind(a.code).all()).results.map((r) => r.verifier);
     if (by.includes(verifier)) continue;

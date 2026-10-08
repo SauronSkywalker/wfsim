@@ -58,7 +58,7 @@ const VERIFIED_KEY = "wfsim-board-verified";
 const CLAIMED_KEY = "wfsim-verifier-owner";
 /// How long an idle browser waits before asking again; one that just finished
 /// an order asks at once.
-const ASK_EVERY_MS = 30000;
+const ASK_EVERY_MS = 10_000;
 
 function verifierId() {
   try {
