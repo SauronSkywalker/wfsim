@@ -365,6 +365,37 @@ impl Default for Shard {
     }
 }
 
+/// THE COUNTS A SHARD'S WORK IS WEIGHED BY, in [`WORK_WEIGHTS`]' order. Each is
+/// a whole number every engine produces bit for bit, so two machines that
+/// folded the same runs weigh the same work, however fast either was.
+pub const WORK_COUNTERS: [&str; 7] = ["runs", "shots", "pellets", "procs", "dot_ticks", "field_ticks", "kills"];
+
+/// WHAT ONE OF EACH COUNT COSTS, in billionths of a second on the reference
+/// machine — fit by `wfsim-work` over the board's rows (docs/BOARD.md
+/// §"Contribution"). Refit when a release moves the fit; a point earned stays.
+pub const WORK_WEIGHTS: [u64; 7] = [423_973, 476, 385, 124, 214, 0, 6_545];
+
+impl Shard {
+    /// The counts named by [`WORK_COUNTERS`].
+    pub fn work_counts(&self) -> [u64; 7] {
+        [
+            u64::from(self.runs),
+            self.shots,
+            self.pellets,
+            self.procs,
+            self.dot_ticks,
+            self.field_ticks,
+            self.kills,
+        ]
+    }
+
+    /// THE WORK THIS SHARD HOLDS, in billionths of a reference second. Integer
+    /// arithmetic, so it is the same number on every target.
+    pub fn work(&self) -> u64 {
+        self.work_counts().iter().zip(WORK_WEIGHTS).fold(0u64, |a, (n, w)| a.saturating_add(n.saturating_mul(w)))
+    }
+}
+
 impl Shard {
     /// TAKE ANOTHER SHARD'S CONTRIBUTION. Sums add, extremes take the better,
     /// lists concatenate — and none of it depends on the ORDER the shards

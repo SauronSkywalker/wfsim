@@ -245,6 +245,7 @@ mod tests {
                             started_at: String::new(),
                             finished_at: String::new(),
                             measured_by: String::new(),
+                            work: 0,
                         },
                     )
                 })

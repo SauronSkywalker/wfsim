@@ -204,6 +204,9 @@ CREATE INDEX IF NOT EXISTS queue_row ON queue (build_id, ruler, mode);
 -- order ("" where a client did not say). Added to the live table with:
 --   ALTER TABLE orders ADD COLUMN clients TEXT NOT NULL DEFAULT '';
 --   ALTER TABLE orders ADD COLUMN clients_compute_ms TEXT NOT NULL DEFAULT '';
+-- `work` is the first result's `Shard::work`, which every later one must equal
+-- (docs/BOARD.md §"Contribution"):
+--   ALTER TABLE orders ADD COLUMN work INTEGER;
 CREATE TABLE IF NOT EXISTS orders (
   identity    TEXT NOT NULL,
   ruler       TEXT NOT NULL,
@@ -223,6 +226,7 @@ CREATE TABLE IF NOT EXISTS orders (
   at          INTEGER NOT NULL,
   clients     TEXT NOT NULL DEFAULT '',
   clients_compute_ms TEXT NOT NULL DEFAULT '',
+  work        INTEGER,
   PRIMARY KEY (identity, ruler, mode)
 );
 
@@ -232,17 +236,20 @@ CREATE INDEX IF NOT EXISTS orders_holder ON orders (leased_to);
 CREATE INDEX IF NOT EXISTS orders_verifier ON orders (verifier);
 
 -- A VERIFYING CLIENT, by the random id its browser made for itself — joined to
--- no account and to no submission, and sent with verification alone. Kept so a
--- client caught once can be refused and everything it agreed to re-checked.
--- `compute_ms` is the time its fights took on its machine, summed. Added to the
--- live table with:
+-- no submission, and to an account only where its owner claimed it (the
+-- `devices` table, in the ACCOUNTS database). Kept so a client caught once can
+-- be refused and everything it agreed to re-checked. `compute_ms` is the time
+-- its fights took on its machine, summed; `work` the work of every fact it
+-- measured, summed (docs/BOARD.md §"Contribution"). Added to the live table with:
 --   ALTER TABLE verifiers ADD COLUMN compute_ms INTEGER NOT NULL DEFAULT 0;
+--   ALTER TABLE verifiers ADD COLUMN work INTEGER NOT NULL DEFAULT 0;
 CREATE TABLE IF NOT EXISTS verifiers (
   id     TEXT PRIMARY KEY,
   agreed INTEGER NOT NULL DEFAULT 0,
   banned INTEGER NOT NULL DEFAULT 0,
   seen   TEXT NOT NULL,
-  compute_ms INTEGER NOT NULL DEFAULT 0
+  compute_ms INTEGER NOT NULL DEFAULT 0,
+  work   INTEGER NOT NULL DEFAULT 0
 );
 
 -- SHORT SHARE LINKS: `/weapons/<weapon>/s/<id>` names a stored share code.

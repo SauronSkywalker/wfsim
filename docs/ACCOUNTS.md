@@ -168,8 +168,9 @@ change that page in the commit that changes what is kept.
   service's own delivery log holds the recipient for up to 30 days; its message
   preview stays off, so no code is retained there.
 - A browser that computes the board's scores keeps a random id it made and
-  sends it with each one (`verifiers`, docs/BOARD.md §"Compute orders");
-  it is never joined to an account or a submission.
+  sends it with each one (`verifiers`, docs/BOARD.md §"Compute orders"). A
+  signed-in browser is claimed for its account (`devices`), so its work counts
+  there (docs/BOARD.md §"Contribution"); it is never joined to a submission.
 - **An account is never joined to the usage count or to a board submission.**
   Both pages promise that nothing about the reader travels with them, and the
   session cookie reaching those endpoints is never read by them.

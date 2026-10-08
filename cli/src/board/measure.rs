@@ -67,13 +67,16 @@ pub(crate) struct Partial {
 /// seconds a run, and the median row is milliseconds — one chunk of a thousand
 /// would blow any budget, and a thousand chunks of one would pay to build a
 /// 361-body arena a thousand times.
+///
+/// Beside the report, the WORK the runs held (`Shard::work`) — what a client
+/// filling the same row as a compute order is held to.
 pub(crate) fn run_budgeted(
     part: &mut Partial,
     label: &str,
     req: &Value,
     want: u32,
     deadline: Option<std::time::Instant>,
-) -> Option<Value> {
+) -> Option<(Value, u64)> {
     let mut acc = wfsim_engine::fight::Shard::default();
     let mut done = 0u32;
     if let Some((who, at, shard)) = part.cursor.take() {
@@ -94,7 +97,7 @@ pub(crate) fn run_budgeted(
         if wfsim_webapi::board_rows::fold_runs(req, &mut acc, done, CHUNK_RUNS).is_err() {
             // A shard that will not parse is not a slow row, it is a broken
             // one; the caller's `ok` check answers it the way it always did.
-            return Some(wfsim_engine_webapi_simulate(req));
+            return Some((wfsim_engine_webapi_simulate(req), 0));
         }
         done += CHUNK_RUNS;
         if done < want && deadline.is_some_and(|d| std::time::Instant::now() >= d) {
@@ -103,7 +106,7 @@ pub(crate) fn run_budgeted(
             return None;
         }
     }
-    Some(wfsim_webapi::board_rows::measured(req, &acc))
+    Some((wfsim_webapi::board_rows::measured(req, &acc), acc.work()))
 }
 
 /// BANK WHERE THIS ROW STOPPED, and leave it for the next run.
@@ -191,7 +194,7 @@ mod tests {
 
             let mut req = want.clone();
             req["runs"] = json!(9);
-            let banked = run_budgeted(&mut Partial::default(), "measure", &req, 9, None).unwrap();
+            let (banked, banked_work) = run_budgeted(&mut Partial::default(), "measure", &req, 9, None).unwrap();
             let mut acc = Value::Null;
             for from in (0..9).step_by(4) {
                 let step = wfsim_webapi::board_rows::board_fold_json(&json!({
@@ -208,6 +211,10 @@ mod tests {
                 "the order's {mode} number is not the scorer's",
             );
             assert_eq!(scored["metric"], json!(bench.metric().id), "the order's metric is not the ruler's");
+            // …AND ITS WORK IS THE SCORER'S, however the page cut the pieces:
+            // it is what a client is credited (docs/BOARD.md §"Contribution").
+            assert!(scored["work"].as_u64().is_some_and(|w| w > 0), "the order's {mode} fight counted no work");
+            assert_eq!(scored["work"], json!(banked_work), "the order's {mode} work is not the scorer's");
         }
         modes
     }
@@ -255,7 +262,7 @@ mod tests {
         assert!(one.get("ok").and_then(Value::as_bool).unwrap_or(false), "{one}");
 
         let mut whole = Partial::default();
-        let unbounded = run_budgeted(&mut whole, "measure", &req, 40, None)
+        let (unbounded, unbounded_work) = run_budgeted(&mut whole, "measure", &req, 40, None)
             .expect("an unbounded run cannot pause");
         assert!(whole.cursor.is_none(), "a finished row carries no cursor");
         assert_eq!(
@@ -280,10 +287,11 @@ mod tests {
         };
         assert!(sittings > 3, "the deadline did not force pauses ({sittings} sittings)");
         assert_eq!(
-            serde_json::to_string(&resumed).unwrap(),
+            serde_json::to_string(&resumed.0).unwrap(),
             serde_json::to_string(&one).unwrap(),
             "a resumed row answered differently from an uninterrupted one",
         );
+        assert_eq!(resumed.1, unbounded_work, "a resumed row counted other work than an uninterrupted one");
     }
 
 

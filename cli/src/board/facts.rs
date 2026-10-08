@@ -61,6 +61,10 @@ pub(crate) struct Fact {
     /// THE COMMIT THAT MEASURED IT, as read back from the database; a row this
     /// run measures is written with the log's own (`FactLog::measured_by`).
     pub(crate) measured_by: String,
+    /// THE WORK THE FIGHT HELD (`Shard::work`), 0 where it was not counted — so
+    /// a spot check can hold a client to the work it claimed as well as the
+    /// score (docs/BOARD.md §"Contribution").
+    pub(crate) work: u64,
 }
 
 /// WHAT THE DATABASE HOLDS FOR ONE RULER: the last measurement of each row.
@@ -163,6 +167,7 @@ impl FactLog {
             "cost_seconds": f.cost_seconds,
             "started_at": f.started_at,
             "finished_at": f.finished_at,
+            "work": f.work,
         });
         // FLUSHED PER ROW. A buffer that is written at the end is the batch
         // this exists to stop being.
@@ -223,6 +228,7 @@ pub(crate) fn load_facts(spec: Option<String>, bench_id: &str) -> Facts {
                 .and_then(Value::as_str)
                 .unwrap_or_default()
                 .to_string(),
+            work: v.get("work").and_then(Value::as_u64).unwrap_or_default(),
         };
         // THE NEWEST WINS THE ROW, decided by the clock rather than by the
         // order the file happens to be in. The database holds one row per key,
@@ -409,6 +415,7 @@ mod tests {
             started_at: "T0".into(),
             finished_at: "T1".into(),
             measured_by: String::new(),
+            work: 0,
         };
         log.write("standard_multi_target", "kpm", "orthos_prime|mods#heavy_slam", &at());
         log.write(
@@ -453,6 +460,7 @@ mod tests {
                     started_at: "T0".into(),
                 finished_at: "T1".into(),
                 measured_by: String::new(),
+                work: 0,
             },
         );
     }

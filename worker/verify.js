@@ -7,8 +7,12 @@
 // `CLIENTS_PER_FACT` equal results make a fact in `scores`. Nothing here
 // computes a number.
 //
-//   POST /api/board/work    { verifier, engine, protocol }                          → { work: { lease, record, ruler, mode } | null }
-//   POST /api/board/verify  { lease, verifier, engine, score, metric, compute_ms }  → { ok }
+//   POST /api/board/work    { verifier, engine, protocol }                                → { work: { lease, record, ruler, mode } | null }
+//   POST /api/board/verify  { lease, verifier, engine, score, metric, work, compute_ms }  → { ok }
+//
+// EQUAL means the score, the metric AND the work (`Shard::work`): a fact
+// credits that work to every client that measured it, and the clients of one
+// fact belong to different owners (docs/BOARD.md §"Contribution").
 //
 // ONLY THE ENGINE THE SITE SERVES WORKS (`site/release.json`): an order exists
 // because the code that scores it is the current code, and a tab left open on
@@ -28,7 +32,7 @@ const SLOT_SPAN = 2147483647;
 /// WHAT A PAGE THAT CAN FILL AN ORDER SENDS. A tab opened before orders existed
 /// asks too, takes an order, and answers in a shape this refuses — holding the
 /// order for a lease's length — so a page that does not say this gets nothing.
-export const PROTOCOL = 2;
+export const PROTOCOL = 3;
 
 const VERIFIER_ID = /^[a-z0-9]{16,40}$/;
 const ENGINE_ID = /^[A-Za-z0-9._-]{1,40}$/;
@@ -43,6 +47,17 @@ const computeOf = (o) => {
   const ms = (o.clients_compute_ms || "").split(",");
   return clientsOf(o).map((_, i) => ms[i] || "");
 };
+
+/// WHO OWNS EACH OF `ids`, from the devices their owners claimed
+/// (`worker/accounts.js` §devices) — an unclaimed one is absent, its own owner.
+async function ownersOf(env, ids) {
+  const out = new Map();
+  if (!env.ACCOUNTS || !ids.length) return out;
+  const { results } = await env.ACCOUNTS.prepare(
+    `SELECT verifier, account FROM devices WHERE verifier IN (${ids.map(() => "?").join(", ")})`).bind(...ids).all();
+  for (const r of results) out.set(r.verifier, r.account);
+  return out;
+}
 
 const json = (body, status = 200) => new Response(JSON.stringify(body), {
   status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
@@ -80,7 +95,7 @@ async function servedEngine(env) {
 const retired = new Set();
 async function retire(db, engine) {
   if (retired.has(engine)) return;
-  await db.prepare(`UPDATE orders SET state = 'todo', engine = '', score = NULL, metric = NULL, produced_by = NULL,
+  await db.prepare(`UPDATE orders SET state = 'todo', engine = '', score = NULL, metric = NULL, work = NULL, produced_by = NULL,
                     verifier = NULL, clients = '', clients_compute_ms = '', ${done}
                     WHERE state IN ('fresh', 'open') AND engine != ?`).bind(engine).run();
   retired.add(engine);
@@ -135,8 +150,13 @@ async function work(request, env) {
   const held = await db.prepare("SELECT 1 AS x FROM orders WHERE leased_to = ? AND lease_until > ? LIMIT 1")
     .bind(b.verifier, now).first();
   if (held) return json({ ok: true, work: null });
+  // A FURTHER RESULT COMES FROM ANOTHER OWNER: one person's machines agreeing
+  // with each other would be one witness counted twice.
+  const open = (await candidates(db, "open", engine, now, 4)).filter((o) => !clientsOf(o).includes(b.verifier));
+  const owners = await ownersOf(env, [b.verifier, ...open.flatMap(clientsOf)]);
+  const mine = owners.get(b.verifier);
   const pool = [
-    ...(await candidates(db, "open", engine, now, 4)).filter((o) => !clientsOf(o).includes(b.verifier)).map((o) => ({ ...o, state: "open" })),
+    ...open.filter((o) => !mine || !clientsOf(o).some((c) => owners.get(c) === mine)).map((o) => ({ ...o, state: "open" })),
     ...(await candidates(db, "todo", "", now, 4)).map((o) => ({ ...o, state: "todo" })),
   ];
   for (const o of pool) {
@@ -168,7 +188,8 @@ async function verify(request, env) {
   if (err) return err;
   if (!LEASE_ID.test(b.lease || "") || !VERIFIER_ID.test(b.verifier || "") || !ENGINE_ID.test(b.engine || "")
       || !METRIC_ID.test(b.metric || "")
-      || typeof b.score !== "number" || !Number.isFinite(b.score) || b.score < 0) {
+      || typeof b.score !== "number" || !Number.isFinite(b.score) || b.score < 0
+      || !Number.isSafeInteger(b.work) || b.work < 0) {
     return json({ ok: false, error: "bad request" }, 400);
   }
   const db = env.LIBRARY, now = Date.now();
@@ -181,22 +202,22 @@ async function verify(request, env) {
     return json({ ok: true });
   }
   const o = await db.prepare(
-    `SELECT identity, ruler, mode, state, engine, score, metric, produced_by, clients, clients_compute_ms FROM orders
+    `SELECT identity, ruler, mode, state, engine, score, metric, work, produced_by, clients, clients_compute_ms FROM orders
       WHERE lease = ? AND leased_to = ? AND lease_until >= ?`).bind(b.lease, b.verifier, now).first();
   if (!o) return json({ ok: true });
   const key = [o.identity, o.ruler, o.mode];
   const spent = db.prepare("UPDATE verifiers SET compute_ms = compute_ms + ? WHERE id = ?").bind(ms || 0, b.verifier);
   if (o.state === "todo") {
     if (needed(env) <= 1) {
-      await fact(db, key, { ...o, score: b.score, metric: b.metric, engine: b.engine, produced_by: b.verifier },
+      await fact(db, key, { ...o, score: b.score, metric: b.metric, work: b.work, engine: b.engine, produced_by: b.verifier },
         [b.verifier], [String(ms ?? "")], b.verifier, spent);
       return json({ ok: true });
     }
     // THE FIRST RESULT, which the server ranks before anyone may agree with it.
     await db.batch([
-      db.prepare(`UPDATE orders SET state = 'fresh', score = ?, metric = ?, engine = ?, produced_by = ?, clients = ?,
+      db.prepare(`UPDATE orders SET state = 'fresh', score = ?, metric = ?, work = ?, engine = ?, produced_by = ?, clients = ?,
                   clients_compute_ms = ?, ${done} WHERE identity = ? AND ruler = ? AND mode = ? AND state = 'todo'`)
-        .bind(b.score, b.metric, b.engine, b.verifier, b.verifier, String(ms ?? ""), ...key),
+        .bind(b.score, b.metric, b.work, b.engine, b.verifier, b.verifier, String(ms ?? ""), ...key),
       spent,
     ]);
     return json({ ok: true });
@@ -204,7 +225,7 @@ async function verify(request, env) {
   if (o.state !== "open") return json({ ok: true });
   const clients = [...clientsOf(o), b.verifier];
   const compute = [...computeOf(o), String(ms ?? "")];
-  if (b.engine !== o.engine || b.score !== o.score || b.metric !== o.metric) {
+  if (b.engine !== o.engine || b.score !== o.score || b.metric !== o.metric || b.work !== o.work) {
     await db.batch([
       db.prepare(`UPDATE orders SET state = 'dispute', verifier = ?, disputed = ?, clients = ?, clients_compute_ms = ?, ${done}
                   WHERE identity = ? AND ruler = ? AND mode = ?`)
@@ -227,9 +248,10 @@ async function verify(request, env) {
 }
 
 /// THE RESULT `clients` MEASURED, made a fact — stamped when the last of them
-/// answered, which is when it was verified. Its `cost_seconds` stays 0: the
-/// scorer plans its shards from that column in ITS runners' seconds, and a
-/// browser's are another machine's (`clients_compute_ms` keeps them).
+/// answered, which is when it was verified — and its work credited to each.
+/// Its `cost_seconds` stays 0: the scorer plans its shards from that column in
+/// ITS runners' seconds, and a browser's are another machine's
+/// (`clients_compute_ms` keeps them).
 async function fact(db, key, o, clients, compute, last, spent) {
   const state = Math.random() < SPOT_SHARE ? "spot" : "verified";
   const at = stamp();
@@ -245,6 +267,7 @@ async function fact(db, key, o, clients, compute, last, spent) {
     // …AND THE ROW IS NO LONGER OWED, the same delete `ship_facts.sh` makes.
     db.prepare("DELETE FROM queue WHERE build_id = ? AND ruler = ? AND mode = ?").bind(...key),
     db.prepare("UPDATE verifiers SET agreed = agreed + 1 WHERE id = ?").bind(last),
+    ...clients.map((c) => db.prepare("UPDATE verifiers SET work = work + ? WHERE id = ?").bind(o.work || 0, c)),
     spent,
   ]);
 }

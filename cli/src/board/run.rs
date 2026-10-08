@@ -542,7 +542,7 @@ pub fn run() {
                     // board run pays for. `run_budgeted` merges the pieces into
                     // exactly what one call over the range produces.
                     let want = req.get("runs").and_then(Value::as_u64).unwrap_or(0) as u32;
-                    let Some(out) = run_budgeted(
+                    let Some((out, work)) = run_budgeted(
                         &mut part.borrow_mut(), "measure", &req, want, row_deadline,
                     ) else {
                         pause_row(&key, &part.borrow(), &mut partials_out, &mut deferred_ids);
@@ -587,6 +587,7 @@ pub fn run() {
                             started_at: began_at,
                             finished_at: at.clone(),
                             measured_by: String::new(),
+                            work,
                         },
                     );
                     // THIRTY SECONDS is a row worth naming: the median row is under

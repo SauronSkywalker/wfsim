@@ -117,3 +117,22 @@ CREATE TABLE IF NOT EXISTS agent_keys (
   claim_attempts   INTEGER NOT NULL DEFAULT 0
 );
 CREATE INDEX IF NOT EXISTS agent_keys_by_account ON agent_keys (account);
+
+-- A MACHINE THAT COMPUTES THE BOARD, claimed by the account signed in on it
+-- (docs/BOARD.md §"Contribution"). `verifier` is the random id the browser
+-- made for itself (`verifiers` in `wfsim`); a device has one owner, the last
+-- account to claim it, and its work goes with it. Only its owner's name is
+-- joined to it — never a submission. Deleting the account releases its devices.
+CREATE TABLE IF NOT EXISTS devices (
+  verifier   TEXT PRIMARY KEY,
+  account    TEXT NOT NULL REFERENCES accounts (id) ON DELETE CASCADE,
+  claimed_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS devices_by_account ON devices (account);
+
+-- AN ACCOUNT SHOWN ON THE CONTRIBUTION RANKING, by its own choice. Absent is
+-- not shown.
+CREATE TABLE IF NOT EXISTS contributors (
+  account  TEXT PRIMARY KEY REFERENCES accounts (id) ON DELETE CASCADE,
+  shown_at TEXT NOT NULL
+);

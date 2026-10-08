@@ -2505,6 +2505,21 @@ ui:
   "connected {date}": "{date} 连接"
   "last used {date}": "最后使用 {date}"
   "No agent acts for this account.": "没有 agent 代表这个账号操作。"
+  # The contribution block on /account, and the public ranking at /contributors.
+  "Board compute": 榜单计算
+  "Points": 积分
+  "{n} device": "{n} 台设备"
+  "{n} devices": "{n} 台设备"
+  "Ranking": 排行
+  "On the ranking": 排行榜
+  "Your name is shown": 显示你的名字
+  "Not shown": 不显示
+  "Hide": 隐藏
+  "Show": 显示
+  "A browser you are signed in on counts its board compute here. What it computes goes to the public board and nowhere else.": "登录了这个账号的浏览器，为榜单做的计算记在这里。它算的只用于公开榜单，不作他用。"
+  "Contributors": 贡献者
+  "The people whose machines compute the board.": 用自己的设备计算榜单的人。
+  "Nobody yet.": 还没有人。
   "An AI agent connects by asking you for a code WFSim mails to your address. Disconnecting it stops its key at once.": "AI agent 需要向你索要 WFSim 发到你邮箱的验证码才能连接。断开后，它的 key 立即失效。"
   "Profile": "个人资料"
   "Username": "用户名"

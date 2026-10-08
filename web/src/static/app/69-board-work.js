@@ -54,6 +54,8 @@ async function measureRow(request, ruler, live) {
 const VERIFIER_KEY = "wfsim-verifier";
 const VERIFY_KEY = "wfsim-board-verify";
 const VERIFIED_KEY = "wfsim-board-verified";
+/// THE ACCOUNT THIS BROWSER WAS LAST CLAIMED FOR, so a claim is sent once.
+const CLAIMED_KEY = "wfsim-verifier-owner";
 /// How long an idle browser waits before asking again; one that just finished
 /// an order asks at once.
 const ASK_EVERY_MS = 30000;
@@ -81,6 +83,16 @@ function boardVerifiedCount() {
   try { return Number(localStorage.getItem(VERIFIED_KEY)) || 0; } catch (_) { return 0; }
 }
 
+/// A SIGNED-IN READER'S BROWSER IS THEIRS: claimed once for the account, so
+/// the work it does counts under their name (docs/BOARD.md §"Contribution").
+async function claimDevice(id) {
+  const account = accountState.account && accountState.account.id;
+  if (!account) return;
+  try { if (localStorage.getItem(CLAIMED_KEY) === account) return; } catch (_) { return; }
+  const r = await accountCall("POST", "/api/account/devices/claim", { verifier: id });
+  if (r && r.ok) try { localStorage.setItem(CLAIMED_KEY, account); } catch (_) { /* private mode */ }
+}
+
 const postBoardWork = (path, body) => fetch(path, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
@@ -93,7 +105,8 @@ async function workOnce() {
   if (!boardVerifyOn() || onPhone()) return false;
   const id = verifierId();
   if (!id) return false;
-  const ask = await postBoardWork("/api/board/work", { verifier: id, engine: ENGINE_ID, protocol: 2 });
+  await claimDevice(id);
+  const ask = await postBoardWork("/api/board/work", { verifier: id, engine: ENGINE_ID, protocol: 3 });
   const w = ask && ask.work;
   if (!w) return false;
   const order = await api("/api/board/order", { record: w.record, ruler: w.ruler, mode: w.mode });
@@ -101,7 +114,7 @@ async function workOnce() {
   const s = await measureRow(order.request, w.ruler, boardVerifyOn);
   if (!s) return true;
   const sent = await postBoardWork("/api/board/verify",
-    { lease: w.lease, verifier: id, engine: ENGINE_ID, score: s.score, metric: s.metric, compute_ms: s.compute_ms });
+    { lease: w.lease, verifier: id, engine: ENGINE_ID, score: s.score, metric: s.metric, work: s.work, compute_ms: s.compute_ms });
   if (!sent) return true;
   try { localStorage.setItem(VERIFIED_KEY, String(boardVerifiedCount() + 1)); } catch (_) { /* private mode */ }
   renderBoardConsent();
@@ -127,7 +140,8 @@ function boardVerifyHtml() {
       .replace("{n}", String(boardVerifiedCount()))
     : tr("Your browser does not compute the board's scores.");
   return ` <span class="board-state">${escHtml(text)}</span>` +
-    ` <button class="ghost-btn small" id="board-verify-flip">${escHtml(on ? tr("stop computing") : tr("start computing"))}</button>`;
+    ` <button class="ghost-btn small" id="board-verify-flip">${escHtml(on ? tr("stop computing") : tr("start computing"))}</button>` +
+    (accountState.providers.length ? ` <a href="/contributors">${escHtml(tr("Contributors"))}</a>` : "");
 }
 function wireBoardVerify() {
   const b = $("board-verify-flip");

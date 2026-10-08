@@ -616,7 +616,9 @@ export async function accountRoute(request, env, path) {
     return json({ ok: true, deleted: true }, 200, { "set-cookie": endSession() });
   }
   // EVERYTHING HELD ABOUT THIS ACCOUNT, as it is held — docs/ACCOUNTS.md.
-  return json({ ok: true, account: await accountView(env, account), agents: await agentsOf(env, account),
+  const devices = (await env.ACCOUNTS.prepare("SELECT verifier, claimed_at FROM devices WHERE account = ?1")
+    .bind(account).all()).results;
+  return json({ ok: true, account: await accountView(env, account), agents: await agentsOf(env, account), devices,
     ...(await cloudExport(env, account)),
     exported_at: now() }, 200,
     { "content-disposition": 'attachment; filename="wfsim-account.json"' });

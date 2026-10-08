@@ -5,7 +5,9 @@
 // queue row, anything else is a dispute, and the
 // answer never says which; a row nobody owes, a top-ten row, a live lease and a
 // banned client get nothing; only the engine `release.json` names works, and
-// what each fight cost its client is kept beside it.
+// what each fight cost its client is kept beside it. Equal includes the WORK,
+// which a fact credits to every client that measured it; and a further result
+// never comes from a device of the same owner (docs/BOARD.md §"Contribution").
 //   node scripts/check_board_verify.mjs
 import { verifyRoute, LEASE_MS, PROTOCOL } from "../worker/verify.js";
 import { DatabaseSync } from "node:sqlite";
@@ -19,6 +21,16 @@ const check = (what, ok, detail = "") => {
 
 const db = new DatabaseSync(":memory:");
 db.exec(readFileSync(new URL("../worker/schema.sql", import.meta.url), "utf8"));
+const accounts = new DatabaseSync(":memory:");
+accounts.exec(readFileSync(new URL("../worker/accounts.sql", import.meta.url), "utf8"));
+const stmtIn = (base) => function stmt(sql, args = []) {
+  return {
+    bind: (...a) => stmt(sql, a),
+    first: async () => base.prepare(sql).get(...args) ?? null,
+    all: async () => ({ results: base.prepare(sql).all(...args) }),
+    run: async () => ({ meta: { changes: Number(base.prepare(sql).run(...args).changes) } }),
+  };
+};
 const stmt = (sql, args = []) => ({
   bind: (...a) => stmt(sql, a),
   first: async () => db.prepare(sql).get(...args) ?? null,
@@ -28,7 +40,9 @@ const stmt = (sql, args = []) => ({
 });
 /// THE SITE'S `release.json`, naming the engine it serves.
 const site = (engine) => ({ fetch: async () => new Response(JSON.stringify({ engine })) });
-const env = { LIBRARY: { prepare: (sql) => stmt(sql), batch: async (ss) => Promise.all(ss.map((x) => x.each())) }, ASSETS: site("e1") };
+const env = { LIBRARY: { prepare: (sql) => stmt(sql), batch: async (ss) => Promise.all(ss.map((x) => x.each())) }, ASSETS: site("e1"),
+  ACCOUNTS: { prepare: (sql) => stmtIn(accounts)(sql) } };
+const WORK = 7_000_000_000;
 const callIn = async (e, path, body) =>
   (await verifyRoute(new Request(`https://x${path}`, { method: "POST", body: JSON.stringify(body) }), e, path)).json();
 const call = (path, body) => callIn(env, path, body);
@@ -36,6 +50,7 @@ const order = (identity, state = "todo", extra = {}) => {
   db.prepare(`INSERT INTO orders (identity, ruler, mode, record, state, slot, at) VALUES (?, 'standard_single_target', 'base', ?, ?, ?, 0)`)
     .run(identity, JSON.stringify({ weapon: "braton_prime", mods: ["serration"] }), state, Math.floor(Math.random() * 1e9));
   db.prepare("INSERT INTO queue (batch, build_id, ruler, mode) VALUES ('arrivals', ?, 'standard_single_target', 'base')").run(identity);
+  if (extra.score !== undefined && extra.work === undefined) extra = { ...extra, work: WORK };
   const sets = Object.keys(extra);
   if (sets.length) db.prepare(`UPDATE orders SET ${sets.map((k) => `${k} = ?`).join(", ")} WHERE identity = ?`).run(...Object.values(extra), identity);
 };
@@ -43,8 +58,8 @@ const row = (identity) => db.prepare("SELECT * FROM orders WHERE identity = ?").
 const fact = (identity) => db.prepare("SELECT * FROM scores WHERE identity = ?").get(identity);
 const only = (identity) => db.prepare("UPDATE orders SET slot = CASE WHEN identity = ? THEN 1 ELSE slot END").run(identity);
 const work = (v, engine = "e1", protocol = PROTOCOL) => call("/api/board/work", { verifier: v, engine, protocol });
-const answer = (w, v, score, metric = "kpm", engine = "e1", compute_ms = 1000) =>
-  call("/api/board/verify", { lease: w.lease, verifier: v, engine, score, metric, compute_ms });
+const answer = (w, v, score, metric = "kpm", engine = "e1", compute_ms = 1000, work = WORK) =>
+  call("/api/board/verify", { lease: w.lease, verifier: v, engine, score, metric, work, compute_ms });
 const A = "a".repeat(24), B = "b".repeat(24), C = "c".repeat(24), D = "d".repeat(24);
 const SCORE = 1.1070976928071055;
 Math.random = () => 0.5;  // no spot check unless a test asks for one
@@ -133,7 +148,7 @@ check("a fact names every client that measured it, first to last", row("one").cl
 const callWith = async (n, path, body) => (await verifyRoute(new Request(`https://x${path}`,
   { method: "POST", body: JSON.stringify(body) }), { ...env, CLIENTS_PER_FACT: n }, path)).json();
 const workWith = (n, v) => callWith(n, "/api/board/work", { verifier: v, engine: "e1", protocol: PROTOCOL });
-const answerWith = (n, w, v) => callWith(n, "/api/board/verify", { lease: w.lease, verifier: v, engine: "e1", score: SCORE, metric: "kpm" });
+const answerWith = (n, w, v) => callWith(n, "/api/board/verify", { lease: w.lease, verifier: v, engine: "e1", score: SCORE, metric: "kpm", work: WORK });
 const K = "k".repeat(24), L = "l".repeat(24), M = "m".repeat(24), N = "n".repeat(24);
 
 db.prepare("UPDATE orders SET state = 'settled'").run();  // the orders above are not these checks
@@ -172,6 +187,36 @@ db.prepare("UPDATE orders SET state = 'open' WHERE identity = 'lock'").run();
 await callIn({ ...env, ASSETS: site("e9") }, "/api/board/work", { verifier: Q, engine: "e9", protocol: PROTOCOL });
 check("once the site serves a new engine, an open result of the old one is opened again from nothing",
   row("lock").state === "todo" && row("lock").clients === "" && row("lock").score === null && row("lock").engine === "");
+
+// THE WORK, and the owners.
+const credited = (v) => db.prepare("SELECT work FROM verifiers WHERE id = ?").get(v).work;
+check("a fact credits its work to every client that measured it, once a fact",
+  credited(B) === WORK && credited(I) === WORK && credited(A) === 2 * WORK, `${credited(A)} ${credited(B)} ${credited(I)}`);
+check("...and a disputed one to nobody", credited(C) === 0 && credited(D) === 0);
+db.prepare("UPDATE orders SET state = 'settled'").run();
+order("worked", "open", { score: SCORE, metric: "kpm", engine: "e1", produced_by: A, clients: A });
+only("worked");
+const R = "r".repeat(24);
+await answer((await work(R)).work, R, SCORE, "kpm", "e1", 1000, WORK + 1);
+check("the same score with other work is a dispute", row("worked").state === "dispute" && !fact("worked"));
+check("a result that does not say its work is refused", (await verifyRoute(new Request("https://x/api/board/verify",
+  { method: "POST", body: JSON.stringify({ lease: "a".repeat(32), verifier: R, engine: "e1", score: SCORE, metric: "kpm" }) }),
+env, "/api/board/verify")).status === 400);
+
+const S = "s".repeat(24), T = "t".repeat(24), U = "u".repeat(24), V = "v".repeat(24);
+for (const [id, name] of [["acct1", "one"], ["acct2", "two"]]) {
+  accounts.prepare("INSERT INTO accounts (id, created_at, username) VALUES (?, '2026-01-01', ?)").run(id, `owner_${name}`);
+}
+const own = (v, a) => accounts.prepare("INSERT INTO devices (verifier, account, claimed_at) VALUES (?, ?, '2026-01-01')").run(v, a);
+own(S, "acct1"); own(T, "acct1"); own(U, "acct2");
+db.prepare("UPDATE orders SET state = 'settled'").run();
+order("owned", "open", { score: SCORE, metric: "kpm", engine: "e1", produced_by: S, clients: S });
+only("owned");
+check("a further result never comes from another device of the same owner", (await work(T)).work === null);
+const wu = await work(U);
+check("...but from another owner's", wu.work && row("owned").leased_to === U);
+db.prepare("UPDATE orders SET lease = NULL, lease_until = NULL, leased_to = NULL WHERE identity = 'owned'").run();
+check("...or from a device nobody claimed", (await work(V)).work && row("owned").leased_to === V);
 
 console.log(failures ? `\n${failures} failed` : "\nan order reaches the board when CLIENTS_PER_FACT clients measured the same bits");
 process.exitCode = failures ? 1 : 0;

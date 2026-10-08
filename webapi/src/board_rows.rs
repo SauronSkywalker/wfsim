@@ -296,8 +296,10 @@ pub fn board_fold_json(v: &Value) -> Value {
     json!({ "ok": true, "acc": acc })
 }
 
-/// `/api/board/score` — `{ruler, request, acc}` → `{score}`, the scorer's own
-/// ending: the report, then the ruler's metric.
+/// `/api/board/score` — `{ruler, request, acc}` → `{score, metric, work}`, the
+/// scorer's own ending: the report, then the ruler's metric — and the WORK the
+/// fold held (`Shard::work`), which a compute order's clients must agree on
+/// beside the score (docs/BOARD.md §"Contribution").
 pub fn board_score_json(v: &Value) -> Value {
     let Some(bench) = bench_named(get_str(v, "ruler", "")) else {
         return crate::request::err_json("unknown ruler".to_string());
@@ -311,5 +313,5 @@ pub fn board_score_json(v: &Value) -> Value {
     if !out.get("ok").and_then(Value::as_bool).unwrap_or(false) {
         return out;
     }
-    json!({ "ok": true, "score": row_score(bench, &out), "metric": bench.metric().id })
+    json!({ "ok": true, "score": row_score(bench, &out), "metric": bench.metric().id, "work": acc.work() })
 }

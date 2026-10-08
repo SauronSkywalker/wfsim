@@ -195,9 +195,12 @@ as a build and never a number; its first result waits for the server's rank;
 each further one comes only from a client of the same engine that has not
 measured it; `CLIENTS_PER_FACT` equal results (checked at 1, 2 and 3) make a
 `verified:` fact naming every client and delete the queue row, a difference
-(score or metric) is a dispute and the answer is the same either way; a row
-nobody owes, a server's order, a live lease and a banned client get nothing; a
-client is written once a day.
+(score, metric or work) is a dispute and the answer is the same either way; a
+fact credits its work to each of its clients and a dispute to none; a result
+that does not name its work is refused; a further result never goes to another
+device of the same owner, and does go to another owner's or an unclaimed one;
+a row nobody owes, a server's order, a live lease and a banned client get
+nothing; a client is written once a day.
 
 ## `check_folds`
 

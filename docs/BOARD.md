@@ -675,10 +675,43 @@ row at a time, so the board's growth is more orders, never a heavier client.
   `HOLD_SECONDS=7200`: a row whose order opened in the last two hours is the
   clients'; an older one it measures as it always has.
 
-**THE CLIENT IS AN ANONYMOUS ID** its browser made for itself, joined to no
-account and to no submission, kept in `verifiers` so a refusal has something to
-hold. Working is ON by default and switched beside the board's own consent; a
-phone never works.
+**THE CLIENT IS AN ID** its browser made for itself, joined to no submission,
+kept in `verifiers` so a refusal has something to hold, and joined to an
+account only by that account claiming it (§"Contribution"). Working is ON by
+default and switched beside the board's own consent; a phone never works.
+
+## Contribution
+
+**WHAT THE COMMUNITY'S MACHINES COMPUTE GOES TO THE PUBLIC BOARD AND NOWHERE
+ELSE**, and each machine's share is counted under its owner's name. Six rules:
+
+1. **ONLY A FACT SCORES.** A client is credited an order's work when the order
+   becomes a fact, and every client in that agreement is credited all of it. A
+   result that never becomes a fact earns nothing; the official machines' work
+   is nobody's.
+2. **THE SAME WORK IS THE SAME POINTS ON EVERY MACHINE.** The engine counts its
+   own work: `Shard::work`, the shard's whole-number counters
+   (`WORK_COUNTERS`) times `WORK_WEIGHTS`, in billionths of a second of the
+   reference machine. A client's `compute_ms` is its machine's speed and is
+   never credited. One point is 10^9 of work.
+3. **THE WORK IS PART OF THE BITS.** A result names its work beside its score,
+   and a further result agrees only if the work is equal too. The server's spot
+   check holds the clients to the work as well as the score, so a claimed work
+   nobody did is a refused client.
+4. **A FACT NEEDS DIFFERENT OWNERS.** A further result is never handed to a
+   device of an owner whose device already measured the order; an unclaimed
+   device is its own owner.
+5. **A DEVICE HAS ONE OWNER.** A signed-in page claims its browser's id
+   (`/api/account/devices/claim`, `devices` in the accounts database); the
+   last account to claim it owns it, and its work goes with it. A refused
+   client's work counts for nothing.
+6. **THE RANKING IS OPT-IN.** `/contributors` lists the accounts that chose to
+   be on it, by display name, with no tier mark.
+
+**THE WEIGHTS ARE FIT, NOT CHOSEN.** `wfsim-work` folds a sample of the
+published board on the reference machine and solves for the weights with the
+least relative error. Refit when a release moves the fit; a refit changes the
+points of facts made after it, never of facts already credited.
 
 ## Consent
 
@@ -1700,8 +1733,8 @@ rule to keep the two apart.
   daily snapshot for people and never a fallback, so a reader is never shown a
   board older than `scores` says.
 - **The store keeps nothing about submitters.** No IP, no token, no time finer
-  than the day. A working client's anonymous id is the one exception, and it is
-  never joined to a submission (§"Compute orders").
+  than the day. A working client's id is the one exception, and it is never
+  joined to a submission (§"Compute orders", §"Contribution").
 - **The library is the only irreplaceable thing.** Boards are derived, the site
   is generated, the code is in git. Anything that could truncate it needs a
   tripwire before it needs a backup.

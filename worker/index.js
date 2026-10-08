@@ -31,6 +31,7 @@ import { qqRoute } from "./qq.js";
 import { worldRoute } from "./world.js";
 import { appraiseRoute } from "./appraise.js";
 import { verifyRoute } from "./verify.js";
+import { contributionRoute } from "./contribution.js";
 import { liveKey, serveLive, pushLive } from "./live_board.js";
 
 const MAX_BYTES = 4096;        // a build is a few hundred bytes; this is slack
@@ -743,6 +744,10 @@ export default {
       if (WELL_KNOWN_TYPES[path]) headers.set("content-type", WELL_KNOWN_TYPES[path]);
       if (WELL_KNOWN_OPEN.has(path)) headers.set("access-control-allow-origin", "*");
       return new Response(doc.body, { status: doc.status, headers });
+    }
+    {
+      const r = await contributionRoute(request, env, path);
+      if (r) return r;
     }
     if (path.startsWith("/api/auth/") || path === "/api/account" || path.startsWith("/api/account/")) {
       const r = await accountRoute(request, env, path);

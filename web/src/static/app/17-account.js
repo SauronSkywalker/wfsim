@@ -17,13 +17,13 @@ const ACCOUNT_SLOTS = [
   { id: "email", name: "Email" },
 ];
 const AUTH_PATHS = { "/login": "login", "/signup": "signup", "/reset": "reset", "/account": "account",
-  "/account/sync": "sync" };
+  "/account/sync": "sync", "/contributors": "contributors" };
 /// …and the pages an extension mounts (`EXT.pages`), routed the same way.
 const authKindOf = (path) => AUTH_PATHS[path.replace(/\/$/, "")] || extKindOf(path.replace(/\/$/, ""));
 /// EACH PAGE ITS OWN `app.view` KIND, so the way in can be read step by step;
 /// the settings pages carry `account_`, since `sync` alone could be any sync.
 const AUTH_VIEWS = { login: "login", signup: "signup", reset: "reset",
-  account: "account", sync: "account_sync" };
+  account: "account", sync: "account_sync", contributors: "contributors" };
 const authView = (kind) => AUTH_VIEWS[kind] || (EXT.pages[kind] || {}).view || "other";
 /// The pages of a signed-in account; every other kind is a way in.
 const isSettings = (kind) => kind === "account" || kind === "sync" || !!(EXT.pages[kind] || {}).settings;
@@ -81,6 +81,10 @@ let accountState = { providers: [], account: null, loaded: false };
 let accountLoading = null;
 /// THE AGENTS ACTING FOR THIS ACCOUNT, as `/api/account/agents` last said.
 let agentsState = [];
+/// THIS ACCOUNT'S DEVICES AND THEIR POINTS, as `/api/account/devices` last
+/// said; and the public ranking, as `/api/contributors` did.
+let devicesState = null;
+let contributorsState = null;
 
 async function accountCall(method, path, body) {
   try {
@@ -115,7 +119,7 @@ function loadAccount() {
     const at = authKindOf(location.pathname);
     // EVERY SETTINGS PAGE ASKS EVERY EXTENSION PAGE: the navigation shows a
     // page only once it says it is available.
-    if (accountState.account && isSettings(at)) await Promise.all([loadAgents(), ...extLoads()]);
+    if (accountState.account && isSettings(at)) await Promise.all([loadAgents(), loadDevices(), ...extLoads()]);
     else if ((EXT.pages[at] || {}).open) await Promise.all(extLoads(at));
     renderAccountEntry();
     const kind = authKindOf(location.pathname);
@@ -123,6 +127,11 @@ function loadAccount() {
     if (accountState.account) syncSoon(0);
   })();
   return accountLoading;
+}
+
+async function loadDevices() {
+  const r = await accountCall("GET", "/api/account/devices");
+  devicesState = r && r.ok ? r : null;
 }
 
 async function loadAgents() {
@@ -443,6 +452,33 @@ function accountAgentsBlock() {
       <a data-native href="/auth.md">auth.md</a></p></div></div>`;
 }
 
+/// WHAT THIS ACCOUNT'S MACHINES COMPUTED FOR THE BOARD, and whether its name
+/// is on the ranking (docs/BOARD.md §"Contribution").
+function accountComputeBlock() {
+  const d = devicesState;
+  if (!d) return "";
+  const n = d.devices.length;
+  return `<div class="block" id="compute"><div class="bh"><h2>${aT("Board compute")}</h2></div><div class="bb"><dl class="kvs">
+    <div class="kv"><dt>${aT("Points")}</dt><dd>${escHtml(d.points.toLocaleString(accountLocale()))} · ${
+      escHtml((n === 1 ? tr("{n} device") : tr("{n} devices")).replace("{n}", String(n)))}</dd>
+      <a class="ghost-btn btn-sm" href="/contributors">${aT("Ranking")}</a></div>
+    <div class="kv"><dt>${aT("On the ranking")}</dt><dd>${aT(d.shown ? "Your name is shown" : "Not shown")}</dd>
+      <button class="ghost-btn btn-sm" data-auth="contribution-shown" data-shown="${d.shown ? "no" : "yes"}">${
+        aT(d.shown ? "Hide" : "Show")}</button></div></dl>
+    <p class="set-note">${aT("A browser you are signed in on counts its board compute here. What it computes goes to the public board and nowhere else.")}</p></div></div>`;
+}
+
+/// THE CONTRIBUTION RANKING — public, the accounts that chose to be on it.
+function contributorsPage() {
+  const list = contributorsState;
+  const rows = (list || []).map((c, i) => `<div class="kv"><dt>${i + 1}. ${escHtml(c.name)}</dt>
+      <dd>@${escHtml(c.username)}</dd><span>${escHtml(c.points.toLocaleString(accountLocale()))}</span></div>`).join("");
+  return `<div class="settings"><div class="set-main"><h1 class="page">${aT("Contributors")}</h1>
+    <p class="set-note">${aT("The people whose machines compute the board.")}</p>
+    <div class="block"><div class="bb">${list === null ? ""
+      : rows ? `<dl class="kvs">${rows}</dl>` : `<p class="set-note" style="margin:0">${aT("Nobody yet.")}</p>`}</div></div></div></div>`;
+}
+
 function accountDataBlock() {
   return `<div class="block" id="data-privacy"><div class="bh"><h2>${aT("Data and privacy")}</h2></div><div class="bb"><dl class="kvs">
     <div class="kv" id="sync-row">${syncRowHtml()}</div>
@@ -468,7 +504,7 @@ let accountDeleteNote = "";
 function accountPage(a) {
   return `<div class="settings">${settingsNav(a, "account")}
     <div class="set-main"><h1 class="page">${aT("Account settings")}</h1>
-      ${accountProfileBlock(a)}${accountMethods(a)}${accountEmailBlock(a)}${accountAgentsBlock()}${accountDataBlock()}${accountDangerBlock()}</div></div>`;
+      ${accountProfileBlock(a)}${accountMethods(a)}${accountEmailBlock(a)}${accountAgentsBlock()}${accountComputeBlock()}${accountDataBlock()}${accountDangerBlock()}</div></div>`;
 }
 
 // ---- drawing a page ------------------------------------------------------------------------
@@ -482,6 +518,17 @@ function renderAuthPage(kind) {
   }
   clearInterval(authTimer);
   if (!accountState.loaded) { main.innerHTML = ""; return; }
+  // THE RANKING IS EVERYONE'S, signed in or not.
+  if (kind === "contributors") {
+    main.innerHTML = contributorsPage();
+    if (contributorsState === null) {
+      accountCall("GET", "/api/contributors").then((r) => {
+        contributorsState = (r && r.ok && r.contributors) || [];
+        if (authKindOf(location.pathname) === "contributors") renderAuthPage(kind);
+      });
+    }
+    return;
+  }
   const { account, providers } = accountState;
   // A SIGNED-IN READER HAS NO SIGN-IN PAGE, and a signed-out one no settings.
   const ext = EXT.pages[kind];
@@ -621,6 +668,13 @@ async function authAct(el) {
       if (!(r && r.ok)) return fail(r);
       presetToast(tr("Disconnected."));
       await loadAgents();
+      return renderAuthPage(kind);
+    }
+    if (what === "contribution-shown") {
+      const r = await accountCall("POST", "/api/account/contribution", { shown: el.dataset.shown === "yes" });
+      if (!(r && r.ok)) return fail(r);
+      await loadDevices();
+      contributorsState = null;
       return renderAuthPage(kind);
     }
     if (what === "sync-now") { await syncNow(); return; }
