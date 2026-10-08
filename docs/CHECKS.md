@@ -200,7 +200,8 @@ fact credits its work to each of its clients, by the day too, and a dispute to n
 that does not name its work is refused; a further result never goes to another
 device of the same owner, and does go to another owner's or an unclaimed one;
 a row nobody owes, a server's order, a live lease and a banned client get
-nothing; a client is written once a day.
+nothing; a page of an engine the site no longer serves, or of an older
+protocol, is told it is stale; a client is written once a day.
 
 ## `check_contribution`
 
