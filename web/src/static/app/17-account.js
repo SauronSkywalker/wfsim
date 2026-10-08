@@ -473,6 +473,7 @@ function accountComputeBlock() {
 /// extension's to draw (`contributorMarks`), proved by the server, and never
 /// moves a place: the order is the points alone.
 let contributorsPeriod = "all";
+let devicesAskedFor = null;
 let contributorMarks = {};
 function contributorsPage() {
   const list = contributorsState;
@@ -549,13 +550,17 @@ function renderAuthPage(kind) {
   // THE RANKING IS EVERYONE'S, signed in or not.
   if (kind === "contributors") {
     main.innerHTML = contributorsPage();
+    // THE READER'S OWN LINE is asked once per account, however they arrived —
+    // signing in on this page included.
+    const who = accountState.account && accountState.account.id;
+    if (who && !devicesState && devicesAskedFor !== who) {
+      devicesAskedFor = who;
+      loadDevices().then(() => { if (authKindOf(location.pathname) === "contributors") renderAuthPage(kind); });
+    }
     if (contributorsState === null) {
       contributorsState = undefined;
       const period = contributorsPeriod;
-      Promise.all([
-        accountCall("GET", period === "recent" ? "/api/contributors?period=recent" : "/api/contributors"),
-        accountState.account && !devicesState ? loadDevices() : null,
-      ]).then(async ([r]) => {
+      accountCall("GET", period === "recent" ? "/api/contributors?period=recent" : "/api/contributors").then(async (r) => {
         if (period !== contributorsPeriod) return;
         contributorsState = (r && r.ok && r.contributors) || [];
         if (authKindOf(location.pathname) === "contributors") renderAuthPage(kind);
