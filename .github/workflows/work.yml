@@ -1,0 +1,60 @@
+name: Work prices
+
+# THE REFERENCE MACHINE FOR `WORK_WEIGHTS` — what one of each counted thing
+# costs (docs/BOARD.md §"Contribution"). Four hosted runners each time the
+# committed site's wasm over the same board rows, and a row's price is fit to
+# its MEDIAN time across them, so no one machine, and no owner's machine, sets
+# what a point is worth. The Node version is pinned: it is the wasm engine
+# being timed. Run by hand; a new price ships as an engine commit.
+
+on:
+  workflow_dispatch:
+    inputs:
+      rows:
+        description: board rows to time
+        default: "300"
+      unit:
+        description: "keep (a point stays worth what it is) or seconds (a point is one second of the median runner)"
+        default: keep
+
+jobs:
+  measure:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
+    strategy:
+      matrix:
+        machine: [1, 2, 3, 4]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.20.0"
+      - name: Time the board's rows
+        run: node scripts/work_calibrate.mjs measure out=measure-${{ matrix.machine }}.json rows=${{ inputs.rows }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: measure-${{ matrix.machine }}
+          path: measure-${{ matrix.machine }}.json
+
+  fit:
+    needs: measure
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.20.0"
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: measure-*
+          merge-multiple: true
+      - name: Fit the prices
+        run: |
+          node scripts/work_calibrate.mjs fit measure-*.json unit=${{ inputs.unit }} | tee fit.txt
+          { echo '```'; cat fit.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fit
+          path: |
+            fit.txt
+            measure-*.json
