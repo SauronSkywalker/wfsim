@@ -17,13 +17,13 @@ const ACCOUNT_SLOTS = [
   { id: "email", name: "Email" },
 ];
 const AUTH_PATHS = { "/login": "login", "/signup": "signup", "/reset": "reset", "/account": "account",
-  "/account/sync": "sync", "/contributors": "contributors" };
+  "/account/sync": "sync", "/contributors": "contributors", "/compute": "compute" };
 /// …and the pages an extension mounts (`EXT.pages`), routed the same way.
 const authKindOf = (path) => AUTH_PATHS[path.replace(/\/$/, "")] || extKindOf(path.replace(/\/$/, ""));
 /// EACH PAGE ITS OWN `app.view` KIND, so the way in can be read step by step;
 /// the settings pages carry `account_`, since `sync` alone could be any sync.
 const AUTH_VIEWS = { login: "login", signup: "signup", reset: "reset",
-  account: "account", sync: "account_sync", contributors: "contributors" };
+  account: "account", sync: "account_sync", contributors: "contributors", compute: "compute" };
 const authView = (kind) => AUTH_VIEWS[kind] || (EXT.pages[kind] || {}).view || "other";
 /// The pages of a signed-in account; every other kind is a way in.
 const isSettings = (kind) => kind === "account" || kind === "sync" || !!(EXT.pages[kind] || {}).settings;
@@ -461,6 +461,7 @@ function accountComputeBlock() {
   return `<div class="block" id="compute"><div class="bh"><h2>${aT("Board compute")}</h2></div><div class="bb"><dl class="kvs">
     <div class="kv"><dt>${aT("Points")}</dt><dd>${escHtml(d.points.toLocaleString(accountLocale()))} · ${
       escHtml((n === 1 ? tr("{n} device") : tr("{n} devices")).replace("{n}", String(n)))}</dd>
+      <a class="ghost-btn btn-sm" href="/compute">${aT("Compute")}</a>
       <a class="ghost-btn btn-sm" href="/contributors">${aT("Ranking")}</a></div>
     <div class="kv"><dt>${aT("On the ranking")}</dt><dd>${aT(d.named ? "Your name is shown" : "Anonymous")}</dd>
       ${contributionNameButton(d)}</div></dl>
@@ -561,6 +562,12 @@ function renderAuthPage(kind) {
   }
   clearInterval(authTimer);
   if (!accountState.loaded) { main.innerHTML = ""; return; }
+  // THE COMPUTE PAGE IS EVERYONE'S TOO: this browser's half needs no account.
+  if (kind === "compute") {
+    main.innerHTML = computePage();
+    computeOpened();
+    return;
+  }
   // THE RANKING IS EVERYONE'S, signed in or not.
   if (kind === "contributors") {
     main.innerHTML = contributorsPage();
@@ -636,6 +643,7 @@ async function authSignedIn(r) {
 
 async function authAct(el) {
   const what = el.dataset.auth;
+  if (what.startsWith("compute-") || what.startsWith("device-")) return computeAct(el, what);
   const kind = authFlow.kind;
   const main = $("auth-page");
   authFlow.error = null;

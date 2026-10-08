@@ -60,7 +60,9 @@ const call = async (path, { cookie = "", body, method = body ? "POST" : "GET", o
     { method, headers, ...(body ? { body: JSON.stringify(body) } : {}) }), env, path.split("?")[0]);
   return r && { status: r.status, ...(await r.json()) };
 };
-const claim = (cookie, verifier) => call("/api/account/devices/claim", { cookie, body: { verifier } });
+const claim = (cookie, verifier, label) => call("/api/account/devices/claim", { cookie, body: { verifier, label } });
+const relabel = (cookie, id, label) => call("/api/account/devices/label", { cookie, body: { id, label } });
+const remove = (cookie, id) => call("/api/account/devices/remove", { cookie, body: { id } });
 const mine = (cookie) => call("/api/account/devices", { cookie });
 const choose = (cookie, named) => call("/api/account/contribution", { cookie, body: { named } });
 const ranking = async (cookie = "", q = "") => (await call(`/api/contributors${q}`, { cookie })).contributors;
@@ -80,7 +82,7 @@ check("a claim from another site is refused", (await call("/api/account/devices/
   { cookie: ann, body: { verifier: X }, origin: "https://evil.example" })).status === 403);
 check("a malformed device is refused", (await claim(ann, "nope")).reason === "bad_device");
 
-await claim(ann, X); await claim(ann, Y);
+await claim(ann, X, "Mac · Chrome"); await claim(ann, Y);
 const a = await mine(ann);
 check("an account's points are its devices' credited work", a.points === 8 && a.devices.length === 2, JSON.stringify(a));
 check("...and its last thirty days, the days before them left out", a.recent === 5, JSON.stringify(a));
@@ -132,6 +134,32 @@ check("deleting an account releases its devices, its place and its answer",
   !accounts.raw.prepare("SELECT 1 FROM devices WHERE account = 'acct-cy'").get()
   && !accounts.raw.prepare("SELECT 1 FROM contribution_choice WHERE account = 'acct-cy'").get()
   && !(await ranking()).some((e) => e.points === 9));
+
+// AN OWNER'S DEVICES, each with its name, what it last did and what it holds now.
+const ed = await person("acct-ed", "ed"), fay = await person("acct-fay", "fay");
+const P = "p".repeat(24), Q = "q2".repeat(12);
+device(P, 4 * POINT); device(Q, 1 * POINT);
+await claim(ed, P, "Mac · Chrome"); await claim(ed, Q, "\u0007bell");
+library.raw.prepare("UPDATE verifiers SET last_at = '2026-10-08T06:00:00Z' WHERE id = ?").run(P);
+library.raw.prepare(`INSERT INTO orders (identity, ruler, mode, record, state, slot, lease, lease_until, leased_to, at)
+  VALUES ('b1', 'standard_single_target', 'base', '{"weapon":"torid","mods":["x"]}', 'todo', 1, 'l', ?, ?, 0)`).run(Date.now() + 60000, P);
+library.raw.prepare(`INSERT INTO orders (identity, ruler, mode, record, state, slot, lease, lease_until, leased_to, at)
+  VALUES ('b2', 'standard_single_target', 'base', '{"weapon":"furis"}', 'todo', 2, 'm', ?, ?, 0)`).run(Date.now() - 60000, Q);
+const eds = (await mine(ed)).devices;
+const p6 = P.slice(0, 6), q6 = Q.slice(0, 6);
+const dp = eds.find((d) => d.id === p6), dq = eds.find((d) => d.id === q6);
+check("an owner sees each device by the name it was claimed with, a name that is not one left empty",
+  dp.label === "Mac · Chrome" && dq.label === null, JSON.stringify(eds));
+check("...when each last answered, and the task each holds a live lease on, by kind and its public facts alone",
+  dp.last_at === "2026-10-08T06:00:00Z" && JSON.stringify(dp.now) === JSON.stringify({ kind: "board", weapon: "torid", ruler: "standard_single_target", mode: "base" })
+  && dq.now === null && dq.last_at === null, JSON.stringify(eds));
+check("the owner renames a device", (await relabel(ed, p6, "书房 PC")).ok && (await mine(ed)).devices.find((d) => d.id === p6).label === "书房 PC");
+check("...and a name that is not one is refused", (await relabel(ed, p6, "x".repeat(41))).reason === "bad_label"
+  && (await relabel(ed, p6, "  ")).reason === "bad_label");
+check("nobody renames or removes another's device", (await relabel(fay, p6, "mine")).status === 404 && (await remove(fay, p6)).status === 404
+  && (await mine(ed)).devices.length === 2);
+check("removed, a device and its work leave the account", (await remove(ed, q6)).ok
+  && (await mine(ed)).devices.length === 1 && (await mine(ed)).points === 4);
 
 console.log(failures ? `\n${failures} failed` : "\nan account's points are the work its devices were credited");
 process.exitCode = failures ? 1 : 0;

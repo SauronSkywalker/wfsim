@@ -20,7 +20,7 @@ const onPhone = () => !!(window.matchMedia && matchMedia("(pointer: coarse)").ma
 /// ONE ROW, MEASURED: its runs folded in pieces, then scored, with what the
 /// pieces took in ms (`compute_ms`) — the waits between them are the reader's.
 /// `null` when the engine refused or `live()` went false between pieces.
-async function measureRow(request, ruler, live) {
+async function measureRow(request, ruler, live, onPiece = () => {}) {
   const runs = Number(request.runs) || 0;
   let acc = null;
   let from = 0;
@@ -39,6 +39,7 @@ async function measureRow(request, ruler, live) {
     // target both come out at about a quarter second a call.
     const ms = Math.max(1, performance.now() - began);
     spent += ms;
+    onPiece(from, runs);
     count = Math.max(1, Math.min(1000, Math.round((n * PIECE_MS) / ms)));
   }
   const began = performance.now();
@@ -89,7 +90,7 @@ async function claimDevice(id) {
   const account = accountState.account && accountState.account.id;
   if (!account) return;
   try { if (localStorage.getItem(CLAIMED_KEY) === account) return; } catch (_) { return; }
-  const r = await accountCall("POST", "/api/account/devices/claim", { verifier: id });
+  const r = await accountCall("POST", "/api/account/devices/claim", { verifier: id, label: computeDeviceGuess() });
   if (r && r.ok) try { localStorage.setItem(CLAIMED_KEY, account); } catch (_) { /* private mode */ }
 }
 
@@ -160,10 +161,12 @@ async function workOnce() {
   if (!w) return false;
   const order = await api("/api/board/order", { record: w.record, ruler: w.ruler, mode: w.mode });
   if (!order || !order.ok) return true;
-  const s = await measureRow(order.request, w.ruler, boardVerifyOn);
-  if (!s) return true;
+  computeStart({ kind: "board", weapon: w.record.weapon, ruler: w.ruler, mode: w.mode });
+  const s = await measureRow(order.request, w.ruler, boardVerifyOn, computeProgress);
+  if (!s) { computeEnd(null); return true; }
   const sent = await postBoardWork("/api/board/verify",
     { lease: w.lease, verifier: id, engine: ENGINE_ID, score: s.score, metric: s.metric, work: s.work, compute_ms: s.compute_ms });
+  computeEnd(sent ? { ms: s.compute_ms, work: s.work } : null);
   if (!sent) return true;
   try { localStorage.setItem(VERIFIED_KEY, String(boardVerifiedCount() + 1)); } catch (_) { /* private mode */ }
   renderBoardConsent();
@@ -214,7 +217,7 @@ function boardPointsHtml(on) {
       <button class="ghost-btn small" id="board-name-yes">${escHtml(tr("Show my name"))}</button>
       <button class="ghost-btn small" id="board-name-no">${escHtml(tr("Keep it anonymous"))}</button> ·`
     : "";
-  return `${earned}${join}${ask} <a href="/contributors">${escHtml(tr("Contributors"))}</a>`;
+  return `${earned}${join}${ask} <a href="/compute">${escHtml(tr("Compute"))}</a> · <a href="/contributors">${escHtml(tr("Contributors"))}</a>`;
 }
 function wireBoardVerify() {
   const b = $("board-verify-flip");

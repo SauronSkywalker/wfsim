@@ -203,6 +203,17 @@ a row nobody owes, a server's order, a live lease and a banned client get
 nothing; a page of an engine the site no longer serves, or of an older
 protocol, is told it is stale; a client is written once a day.
 
+## `check_compute`
+
+The `/compute` page, the account answered by interception. This browser's tasks
+are drawn from what it kept and by each task's KIND: a board order as its
+weapon and ruler, linked to that board and never naming its mods, and a kind
+the page does not know still drawn; a task in progress shows how far it is;
+signed out, it says how to count the work under a name. Signed in, every device
+of the account is listed by its name with this browser marked, with what each
+is doing or when it last answered; one claimed before it had a name is given
+its guess; a device is renamed inline and removed after an inline question.
+
 ## `check_contribution`
 
 Plain node against `worker/accounts.sql` and `worker/schema.sql`, the paid half
@@ -215,8 +226,10 @@ until it agrees, when it shows the display name or else the username and the
 mark the paid half proves; a no is kept, a yes can be taken back, and the
 reader's own row is marked to them alone; a browser asked by its own id is told
 what it earned and whether it is claimed, a refused one nothing; nothing is
-claimed signed out, from another site or with a malformed id; deleting the
-account releases its devices and its answer.
+claimed signed out, from another site or with a malformed id; an owner sees
+each device by its name, when it last answered and the task it holds by kind
+and public facts alone, renames and removes it, and nobody else can; deleting
+the account releases its devices and its answer.
 
 ## `check_folds`
 

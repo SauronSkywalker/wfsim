@@ -209,7 +209,9 @@ async function verify(request, env) {
       WHERE lease = ? AND leased_to = ? AND lease_until >= ?`).bind(b.lease, b.verifier, now).first();
   if (!o) return json({ ok: true });
   const key = [o.identity, o.ruler, o.mode];
-  const spent = db.prepare("UPDATE verifiers SET compute_ms = compute_ms + ? WHERE id = ?").bind(ms || 0, b.verifier);
+  // …AND WHEN IT LAST ANSWERED, for its owner's device list, in the same write.
+  const spent = db.prepare("UPDATE verifiers SET compute_ms = compute_ms + ?, last_at = ? WHERE id = ?")
+    .bind(ms || 0, stamp(), b.verifier);
   if (o.state === "todo") {
     if (needed(env) <= 1) {
       await fact(db, key, { ...o, score: b.score, metric: b.metric, work: b.work, engine: b.engine, produced_by: b.verifier },

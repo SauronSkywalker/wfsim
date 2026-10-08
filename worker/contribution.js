@@ -7,8 +7,10 @@
 // device is on the public ranking, ANONYMOUS until it agrees to show its name
 // (`contribution_choice`): publishing a name is the person's choice, asked once.
 //
-//   GET  /api/account/devices        → { devices: [{ id, claimed_at, points, recent }], points, recent, named, decided }
-//   POST /api/account/devices/claim  { verifier } → { ok }
+//   GET  /api/account/devices        → { devices: [{ id, label, claimed_at, points, recent, last_at, now }], points, recent, named, decided }
+//   POST /api/account/devices/claim  { verifier, label? } → { ok }
+//   POST /api/account/devices/label  { id, label }        → { ok }
+//   POST /api/account/devices/remove { id }               → { ok }
 //   POST /api/account/contribution   { named }    → { ok }
 //   POST /api/board/points           { verifier } → { points, recent, claimed }
 //   GET  /api/contributors[?period=recent] → { contributors: [{ name, points, recent, mark?, you? }] }
@@ -26,6 +28,9 @@ export const RECENT_DAYS = 30;
 /// How many names the ranking shows.
 export const RANKED = 100;
 const VERIFIER_ID = /^[a-z0-9]{16,40}$/;
+/// What the owner calls a device: one short line, no control characters.
+const LABEL = /^[^\u0000-\u001f\u007f]{1,40}$/u;
+const labelOf = (s) => (typeof s === "string" && LABEL.test(s.trim()) ? s.trim() : null);
 /// D1 binds at most a hundred parameters a statement.
 const PER_STATEMENT = 90;
 
@@ -55,13 +60,51 @@ async function workOf(env, ids) {
 }
 const NONE = { work: 0, recent: 0 };
 
+/// WHAT EACH OF `ids` IS DOING: when it last answered (`last_at`), and the task
+/// it holds a live lease on (`now`) — named as a task KIND and its public facts,
+/// so the page draws any kind the same way.
+async function activityOf(env, ids) {
+  const out = new Map();
+  if (!env.LIBRARY || !ids.length) return out;
+  const t = Date.now();
+  for (let i = 0; i < ids.length; i += PER_STATEMENT) {
+    const part = ids.slice(i, i + PER_STATEMENT);
+    const marks = part.map(() => "?").join(", ");
+    const [seen, held] = await env.LIBRARY.batch([
+      env.LIBRARY.prepare(`SELECT id, last_at FROM verifiers WHERE id IN (${marks})`).bind(...part),
+      env.LIBRARY.prepare(`SELECT leased_to, record, ruler, mode FROM orders WHERE lease_until > ? AND leased_to IN (${marks})`)
+        .bind(t, ...part),
+    ]);
+    for (const r of seen.results) out.set(r.id, { last_at: r.last_at || null, now: null });
+    for (const r of held.results) {
+      let weapon = null;
+      try { weapon = JSON.parse(r.record).weapon || null; } catch (_) { /* a record that is not one names nothing */ }
+      const e = out.get(r.leased_to) || { last_at: null, now: null };
+      e.now = { kind: "board", weapon, ruler: r.ruler, mode: r.mode };
+      out.set(r.leased_to, e);
+    }
+  }
+  return out;
+}
+
+/// THE OWNER'S DEVICE BY THE SIX CHARACTERS THE PAGE SEES — only theirs, and
+/// only when exactly one matches.
+async function ownDevice(env, account, id) {
+  if (!/^[a-z0-9]{6}$/.test(id || "")) return null;
+  const { results } = await env.ACCOUNTS.prepare(
+    "SELECT verifier FROM devices WHERE account = ?1 AND substr(verifier, 1, 6) = ?2").bind(account, id).all();
+  return results.length === 1 ? results[0].verifier : null;
+}
+
 async function devices(env, account) {
   const { results } = await env.ACCOUNTS.prepare(
-    "SELECT verifier, claimed_at FROM devices WHERE account = ?1 ORDER BY claimed_at").bind(account).all();
-  const work = await workOf(env, results.map((d) => d.verifier));
+    "SELECT verifier, claimed_at, label FROM devices WHERE account = ?1 ORDER BY claimed_at").bind(account).all();
+  const ids = results.map((d) => d.verifier);
+  const [work, doing] = await Promise.all([workOf(env, ids), activityOf(env, ids)]);
   const choice = await env.ACCOUNTS.prepare("SELECT named FROM contribution_choice WHERE account = ?1").bind(account).first();
   const named = !!(choice && choice.named);
-  const list = results.map((d) => ({ id: d.verifier.slice(0, 6), claimed_at: d.claimed_at, ...(work.get(d.verifier) || NONE) }));
+  const list = results.map((d) => ({ id: d.verifier.slice(0, 6), label: d.label || null, claimed_at: d.claimed_at,
+    ...(doing.get(d.verifier) || { last_at: null, now: null }), ...(work.get(d.verifier) || NONE) }));
   // `shown` is `named` for a page from before the ranking was anonymous.
   return json({ ok: true, named, decided: !!choice, shown: named,
     points: points(list.reduce((s, d) => s + d.work, 0)), recent: points(list.reduce((s, d) => s + d.recent, 0)),
@@ -83,9 +126,26 @@ async function devicePoints(env, b) {
 async function claim(env, account, b) {
   if (!VERIFIER_ID.test(b.verifier || "")) return no("bad_device");
   await env.ACCOUNTS.prepare(
-    `INSERT INTO devices (verifier, account, claimed_at) VALUES (?1, ?2, ?3)
-     ON CONFLICT (verifier) DO UPDATE SET account = ?2, claimed_at = ?3 WHERE account != ?2`,
-  ).bind(b.verifier, account, now().slice(0, 10)).run();
+    `INSERT INTO devices (verifier, account, claimed_at, label) VALUES (?1, ?2, ?3, ?4)
+     ON CONFLICT (verifier) DO UPDATE SET account = ?2, claimed_at = ?3, label = ?4 WHERE account != ?2`,
+  ).bind(b.verifier, account, now().slice(0, 10), labelOf(b.label)).run();
+  return json({ ok: true });
+}
+
+/// WHAT THE OWNER CALLS IT, or — removed — not theirs any more: its work leaves
+/// the account with it, and the browser counts for nobody until it is claimed.
+async function relabel(env, account, b) {
+  const v = await ownDevice(env, account, b.id);
+  if (!v) return no("not_your_device", 404);
+  const label = labelOf(b.label);
+  if (!label) return no("bad_label");
+  await env.ACCOUNTS.prepare("UPDATE devices SET label = ?1 WHERE verifier = ?2").bind(label, v).run();
+  return json({ ok: true });
+}
+async function release(env, account, b) {
+  const v = await ownDevice(env, account, b.id);
+  if (!v) return no("not_your_device", 404);
+  await env.ACCOUNTS.prepare("DELETE FROM devices WHERE verifier = ?1").bind(v).run();
   return json({ ok: true });
 }
 
@@ -146,7 +206,9 @@ export async function contributionRoute(request, env, path) {
     try { b = JSON.parse((await request.text()) || "{}"); } catch (_) { return no("not_json"); }
     return devicePoints(env, b);
   }
-  if (path !== "/api/account/devices" && path !== "/api/account/devices/claim" && path !== "/api/account/contribution") return null;
+  const posts = { "/api/account/devices/claim": claim, "/api/account/devices/label": relabel,
+    "/api/account/devices/remove": release, "/api/account/contribution": choose };
+  if (path !== "/api/account/devices" && !posts[path]) return null;
   if (!env.ACCOUNTS || !env.AUTH_SECRET) return no("unavailable", 503);
   const get = path === "/api/account/devices";
   if (request.method !== (get ? "GET" : "POST")) return no("method", 405);
@@ -156,5 +218,5 @@ export async function contributionRoute(request, env, path) {
   if (get) return devices(env, account);
   let b = {};
   try { b = JSON.parse((await request.text()) || "{}"); } catch (_) { return no("not_json"); }
-  return path === "/api/account/devices/claim" ? claim(env, account, b) : choose(env, account, b);
+  return posts[path](env, account, b);
 }

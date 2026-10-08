@@ -126,7 +126,9 @@ CREATE INDEX IF NOT EXISTS agent_keys_by_account ON agent_keys (account);
 CREATE TABLE IF NOT EXISTS devices (
   verifier   TEXT PRIMARY KEY,
   account    TEXT NOT NULL REFERENCES accounts (id) ON DELETE CASCADE,
-  claimed_at TEXT NOT NULL
+  claimed_at TEXT NOT NULL,
+  -- What the owner calls it: the browser's own coarse guess ("Mac · Chrome") until renamed.
+  label      TEXT
 );
 CREATE INDEX IF NOT EXISTS devices_by_account ON devices (account);
 

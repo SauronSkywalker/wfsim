@@ -706,6 +706,11 @@ each machine's share is counted under its owner's name. Seven rules:
    (`/api/account/devices/claim`, `devices` in the accounts database); the
    last account to claim it owns it, and its work goes with it. A refused
    client's work counts for nothing.
+   The owner sees every device of theirs at `/compute`: the name they call it
+   (the browser's coarse guess until renamed), when it last answered
+   (`verifiers.last_at`) and the task it holds a lease on, named by its KIND
+   and public facts alone; a device is renamed or removed there. This
+   browser's own task list stays in this browser.
 6. **EVERYONE IS RANKED; A NAME IS SHOWN ONLY BY CONSENT.** `/contributors`
    lists every account with a claimed device, by all their points or the last
    thirty days' (`verifier_days`, credited with the total and read through the
