@@ -421,6 +421,7 @@ ui:
   "Starts in": 距离开始
   "Next: {when}": "下一次：{when}"
   "Not in the next 14 days": 未来 14 天内没有
+  "The game has never opened one like this": 游戏里从未开过这样的
   "Remind me when an arbitration is": 仲裁符合以下条件时提醒我
   "The arbitration schedule could not be reached.": 仲裁时间表加载失败。
   "No arbitration in the next 14 days matches these filters.": 未来 14 天内没有符合筛选条件的仲裁。
@@ -2520,6 +2521,15 @@ ui:
   "Contributors": 贡献者
   "The people whose machines compute the board.": 用自己的设备计算榜单的人。
   "Nobody yet.": 还没有人。
+  "All time": 全部
+  "Last 30 days": 近 30 天
+  "Points count verified compute and nothing else. A membership adds none.": "积分只计验证通过的计算量，会员没有任何加成。"
+  "Signed in, the board compute your browser does counts under your name.": "登录后，你的浏览器为榜单做的计算会记在你的名下。"
+  "Your points": 你的积分
+  "Show my name": 显示我的名字
+  "Your display name and handle appear here, with any mark your account carries.": "这里会显示你的显示名和用户名，以及你账号带有的标识。"
+  "This browser: {n} points.": "这台浏览器：{n} 积分。"
+  "Sign in to count it under your name": 登录后记在你的名下
   "An AI agent connects by asking you for a code WFSim mails to your address. Disconnecting it stops its key at once.": "AI agent 需要向你索要 WFSim 发到你邮箱的验证码才能连接。断开后，它的 key 立即失效。"
   "Profile": "个人资料"
   "Username": "用户名"

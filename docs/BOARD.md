@@ -683,7 +683,7 @@ default and switched beside the board's own consent; a phone never works.
 ## Contribution
 
 **WHAT THE COMMUNITY'S MACHINES COMPUTE GOES TO THE PUBLIC BOARD AND NOWHERE
-ELSE**, and each machine's share is counted under its owner's name. Six rules:
+ELSE**, and each machine's share is counted under its owner's name. Seven rules:
 
 1. **ONLY A FACT SCORES.** A client is credited an order's work when the order
    becomes a fact, and every client in that agreement is credited all of it. A
@@ -706,7 +706,13 @@ ELSE**, and each machine's share is counted under its owner's name. Six rules:
    last account to claim it owns it, and its work goes with it. A refused
    client's work counts for nothing.
 6. **THE RANKING IS OPT-IN.** `/contributors` lists the accounts that chose to
-   be on it, by display name, with no tier mark.
+   be on it, by display name, by all their points or the last thirty days'
+   (`verifier_days`, credited with the total and read through the same ban).
+   A browser asks what it earned by its own id (`/api/board/points`).
+7. **A MARK NEVER MOVES A PLACE.** A name may carry the marks its account
+   carries elsewhere, drawn by the extension (`contributorMarks`) from what
+   the server proves; the order is the points alone, and nothing paid adds a
+   point or puts an order in a device's hands sooner.
 
 **THE WEIGHTS ARE FIT, NOT CHOSEN.** `wfsim-work` folds a sample of the
 published board on the reference machine and solves for the weights with the

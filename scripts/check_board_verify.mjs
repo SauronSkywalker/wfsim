@@ -192,6 +192,11 @@ check("once the site serves a new engine, an open result of the old one is opene
 const credited = (v) => db.prepare("SELECT work FROM verifiers WHERE id = ?").get(v).work;
 check("a fact credits its work to every client that measured it, once a fact",
   credited(B) === WORK && credited(I) === WORK && credited(A) === 2 * WORK, `${credited(A)} ${credited(B)} ${credited(I)}`);
+const creditedToday = (v) => db.prepare("SELECT SUM(work) AS w FROM verifier_days WHERE verifier = ? AND day = ?")
+  .get(v, new Date().toISOString().slice(0, 10)).w;
+check("...and the same work under the day it was credited, for the ranking's last thirty days",
+  creditedToday(A) === 2 * WORK && creditedToday(B) === WORK && creditedToday(I) === WORK,
+  `${creditedToday(A)} ${creditedToday(B)} ${creditedToday(I)}`);
 check("...and a disputed one to nobody", credited(C) === 0 && credited(D) === 0);
 db.prepare("UPDATE orders SET state = 'settled'").run();
 order("worked", "open", { score: SCORE, metric: "kpm", engine: "e1", produced_by: A, clients: A });

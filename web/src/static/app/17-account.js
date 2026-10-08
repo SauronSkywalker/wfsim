@@ -468,15 +468,43 @@ function accountComputeBlock() {
     <p class="set-note">${aT("A browser you are signed in on counts its board compute here. What it computes goes to the public board and nowhere else.")}</p></div></div>`;
 }
 
-/// THE CONTRIBUTION RANKING — public, the accounts that chose to be on it.
+/// THE CONTRIBUTION RANKING — public, the accounts that chose to be on it, by
+/// all their points or the last thirty days'. A mark beside a name is the
+/// extension's to draw (`contributorMarks`), proved by the server, and never
+/// moves a place: the order is the points alone.
+let contributorsPeriod = "all";
+let contributorMarks = {};
 function contributorsPage() {
   const list = contributorsState;
-  const rows = (list || []).map((c, i) => `<div class="kv"><dt>${i + 1}. ${escHtml(c.name)}</dt>
-      <dd>@${escHtml(c.username)}</dd><span>${escHtml(c.points.toLocaleString(accountLocale()))}</span></div>`).join("");
+  const recent = contributorsPeriod === "recent";
+  const n = (x) => escHtml(x.toLocaleString(accountLocale()));
+  const rows = (list || []).map((c, i) => `<div class="kv"><dt>${i + 1}. ${escHtml(c.name)}${contributorMarks[c.username] || ""}</dt>
+      <dd>@${escHtml(c.username)}</dd><span>${n(recent ? c.recent : c.points)}</span></div>`).join("");
+  const tab = (id, label) => `<button class="seg${contributorsPeriod === id ? " on" : ""}" data-auth="contributors-period"
+      data-period="${id}" aria-pressed="${contributorsPeriod === id}">${aT(label)}</button>`;
   return `<div class="settings"><div class="set-main"><h1 class="page">${aT("Contributors")}</h1>
     <p class="set-note">${aT("The people whose machines compute the board.")}</p>
-    <div class="block"><div class="bb">${list === null ? ""
-      : rows ? `<dl class="kvs">${rows}</dl>` : `<p class="set-note" style="margin:0">${aT("Nobody yet.")}</p>`}</div></div></div></div>`;
+    ${contributorsYouHtml()}
+    <div class="block"><div class="bh"><span class="oseg">${tab("all", "All time")} ${tab("recent", "Last 30 days")}</span></div><div class="bb">${list == null ? ""
+      : rows ? `<dl class="kvs">${rows}</dl>` : `<p class="set-note" style="margin:0">${aT("Nobody yet.")}</p>`}</div></div>
+    <p class="set-note">${aT("Points count verified compute and nothing else. A membership adds none.")}</p></div></div>`;
+}
+
+/// THE READER'S OWN LINE: signed out, how to be on it; signed in, their points
+/// and the one switch that puts them on it or takes them off.
+function contributorsYouHtml() {
+  if (!accountState.providers.length) return "";
+  if (!accountState.account) {
+    return `<p class="set-note">${aT("Signed in, the board compute your browser does counts under your name.")}
+      <a href="/login?return=${encodeURIComponent("/contributors")}">${aT("Sign in")}</a></p>`;
+  }
+  const d = devicesState;
+  if (!d) return "";
+  return `<div class="block"><div class="bb"><dl class="kvs"><div class="kv"><dt>${aT("Your points")}</dt>
+      <dd>${escHtml(d.points.toLocaleString(accountLocale()))} · ${aT(d.shown ? "Your name is shown" : "Not shown")}</dd>
+      <button class="ghost-btn btn-sm" data-auth="contribution-shown" data-shown="${d.shown ? "no" : "yes"}">${
+        aT(d.shown ? "Hide" : "Show my name")}</button></div></dl>
+    ${d.shown ? "" : `<p class="set-note" style="margin:0">${aT("Your display name and handle appear here, with any mark your account carries.")}</p>`}</div></div>`;
 }
 
 function accountDataBlock() {
@@ -522,9 +550,20 @@ function renderAuthPage(kind) {
   if (kind === "contributors") {
     main.innerHTML = contributorsPage();
     if (contributorsState === null) {
-      accountCall("GET", "/api/contributors").then((r) => {
+      contributorsState = undefined;
+      const period = contributorsPeriod;
+      Promise.all([
+        accountCall("GET", period === "recent" ? "/api/contributors?period=recent" : "/api/contributors"),
+        accountState.account && !devicesState ? loadDevices() : null,
+      ]).then(async ([r]) => {
+        if (period !== contributorsPeriod) return;
         contributorsState = (r && r.ok && r.contributors) || [];
         if (authKindOf(location.pathname) === "contributors") renderAuthPage(kind);
+        const marks = await extHook("contributorMarks", contributorsState.map((c) => c.username));
+        if (marks && typeof marks === "object") {
+          contributorMarks = marks;
+          if (authKindOf(location.pathname) === "contributors") renderAuthPage(kind);
+        }
       });
     }
     return;
@@ -668,6 +707,11 @@ async function authAct(el) {
       if (!(r && r.ok)) return fail(r);
       presetToast(tr("Disconnected."));
       await loadAgents();
+      return renderAuthPage(kind);
+    }
+    if (what === "contributors-period") {
+      contributorsPeriod = el.dataset.period === "recent" ? "recent" : "all";
+      contributorsState = null;
       return renderAuthPage(kind);
     }
     if (what === "contribution-shown") {

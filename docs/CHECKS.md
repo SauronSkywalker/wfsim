@@ -196,7 +196,7 @@ each further one comes only from a client of the same engine that has not
 measured it; `CLIENTS_PER_FACT` equal results (checked at 1, 2 and 3) make a
 `verified:` fact naming every client and delete the queue row, a difference
 (score, metric or work) is a dispute and the answer is the same either way; a
-fact credits its work to each of its clients and a dispute to none; a result
+fact credits its work to each of its clients, by the day too, and a dispute to none; a result
 that does not name its work is refused; a further result never goes to another
 device of the same owner, and does go to another owner's or an unclaimed one;
 a row nobody owes, a server's order, a live lease and a banned client get
@@ -208,8 +208,10 @@ Plain node against `worker/accounts.sql` and `worker/schema.sql`. A signed-in
 browser claims its device and the last claim owns it, its work going with it;
 an account's points are its devices' credited work, a refused device's counting
 for nothing; the ranking lists only the accounts that chose to be on it, most
-first; nothing is claimed signed out, from another site or with a malformed id;
-deleting the account releases its devices.
+first, by all their points or by the last thirty days' alone; a browser asked
+by its own id is told what it earned and whether it is claimed, a refused one
+nothing; nothing is claimed signed out, from another site or with a malformed
+id; deleting the account releases its devices.
 
 ## `check_folds`
 

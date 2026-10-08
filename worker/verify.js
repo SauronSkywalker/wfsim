@@ -268,6 +268,9 @@ async function fact(db, key, o, clients, compute, last, spent) {
     db.prepare("DELETE FROM queue WHERE build_id = ? AND ruler = ? AND mode = ?").bind(...key),
     db.prepare("UPDATE verifiers SET agreed = agreed + 1 WHERE id = ?").bind(last),
     ...clients.map((c) => db.prepare("UPDATE verifiers SET work = work + ? WHERE id = ?").bind(o.work || 0, c)),
+    ...clients.map((c) => db.prepare(
+      `INSERT INTO verifier_days (verifier, day, work) VALUES (?, ?, ?)
+       ON CONFLICT (verifier, day) DO UPDATE SET work = work + excluded.work`).bind(c, day(), o.work || 0)),
     spent,
   ]);
 }

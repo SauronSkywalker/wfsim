@@ -252,6 +252,16 @@ CREATE TABLE IF NOT EXISTS verifiers (
   work   INTEGER NOT NULL DEFAULT 0
 );
 
+-- THE SAME WORK BY THE DAY IT WAS CREDITED, for the ranking's last thirty days
+-- (docs/BOARD.md §"Contribution"). A refused client's days count for nothing,
+-- as its total does: the ranking reads them through `verifiers.banned`.
+CREATE TABLE IF NOT EXISTS verifier_days (
+  verifier TEXT NOT NULL,
+  day      TEXT NOT NULL,
+  work     INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (verifier, day)
+);
+
 -- SHORT SHARE LINKS: `/weapons/<weapon>/s/<id>` names a stored share code.
 -- `id` is a hash of (weapon, code) computed by the worker, so a row never
 -- changes, the same build is one row, and no client chooses an id. `at` is the

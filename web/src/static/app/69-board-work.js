@@ -93,6 +93,21 @@ async function claimDevice(id) {
   if (r && r.ok) try { localStorage.setItem(CLAIMED_KEY, account); } catch (_) { /* private mode */ }
 }
 
+/// WHAT THIS BROWSER HAS EARNED — `{ points, recent, claimed }`, asked by its
+/// own secret id. A fact is made when another client agrees, which can be
+/// hours later, so it is asked at most every `POINTS_EVERY_MS`.
+let devicePoints = null;
+let devicePointsAt = 0;
+const POINTS_EVERY_MS = 5 * 60_000;
+async function loadDevicePoints() {
+  if (!WASM || !boardVerifyOn() || Date.now() - devicePointsAt < POINTS_EVERY_MS) return;
+  const id = verifierId();
+  if (!id) return;
+  devicePointsAt = Date.now();
+  const r = await postBoardWork("/api/board/points", { verifier: id });
+  if (r && r.ok) { devicePoints = r; renderBoardConsent(); }
+}
+
 const postBoardWork = (path, body) => fetch(path, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
@@ -118,11 +133,13 @@ async function workOnce() {
   if (!sent) return true;
   try { localStorage.setItem(VERIFIED_KEY, String(boardVerifiedCount() + 1)); } catch (_) { /* private mode */ }
   renderBoardConsent();
+  loadDevicePoints();
   return true;
 }
 
 /// ONLY THE DEPLOYED SITE WORKS: the dev server has no orders to hand out.
 if (WASM) {
+  loadDevicePoints();
   (async () => {
     for (;;) {
       let worked = false;
@@ -141,7 +158,18 @@ function boardVerifyHtml() {
     : tr("Your browser does not compute the board's scores.");
   return ` <span class="board-state">${escHtml(text)}</span>` +
     ` <button class="ghost-btn small" id="board-verify-flip">${escHtml(on ? tr("stop computing") : tr("start computing"))}</button>` +
-    (accountState.providers.length ? ` <a href="/contributors">${escHtml(tr("Contributors"))}</a>` : "");
+    (accountState.providers.length ? boardPointsHtml(on) : "");
+}
+/// WHAT IT EARNED, and where it counts: under the account that claimed this
+/// browser, or — signed out — the one line saying signing in puts it there.
+function boardPointsHtml(on) {
+  const d = on && devicePoints;
+  const earned = d ? ` <span class="board-state">${escHtml(tr("This browser: {n} points.")
+    .replace("{n}", d.points.toLocaleString(accountLocale())))}</span>` : "";
+  const join = on && !accountState.account
+    ? ` <a href="/login?return=${encodeURIComponent("/contributors")}">${escHtml(tr("Sign in to count it under your name"))}</a> ·`
+    : "";
+  return `${earned}${join} <a href="/contributors">${escHtml(tr("Contributors"))}</a>`;
 }
 function wireBoardVerify() {
   const b = $("board-verify-flip");
