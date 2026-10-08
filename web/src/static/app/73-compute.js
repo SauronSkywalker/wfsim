@@ -64,7 +64,7 @@ function computeChrome() {
       ask.setAttribute("role", "region");
       // BOTTOM LEFT: Nona's button holds the bottom right.
       ask.style.cssText = "position:fixed;left:16px;bottom:16px;z-index:50;max-width:360px;padding:14px 16px;"
-        + "border:1px solid var(--line);border-radius:10px;background:var(--panel);box-shadow:0 6px 24px rgba(0,0,0,.25);font-size:13px;line-height:1.6";
+        + "border:1px solid var(--line);border-radius:10px;background:var(--surface);box-shadow:0 6px 24px rgba(0,0,0,.25);font-size:13px;line-height:1.6";
       ask.addEventListener("click", (e) => {
         const b = e.target.closest("[data-compute-ask]");
         if (b) setBoardVerify(b.dataset.computeAsk === "yes");
