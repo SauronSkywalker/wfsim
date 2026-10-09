@@ -138,9 +138,10 @@ function utilityClock() {
 
 // ---- REMINDERS --------------------------------------------------------------
 //
-// KEPT IN THIS BROWSER, and fired while the site is open in it, on any page.
-// A reminder is `{id, kind, attributes, names, made_at_ms}` and matches an item
-// of its kind whose attributes hold every one it states (`reminderMatches`).
+// KEPT IN THIS BROWSER, synced to a signed-in account like a saved build
+// (37-sync.js), and fired while the site is open, on any page. A reminder is
+// `{id, kind, attributes, names, made_at_ms}` and matches an item of its kind
+// whose attributes hold every one it states (`reminderMatches`).
 
 const REMINDERS_KEY = "wfsim-reminders";
 /// Items a reminder already fired for (id → its end), so one fires once.
@@ -171,10 +172,12 @@ function reminderAdd(kind, attributes, names) {
   for (const item of (world ? world.items : [])) if (reminderMatches(r, item)) seen[item.id] = item.ends_at_ms;
   storeJson(REMINDERS_SEEN_KEY, seen);
   utilityClock();
+  syncSoon();
   return r;
 }
 function reminderRemove(id) {
   storeJson(REMINDERS_KEY, reminders().filter((r) => r.id !== id));
+  syncSoon();
 }
 
 /// ON EVERY ROUTE: a reader with a reminder has the clock running, and a first
@@ -197,7 +200,9 @@ function reminderCheck() {
   const fresh = [];
   for (const item of world.items) {
     if (item.ends_at_ms <= now || seen[item.id]) continue;
-    const r = rs.find((x) => reminderMatches(x, item));
+    // WHAT WAS OPEN WHEN A REMINDER WAS MADE IS NOT NEWS to it, on whichever
+    // browser it was made: one synced here would otherwise fire at once.
+    const r = rs.find((x) => reminderMatches(x, item) && !(item.started_at_ms < (x.made_at_ms || 0)));
     if (!r) continue;
     seen[item.id] = item.ends_at_ms;
     fresh.push({ id: item.id, reminder: r.id, kind: item.kind, attributes: item.attributes, names: item.names, ends_at_ms: item.ends_at_ms, at_ms: now, read: false });
@@ -359,7 +364,8 @@ function renderReminders() {
       <div class="brow frow">
         <span class="ftier">${escHtml(UTILITY_KINDS[r.kind] ? tr(utilityTitle(UTILITY_KINDS[r.kind].tab)) : r.kind)}</span>
         <span class="bname">${escHtml(reminderLabel(r))}
-          <span class="fnode${st.never ? " warn" : ""}">${escHtml(st.text)}</span></span>
+          <span class="fnode${st.never ? " warn" : ""}">${escHtml(st.text)}${
+            r.cloud_sync === false && accountState.account ? ` · ${escHtml(tr("This browser only"))}` : ""}</span></span>
         <button type="button" class="ghost-btn small" data-rdel="${escHtml(r.id)}">${escHtml(tr("Delete"))}</button>
       </div>`; }).join("")}</div>`
       : `<div class="sim-empty">${escHtml(tr("No reminders yet. Make one above, or with the bell on a row of a list."))}</div>`}

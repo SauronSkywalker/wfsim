@@ -1,6 +1,7 @@
 // ---- BUILD SYNC ------------------------------------------------------------
 //
-// docs/UI.md §"Build sync". What a reader saved — every preset and custom list —
+// docs/UI.md §"Build sync". What a reader saved — every preset and custom list,
+// and the reminders —
 // kept the same on every browser signed in to one account, entry by entry,
 // matched by `id` (`mintPresetIds`). The server keeps the newest write of each
 // entry and hands back everything taken since this browser last asked; this
@@ -16,7 +17,9 @@ const SYNC_DELAY_MS = 2000;
 const SYNC_IDLE_MS = 30000;
 /// The server's `PUSH_MAX`.
 const SYNC_CHUNK = 200;
-const isSyncList = (k) => /^wfsim-(presets|customs)-/.test(k);
+const isSyncList = (k) => /^wfsim-(presets|customs)-/.test(k) || k === REMINDERS_KEY;
+/// WHAT AN ITEM IS, by its list: a collection's domain, or `reminders`.
+const syncDomain = (list) => (list === REMINDERS_KEY ? "reminders" : list.replace(/^wfsim-(presets|customs)-/, ""));
 
 /// AN ENTRY STAYS ON THIS BROWSER when its `cloud_sync` is false: the reader's
 /// choice (the cloud on its chip), or a new entry's default while "upload new
@@ -27,15 +30,15 @@ const SYNC_AUTO_KEY = "wfsim-sync-auto";
 const syncAuto = () => { try { return localStorage.getItem(SYNC_AUTO_KEY) !== "0"; } catch (_) { return true; } };
 const setSyncAuto = (on) => { try { localStorage.setItem(SYNC_AUTO_KEY, on ? "1" : "0"); } catch (_) { /* this page only */ } };
 /// WHAT THE ACCOUNT MAY HOLD, per pool, as the server last said: `{ presets,
-/// customs }`, a missing pool unlimited. The server decides it; the page shows
+/// customs, reminders }`, a missing pool unlimited. The server decides it; the page shows
 /// it and stops asking past it.
 let syncAllowance = null;
-const syncPool = (list) => (list.startsWith("wfsim-customs-") ? "customs" : "presets");
+const syncPool = (list) => (list === REMINDERS_KEY ? "reminders" : list.startsWith("wfsim-customs-") ? "customs" : "presets");
 /// How many of this browser's entries each pool syncs. None while they are
 /// another account's (`other`): this account holds none of them until asked,
 /// and a count of them read as this account's allowance taken.
 function syncedCounts() {
-  const out = { presets: 0, customs: 0 };
+  const out = { presets: 0, customs: 0, reminders: 0 };
   if (syncStatus.state === "other") return out;
   for (const { list, p } of syncLocal().values()) if (isCloudSynced(p)) out[syncPool(list)]++;
   return out;
@@ -212,7 +215,7 @@ async function syncRound() {
   const now = Date.now();
   // WHAT THE ACCOUNT ALREADY HOLDS, per pool; each new entry is counted in as
   // it is taken, so the one that fills the allowance is still taken.
-  const counts = { presets: 0, customs: 0 };
+  const counts = { presets: 0, customs: 0, reminders: 0 };
   for (const [id, { list, p }] of local) {
     if (st.known[id] && !st.known[id].off && isCloudSynced(p)) counts[syncPool(list)]++;
   }
@@ -355,7 +358,7 @@ function syncShapes(unsynced, here) {
       if (v && typeof v === "object" && !Array.isArray(v)) for (const [k2, v2] of Object.entries(v)) fields[`${k}.${k2}`] = size(v2);
     }
     const top = Object.fromEntries(Object.entries(fields).sort((a, b) => b[1] - a[1]).slice(0, 8));
-    return { kind: u.list.replace(/^wfsim-(presets|customs)-/, ""), reason: u.reason, size: size(body), fields: top };
+    return { kind: syncDomain(u.list), reason: u.reason, size: size(body), fields: top };
   });
 }
 
@@ -385,8 +388,13 @@ function syncConflict(st, c, cf, settled) {
   if (!Array.isArray(ps)) ps = [];
   const at = ps.findIndex((p) => p && p.id === c.id);
   const mine = at >= 0 ? ps[at] : null;
-  const domain = c.list.replace(/^wfsim-(presets|customs)-/, "");
-  if (cf.body === null) {
+  const domain = syncDomain(c.list);
+  if (domain === "reminders") {
+    // A REMINDER IS NEVER EDITED, only made and deleted: the account's state is it.
+    if (cf.body === null) { delete st.known[c.id]; if (at >= 0) ps.splice(at, 1); }
+    else { st.known[c.id] = { list: cf.list, sig: syncSig(cf.body), at: Date.now(), v: cf.version }; if (at >= 0) ps[at] = cf.body; else ps.push(cf.body); }
+    settled.ids.add(c.id);
+  } else if (cf.body === null) {
     delete st.known[c.id];
     if (mine && !c.deleted) {
       const old = mine.id;
@@ -509,6 +517,8 @@ function syncShow({ lists, ids, removed }) {
     });
     doc.rerender();
   }
+  // REMINDERS MADE OR DELETED ELSEWHERE are drawn, and watched for, here.
+  if (lists.has(REMINDERS_KEY)) reminderWatch();
   // A CUSTOM THAT ARRIVED is seated where the entry on screen held it.
   if ([...lists].some((k) => k.startsWith("wfsim-customs-"))) {
     for (const [d, h] of [...absentHolds]) {

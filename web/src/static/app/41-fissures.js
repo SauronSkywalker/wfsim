@@ -4,7 +4,7 @@
 // a row makes a reminder for fissures like it (`reminderDraft`, 27-utility.js).
 
 /// THE THREE LISTS THE GAME KEEPS APART: the star chart, its Steel Path, and
-/// Railjack's Void Storms. One is shown at a time, as the game shows them.
+/// Railjack's Void Storms — each a chip after All, in this order everywhere.
 const FISSURE_LISTS = [["normal", "Normal"], ["steel_path", "Steel Path"], ["railjack", "Railjack"]];
 /// The world state's own order, Lith first (`scripts/world_names.py`).
 const FISSURE_TIERS = ["VoidT1", "VoidT2", "VoidT3", "VoidT4", "VoidT5", "VoidT6"];
@@ -12,7 +12,7 @@ const FISSURE_TIERS = ["VoidT1", "VoidT2", "VoidT3", "VoidT4", "VoidT5", "VoidT6
 /// node or drops any of them before saving.
 const FISSURE_REMINDER_DEFAULT = ["list", "tier", "mission"];
 
-let fissureList = "normal";
+let fissureList = "all";
 let fissureTier = "all";
 
 const fissureListName = (v) => tr((FISSURE_LISTS.find(([k]) => k === v) || [v, v])[1]);
@@ -36,11 +36,11 @@ function renderFissures() {
   if (wait) { filters.innerHTML = ""; list.innerHTML = wait; return; }
   const now = Date.now();
   const open = worldOf("fissure");
-  const ofList = open.filter((f) => f.attributes.list === fissureList);
+  const ofList = open.filter((f) => fissureList === "all" || f.attributes.list === fissureList);
   const tiers = FISSURE_TIERS.filter((t) => ofList.some((f) => f.attributes.tier === t));
   if (fissureTier !== "all" && !tiers.includes(fissureTier)) fissureTier = "all";
   const tierName = (t) => worldName((ofList.find((f) => f.attributes.tier === t) || { names: {} }).names.tier, t);
-  filters.innerHTML = `<div class="slotf-row">${FISSURE_LISTS.map(([k, label]) =>
+  filters.innerHTML = `<div class="slotf-row">${filterChip(tr("All"), fissureList === "all", `data-flist="all"`, open.length)}${FISSURE_LISTS.map(([k, label]) =>
       filterChip(tr(label), fissureList === k, `data-flist="${k}"`, open.filter((f) => f.attributes.list === k).length)).join("")}</div>
     <div class="slotf-row">${filterChip(tr("All"), fissureTier === "all", `data-ftier="all"`)}${
       tiers.map((t) => filterChip(tierName(t), fissureTier === t, `data-ftier="${t}"`,
@@ -52,13 +52,15 @@ function renderFissures() {
     el.onclick = () => { fissureTier = el.dataset.ftier; renderFissures(); };
   });
   const order = (t) => { const i = FISSURE_TIERS.indexOf(t); return i < 0 ? FISSURE_TIERS.length : i; };
+  const listAt = (l) => FISSURE_LISTS.findIndex(([k]) => k === l);
   const rows = ofList.filter((f) => fissureTier === "all" || f.attributes.tier === fissureTier)
-    .sort((a, b) => order(a.attributes.tier) - order(b.attributes.tier) || a.ends_at_ms - b.ends_at_ms);
+    .sort((a, b) => order(a.attributes.tier) - order(b.attributes.tier)
+      || listAt(a.attributes.list) - listAt(b.attributes.list) || a.ends_at_ms - b.ends_at_ms);
   list.innerHTML = rows.length ? `<div class="bench-rows">${rows.map((f) => `
       <div class="brow frow">
         <span class="ftier">${escHtml(worldName(f.names.tier, f.attributes.tier))}</span>
         <span class="bname">${escHtml(worldName(f.names.mission, f.attributes.mission))}
-          <span class="fnode">${escHtml(worldName(f.names.node, f.attributes.node))}${
+          <span class="fnode">${fissureList === "all" ? `${escHtml(fissureListName(f.attributes.list))} · ` : ""}${escHtml(worldName(f.names.node, f.attributes.node))}${
             f.names.system ? ` · ${escHtml(worldName(f.names.system))}` : ""}</span></span>
         <span class="bscore" data-ends="${f.ends_at_ms}">${utilityLeft(f.ends_at_ms - now)}</span>
         ${reminderBellHtml(f)}

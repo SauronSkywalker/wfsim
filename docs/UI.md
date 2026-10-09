@@ -275,7 +275,8 @@ build" is not something the builder can show.
 
 **A SIGNED-IN READER'S SAVED ENTRIES ARE THE SAME ON EVERY BROWSER SIGNED IN
 TO THE ACCOUNT**, free to every account — every entry under `wfsim-presets-*`
-and `wfsim-customs-*` the reader leaves synced, entry by entry, matched by `id`.
+and `wfsim-customs-*`, and every reminder (`wfsim-reminders`), the reader leaves
+synced, entry by entry, matched by `id`.
 Saving on a browser is never limited; what an account holds may be, and the
 server states it. `web/src/static/app/37-sync.js` is the page's half;
 the server's half is the private worker's `/api/cloud/sync` (docs/ACCOUNTS.md
@@ -945,7 +946,7 @@ none of it feeds the builder, the simulator or the optimizer (`docs/CORE.md`
 | --- | --- |
 | everything listed is an item `{kind, id, attributes, names, started_at_ms, ends_at_ms}`; a new kind is a parser in the worker and a tab registered in `UTILITY_KINDS` | `worker/world.js` `KINDS`, `27-utility.js` |
 | DE's file is relayed by the bot server each minute (DE refuses the worker) and served from R2; the feed is the live site's, from every origin, asked each minute while a Utility page shows and every two minutes elsewhere while a reminder waits | `worldLoad`, `utilityClock` |
-| Void Fissures shows one of the game's three lists at a time — star chart, Steel Path, Void Storms — by relic era, then by time left | `41-fissures.js` |
+| Void Fissures shows all of the game's three lists, or one — star chart, Steel Path, Void Storms, in that order on every chip row — by relic era, then list, then time left | `41-fissures.js` |
 | Arbitrations are in no DE file: the worker reads a schedule computed ahead, puts the hour open now in the feed, and serves the next fourteen days apart (`/api/world/arbitrations`), which the page lists by day, filtered by mission type and faction | `arbitrationsOf`, `47-arbitrations.js` |
 | a reminder is a kind and some attributes; it matches an item of that kind holding every one | `reminderMatches` |
 | the bell on a row makes one, holding the attributes the kind names (a fissure's list, era and mission; an arbitration's mission type and faction) until the reader changes the chips | `reminderDraft`, `*_REMINDER_DEFAULT` |
@@ -953,7 +954,7 @@ none of it feeds the builder, the simulator or the optimizer (`docs/CORE.md`
 | a reminder for a kind known ahead says when it fires next instead of how many are open | `reminderStatus`, `arbitrationNext` |
 | a saved reminder nothing can ever match says so in red — no fissure the game has opened holds its picks, or no node of the arbitration schedule does | `possible`, `fissurePossible`, `arbitrationPossible` |
 | what a new reminder already matches is seen, so it fires for what opens later | `reminderAdd` |
-| reminders live in this browser and fire while the site is open there, on any page: once per item, said on the page, counted on the Utility link until Reminders is opened | `reminderCheck`, `reminderRead` |
+| reminders sync with a signed-in account as a pool of their own; they fire on each browser while the site is open there, on any page: once per item, never for one open when the reminder was made, said on the page, counted on the Utility link until Reminders is opened | `reminderCheck`, `reminderRead`, `syncPool` |
 | a system notification as well only when the reader turns it on, which is when the browser asks, and only for a tab in the background | `reminderSystemOn` |
 
 Where the names come from: `docs/DATA_SOURCES.md` §"The world state".

@@ -69,7 +69,8 @@ function cloudLink(domain, p) {
 const CLOUD_STATE = { error: "Could not sync just now.", other: "This browser holds items synced with another account.",
   not_included: "Not available for this account" };
 const CLOUD_KIND = { "builder-builds": "Builds", "simulator-scenarios": "Scenarios", optimizer: "Searches",
-  warframes: "Warframe builds", companions: "Companions", operators: "Operator builds", rivens: "Rivens", enemies: "Custom enemies" };
+  warframes: "Warframe builds", companions: "Companions", operators: "Operator builds", rivens: "Rivens", enemies: "Custom enemies",
+  reminders: "Reminders" };
 
 /// Every item this browser holds, as the page lists it.
 function cloudItems() {
@@ -78,9 +79,12 @@ function cloudItems() {
   const mine = syncStatus.state !== "other";
   const out = [];
   for (const [id, { list, p }] of syncLocal()) {
-    const domain = list.replace(/^wfsim-(presets|customs)-/, "");
+    const domain = syncDomain(list);
     const reason = rejected.get(id);
-    out.push({ id, list, domain, p, owner: cloudOwner(domain, p.scope), link: cloudLink(domain, p),
+    // A REMINDER IS NAMED BY WHAT IT HOLDS, and opens on its tab.
+    const reminder = domain === "reminders";
+    out.push({ id, list, domain, p, name: reminder ? reminderLabel(p) : p.name || "", saved: p.savedAt || p.made_at_ms || 0,
+      owner: reminder ? "" : cloudOwner(domain, p.scope), link: reminder ? "/utility/reminders" : cloudLink(domain, p),
       state: reason ? "rejected" : mine && isCloudSynced(p) ? "synced" : "local", reason });
   }
   return out;
@@ -100,7 +104,7 @@ function cloudPage(a) {
   const when = s.at ? new Date(s.at).toLocaleTimeString(accountLocale(), { hour: "2-digit", minute: "2-digit" }) : "";
   const usage = `<div class="block"><div class="bh"><h2>${aT("Usage")}</h2><span class="sub">${aT("Saving on this browser is never limited.")}</span></div>
     <div class="bb"><div class="meters">${meter("presets", "Presets", "builds, fights, searches, Warframe, companion and Operator builds")}${
-      meter("customs", "Customs", "rivens, custom enemies")}</div>
+      meter("customs", "Customs", "rivens, custom enemies")}${meter("reminders", "Reminders", "Void Fissures, Arbitrations")}</div>
       <div class="sync-acts"><span>${s.state === "on"
         ? `<span class="tag ok">${aT("On")}</span> ${escHtml(tr("last synced {time}").replace("{time}", when))}`
         : aT(CLOUD_STATE[s.state] || "Checking…")}</span>
@@ -130,7 +134,7 @@ function cloudTrashHtml() {
   if (cloudTrash === null) { loadCloudTrash(); return ""; }
   const day = (t) => new Date(t).toLocaleString(accountLocale(), { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
   const rows = cloudTrash.map((x) => {
-    const domain = x.list.replace(/^wfsim-(presets|customs)-/, "");
+    const domain = syncDomain(x.list);
     const owner = META ? cloudOwner(domain, x.scope) : "";
     const left = Math.max(1, Math.ceil((x.ends_at - Date.now()) / 86400000));
     return `<tr><td class="nm">${escHtml(x.name || "")}</td><td class="muted">${aT(CLOUD_KIND[domain] || domain)}</td>
@@ -169,8 +173,8 @@ function cloudListHtml() {
   const count = (st) => all.filter((x) => st === "all" || x.state === st).length;
   const q = v.q.trim().toLowerCase();
   let rows = all.filter((x) => (v.status === "all" || x.state === v.status) && (v.kind === "all" || x.domain === v.kind)
-    && (!q || `${x.p.name} ${x.owner}`.toLowerCase().includes(q)));
-  rows.sort((x, y) => (y.p.savedAt || 0) - (x.p.savedAt || 0));
+    && (!q || `${x.name} ${x.owner}`.toLowerCase().includes(q)));
+  rows.sort((x, y) => y.saved - x.saved);
   const seg = (st, label) => `<button type="button" data-cstatus="${st}" class="${v.status === st ? "on" : ""}">${aT(label)}<em>${count(st)}</em></button>`;
   const kinds = [...new Set(all.map((x) => x.domain))];
   const day = (t) => (t ? new Date(t).toLocaleString(accountLocale(), { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "—");
@@ -179,8 +183,8 @@ function cloudListHtml() {
     const [cls, label] = STATE[x.state];
     const text = x.state === "rejected" ? tr(SYNC_REJECTED[x.reason] || x.reason) : tr(label);
     return `<tr><td><input type="checkbox" data-cpick="${escHtml(x.id)}" ${cloudPicked.has(x.id) ? "checked" : ""} aria-label="${aT("Select")}"></td>
-      <td class="nm">${escHtml(x.p.name || "")}</td><td class="muted">${aT(CLOUD_KIND[x.domain] || x.domain)}</td>
-      <td>${x.owner ? escHtml(x.owner) : `<span class="muted">—</span>`}</td><td class="muted">${escHtml(day(x.p.savedAt))}</td>
+      <td class="nm">${escHtml(x.name)}</td><td class="muted">${aT(CLOUD_KIND[x.domain] || x.domain)}</td>
+      <td>${x.owner ? escHtml(x.owner) : `<span class="muted">—</span>`}</td><td class="muted">${escHtml(day(x.saved))}</td>
       <td><button type="button" class="cloud ${cls}" data-ctoggle="${escHtml(x.id)}" ${x.state === "rejected" ? "disabled" : ""}>${CLOUD_SVG}${escHtml(text)}</button></td>
       <td>${x.link ? `<a class="open" href="${escHtml(x.link)}">${aT("Open")} ↗</a>` : ""}</td></tr>`;
   };

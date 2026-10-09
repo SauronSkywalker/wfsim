@@ -7,6 +7,7 @@
 /// first sync is a union, two entries sharing a name both survive under it, an
 /// edit and a deletion reach the other browser, the measured result never travels, another account's entries are
 /// not merged without a word, an account without the feature pushes nothing,
+/// reminders travel as a pool of their own and fire only for what opened since,
 /// a remote edit to the build on screen reaches the screen, and signed out the
 /// cloud is a link to sign in.
 import { openApp } from "./cdp.mjs";
@@ -241,6 +242,38 @@ const r = await evaluate(`(async () => {
   await syncNow();
   out.copySynced = !!copy && srv.acc1.has(copy.id);
 
+  // REMINDERS SYNC AS A POOL OF THEIR OWN: made on one browser, they reach the
+  // other, past the pool's allowance they stay here, and a deletion travels.
+  await quiet();
+  const R1 = await keep();
+  const made = reminderAdd('fissure', { tier: 'VoidT5' }, {});
+  await quiet(); await syncNow();
+  out.remPushed = ((srv.acc1.get(made.id) || {}).list) || null;
+  allowance = { reminders: syncedCounts().reminders };
+  await syncNow();
+  const kept = reminderAdd('fissure', { tier: 'VoidT6' }, {});
+  await quiet(); await syncNow();
+  out.remPast = [(reminders().find((x) => x.id === kept.id) || {}).cloud_sync === false, srv.acc1.has(kept.id)];
+  allowance = null;
+  const R2 = await keep();
+  await become(R1);
+  await syncNow();
+  out.remArrived = reminders().map((x) => x.id).includes(made.id);
+  // WHAT WAS OPEN BEFORE IT WAS MADE does not fire it here; what opened since does.
+  localStorage.removeItem(REMINDERS_SEEN_KEY); localStorage.removeItem(REMINDERS_HITS_KEY);
+  const fis = (id, start) => ({ kind: 'fissure', id, attributes: { list: 'normal', tier: 'VoidT5', mission: 'MT_DEFENSE', node: 'N' },
+    names: {}, started_at_ms: start, ends_at_ms: Date.now() + 3600000 });
+  world = { read_at_ms: Date.now(), items: [fis('before', made.made_at_ms - 60000), fis('after', made.made_at_ms + 1)] };
+  reminderCheck();
+  out.remFired = reminderHits().map((h) => h.id).sort();
+  world = null;
+  reminderRemove(made.id);
+  await quiet(); await syncNow();
+  await become(R2);
+  await syncNow();
+  out.remDeleted = !reminders().some((x) => x.id === made.id);
+  out.remListed = cloudItems().some((x) => x.domain === 'reminders' && x.name);
+
   // ANOTHER ACCOUNT: nothing merged until asked.
   await signIn('acc2');
   out.otherStatus = syncStatus.state;
@@ -308,6 +341,13 @@ check("an item the server rejects does not hold back the one beside it, and is n
 check("two browsers that change one entry keep both: the account's version as the entry, the second one's as a copy beside it",
   ok(r.conflict) === ok(["shred", "shred", true, true]), ok(r.conflict));
 check("...and the copy syncs as an entry of its own", r.copySynced === true);
+check("a reminder made on one browser is pushed to its own list", r.remPushed === "wfsim-reminders", ok(r.remPushed));
+check("...past its pool's allowance a new one stays on this browser", ok(r.remPast) === ok([true, false]), ok(r.remPast));
+check("...it reaches the other browser", r.remArrived === true);
+check("...where it fires for what opened after it was made, not for what was already open",
+  ok(r.remFired) === ok(["after"]), ok(r.remFired));
+check("...a deletion there reaches the first browser", r.remDeleted === true);
+check("...and Cloud sync lists it, named by what it holds", r.remListed === true);
 check("another account's entries are not merged without a word",
   r.otherStatus === "other" && r.acc2Before === 0, ok([r.otherStatus, r.acc2Before]));
 check("...nor counted as that account's: it holds none of them yet",
