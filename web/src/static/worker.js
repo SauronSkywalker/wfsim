@@ -16,7 +16,29 @@ importScripts("pkg/wfsim_wasm.js");
 // `ready` only rejects each message's await, which the page never sees, so the
 // lane sat silent until `LANE_WATCHDOG.loading` ran out; a throw from a task
 // reaches the page's `onerror` now, which settles the lane as dead.
-const load = () => wasm_bindgen({ module_or_path: "pkg/wfsim_wasm_bg.wasm" });
+// THE DOWNLOAD IS COUNTED, so a slow line shows the reader how far it has got
+// rather than a blank page and then a banner (index.html's boot guard).
+// `WASM_BYTES` is the module's size, written in by build_site_app.py; 0 on the
+// dev server, where the page shows the bytes alone.
+const WASM_BYTES = 0;
+const counted = async () => {
+  const r = await fetch("pkg/wfsim_wasm_bg.wasm");
+  if (!r.ok || !r.body) return r;
+  const reader = r.body.getReader();
+  let got = 0, said = 0;
+  const say = () => { said = Date.now(); postMessage({ kind: "loading", got, total: WASM_BYTES }); };
+  return new Response(new ReadableStream({
+    async pull(c) {
+      const { done, value } = await reader.read();
+      if (done) { say(); c.close(); return; }
+      got += value.byteLength;
+      if (Date.now() - said > 250) say();
+      c.enqueue(value);
+    },
+    cancel: (why) => reader.cancel(why),
+  }), { headers: { "content-type": "application/wasm" } });
+};
+const load = () => wasm_bindgen({ module_or_path: counted() });
 const ready = load().catch(load);
 ready.catch((err) => setTimeout(() => { throw err; }));
 // …AND ONE THAT IS STILL DOWNLOADING SAYS SO, so a slow line is not taken for a

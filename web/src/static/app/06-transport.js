@@ -263,6 +263,11 @@ function makeLane() {
     // ANY word from the worker is proof of life, including one about a request
     // whose progress nobody asked to see.
     wd.heard();
+    // THE ENGINE'S DOWNLOAD, for the boot screen (index.html).
+    if (e.data.kind === "loading") {
+      if (window.__wfsimBootProgress) window.__wfsimBootProgress(e.data.got, e.data.total);
+      return;
+    }
     if (e.data.kind === "progress") {
       const f = progress.get(e.data.id);
       if (f) f(e.data.done, e.data.total);

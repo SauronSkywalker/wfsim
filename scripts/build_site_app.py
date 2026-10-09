@@ -2265,6 +2265,12 @@ def main() -> None:
                    .replace("pkg/wfsim_wasm_bg.wasm", f"/pkg/{pkg['wasm']}"))
     if named == worker:
         sys.exit("worker.js: neither pkg/ path found — the module would 404")
+    # …AND THE MODULE'S SIZE, so the boot screen can say how far its download is.
+    size = (APP / "pkg" / pkg["wasm"]).stat().st_size
+    sized = named.replace("const WASM_BYTES = 0;", f"const WASM_BYTES = {size};")
+    if sized == named:
+        sys.exit("worker.js: `const WASM_BYTES = 0;` not found — the boot screen would show no total")
+    named = sized
     (APP / "worker.js").write_text(named, encoding="utf-8", newline=chr(10))
 
     html = (STATIC / "index.html").read_text(encoding="utf-8")
