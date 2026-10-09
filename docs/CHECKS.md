@@ -205,7 +205,10 @@ that does not name its work is refused; a further result never goes to another
 device of the same owner, and does go to another owner's or an unclaimed one;
 a row nobody owes, a server's order, a live lease and a banned client get
 nothing; a page of an engine the site no longer serves, or of an older
-protocol, is told it is stale; a computer that never said yes is handed
+protocol, is told it is stale; a release carries an open result to the new
+engine with its clients, whose reproduction makes the fact and whose
+difference replaces it unrefused; a new build's row is leased before a
+rescore's; a computer that never said yes is handed
 nothing, and the yes it sent is kept on its row; a client is written once a
 day. A scorer run's claim (`fetch_queue.sh`, run as the statements it sends)
 takes every old order, open or not, that no client holds, leaves a held one and

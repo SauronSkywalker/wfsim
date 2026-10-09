@@ -196,9 +196,44 @@ check("what the fight cost is kept beside the client that fought it",
 check("...and both agreeing clients' costs are kept on a fact, in order", row("one").clients_compute_ms === "1000,1000",
   row("one").clients_compute_ms);
 db.prepare("UPDATE orders SET state = 'open' WHERE identity = 'lock'").run();
-await callIn({ ...env, ASSETS: site("e9") }, "/api/board/work", { verifier: Q, engine: "e9", protocol: PROTOCOL, consent: YES });
-check("once the site serves a new engine, an open result of the old one is opened again from nothing",
-  row("lock").state === "todo" && row("lock").clients === "" && row("lock").score === null && row("lock").engine === "");
+// A RELEASE CARRIES A RESULT: the new engine's client confirms it or replaces it.
+const released = (e) => {
+  const at = { ...env, ASSETS: site(e) };
+  return {
+    work: (v) => callIn(at, "/api/board/work", { verifier: v, engine: e, protocol: PROTOCOL, consent: YES }),
+    answer: (w, v, score, w2 = WORK) => callIn(at, "/api/board/verify", { lease: w.lease, verifier: v, engine: e, score, metric: "kpm", work: w2, compute_ms: 1000 }),
+  };
+};
+const e9 = released("e9");
+const carried = await e9.work(Q);
+check("once the site serves a new engine, an open result of the old one is carried to it, clients and all",
+  row("lock").state === "open" && row("lock").engine === "e9" && row("lock").carried_from === "e1" && row("lock").clients === P
+  && row("lock").score === SCORE && carried.work && row("lock").leased_to === Q, JSON.stringify(row("lock")));
+await e9.answer(carried.work, Q, SCORE);
+check("...and the new engine reproducing its bits makes the fact, both clients on it",
+  row("lock").state === "verified" && row("lock").clients === `${P},${Q}` && fact("lock") && fact("lock").measured_by === "verified:e9");
+const REPLACER = "1".repeat(24);
+db.prepare("UPDATE orders SET state = 'settled'").run();
+order("moved", "open", { score: SCORE, metric: "kpm", engine: "e9", produced_by: P, clients: P });
+const e8 = released("e8");
+const moved = await e8.work(REPLACER);
+await e8.answer(moved.work, REPLACER, SCORE * 3);
+check("...one it does not reproduce is replaced by the new result as the first, and nobody is refused",
+  row("moved").state === "fresh" && row("moved").score === SCORE * 3 && row("moved").clients === REPLACER && row("moved").produced_by === REPLACER
+  && row("moved").carried_from === null && !fact("moved")
+  && !db.prepare("SELECT banned FROM verifiers WHERE id = ?").get(P).banned, JSON.stringify(row("moved")));
+
+// A NEW BUILD'S ROWS ARE LEASED BEFORE A RESCORE'S.
+db.prepare("UPDATE orders SET state = 'settled'").run();
+order("rescore");
+order("arrival", "todo", { priority: 0 });
+db.prepare("UPDATE orders SET slot = CASE identity WHEN 'rescore' THEN 1 ELSE 2000000000 END").run();
+const EARLY = "2".repeat(24);
+check("a new build's row is leased before a rescore's, wherever their slots fall",
+  (await e8.work(EARLY)).work && row("arrival").leased_to === EARLY && row("rescore").leased_to === null);
+db.prepare("UPDATE orders SET state = 'settled' WHERE identity = 'arrival'").run();
+const LATER = "3".repeat(24);
+check("...and a rescore's when no new build's is left", (await e8.work(LATER)).work && row("rescore").leased_to === LATER);
 
 // THE WORK, and the owners.
 const credited = (v) => db.prepare("SELECT work FROM verifiers WHERE id = ?").get(v).work;

@@ -209,6 +209,13 @@ CREATE INDEX IF NOT EXISTS queue_row ON queue (build_id, ruler, mode);
 -- `work` is the first result's `Shard::work`, which every later one must equal
 -- (docs/BOARD.md §"Contribution"):
 --   ALTER TABLE orders ADD COLUMN work INTEGER;
+-- `priority` is 0 for the rows a new build owes and 1 for a rescore or a sweep;
+-- a lease takes 0 first (`ship_queue.sh` sets it from the batch). `carried_from`
+-- is the engine a result was measured by when a release carried it to the next
+-- engine, which a further result then confirms or replaces:
+--   ALTER TABLE orders ADD COLUMN priority INTEGER NOT NULL DEFAULT 1;
+--   ALTER TABLE orders ADD COLUMN carried_from TEXT;
+--   DROP INDEX orders_pick;
 CREATE TABLE IF NOT EXISTS orders (
   identity    TEXT NOT NULL,
   ruler       TEXT NOT NULL,
@@ -229,10 +236,12 @@ CREATE TABLE IF NOT EXISTS orders (
   clients     TEXT NOT NULL DEFAULT '',
   clients_compute_ms TEXT NOT NULL DEFAULT '',
   work        INTEGER,
+  priority    INTEGER NOT NULL DEFAULT 1,
+  carried_from TEXT,
   PRIMARY KEY (identity, ruler, mode)
 );
 
-CREATE INDEX IF NOT EXISTS orders_pick ON orders (state, engine, slot);
+CREATE INDEX IF NOT EXISTS orders_pick ON orders (state, engine, priority, slot);
 CREATE INDEX IF NOT EXISTS orders_lease ON orders (lease);
 CREATE INDEX IF NOT EXISTS orders_holder ON orders (leased_to);
 CREATE INDEX IF NOT EXISTS orders_verifier ON orders (verifier);

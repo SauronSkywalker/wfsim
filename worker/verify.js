@@ -85,15 +85,19 @@ async function servedEngine(env) {
   return engine;
 }
 
-/// A RESULT OF AN OLDER ENGINE IS NO RESULT, so an order holding one is opened
-/// again from nothing — once per engine an isolate sees, since no older engine
-/// can answer after that.
+/// A RELEASE CARRIES A RESULT, IT DOES NOT ERASE IT: an order an older engine
+/// measured is opened for the served one, keeping its clients and noting the
+/// engine they used (`carried_from`). Most releases leave most numbers where
+/// they were, and wiping them threw a third of the volunteers' work away; a
+/// client of the new engine either reproduces the bits — a fact, every client
+/// credited — or replaces them (`verify`). A claimed order keeps its claim.
+/// Once per engine an isolate sees, since no older engine can answer after that.
 const retired = new Set();
 async function retire(db, engine) {
   if (retired.has(engine)) return;
-  await db.prepare(`UPDATE orders SET state = 'todo', engine = '', score = NULL, metric = NULL, work = NULL, produced_by = NULL,
-                    verifier = NULL, clients = '', clients_compute_ms = '', ${done}
-                    WHERE state IN ('fresh', 'open') AND engine != ?`).bind(engine).run();
+  await db.prepare(`UPDATE orders SET carried_from = COALESCE(carried_from, engine), engine = ?,
+                    state = CASE WHEN state = 'scoring:open' THEN state ELSE 'open' END, ${done}
+                    WHERE state IN ('fresh', 'open', 'scoring:open') AND engine != ? AND engine != ''`).bind(engine, engine).run();
   retired.add(engine);
 }
 
@@ -110,21 +114,22 @@ async function admit(db, id) {
   return id;
 }
 
-/// UP TO `n` LEASABLE ORDERS IN ONE STATE, from a random slot onwards and then
-/// from the start: a seek on `orders_pick`, so a lease reads a few rows however
-/// long the book is.
+/// UP TO `n` LEASABLE ORDERS IN ONE STATE, the rows a new build owes before a
+/// rescore's (`priority`), each from a random slot onwards and then from the
+/// start: a seek on `orders_pick`, so a lease reads a few rows however long the
+/// book is.
 async function candidates(db, state, engine, now, n) {
-  const start = Math.floor(Math.random() * SLOT_SPAN);
-  const out = [];
-  for (const from of [start, 0]) {
-    const { results } = await db.prepare(
-      `SELECT identity, ruler, mode, record, produced_by, clients FROM orders
-        WHERE state = ? AND engine = ? AND slot >= ? AND (lease_until IS NULL OR lease_until < ?)
-        ORDER BY slot LIMIT ?`).bind(state, engine, from, now, n).all();
-    out.push(...results);
-    if (out.length) break;
+  for (const priority of [0, 1]) {
+    const start = Math.floor(Math.random() * SLOT_SPAN);
+    for (const from of [start, 0]) {
+      const { results } = await db.prepare(
+        `SELECT identity, ruler, mode, record, produced_by, clients FROM orders
+          WHERE state = ? AND engine = ? AND priority = ? AND slot >= ? AND (lease_until IS NULL OR lease_until < ?)
+          ORDER BY slot LIMIT ?`).bind(state, engine, priority, from, now, n).all();
+      if (results.length) return results;
+    }
   }
-  return out;
+  return [];
 }
 
 const owed = async (db, o) => !!(await db.prepare(
@@ -219,7 +224,7 @@ async function verify(request, env) {
     return json({ ok: true });
   }
   const o = await db.prepare(
-    `SELECT identity, ruler, mode, state, engine, score, metric, work, produced_by, clients, clients_compute_ms FROM orders
+    `SELECT identity, ruler, mode, state, engine, score, metric, work, produced_by, clients, clients_compute_ms, carried_from FROM orders
       WHERE lease = ? AND leased_to = ? AND lease_until >= ?`).bind(b.lease, b.verifier, now).first();
   if (!o) return json({ ok: true });
   const key = [o.identity, o.ruler, o.mode];
@@ -235,7 +240,7 @@ async function verify(request, env) {
     // THE FIRST RESULT, which the server ranks before anyone may agree with it.
     await db.batch([
       db.prepare(`UPDATE orders SET state = 'fresh', score = ?, metric = ?, work = ?, engine = ?, produced_by = ?, clients = ?,
-                  clients_compute_ms = ?, ${done} WHERE identity = ? AND ruler = ? AND mode = ? AND state = 'todo'`)
+                  clients_compute_ms = ?, carried_from = NULL, ${done} WHERE identity = ? AND ruler = ? AND mode = ? AND state = 'todo'`)
         .bind(b.score, b.metric, b.work, b.engine, b.verifier, b.verifier, String(ms ?? ""), ...key),
       spent,
     ]);
@@ -244,7 +249,19 @@ async function verify(request, env) {
   if (o.state !== "open") return json({ ok: true });
   const clients = [...clientsOf(o), b.verifier];
   const compute = [...computeOf(o), String(ms ?? "")];
-  if (b.engine !== o.engine || b.score !== o.score || b.metric !== o.metric || b.work !== o.work) {
+  const differs = b.engine !== o.engine || b.score !== o.score || b.metric !== o.metric || b.work !== o.work;
+  // A CARRIED RESULT THE NEW ENGINE DOES NOT REPRODUCE WAS MOVED BY THE RELEASE,
+  // not by a lie: the new result replaces it as the first, and nobody is refused.
+  if (differs && o.carried_from) {
+    await db.batch([
+      db.prepare(`UPDATE orders SET state = 'fresh', score = ?, metric = ?, work = ?, engine = ?, produced_by = ?, verifier = NULL,
+                  clients = ?, clients_compute_ms = ?, carried_from = NULL, ${done} WHERE identity = ? AND ruler = ? AND mode = ? AND state = 'open'`)
+        .bind(b.score, b.metric, b.work, b.engine, b.verifier, b.verifier, String(ms ?? ""), ...key),
+      spent,
+    ]);
+    return json({ ok: true });
+  }
+  if (differs) {
     await db.batch([
       db.prepare(`UPDATE orders SET state = 'dispute', verifier = ?, disputed = ?, clients = ?, clients_compute_ms = ?, ${done}
                   WHERE identity = ? AND ruler = ? AND mode = ?`)

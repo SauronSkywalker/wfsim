@@ -71,7 +71,9 @@ is how they are kept:
    before the fallback may take it). Changing how the board runs is turning one
    of them.
 5. **ONE ENGINE.** A client works only while its page runs the engine the site
-   serves (`release.json`'s `engine`); a result of any other is no result.
+   serves (`release.json`'s `engine`), and a fact is made by that engine's
+   bits; an older engine's result is carried to be confirmed, never taken as
+   one.
 
 So the compute grows with the time people keep the site open, and the official
 compute is what the clients leave over.
@@ -641,11 +643,20 @@ row at a time, so the board's growth is more orders, never a heavier client.
 - **Leasing.** `/api/board/work` (`worker/verify.js`) hands a client one
   order — its library RECORD, a ruler and a mode, never a number — chosen from
   a random `slot` on an index, so a lease reads a few rows however long the
-  book is. One lease a client, thirty minutes long; a row no longer owed is
-  settled where it is found. ONLY THE SERVED ENGINE LEASES: the worker reads
-  `engine` from the site's `release.json`, a page of any other gets no order and
-  its answers are dropped, and an order holding an older engine's result is
-  opened again from nothing.
+  book is. An order waiting for a further result goes first, then the rows a
+  NEW BUILD owes (`priority` 0, an `arrivals-` batch), then a rescore's or a
+  sweep's: someone is waiting to see a new build ranked, and nobody is waiting
+  on a rescore. One lease a client, thirty minutes long; a row no longer owed
+  is settled where it is found. ONLY THE SERVED ENGINE LEASES: the worker reads
+  `engine` from the site's `release.json`, and a page of any other gets no order
+  and its answers are dropped.
+- **A release carries a result.** An order holding an older engine's result is
+  opened for the served one with its clients kept (`carried_from` names the
+  engine they used). A client of the new engine that reproduces the bits makes
+  the fact and every client is credited; one that does not replaces the result
+  as the first, and nobody is refused, since the release moved the number.
+  Most releases move few numbers, and opening every such order from nothing
+  threw away a third of what the volunteers computed.
 - **Fighting.** The client asks `/api/board/order` for the fight off the record
   (the scorer's `scored_build` and `row_requests`, a riven's rolls included),
   folds it with `/api/board/fold` and ends it with `/api/board/score`
