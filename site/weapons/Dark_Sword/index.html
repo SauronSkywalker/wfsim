@@ -15,10 +15,10 @@
   <meta property="og:url" content="https://wfsim.app/weapons/Dark_Sword" />
   <meta property="og:image" content="https://wfsim.app/og/Dark_Sword.png" />
   
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Dark Sword","description":"Dark Sword (暗黑长剑) — Sword · Melee · Mastery Rank 8. 260 base damage (puncture 120, radiation 80, slash 60), 5% crit chance, 1.5x crit multiplier, 40% status chance. Build it, simulate the fight, and optimize the mods.","url":"https://wfsim.app/weapons/Dark_Sword","inLanguage":"en","isPartOf":{"@type":"WebApplication","name":"WFSim","url":"https://wfsim.app/"},"breadcrumb":{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"WFSim","item":"https://wfsim.app/"},{"@type":"ListItem","position":2,"name":"Dark Sword","item":"https://wfsim.app/weapons/Dark_Sword"}]},"dateModified":"2026-10-08","about":{"@type":"Thing","name":"Dark Sword","alternateName":"暗黑长剑"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Dark Sword","description":"Dark Sword (暗黑长剑) — Sword · Melee · Mastery Rank 8. 260 base damage (puncture 120, radiation 80, slash 60), 5% crit chance, 1.5x crit multiplier, 40% status chance. Build it, simulate the fight, and optimize the mods.","url":"https://wfsim.app/weapons/Dark_Sword","inLanguage":"en","isPartOf":{"@type":"WebApplication","name":"WFSim","url":"https://wfsim.app/"},"breadcrumb":{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"WFSim","item":"https://wfsim.app/"},{"@type":"ListItem","position":2,"name":"Dark Sword","item":"https://wfsim.app/weapons/Dark_Sword"}]},"dateModified":"2026-10-09","about":{"@type":"Thing","name":"Dark Sword","alternateName":"暗黑长剑"}}</script>
   <meta name="twitter:card" content="summary" />
   
-  <link rel="stylesheet" href="/asset/style.4077e0ab15cb.css" />
+  <link rel="stylesheet" href="/asset/style.006b2410f4a6.css" />
   <link rel="icon" type="image/svg+xml" href="/logo.svg" />
   <link rel="ai-catalog" href="/.well-known/ai-catalog.json" type="application/json" />
   
@@ -57,21 +57,38 @@
         say("WFSim failed while loading. / WFSim 加载时出错。",
             String((r && (r.stack || r.message)) || r || "unknown"));
       });
+      // THE ENGINE'S DOWNLOAD, counted by worker.js and drawn under the first
+      // paint, so a slow line reads as progress rather than as a hang.
+      var heard = 0, best = 0;
+      var mb = function (n) { return (n / 1048576).toFixed(1); };
+      window.__wfsimBootProgress = function (got, total) {
+        heard = Date.now();
+        if (got < best) return;
+        best = got;
+        var el = document.getElementById("boot-progress");
+        if (!el) return;
+        el.textContent = "下载计算引擎 · Downloading the engine  " + mb(got) +
+          (total > 0 ? " / " + mb(total) + " MB  " + Math.min(100, Math.round(got * 100 / total)) + "%" : " MB");
+      };
       // ...and the case with no error at all: the app never finishes starting.
-      // Silence for twenty seconds is a failure whatever caused it, and a
-      // reader who can see this line can tell us what their network did.
-      setTimeout(function () {
+      // Twenty seconds with no byte arriving is a failure whatever caused it,
+      // and a reader who can see this line can tell us what their network did.
+      // A download still arriving is not stuck, so the banner waits on it.
+      var watch = function () {
         if (window.__wfsimReady) return;
+        if (heard && Date.now() - heard < 20000) { setTimeout(watch, 5000); return; }
         say("WFSim is still loading. / WFSim 还在加载。",
-            "It has not finished starting after 20 seconds — usually a slow or blocked network." +
-            NL + "启动超过 20 秒还没完成，通常是网络慢或被拦截。");
-      }, 20000);
+            (best ? "The engine download stopped at " + mb(best) + " MB. / 计算引擎下载停在 " + mb(best) + " MB。" + NL :
+              "It has not finished starting after 20 seconds — usually a slow or blocked network." +
+              NL + "启动超过 20 秒还没完成，通常是网络慢或被拦截。"));
+      };
+      setTimeout(watch, 20000);
     })();
   </script>
 </head>
 <body>
   
-  <div id="booting" class="booting">WFSim<span class="bdot">·</span><span class="bdot">·</span><span class="bdot">·</span></div>
+  <div id="booting" class="booting">WFSim<span class="bdot">·</span><span class="bdot">·</span><span class="bdot">·</span><span id="boot-progress" class="boot-progress"></span></div>
   <header class="topbar">
     <div class="topbar-inner">
       <a class="brand" href="/">WF<span>Sim</span></a>
@@ -614,13 +631,13 @@
     <a href="/support" title="Support WFSim" data-i18n-title data-i18n>Support</a> ·
     <a href="/support#usage" data-i18n>Usage statistics</a>
     
-    · <span class="build-stamp" id="build-stamp" title="which build this page is">04852c6e</span>
+    · <span class="build-stamp" id="build-stamp" title="which build this page is">b69beee0</span>
     </div>
   </footer>
 
   <script>window.WFSIM_WASM = true;</script>
 
-  <script src="/asset/app.c0ecbf8118be.js"></script>
+  <script src="/asset/app.2f67e8a35fc7.js"></script>
   <script type="module" src="/asset/nona.c70ed3980e7d/index.js"></script>
 
 <div class="calc-status" id="calc-status" hidden></div>

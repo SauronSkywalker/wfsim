@@ -4,21 +4,21 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Vaykor Marelok — Warframe build, damage &amp; DPS | WFSim</title>
-  <meta name="description" content="Vaykor Marelok (勇气·玛瑞火枪) — Pistol · Secondary · Mastery Rank 10. 160 base damage (impact 96, puncture 16, slash 48), 20% crit chance, 1.5x crit multiplier, 35% status chance. Best riven-free build on the board: 3.1604 under Standard Single Target · Thrax Centurion Lv 9999 SP · 180 s · KPM, as of 2026-10-08." />
+  <meta name="description" content="Vaykor Marelok (勇气·玛瑞火枪) — Pistol · Secondary · Mastery Rank 10. 160 base damage (impact 96, puncture 16, slash 48), 20% crit chance, 1.5x crit multiplier, 35% status chance. Best riven-free build on the board: 3.1604 under Standard Single Target · Thrax Centurion Lv 9999 SP · 180 s · KPM, as of 2026-10-09." />
   
   <meta property="og:type" content="website" />
   
   <link rel="canonical" href="https://wfsim.app/weapons/Vaykor_Marelok" />
   <meta property="og:site_name" content="WFSim" />
   <meta property="og:title" content="Vaykor Marelok — Warframe build, damage &amp; DPS | WFSim" />
-  <meta property="og:description" content="Vaykor Marelok (勇气·玛瑞火枪) — Pistol · Secondary · Mastery Rank 10. 160 base damage (impact 96, puncture 16, slash 48), 20% crit chance, 1.5x crit multiplier, 35% status chance. Best riven-free build on the board: 3.1604 under Standard Single Target · Thrax Centurion Lv 9999 SP · 180 s · KPM, as of 2026-10-08." />
+  <meta property="og:description" content="Vaykor Marelok (勇气·玛瑞火枪) — Pistol · Secondary · Mastery Rank 10. 160 base damage (impact 96, puncture 16, slash 48), 20% crit chance, 1.5x crit multiplier, 35% status chance. Best riven-free build on the board: 3.1604 under Standard Single Target · Thrax Centurion Lv 9999 SP · 180 s · KPM, as of 2026-10-09." />
   <meta property="og:url" content="https://wfsim.app/weapons/Vaykor_Marelok" />
   <meta property="og:image" content="https://wfsim.app/og/Vaykor_Marelok.png" />
   
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Vaykor Marelok","description":"Vaykor Marelok (勇气·玛瑞火枪) — Pistol · Secondary · Mastery Rank 10. 160 base damage (impact 96, puncture 16, slash 48), 20% crit chance, 1.5x crit multiplier, 35% status chance. Best riven-free build on the board: 3.1604 under Standard Single Target · Thrax Centurion Lv 9999 SP · 180 s · KPM, as of 2026-10-08.","url":"https://wfsim.app/weapons/Vaykor_Marelok","inLanguage":"en","isPartOf":{"@type":"WebApplication","name":"WFSim","url":"https://wfsim.app/"},"breadcrumb":{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"WFSim","item":"https://wfsim.app/"},{"@type":"ListItem","position":2,"name":"Vaykor Marelok","item":"https://wfsim.app/weapons/Vaykor_Marelok"}]},"dateModified":"2026-10-08","about":{"@type":"Thing","name":"Vaykor Marelok","alternateName":"勇气·玛瑞火枪"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Vaykor Marelok","description":"Vaykor Marelok (勇气·玛瑞火枪) — Pistol · Secondary · Mastery Rank 10. 160 base damage (impact 96, puncture 16, slash 48), 20% crit chance, 1.5x crit multiplier, 35% status chance. Best riven-free build on the board: 3.1604 under Standard Single Target · Thrax Centurion Lv 9999 SP · 180 s · KPM, as of 2026-10-09.","url":"https://wfsim.app/weapons/Vaykor_Marelok","inLanguage":"en","isPartOf":{"@type":"WebApplication","name":"WFSim","url":"https://wfsim.app/"},"breadcrumb":{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"WFSim","item":"https://wfsim.app/"},{"@type":"ListItem","position":2,"name":"Vaykor Marelok","item":"https://wfsim.app/weapons/Vaykor_Marelok"}]},"dateModified":"2026-10-09","about":{"@type":"Thing","name":"Vaykor Marelok","alternateName":"勇气·玛瑞火枪"}}</script>
   <meta name="twitter:card" content="summary" />
   
-  <link rel="stylesheet" href="/asset/style.4077e0ab15cb.css" />
+  <link rel="stylesheet" href="/asset/style.006b2410f4a6.css" />
   <link rel="icon" type="image/svg+xml" href="/logo.svg" />
   <link rel="ai-catalog" href="/.well-known/ai-catalog.json" type="application/json" />
   
@@ -57,21 +57,38 @@
         say("WFSim failed while loading. / WFSim 加载时出错。",
             String((r && (r.stack || r.message)) || r || "unknown"));
       });
+      // THE ENGINE'S DOWNLOAD, counted by worker.js and drawn under the first
+      // paint, so a slow line reads as progress rather than as a hang.
+      var heard = 0, best = 0;
+      var mb = function (n) { return (n / 1048576).toFixed(1); };
+      window.__wfsimBootProgress = function (got, total) {
+        heard = Date.now();
+        if (got < best) return;
+        best = got;
+        var el = document.getElementById("boot-progress");
+        if (!el) return;
+        el.textContent = "下载计算引擎 · Downloading the engine  " + mb(got) +
+          (total > 0 ? " / " + mb(total) + " MB  " + Math.min(100, Math.round(got * 100 / total)) + "%" : " MB");
+      };
       // ...and the case with no error at all: the app never finishes starting.
-      // Silence for twenty seconds is a failure whatever caused it, and a
-      // reader who can see this line can tell us what their network did.
-      setTimeout(function () {
+      // Twenty seconds with no byte arriving is a failure whatever caused it,
+      // and a reader who can see this line can tell us what their network did.
+      // A download still arriving is not stuck, so the banner waits on it.
+      var watch = function () {
         if (window.__wfsimReady) return;
+        if (heard && Date.now() - heard < 20000) { setTimeout(watch, 5000); return; }
         say("WFSim is still loading. / WFSim 还在加载。",
-            "It has not finished starting after 20 seconds — usually a slow or blocked network." +
-            NL + "启动超过 20 秒还没完成，通常是网络慢或被拦截。");
-      }, 20000);
+            (best ? "The engine download stopped at " + mb(best) + " MB. / 计算引擎下载停在 " + mb(best) + " MB。" + NL :
+              "It has not finished starting after 20 seconds — usually a slow or blocked network." +
+              NL + "启动超过 20 秒还没完成，通常是网络慢或被拦截。"));
+      };
+      setTimeout(watch, 20000);
     })();
   </script>
 </head>
 <body>
   
-  <div id="booting" class="booting">WFSim<span class="bdot">·</span><span class="bdot">·</span><span class="bdot">·</span></div>
+  <div id="booting" class="booting">WFSim<span class="bdot">·</span><span class="bdot">·</span><span class="bdot">·</span><span id="boot-progress" class="boot-progress"></span></div>
   <header class="topbar">
     <div class="topbar-inner">
       <a class="brand" href="/">WF<span>Sim</span></a>
@@ -198,12 +215,13 @@
       <div class="fold-h"><b>Measured builds</b><span class="sim-hint">the board&#x27;s best riven-free build for each ruler, and what this weapon&#x27;s number does not account for</span></div>
       <div class="fold-b">
       <table class="w-tab w-answers">
-        <caption>Best riven-free build on the WFSim board, as of 2026-10-08</caption>
+        <caption>Best riven-free build on the WFSim board, as of 2026-10-09</caption>
         <thead><tr><th>Ruler</th><th>Fight</th><th>Mode</th><th>Score</th><th>Build</th><th>Measured</th></tr></thead>
         <tbody>
           <tr><td>Standard Single Target</td><td>Thrax Centurion Lv 9999 SP · 180 s · KPM</td><td>base</td><td class="w-num">3.1604</td><td>Frostbite, Pistol Pestilence, Primed Heated Charge, Scorch, Pistol Acuity, Primed Target Cracker, Pistol Elementalist, Semi-Pistol Cannonade, Secondary Enervate</td><td class="w-when">2026-10-03 19:24 UTC · ea8f24ebe2</td></tr>
           <tr><td>Standard Multi Target</td><td>5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM</td><td>base</td><td class="w-num">12.2384</td><td>Frostbite, Pistol Pestilence, Primed Heated Charge, Scorch, Pistol Acuity, Primed Target Cracker, Pistol Elementalist, Semi-Pistol Cannonade, Secondary Enervate</td><td class="w-when">2026-10-05 16:56 UTC · 052c2ed8c6</td></tr>
           <tr><td>Demolisher</td><td>one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM</td><td>base</td><td class="w-num">0.8588</td><td>Frostbite, Pistol Pestilence, Primed Heated Charge, Scorch, Pistol Acuity, Primed Target Cracker, Pistol Elementalist, Semi-Pistol Cannonade, Secondary Enervate</td><td class="w-when">2026-10-03 18:30 UTC · ea8f24ebe2</td></tr>
+          <tr><td>Heavy Gunner</td><td>one target · Eximus Corrupted Heavy Gunner Lv 9999 SP · 180 s · KPM</td><td>base</td><td class="w-num">2.1467</td><td>Frostbite, Pistol Pestilence, Primed Heated Charge, Scorch, Pistol Acuity, Primed Target Cracker, Pistol Elementalist, Semi-Pistol Cannonade, Secondary Enervate</td><td class="w-when">2026-10-08 21:12 UTC · 531aca13c9</td></tr>
         </tbody>
       </table>
       <div class="w-notes"><b>Not modelled here</b>
@@ -623,13 +641,13 @@
     <a href="/support" title="Support WFSim" data-i18n-title data-i18n>Support</a> ·
     <a href="/support#usage" data-i18n>Usage statistics</a>
     
-    · <span class="build-stamp" id="build-stamp" title="which build this page is">04852c6e</span>
+    · <span class="build-stamp" id="build-stamp" title="which build this page is">b69beee0</span>
     </div>
   </footer>
 
   <script>window.WFSIM_WASM = true;</script>
 
-  <script src="/asset/app.c0ecbf8118be.js"></script>
+  <script src="/asset/app.2f67e8a35fc7.js"></script>
   <script type="module" src="/asset/nona.c70ed3980e7d/index.js"></script>
 
 <div class="calc-status" id="calc-status" hidden></div>

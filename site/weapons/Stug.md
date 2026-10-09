@@ -4,7 +4,7 @@ Chinese name: 史特克
 
 Pistol · Secondary · Mastery Rank 2. 4 base damage (corrosive 4), 5% crit chance, 1.5x crit multiplier, 10% status chance.
 
-## Best riven-free build on the WFSim board, as of 2026-10-08
+## Best riven-free build on the WFSim board, as of 2026-10-09
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
@@ -15,6 +15,7 @@ Each row is measured on its own, and says when and by which WFSim commit; the ga
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 57.0216 | Deep Freeze, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Primed Target Cracker, Galvanized Crosshairs, Lethal Torrent, Anemic Agility, Cascadia Flare | 2026-09-29 13:09 UTC · 601279c5f9 |
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | cycle | 9.9371 | Frostbite, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Hornet Strike, Primed Target Cracker, Galvanized Crosshairs, Anemic Agility, Secondary Deadhead | 2026-10-06 01:56 UTC · 9705d4724b |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | cycle | 13.9331 | Frostbite, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Primed Target Cracker, Primed Pistol Gambit, Lethal Torrent, Anemic Agility, Lethal Momentum, Cascadia Flare | 2026-09-29 10:46 UTC · 9b0496567c |
+| Heavy Gunner | one target · Eximus Corrupted Heavy Gunner Lv 9999 SP · 180 s · KPM | cycle | 6.4437 | Deep Freeze, Pistol Pestilence, Primed Heated Charge, Galvanized Diffusion, Primed Target Cracker, Lethal Torrent, Anemic Agility, Creeping Bullseye, Cascadia Flare | 2026-10-08 22:54 UTC · c9a903ca56 |
 
 ## Not modelled here
 

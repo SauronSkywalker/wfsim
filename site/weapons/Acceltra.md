@@ -4,7 +4,7 @@ Chinese name: 迅发电浆炮
 
 Rifle · Primary · Mastery Rank 8. 35 base damage (impact 35), 32% crit chance, 2.8x crit multiplier, 6% status chance.
 
-## Best riven-free build on the WFSim board, as of 2026-10-08
+## Best riven-free build on the WFSim board, as of 2026-10-09
 
 A score belongs to its ruler: compare it only with scores under the same ruler.
 
@@ -15,6 +15,7 @@ Each row is measured on its own, and says when and by which WFSim commit; the ga
 | Standard Single Target | Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.0719 | Primed Cryo Rounds, Malignant Force, Hellfire, Galvanized Chamber, Primary Acuity, Galvanized Aptitude, Vital Sense, Magnetic Capacity, Primary Deadhead | 2026-10-05 17:38 UTC · 052c2ed8c6 |
 | Standard Multi Target | 5x5 at 3 m · Thrax Centurion Lv 9999 SP · 180 s · KPM | base | 5.0696 | Primed Cryo Rounds, Malignant Force, Hellfire, Galvanized Chamber, Primary Acuity, Galvanized Aptitude, Vital Sense, Magnetic Capacity, Primary Deadhead | 2026-10-06 09:46 UTC · 92ec4b1a70 |
 | Demolisher | one target · Demolisher Devourer Lv 9999 SP · 4-player health · 180 s · KPM | base | 0.1787 | Wildfire, Primary Acuity, Serration, Hunter Track, Rifle Elementalist, Vital Sense, Continuous Misery, Hush, Vigilante Supplies, Primary Compression | 2026-10-05 16:48 UTC · 052c2ed8c6 |
+| Heavy Gunner | one target · Eximus Corrupted Heavy Gunner Lv 9999 SP · 180 s · KPM | base | 1.0876 | Primed Cryo Rounds, Malignant Force, Hellfire, Galvanized Chamber, Primary Acuity, Galvanized Aptitude, Vital Sense, Magnetic Capacity, Primary Deadhead | 2026-10-08 19:24 UTC · 531aca13c9 |
 
 ## Not modelled here
 
