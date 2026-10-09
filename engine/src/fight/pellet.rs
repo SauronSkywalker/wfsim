@@ -1500,15 +1500,19 @@ pub(super) fn settle_pellet(pellet_idx: u32, shot: &Strike, live: &mut Live) {
             // once rather than per pellet — recorded on a MISS too, so
             // the sphere that went off on the floor still has a number
             // behind it.
+            // ONE BEAM'S WORTH, never the merge: a continuous weapon fires
+            // one pellet carrying multishot as `beam_merge`, so leaving it
+            // in hands the shot's multishot to the half that must not take it.
+            let unmerged = 1.0 / (*beam_merge).max(1e-9);
             if strike_spread.is_none() {
                 *strike_spread = Some(SpreadStrike {
-                    raw_per_bucket: body_only(raw / bucket / careen),
+                    raw_per_bucket: body_only(raw / bucket / careen) * unmerged,
                     shares,
                     crit_multiplier,
                     crit_tier: tier,
                     attrition,
-                    modded_base: spread_mb,
-                    status_chance,
+                    modded_base: spread_mb * unmerged,
+                    status_chance: (status_chance - weakpoint_sc) * unmerged + weakpoint_sc,
                     forced: forced.to_vec(),
                     vector: qvec,
                 });

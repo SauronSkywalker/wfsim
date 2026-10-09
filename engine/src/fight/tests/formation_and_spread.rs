@@ -275,6 +275,36 @@ fn a_formation_takes_the_damage_a_chain_spreads_into_it() {
     );
 }
 
+/// ONLY THE DIRECT TARGET'S PATH TAKES A BEAM'S MULTISHOT. *"As a continuous
+/// weapon, the spherical damage radius does not benefit from Multishot; only
+/// targets directly hit by the beam benefit"* (wiki, Torid Incarnon Genesis).
+/// On a 1.5 m 3x3 grid one path reaches six bodies, so Split Chamber must
+/// leave at least three of the nine well short of its own x1.9.
+#[test]
+fn a_beams_multishot_stays_on_the_directly_struck_path() {
+    let by_body = |cards: &[&str]| {
+        let base = crate::model::WeaponBase::from_data("torid_incarnon", false, &["torid_evo1_incarnon_form"]);
+        let pool = crate::data::mods::pool_for_weapon("torid_incarnon");
+        let refs: Vec<&crate::model::ModDef> = cards
+            .iter()
+            .map(|m| pool.iter().find(|d| d.id == *m).unwrap_or_else(|| panic!("{m}")))
+            .collect();
+        let panel = crate::build::loadout::resolve(&base, &refs, crate::model::StackPolicy::Emergent);
+        let mut arena = crate::arena::Arena::training(10.0);
+        let grid = crate::formation::Formation::grid(Foe::training_dummy(), BodyPart::humanoid(), 3, 3, 1.5, arena.target_at);
+        arena.others = grid.foes.iter().enumerate().filter(|(i, _)| *i != grid.aimed).map(|(_, f)| f.clone()).collect();
+        let p = FightParams::from_panel(&panel, &arena, &crate::data::arcanes::ArcaneFx::none());
+        run_once(&p, &mut Rng::new(0x5EED)).taken.by_body().0[..9].to_vec()
+    };
+    let (bare, split) = (by_body(&[]), by_body(&["split_chamber"]));
+    let ratios: Vec<f64> = bare.iter().zip(&split).map(|(b, s)| s / b).collect();
+    assert!(ratios[0] > 1.8, "the aimed body takes the multishot: {ratios:?}");
+    assert!(
+        ratios.iter().filter(|r| **r < 1.8).count() >= 3,
+        "bodies off the direct path must not take it all: {ratios:?}"
+    );
+}
+
 /// THE BASE FORM REACHES A FORMATION TOO, and by a different mechanism —
 /// its AoE is a lingering CLOUD, not a chain. Which is
 /// what makes a full Incarnon CYCLE simulable against a crowd: the grenade
